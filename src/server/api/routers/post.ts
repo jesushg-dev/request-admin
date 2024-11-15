@@ -15,7 +15,7 @@ export const postRouter = createTRPCRouter({
       };
     }),
 
-  create: protectedProcedure
+ /* create: protectedProcedure
     .input(z.object({ name: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
       return ctx.db.post.create({
@@ -33,7 +33,7 @@ export const postRouter = createTRPCRouter({
     });
 
     return post ?? null;
-  }),
+  }),*/
 
   getSecretMessage: protectedProcedure.query(() => {
     return "you can now see this secret message!";
