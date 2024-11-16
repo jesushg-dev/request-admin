@@ -25,6 +25,7 @@ declare module "next-auth" {
       permissions: string[];
       isTwoFactorEnabled: boolean;
       isOAuth: boolean;
+      tenantId: string;
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"];
@@ -41,6 +42,7 @@ export type ExtendedUser = DefaultSession["user"] & {
   permissions: string[];
   isTwoFactorEnabled: boolean;
   isOAuth: boolean;
+  tenantId: string;
   // role: UserRole;
 };
 

@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+[class^='fab-icon-'],
+[class*=' fab-icon-'] {
+  font-family: 'fab-icons' !important;
+  font-size: 55px;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: inherit;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.fab-icon-add:before {
+  content: '\e704';
+}
+
+div:where(.swal2-icon).swal2-warning {
+  border-color: #4f46e5 !important;
+  color: #4f46e5 !important;
+}
+
+.z-swalert {
+  z-index: 100000 !important;
+}
