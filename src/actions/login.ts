@@ -89,6 +89,7 @@ export const login = async (
       await db.twoFactorConfirmation.create({
         data: {
           userId: existingUser.id,
+          tenantId: existingUser.tenantId,
         }
       });
     } else {

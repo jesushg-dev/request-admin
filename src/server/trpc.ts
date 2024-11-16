@@ -12,7 +12,7 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { auth } from "@/server/auth";
-import { db } from "@/server/db";
+import { enhance } from "@zenstackhq/runtime";
 
 /**
  * 1. CONTEXT
@@ -30,7 +30,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await auth();
 
   return {
-    db,
+    prisma: await enhance(prisma, { user: session }),
     session,
     ...opts,
   };
@@ -108,7 +108,7 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
  * guarantee that a user querying is authorized, but you can still access user session data if they
  * are logged in.
  */
-export const publicProcedure = t.procedure.use(timingMiddleware);
+export const procedure = t.procedure.use(timingMiddleware);
 
 /**
  * Protected (authenticated) procedure
