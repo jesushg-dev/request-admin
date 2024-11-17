@@ -1,0 +1,496 @@
+/* eslint-disable */
+import type { Prisma, CategoryRequirement } from '@zenstackhq/runtime/models';
+import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/react-query';
+import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
+import type { PolicyCrudKind } from '@zenstackhq/runtime';
+import metadata from './__model_meta';
+type DefaultError = QueryError;
+import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
+
+export function useCreateCategoryRequirement(
+  options?: Omit<UseMutationOptions<CategoryRequirement | undefined, DefaultError, Prisma.CategoryRequirementCreateArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.CategoryRequirementCreateArgs, DefaultError, CategoryRequirement, true>(
+    'CategoryRequirement',
+    'POST',
+    `${endpoint}/categoryRequirement/create`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.CategoryRequirementCreateArgs>(
+      args: Prisma.SelectSubset<T, Prisma.CategoryRequirementCreateArgs>,
+      options?: Omit<
+        UseMutationOptions<
+          CheckSelect<T, CategoryRequirement, Prisma.CategoryRequirementGetPayload<T>> | undefined,
+          DefaultError,
+          Prisma.SelectSubset<T, Prisma.CategoryRequirementCreateArgs>
+        > &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, CategoryRequirement, Prisma.CategoryRequirementGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
+}
+
+export function useCreateManyCategoryRequirement(
+  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.CategoryRequirementCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.CategoryRequirementCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'CategoryRequirement',
+    'POST',
+    `${endpoint}/categoryRequirement/createMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.CategoryRequirementCreateManyArgs>(
+      args: Prisma.SelectSubset<T, Prisma.CategoryRequirementCreateManyArgs>,
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.CategoryRequirementCreateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
+    },
+  };
+  return mutation;
+}
+
+export function useFindManyCategoryRequirement<
+  TArgs extends Prisma.CategoryRequirementFindManyArgs,
+  TQueryFnData = Array<Prisma.CategoryRequirementGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.CategoryRequirementFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('CategoryRequirement', `${endpoint}/categoryRequirement/findMany`, args, options, fetch);
+}
+
+export function useInfiniteFindManyCategoryRequirement<
+  TArgs extends Prisma.CategoryRequirementFindManyArgs,
+  TQueryFnData = Array<Prisma.CategoryRequirementGetPayload<TArgs>>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.CategoryRequirementFindManyArgs>,
+  options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
+) {
+  options = options ?? { getNextPageParam: () => null };
+  const { endpoint, fetch } = getHooksContext();
+  return useInfiniteModelQuery<TQueryFnData, TData, TError>('CategoryRequirement', `${endpoint}/categoryRequirement/findMany`, args, options, fetch);
+}
+
+export function useSuspenseFindManyCategoryRequirement<
+  TArgs extends Prisma.CategoryRequirementFindManyArgs,
+  TQueryFnData = Array<Prisma.CategoryRequirementGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.CategoryRequirementFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('CategoryRequirement', `${endpoint}/categoryRequirement/findMany`, args, options, fetch);
+}
+
+export function useSuspenseInfiniteFindManyCategoryRequirement<
+  TArgs extends Prisma.CategoryRequirementFindManyArgs,
+  TQueryFnData = Array<Prisma.CategoryRequirementGetPayload<TArgs>>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.CategoryRequirementFindManyArgs>,
+  options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
+) {
+  options = options ?? { getNextPageParam: () => null };
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('CategoryRequirement', `${endpoint}/categoryRequirement/findMany`, args, options, fetch);
+}
+
+export function useFindUniqueCategoryRequirement<
+  TArgs extends Prisma.CategoryRequirementFindUniqueArgs,
+  TQueryFnData = Prisma.CategoryRequirementGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.CategoryRequirementFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('CategoryRequirement', `${endpoint}/categoryRequirement/findUnique`, args, options, fetch);
+}
+
+export function useSuspenseFindUniqueCategoryRequirement<
+  TArgs extends Prisma.CategoryRequirementFindUniqueArgs,
+  TQueryFnData = Prisma.CategoryRequirementGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.CategoryRequirementFindUniqueArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('CategoryRequirement', `${endpoint}/categoryRequirement/findUnique`, args, options, fetch);
+}
+
+export function useFindFirstCategoryRequirement<
+  TArgs extends Prisma.CategoryRequirementFindFirstArgs,
+  TQueryFnData = Prisma.CategoryRequirementGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.CategoryRequirementFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('CategoryRequirement', `${endpoint}/categoryRequirement/findFirst`, args, options, fetch);
+}
+
+export function useSuspenseFindFirstCategoryRequirement<
+  TArgs extends Prisma.CategoryRequirementFindFirstArgs,
+  TQueryFnData = Prisma.CategoryRequirementGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.CategoryRequirementFindFirstArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('CategoryRequirement', `${endpoint}/categoryRequirement/findFirst`, args, options, fetch);
+}
+
+export function useUpdateCategoryRequirement(
+  options?: Omit<UseMutationOptions<CategoryRequirement | undefined, DefaultError, Prisma.CategoryRequirementUpdateArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.CategoryRequirementUpdateArgs, DefaultError, CategoryRequirement, true>(
+    'CategoryRequirement',
+    'PUT',
+    `${endpoint}/categoryRequirement/update`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.CategoryRequirementUpdateArgs>(
+      args: Prisma.SelectSubset<T, Prisma.CategoryRequirementUpdateArgs>,
+      options?: Omit<
+        UseMutationOptions<
+          CheckSelect<T, CategoryRequirement, Prisma.CategoryRequirementGetPayload<T>> | undefined,
+          DefaultError,
+          Prisma.SelectSubset<T, Prisma.CategoryRequirementUpdateArgs>
+        > &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, CategoryRequirement, Prisma.CategoryRequirementGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
+}
+
+export function useUpdateManyCategoryRequirement(
+  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.CategoryRequirementUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.CategoryRequirementUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'CategoryRequirement',
+    'PUT',
+    `${endpoint}/categoryRequirement/updateMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.CategoryRequirementUpdateManyArgs>(
+      args: Prisma.SelectSubset<T, Prisma.CategoryRequirementUpdateManyArgs>,
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.CategoryRequirementUpdateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
+    },
+  };
+  return mutation;
+}
+
+export function useUpsertCategoryRequirement(
+  options?: Omit<UseMutationOptions<CategoryRequirement | undefined, DefaultError, Prisma.CategoryRequirementUpsertArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.CategoryRequirementUpsertArgs, DefaultError, CategoryRequirement, true>(
+    'CategoryRequirement',
+    'POST',
+    `${endpoint}/categoryRequirement/upsert`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.CategoryRequirementUpsertArgs>(
+      args: Prisma.SelectSubset<T, Prisma.CategoryRequirementUpsertArgs>,
+      options?: Omit<
+        UseMutationOptions<
+          CheckSelect<T, CategoryRequirement, Prisma.CategoryRequirementGetPayload<T>> | undefined,
+          DefaultError,
+          Prisma.SelectSubset<T, Prisma.CategoryRequirementUpsertArgs>
+        > &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, CategoryRequirement, Prisma.CategoryRequirementGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
+}
+
+export function useDeleteCategoryRequirement(
+  options?: Omit<UseMutationOptions<CategoryRequirement | undefined, DefaultError, Prisma.CategoryRequirementDeleteArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.CategoryRequirementDeleteArgs, DefaultError, CategoryRequirement, true>(
+    'CategoryRequirement',
+    'DELETE',
+    `${endpoint}/categoryRequirement/delete`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.CategoryRequirementDeleteArgs>(
+      args: Prisma.SelectSubset<T, Prisma.CategoryRequirementDeleteArgs>,
+      options?: Omit<
+        UseMutationOptions<
+          CheckSelect<T, CategoryRequirement, Prisma.CategoryRequirementGetPayload<T>> | undefined,
+          DefaultError,
+          Prisma.SelectSubset<T, Prisma.CategoryRequirementDeleteArgs>
+        > &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, CategoryRequirement, Prisma.CategoryRequirementGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
+}
+
+export function useDeleteManyCategoryRequirement(
+  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.CategoryRequirementDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.CategoryRequirementDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'CategoryRequirement',
+    'DELETE',
+    `${endpoint}/categoryRequirement/deleteMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.CategoryRequirementDeleteManyArgs>(
+      args: Prisma.SelectSubset<T, Prisma.CategoryRequirementDeleteManyArgs>,
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.CategoryRequirementDeleteManyArgs>> & ExtraMutationOptions, 'mutationFn'>
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
+    },
+  };
+  return mutation;
+}
+
+export function useAggregateCategoryRequirement<
+  TArgs extends Prisma.CategoryRequirementAggregateArgs,
+  TQueryFnData = Prisma.GetCategoryRequirementAggregateType<TArgs>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.CategoryRequirementAggregateArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('CategoryRequirement', `${endpoint}/categoryRequirement/aggregate`, args, options, fetch);
+}
+
+export function useSuspenseAggregateCategoryRequirement<
+  TArgs extends Prisma.CategoryRequirementAggregateArgs,
+  TQueryFnData = Prisma.GetCategoryRequirementAggregateType<TArgs>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.CategoryRequirementAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('CategoryRequirement', `${endpoint}/categoryRequirement/aggregate`, args, options, fetch);
+}
+
+export function useGroupByCategoryRequirement<
+  TArgs extends Prisma.CategoryRequirementGroupByArgs,
+  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
+  OrderByArg extends Prisma.True extends HasSelectOrTake
+    ? { orderBy: Prisma.CategoryRequirementGroupByArgs['orderBy'] }
+    : { orderBy?: Prisma.CategoryRequirementGroupByArgs['orderBy'] },
+  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
+  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
+  ByValid extends Prisma.Has<ByFields, OrderFields>,
+  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
+  HavingValid extends Prisma.Has<ByFields, HavingFields>,
+  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
+  InputErrors extends ByEmpty extends Prisma.True
+    ? `Error: "by" must not be empty.`
+    : HavingValid extends Prisma.False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+        }[HavingFields]
+      : 'take' extends Prisma.Keys<TArgs>
+        ? 'orderBy' extends Prisma.Keys<TArgs>
+          ? ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields]
+          : 'Error: If you provide "take", you also need to provide "orderBy"'
+        : 'skip' extends Prisma.Keys<TArgs>
+          ? 'orderBy' extends Prisma.Keys<TArgs>
+            ? ByValid extends Prisma.True
+              ? {}
+              : {
+                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+                }[OrderFields]
+            : 'Error: If you provide "skip", you also need to provide "orderBy"'
+          : ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields],
+  TQueryFnData = {} extends InputErrors
+    ? Array<
+        PickEnumerable<Prisma.CategoryRequirementGroupByOutputType, TArgs['by']> & {
+          [P in keyof TArgs & keyof Prisma.CategoryRequirementGroupByOutputType]: P extends '_count'
+            ? TArgs[P] extends boolean
+              ? number
+              : Prisma.GetScalarType<TArgs[P], Prisma.CategoryRequirementGroupByOutputType[P]>
+            : Prisma.GetScalarType<TArgs[P], Prisma.CategoryRequirementGroupByOutputType[P]>;
+        }
+      >
+    : InputErrors,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.CategoryRequirementGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('CategoryRequirement', `${endpoint}/categoryRequirement/groupBy`, args, options, fetch);
+}
+
+export function useSuspenseGroupByCategoryRequirement<
+  TArgs extends Prisma.CategoryRequirementGroupByArgs,
+  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
+  OrderByArg extends Prisma.True extends HasSelectOrTake
+    ? { orderBy: Prisma.CategoryRequirementGroupByArgs['orderBy'] }
+    : { orderBy?: Prisma.CategoryRequirementGroupByArgs['orderBy'] },
+  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
+  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
+  ByValid extends Prisma.Has<ByFields, OrderFields>,
+  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
+  HavingValid extends Prisma.Has<ByFields, HavingFields>,
+  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
+  InputErrors extends ByEmpty extends Prisma.True
+    ? `Error: "by" must not be empty.`
+    : HavingValid extends Prisma.False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+        }[HavingFields]
+      : 'take' extends Prisma.Keys<TArgs>
+        ? 'orderBy' extends Prisma.Keys<TArgs>
+          ? ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields]
+          : 'Error: If you provide "take", you also need to provide "orderBy"'
+        : 'skip' extends Prisma.Keys<TArgs>
+          ? 'orderBy' extends Prisma.Keys<TArgs>
+            ? ByValid extends Prisma.True
+              ? {}
+              : {
+                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+                }[OrderFields]
+            : 'Error: If you provide "skip", you also need to provide "orderBy"'
+          : ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields],
+  TQueryFnData = {} extends InputErrors
+    ? Array<
+        PickEnumerable<Prisma.CategoryRequirementGroupByOutputType, TArgs['by']> & {
+          [P in keyof TArgs & keyof Prisma.CategoryRequirementGroupByOutputType]: P extends '_count'
+            ? TArgs[P] extends boolean
+              ? number
+              : Prisma.GetScalarType<TArgs[P], Prisma.CategoryRequirementGroupByOutputType[P]>
+            : Prisma.GetScalarType<TArgs[P], Prisma.CategoryRequirementGroupByOutputType[P]>;
+        }
+      >
+    : InputErrors,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.CategoryRequirementGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('CategoryRequirement', `${endpoint}/categoryRequirement/groupBy`, args, options, fetch);
+}
+
+export function useCountCategoryRequirement<
+  TArgs extends Prisma.CategoryRequirementCountArgs,
+  TQueryFnData = TArgs extends { select: any }
+    ? TArgs['select'] extends true
+      ? number
+      : Prisma.GetScalarType<TArgs['select'], Prisma.CategoryRequirementCountAggregateOutputType>
+    : number,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.CategoryRequirementCountArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('CategoryRequirement', `${endpoint}/categoryRequirement/count`, args, options, fetch);
+}
+
+export function useSuspenseCountCategoryRequirement<
+  TArgs extends Prisma.CategoryRequirementCountArgs,
+  TQueryFnData = TArgs extends { select: any }
+    ? TArgs['select'] extends true
+      ? number
+      : Prisma.GetScalarType<TArgs['select'], Prisma.CategoryRequirementCountAggregateOutputType>
+    : number,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.CategoryRequirementCountArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('CategoryRequirement', `${endpoint}/categoryRequirement/count`, args, options, fetch);
+}
+
+export function useCheckCategoryRequirement<TError = DefaultError>(
+  args: { operation: PolicyCrudKind; where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; name?: string; description?: string } },
+  options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<boolean, boolean, TError>('CategoryRequirement', `${endpoint}/categoryRequirement/check`, args, options, fetch);
+}

@@ -1,9 +1,9 @@
-import { db } from "@/server/db";
+import { db } from '@/server/db';
 
 export const getTwoFactorTokenByToken = async (token: string) => {
   try {
     const twoFactorToken = await db.twoFactorToken.findUnique({
-      where: { token }
+      where: { token },
     });
 
     return twoFactorToken;
@@ -15,7 +15,7 @@ export const getTwoFactorTokenByToken = async (token: string) => {
 export const getTwoFactorTokenByEmail = async (email: string) => {
   try {
     const twoFactorToken = await db.twoFactorToken.findFirst({
-      where: { email }
+      where: { email },
     });
 
     return twoFactorToken;

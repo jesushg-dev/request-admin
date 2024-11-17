@@ -61,8 +61,7 @@ function PublishFormBtn({ id }: { id: number }) {
             onClick={(e) => {
               e.preventDefault();
               startTransition(publishForm);
-            }}
-          >
+            }}>
             Proceed {loading && <FaSpinner className="animate-spin" />}
           </AlertDialogAction>
         </AlertDialogFooter>

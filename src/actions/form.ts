@@ -1,8 +1,8 @@
 'use server';
 
-import { auth } from "@/server/auth";
-import { db } from "@/services/lib/db";
-import { formSchema, formSchemaType } from "@/services/schemas/form";
+import { auth } from '@/server/auth';
+import { db } from '@/services/lib/db';
+import { formSchema, formSchemaType } from '@/services/schemas/form';
 
 class UserNotFoundErr extends Error {}
 
@@ -59,7 +59,7 @@ export async function CreateForm(data: formSchemaType) {
       userId: session.user.id,
       name,
       description,
-      tenantId: session.user.tenantId
+      tenantId: session.user.tenantId,
     },
   });
 
@@ -86,7 +86,7 @@ export async function GetForms() {
   });
 }
 
-export async function GetFormById(id: number) {
+export async function GetFormById(id: string) {
   const session = await auth();
   if (!session) {
     throw new UserNotFoundErr();
@@ -100,7 +100,7 @@ export async function GetFormById(id: number) {
   });
 }
 
-export async function UpdateFormContent(id: number, jsonContent: string) {
+export async function UpdateFormContent(id: string, jsonContent: string) {
   const session = await auth();
   if (!session) {
     throw new UserNotFoundErr();
@@ -117,7 +117,7 @@ export async function UpdateFormContent(id: number, jsonContent: string) {
   });
 }
 
-export async function PublishForm(id: number) {
+export async function PublishForm(id: string) {
   const session = await auth();
   if (!session) {
     throw new UserNotFoundErr();
@@ -156,11 +156,13 @@ export async function SubmitForm(tenantId: string, formUrl: string, content: str
       submissions: {
         increment: 1,
       },
-      FormSubmissions: {
-        create: [{
-          content,
-          tenantId
-        }],
+      FormSubmission: {
+        create: [
+          {
+            content,
+            tenantId,
+          },
+        ],
       },
     },
     where: {
@@ -170,7 +172,7 @@ export async function SubmitForm(tenantId: string, formUrl: string, content: str
   });
 }
 
-export async function GetFormWithSubmissions(id: number) {
+export async function GetFormWithSubmissions(id: string) {
   const session = await auth();
   if (!session) {
     throw new UserNotFoundErr();
@@ -182,7 +184,7 @@ export async function GetFormWithSubmissions(id: number) {
       id,
     },
     include: {
-      FormSubmissions: true,
+      FormSubmission: true,
     },
   });
 }

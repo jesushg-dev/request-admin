@@ -23,7 +23,7 @@ const authMiddleware = auth((req) => {
   }
 
   if (!isLoggedIn && !isPublicRoute) {
-    return Response.redirect(new URL("/auth/login", nextUrl));
+    return Response.redirect(new URL('/auth/login', nextUrl));
   }
 
   if (isLoggedIn) {

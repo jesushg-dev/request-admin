@@ -1,0 +1,465 @@
+/* eslint-disable */
+import type { Prisma, ServiceType } from '@zenstackhq/runtime/models';
+import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/react-query';
+import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
+import type { PolicyCrudKind } from '@zenstackhq/runtime';
+import metadata from './__model_meta';
+type DefaultError = QueryError;
+import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
+
+export function useCreateServiceType(options?: Omit<UseMutationOptions<ServiceType | undefined, DefaultError, Prisma.ServiceTypeCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.ServiceTypeCreateArgs, DefaultError, ServiceType, true>(
+    'ServiceType',
+    'POST',
+    `${endpoint}/serviceType/create`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.ServiceTypeCreateArgs>(
+      args: Prisma.SelectSubset<T, Prisma.ServiceTypeCreateArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, ServiceType, Prisma.ServiceTypeGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ServiceTypeCreateArgs>> &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, ServiceType, Prisma.ServiceTypeGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
+}
+
+export function useCreateManyServiceType(
+  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.ServiceTypeCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.ServiceTypeCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'ServiceType',
+    'POST',
+    `${endpoint}/serviceType/createMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.ServiceTypeCreateManyArgs>(
+      args: Prisma.SelectSubset<T, Prisma.ServiceTypeCreateManyArgs>,
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.ServiceTypeCreateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
+    },
+  };
+  return mutation;
+}
+
+export function useFindManyServiceType<
+  TArgs extends Prisma.ServiceTypeFindManyArgs,
+  TQueryFnData = Array<Prisma.ServiceTypeGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.ServiceTypeFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('ServiceType', `${endpoint}/serviceType/findMany`, args, options, fetch);
+}
+
+export function useInfiniteFindManyServiceType<
+  TArgs extends Prisma.ServiceTypeFindManyArgs,
+  TQueryFnData = Array<Prisma.ServiceTypeGetPayload<TArgs>>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.ServiceTypeFindManyArgs>,
+  options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
+) {
+  options = options ?? { getNextPageParam: () => null };
+  const { endpoint, fetch } = getHooksContext();
+  return useInfiniteModelQuery<TQueryFnData, TData, TError>('ServiceType', `${endpoint}/serviceType/findMany`, args, options, fetch);
+}
+
+export function useSuspenseFindManyServiceType<
+  TArgs extends Prisma.ServiceTypeFindManyArgs,
+  TQueryFnData = Array<Prisma.ServiceTypeGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.ServiceTypeFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('ServiceType', `${endpoint}/serviceType/findMany`, args, options, fetch);
+}
+
+export function useSuspenseInfiniteFindManyServiceType<
+  TArgs extends Prisma.ServiceTypeFindManyArgs,
+  TQueryFnData = Array<Prisma.ServiceTypeGetPayload<TArgs>>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.ServiceTypeFindManyArgs>,
+  options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
+) {
+  options = options ?? { getNextPageParam: () => null };
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('ServiceType', `${endpoint}/serviceType/findMany`, args, options, fetch);
+}
+
+export function useFindUniqueServiceType<
+  TArgs extends Prisma.ServiceTypeFindUniqueArgs,
+  TQueryFnData = Prisma.ServiceTypeGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.ServiceTypeFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('ServiceType', `${endpoint}/serviceType/findUnique`, args, options, fetch);
+}
+
+export function useSuspenseFindUniqueServiceType<
+  TArgs extends Prisma.ServiceTypeFindUniqueArgs,
+  TQueryFnData = Prisma.ServiceTypeGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.ServiceTypeFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('ServiceType', `${endpoint}/serviceType/findUnique`, args, options, fetch);
+}
+
+export function useFindFirstServiceType<
+  TArgs extends Prisma.ServiceTypeFindFirstArgs,
+  TQueryFnData = Prisma.ServiceTypeGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.ServiceTypeFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('ServiceType', `${endpoint}/serviceType/findFirst`, args, options, fetch);
+}
+
+export function useSuspenseFindFirstServiceType<
+  TArgs extends Prisma.ServiceTypeFindFirstArgs,
+  TQueryFnData = Prisma.ServiceTypeGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.ServiceTypeFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('ServiceType', `${endpoint}/serviceType/findFirst`, args, options, fetch);
+}
+
+export function useUpdateServiceType(options?: Omit<UseMutationOptions<ServiceType | undefined, DefaultError, Prisma.ServiceTypeUpdateArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.ServiceTypeUpdateArgs, DefaultError, ServiceType, true>(
+    'ServiceType',
+    'PUT',
+    `${endpoint}/serviceType/update`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.ServiceTypeUpdateArgs>(
+      args: Prisma.SelectSubset<T, Prisma.ServiceTypeUpdateArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, ServiceType, Prisma.ServiceTypeGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ServiceTypeUpdateArgs>> &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, ServiceType, Prisma.ServiceTypeGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
+}
+
+export function useUpdateManyServiceType(
+  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.ServiceTypeUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.ServiceTypeUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'ServiceType',
+    'PUT',
+    `${endpoint}/serviceType/updateMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.ServiceTypeUpdateManyArgs>(
+      args: Prisma.SelectSubset<T, Prisma.ServiceTypeUpdateManyArgs>,
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.ServiceTypeUpdateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
+    },
+  };
+  return mutation;
+}
+
+export function useUpsertServiceType(options?: Omit<UseMutationOptions<ServiceType | undefined, DefaultError, Prisma.ServiceTypeUpsertArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.ServiceTypeUpsertArgs, DefaultError, ServiceType, true>(
+    'ServiceType',
+    'POST',
+    `${endpoint}/serviceType/upsert`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.ServiceTypeUpsertArgs>(
+      args: Prisma.SelectSubset<T, Prisma.ServiceTypeUpsertArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, ServiceType, Prisma.ServiceTypeGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ServiceTypeUpsertArgs>> &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, ServiceType, Prisma.ServiceTypeGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
+}
+
+export function useDeleteServiceType(options?: Omit<UseMutationOptions<ServiceType | undefined, DefaultError, Prisma.ServiceTypeDeleteArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.ServiceTypeDeleteArgs, DefaultError, ServiceType, true>(
+    'ServiceType',
+    'DELETE',
+    `${endpoint}/serviceType/delete`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.ServiceTypeDeleteArgs>(
+      args: Prisma.SelectSubset<T, Prisma.ServiceTypeDeleteArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, ServiceType, Prisma.ServiceTypeGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ServiceTypeDeleteArgs>> &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, ServiceType, Prisma.ServiceTypeGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
+}
+
+export function useDeleteManyServiceType(
+  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.ServiceTypeDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.ServiceTypeDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'ServiceType',
+    'DELETE',
+    `${endpoint}/serviceType/deleteMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.ServiceTypeDeleteManyArgs>(
+      args: Prisma.SelectSubset<T, Prisma.ServiceTypeDeleteManyArgs>,
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.ServiceTypeDeleteManyArgs>> & ExtraMutationOptions, 'mutationFn'>
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
+    },
+  };
+  return mutation;
+}
+
+export function useAggregateServiceType<
+  TArgs extends Prisma.ServiceTypeAggregateArgs,
+  TQueryFnData = Prisma.GetServiceTypeAggregateType<TArgs>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.ServiceTypeAggregateArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('ServiceType', `${endpoint}/serviceType/aggregate`, args, options, fetch);
+}
+
+export function useSuspenseAggregateServiceType<
+  TArgs extends Prisma.ServiceTypeAggregateArgs,
+  TQueryFnData = Prisma.GetServiceTypeAggregateType<TArgs>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.ServiceTypeAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('ServiceType', `${endpoint}/serviceType/aggregate`, args, options, fetch);
+}
+
+export function useGroupByServiceType<
+  TArgs extends Prisma.ServiceTypeGroupByArgs,
+  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
+  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.ServiceTypeGroupByArgs['orderBy'] } : { orderBy?: Prisma.ServiceTypeGroupByArgs['orderBy'] },
+  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
+  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
+  ByValid extends Prisma.Has<ByFields, OrderFields>,
+  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
+  HavingValid extends Prisma.Has<ByFields, HavingFields>,
+  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
+  InputErrors extends ByEmpty extends Prisma.True
+    ? `Error: "by" must not be empty.`
+    : HavingValid extends Prisma.False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+        }[HavingFields]
+      : 'take' extends Prisma.Keys<TArgs>
+        ? 'orderBy' extends Prisma.Keys<TArgs>
+          ? ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields]
+          : 'Error: If you provide "take", you also need to provide "orderBy"'
+        : 'skip' extends Prisma.Keys<TArgs>
+          ? 'orderBy' extends Prisma.Keys<TArgs>
+            ? ByValid extends Prisma.True
+              ? {}
+              : {
+                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+                }[OrderFields]
+            : 'Error: If you provide "skip", you also need to provide "orderBy"'
+          : ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields],
+  TQueryFnData = {} extends InputErrors
+    ? Array<
+        PickEnumerable<Prisma.ServiceTypeGroupByOutputType, TArgs['by']> & {
+          [P in keyof TArgs & keyof Prisma.ServiceTypeGroupByOutputType]: P extends '_count'
+            ? TArgs[P] extends boolean
+              ? number
+              : Prisma.GetScalarType<TArgs[P], Prisma.ServiceTypeGroupByOutputType[P]>
+            : Prisma.GetScalarType<TArgs[P], Prisma.ServiceTypeGroupByOutputType[P]>;
+        }
+      >
+    : InputErrors,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.ServiceTypeGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('ServiceType', `${endpoint}/serviceType/groupBy`, args, options, fetch);
+}
+
+export function useSuspenseGroupByServiceType<
+  TArgs extends Prisma.ServiceTypeGroupByArgs,
+  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
+  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.ServiceTypeGroupByArgs['orderBy'] } : { orderBy?: Prisma.ServiceTypeGroupByArgs['orderBy'] },
+  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
+  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
+  ByValid extends Prisma.Has<ByFields, OrderFields>,
+  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
+  HavingValid extends Prisma.Has<ByFields, HavingFields>,
+  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
+  InputErrors extends ByEmpty extends Prisma.True
+    ? `Error: "by" must not be empty.`
+    : HavingValid extends Prisma.False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+        }[HavingFields]
+      : 'take' extends Prisma.Keys<TArgs>
+        ? 'orderBy' extends Prisma.Keys<TArgs>
+          ? ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields]
+          : 'Error: If you provide "take", you also need to provide "orderBy"'
+        : 'skip' extends Prisma.Keys<TArgs>
+          ? 'orderBy' extends Prisma.Keys<TArgs>
+            ? ByValid extends Prisma.True
+              ? {}
+              : {
+                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+                }[OrderFields]
+            : 'Error: If you provide "skip", you also need to provide "orderBy"'
+          : ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields],
+  TQueryFnData = {} extends InputErrors
+    ? Array<
+        PickEnumerable<Prisma.ServiceTypeGroupByOutputType, TArgs['by']> & {
+          [P in keyof TArgs & keyof Prisma.ServiceTypeGroupByOutputType]: P extends '_count'
+            ? TArgs[P] extends boolean
+              ? number
+              : Prisma.GetScalarType<TArgs[P], Prisma.ServiceTypeGroupByOutputType[P]>
+            : Prisma.GetScalarType<TArgs[P], Prisma.ServiceTypeGroupByOutputType[P]>;
+        }
+      >
+    : InputErrors,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.ServiceTypeGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('ServiceType', `${endpoint}/serviceType/groupBy`, args, options, fetch);
+}
+
+export function useCountServiceType<
+  TArgs extends Prisma.ServiceTypeCountArgs,
+  TQueryFnData = TArgs extends { select: any }
+    ? TArgs['select'] extends true
+      ? number
+      : Prisma.GetScalarType<TArgs['select'], Prisma.ServiceTypeCountAggregateOutputType>
+    : number,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.ServiceTypeCountArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('ServiceType', `${endpoint}/serviceType/count`, args, options, fetch);
+}
+
+export function useSuspenseCountServiceType<
+  TArgs extends Prisma.ServiceTypeCountArgs,
+  TQueryFnData = TArgs extends { select: any }
+    ? TArgs['select'] extends true
+      ? number
+      : Prisma.GetScalarType<TArgs['select'], Prisma.ServiceTypeCountAggregateOutputType>
+    : number,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.ServiceTypeCountArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('ServiceType', `${endpoint}/serviceType/count`, args, options, fetch);
+}
+
+export function useCheckServiceType<TError = DefaultError>(
+  args: {
+    operation: PolicyCrudKind;
+    where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; salesChannelId?: string; name?: string; description?: string; acceptsNewClients?: boolean };
+  },
+  options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<boolean, boolean, TError>('ServiceType', `${endpoint}/serviceType/check`, args, options, fetch);
+}

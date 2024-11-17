@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
       categoryId: categoryId, // Use the categoryId in your query
     },
     select: {
-      subCategoryId: true,
+      id: true,
       name: true,
       description: true,
       form: {

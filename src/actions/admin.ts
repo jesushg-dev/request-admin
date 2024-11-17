@@ -1,14 +1,14 @@
-"use server";
+'use server';
 
-import { currentPermissions } from "@/services/lib/auth";
+import { currentPermissions } from '@/services/lib/auth';
 
 export const admin = async () => {
   const permissions = await currentPermissions();
 
   // todo: improve this
   if ((permissions?.length ?? 0) > 0) {
-    return { success: "Allowed Server Action!" };
+    return { success: 'Allowed Server Action!' };
   }
 
-  return { error: "Forbidden Server Action!" }
+  return { error: 'Forbidden Server Action!' };
 };

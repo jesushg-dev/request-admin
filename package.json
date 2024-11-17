@@ -19,7 +19,9 @@
     "preview": "next build && next start",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "prettierrc": "prettier --write ."
+    "prettierrc": "prettier --write .",
+    "generate": "npx zenstack generate && npx prisma db push && prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
+    "template": "node ./.templates/config.js && prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\" --cache"
   },
   "prettier": {
     "plugins": [
@@ -31,7 +33,7 @@
     "singleQuote": true,
     "printWidth": 180,
     "bracketSpacing": true,
-    "jsxBracketSameLine": true
+    "bracketSameLine": true
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
@@ -138,12 +140,14 @@
   "devDependencies": {
     "@eslint-community/eslint-plugin-eslint-comments": "^4.4.1",
     "@eslint-react/eslint-plugin": "^1.16.1",
+    "@eslint/compat": "^1.2.3",
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.15.0",
     "@hookform/devtools": "^4.3.1",
     "@jest/globals": "^29.7.0",
     "@next/eslint-plugin-next": "^15.0.3",
     "@playwright/test": "^1.48.2",
+    "@tanstack/eslint-plugin-query": "^5.60.1",
     "@testing-library/react": "^16.0.1",
     "@types/bcrypt": "^5.0.2",
     "@types/bcryptjs": "^2.4.6",
@@ -169,6 +173,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.3",
     "eslint-plugin-import-x": "^4.4.2",
+    "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react-compiler": "^19.0.0-beta-a7bf2bd-20241110",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-regexp": "^2.7.0",
@@ -181,6 +186,7 @@
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.8",
     "prisma": "^5.22.0",
+    "scaffdog": "^4.1.0",
     "tailwindcss": "^3.4.15",
     "typescript": "^5.6.3",
     "typescript-eslint": "^8.14.0",

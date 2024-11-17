@@ -1,0 +1,41 @@
+/* eslint-disable */
+import { db } from '.';
+import { createTRPCRouter } from '../../trpc';
+import { procedure } from '../../trpc';
+import * as _Schema from '@zenstackhq/runtime/zod/input';
+const $Schema: typeof _Schema = (_Schema as any).default ?? _Schema;
+import { checkRead, checkMutate } from '../helper';
+
+export default function createRouter() {
+  return createTRPCRouter({
+    aggregate: procedure.input($Schema.CategoryInputSchema.aggregate).query(({ ctx, input }) => checkRead(db(ctx).category.aggregate(input as any))),
+
+    createMany: procedure.input($Schema.CategoryInputSchema.createMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).category.createMany(input as any))),
+
+    create: procedure.input($Schema.CategoryInputSchema.create).mutation(async ({ ctx, input }) => checkMutate(db(ctx).category.create(input as any))),
+
+    deleteMany: procedure.input($Schema.CategoryInputSchema.deleteMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).category.deleteMany(input as any))),
+
+    delete: procedure.input($Schema.CategoryInputSchema.delete).mutation(async ({ ctx, input }) => checkMutate(db(ctx).category.delete(input as any))),
+
+    findFirst: procedure.input($Schema.CategoryInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).category.findFirst(input as any))),
+
+    findFirstOrThrow: procedure.input($Schema.CategoryInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).category.findFirstOrThrow(input as any))),
+
+    findMany: procedure.input($Schema.CategoryInputSchema.findMany.optional()).query(({ ctx, input }) => checkRead(db(ctx).category.findMany(input as any))),
+
+    findUnique: procedure.input($Schema.CategoryInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).category.findUnique(input as any))),
+
+    findUniqueOrThrow: procedure.input($Schema.CategoryInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).category.findUniqueOrThrow(input as any))),
+
+    groupBy: procedure.input($Schema.CategoryInputSchema.groupBy).query(({ ctx, input }) => checkRead(db(ctx).category.groupBy(input as any))),
+
+    updateMany: procedure.input($Schema.CategoryInputSchema.updateMany).mutation(async ({ ctx, input }) => checkMutate(db(ctx).category.updateMany(input as any))),
+
+    update: procedure.input($Schema.CategoryInputSchema.update).mutation(async ({ ctx, input }) => checkMutate(db(ctx).category.update(input as any))),
+
+    upsert: procedure.input($Schema.CategoryInputSchema.upsert).mutation(async ({ ctx, input }) => checkMutate(db(ctx).category.upsert(input as any))),
+
+    count: procedure.input($Schema.CategoryInputSchema.count.optional()).query(({ ctx, input }) => checkRead(db(ctx).category.count(input as any))),
+  });
+}

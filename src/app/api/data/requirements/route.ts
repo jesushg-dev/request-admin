@@ -1,4 +1,4 @@
-import prisma from '@/utils/lib/prisma';
+import { db } from '@/services/lib/db';
 import { getToken } from 'next-auth/jwt';
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -27,12 +27,12 @@ export async function GET(req: NextRequest) {
   }
 
   // Use the extracted salesChannelId to filter subCategories
-  const subCategories = await prisma.serviceType.findMany({
+  const subCategories = await db.serviceType.findMany({
     where: {
       salesChannelId: salesChannelId, // Use the salesChannelId in your query
     },
     select: {
-      serviceTypeId: true,
+      id: true,
       name: true,
       description: true,
     },

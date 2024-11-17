@@ -1,0 +1,47 @@
+/* eslint-disable */
+import { db } from '.';
+import { createTRPCRouter } from '../../trpc';
+import { procedure } from '../../trpc';
+import * as _Schema from '@zenstackhq/runtime/zod/input';
+const $Schema: typeof _Schema = (_Schema as any).default ?? _Schema;
+import { checkRead, checkMutate } from '../helper';
+
+export default function createRouter() {
+  return createTRPCRouter({
+    aggregate: procedure.input($Schema.TwoFactorTokenInputSchema.aggregate).query(({ ctx, input }) => checkRead(db(ctx).twoFactorToken.aggregate(input as any))),
+
+    createMany: procedure
+      .input($Schema.TwoFactorTokenInputSchema.createMany.optional())
+      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).twoFactorToken.createMany(input as any))),
+
+    create: procedure.input($Schema.TwoFactorTokenInputSchema.create).mutation(async ({ ctx, input }) => checkMutate(db(ctx).twoFactorToken.create(input as any))),
+
+    deleteMany: procedure
+      .input($Schema.TwoFactorTokenInputSchema.deleteMany.optional())
+      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).twoFactorToken.deleteMany(input as any))),
+
+    delete: procedure.input($Schema.TwoFactorTokenInputSchema.delete).mutation(async ({ ctx, input }) => checkMutate(db(ctx).twoFactorToken.delete(input as any))),
+
+    findFirst: procedure.input($Schema.TwoFactorTokenInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).twoFactorToken.findFirst(input as any))),
+
+    findFirstOrThrow: procedure
+      .input($Schema.TwoFactorTokenInputSchema.findFirst.optional())
+      .query(({ ctx, input }) => checkRead(db(ctx).twoFactorToken.findFirstOrThrow(input as any))),
+
+    findMany: procedure.input($Schema.TwoFactorTokenInputSchema.findMany.optional()).query(({ ctx, input }) => checkRead(db(ctx).twoFactorToken.findMany(input as any))),
+
+    findUnique: procedure.input($Schema.TwoFactorTokenInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).twoFactorToken.findUnique(input as any))),
+
+    findUniqueOrThrow: procedure.input($Schema.TwoFactorTokenInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).twoFactorToken.findUniqueOrThrow(input as any))),
+
+    groupBy: procedure.input($Schema.TwoFactorTokenInputSchema.groupBy).query(({ ctx, input }) => checkRead(db(ctx).twoFactorToken.groupBy(input as any))),
+
+    updateMany: procedure.input($Schema.TwoFactorTokenInputSchema.updateMany).mutation(async ({ ctx, input }) => checkMutate(db(ctx).twoFactorToken.updateMany(input as any))),
+
+    update: procedure.input($Schema.TwoFactorTokenInputSchema.update).mutation(async ({ ctx, input }) => checkMutate(db(ctx).twoFactorToken.update(input as any))),
+
+    upsert: procedure.input($Schema.TwoFactorTokenInputSchema.upsert).mutation(async ({ ctx, input }) => checkMutate(db(ctx).twoFactorToken.upsert(input as any))),
+
+    count: procedure.input($Schema.TwoFactorTokenInputSchema.count.optional()).query(({ ctx, input }) => checkRead(db(ctx).twoFactorToken.count(input as any))),
+  });
+}

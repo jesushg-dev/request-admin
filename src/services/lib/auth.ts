@@ -1,4 +1,4 @@
-import { auth } from "@/server/auth";
+import { auth } from '@/server/auth';
 
 export const currentUser = async () => {
   const session = await auth();

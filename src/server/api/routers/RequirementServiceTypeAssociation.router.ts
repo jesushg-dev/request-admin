@@ -1,0 +1,71 @@
+/* eslint-disable */
+import { db } from '.';
+import { createTRPCRouter } from '../../trpc';
+import { procedure } from '../../trpc';
+import * as _Schema from '@zenstackhq/runtime/zod/input';
+const $Schema: typeof _Schema = (_Schema as any).default ?? _Schema;
+import { checkRead, checkMutate } from '../helper';
+
+export default function createRouter() {
+  return createTRPCRouter({
+    aggregate: procedure
+      .input($Schema.RequirementServiceTypeAssociationInputSchema.aggregate)
+      .query(({ ctx, input }) => checkRead(db(ctx).requirementServiceTypeAssociation.aggregate(input as any))),
+
+    createMany: procedure
+      .input($Schema.RequirementServiceTypeAssociationInputSchema.createMany.optional())
+      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).requirementServiceTypeAssociation.createMany(input as any))),
+
+    create: procedure
+      .input($Schema.RequirementServiceTypeAssociationInputSchema.create)
+      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).requirementServiceTypeAssociation.create(input as any))),
+
+    deleteMany: procedure
+      .input($Schema.RequirementServiceTypeAssociationInputSchema.deleteMany.optional())
+      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).requirementServiceTypeAssociation.deleteMany(input as any))),
+
+    delete: procedure
+      .input($Schema.RequirementServiceTypeAssociationInputSchema.delete)
+      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).requirementServiceTypeAssociation.delete(input as any))),
+
+    findFirst: procedure
+      .input($Schema.RequirementServiceTypeAssociationInputSchema.findFirst.optional())
+      .query(({ ctx, input }) => checkRead(db(ctx).requirementServiceTypeAssociation.findFirst(input as any))),
+
+    findFirstOrThrow: procedure
+      .input($Schema.RequirementServiceTypeAssociationInputSchema.findFirst.optional())
+      .query(({ ctx, input }) => checkRead(db(ctx).requirementServiceTypeAssociation.findFirstOrThrow(input as any))),
+
+    findMany: procedure
+      .input($Schema.RequirementServiceTypeAssociationInputSchema.findMany.optional())
+      .query(({ ctx, input }) => checkRead(db(ctx).requirementServiceTypeAssociation.findMany(input as any))),
+
+    findUnique: procedure
+      .input($Schema.RequirementServiceTypeAssociationInputSchema.findUnique)
+      .query(({ ctx, input }) => checkRead(db(ctx).requirementServiceTypeAssociation.findUnique(input as any))),
+
+    findUniqueOrThrow: procedure
+      .input($Schema.RequirementServiceTypeAssociationInputSchema.findUnique)
+      .query(({ ctx, input }) => checkRead(db(ctx).requirementServiceTypeAssociation.findUniqueOrThrow(input as any))),
+
+    groupBy: procedure
+      .input($Schema.RequirementServiceTypeAssociationInputSchema.groupBy)
+      .query(({ ctx, input }) => checkRead(db(ctx).requirementServiceTypeAssociation.groupBy(input as any))),
+
+    updateMany: procedure
+      .input($Schema.RequirementServiceTypeAssociationInputSchema.updateMany)
+      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).requirementServiceTypeAssociation.updateMany(input as any))),
+
+    update: procedure
+      .input($Schema.RequirementServiceTypeAssociationInputSchema.update)
+      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).requirementServiceTypeAssociation.update(input as any))),
+
+    upsert: procedure
+      .input($Schema.RequirementServiceTypeAssociationInputSchema.upsert)
+      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).requirementServiceTypeAssociation.upsert(input as any))),
+
+    count: procedure
+      .input($Schema.RequirementServiceTypeAssociationInputSchema.count.optional())
+      .query(({ ctx, input }) => checkRead(db(ctx).requirementServiceTypeAssociation.count(input as any))),
+  });
+}

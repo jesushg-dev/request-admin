@@ -1,0 +1,47 @@
+/* eslint-disable */
+import { db } from '.';
+import { createTRPCRouter } from '../../trpc';
+import { procedure } from '../../trpc';
+import * as _Schema from '@zenstackhq/runtime/zod/input';
+const $Schema: typeof _Schema = (_Schema as any).default ?? _Schema;
+import { checkRead, checkMutate } from '../helper';
+
+export default function createRouter() {
+  return createTRPCRouter({
+    aggregate: procedure.input($Schema.AuthenticatorInputSchema.aggregate).query(({ ctx, input }) => checkRead(db(ctx).authenticator.aggregate(input as any))),
+
+    createMany: procedure
+      .input($Schema.AuthenticatorInputSchema.createMany.optional())
+      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).authenticator.createMany(input as any))),
+
+    create: procedure.input($Schema.AuthenticatorInputSchema.create).mutation(async ({ ctx, input }) => checkMutate(db(ctx).authenticator.create(input as any))),
+
+    deleteMany: procedure
+      .input($Schema.AuthenticatorInputSchema.deleteMany.optional())
+      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).authenticator.deleteMany(input as any))),
+
+    delete: procedure.input($Schema.AuthenticatorInputSchema.delete).mutation(async ({ ctx, input }) => checkMutate(db(ctx).authenticator.delete(input as any))),
+
+    findFirst: procedure.input($Schema.AuthenticatorInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).authenticator.findFirst(input as any))),
+
+    findFirstOrThrow: procedure
+      .input($Schema.AuthenticatorInputSchema.findFirst.optional())
+      .query(({ ctx, input }) => checkRead(db(ctx).authenticator.findFirstOrThrow(input as any))),
+
+    findMany: procedure.input($Schema.AuthenticatorInputSchema.findMany.optional()).query(({ ctx, input }) => checkRead(db(ctx).authenticator.findMany(input as any))),
+
+    findUnique: procedure.input($Schema.AuthenticatorInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).authenticator.findUnique(input as any))),
+
+    findUniqueOrThrow: procedure.input($Schema.AuthenticatorInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).authenticator.findUniqueOrThrow(input as any))),
+
+    groupBy: procedure.input($Schema.AuthenticatorInputSchema.groupBy).query(({ ctx, input }) => checkRead(db(ctx).authenticator.groupBy(input as any))),
+
+    updateMany: procedure.input($Schema.AuthenticatorInputSchema.updateMany).mutation(async ({ ctx, input }) => checkMutate(db(ctx).authenticator.updateMany(input as any))),
+
+    update: procedure.input($Schema.AuthenticatorInputSchema.update).mutation(async ({ ctx, input }) => checkMutate(db(ctx).authenticator.update(input as any))),
+
+    upsert: procedure.input($Schema.AuthenticatorInputSchema.upsert).mutation(async ({ ctx, input }) => checkMutate(db(ctx).authenticator.upsert(input as any))),
+
+    count: procedure.input($Schema.AuthenticatorInputSchema.count.optional()).query(({ ctx, input }) => checkRead(db(ctx).authenticator.count(input as any))),
+  });
+}

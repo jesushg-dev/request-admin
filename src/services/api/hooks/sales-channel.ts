@@ -1,0 +1,470 @@
+/* eslint-disable */
+import type { Prisma, SalesChannel } from '@zenstackhq/runtime/models';
+import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/react-query';
+import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
+import type { PolicyCrudKind } from '@zenstackhq/runtime';
+import metadata from './__model_meta';
+type DefaultError = QueryError;
+import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
+
+export function useCreateSalesChannel(
+  options?: Omit<UseMutationOptions<SalesChannel | undefined, DefaultError, Prisma.SalesChannelCreateArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.SalesChannelCreateArgs, DefaultError, SalesChannel, true>(
+    'SalesChannel',
+    'POST',
+    `${endpoint}/salesChannel/create`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.SalesChannelCreateArgs>(
+      args: Prisma.SelectSubset<T, Prisma.SalesChannelCreateArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, SalesChannel, Prisma.SalesChannelGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.SalesChannelCreateArgs>> &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, SalesChannel, Prisma.SalesChannelGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
+}
+
+export function useCreateManySalesChannel(
+  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SalesChannelCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.SalesChannelCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'SalesChannel',
+    'POST',
+    `${endpoint}/salesChannel/createMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.SalesChannelCreateManyArgs>(
+      args: Prisma.SelectSubset<T, Prisma.SalesChannelCreateManyArgs>,
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.SalesChannelCreateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
+    },
+  };
+  return mutation;
+}
+
+export function useFindManySalesChannel<
+  TArgs extends Prisma.SalesChannelFindManyArgs,
+  TQueryFnData = Array<Prisma.SalesChannelGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.SalesChannelFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('SalesChannel', `${endpoint}/salesChannel/findMany`, args, options, fetch);
+}
+
+export function useInfiniteFindManySalesChannel<
+  TArgs extends Prisma.SalesChannelFindManyArgs,
+  TQueryFnData = Array<Prisma.SalesChannelGetPayload<TArgs>>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.SalesChannelFindManyArgs>,
+  options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
+) {
+  options = options ?? { getNextPageParam: () => null };
+  const { endpoint, fetch } = getHooksContext();
+  return useInfiniteModelQuery<TQueryFnData, TData, TError>('SalesChannel', `${endpoint}/salesChannel/findMany`, args, options, fetch);
+}
+
+export function useSuspenseFindManySalesChannel<
+  TArgs extends Prisma.SalesChannelFindManyArgs,
+  TQueryFnData = Array<Prisma.SalesChannelGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.SalesChannelFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('SalesChannel', `${endpoint}/salesChannel/findMany`, args, options, fetch);
+}
+
+export function useSuspenseInfiniteFindManySalesChannel<
+  TArgs extends Prisma.SalesChannelFindManyArgs,
+  TQueryFnData = Array<Prisma.SalesChannelGetPayload<TArgs>>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.SalesChannelFindManyArgs>,
+  options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
+) {
+  options = options ?? { getNextPageParam: () => null };
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('SalesChannel', `${endpoint}/salesChannel/findMany`, args, options, fetch);
+}
+
+export function useFindUniqueSalesChannel<
+  TArgs extends Prisma.SalesChannelFindUniqueArgs,
+  TQueryFnData = Prisma.SalesChannelGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.SalesChannelFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('SalesChannel', `${endpoint}/salesChannel/findUnique`, args, options, fetch);
+}
+
+export function useSuspenseFindUniqueSalesChannel<
+  TArgs extends Prisma.SalesChannelFindUniqueArgs,
+  TQueryFnData = Prisma.SalesChannelGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.SalesChannelFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('SalesChannel', `${endpoint}/salesChannel/findUnique`, args, options, fetch);
+}
+
+export function useFindFirstSalesChannel<
+  TArgs extends Prisma.SalesChannelFindFirstArgs,
+  TQueryFnData = Prisma.SalesChannelGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.SalesChannelFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('SalesChannel', `${endpoint}/salesChannel/findFirst`, args, options, fetch);
+}
+
+export function useSuspenseFindFirstSalesChannel<
+  TArgs extends Prisma.SalesChannelFindFirstArgs,
+  TQueryFnData = Prisma.SalesChannelGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.SalesChannelFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('SalesChannel', `${endpoint}/salesChannel/findFirst`, args, options, fetch);
+}
+
+export function useUpdateSalesChannel(
+  options?: Omit<UseMutationOptions<SalesChannel | undefined, DefaultError, Prisma.SalesChannelUpdateArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.SalesChannelUpdateArgs, DefaultError, SalesChannel, true>(
+    'SalesChannel',
+    'PUT',
+    `${endpoint}/salesChannel/update`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.SalesChannelUpdateArgs>(
+      args: Prisma.SelectSubset<T, Prisma.SalesChannelUpdateArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, SalesChannel, Prisma.SalesChannelGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.SalesChannelUpdateArgs>> &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, SalesChannel, Prisma.SalesChannelGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
+}
+
+export function useUpdateManySalesChannel(
+  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SalesChannelUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.SalesChannelUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'SalesChannel',
+    'PUT',
+    `${endpoint}/salesChannel/updateMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.SalesChannelUpdateManyArgs>(
+      args: Prisma.SelectSubset<T, Prisma.SalesChannelUpdateManyArgs>,
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.SalesChannelUpdateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
+    },
+  };
+  return mutation;
+}
+
+export function useUpsertSalesChannel(
+  options?: Omit<UseMutationOptions<SalesChannel | undefined, DefaultError, Prisma.SalesChannelUpsertArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.SalesChannelUpsertArgs, DefaultError, SalesChannel, true>(
+    'SalesChannel',
+    'POST',
+    `${endpoint}/salesChannel/upsert`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.SalesChannelUpsertArgs>(
+      args: Prisma.SelectSubset<T, Prisma.SalesChannelUpsertArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, SalesChannel, Prisma.SalesChannelGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.SalesChannelUpsertArgs>> &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, SalesChannel, Prisma.SalesChannelGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
+}
+
+export function useDeleteSalesChannel(
+  options?: Omit<UseMutationOptions<SalesChannel | undefined, DefaultError, Prisma.SalesChannelDeleteArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.SalesChannelDeleteArgs, DefaultError, SalesChannel, true>(
+    'SalesChannel',
+    'DELETE',
+    `${endpoint}/salesChannel/delete`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.SalesChannelDeleteArgs>(
+      args: Prisma.SelectSubset<T, Prisma.SalesChannelDeleteArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, SalesChannel, Prisma.SalesChannelGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.SalesChannelDeleteArgs>> &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, SalesChannel, Prisma.SalesChannelGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
+}
+
+export function useDeleteManySalesChannel(
+  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SalesChannelDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.SalesChannelDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'SalesChannel',
+    'DELETE',
+    `${endpoint}/salesChannel/deleteMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.SalesChannelDeleteManyArgs>(
+      args: Prisma.SelectSubset<T, Prisma.SalesChannelDeleteManyArgs>,
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.SalesChannelDeleteManyArgs>> & ExtraMutationOptions, 'mutationFn'>
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
+    },
+  };
+  return mutation;
+}
+
+export function useAggregateSalesChannel<
+  TArgs extends Prisma.SalesChannelAggregateArgs,
+  TQueryFnData = Prisma.GetSalesChannelAggregateType<TArgs>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.SalesChannelAggregateArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('SalesChannel', `${endpoint}/salesChannel/aggregate`, args, options, fetch);
+}
+
+export function useSuspenseAggregateSalesChannel<
+  TArgs extends Prisma.SalesChannelAggregateArgs,
+  TQueryFnData = Prisma.GetSalesChannelAggregateType<TArgs>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.SalesChannelAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('SalesChannel', `${endpoint}/salesChannel/aggregate`, args, options, fetch);
+}
+
+export function useGroupBySalesChannel<
+  TArgs extends Prisma.SalesChannelGroupByArgs,
+  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
+  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.SalesChannelGroupByArgs['orderBy'] } : { orderBy?: Prisma.SalesChannelGroupByArgs['orderBy'] },
+  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
+  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
+  ByValid extends Prisma.Has<ByFields, OrderFields>,
+  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
+  HavingValid extends Prisma.Has<ByFields, HavingFields>,
+  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
+  InputErrors extends ByEmpty extends Prisma.True
+    ? `Error: "by" must not be empty.`
+    : HavingValid extends Prisma.False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+        }[HavingFields]
+      : 'take' extends Prisma.Keys<TArgs>
+        ? 'orderBy' extends Prisma.Keys<TArgs>
+          ? ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields]
+          : 'Error: If you provide "take", you also need to provide "orderBy"'
+        : 'skip' extends Prisma.Keys<TArgs>
+          ? 'orderBy' extends Prisma.Keys<TArgs>
+            ? ByValid extends Prisma.True
+              ? {}
+              : {
+                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+                }[OrderFields]
+            : 'Error: If you provide "skip", you also need to provide "orderBy"'
+          : ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields],
+  TQueryFnData = {} extends InputErrors
+    ? Array<
+        PickEnumerable<Prisma.SalesChannelGroupByOutputType, TArgs['by']> & {
+          [P in keyof TArgs & keyof Prisma.SalesChannelGroupByOutputType]: P extends '_count'
+            ? TArgs[P] extends boolean
+              ? number
+              : Prisma.GetScalarType<TArgs[P], Prisma.SalesChannelGroupByOutputType[P]>
+            : Prisma.GetScalarType<TArgs[P], Prisma.SalesChannelGroupByOutputType[P]>;
+        }
+      >
+    : InputErrors,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.SalesChannelGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('SalesChannel', `${endpoint}/salesChannel/groupBy`, args, options, fetch);
+}
+
+export function useSuspenseGroupBySalesChannel<
+  TArgs extends Prisma.SalesChannelGroupByArgs,
+  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
+  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.SalesChannelGroupByArgs['orderBy'] } : { orderBy?: Prisma.SalesChannelGroupByArgs['orderBy'] },
+  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
+  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
+  ByValid extends Prisma.Has<ByFields, OrderFields>,
+  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
+  HavingValid extends Prisma.Has<ByFields, HavingFields>,
+  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
+  InputErrors extends ByEmpty extends Prisma.True
+    ? `Error: "by" must not be empty.`
+    : HavingValid extends Prisma.False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+        }[HavingFields]
+      : 'take' extends Prisma.Keys<TArgs>
+        ? 'orderBy' extends Prisma.Keys<TArgs>
+          ? ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields]
+          : 'Error: If you provide "take", you also need to provide "orderBy"'
+        : 'skip' extends Prisma.Keys<TArgs>
+          ? 'orderBy' extends Prisma.Keys<TArgs>
+            ? ByValid extends Prisma.True
+              ? {}
+              : {
+                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+                }[OrderFields]
+            : 'Error: If you provide "skip", you also need to provide "orderBy"'
+          : ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields],
+  TQueryFnData = {} extends InputErrors
+    ? Array<
+        PickEnumerable<Prisma.SalesChannelGroupByOutputType, TArgs['by']> & {
+          [P in keyof TArgs & keyof Prisma.SalesChannelGroupByOutputType]: P extends '_count'
+            ? TArgs[P] extends boolean
+              ? number
+              : Prisma.GetScalarType<TArgs[P], Prisma.SalesChannelGroupByOutputType[P]>
+            : Prisma.GetScalarType<TArgs[P], Prisma.SalesChannelGroupByOutputType[P]>;
+        }
+      >
+    : InputErrors,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.SalesChannelGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('SalesChannel', `${endpoint}/salesChannel/groupBy`, args, options, fetch);
+}
+
+export function useCountSalesChannel<
+  TArgs extends Prisma.SalesChannelCountArgs,
+  TQueryFnData = TArgs extends { select: any }
+    ? TArgs['select'] extends true
+      ? number
+      : Prisma.GetScalarType<TArgs['select'], Prisma.SalesChannelCountAggregateOutputType>
+    : number,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.SalesChannelCountArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('SalesChannel', `${endpoint}/salesChannel/count`, args, options, fetch);
+}
+
+export function useSuspenseCountSalesChannel<
+  TArgs extends Prisma.SalesChannelCountArgs,
+  TQueryFnData = TArgs extends { select: any }
+    ? TArgs['select'] extends true
+      ? number
+      : Prisma.GetScalarType<TArgs['select'], Prisma.SalesChannelCountAggregateOutputType>
+    : number,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.SalesChannelCountArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('SalesChannel', `${endpoint}/salesChannel/count`, args, options, fetch);
+}
+
+export function useCheckSalesChannel<TError = DefaultError>(
+  args: { operation: PolicyCrudKind; where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; name?: string; description?: string } },
+  options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<boolean, boolean, TError>('SalesChannel', `${endpoint}/salesChannel/check`, args, options, fetch);
+}

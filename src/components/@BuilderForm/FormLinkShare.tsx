@@ -29,8 +29,7 @@ function FormLinkShare({ shareUrl }: { shareUrl: string }) {
             title: 'Copied!',
             description: 'Link copied to clipboard',
           });
-        }}
-      >
+        }}>
         <ImShare className="mr-2 h-4 w-4" />
         Share link
       </Button>

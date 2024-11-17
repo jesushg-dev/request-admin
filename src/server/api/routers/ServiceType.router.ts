@@ -1,0 +1,41 @@
+/* eslint-disable */
+import { db } from '.';
+import { createTRPCRouter } from '../../trpc';
+import { procedure } from '../../trpc';
+import * as _Schema from '@zenstackhq/runtime/zod/input';
+const $Schema: typeof _Schema = (_Schema as any).default ?? _Schema;
+import { checkRead, checkMutate } from '../helper';
+
+export default function createRouter() {
+  return createTRPCRouter({
+    aggregate: procedure.input($Schema.ServiceTypeInputSchema.aggregate).query(({ ctx, input }) => checkRead(db(ctx).serviceType.aggregate(input as any))),
+
+    createMany: procedure.input($Schema.ServiceTypeInputSchema.createMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).serviceType.createMany(input as any))),
+
+    create: procedure.input($Schema.ServiceTypeInputSchema.create).mutation(async ({ ctx, input }) => checkMutate(db(ctx).serviceType.create(input as any))),
+
+    deleteMany: procedure.input($Schema.ServiceTypeInputSchema.deleteMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).serviceType.deleteMany(input as any))),
+
+    delete: procedure.input($Schema.ServiceTypeInputSchema.delete).mutation(async ({ ctx, input }) => checkMutate(db(ctx).serviceType.delete(input as any))),
+
+    findFirst: procedure.input($Schema.ServiceTypeInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).serviceType.findFirst(input as any))),
+
+    findFirstOrThrow: procedure.input($Schema.ServiceTypeInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).serviceType.findFirstOrThrow(input as any))),
+
+    findMany: procedure.input($Schema.ServiceTypeInputSchema.findMany.optional()).query(({ ctx, input }) => checkRead(db(ctx).serviceType.findMany(input as any))),
+
+    findUnique: procedure.input($Schema.ServiceTypeInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).serviceType.findUnique(input as any))),
+
+    findUniqueOrThrow: procedure.input($Schema.ServiceTypeInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).serviceType.findUniqueOrThrow(input as any))),
+
+    groupBy: procedure.input($Schema.ServiceTypeInputSchema.groupBy).query(({ ctx, input }) => checkRead(db(ctx).serviceType.groupBy(input as any))),
+
+    updateMany: procedure.input($Schema.ServiceTypeInputSchema.updateMany).mutation(async ({ ctx, input }) => checkMutate(db(ctx).serviceType.updateMany(input as any))),
+
+    update: procedure.input($Schema.ServiceTypeInputSchema.update).mutation(async ({ ctx, input }) => checkMutate(db(ctx).serviceType.update(input as any))),
+
+    upsert: procedure.input($Schema.ServiceTypeInputSchema.upsert).mutation(async ({ ctx, input }) => checkMutate(db(ctx).serviceType.upsert(input as any))),
+
+    count: procedure.input($Schema.ServiceTypeInputSchema.count.optional()).query(({ ctx, input }) => checkRead(db(ctx).serviceType.count(input as any))),
+  });
+}

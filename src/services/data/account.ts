@@ -1,9 +1,9 @@
-import { db } from "@/server/db";
+import { db } from '@/server/db';
 
 export const getAccountByUserId = async (userId: string) => {
   try {
     const account = await db.account.findFirst({
-      where: { userId }
+      where: { userId },
     });
 
     return account;

@@ -1,14 +1,14 @@
 import bcrypt from 'bcryptjs';
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { type DefaultSession, type NextAuthConfig } from "next-auth";
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import { type DefaultSession, type NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
-import DiscordProvider from "next-auth/providers/discord";
+import DiscordProvider from 'next-auth/providers/discord';
 import Github from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
 
-import { db } from "@/server/db";
-import { LoginSchema } from "@/services/schemas";
-import { getUserByEmail, getUserById } from "@/services/data/user";
+import { db } from '@/server/db';
+import { LoginSchema } from '@/services/schemas';
+import { getUserByEmail, getUserById } from '@/services/data/user';
 import { getAccountByUserId } from '@/services/data/account';
 import { getTwoFactorConfirmationByUserId } from '@/services/data/two-factor-confirmation';
 
@@ -18,7 +18,7 @@ import { getTwoFactorConfirmationByUserId } from '@/services/data/two-factor-con
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
-declare module "next-auth" {
+declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: {
       id: string;
@@ -28,7 +28,7 @@ declare module "next-auth" {
       tenantId: string;
       // ...other properties
       // role: UserRole;
-    } & DefaultSession["user"];
+    } & DefaultSession['user'];
   }
 
   // interface User {
@@ -37,7 +37,7 @@ declare module "next-auth" {
   // }
 }
 
-export type ExtendedUser = DefaultSession["user"] & {
+export type ExtendedUser = DefaultSession['user'] & {
   id: string;
   permissions: string[];
   isTwoFactorEnabled: boolean;
@@ -53,21 +53,21 @@ export type ExtendedUser = DefaultSession["user"] & {
  */
 export const authConfig: NextAuthConfig = {
   pages: {
-    signIn: "/auth/login",
-    error: "/auth/error",
+    signIn: '/auth/login',
+    error: '/auth/error',
   },
   events: {
     async linkAccount({ user }) {
       await db.user.update({
         where: { id: user.id },
-        data: { emailVerified: new Date() }
-      })
-    }
+        data: { emailVerified: new Date() },
+      });
+    },
   },
   callbacks: {
     async signIn({ user, account }) {
       // Allow OAuth without email verification
-      if (account?.provider !== "credentials") return true;
+      if (account?.provider !== 'credentials') return true;
 
       if (!user.id) return false;
 
@@ -83,7 +83,7 @@ export const authConfig: NextAuthConfig = {
 
         // Delete two factor confirmation for next sign in
         await db.twoFactorConfirmation.delete({
-          where: { id: twoFactorConfirmation.id }
+          where: { id: twoFactorConfirmation.id },
         });
       }
 
@@ -117,9 +117,7 @@ export const authConfig: NextAuthConfig = {
 
       if (!existingUser) return token;
 
-      const existingAccount = await getAccountByUserId(
-        existingUser.id
-      );
+      const existingAccount = await getAccountByUserId(existingUser.id);
 
       token.isOAuth = !!existingAccount;
       token.name = existingUser.name;
@@ -128,7 +126,7 @@ export const authConfig: NextAuthConfig = {
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
 
       return token;
-    }
+    },
   },
   providers: [
     Google({
@@ -169,5 +167,4 @@ export const authConfig: NextAuthConfig = {
      */
   ],
   adapter: PrismaAdapter(db),
-  
 } satisfies NextAuthConfig;

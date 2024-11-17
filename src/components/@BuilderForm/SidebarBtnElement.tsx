@@ -20,8 +20,7 @@ function SidebarBtnElement({ formElement }: { formElement: FormElement }) {
       variant={'outline'}
       className={cn('flex h-[40px] w-[120px] cursor-grab items-center justify-between gap-2', draggable.isDragging && 'ring-2 ring-primary')}
       {...draggable.listeners}
-      {...draggable.attributes}
-    >
+      {...draggable.attributes}>
       <Icon className="h-5 w-5 cursor-grab text-primary" />
       <p className="text-xs">{label}</p>
     </Button>

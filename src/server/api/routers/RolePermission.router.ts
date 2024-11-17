@@ -1,0 +1,47 @@
+/* eslint-disable */
+import { db } from '.';
+import { createTRPCRouter } from '../../trpc';
+import { procedure } from '../../trpc';
+import * as _Schema from '@zenstackhq/runtime/zod/input';
+const $Schema: typeof _Schema = (_Schema as any).default ?? _Schema;
+import { checkRead, checkMutate } from '../helper';
+
+export default function createRouter() {
+  return createTRPCRouter({
+    aggregate: procedure.input($Schema.RolePermissionInputSchema.aggregate).query(({ ctx, input }) => checkRead(db(ctx).rolePermission.aggregate(input as any))),
+
+    createMany: procedure
+      .input($Schema.RolePermissionInputSchema.createMany.optional())
+      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).rolePermission.createMany(input as any))),
+
+    create: procedure.input($Schema.RolePermissionInputSchema.create).mutation(async ({ ctx, input }) => checkMutate(db(ctx).rolePermission.create(input as any))),
+
+    deleteMany: procedure
+      .input($Schema.RolePermissionInputSchema.deleteMany.optional())
+      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).rolePermission.deleteMany(input as any))),
+
+    delete: procedure.input($Schema.RolePermissionInputSchema.delete).mutation(async ({ ctx, input }) => checkMutate(db(ctx).rolePermission.delete(input as any))),
+
+    findFirst: procedure.input($Schema.RolePermissionInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).rolePermission.findFirst(input as any))),
+
+    findFirstOrThrow: procedure
+      .input($Schema.RolePermissionInputSchema.findFirst.optional())
+      .query(({ ctx, input }) => checkRead(db(ctx).rolePermission.findFirstOrThrow(input as any))),
+
+    findMany: procedure.input($Schema.RolePermissionInputSchema.findMany.optional()).query(({ ctx, input }) => checkRead(db(ctx).rolePermission.findMany(input as any))),
+
+    findUnique: procedure.input($Schema.RolePermissionInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).rolePermission.findUnique(input as any))),
+
+    findUniqueOrThrow: procedure.input($Schema.RolePermissionInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).rolePermission.findUniqueOrThrow(input as any))),
+
+    groupBy: procedure.input($Schema.RolePermissionInputSchema.groupBy).query(({ ctx, input }) => checkRead(db(ctx).rolePermission.groupBy(input as any))),
+
+    updateMany: procedure.input($Schema.RolePermissionInputSchema.updateMany).mutation(async ({ ctx, input }) => checkMutate(db(ctx).rolePermission.updateMany(input as any))),
+
+    update: procedure.input($Schema.RolePermissionInputSchema.update).mutation(async ({ ctx, input }) => checkMutate(db(ctx).rolePermission.update(input as any))),
+
+    upsert: procedure.input($Schema.RolePermissionInputSchema.upsert).mutation(async ({ ctx, input }) => checkMutate(db(ctx).rolePermission.upsert(input as any))),
+
+    count: procedure.input($Schema.RolePermissionInputSchema.count.optional()).query(({ ctx, input }) => checkRead(db(ctx).rolePermission.count(input as any))),
+  });
+}

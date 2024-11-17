@@ -20,8 +20,7 @@ function VisitBtn({ shareUrl }: { shareUrl: string }) {
       className="w-[200px]"
       onClick={() => {
         window.open(shareLink, '_blank');
-      }}
-    >
+      }}>
       Visit
     </Button>
   );

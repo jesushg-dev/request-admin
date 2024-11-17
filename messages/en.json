@@ -1,24 +1,4 @@
 {
-  "admin": {
-    "area": {
-      "main": {
-        "title": "Admin area",
-        "table": {
-          "header": {
-            "id": "ID",
-            "name": "Name",
-            "description": "Description",
-            "actions": "Actions"
-          },
-          "actions": {
-            "edit": "Edit",
-            "delete": "Delete"
-          }
-        }
-      }
-    }
-  },
-
   "Index": {
     "title": "Home",
     "description": "This is the home page.",
@@ -73,5 +53,24 @@
   },
   "ServerActions": {
     "item": "Item #{id}"
+  },
+  "admin": {
+    "area": {
+      "main": {
+        "title": "Admin area",
+        "table": {
+          "header": {
+            "id": "ID",
+            "name": "Name",
+            "description": "Description",
+            "actions": "Actions"
+          },
+          "actions": {
+            "edit": "Edit",
+            "delete": "Delete"
+          }
+        }
+      }
+    }
   }
 }

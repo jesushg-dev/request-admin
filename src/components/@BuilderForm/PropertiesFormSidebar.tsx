@@ -1,5 +1,5 @@
 import React from 'react';
-import useDesigner from '../../hooks/useDesigner';
+import useDesigner from '../../hooks/use-designer';
 import { FormElements } from './FormElements';
 import { AiOutlineClose } from 'react-icons/ai';
 import { Button } from '../ui/button';
@@ -14,14 +14,13 @@ function PropertiesFormSidebar() {
   return (
     <div className="flex flex-col p-2">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-textPrimary">Element properties</p>
+        <p className="text-textPrimary text-sm">Element properties</p>
         <Button
           size={'icon'}
           variant={'ghost'}
           onClick={() => {
             setSelectedElement(null);
-          }}
-        >
+          }}>
           <AiOutlineClose />
         </Button>
       </div>

@@ -1,23 +1,4 @@
 {
-  "admin": {
-    "area": {
-      "main": {
-        "title": "Área de administración",
-        "table": {
-          "header": {
-            "id": "ID",
-            "name": "Nombre",
-            "description": "Descripción",
-            "actions": "Acciones"
-          },
-          "actions": {
-            "edit": "Edit",
-            "delete": "Delete"
-          }
-        }
-      }
-    }
-  },
   "Index": {
     "title": "Inicio",
     "description": "Esta es la página de inicio.",
@@ -72,5 +53,24 @@
   },
   "ServerActions": {
     "item": "Artículo #{id}"
+  },
+  "admin": {
+    "area": {
+      "main": {
+        "title": "Área de administración",
+        "table": {
+          "header": {
+            "id": "ID",
+            "name": "Nombre",
+            "description": "Descripción",
+            "actions": "Acciones"
+          },
+          "actions": {
+            "edit": "Edit",
+            "delete": "Delete"
+          }
+        }
+      }
+    }
   }
 }

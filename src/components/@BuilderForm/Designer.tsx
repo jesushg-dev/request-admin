@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import DesignerSidebar from './DesignerSidebar';
 import { DragEndEvent, useDndMonitor, useDraggable, useDroppable } from '@dnd-kit/core';
 import { cn } from '@/utils/lib/utils';
-import useDesigner from '../../hooks/useDesigner';
+import useDesigner from '../../hooks/use-designer';
 import { ElementsType, FormElementInstance, FormElements, styleElements } from './FormElements';
 import { idGenerator } from '@/utils/lib/idGenerator';
 import { BiBookAlt, BiSolidTrash } from 'react-icons/bi';
@@ -108,16 +108,14 @@ function Designer() {
         className="w-full p-4"
         onClick={() => {
           if (selectedElement) setSelectedElement(null);
-        }}
-      >
+        }}>
         <div
           ref={droppable.setNodeRef}
           className={cn(
             'm-auto flex h-full max-w-[920px] flex-1 flex-grow flex-col items-center justify-start overflow-y-auto rounded-xl bg-background',
             droppable.isOver && 'ring-4 ring-inset ring-primary'
-          )}
-        >
-          {!droppable.isOver && elements.length === 0 && <p className="text-muted-foreground flex flex-grow items-center text-3xl font-bold">Drop here</p>}
+          )}>
+          {!droppable.isOver && elements.length === 0 && <p className="flex flex-grow items-center text-3xl font-bold text-muted-foreground">Drop here</p>}
 
           {droppable.isOver && elements.length === 0 && (
             <div className="w-full p-4">
@@ -180,7 +178,7 @@ function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
       {...draggable.listeners}
       {...draggable.attributes}
       style={styles}
-      className="relative flex flex-col overflow-hidden rounded-md border-2 border-dashed text-textPrimary hover:cursor-pointer"
+      className="text-textPrimary relative flex flex-col overflow-hidden rounded-md border-2 border-dashed hover:cursor-pointer"
       onMouseEnter={() => {
         setMouseIsOver(true);
       }}
@@ -204,14 +202,13 @@ function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
             <p className="text-sm">Keep press here and drag to move</p>
           </div>
 
-          <div className="absolute right-0 top-0 z-50 flex flex-row items-center gap-2 p-1 shadow-3">
+          <div className="shadow-3 absolute right-0 top-0 z-50 flex flex-row items-center gap-2 p-1">
             <Button
               className="px-2 py-1 text-xs"
               onClick={(e) => {
                 e.stopPropagation();
                 setSelectedElement(element);
-              }}
-            >
+              }}>
               Properties
               <BiBookAlt />
             </Button>
@@ -221,8 +218,7 @@ function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
               onClick={(e) => {
                 e.stopPropagation();
                 removeElement(element.id);
-              }}
-            >
+              }}>
               Delete
               <BiSolidTrash />
             </Button>
@@ -230,7 +226,7 @@ function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
         </div>
       )}
       {topHalf.isOver && <div className="absolute top-0 h-[7px] w-full rounded-md rounded-b-none bg-primary" />}
-      <div className={cn('bg-accent/40 pointer-events-none flex h-[120px] w-full items-center rounded-md px-4 py-2 opacity-100', mouseIsOver && 'opacity-30')}>
+      <div className={cn('pointer-events-none flex h-[120px] w-full items-center rounded-md bg-accent/40 px-4 py-2 opacity-100', mouseIsOver && 'opacity-30')}>
         <DesignerElement elementInstance={element} />
       </div>
       {bottomHalf.isOver && <div className="absolute bottom-0 h-[7px] w-full rounded-md rounded-t-none bg-primary" />}

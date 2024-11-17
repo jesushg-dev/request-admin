@@ -54,8 +54,7 @@ export default function DesignerContextProvider({ children }: { children: ReactN
         setSelectedElement,
 
         updateElement,
-      }}
-    >
+      }}>
       {children}
     </DesignerContext.Provider>
   );

@@ -8,7 +8,7 @@ import SaveFormBtn from './SaveFormBtn';
 import Designer from './Designer';
 import { DndContext, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import DragOverlayWrapper from './DragOverlayWrapper';
-import useDesigner from '../../hooks/useDesigner';
+import useDesigner from '../../hooks/use-designer';
 import { ImSpinner2 } from 'react-icons/im';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
@@ -63,7 +63,7 @@ function FormBuilder({ form }: { form: Form }) {
           <div className="max-w-md">
             <h1 className="mb-10 border-b pb-2 text-center text-4xl font-bold text-primary">🎊🎊 Form Published 🎊🎊</h1>
             <h2 className="text-2xl">Share this form</h2>
-            <h3 className="text-muted-foreground border-b pb-10 text-xl">Anyone with the link can view and submit the form</h3>
+            <h3 className="border-b pb-10 text-xl text-muted-foreground">Anyone with the link can view and submit the form</h3>
             <div className="my-4 flex w-full flex-col items-center gap-2 border-b pb-4">
               <Input className="w-full" readOnly value={shareUrl} />
               <Button
@@ -74,8 +74,7 @@ function FormBuilder({ form }: { form: Form }) {
                     title: 'Copied!',
                     description: 'Link copied to clipboard',
                   });
-                }}
-              >
+                }}>
                 Copy link
               </Button>
             </div>
@@ -100,11 +99,11 @@ function FormBuilder({ form }: { form: Form }) {
   }
 
   return (
-    <div className="flex flex-1 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+    <div className="border-stroke shadow-default dark:border-strokedark dark:bg-boxdark flex flex-1 flex-col rounded-sm border bg-white">
       <DndContext sensors={sensors}>
-        <div className="flex w-full items-center justify-between border-b border-stroke px-6 py-4 dark:border-strokedark">
+        <div className="border-stroke dark:border-strokedark flex w-full items-center justify-between border-b px-6 py-4">
           <h3 className="font-medium text-black dark:text-white">
-            <span className="text-muted-foreground mr-2">Form:</span>
+            <span className="mr-2 text-muted-foreground">Form:</span>
             {form.name}
           </h3>
 
@@ -118,7 +117,7 @@ function FormBuilder({ form }: { form: Form }) {
             )}
           </div>
         </div>
-        <div className="bg-accent relative flex h-[200px] w-full flex-grow items-center justify-center overflow-y-auto bg-[url(/paper.svg)] dark:bg-[url(/paper-dark.svg)]">
+        <div className="relative flex h-[200px] w-full flex-grow items-center justify-center overflow-y-auto bg-accent bg-[url(/paper.svg)] dark:bg-[url(/paper-dark.svg)]">
           <Designer />
         </div>
         <DragOverlayWrapper />

@@ -1,0 +1,41 @@
+/* eslint-disable */
+import { db } from '.';
+import { createTRPCRouter } from '../../trpc';
+import { procedure } from '../../trpc';
+import * as _Schema from '@zenstackhq/runtime/zod/input';
+const $Schema: typeof _Schema = (_Schema as any).default ?? _Schema;
+import { checkRead, checkMutate } from '../helper';
+
+export default function createRouter() {
+  return createTRPCRouter({
+    aggregate: procedure.input($Schema.UserRoleInputSchema.aggregate).query(({ ctx, input }) => checkRead(db(ctx).userRole.aggregate(input as any))),
+
+    createMany: procedure.input($Schema.UserRoleInputSchema.createMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).userRole.createMany(input as any))),
+
+    create: procedure.input($Schema.UserRoleInputSchema.create).mutation(async ({ ctx, input }) => checkMutate(db(ctx).userRole.create(input as any))),
+
+    deleteMany: procedure.input($Schema.UserRoleInputSchema.deleteMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).userRole.deleteMany(input as any))),
+
+    delete: procedure.input($Schema.UserRoleInputSchema.delete).mutation(async ({ ctx, input }) => checkMutate(db(ctx).userRole.delete(input as any))),
+
+    findFirst: procedure.input($Schema.UserRoleInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).userRole.findFirst(input as any))),
+
+    findFirstOrThrow: procedure.input($Schema.UserRoleInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).userRole.findFirstOrThrow(input as any))),
+
+    findMany: procedure.input($Schema.UserRoleInputSchema.findMany.optional()).query(({ ctx, input }) => checkRead(db(ctx).userRole.findMany(input as any))),
+
+    findUnique: procedure.input($Schema.UserRoleInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).userRole.findUnique(input as any))),
+
+    findUniqueOrThrow: procedure.input($Schema.UserRoleInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).userRole.findUniqueOrThrow(input as any))),
+
+    groupBy: procedure.input($Schema.UserRoleInputSchema.groupBy).query(({ ctx, input }) => checkRead(db(ctx).userRole.groupBy(input as any))),
+
+    updateMany: procedure.input($Schema.UserRoleInputSchema.updateMany).mutation(async ({ ctx, input }) => checkMutate(db(ctx).userRole.updateMany(input as any))),
+
+    update: procedure.input($Schema.UserRoleInputSchema.update).mutation(async ({ ctx, input }) => checkMutate(db(ctx).userRole.update(input as any))),
+
+    upsert: procedure.input($Schema.UserRoleInputSchema.upsert).mutation(async ({ ctx, input }) => checkMutate(db(ctx).userRole.upsert(input as any))),
+
+    count: procedure.input($Schema.UserRoleInputSchema.count.optional()).query(({ ctx, input }) => checkRead(db(ctx).userRole.count(input as any))),
+  });
+}

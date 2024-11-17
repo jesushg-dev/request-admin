@@ -10,7 +10,14 @@ export const pathnames = {
   '/': '/',
   '/admin': '/admin',
   '/admin/area': '/admin/area',
-  //area
+  '/admin/area/new': {
+    en: '/admin/area/new',
+    es: '/admin/area/nuevo',
+  },
+  '/admin/area/[slug]': {
+    en: '/admin/area/[slug]',
+    es: '/admin/area/[slug]',
+  },
   '/admin/request': {
     en: '/admin/request',
     es: '/admin/caso',
@@ -140,6 +147,32 @@ export const pathnames = {
     en: '/admin/user/[slug]',
     es: '/admin/usuario/[slug]',
   },
+  //document
+  '/admin/document': {
+    en: '/admin/document',
+    es: '/admin/documento',
+  },
+  '/admin/document/new': {
+    en: '/admin/document/new',
+    es: '/admin/documento/nuevo',
+  },
+  '/admin/document/[slug]': {
+    en: '/admin/document/[slug]',
+    es: '/admin/documento/[slug]',
+  },
+  //form
+  '/admin/form': {
+    en: '/admin/form',
+    es: '/admin/formulario',
+  },
+  '/admin/form/new': {
+    en: '/admin/form/new',
+    es: '/admin/formulario/nuevo',
+  },
+  '/admin/form/[slug]': {
+    en: '/admin/form/[slug]',
+    es: '/admin/formulario/[slug]',
+  },
   //settings
   '/admin/settings': {
     en: '/admin/settings',
@@ -170,12 +203,32 @@ export const pathnames = {
     en: '/admin/form-designer',
     es: '/admin/diseñador-de-formularios',
   },
-  ///admin/document
-  '/admin/document': {
-    en: '/admin/document',
-    es: '/admin/documento',
+  //identification-type
+  '/admin/identification-type': {
+    en: '/admin/identification-type',
+    es: '/admin/tipo-de-identificacion',
   },
-
+  '/admin/identification-type/new': {
+    en: '/admin/identification-type/new',
+    es: '/admin/tipo-de-identificacion/nuevo',
+  },
+  '/admin/identification-type/[slug]': {
+    en: '/admin/identification-type/[slug]',
+    es: '/admin/tipo-de-identificacion/[slug]',
+  },
+  //tenant
+  '/admin/tenant': {
+    en: '/admin/tenant',
+    es: '/admin/inquilino',
+  },
+  '/admin/tenant/new': {
+    en: '/admin/tenant/new',
+    es: '/admin/inquilino/nuevo',
+  },
+  '/admin/tenant/[slug]': {
+    en: '/admin/tenant/[slug]',
+    es: '/admin/inquilino/[slug]',
+  },
   //about
   '/about/privacy-policy': {
     en: '/about/privacy-policy',
@@ -191,11 +244,10 @@ export const pathnames = {
   },
 } satisfies Pathnames<typeof locales>;
 
- 
 export const routing = defineRouting({
   // A list of all locales that are supported
   locales,
- 
+
   // Used when no locale matches
   defaultLocale: 'en',
 
@@ -205,8 +257,7 @@ export const routing = defineRouting({
   // The pathnames for each page
   pathnames,
 });
- 
+
 // Lightweight wrappers around Next.js' navigation APIs
 // that will consider the routing configuration
-export const {Link, redirect, usePathname, useRouter} =
-  createNavigation(routing);
+export const { Link, redirect, usePathname, useRouter } = createNavigation(routing);

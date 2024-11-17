@@ -93,8 +93,7 @@ function FormSubmitComponent({ formUrl, content }: { content: FormElementInstanc
         onClick={() => {
           startTransition(submitForm);
         }}
-        disabled={pending}
-      >
+        disabled={pending}>
         {!pending && (
           <>
             <HiCursorClick className="mr-2" />

@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
       },
     },
     select: {
-      requirementId: true,
+      id: true,
       name: true,
       description: true,
     },

@@ -1,0 +1,41 @@
+/* eslint-disable */
+import { db } from '.';
+import { createTRPCRouter } from '../../trpc';
+import { procedure } from '../../trpc';
+import * as _Schema from '@zenstackhq/runtime/zod/input';
+const $Schema: typeof _Schema = (_Schema as any).default ?? _Schema;
+import { checkRead, checkMutate } from '../helper';
+
+export default function createRouter() {
+  return createTRPCRouter({
+    aggregate: procedure.input($Schema.RequestTypeInputSchema.aggregate).query(({ ctx, input }) => checkRead(db(ctx).requestType.aggregate(input as any))),
+
+    createMany: procedure.input($Schema.RequestTypeInputSchema.createMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).requestType.createMany(input as any))),
+
+    create: procedure.input($Schema.RequestTypeInputSchema.create).mutation(async ({ ctx, input }) => checkMutate(db(ctx).requestType.create(input as any))),
+
+    deleteMany: procedure.input($Schema.RequestTypeInputSchema.deleteMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).requestType.deleteMany(input as any))),
+
+    delete: procedure.input($Schema.RequestTypeInputSchema.delete).mutation(async ({ ctx, input }) => checkMutate(db(ctx).requestType.delete(input as any))),
+
+    findFirst: procedure.input($Schema.RequestTypeInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).requestType.findFirst(input as any))),
+
+    findFirstOrThrow: procedure.input($Schema.RequestTypeInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).requestType.findFirstOrThrow(input as any))),
+
+    findMany: procedure.input($Schema.RequestTypeInputSchema.findMany.optional()).query(({ ctx, input }) => checkRead(db(ctx).requestType.findMany(input as any))),
+
+    findUnique: procedure.input($Schema.RequestTypeInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).requestType.findUnique(input as any))),
+
+    findUniqueOrThrow: procedure.input($Schema.RequestTypeInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).requestType.findUniqueOrThrow(input as any))),
+
+    groupBy: procedure.input($Schema.RequestTypeInputSchema.groupBy).query(({ ctx, input }) => checkRead(db(ctx).requestType.groupBy(input as any))),
+
+    updateMany: procedure.input($Schema.RequestTypeInputSchema.updateMany).mutation(async ({ ctx, input }) => checkMutate(db(ctx).requestType.updateMany(input as any))),
+
+    update: procedure.input($Schema.RequestTypeInputSchema.update).mutation(async ({ ctx, input }) => checkMutate(db(ctx).requestType.update(input as any))),
+
+    upsert: procedure.input($Schema.RequestTypeInputSchema.upsert).mutation(async ({ ctx, input }) => checkMutate(db(ctx).requestType.upsert(input as any))),
+
+    count: procedure.input($Schema.RequestTypeInputSchema.count.optional()).query(({ ctx, input }) => checkRead(db(ctx).requestType.count(input as any))),
+  });
+}

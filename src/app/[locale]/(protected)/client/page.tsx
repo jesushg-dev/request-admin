@@ -1,11 +1,11 @@
 'use client';
 
 import { UserInfo } from '@/components/user-info';
-import { useCurrentUser } from '@/hooks/use-current-user';
+import { useCurrentUser } from '@/hooks/use-current-user.hook';
 
 const ClientPage = () => {
   const user = useCurrentUser();
-  console.log("🚀 ~ ClientPage ~ user:", user)
+  console.log('🚀 ~ ClientPage ~ user:', user);
 
   return <UserInfo label="📱 Client component" user={user} />;
 };

@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
       salesChannelId: salesChannelId, // Use the salesChannelId in your query
     },
     select: {
-      serviceTypeId: true,
+      id: true,
       name: true,
       description: true,
     },
