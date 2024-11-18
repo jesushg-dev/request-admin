@@ -416,7 +416,7 @@ export function useCheckRequest<TError = DefaultError>(
       priority?: string;
       closedBy?: string;
       closedComment?: string;
-      formSubmissionId?: number;
+      formSubmissionId?: string;
     };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions

@@ -1,5 +1,5 @@
 import React from 'react';
-import useDesigner from '../../hooks/use-designer';
+import useDesigner from '@/hooks/use-designer.hook';
 import { FormElements } from './FormElements';
 import { AiOutlineClose } from 'react-icons/ai';
 import { Button } from '../ui/button';

@@ -8,7 +8,7 @@ import SaveFormBtn from './SaveFormBtn';
 import Designer from './Designer';
 import { DndContext, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import DragOverlayWrapper from './DragOverlayWrapper';
-import useDesigner from '../../hooks/use-designer';
+import useDesigner from '@/hooks/use-designer.hook';
 import { ImSpinner2 } from 'react-icons/im';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';

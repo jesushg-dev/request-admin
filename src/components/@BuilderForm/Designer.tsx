@@ -1,15 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
-import DesignerSidebar from './DesignerSidebar';
+import { v4 as idGenerator } from 'uuid';
+
 import { DragEndEvent, useDndMonitor, useDraggable, useDroppable } from '@dnd-kit/core';
-import { cn } from '@/utils/lib/utils';
-import useDesigner from '../../hooks/use-designer';
+import { Button } from '../Form';
+import { cn } from '@/services/lib/utils';
+import DesignerSidebar from './DesignerSidebar';
+import useDesigner from '@/hooks/use-designer.hook';
 import { ElementsType, FormElementInstance, FormElements, styleElements } from './FormElements';
-import { idGenerator } from '@/utils/lib/idGenerator';
 import { BiBookAlt, BiSolidTrash } from 'react-icons/bi';
 import { RiDragMove2Line } from 'react-icons/ri';
-import { Button } from '../Form';
 
 function Designer() {
   const { elements, addElement, selectedElement, setSelectedElement, removeElement } = useDesigner();

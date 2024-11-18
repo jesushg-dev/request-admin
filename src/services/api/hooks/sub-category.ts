@@ -456,7 +456,7 @@ export function useSuspenseCountSubCategory<
 export function useCheckSubCategory<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
-    where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; categoryId?: string; name?: string; description?: string; formId?: number };
+    where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; categoryId?: string; name?: string; description?: string; formId?: string };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {

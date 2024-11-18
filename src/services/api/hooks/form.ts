@@ -401,7 +401,7 @@ export function useCheckForm<TError = DefaultError>(
       createdBy?: string;
       modifiedBy?: string;
       tenantId?: string;
-      id?: number;
+      id?: string;
       userId?: string;
       published?: boolean;
       name?: string;

@@ -462,7 +462,7 @@ export function useSuspenseCountFormSubmission<
 }
 
 export function useCheckFormSubmission<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: number; formId?: number; content?: string } },
+  args: { operation: PolicyCrudKind; where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; formId?: string; content?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

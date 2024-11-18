@@ -1,6 +1,7 @@
 'use client';
 
-import { formSchema, formSchemaType } from '@/utils/schemas/form';
+import { FC } from 'react';
+import { formSchema, formSchemaType } from '@/services/schemas/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { ImSpinner2 } from 'react-icons/im';
@@ -14,34 +15,36 @@ import { CreateForm } from '@/actions/form';
 import { BsFileEarmarkPlus } from 'react-icons/bs';
 import { useRouter } from 'next/navigation';
 
-function CreateFormBtn() {
+interface IFormProps {}
+
+const handleFormSubmit = async (values: formSchemaType, toast: any, router: any) => {
+  try {
+    const formId = await CreateForm(values);
+    toast({
+      title: 'Success',
+      description: 'Form created successfully',
+    });
+    router.push(`/builder/${formId}`);
+  } catch {
+    toast({
+      title: 'Error',
+      description: 'Something went wrong, please try again later',
+      variant: 'destructive',
+    });
+  }
+};
+
+const CreateFormBtn: FC<IFormProps> = () => {
   const router = useRouter();
   const form = useForm<formSchemaType>({
     resolver: zodResolver(formSchema),
   });
 
-  async function onSubmit(values: formSchemaType) {
-    try {
-      const formId = await CreateForm(values);
-      toast({
-        title: 'Success',
-        description: 'Form created successfully',
-      });
-      router.push(`/builder/${formId}`);
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Something went wrong, please try again later',
-        variant: 'destructive',
-      });
-    }
-  }
-
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button
-          variant={'outline'}
+          variant="outline"
           className="group flex h-[190px] flex-col items-center justify-center gap-4 border border-dashed border-primary/20 hover:cursor-pointer hover:border-primary">
           <BsFileEarmarkPlus className="h-8 w-8 text-muted-foreground group-hover:text-primary" />
           <p className="text-xl font-bold text-muted-foreground group-hover:text-primary">Create new form</p>
@@ -53,7 +56,7 @@ function CreateFormBtn() {
           <DialogDescription>Create a new form to start collecting responses</DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+          <form onSubmit={form.handleSubmit((values) => handleFormSubmit(values, toast, router))} className="space-y-2">
             <FormField
               control={form.control}
               name="name"
@@ -83,14 +86,13 @@ function CreateFormBtn() {
           </form>
         </Form>
         <DialogFooter>
-          <Button onClick={form.handleSubmit(onSubmit)} disabled={form.formState.isSubmitting} className="mt-4 w-full">
-            {!form.formState.isSubmitting && <span>Save</span>}
-            {form.formState.isSubmitting && <ImSpinner2 className="animate-spin" />}
+          <Button type="submit" disabled={form.formState.isSubmitting} className="mt-4 w-full">
+            {form.formState.isSubmitting ? <ImSpinner2 className="animate-spin" /> : 'Save'}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
-}
+};
 
 export default CreateFormBtn;

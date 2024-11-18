@@ -401,6 +401,7 @@ export function useCheckUser<TError = DefaultError>(
       createdBy?: string;
       modifiedBy?: string;
       id?: string;
+      twoFactorConfirmationId?: string;
       name?: string;
       username?: string;
       email?: string;
@@ -408,6 +409,7 @@ export function useCheckUser<TError = DefaultError>(
       password?: string;
       role?: string;
       isTwoFactorEnabled?: boolean;
+      superAdmin?: boolean;
       areaId?: string;
       coordinatorId?: string;
     };
