@@ -1,0 +1,142 @@
+import './abstract.zmodel'
+import './auth.zmodel'
+import './form.zmodel'
+import './document.zmodel'
+import './client.zmodel'
+
+model Request extends TenantScoped, Auditable {
+  id                    String      @id @default(uuid()) @db.UniqueIdentifier
+  serviceTypeId         String      @db.UniqueIdentifier
+  clientId              String      @db.UniqueIdentifier
+  issueSubject          String?     @db.VarChar(255)
+  description           String?     @db.VarChar(5000)
+  priority              String?     @db.VarChar(50)
+  closedAt              DateTime?
+  closedBy              String?     @db.VarChar(50)
+  closedComment         String?     @db.VarChar(500)
+  formSubmissionId      String?     @db.UniqueIdentifier
+  formSubmission        FormSubmission? @relation(fields: [formSubmissionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  serviceType           ServiceType     @relation(fields: [serviceTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  client                Client          @relation(fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  document              Document[]
+  requestState          RequestState[]
+  requestAssignment     RequestAssignment[]
+  requirementComplianceTracking RequirementComplianceTracking[]
+}
+
+model RequestAssignment extends TenantScoped, Auditable {
+  id              String    @id @default(uuid()) @db.UniqueIdentifier
+  requestId       String    @db.UniqueIdentifier
+  userId          String?   @db.UniqueIdentifier
+  areaId          String?   @db.UniqueIdentifier
+  priority        String?   @db.VarChar(50)
+  comment         String?   @db.VarChar(255)
+  assignmentDate  DateTime
+  unassignmentDate DateTime?
+  status          String    @db.VarChar(50)
+  type            String    @db.VarChar(50)
+  request         Request   @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user            User?     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  area            Area?     @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  documentAssignment DocumentAssignment[]
+}
+
+model RequestState extends TenantScoped, Auditable {
+  id              String     @id @default(uuid()) @db.UniqueIdentifier
+  requestId       String     @db.UniqueIdentifier
+  status          String?    @db.VarChar(50)
+  comment         String?    @db.VarChar(255)
+  request         Request    @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Requirement extends TenantScoped, Auditable {
+  id                  String      @id @default(uuid()) @db.UniqueIdentifier
+  name                String      @db.VarChar(200) @unique
+  description         String      @db.VarChar(500)
+  categoryRequirementId String?   @db.UniqueIdentifier
+  onlyRequireInNewClients Boolean @default(false)
+  requirementComplianceTracking RequirementComplianceTracking[]
+  requirementServiceTypeAssociation RequirementServiceTypeAssociation[]
+  category           CategoryRequirement? @relation(fields: [categoryRequirementId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+
+model RequirementComplianceTracking extends TenantScoped, Auditable {
+  id              String      @id @default(uuid()) @db.UniqueIdentifier
+  requestId       String      @db.UniqueIdentifier
+  requirementId   String      @db.UniqueIdentifier
+  fulfilled       Boolean     @default(false)
+  request         Request     @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  requirement     Requirement @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model RequirementServiceTypeAssociation extends TenantScoped, Auditable {
+  id              String      @id @default(uuid()) @db.UniqueIdentifier
+  requirementId   String      @db.UniqueIdentifier
+  serviceTypeId   String      @db.UniqueIdentifier
+  requirement     Requirement @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  serviceType     ServiceType @relation(fields: [serviceTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model ServiceType extends TenantScoped, Auditable {
+  id                    String      @id @default(uuid()) @db.UniqueIdentifier
+  salesChannelId        String      @db.UniqueIdentifier
+  name                  String      @db.VarChar(100)
+  description           String?     @db.VarChar(500)
+  acceptsNewClients     Boolean?
+  request               Request[]
+  requirementServiceTypeAssociation RequirementServiceTypeAssociation[]
+  salesChannel          SalesChannel @relation(fields: [salesChannelId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model SalesChannel extends TenantScoped, Auditable {
+  id              String   @id @default(uuid()) @db.UniqueIdentifier
+  name            String   @db.VarChar(100) @unique
+  description     String?  @db.VarChar(500)
+  serviceType     ServiceType[]
+}
+
+model CategoryRequirement extends TenantScoped, Auditable {
+  id              String   @id @default(uuid()) @db.UniqueIdentifier
+  name            String   @db.VarChar(200) @unique
+  description     String?  @db.VarChar(500)
+  requirements    Requirement[]
+}
+
+model Area extends TenantScoped, Auditable {
+  id              String   @id @default(uuid()) @db.UniqueIdentifier
+  name            String   @db.VarChar(100) @unique
+  description     String?  @db.VarChar(255)
+  user            User[]
+  requestAssignment RequestAssignment[]
+  requestType     RequestType[]
+}
+
+model RequestType extends TenantScoped, Auditable {
+  id              String     @id @default(uuid()) @db.UniqueIdentifier
+  areaId          String     @db.UniqueIdentifier
+  name            String     @db.VarChar(100)
+  description     String?    @db.VarChar(500)
+  state           Boolean?
+  area            Area       @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  category        Category[]
+}
+
+model Category extends TenantScoped, Auditable {
+  id              String   @id @default(uuid()) @db.UniqueIdentifier
+  requestTypeId   String   @db.UniqueIdentifier
+  name            String   @db.VarChar(50)
+  description     String?  @db.VarChar(255)
+  requestType     RequestType @relation(fields: [requestTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subCategories   SubCategory[] @relation("CategorySubCategory")
+}
+
+model SubCategory extends TenantScoped, Auditable {
+  id              String   @id @default(uuid()) @db.UniqueIdentifier
+  categoryId      String   @db.UniqueIdentifier
+  name            String   @db.VarChar(100)
+  description     String?  @db.VarChar(355)
+  formId          String?   @db.UniqueIdentifier
+  category        Category @relation("CategorySubCategory", fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  form            Form?    @relation(fields: [formId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}

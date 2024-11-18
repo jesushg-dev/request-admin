@@ -1,3 +1,11 @@
+import './zmodel/abstract.zmodel'
+import './zmodel/auth.zmodel'
+import './zmodel/client.zmodel'
+import './zmodel/document.zmodel'
+import './zmodel/form.zmodel'
+import './zmodel/messenger.zmodel'
+import './zmodel/request.zmodel'
+
 plugin trpc {
   provider = '@zenstackhq/trpc'
   output = './src/server/api'
@@ -22,425 +30,59 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
-
-// Abstract model for tenant isolation policies
-abstract model TenantScoped {
-  tenantId String @db.UniqueIdentifier
-  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@allow('read', tenant.users?[id == auth().id])
-  @@allow('create', tenant.users?[id == auth().id])
-  @@allow('update', tenant.users?[id == auth().id])
-  @@allow('delete', tenant.users?[id == auth().id])
-}
-
-abstract model Auditable {
-  createdAt DateTime @default(now())
-  updatedAt DateTime? @updatedAt
-  deletedAt DateTime?
-  createdBy String? @db.VarChar(50) @default(auth().id)
-  modifiedBy String? @db.VarChar(50) @default(auth().id)
-}
-
-model User extends Auditable {
-  id                   String    @id @default(uuid()) @db.UniqueIdentifier
-  twoFactorConfirmationId String? @db.UniqueIdentifier
-  name                 String?
-  username             String?   @unique
-  email                String?   @unique
-  emailVerified        DateTime?
-  image                String?
-  password             String    @password @omit
-  role                 String    @default("USER")
-  isTwoFactorEnabled   Boolean   @default(false)
-  tenants              Tenant[]  @relation("UserTenants")
-  accounts             Account[]
-  sessions             Session[]
-  twoFactorConfirmation TwoFactorConfirmation? 
-  Authenticators       Authenticator[]
-  areaId               String?   @db.UniqueIdentifier
-  coordinatorId        String?   @db.UniqueIdentifier
-  area                 Area?     @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  coordinator          User?     @relation("Coordination", fields: [coordinatorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  employees            User[]    @relation("Coordination")
-  requestAssignment    RequestAssignment[]
-  userRole             UserRole[]
-
-  @@map("Users")
-}
-
 model Tenant extends Auditable {
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
-  name            String
-  logoUrl         String?
-  websiteUrl      String?
-  title           String?
-  description     String?
-  primaryColor    String?
-  secondaryColor  String?
-  contactEmail    String?
-  contactPhone    String?
-  address         String?
-  users           User[]     @relation("UserTenants")
+  id               String     @id @default(uuid()) @db.UniqueIdentifier
+  name             String
+  logoUrl          String?
+  websiteUrl       String?
+  title            String?
+  description      String?
+  primaryColor     String?
+  secondaryColor   String?
+  contactEmail     String?
+  contactPhone     String?
+  address          String?
   
+  users            User[]     @relation("UserTenants")
+
   // Related entities
-  accounts        Account[]
-  sessions        Session[]
-  verificationTokens VerificationToken[]
-  passwordResetTokens PasswordResetToken[]
-  twoFactorTokens  TwoFactorToken[]
-  twoFactorConfirmations TwoFactorConfirmation[]
-  authenticators   Authenticator[]
-  requirements     Requirement[]
-  categoryRequirements CategoryRequirement[]
-  salesChannels    SalesChannel[]
-  serviceTypes     ServiceType[]
+  accounts                  Account[]
+  sessions                  Session[]
+  verificationTokens        VerificationToken[]
+  passwordResetTokens       PasswordResetToken[]
+  twoFactorTokens           TwoFactorToken[]
+  twoFactorConfirmations    TwoFactorConfirmation[]
+  authenticators            Authenticator[]
+  requirements              Requirement[]
+  categoryRequirements      CategoryRequirement[]
+  salesChannels             SalesChannel[]
+  serviceTypes              ServiceType[]
   requirementServiceTypeAssociations RequirementServiceTypeAssociation[]
-  requests         Request[]
+  requests                  Request[]
   requirementComplianceTrackings RequirementComplianceTracking[]
-  documents        Document[]
-  areas            Area[]
-  categories       Category[]
-  subCategories    SubCategory[]
-  requestAssignments RequestAssignment[]
-  userRoles        UserRole[]
-  roles            Role[]
-  modules          Module[]
-  permissions      Permission[]
-  rolePermissions  RolePermission[]
-  requestStates    RequestState[]
-  clients          Client[]
-  identificationTypes IdentificationType[]
-  documentAssignments DocumentAssignment[]
-  requestTypes     RequestType[]
-  forms            Form[]
-  formSubmission  FormSubmission[]
+  documents                 Document[]
+  areas                     Area[]
+  categories                Category[]
+  subCategories             SubCategory[]
+  requestAssignments        RequestAssignment[]
+  userRoles                 UserRole[]
+  roles                     Role[]
+  modules                   Module[]
+  permissions               Permission[]
+  rolePermissions           RolePermission[]
+  requestStates             RequestState[]
+  clients                   Client[]
+  identificationTypes       IdentificationType[]
+  documentAssignments       DocumentAssignment[]
+  requestTypes              RequestType[]
+  forms                     Form[]
+  formSubmission            FormSubmission[]
+  workspaces       Workspace[]
+  members          Member[]
+  channels         Channel[]
+  conversations    Conversation[]
+  messages         Message[]
+  reactions        Reaction[]
 
   @@map("Tenants")
-}
-
-model Account extends TenantScoped {
-  id                       String   @id @default(uuid()) @db.UniqueIdentifier
-  userId                   String   @db.UniqueIdentifier
-  type                     String
-  provider                 String
-  providerAccountId        String
-  refresh_token            String?  @db.Text
-  access_token             String?  @db.Text
-  expires_at               Int?
-  token_type               String?
-  scope                    String?
-  id_token                 String?  @db.Text
-  session_state            String?
-  refresh_token_expires_in Int?
-  user                     User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@unique([provider, providerAccountId])
-  @@index([userId])
-  @@map("Accounts")
-}
-
-model Session extends TenantScoped {
-  id              String   @id @default(uuid()) @db.UniqueIdentifier
-  sessionToken    String   @unique
-  userId          String   @db.UniqueIdentifier
-  expires         DateTime
-  currentTenantId String   @db.UniqueIdentifier // This field holds the active tenant for the session
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@index([userId])
-  @@index([currentTenantId])
-  @@map("Sessions")
-}
-
-model VerificationToken extends TenantScoped {
-  id          String    @id @default(uuid()) @db.UniqueIdentifier
-  email       String
-  token       String    @unique
-  expires     DateTime
-
-  @@unique([email, token])
-  @@map("VerificationTokens")
-}
-
-model PasswordResetToken extends TenantScoped {
-  id          String    @id @default(uuid()) @db.UniqueIdentifier
-  email       String
-  token       String    @unique
-  expires     DateTime
-
-  @@unique([email, token])
-  @@map("PasswordResetTokens")
-}
-
-model TwoFactorToken extends TenantScoped {
-  id          String    @id @default(uuid()) @db.UniqueIdentifier
-  email       String
-  token       String    @unique
-  expires     DateTime
-
-  @@unique([email, token])
-  @@map("TwoFactorTokens")
-}
-
-model TwoFactorConfirmation extends TenantScoped {
-  id     String    @id @default(uuid()) @db.UniqueIdentifier
-  userId String    @db.UniqueIdentifier
-  user   User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@unique([userId])
-  @@map("TwoFactorConfirmations")
-}
-
-model Authenticator extends TenantScoped {
-  id                   String  @id @default(uuid()) @db.UniqueIdentifier
-  userId               String  @db.UniqueIdentifier
-  providerAccountId    String
-  credentialPublicKey  String
-  counter              Int
-  credentialDeviceType String
-  credentialBackedUp   Boolean
-  transports           String?
-
-  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@unique([userId, providerAccountId])
-  @@map("Authenticators")
-}
-
-model Requirement extends TenantScoped, Auditable {
-  id                  String      @id @default(uuid()) @db.UniqueIdentifier
-  name                String      @db.VarChar(200) @unique
-  description         String      @db.VarChar(500)
-  categoryRequirementId String?   @db.UniqueIdentifier
-  onlyRequireInNewClients Boolean @default(false)
-  requirementComplianceTracking RequirementComplianceTracking[]
-  requirementServiceTypeAssociation RequirementServiceTypeAssociation[]
-  category           CategoryRequirement? @relation(fields: [categoryRequirementId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model CategoryRequirement extends TenantScoped, Auditable {
-  id              String   @id @default(uuid()) @db.UniqueIdentifier
-  name            String   @db.VarChar(200) @unique
-  description     String?  @db.VarChar(500)
-  requirements    Requirement[]
-}
-
-model SalesChannel extends TenantScoped, Auditable {
-  id              String   @id @default(uuid()) @db.UniqueIdentifier
-  name            String   @db.VarChar(100) @unique
-  description     String?  @db.VarChar(500)
-  serviceType     ServiceType[]
-}
-
-model ServiceType extends TenantScoped, Auditable {
-  id                    String      @id @default(uuid()) @db.UniqueIdentifier
-  salesChannelId        String      @db.UniqueIdentifier
-  name                  String      @db.VarChar(100)
-  description           String?     @db.VarChar(500)
-  acceptsNewClients     Boolean?
-  request               Request[]
-  requirementServiceTypeAssociation RequirementServiceTypeAssociation[]
-  salesChannel          SalesChannel @relation(fields: [salesChannelId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model RequirementServiceTypeAssociation extends TenantScoped, Auditable {
-  id              String      @id @default(uuid()) @db.UniqueIdentifier
-  requirementId   String      @db.UniqueIdentifier
-  serviceTypeId   String      @db.UniqueIdentifier
-  requirement     Requirement @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  serviceType     ServiceType @relation(fields: [serviceTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model Request extends TenantScoped, Auditable {
-  id                    String      @id @default(uuid()) @db.UniqueIdentifier
-  serviceTypeId         String      @db.UniqueIdentifier
-  clientId              String      @db.UniqueIdentifier
-  issueSubject          String?     @db.VarChar(255)
-  description           String?     @db.VarChar(5000)
-  priority              String?     @db.VarChar(50)
-  closedAt              DateTime?
-  closedBy              String?     @db.VarChar(50)
-  closedComment         String?     @db.VarChar(500)
-  formSubmissionId      String?     @db.UniqueIdentifier
-  formSubmission        FormSubmission? @relation(fields: [formSubmissionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  serviceType           ServiceType     @relation(fields: [serviceTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  client                Client          @relation(fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  document              Document[]
-  requestState          RequestState[]
-  requestAssignment     RequestAssignment[]
-  requirementComplianceTracking RequirementComplianceTracking[]
-}
-
-model RequirementComplianceTracking extends TenantScoped, Auditable {
-  id              String      @id @default(uuid()) @db.UniqueIdentifier
-  requestId       String      @db.UniqueIdentifier
-  requirementId   String      @db.UniqueIdentifier
-  fulfilled       Boolean     @default(false)
-  request         Request     @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  requirement     Requirement @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model Document extends TenantScoped, Auditable {
-  id              String   @id @default(uuid()) @db.UniqueIdentifier
-  name            String   @db.VarChar(155)
-  status          Int
-  requestId       String   @db.UniqueIdentifier
-  request         Request  @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model Area extends TenantScoped, Auditable {
-  id              String   @id @default(uuid()) @db.UniqueIdentifier
-  name            String   @db.VarChar(100) @unique
-  description     String?  @db.VarChar(255)
-  user            User[]
-  requestAssignment RequestAssignment[]
-  requestType     RequestType[]
-}
-
-model Category extends TenantScoped, Auditable {
-  id              String   @id @default(uuid()) @db.UniqueIdentifier
-  requestTypeId   String   @db.UniqueIdentifier
-  name            String   @db.VarChar(50)
-  description     String?  @db.VarChar(255)
-  requestType     RequestType @relation(fields: [requestTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  subCategories   SubCategory[] @relation("CategorySubCategory")
-}
-
-model SubCategory extends TenantScoped, Auditable {
-  id              String   @id @default(uuid()) @db.UniqueIdentifier
-  categoryId      String   @db.UniqueIdentifier
-  name            String   @db.VarChar(100)
-  description     String?  @db.VarChar(355)
-  formId          String   @db.UniqueIdentifier
-  category        Category @relation("CategorySubCategory", fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  form            Form?    @relation(fields: [formId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model RequestAssignment extends TenantScoped, Auditable {
-  id              String    @id @default(uuid()) @db.UniqueIdentifier
-  requestId       String    @db.UniqueIdentifier
-  userId          String?   @db.UniqueIdentifier
-  areaId          String?   @db.UniqueIdentifier
-  priority        String?   @db.VarChar(50)
-  comment         String?   @db.VarChar(255)
-  assignmentDate  DateTime
-  unassignmentDate DateTime?
-  status          String    @db.VarChar(50)
-  type            String    @db.VarChar(50)
-  request         Request   @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  user            User?     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  area            Area?     @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  documentAssignment DocumentAssignment[]
-}
-
-model UserRole extends TenantScoped, Auditable {
-  id              String    @id @default(uuid()) @db.UniqueIdentifier
-  userId          String    @db.UniqueIdentifier
-  roleId          String    @db.UniqueIdentifier
-  user            User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  role            Role      @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model Role extends TenantScoped, Auditable {
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
-  name            String     @db.VarChar(100) @unique
-  description     String?    @db.VarChar(255)
-  userRole        UserRole[]
-  rolePermission  RolePermission[]
-}
-
-model Module extends TenantScoped, Auditable {
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
-  name            String     @db.VarChar(100) @unique
-  description     String?    @db.VarChar(255)
-  permission      Permission[]
-}
-
-model Permission extends TenantScoped, Auditable {
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
-  name            String     @db.VarChar(50)
-  description     String?    @db.VarChar(255)
-  moduleId        String     @db.UniqueIdentifier
-  module          Module     @relation(fields: [moduleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  rolePermission  RolePermission[]
-}
-
-model RolePermission extends TenantScoped, Auditable {
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
-  roleId          String     @db.UniqueIdentifier
-  permissionId    String     @db.UniqueIdentifier
-  role            Role       @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  permission      Permission @relation(fields: [permissionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model RequestState extends TenantScoped, Auditable {
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
-  requestId       String     @db.UniqueIdentifier
-  status          String?    @db.VarChar(50)
-  comment         String?    @db.VarChar(255)
-  request         Request    @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model Client extends TenantScoped, Auditable {
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
-  name            String     @db.VarChar(400)
-  email           String?    @db.VarChar(100) @unique
-  identificationNumber String @db.VarChar(110) @unique
-  corporateName   String?    @db.VarChar(100)
-  monthlyIncome   Float?
-  occupation      String?    @db.VarChar(100)
-  phone           String?    @db.VarChar(50)
-  identificationTypeId String @db.UniqueIdentifier
-  request         Request[]
-  identificationType IdentificationType @relation(fields: [identificationTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model IdentificationType extends TenantScoped, Auditable {
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
-  name            String     @db.VarChar(150) @unique
-  description     String?    @db.VarChar(500)
-  client          Client[]
-}
-
-model DocumentAssignment extends TenantScoped, Auditable {
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
-  name            String?    @db.VarChar(50)
-  status          String?    @db.VarChar(50)
-  requestAssignmentId String @db.UniqueIdentifier
-  requestAssignment RequestAssignment @relation(fields: [requestAssignmentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model RequestType extends TenantScoped, Auditable {
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
-  areaId          String     @db.UniqueIdentifier
-  name            String     @db.VarChar(100)
-  description     String?    @db.VarChar(500)
-  state           Boolean?
-  area            Area       @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  category        Category[]
-}
-
-model Form extends TenantScoped, Auditable {
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
-  userId          String     @db.UniqueIdentifier
-  published       Boolean    @default(false)
-  name            String
-  description     String     @default("")
-  content         String     @default("[]")
-  visits          Int        @default(0)
-  submissions     Int        @default(0)
-  shareURL        String     @unique @default(uuid())
-  SubCategory     SubCategory[]
-  FormSubmission FormSubmission[]
-
-  @@unique([name, userId])
-}
-
-model FormSubmission extends TenantScoped, Auditable {
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
-  formId          String     @db.UniqueIdentifier
-  content         String
-  form            Form       @relation(fields: [formId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  request         Request[]
 }

@@ -1,0 +1,26 @@
+import './abstract.zmodel'
+import './request.zmodel'
+
+model Form extends TenantScoped, Auditable {
+  id              String     @id @default(uuid()) @db.UniqueIdentifier
+  userId          String     @db.UniqueIdentifier
+  published       Boolean    @default(false)
+  name            String
+  description     String     @default("")
+  content         String     @default("[]")
+  visits          Int        @default(0)
+  submissions     Int        @default(0)
+  shareURL        String     @unique @default(uuid())
+  SubCategory     SubCategory[]
+  FormSubmission FormSubmission[]
+
+  @@unique([name, userId])
+}
+
+model FormSubmission extends TenantScoped, Auditable {
+  id              String     @id @default(uuid()) @db.UniqueIdentifier
+  formId          String     @db.UniqueIdentifier
+  content         String
+  form            Form       @relation(fields: [formId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  request         Request[]
+}

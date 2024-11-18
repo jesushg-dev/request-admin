@@ -12,37 +12,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model User {
-  createdAt             DateTime               @default(now())
-  updatedAt             DateTime?              @updatedAt()
-  deletedAt             DateTime?
-  createdBy             String?                @db.VarChar(50)
-  modifiedBy            String?                @db.VarChar(50)
-  id                    String                 @id() @default(uuid()) @db.UniqueIdentifier()
-  name                  String?
-  username              String?                @unique()
-  email                 String?                @unique()
-  emailVerified         DateTime?
-  image                 String?
-  password              String
-  role                  String                 @default("USER")
-  isTwoFactorEnabled    Boolean                @default(false)
-  tenants               Tenant[]               @relation("UserTenants")
-  accounts              Account[]
-  sessions              Session[]
-  twoFactorConfirmation TwoFactorConfirmation?
-  Authenticators        Authenticator[]
-  areaId                String?                @db.UniqueIdentifier()
-  coordinatorId         String?                @db.UniqueIdentifier()
-  area                  Area?                  @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  coordinator           User?                  @relation("Coordination", fields: [coordinatorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  employees             User[]                 @relation("Coordination")
-  requestAssignment     RequestAssignment[]
-  userRole              UserRole[]
-
-  @@map("Users")
-}
-
 model Tenant {
   createdAt                          DateTime                            @default(now())
   updatedAt                          DateTime?                           @updatedAt()
@@ -92,320 +61,49 @@ model Tenant {
   requestTypes                       RequestType[]
   forms                              Form[]
   formSubmission                     FormSubmission[]
+  workspaces                         Workspace[]
+  members                            Member[]
+  channels                           Channel[]
+  conversations                      Conversation[]
+  messages                           Message[]
+  reactions                          Reaction[]
 
   @@map("Tenants")
 }
 
-model Account {
-  tenantId                 String  @db.UniqueIdentifier()
-  tenant                   Tenant  @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                       String  @id() @default(uuid()) @db.UniqueIdentifier()
-  userId                   String  @db.UniqueIdentifier()
-  type                     String
-  provider                 String
-  providerAccountId        String
-  refresh_token            String? @db.Text()
-  access_token             String? @db.Text()
-  expires_at               Int?
-  token_type               String?
-  scope                    String?
-  id_token                 String? @db.Text()
-  session_state            String?
-  refresh_token_expires_in Int?
-  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+model User {
+  createdAt               DateTime               @default(now())
+  updatedAt               DateTime?              @updatedAt()
+  deletedAt               DateTime?
+  createdBy               String?                @db.VarChar(50)
+  modifiedBy              String?                @db.VarChar(50)
+  id                      String                 @id() @default(uuid()) @db.UniqueIdentifier()
+  twoFactorConfirmationId String?                @db.UniqueIdentifier()
+  name                    String?
+  username                String?                @unique()
+  email                   String?                @unique()
+  emailVerified           DateTime?
+  image                   String?
+  password                String
+  role                    String                 @default("USER")
+  isTwoFactorEnabled      Boolean                @default(false)
+  superAdmin              Boolean                @default(false)
+  tenants                 Tenant[]               @relation("UserTenants")
+  workspaces              Workspace[]
+  accounts                Account[]
+  sessions                Session[]
+  twoFactorConfirmation   TwoFactorConfirmation?
+  Authenticators          Authenticator[]
+  areaId                  String?                @db.UniqueIdentifier()
+  coordinatorId           String?                @db.UniqueIdentifier()
+  area                    Area?                  @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  coordinator             User?                  @relation("Coordination", fields: [coordinatorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  employees               User[]                 @relation("Coordination")
+  requestAssignment       RequestAssignment[]
+  userRole                UserRole[]
+  members                 Member[]
 
-  @@unique([provider, providerAccountId])
-  @@index([userId])
-  @@map("Accounts")
-}
-
-model Session {
-  tenantId        String   @db.UniqueIdentifier()
-  tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id              String   @id() @default(uuid()) @db.UniqueIdentifier()
-  sessionToken    String   @unique()
-  userId          String   @db.UniqueIdentifier()
-  expires         DateTime
-  currentTenantId String   @db.UniqueIdentifier()
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@index([userId])
-  @@index([currentTenantId])
-  @@map("Sessions")
-}
-
-model VerificationToken {
-  tenantId String   @db.UniqueIdentifier()
-  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id       String   @id() @default(uuid()) @db.UniqueIdentifier()
-  email    String
-  token    String   @unique()
-  expires  DateTime
-
-  @@unique([email, token])
-  @@map("VerificationTokens")
-}
-
-model PasswordResetToken {
-  tenantId String   @db.UniqueIdentifier()
-  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id       String   @id() @default(uuid()) @db.UniqueIdentifier()
-  email    String
-  token    String   @unique()
-  expires  DateTime
-
-  @@unique([email, token])
-  @@map("PasswordResetTokens")
-}
-
-model TwoFactorToken {
-  tenantId String   @db.UniqueIdentifier()
-  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id       String   @id() @default(uuid()) @db.UniqueIdentifier()
-  email    String
-  token    String   @unique()
-  expires  DateTime
-
-  @@unique([email, token])
-  @@map("TwoFactorTokens")
-}
-
-model TwoFactorConfirmation {
-  tenantId String @db.UniqueIdentifier()
-  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id       String @id() @default(uuid()) @db.UniqueIdentifier()
-  userId   String @db.UniqueIdentifier()
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@unique([userId])
-  @@map("TwoFactorConfirmations")
-}
-
-model Authenticator {
-  tenantId             String  @db.UniqueIdentifier()
-  tenant               Tenant  @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                   String  @id() @default(uuid()) @db.UniqueIdentifier()
-  userId               String  @db.UniqueIdentifier()
-  providerAccountId    String
-  credentialPublicKey  String
-  counter              Int
-  credentialDeviceType String
-  credentialBackedUp   Boolean
-  transports           String?
-  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@unique([userId, providerAccountId])
-  @@map("Authenticators")
-}
-
-model Requirement {
-  createdAt                         DateTime                            @default(now())
-  updatedAt                         DateTime?                           @updatedAt()
-  deletedAt                         DateTime?
-  createdBy                         String?                             @db.VarChar(50)
-  modifiedBy                        String?                             @db.VarChar(50)
-  tenantId                          String                              @db.UniqueIdentifier()
-  tenant                            Tenant                              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                                String                              @id() @default(uuid()) @db.UniqueIdentifier()
-  name                              String                              @unique() @db.VarChar(200)
-  description                       String                              @db.VarChar(500)
-  categoryRequirementId             String?                             @db.UniqueIdentifier()
-  onlyRequireInNewClients           Boolean                             @default(false)
-  requirementComplianceTracking     RequirementComplianceTracking[]
-  requirementServiceTypeAssociation RequirementServiceTypeAssociation[]
-  category                          CategoryRequirement?                @relation(fields: [categoryRequirementId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model CategoryRequirement {
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime?     @updatedAt()
-  deletedAt    DateTime?
-  createdBy    String?       @db.VarChar(50)
-  modifiedBy   String?       @db.VarChar(50)
-  tenantId     String        @db.UniqueIdentifier()
-  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id           String        @id() @default(uuid()) @db.UniqueIdentifier()
-  name         String        @unique() @db.VarChar(200)
-  description  String?       @db.VarChar(500)
-  requirements Requirement[]
-}
-
-model SalesChannel {
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime?     @updatedAt()
-  deletedAt   DateTime?
-  createdBy   String?       @db.VarChar(50)
-  modifiedBy  String?       @db.VarChar(50)
-  tenantId    String        @db.UniqueIdentifier()
-  tenant      Tenant        @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id          String        @id() @default(uuid()) @db.UniqueIdentifier()
-  name        String        @unique() @db.VarChar(100)
-  description String?       @db.VarChar(500)
-  serviceType ServiceType[]
-}
-
-model ServiceType {
-  createdAt                         DateTime                            @default(now())
-  updatedAt                         DateTime?                           @updatedAt()
-  deletedAt                         DateTime?
-  createdBy                         String?                             @db.VarChar(50)
-  modifiedBy                        String?                             @db.VarChar(50)
-  tenantId                          String                              @db.UniqueIdentifier()
-  tenant                            Tenant                              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                                String                              @id() @default(uuid()) @db.UniqueIdentifier()
-  salesChannelId                    String                              @db.UniqueIdentifier()
-  name                              String                              @db.VarChar(100)
-  description                       String?                             @db.VarChar(500)
-  acceptsNewClients                 Boolean?
-  request                           Request[]
-  requirementServiceTypeAssociation RequirementServiceTypeAssociation[]
-  salesChannel                      SalesChannel                        @relation(fields: [salesChannelId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model RequirementServiceTypeAssociation {
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime?   @updatedAt()
-  deletedAt     DateTime?
-  createdBy     String?     @db.VarChar(50)
-  modifiedBy    String?     @db.VarChar(50)
-  tenantId      String      @db.UniqueIdentifier()
-  tenant        Tenant      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id            String      @id() @default(uuid()) @db.UniqueIdentifier()
-  requirementId String      @db.UniqueIdentifier()
-  serviceTypeId String      @db.UniqueIdentifier()
-  requirement   Requirement @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  serviceType   ServiceType @relation(fields: [serviceTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model Request {
-  createdAt                     DateTime                        @default(now())
-  updatedAt                     DateTime?                       @updatedAt()
-  deletedAt                     DateTime?
-  createdBy                     String?                         @db.VarChar(50)
-  modifiedBy                    String?                         @db.VarChar(50)
-  tenantId                      String                          @db.UniqueIdentifier()
-  tenant                        Tenant                          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                            String                          @id() @default(uuid()) @db.UniqueIdentifier()
-  serviceTypeId                 String                          @db.UniqueIdentifier()
-  clientId                      String                          @db.UniqueIdentifier()
-  issueSubject                  String?                         @db.VarChar(255)
-  description                   String?                         @db.VarChar(5000)
-  priority                      String?                         @db.VarChar(50)
-  closedAt                      DateTime?
-  closedBy                      String?                         @db.VarChar(50)
-  closedComment                 String?                         @db.VarChar(500)
-  formSubmissionId              String?                         @db.UniqueIdentifier()
-  formSubmission                FormSubmission?                 @relation(fields: [formSubmissionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  serviceType                   ServiceType                     @relation(fields: [serviceTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  client                        Client                          @relation(fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  document                      Document[]
-  requestState                  RequestState[]
-  requestAssignment             RequestAssignment[]
-  requirementComplianceTracking RequirementComplianceTracking[]
-}
-
-model RequirementComplianceTracking {
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime?   @updatedAt()
-  deletedAt     DateTime?
-  createdBy     String?     @db.VarChar(50)
-  modifiedBy    String?     @db.VarChar(50)
-  tenantId      String      @db.UniqueIdentifier()
-  tenant        Tenant      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id            String      @id() @default(uuid()) @db.UniqueIdentifier()
-  requestId     String      @db.UniqueIdentifier()
-  requirementId String      @db.UniqueIdentifier()
-  fulfilled     Boolean     @default(false)
-  request       Request     @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  requirement   Requirement @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model Document {
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime? @updatedAt()
-  deletedAt  DateTime?
-  createdBy  String?   @db.VarChar(50)
-  modifiedBy String?   @db.VarChar(50)
-  tenantId   String    @db.UniqueIdentifier()
-  tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id         String    @id() @default(uuid()) @db.UniqueIdentifier()
-  name       String    @db.VarChar(155)
-  status     Int
-  requestId  String    @db.UniqueIdentifier()
-  request    Request   @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model Area {
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime?           @updatedAt()
-  deletedAt         DateTime?
-  createdBy         String?             @db.VarChar(50)
-  modifiedBy        String?             @db.VarChar(50)
-  tenantId          String              @db.UniqueIdentifier()
-  tenant            Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                String              @id() @default(uuid()) @db.UniqueIdentifier()
-  name              String              @unique() @db.VarChar(100)
-  description       String?             @db.VarChar(255)
-  user              User[]
-  requestAssignment RequestAssignment[]
-  requestType       RequestType[]
-}
-
-model Category {
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime?     @updatedAt()
-  deletedAt     DateTime?
-  createdBy     String?       @db.VarChar(50)
-  modifiedBy    String?       @db.VarChar(50)
-  tenantId      String        @db.UniqueIdentifier()
-  tenant        Tenant        @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id            String        @id() @default(uuid()) @db.UniqueIdentifier()
-  requestTypeId String        @db.UniqueIdentifier()
-  name          String        @db.VarChar(50)
-  description   String?       @db.VarChar(255)
-  requestType   RequestType   @relation(fields: [requestTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  subCategories SubCategory[] @relation("CategorySubCategory")
-}
-
-model SubCategory {
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime? @updatedAt()
-  deletedAt   DateTime?
-  createdBy   String?   @db.VarChar(50)
-  modifiedBy  String?   @db.VarChar(50)
-  tenantId    String    @db.UniqueIdentifier()
-  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id          String    @id() @default(uuid()) @db.UniqueIdentifier()
-  categoryId  String    @db.UniqueIdentifier()
-  name        String    @db.VarChar(100)
-  description String?   @db.VarChar(355)
-  formId      String    @db.UniqueIdentifier()
-  category    Category  @relation("CategorySubCategory", fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  form        Form?     @relation(fields: [formId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model RequestAssignment {
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime?            @updatedAt()
-  deletedAt          DateTime?
-  createdBy          String?              @db.VarChar(50)
-  modifiedBy         String?              @db.VarChar(50)
-  tenantId           String               @db.UniqueIdentifier()
-  tenant             Tenant               @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                 String               @id() @default(uuid()) @db.UniqueIdentifier()
-  requestId          String               @db.UniqueIdentifier()
-  userId             String?              @db.UniqueIdentifier()
-  areaId             String?              @db.UniqueIdentifier()
-  priority           String?              @db.VarChar(50)
-  comment            String?              @db.VarChar(255)
-  assignmentDate     DateTime
-  unassignmentDate   DateTime?
-  status             String               @db.VarChar(50)
-  type               String               @db.VarChar(50)
-  request            Request              @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  user               User?                @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  area               Area?                @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  documentAssignment DocumentAssignment[]
+  @@map("Users")
 }
 
 model UserRole {
@@ -483,6 +181,159 @@ model RolePermission {
   permission   Permission @relation(fields: [permissionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
+model Session {
+  tenantId        String   @db.UniqueIdentifier()
+  tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id              String   @id() @default(uuid()) @db.UniqueIdentifier()
+  sessionToken    String   @unique()
+  userId          String   @db.UniqueIdentifier()
+  expires         DateTime
+  currentTenantId String   @db.UniqueIdentifier()
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([userId])
+  @@index([currentTenantId])
+  @@map("Sessions")
+}
+
+model Account {
+  tenantId                 String  @db.UniqueIdentifier()
+  tenant                   Tenant  @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                       String  @id() @default(uuid()) @db.UniqueIdentifier()
+  userId                   String  @db.UniqueIdentifier()
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text()
+  access_token             String? @db.Text()
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text()
+  session_state            String?
+  refresh_token_expires_in Int?
+  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("Accounts")
+}
+
+model VerificationToken {
+  tenantId String   @db.UniqueIdentifier()
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id       String   @id() @default(uuid()) @db.UniqueIdentifier()
+  email    String
+  token    String   @unique()
+  expires  DateTime
+
+  @@unique([email, token])
+  @@map("VerificationTokens")
+}
+
+model PasswordResetToken {
+  tenantId String   @db.UniqueIdentifier()
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id       String   @id() @default(uuid()) @db.UniqueIdentifier()
+  email    String
+  token    String   @unique()
+  expires  DateTime
+
+  @@unique([email, token])
+  @@map("PasswordResetTokens")
+}
+
+model TwoFactorToken {
+  tenantId String   @db.UniqueIdentifier()
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id       String   @id() @default(uuid()) @db.UniqueIdentifier()
+  email    String
+  token    String   @unique()
+  expires  DateTime
+
+  @@unique([email, token])
+  @@map("TwoFactorTokens")
+}
+
+model TwoFactorConfirmation {
+  tenantId String @db.UniqueIdentifier()
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id       String @id() @default(uuid()) @db.UniqueIdentifier()
+  userId   String @db.UniqueIdentifier()
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([userId])
+  @@map("TwoFactorConfirmations")
+}
+
+model Authenticator {
+  tenantId             String  @db.UniqueIdentifier()
+  tenant               Tenant  @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                   String  @id() @default(uuid()) @db.UniqueIdentifier()
+  userId               String  @db.UniqueIdentifier()
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([userId, providerAccountId])
+  @@map("Authenticators")
+}
+
+model Request {
+  createdAt                     DateTime                        @default(now())
+  updatedAt                     DateTime?                       @updatedAt()
+  deletedAt                     DateTime?
+  createdBy                     String?                         @db.VarChar(50)
+  modifiedBy                    String?                         @db.VarChar(50)
+  tenantId                      String                          @db.UniqueIdentifier()
+  tenant                        Tenant                          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                            String                          @id() @default(uuid()) @db.UniqueIdentifier()
+  serviceTypeId                 String                          @db.UniqueIdentifier()
+  clientId                      String                          @db.UniqueIdentifier()
+  issueSubject                  String?                         @db.VarChar(255)
+  description                   String?                         @db.VarChar(5000)
+  priority                      String?                         @db.VarChar(50)
+  closedAt                      DateTime?
+  closedBy                      String?                         @db.VarChar(50)
+  closedComment                 String?                         @db.VarChar(500)
+  formSubmissionId              String?                         @db.UniqueIdentifier()
+  formSubmission                FormSubmission?                 @relation(fields: [formSubmissionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  serviceType                   ServiceType                     @relation(fields: [serviceTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  client                        Client                          @relation(fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  document                      Document[]
+  requestState                  RequestState[]
+  requestAssignment             RequestAssignment[]
+  requirementComplianceTracking RequirementComplianceTracking[]
+}
+
+model RequestAssignment {
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime?            @updatedAt()
+  deletedAt          DateTime?
+  createdBy          String?              @db.VarChar(50)
+  modifiedBy         String?              @db.VarChar(50)
+  tenantId           String               @db.UniqueIdentifier()
+  tenant             Tenant               @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                 String               @id() @default(uuid()) @db.UniqueIdentifier()
+  requestId          String               @db.UniqueIdentifier()
+  userId             String?              @db.UniqueIdentifier()
+  areaId             String?              @db.UniqueIdentifier()
+  priority           String?              @db.VarChar(50)
+  comment            String?              @db.VarChar(255)
+  assignmentDate     DateTime
+  unassignmentDate   DateTime?
+  status             String               @db.VarChar(50)
+  type               String               @db.VarChar(50)
+  request            Request              @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user               User?                @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  area               Area?                @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  documentAssignment DocumentAssignment[]
+}
+
 model RequestState {
   createdAt  DateTime  @default(now())
   updatedAt  DateTime? @updatedAt()
@@ -498,54 +349,115 @@ model RequestState {
   request    Request   @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-model Client {
-  createdAt            DateTime           @default(now())
-  updatedAt            DateTime?          @updatedAt()
-  deletedAt            DateTime?
-  createdBy            String?            @db.VarChar(50)
-  modifiedBy           String?            @db.VarChar(50)
-  tenantId             String             @db.UniqueIdentifier()
-  tenant               Tenant             @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                   String             @id() @default(uuid()) @db.UniqueIdentifier()
-  name                 String             @db.VarChar(400)
-  email                String?            @unique() @db.VarChar(100)
-  identificationNumber String             @unique() @db.VarChar(110)
-  corporateName        String?            @db.VarChar(100)
-  monthlyIncome        Float?
-  occupation           String?            @db.VarChar(100)
-  phone                String?            @db.VarChar(50)
-  identificationTypeId String             @db.UniqueIdentifier()
-  request              Request[]
-  identificationType   IdentificationType @relation(fields: [identificationTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+model Requirement {
+  createdAt                         DateTime                            @default(now())
+  updatedAt                         DateTime?                           @updatedAt()
+  deletedAt                         DateTime?
+  createdBy                         String?                             @db.VarChar(50)
+  modifiedBy                        String?                             @db.VarChar(50)
+  tenantId                          String                              @db.UniqueIdentifier()
+  tenant                            Tenant                              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                                String                              @id() @default(uuid()) @db.UniqueIdentifier()
+  name                              String                              @unique() @db.VarChar(200)
+  description                       String                              @db.VarChar(500)
+  categoryRequirementId             String?                             @db.UniqueIdentifier()
+  onlyRequireInNewClients           Boolean                             @default(false)
+  requirementComplianceTracking     RequirementComplianceTracking[]
+  requirementServiceTypeAssociation RequirementServiceTypeAssociation[]
+  category                          CategoryRequirement?                @relation(fields: [categoryRequirementId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-model IdentificationType {
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime? @updatedAt()
+model RequirementComplianceTracking {
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime?   @updatedAt()
+  deletedAt     DateTime?
+  createdBy     String?     @db.VarChar(50)
+  modifiedBy    String?     @db.VarChar(50)
+  tenantId      String      @db.UniqueIdentifier()
+  tenant        Tenant      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id            String      @id() @default(uuid()) @db.UniqueIdentifier()
+  requestId     String      @db.UniqueIdentifier()
+  requirementId String      @db.UniqueIdentifier()
+  fulfilled     Boolean     @default(false)
+  request       Request     @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  requirement   Requirement @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model RequirementServiceTypeAssociation {
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime?   @updatedAt()
+  deletedAt     DateTime?
+  createdBy     String?     @db.VarChar(50)
+  modifiedBy    String?     @db.VarChar(50)
+  tenantId      String      @db.UniqueIdentifier()
+  tenant        Tenant      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id            String      @id() @default(uuid()) @db.UniqueIdentifier()
+  requirementId String      @db.UniqueIdentifier()
+  serviceTypeId String      @db.UniqueIdentifier()
+  requirement   Requirement @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  serviceType   ServiceType @relation(fields: [serviceTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model ServiceType {
+  createdAt                         DateTime                            @default(now())
+  updatedAt                         DateTime?                           @updatedAt()
+  deletedAt                         DateTime?
+  createdBy                         String?                             @db.VarChar(50)
+  modifiedBy                        String?                             @db.VarChar(50)
+  tenantId                          String                              @db.UniqueIdentifier()
+  tenant                            Tenant                              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                                String                              @id() @default(uuid()) @db.UniqueIdentifier()
+  salesChannelId                    String                              @db.UniqueIdentifier()
+  name                              String                              @db.VarChar(100)
+  description                       String?                             @db.VarChar(500)
+  acceptsNewClients                 Boolean?
+  request                           Request[]
+  requirementServiceTypeAssociation RequirementServiceTypeAssociation[]
+  salesChannel                      SalesChannel                        @relation(fields: [salesChannelId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model SalesChannel {
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime?     @updatedAt()
   deletedAt   DateTime?
-  createdBy   String?   @db.VarChar(50)
-  modifiedBy  String?   @db.VarChar(50)
-  tenantId    String    @db.UniqueIdentifier()
-  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id          String    @id() @default(uuid()) @db.UniqueIdentifier()
-  name        String    @unique() @db.VarChar(150)
-  description String?   @db.VarChar(500)
-  client      Client[]
+  createdBy   String?       @db.VarChar(50)
+  modifiedBy  String?       @db.VarChar(50)
+  tenantId    String        @db.UniqueIdentifier()
+  tenant      Tenant        @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id          String        @id() @default(uuid()) @db.UniqueIdentifier()
+  name        String        @unique() @db.VarChar(100)
+  description String?       @db.VarChar(500)
+  serviceType ServiceType[]
 }
 
-model DocumentAssignment {
-  createdAt           DateTime          @default(now())
-  updatedAt           DateTime?         @updatedAt()
-  deletedAt           DateTime?
-  createdBy           String?           @db.VarChar(50)
-  modifiedBy          String?           @db.VarChar(50)
-  tenantId            String            @db.UniqueIdentifier()
-  tenant              Tenant            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                  String            @id() @default(uuid()) @db.UniqueIdentifier()
-  name                String?           @db.VarChar(50)
-  status              String?           @db.VarChar(50)
-  requestAssignmentId String            @db.UniqueIdentifier()
-  requestAssignment   RequestAssignment @relation(fields: [requestAssignmentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+model CategoryRequirement {
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime?     @updatedAt()
+  deletedAt    DateTime?
+  createdBy    String?       @db.VarChar(50)
+  modifiedBy   String?       @db.VarChar(50)
+  tenantId     String        @db.UniqueIdentifier()
+  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id           String        @id() @default(uuid()) @db.UniqueIdentifier()
+  name         String        @unique() @db.VarChar(200)
+  description  String?       @db.VarChar(500)
+  requirements Requirement[]
+}
+
+model Area {
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime?           @updatedAt()
+  deletedAt         DateTime?
+  createdBy         String?             @db.VarChar(50)
+  modifiedBy        String?             @db.VarChar(50)
+  tenantId          String              @db.UniqueIdentifier()
+  tenant            Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                String              @id() @default(uuid()) @db.UniqueIdentifier()
+  name              String              @unique() @db.VarChar(100)
+  description       String?             @db.VarChar(255)
+  user              User[]
+  requestAssignment RequestAssignment[]
+  requestType       RequestType[]
 }
 
 model RequestType {
@@ -563,6 +475,39 @@ model RequestType {
   state       Boolean?
   area        Area       @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   category    Category[]
+}
+
+model Category {
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime?     @updatedAt()
+  deletedAt     DateTime?
+  createdBy     String?       @db.VarChar(50)
+  modifiedBy    String?       @db.VarChar(50)
+  tenantId      String        @db.UniqueIdentifier()
+  tenant        Tenant        @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id            String        @id() @default(uuid()) @db.UniqueIdentifier()
+  requestTypeId String        @db.UniqueIdentifier()
+  name          String        @db.VarChar(50)
+  description   String?       @db.VarChar(255)
+  requestType   RequestType   @relation(fields: [requestTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subCategories SubCategory[] @relation("CategorySubCategory")
+}
+
+model SubCategory {
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt()
+  deletedAt   DateTime?
+  createdBy   String?   @db.VarChar(50)
+  modifiedBy  String?   @db.VarChar(50)
+  tenantId    String    @db.UniqueIdentifier()
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id          String    @id() @default(uuid()) @db.UniqueIdentifier()
+  categoryId  String    @db.UniqueIdentifier()
+  name        String    @db.VarChar(100)
+  description String?   @db.VarChar(355)
+  formId      String?   @db.UniqueIdentifier()
+  category    Category  @relation("CategorySubCategory", fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  form        Form?     @relation(fields: [formId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model Form {
@@ -601,4 +546,177 @@ model FormSubmission {
   content    String
   form       Form      @relation(fields: [formId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   request    Request[]
+}
+
+model Document {
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @updatedAt()
+  deletedAt  DateTime?
+  createdBy  String?   @db.VarChar(50)
+  modifiedBy String?   @db.VarChar(50)
+  tenantId   String    @db.UniqueIdentifier()
+  tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id         String    @id() @default(uuid()) @db.UniqueIdentifier()
+  name       String    @db.VarChar(155)
+  status     Int
+  requestId  String    @db.UniqueIdentifier()
+  request    Request   @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model DocumentAssignment {
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime?         @updatedAt()
+  deletedAt           DateTime?
+  createdBy           String?           @db.VarChar(50)
+  modifiedBy          String?           @db.VarChar(50)
+  tenantId            String            @db.UniqueIdentifier()
+  tenant              Tenant            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                  String            @id() @default(uuid()) @db.UniqueIdentifier()
+  name                String?           @db.VarChar(50)
+  status              String?           @db.VarChar(50)
+  requestAssignmentId String            @db.UniqueIdentifier()
+  requestAssignment   RequestAssignment @relation(fields: [requestAssignmentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Client {
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime?          @updatedAt()
+  deletedAt            DateTime?
+  createdBy            String?            @db.VarChar(50)
+  modifiedBy           String?            @db.VarChar(50)
+  tenantId             String             @db.UniqueIdentifier()
+  tenant               Tenant             @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                   String             @id() @default(uuid()) @db.UniqueIdentifier()
+  name                 String             @db.VarChar(400)
+  email                String?            @unique() @db.VarChar(100)
+  identificationNumber String             @unique() @db.VarChar(110)
+  corporateName        String?            @db.VarChar(100)
+  monthlyIncome        Float?
+  occupation           String?            @db.VarChar(100)
+  phone                String?            @db.VarChar(50)
+  identificationTypeId String             @db.UniqueIdentifier()
+  request              Request[]
+  identificationType   IdentificationType @relation(fields: [identificationTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model IdentificationType {
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt()
+  deletedAt   DateTime?
+  createdBy   String?   @db.VarChar(50)
+  modifiedBy  String?   @db.VarChar(50)
+  tenantId    String    @db.UniqueIdentifier()
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id          String    @id() @default(uuid()) @db.UniqueIdentifier()
+  name        String    @unique() @db.VarChar(150)
+  description String?   @db.VarChar(500)
+  client      Client[]
+}
+
+model Workspace {
+  tenantId     String         @db.UniqueIdentifier()
+  tenant       Tenant         @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id           String         @id() @default(uuid()) @db.UniqueIdentifier()
+  name         String
+  joinCode     String
+  userId       String         @db.UniqueIdentifier()
+  user         User           @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  members      Member[]
+  channels     Channel[]
+  messages     Message[]
+  reactions    Reaction[]
+  conversation Conversation[]
+
+  @@index([userId])
+}
+
+model Member {
+  tenantId                 String         @db.UniqueIdentifier()
+  tenant                   Tenant         @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                       String         @id() @default(uuid()) @db.UniqueIdentifier()
+  userId                   String         @db.UniqueIdentifier()
+  workspaceId              String         @db.UniqueIdentifier()
+  role                     String         @db.VarChar(20)
+  user                     User           @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  workspace                Workspace      @relation(fields: [workspaceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  reactions                Reaction[]
+  messages                 Message[]
+  conversationsAsMemberOne Conversation[] @relation("MemberOne")
+  conversationsAsMemberTwo Conversation[] @relation("MemberTwo")
+
+  @@index([userId])
+  @@index([workspaceId])
+  @@index([workspaceId, userId])
+}
+
+model Channel {
+  tenantId    String    @db.UniqueIdentifier()
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id          String    @id() @default(uuid()) @db.UniqueIdentifier()
+  name        String
+  workspaceId String    @db.UniqueIdentifier()
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: NoAction)
+  messages    Message[]
+
+  @@index([workspaceId])
+}
+
+model Conversation {
+  tenantId    String    @db.UniqueIdentifier()
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id          String    @id() @default(uuid()) @db.UniqueIdentifier()
+  workspaceId String    @db.UniqueIdentifier()
+  memberOneId String    @db.UniqueIdentifier()
+  memberTwoId String    @db.UniqueIdentifier()
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  memberOne   Member    @relation("MemberOne", fields: [memberOneId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  memberTwo   Member    @relation("MemberTwo", fields: [memberTwoId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  messages    Message[]
+
+  @@index([workspaceId])
+}
+
+model Message {
+  tenantId        String        @db.UniqueIdentifier()
+  tenant          Tenant        @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id              String        @id() @default(uuid()) @db.UniqueIdentifier()
+  body            String
+  imageId         String?       @db.UniqueIdentifier()
+  memberId        String        @db.UniqueIdentifier()
+  workspaceId     String        @db.UniqueIdentifier()
+  channelId       String?       @db.UniqueIdentifier()
+  parentMessageId String?       @db.UniqueIdentifier()
+  conversationId  String?       @db.UniqueIdentifier()
+  updatedAt       DateTime?     @updatedAt()
+  member          Member        @relation(fields: [memberId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  workspace       Workspace     @relation(fields: [workspaceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  channel         Channel?      @relation(fields: [channelId], references: [id], onDelete: NoAction)
+  parentMessage   Message?      @relation("ParentMessage", fields: [parentMessageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies         Message[]     @relation("ParentMessage")
+  conversation    Conversation? @relation(fields: [conversationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  reactions       Reaction[]
+
+  @@index([workspaceId])
+  @@index([memberId])
+  @@index([channelId])
+  @@index([parentMessageId])
+  @@index([conversationId])
+  @@index([channelId, parentMessageId, conversationId])
+}
+
+model Reaction {
+  tenantId    String    @db.UniqueIdentifier()
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id          String    @id() @default(uuid()) @db.UniqueIdentifier()
+  workspaceId String    @db.UniqueIdentifier()
+  messageId   String    @db.UniqueIdentifier()
+  memberId    String    @db.UniqueIdentifier()
+  value       String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  message     Message   @relation(fields: [messageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  member      Member    @relation(fields: [memberId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([workspaceId])
+  @@index([messageId])
+  @@index([memberId])
 }

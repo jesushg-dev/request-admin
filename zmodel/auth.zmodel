@@ -1,0 +1,169 @@
+import '../schema.zmodel'
+import './abstract.zmodel'
+import './request.zmodel'
+import './messenger.zmodel'
+
+// User model (in auth.zmodel)
+model User extends Auditable {
+  id                   String    @id @default(uuid()) @db.UniqueIdentifier
+  twoFactorConfirmationId String? @db.UniqueIdentifier
+  name                 String?
+  username             String?   @unique
+  email                String?   @unique
+  emailVerified        DateTime?
+  image                String?
+  password             String    @password @omit
+  role                 String    @default("USER")
+  isTwoFactorEnabled   Boolean   @default(false)
+  superAdmin           Boolean   @default(false)
+
+  tenants              Tenant[]  @relation("UserTenants")
+  workspaces           Workspace[] // Link to Workspaces
+  accounts             Account[]
+  sessions             Session[]
+  twoFactorConfirmation TwoFactorConfirmation? 
+  Authenticators       Authenticator[]
+  areaId               String?   @db.UniqueIdentifier
+  coordinatorId        String?   @db.UniqueIdentifier
+  area                 Area?     @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  coordinator          User?     @relation("Coordination", fields: [coordinatorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  employees            User[]    @relation("Coordination")
+  requestAssignment    RequestAssignment[]
+  userRole             UserRole[]
+  members              Member[]
+
+  @@map("Users")
+}
+
+
+
+model UserRole extends TenantScoped, Auditable {
+  id              String    @id @default(uuid()) @db.UniqueIdentifier
+  userId          String    @db.UniqueIdentifier
+  roleId          String    @db.UniqueIdentifier
+  user            User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  role            Role      @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Role extends TenantScoped, Auditable {
+  id              String     @id @default(uuid()) @db.UniqueIdentifier
+  name            String     @db.VarChar(100) @unique
+  description     String?    @db.VarChar(255)
+  userRole        UserRole[]
+  rolePermission  RolePermission[]
+}
+
+model Module extends TenantScoped, Auditable {
+  id              String     @id @default(uuid()) @db.UniqueIdentifier
+  name            String     @db.VarChar(100) @unique
+  description     String?    @db.VarChar(255)
+  permission      Permission[]
+}
+
+model Permission extends TenantScoped, Auditable {
+  id              String     @id @default(uuid()) @db.UniqueIdentifier
+  name            String     @db.VarChar(50)
+  description     String?    @db.VarChar(255)
+  moduleId        String     @db.UniqueIdentifier
+  module          Module     @relation(fields: [moduleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  rolePermission  RolePermission[]
+}
+
+model RolePermission extends TenantScoped, Auditable {
+  id              String     @id @default(uuid()) @db.UniqueIdentifier
+  roleId          String     @db.UniqueIdentifier
+  permissionId    String     @db.UniqueIdentifier
+  role            Role       @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  permission      Permission @relation(fields: [permissionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Session extends TenantScoped {
+  id              String   @id @default(uuid()) @db.UniqueIdentifier
+  sessionToken    String   @unique
+  userId          String   @db.UniqueIdentifier
+  expires         DateTime
+  currentTenantId String   @db.UniqueIdentifier // This field holds the active tenant for the session
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([userId])
+  @@index([currentTenantId])
+  @@map("Sessions")
+}
+
+
+model Account extends TenantScoped {
+  id                       String   @id @default(uuid()) @db.UniqueIdentifier
+  userId                   String   @db.UniqueIdentifier
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String?  @db.Text
+  access_token             String?  @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String?  @db.Text
+  session_state            String?
+  refresh_token_expires_in Int?
+  user                     User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("Accounts")
+}
+
+model VerificationToken extends TenantScoped {
+  id          String    @id @default(uuid()) @db.UniqueIdentifier
+  email       String
+  token       String    @unique
+  expires     DateTime
+
+  @@unique([email, token])
+  @@map("VerificationTokens")
+}
+
+
+model PasswordResetToken extends TenantScoped {
+  id          String    @id @default(uuid()) @db.UniqueIdentifier
+  email       String
+  token       String    @unique
+  expires     DateTime
+
+  @@unique([email, token])
+  @@map("PasswordResetTokens")
+}
+
+model TwoFactorToken extends TenantScoped {
+  id          String    @id @default(uuid()) @db.UniqueIdentifier
+  email       String
+  token       String    @unique
+  expires     DateTime
+
+  @@unique([email, token])
+  @@map("TwoFactorTokens")
+}
+
+model TwoFactorConfirmation extends TenantScoped {
+  id     String    @id @default(uuid()) @db.UniqueIdentifier
+  userId String    @db.UniqueIdentifier
+  user   User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([userId])
+  @@map("TwoFactorConfirmations")
+}
+
+model Authenticator extends TenantScoped {
+  id                   String  @id @default(uuid()) @db.UniqueIdentifier
+  userId               String  @db.UniqueIdentifier
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([userId, providerAccountId])
+  @@map("Authenticators")
+}

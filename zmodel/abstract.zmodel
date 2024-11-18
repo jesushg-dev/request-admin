@@ -1,0 +1,20 @@
+import '../schema.zmodel'
+
+// Abstract model for tenant isolation policies
+abstract model TenantScoped {
+  tenantId String @db.UniqueIdentifier
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@allow('read', tenant.users?[id == auth().id])
+  @@allow('create', tenant.users?[id == auth().id])
+  @@allow('update', tenant.users?[id == auth().id])
+  @@allow('delete', tenant.users?[id == auth().id])
+}
+
+abstract model Auditable {
+  createdAt DateTime @default(now())
+  updatedAt DateTime? @updatedAt
+  deletedAt DateTime?
+  createdBy String? @db.VarChar(50) @default(auth().id)
+  modifiedBy String? @db.VarChar(50) @default(auth().id)
+}
