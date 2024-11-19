@@ -2,7 +2,7 @@ import '@/styles/globals.css';
 import { type Metadata } from 'next';
 import { SessionProvider } from 'next-auth/react';
 import { TRPCReactProvider } from '@/trpc/react';
-import { auth } from '@/server/auth';
+import { ThemeProvider } from 'next-themes';
 
 import { GeistSans } from 'geist/font/sans';
 import { Inter } from 'next/font/google';
@@ -11,6 +11,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { Locale, routing } from '@/i18n/routing';
 
+import { auth } from '@/server/auth';
 import NextTopLoader from 'nextjs-toploader';
 import { Toaster } from '@/components/ui/sonner';
 import { ToastContainer } from 'react-toastify';
@@ -59,17 +60,19 @@ export default async function RootLayout({ children, params }: Props) {
   const messages = await getMessages();
 
   return (
-    <SessionProvider session={session}>
-      <html lang={locale} className={`${GeistSans.variable} ${inter.variable}`}>
-        <body data-theme="light" className="font-sans" suppressHydrationWarning>
-          <NextIntlClientProvider locale={locale} messages={messages}>
-            <NextTopLoader />
-            <Toaster />
-            <ToastContainer />
-            <TRPCReactProvider>{children}</TRPCReactProvider>
-          </NextIntlClientProvider>
-        </body>
-      </html>
-    </SessionProvider>
+    <html lang={locale} className={`${GeistSans.variable} ${inter.variable} antialiased`}>
+      <body data-theme="light" className="font-sans" suppressHydrationWarning>
+        <SessionProvider session={session}>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+            <NextIntlClientProvider locale={locale} messages={messages}>
+              <NextTopLoader />
+              <Toaster />
+              <ToastContainer />
+              <TRPCReactProvider>{children}</TRPCReactProvider>
+            </NextIntlClientProvider>
+          </ThemeProvider>
+        </SessionProvider>
+      </body>
+    </html>
   );
 }
