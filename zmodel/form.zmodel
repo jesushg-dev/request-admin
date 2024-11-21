@@ -2,25 +2,38 @@ import './abstract.zmodel'
 import './request.zmodel'
 
 model Form extends TenantScoped, Auditable {
+  // Primary identifier
   id              String     @id @default(uuid()) @db.UniqueIdentifier
-  userId          String     @db.UniqueIdentifier
-  published       Boolean    @default(false)
-  name            String
-  description     String     @default("")
-  content         String     @default("[]")
-  visits          Int        @default(0)
-  submissions     Int        @default(0)
-  shareURL        String     @unique @default(uuid())
-  SubCategory     SubCategory[]
-  FormSubmission FormSubmission[]
 
-  @@unique([name, userId])
+  // Form details
+  userId          String     @db.UniqueIdentifier // ID of the user who owns the form
+  name            String     // Name of the form
+  description     String     @default("") // Description of the form
+  content         String     @default("[]") // JSON content of the form (default: empty JSON)
+  published       Boolean    @default(false) // Publication status of the form
+
+  // Form statistics
+  visits          Int        @default(0) // Number of visits to the form
+  submissions     Int        @default(0) // Number of submissions received
+  shareURL        String     @unique @default(uuid()) // Unique shareable URL
+
+  // Relationships
+  SubCategory     SubCategory[] // Associated subcategories for categorization
+  FormSubmission  FormSubmission[] // Submissions made to this form
+
+  // Constraints
+  @@unique([name, userId]) // Ensures each user has unique form names
 }
 
 model FormSubmission extends TenantScoped, Auditable {
+  // Primary identifier
   id              String     @id @default(uuid()) @db.UniqueIdentifier
-  formId          String     @db.UniqueIdentifier
-  content         String
-  form            Form       @relation(fields: [formId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  request         Request[]
+
+  // Submission details
+  formId          String     @db.UniqueIdentifier // ID of the associated form
+  content         String     // Submitted content in JSON format
+
+  // Relationships
+  form            Form       @relation(fields: [formId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Link to the associated form
+  request         Request[]  // Requests generated from this submission
 }

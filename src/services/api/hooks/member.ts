@@ -408,7 +408,7 @@ export function useSuspenseCountMember<
 }
 
 export function useCheckMember<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { tenantId?: string; id?: string; userId?: string; workspaceId?: string; role?: string } },
+  args: { operation: PolicyCrudKind; where?: { tenantId?: string; id?: string; userId?: string; workspaceId?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

@@ -500,7 +500,7 @@ export function useSuspenseCountTwoFactorConfirmation<
 }
 
 export function useCheckTwoFactorConfirmation<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { tenantId?: string; id?: string; userId?: string } },
+  args: { operation: PolicyCrudKind; where?: { id?: string; userId?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

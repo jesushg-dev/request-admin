@@ -408,7 +408,7 @@ export function useSuspenseCountSession<
 }
 
 export function useCheckSession<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { tenantId?: string; id?: string; sessionToken?: string; userId?: string; currentTenantId?: string } },
+  args: { operation: PolicyCrudKind; where?: { id?: string; sessionToken?: string; userId?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

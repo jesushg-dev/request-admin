@@ -488,7 +488,7 @@ export function useSuspenseCountPasswordResetToken<
 }
 
 export function useCheckPasswordResetToken<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { tenantId?: string; id?: string; email?: string; token?: string } },
+  args: { operation: PolicyCrudKind; where?: { id?: string; email?: string; token?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

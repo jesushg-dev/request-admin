@@ -2,159 +2,223 @@ import '../schema.zmodel'
 import './abstract.zmodel'
 import './request.zmodel'
 import './messenger.zmodel'
+import './person.zmodel'
 
-// User model (in auth.zmodel)
 model User extends Auditable {
+  // Primary identifier
   id                   String    @id @default(uuid()) @db.UniqueIdentifier
-  twoFactorConfirmationId String? @db.UniqueIdentifier
-  name                 String?
-  username             String?   @unique
-  email                String?   @unique
-  emailVerified        DateTime?
-  image                String?
-  password             String    @password @omit
-  role                 String    @default("USER")
-  isTwoFactorEnabled   Boolean   @default(false)
-  superAdmin           Boolean   @default(false)
 
-  tenants              Tenant[]  @relation("UserTenants")
-  workspaces           Workspace[] // Link to Workspaces
-  accounts             Account[]
-  sessions             Session[]
-  twoFactorConfirmation TwoFactorConfirmation? 
-  Authenticators       Authenticator[]
-  areaId               String?   @db.UniqueIdentifier
-  coordinatorId        String?   @db.UniqueIdentifier
-  area                 Area?     @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  coordinator          User?     @relation("Coordination", fields: [coordinatorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  employees            User[]    @relation("Coordination")
-  requestAssignment    RequestAssignment[]
-  userRole             UserRole[]
-  members              Member[]
+  // Authentication and authorization
+  username             String?   @unique // Unique username for login
+  email                String?   @unique // Unique email address
+  emailVerified        DateTime? // Timestamp for email verification
+  password             String    @password @omit // Hashed password, excluded from client queries
+  isTwoFactorEnabled   Boolean   @default(false) // Flag for two-factor authentication
+  twoFactorConfirmationId String? @db.UniqueIdentifier // ID for two-factor confirmation
+  twoFactorConfirmation TwoFactorConfirmation? // Related two-factor confirmation record
+  Authenticators       Authenticator[] // WebAuthn authenticators (optional)
+  superAdmin           Boolean   @default(false) // Flag for super admin status
 
-  @@map("Users")
+  // Personal details
+  name                 String? // User's display name
+  image                String? // User's profile image
+  personId             String?    @db.UniqueIdentifier // Reference to the linked Person entity
+  person               Person? // Optional link to Person entity
+
+  // Relationships to system entities
+  tenants              Tenant[]  @relation("UserTenants") // Tenants associated with the user
+  workspaces           Workspace[] // Workspaces linked to the user
+  accounts             Account[] // Linked authentication accounts (e.g., OAuth)
+  sessions             Session[] // Active sessions of the user
+  requestAssignment    RequestAssignment[] // Requests assigned to the user
+  userRole             UserRole[] // User's roles in the system
+  members              Member[] // Memberships in groups or projects
+
+  // Hierarchical relationships
+  areaId               String?   @db.UniqueIdentifier // Reference to an associated Area
+  coordinatorId        String?   @db.UniqueIdentifier // Reference to a coordinator (User)
+  area                 Area?     @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Area linked to the user
+  coordinator          User?     @relation("Coordination", fields: [coordinatorId], references: [id], onDelete: NoAction, onUpdate: NoAction) // User's coordinator
+  employees            User[]    @relation("Coordination") // Users managed by this user
+
+  @@map("Users") // Maps the model to the "Users" table in the database
 }
 
-
-
 model UserRole extends TenantScoped, Auditable {
+  // Primary identifier
   id              String    @id @default(uuid()) @db.UniqueIdentifier
-  userId          String    @db.UniqueIdentifier
-  roleId          String    @db.UniqueIdentifier
+
+  // Relationships
+  userId          String    @db.UniqueIdentifier // Reference to the linked User
+  roleId          String    @db.UniqueIdentifier // Reference to the linked Role
   user            User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   role            Role      @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
+
 model Role extends TenantScoped, Auditable {
+  // Primary identifier
   id              String     @id @default(uuid()) @db.UniqueIdentifier
-  name            String     @db.VarChar(100) @unique
-  description     String?    @db.VarChar(255)
-  userRole        UserRole[]
-  rolePermission  RolePermission[]
+
+  // Role details
+  name            String     @db.VarChar(100) @unique // Role name (e.g., "Admin", "User")
+  description     String?    @db.VarChar(255) // Optional role description
+
+  // Relationships
+  userRole        UserRole[] // Links to UserRole assignments
+  rolePermission  RolePermission[] // Links to associated permissions
 }
+
 
 model Module extends TenantScoped, Auditable {
+  // Primary identifier
   id              String     @id @default(uuid()) @db.UniqueIdentifier
-  name            String     @db.VarChar(100) @unique
-  description     String?    @db.VarChar(255)
-  permission      Permission[]
+
+  // Module details
+  name            String     @db.VarChar(100) @unique // Module name (e.g., "Orders", "Settings")
+  description     String?    @db.VarChar(255) // Optional module description
+
+  // Relationships
+  permission      Permission[] // Permissions associated with this module
 }
+
 
 model Permission extends TenantScoped, Auditable {
+  // Primary identifier
   id              String     @id @default(uuid()) @db.UniqueIdentifier
-  name            String     @db.VarChar(50)
-  description     String?    @db.VarChar(255)
-  moduleId        String     @db.UniqueIdentifier
+
+  // Permission details
+  name            String     @db.VarChar(50) // Permission name (e.g., "Read", "Write")
+  description     String?    @db.VarChar(255) // Optional permission description
+
+  // Relationships
+  moduleId        String     @db.UniqueIdentifier // Reference to the Module
   module          Module     @relation(fields: [moduleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  rolePermission  RolePermission[]
+  rolePermission  RolePermission[] // Links to associated RolePermissions
 }
 
+
 model RolePermission extends TenantScoped, Auditable {
+  // Primary identifier
   id              String     @id @default(uuid()) @db.UniqueIdentifier
-  roleId          String     @db.UniqueIdentifier
-  permissionId    String     @db.UniqueIdentifier
+
+  // Relationships
+  roleId          String     @db.UniqueIdentifier // Reference to the linked Role
+  permissionId    String     @db.UniqueIdentifier // Reference to the linked Permission
   role            Role       @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   permission      Permission @relation(fields: [permissionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-model Session extends TenantScoped {
+
+model Session {
+  // Primary identifier
   id              String   @id @default(uuid()) @db.UniqueIdentifier
-  sessionToken    String   @unique
-  userId          String   @db.UniqueIdentifier
-  expires         DateTime
-  currentTenantId String   @db.UniqueIdentifier // This field holds the active tenant for the session
+
+  // Session details
+  sessionToken    String   @unique // Unique session token
+  userId          String   @db.UniqueIdentifier // Reference to the linked User
+  expires         DateTime // Expiration timestamp
+
+  // Relationships
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@index([userId])
-  @@index([currentTenantId])
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId]) // Index for userId to optimize lookups
   @@map("Sessions")
 }
 
 
-model Account extends TenantScoped {
+model Account {
+  // Primary identifier
   id                       String   @id @default(uuid()) @db.UniqueIdentifier
-  userId                   String   @db.UniqueIdentifier
-  type                     String
-  provider                 String
-  providerAccountId        String
+
+  // Account details
+  userId                   String   @db.UniqueIdentifier // Reference to the linked User
+  type                     String   // Account type (e.g., OAuth, Password)
+  provider                 String   // Provider name (e.g., "Google", "GitHub")
+  providerAccountId        String   // Unique ID from the provider
   refresh_token            String?  @db.Text
   access_token             String?  @db.Text
-  expires_at               Int?
-  token_type               String?
+  expires_at               Int?     // Expiration timestamp
+  token_type               String?  // Type of token (e.g., "Bearer")
   scope                    String?
   id_token                 String?  @db.Text
   session_state            String?
   refresh_token_expires_in Int?
+
+  // Relationships
   user                     User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@unique([provider, providerAccountId])
-  @@index([userId])
+  @@unique([provider, providerAccountId]) // Unique constraint for provider accounts
+  @@index([userId]) // Index for userId
   @@map("Accounts")
 }
 
-model VerificationToken extends TenantScoped {
-  id          String    @id @default(uuid()) @db.UniqueIdentifier
-  email       String
-  token       String    @unique
-  expires     DateTime
 
-  @@unique([email, token])
+model VerificationToken {
+  // Primary identifier
+  id          String    @id @default(uuid()) @db.UniqueIdentifier
+
+  // Token details
+  email       String    // Email associated with the token
+  token       String    @unique // Unique verification token
+  expires     DateTime  // Expiration timestamp
+
+  @@unique([email, token]) // Unique constraint for email-token pairs
   @@map("VerificationTokens")
 }
 
-
-model PasswordResetToken extends TenantScoped {
+model PasswordResetToken {
+  // Primary identifier
   id          String    @id @default(uuid()) @db.UniqueIdentifier
-  email       String
-  token       String    @unique
-  expires     DateTime
 
-  @@unique([email, token])
+  // Token details
+  email       String    // Email associated with the token
+  token       String    @unique // Unique reset token
+  expires     DateTime  // Expiration timestamp
+
+  @@unique([email, token]) // Unique constraint for email-token pairs
   @@map("PasswordResetTokens")
 }
 
-model TwoFactorToken extends TenantScoped {
-  id          String    @id @default(uuid()) @db.UniqueIdentifier
-  email       String
-  token       String    @unique
-  expires     DateTime
 
-  @@unique([email, token])
+model TwoFactorToken {
+  // Primary identifier
+  id          String    @id @default(uuid()) @db.UniqueIdentifier
+
+  // Token details
+  email       String    // Email associated with the token
+  token       String    @unique // Unique 2FA token
+  expires     DateTime  // Expiration timestamp
+
+  @@unique([email, token]) // Unique constraint for email-token pairs
   @@map("TwoFactorTokens")
 }
 
-model TwoFactorConfirmation extends TenantScoped {
-  id     String    @id @default(uuid()) @db.UniqueIdentifier
-  userId String    @db.UniqueIdentifier
-  user   User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@unique([userId])
+model TwoFactorConfirmation {
+  // Primary identifier
+  id          String    @id @default(uuid()) @db.UniqueIdentifier
+
+  // Relationships
+  userId      String    @db.UniqueIdentifier // Reference to the linked User
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([userId]) // Unique constraint for userId
   @@map("TwoFactorConfirmations")
 }
 
-model Authenticator extends TenantScoped {
+
+model Authenticator {
+  // Primary identifier
   id                   String  @id @default(uuid()) @db.UniqueIdentifier
-  userId               String  @db.UniqueIdentifier
+
+  // Authenticator details
+  credentialID         String  @unique // Unique credential ID
+  userId               String  @db.UniqueIdentifier // Reference to the linked User
   providerAccountId    String
   credentialPublicKey  String
   counter              Int
@@ -162,8 +226,9 @@ model Authenticator extends TenantScoped {
   credentialBackedUp   Boolean
   transports           String?
 
+  // Relationships
   user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@unique([userId, providerAccountId])
+  @@unique([userId, providerAccountId]) // Unique constraint for user-provider account pairs
   @@map("Authenticators")
 }

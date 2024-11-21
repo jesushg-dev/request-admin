@@ -36,6 +36,7 @@ export * from './form';
 export * from './form-submission';
 export * from './document';
 export * from './document-assignment';
+export * from './person';
 export * from './client';
 export * from './identification-type';
 export * from './workspace';

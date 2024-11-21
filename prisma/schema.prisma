@@ -30,13 +30,8 @@ model Tenant {
   contactPhone                       String?
   address                            String?
   users                              User[]                              @relation("UserTenants")
-  accounts                           Account[]
-  sessions                           Session[]
-  verificationTokens                 VerificationToken[]
-  passwordResetTokens                PasswordResetToken[]
-  twoFactorTokens                    TwoFactorToken[]
-  twoFactorConfirmations             TwoFactorConfirmation[]
-  authenticators                     Authenticator[]
+  persons                            Person[]
+  clients                            Client[]
   requirements                       Requirement[]
   categoryRequirements               CategoryRequirement[]
   salesChannels                      SalesChannel[]
@@ -55,7 +50,6 @@ model Tenant {
   permissions                        Permission[]
   rolePermissions                    RolePermission[]
   requestStates                      RequestState[]
-  clients                            Client[]
   identificationTypes                IdentificationType[]
   documentAssignments                DocumentAssignment[]
   requestTypes                       RequestType[]
@@ -78,30 +72,30 @@ model User {
   createdBy               String?                @db.VarChar(50)
   modifiedBy              String?                @db.VarChar(50)
   id                      String                 @id() @default(uuid()) @db.UniqueIdentifier()
-  twoFactorConfirmationId String?                @db.UniqueIdentifier()
-  name                    String?
   username                String?                @unique()
   email                   String?                @unique()
   emailVerified           DateTime?
-  image                   String?
   password                String
-  role                    String                 @default("USER")
   isTwoFactorEnabled      Boolean                @default(false)
-  superAdmin              Boolean                @default(false)
+  twoFactorConfirmationId String?                @db.UniqueIdentifier()
+  twoFactorConfirmation   TwoFactorConfirmation?
+  Authenticators          Authenticator[]
+  name                    String?
+  image                   String?
+  personId                String?                @db.UniqueIdentifier()
+  person                  Person?
   tenants                 Tenant[]               @relation("UserTenants")
   workspaces              Workspace[]
   accounts                Account[]
   sessions                Session[]
-  twoFactorConfirmation   TwoFactorConfirmation?
-  Authenticators          Authenticator[]
+  requestAssignment       RequestAssignment[]
+  userRole                UserRole[]
+  members                 Member[]
   areaId                  String?                @db.UniqueIdentifier()
   coordinatorId           String?                @db.UniqueIdentifier()
   area                    Area?                  @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   coordinator             User?                  @relation("Coordination", fields: [coordinatorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   employees               User[]                 @relation("Coordination")
-  requestAssignment       RequestAssignment[]
-  userRole                UserRole[]
-  members                 Member[]
 
   @@map("Users")
 }
@@ -182,23 +176,19 @@ model RolePermission {
 }
 
 model Session {
-  tenantId        String   @db.UniqueIdentifier()
-  tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id              String   @id() @default(uuid()) @db.UniqueIdentifier()
-  sessionToken    String   @unique()
-  userId          String   @db.UniqueIdentifier()
-  expires         DateTime
-  currentTenantId String   @db.UniqueIdentifier()
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id           String   @id() @default(uuid()) @db.UniqueIdentifier()
+  sessionToken String   @unique()
+  userId       String   @db.UniqueIdentifier()
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt()
 
   @@index([userId])
-  @@index([currentTenantId])
   @@map("Sessions")
 }
 
 model Account {
-  tenantId                 String  @db.UniqueIdentifier()
-  tenant                   Tenant  @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id                       String  @id() @default(uuid()) @db.UniqueIdentifier()
   userId                   String  @db.UniqueIdentifier()
   type                     String
@@ -220,56 +210,47 @@ model Account {
 }
 
 model VerificationToken {
-  tenantId String   @db.UniqueIdentifier()
-  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id       String   @id() @default(uuid()) @db.UniqueIdentifier()
-  email    String
-  token    String   @unique()
-  expires  DateTime
+  id      String   @id() @default(uuid()) @db.UniqueIdentifier()
+  email   String
+  token   String   @unique()
+  expires DateTime
 
   @@unique([email, token])
   @@map("VerificationTokens")
 }
 
 model PasswordResetToken {
-  tenantId String   @db.UniqueIdentifier()
-  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id       String   @id() @default(uuid()) @db.UniqueIdentifier()
-  email    String
-  token    String   @unique()
-  expires  DateTime
+  id      String   @id() @default(uuid()) @db.UniqueIdentifier()
+  email   String
+  token   String   @unique()
+  expires DateTime
 
   @@unique([email, token])
   @@map("PasswordResetTokens")
 }
 
 model TwoFactorToken {
-  tenantId String   @db.UniqueIdentifier()
-  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id       String   @id() @default(uuid()) @db.UniqueIdentifier()
-  email    String
-  token    String   @unique()
-  expires  DateTime
+  id      String   @id() @default(uuid()) @db.UniqueIdentifier()
+  email   String
+  token   String   @unique()
+  expires DateTime
 
   @@unique([email, token])
   @@map("TwoFactorTokens")
 }
 
 model TwoFactorConfirmation {
-  tenantId String @db.UniqueIdentifier()
-  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id       String @id() @default(uuid()) @db.UniqueIdentifier()
-  userId   String @db.UniqueIdentifier()
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id     String @id() @default(uuid()) @db.UniqueIdentifier()
+  userId String @db.UniqueIdentifier()
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@unique([userId])
   @@map("TwoFactorConfirmations")
 }
 
 model Authenticator {
-  tenantId             String  @db.UniqueIdentifier()
-  tenant               Tenant  @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id                   String  @id() @default(uuid()) @db.UniqueIdentifier()
+  credentialID         String  @unique()
   userId               String  @db.UniqueIdentifier()
   providerAccountId    String
   credentialPublicKey  String
@@ -520,10 +501,10 @@ model Form {
   tenant         Tenant           @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id             String           @id() @default(uuid()) @db.UniqueIdentifier()
   userId         String           @db.UniqueIdentifier()
-  published      Boolean          @default(false)
   name           String
   description    String           @default("")
   content        String           @default("[]")
+  published      Boolean          @default(false)
   visits         Int              @default(0)
   submissions    Int              @default(0)
   shareURL       String           @unique() @default(uuid())
@@ -578,7 +559,7 @@ model DocumentAssignment {
   requestAssignment   RequestAssignment @relation(fields: [requestAssignmentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-model Client {
+model Person {
   createdAt            DateTime           @default(now())
   updatedAt            DateTime?          @updatedAt()
   deletedAt            DateTime?
@@ -587,16 +568,42 @@ model Client {
   tenantId             String             @db.UniqueIdentifier()
   tenant               Tenant             @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id                   String             @id() @default(uuid()) @db.UniqueIdentifier()
-  name                 String             @db.VarChar(400)
-  email                String?            @unique() @db.VarChar(100)
-  identificationNumber String             @unique() @db.VarChar(110)
-  corporateName        String?            @db.VarChar(100)
-  monthlyIncome        Float?
-  occupation           String?            @db.VarChar(100)
+  firstName            String             @db.VarChar(100)
+  lastName             String             @db.VarChar(100)
+  email                String?            @unique()
   phone                String?            @db.VarChar(50)
+  identificationNumber String             @unique() @db.VarChar(110)
+  userId               String?            @unique() @db.UniqueIdentifier()
+  user                 User?              @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  clientId             String?            @unique() @db.UniqueIdentifier()
+  client               Client?            @relation(fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   identificationTypeId String             @db.UniqueIdentifier()
-  request              Request[]
   identificationType   IdentificationType @relation(fields: [identificationTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("Persons")
+}
+
+model Client {
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime? @updatedAt()
+  deletedAt            DateTime?
+  createdBy            String?   @db.VarChar(50)
+  modifiedBy           String?   @db.VarChar(50)
+  tenantId             String    @db.UniqueIdentifier()
+  tenant               Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                   String    @id() @default(uuid()) @db.UniqueIdentifier()
+  name                 String    @db.VarChar(400)
+  email                String?   @unique() @db.VarChar(100)
+  identificationNumber String    @unique() @db.VarChar(110)
+  corporateName        String?   @db.VarChar(100)
+  monthlyIncome        Float?
+  occupation           String?   @db.VarChar(100)
+  phone                String?   @db.VarChar(50)
+  personId             String?   @db.UniqueIdentifier()
+  person               Person?
+  request              Request[]
+
+  @@map("Clients")
 }
 
 model IdentificationType {
@@ -610,7 +617,9 @@ model IdentificationType {
   id          String    @id() @default(uuid()) @db.UniqueIdentifier()
   name        String    @unique() @db.VarChar(150)
   description String?   @db.VarChar(500)
-  client      Client[]
+  client      Person[]
+
+  @@map("IdentificationTypes")
 }
 
 model Workspace {
@@ -636,7 +645,6 @@ model Member {
   id                       String         @id() @default(uuid()) @db.UniqueIdentifier()
   userId                   String         @db.UniqueIdentifier()
   workspaceId              String         @db.UniqueIdentifier()
-  role                     String         @db.VarChar(20)
   user                     User           @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   workspace                Workspace      @relation(fields: [workspaceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   reactions                Reaction[]
@@ -682,12 +690,12 @@ model Message {
   id              String        @id() @default(uuid()) @db.UniqueIdentifier()
   body            String
   imageId         String?       @db.UniqueIdentifier()
+  updatedAt       DateTime?     @updatedAt()
   memberId        String        @db.UniqueIdentifier()
   workspaceId     String        @db.UniqueIdentifier()
   channelId       String?       @db.UniqueIdentifier()
   parentMessageId String?       @db.UniqueIdentifier()
   conversationId  String?       @db.UniqueIdentifier()
-  updatedAt       DateTime?     @updatedAt()
   member          Member        @relation(fields: [memberId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   workspace       Workspace     @relation(fields: [workspaceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   channel         Channel?      @relation(fields: [channelId], references: [id], onDelete: NoAction)
@@ -708,10 +716,10 @@ model Reaction {
   tenantId    String    @db.UniqueIdentifier()
   tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id          String    @id() @default(uuid()) @db.UniqueIdentifier()
+  value       String
   workspaceId String    @db.UniqueIdentifier()
   messageId   String    @db.UniqueIdentifier()
   memberId    String    @db.UniqueIdentifier()
-  value       String
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   message     Message   @relation(fields: [messageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   member      Member    @relation(fields: [memberId], references: [id], onDelete: NoAction, onUpdate: NoAction)

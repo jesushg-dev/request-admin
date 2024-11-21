@@ -1,4 +1,4 @@
-import { db } from '@/server/db';
+import { db } from '@/server/db-client';
 
 export const getAccountByUserId = async (userId: string) => {
   try {

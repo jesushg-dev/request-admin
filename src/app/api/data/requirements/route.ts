@@ -1,4 +1,4 @@
-import { db } from '@/services/lib/db';
+import { db } from '@/server/db-server';
 import { getToken } from 'next-auth/jwt';
 
 import { NextRequest, NextResponse } from 'next/server';

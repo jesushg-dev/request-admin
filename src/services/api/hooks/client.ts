@@ -421,7 +421,7 @@ export function useCheckClient<TError = DefaultError>(
       corporateName?: string;
       occupation?: string;
       phone?: string;
-      identificationTypeId?: string;
+      personId?: string;
     };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions

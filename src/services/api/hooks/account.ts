@@ -411,7 +411,6 @@ export function useCheckAccount<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
     where?: {
-      tenantId?: string;
       id?: string;
       userId?: string;
       type?: string;

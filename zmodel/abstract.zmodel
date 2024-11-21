@@ -2,19 +2,26 @@ import '../schema.zmodel'
 
 // Abstract model for tenant isolation policies
 abstract model TenantScoped {
-  tenantId String @db.UniqueIdentifier
-  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  // Tenant relationship
+  tenantId String @db.UniqueIdentifier // ID of the tenant this entity belongs to
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Relation to Tenant entity
 
-  @@allow('read', tenant.users?[id == auth().id])
-  @@allow('create', tenant.users?[id == auth().id])
-  @@allow('update', tenant.users?[id == auth().id])
-  @@allow('delete', tenant.users?[id == auth().id])
+  // Access policies
+  @@allow('read', tenant.users?[id == auth().id])   // Allow read access for authenticated users in the tenant
+  @@allow('create', tenant.users?[id == auth().id]) // Allow create access for authenticated users in the tenant
+  @@allow('update', tenant.users?[id == auth().id]) // Allow update access for authenticated users in the tenant
+  @@allow('delete', tenant.users?[id == auth().id]) // Allow delete access for authenticated users in the tenant
 }
 
+// Abstract model for auditable entities
 abstract model Auditable {
-  createdAt DateTime @default(now())
-  updatedAt DateTime? @updatedAt
-  deletedAt DateTime?
-  createdBy String? @db.VarChar(50) @default(auth().id)
-  modifiedBy String? @db.VarChar(50) @default(auth().id)
+  // Timestamps
+  createdAt  DateTime @default(now()) // Timestamp when the entity was created
+  updatedAt  DateTime? @updatedAt // Timestamp when the entity was last updated
+  deletedAt  DateTime? // Timestamp when the entity was deleted (soft delete)
+
+  // User tracking
+  createdBy  String? @db.VarChar(50) @default(auth().id) // ID of the user who created the entity
+  modifiedBy String? @db.VarChar(50) @default(auth().id) // ID of the user who last modified the entity
 }
+

@@ -409,10 +409,10 @@ export function useCheckForm<TError = DefaultError>(
       tenantId?: string;
       id?: string;
       userId?: string;
-      published?: boolean;
       name?: string;
       description?: string;
       content?: string;
+      published?: boolean;
       visits?: number;
       submissions?: number;
       shareURL?: string;

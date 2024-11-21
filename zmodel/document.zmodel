@@ -2,17 +2,28 @@ import './abstract.zmodel'
 import './request.zmodel'
 
 model Document extends TenantScoped, Auditable {
-  id              String   @id @default(uuid()) @db.UniqueIdentifier
-  name            String   @db.VarChar(155)
-  status          Int
-  requestId       String   @db.UniqueIdentifier
-  request         Request  @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  // Primary identifier
+  id              String   @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for the document
+
+  // Document details
+  name            String   @db.VarChar(155) // Name of the document
+  status          Int // Status code representing the state of the document
+
+  // Relationships
+  requestId       String   @db.UniqueIdentifier // ID of the associated request
+  request         Request  @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Link to the associated Request entity
 }
 
+
 model DocumentAssignment extends TenantScoped, Auditable {
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
-  name            String?    @db.VarChar(50)
-  status          String?    @db.VarChar(50)
-  requestAssignmentId String @db.UniqueIdentifier
-  requestAssignment RequestAssignment @relation(fields: [requestAssignmentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  // Primary identifier
+  id                    String     @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for the document assignment
+
+  // Document assignment details
+  name                  String?    @db.VarChar(50) // Optional name for the document assignment
+  status                String?    @db.VarChar(50) // Optional status of the document assignment
+
+  // Relationships
+  requestAssignmentId   String     @db.UniqueIdentifier // ID of the associated request assignment
+  requestAssignment     RequestAssignment @relation(fields: [requestAssignmentId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Link to the associated RequestAssignment entity
 }

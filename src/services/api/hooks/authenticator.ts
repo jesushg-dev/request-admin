@@ -471,8 +471,8 @@ export function useCheckAuthenticator<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
     where?: {
-      tenantId?: string;
       id?: string;
+      credentialID?: string;
       userId?: string;
       providerAccountId?: string;
       credentialPublicKey?: string;

@@ -39,6 +39,7 @@ import createFormRouter from './Form.router';
 import createFormSubmissionRouter from './FormSubmission.router';
 import createDocumentRouter from './Document.router';
 import createDocumentAssignmentRouter from './DocumentAssignment.router';
+import createPersonRouter from './Person.router';
 import createClientRouter from './Client.router';
 import createIdentificationTypeRouter from './IdentificationType.router';
 import createWorkspaceRouter from './Workspace.router';
@@ -88,6 +89,7 @@ export function createRouter() {
     formSubmission: createFormSubmissionRouter(),
     document: createDocumentRouter(),
     documentAssignment: createDocumentAssignmentRouter(),
+    person: createPersonRouter(),
     client: createClientRouter(),
     identificationType: createIdentificationTypeRouter(),
     workspace: createWorkspaceRouter(),

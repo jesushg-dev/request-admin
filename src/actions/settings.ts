@@ -3,7 +3,7 @@
 import * as z from 'zod';
 import bcrypt from 'bcryptjs';
 
-import { db } from '@/server/db';
+import { db } from '@/server/db-client';
 import { SettingsSchema } from '@/services/schemas';
 import { getUserByEmail, getUserById } from '@/services/data/user';
 import { currentUser } from '@/services/lib/auth';

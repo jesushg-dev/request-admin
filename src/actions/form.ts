@@ -1,7 +1,7 @@
 'use server';
 
 import { auth } from '@/server/auth';
-import { db } from '@/services/lib/db';
+import { db } from '@/server/db-server';
 import { formSchema, formSchemaType } from '@/services/schemas/form';
 
 class UserNotFoundErr extends Error {}

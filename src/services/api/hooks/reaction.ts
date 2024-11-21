@@ -414,7 +414,7 @@ export function useSuspenseCountReaction<
 }
 
 export function useCheckReaction<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { tenantId?: string; id?: string; workspaceId?: string; messageId?: string; memberId?: string; value?: string } },
+  args: { operation: PolicyCrudKind; where?: { tenantId?: string; id?: string; value?: string; workspaceId?: string; messageId?: string; memberId?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

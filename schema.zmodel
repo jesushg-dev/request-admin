@@ -1,6 +1,6 @@
 import './zmodel/abstract.zmodel'
 import './zmodel/auth.zmodel'
-import './zmodel/client.zmodel'
+import './zmodel/person.zmodel'
 import './zmodel/document.zmodel'
 import './zmodel/form.zmodel'
 import './zmodel/messenger.zmodel'
@@ -29,8 +29,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
-}
-model Tenant extends Auditable {
+}model Tenant extends Auditable {
   id               String     @id @default(uuid()) @db.UniqueIdentifier
   name             String
   logoUrl          String?
@@ -44,15 +43,10 @@ model Tenant extends Auditable {
   address          String?
   
   users            User[]     @relation("UserTenants")
+  persons           Person[]
+  clients          Client[]
 
   // Related entities
-  accounts                  Account[]
-  sessions                  Session[]
-  verificationTokens        VerificationToken[]
-  passwordResetTokens       PasswordResetToken[]
-  twoFactorTokens           TwoFactorToken[]
-  twoFactorConfirmations    TwoFactorConfirmation[]
-  authenticators            Authenticator[]
   requirements              Requirement[]
   categoryRequirements      CategoryRequirement[]
   salesChannels             SalesChannel[]
@@ -71,7 +65,6 @@ model Tenant extends Auditable {
   permissions               Permission[]
   rolePermissions           RolePermission[]
   requestStates             RequestState[]
-  clients                   Client[]
   identificationTypes       IdentificationType[]
   documentAssignments       DocumentAssignment[]
   requestTypes              RequestType[]

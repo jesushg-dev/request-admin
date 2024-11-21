@@ -6,11 +6,11 @@ import DiscordProvider from 'next-auth/providers/discord';
 import Github from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
 
-import { db } from '@/server/db';
 import { LoginSchema } from '@/services/schemas';
 import { getUserByEmail, getUserById } from '@/services/data/user';
 import { getAccountByUserId } from '@/services/data/account';
 import { getTwoFactorConfirmationByUserId } from '@/services/data/two-factor-confirmation';
+import { db } from '../db-client';
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -122,7 +122,7 @@ export const authConfig: NextAuthConfig = {
       token.isOAuth = !!existingAccount;
       token.name = existingUser.name;
       token.email = existingUser.email;
-      token.role = existingUser.role;
+      token.picture = existingUser.image;
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
 
       return token;
@@ -167,4 +167,5 @@ export const authConfig: NextAuthConfig = {
      */
   ],
   adapter: PrismaAdapter(db),
+  session: { strategy: 'jwt' },
 } satisfies NextAuthConfig;

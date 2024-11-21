@@ -1,5 +1,5 @@
 import { auth } from '@/server/auth';
-import { db } from '@/server/db';
+import { db } from '@/server/db-client';
 import { enhance } from '@zenstackhq/runtime';
 import { User } from '@zenstackhq/runtime/models';
 import { NextRequestHandler } from '@zenstackhq/server/next';

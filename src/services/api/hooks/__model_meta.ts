@@ -102,51 +102,16 @@ const metadata = {
           isArray: true,
           backLink: 'tenants',
         },
-        accounts: {
-          name: 'accounts',
-          type: 'Account',
+        persons: {
+          name: 'persons',
+          type: 'Person',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
         },
-        sessions: {
-          name: 'sessions',
-          type: 'Session',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
-        verificationTokens: {
-          name: 'verificationTokens',
-          type: 'VerificationToken',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
-        passwordResetTokens: {
-          name: 'passwordResetTokens',
-          type: 'PasswordResetToken',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
-        twoFactorTokens: {
-          name: 'twoFactorTokens',
-          type: 'TwoFactorToken',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
-        twoFactorConfirmations: {
-          name: 'twoFactorConfirmations',
-          type: 'TwoFactorConfirmation',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
-        authenticators: {
-          name: 'authenticators',
-          type: 'Authenticator',
+        clients: {
+          name: 'clients',
+          type: 'Client',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
@@ -277,13 +242,6 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
-        clients: {
-          name: 'clients',
-          type: 'Client',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
         identificationTypes: {
           name: 'identificationTypes',
           type: 'IdentificationType',
@@ -408,16 +366,6 @@ const metadata = {
           isId: true,
           attributes: [{ name: '@default', args: [] }],
         },
-        twoFactorConfirmationId: {
-          name: 'twoFactorConfirmationId',
-          type: 'String',
-          isOptional: true,
-        },
-        name: {
-          name: 'name',
-          type: 'String',
-          isOptional: true,
-        },
         username: {
           name: 'username',
           type: 'String',
@@ -433,29 +381,55 @@ const metadata = {
           type: 'DateTime',
           isOptional: true,
         },
-        image: {
-          name: 'image',
-          type: 'String',
-          isOptional: true,
-        },
         password: {
           name: 'password',
           type: 'String',
-        },
-        role: {
-          name: 'role',
-          type: 'String',
-          attributes: [{ name: '@default', args: [{ value: 'USER' }] }],
         },
         isTwoFactorEnabled: {
           name: 'isTwoFactorEnabled',
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: false }] }],
         },
-        superAdmin: {
-          name: 'superAdmin',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: false }] }],
+        twoFactorConfirmationId: {
+          name: 'twoFactorConfirmationId',
+          type: 'String',
+          isOptional: true,
+        },
+        twoFactorConfirmation: {
+          name: 'twoFactorConfirmation',
+          type: 'TwoFactorConfirmation',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'user',
+        },
+        Authenticators: {
+          name: 'Authenticators',
+          type: 'Authenticator',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'user',
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+          isOptional: true,
+        },
+        image: {
+          name: 'image',
+          type: 'String',
+          isOptional: true,
+        },
+        personId: {
+          name: 'personId',
+          type: 'String',
+          isOptional: true,
+        },
+        person: {
+          name: 'person',
+          type: 'Person',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'user',
         },
         tenants: {
           name: 'tenants',
@@ -485,16 +459,23 @@ const metadata = {
           isArray: true,
           backLink: 'user',
         },
-        twoFactorConfirmation: {
-          name: 'twoFactorConfirmation',
-          type: 'TwoFactorConfirmation',
+        requestAssignment: {
+          name: 'requestAssignment',
+          type: 'RequestAssignment',
           isDataModel: true,
-          isOptional: true,
+          isArray: true,
           backLink: 'user',
         },
-        Authenticators: {
-          name: 'Authenticators',
-          type: 'Authenticator',
+        userRole: {
+          name: 'userRole',
+          type: 'UserRole',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'user',
+        },
+        members: {
+          name: 'members',
+          type: 'Member',
           isDataModel: true,
           isArray: true,
           backLink: 'user',
@@ -537,27 +518,6 @@ const metadata = {
           isDataModel: true,
           isArray: true,
           backLink: 'coordinator',
-        },
-        requestAssignment: {
-          name: 'requestAssignment',
-          type: 'RequestAssignment',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'user',
-        },
-        userRole: {
-          name: 'userRole',
-          type: 'UserRole',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'user',
-        },
-        members: {
-          name: 'members',
-          type: 'Member',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'user',
         },
       },
       uniqueConstraints: {
@@ -1016,20 +976,6 @@ const metadata = {
     session: {
       name: 'Session',
       fields: {
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'sessions',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
         id: {
           name: 'id',
           type: 'String',
@@ -1050,10 +996,6 @@ const metadata = {
           name: 'expires',
           type: 'DateTime',
         },
-        currentTenantId: {
-          name: 'currentTenantId',
-          type: 'String',
-        },
         user: {
           name: 'user',
           type: 'User',
@@ -1061,6 +1003,16 @@ const metadata = {
           backLink: 'sessions',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'userId' },
+        },
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          attributes: [{ name: '@updatedAt', args: [] }],
         },
       },
       uniqueConstraints: {
@@ -1077,20 +1029,6 @@ const metadata = {
     account: {
       name: 'Account',
       fields: {
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'accounts',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
         id: {
           name: 'id',
           type: 'String',
@@ -1178,20 +1116,6 @@ const metadata = {
     verificationToken: {
       name: 'VerificationToken',
       fields: {
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'verificationTokens',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
         id: {
           name: 'id',
           type: 'String',
@@ -1229,20 +1153,6 @@ const metadata = {
     passwordResetToken: {
       name: 'PasswordResetToken',
       fields: {
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'passwordResetTokens',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
         id: {
           name: 'id',
           type: 'String',
@@ -1280,20 +1190,6 @@ const metadata = {
     twoFactorToken: {
       name: 'TwoFactorToken',
       fields: {
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'twoFactorTokens',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
         id: {
           name: 'id',
           type: 'String',
@@ -1331,20 +1227,6 @@ const metadata = {
     twoFactorConfirmation: {
       name: 'TwoFactorConfirmation',
       fields: {
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'twoFactorConfirmations',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
         id: {
           name: 'id',
           type: 'String',
@@ -1380,25 +1262,15 @@ const metadata = {
     authenticator: {
       name: 'Authenticator',
       fields: {
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'authenticators',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
         id: {
           name: 'id',
           type: 'String',
           isId: true,
           attributes: [{ name: '@default', args: [] }],
+        },
+        credentialID: {
+          name: 'credentialID',
+          type: 'String',
         },
         userId: {
           name: 'userId',
@@ -1444,6 +1316,10 @@ const metadata = {
         id: {
           name: 'id',
           fields: ['id'],
+        },
+        credentialID: {
+          name: 'credentialID',
+          fields: ['credentialID'],
         },
         userId_providerAccountId: {
           name: 'userId_providerAccountId',
@@ -2835,11 +2711,6 @@ const metadata = {
           name: 'userId',
           type: 'String',
         },
-        published: {
-          name: 'published',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: false }] }],
-        },
         name: {
           name: 'name',
           type: 'String',
@@ -2853,6 +2724,11 @@ const metadata = {
           name: 'content',
           type: 'String',
           attributes: [{ name: '@default', args: [{ value: '[]' }] }],
+        },
+        published: {
+          name: 'published',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
         },
         visits: {
           name: 'visits',
@@ -3153,6 +3029,151 @@ const metadata = {
         },
       },
     },
+    person: {
+      name: 'Person',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Person$createdBy,
+        },
+        modifiedBy: {
+          name: 'modifiedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Person$modifiedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'persons',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        firstName: {
+          name: 'firstName',
+          type: 'String',
+        },
+        lastName: {
+          name: 'lastName',
+          type: 'String',
+        },
+        email: {
+          name: 'email',
+          type: 'String',
+          isOptional: true,
+        },
+        phone: {
+          name: 'phone',
+          type: 'String',
+          isOptional: true,
+        },
+        identificationNumber: {
+          name: 'identificationNumber',
+          type: 'String',
+        },
+        userId: {
+          name: 'userId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'user',
+        },
+        user: {
+          name: 'user',
+          type: 'User',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'person',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'userId' },
+        },
+        clientId: {
+          name: 'clientId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'client',
+        },
+        client: {
+          name: 'client',
+          type: 'Client',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'person',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'clientId' },
+        },
+        identificationTypeId: {
+          name: 'identificationTypeId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'identificationType',
+        },
+        identificationType: {
+          name: 'identificationType',
+          type: 'IdentificationType',
+          isDataModel: true,
+          backLink: 'client',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'identificationTypeId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        email: {
+          name: 'email',
+          fields: ['email'],
+        },
+        identificationNumber: {
+          name: 'identificationNumber',
+          fields: ['identificationNumber'],
+        },
+        userId: {
+          name: 'userId',
+          fields: ['userId'],
+        },
+        clientId: {
+          name: 'clientId',
+          fields: ['clientId'],
+        },
+      },
+    },
     client: {
       name: 'Client',
       fields: {
@@ -3239,11 +3260,17 @@ const metadata = {
           type: 'String',
           isOptional: true,
         },
-        identificationTypeId: {
-          name: 'identificationTypeId',
+        personId: {
+          name: 'personId',
           type: 'String',
-          isForeignKey: true,
-          relationField: 'identificationType',
+          isOptional: true,
+        },
+        person: {
+          name: 'person',
+          type: 'Person',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'client',
         },
         request: {
           name: 'request',
@@ -3251,14 +3278,6 @@ const metadata = {
           isDataModel: true,
           isArray: true,
           backLink: 'client',
-        },
-        identificationType: {
-          name: 'identificationType',
-          type: 'IdentificationType',
-          isDataModel: true,
-          backLink: 'client',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'identificationTypeId' },
         },
       },
       uniqueConstraints: {
@@ -3340,7 +3359,7 @@ const metadata = {
         },
         client: {
           name: 'client',
-          type: 'Client',
+          type: 'Person',
           isDataModel: true,
           isArray: true,
           backLink: 'identificationType',
@@ -3479,10 +3498,6 @@ const metadata = {
           type: 'String',
           isForeignKey: true,
           relationField: 'workspace',
-        },
-        role: {
-          name: 'role',
-          type: 'String',
         },
         user: {
           name: 'user',
@@ -3704,6 +3719,12 @@ const metadata = {
           type: 'String',
           isOptional: true,
         },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
         memberId: {
           name: 'memberId',
           type: 'String',
@@ -3736,12 +3757,6 @@ const metadata = {
           isOptional: true,
           isForeignKey: true,
           relationField: 'conversation',
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
         },
         member: {
           name: 'member',
@@ -3831,6 +3846,10 @@ const metadata = {
           isId: true,
           attributes: [{ name: '@default', args: [] }],
         },
+        value: {
+          name: 'value',
+          type: 'String',
+        },
         workspaceId: {
           name: 'workspaceId',
           type: 'String',
@@ -3848,10 +3867,6 @@ const metadata = {
           type: 'String',
           isForeignKey: true,
           relationField: 'member',
-        },
-        value: {
-          name: 'value',
-          type: 'String',
         },
         workspace: {
           name: 'workspace',
@@ -4080,6 +4095,14 @@ function $default$DocumentAssignment$createdBy(user: any): unknown {
 }
 
 function $default$DocumentAssignment$modifiedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Person$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Person$modifiedBy(user: any): unknown {
   return user?.id;
 }
 

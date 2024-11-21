@@ -468,7 +468,7 @@ export function useSuspenseCountTwoFactorToken<
 }
 
 export function useCheckTwoFactorToken<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { tenantId?: string; id?: string; email?: string; token?: string } },
+  args: { operation: PolicyCrudKind; where?: { id?: string; email?: string; token?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

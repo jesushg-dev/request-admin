@@ -3,7 +3,7 @@
 import type * as z from 'zod';
 import { AuthError } from 'next-auth';
 
-import { db } from '@/server/db';
+import { db } from '@/server/db-client';
 import { LoginSchema } from '@/services/schemas';
 import { getUserByEmail } from '@/services/data/user';
 import { getTwoFactorTokenByEmail } from '@/services/data/two-factor-token';
@@ -13,7 +13,7 @@ import { generateVerificationToken, generateTwoFactorToken } from '@/services/li
 import { getTwoFactorConfirmationByUserId } from '@/services/data/two-factor-confirmation';
 import { signIn } from '@/server/auth';
 
-export const login = async (values: z.infer<typeof LoginSchema>, tenantId: string, callbackUrl?: string | null) => {
+export const login = async (values: z.infer<typeof LoginSchema>, callbackUrl?: string | null) => {
   const validatedFields = LoginSchema.safeParse(values);
 
   if (!validatedFields.success) {
@@ -68,7 +68,6 @@ export const login = async (values: z.infer<typeof LoginSchema>, tenantId: strin
 
       await db.twoFactorConfirmation.create({
         data: {
-          tenantId: tenantId,
           userId: existingUser.id,
         },
       });

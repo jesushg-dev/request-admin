@@ -1,6 +1,6 @@
 'use server';
 
-import { db } from '@/server/db';
+import { db } from '@/server/db-client';
 import { getUserByEmail } from '@/services/data/user';
 import { getVerificationTokenByToken } from '@/services/data/verificiation-token';
 
