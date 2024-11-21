@@ -4,8 +4,7 @@ import { SessionProvider } from 'next-auth/react';
 import { TRPCReactProvider } from '@/trpc/react';
 import { ThemeProvider } from 'next-themes';
 
-import { GeistSans } from 'geist/font/sans';
-import { Inter } from 'next/font/google';
+import localFont from 'next/font/local';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { NextIntlClientProvider } from 'next-intl';
 import { notFound } from 'next/navigation';
@@ -17,10 +16,16 @@ import { Toaster } from '@/components/ui/sonner';
 import { ToastContainer } from 'react-toastify';
 
 // Font configuration
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-sans',
-  weight: ['400', '500', '600', '700'],
+const geistSans = localFont({
+  src: '../fonts/GeistVF.woff',
+  variable: '--font-geist-sans',
+  weight: '100 900',
+});
+
+const geistMono = localFont({
+  src: '../fonts/GeistMonoVF.woff',
+  variable: '--font-geist-mono',
+  weight: '100 900',
 });
 
 // Metadata configuration with localization support
@@ -60,8 +65,8 @@ export default async function RootLayout({ children, params }: Props) {
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`${GeistSans.variable} ${inter.variable} antialiased`}>
-      <body data-theme="light" className="font-sans" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <SessionProvider session={session}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <NextIntlClientProvider locale={locale} messages={messages}>
