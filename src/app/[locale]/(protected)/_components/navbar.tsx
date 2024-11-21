@@ -22,7 +22,7 @@ export const Navbar = () => {
           <Link href="/prullenbak/admin">Admin</Link>
         </Button>
         <Button asChild variant={pathname === '/settings' ? 'default' : 'outline'}>
-          <Link href="/settings">Settings</Link>
+          <Link href="/prullenbak/settings">Settings</Link>
         </Button>
       </div>
       <UserButton />

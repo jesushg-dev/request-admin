@@ -5,7 +5,6 @@ import { useCurrentUser } from '@/hooks/use-current-user.hook';
 
 const ClientPage = () => {
   const user = useCurrentUser();
-  console.log('🚀 ~ ClientPage ~ user:', user);
 
   return <UserInfo label="📱 Client component" user={user} />;
 };

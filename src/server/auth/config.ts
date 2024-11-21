@@ -7,43 +7,18 @@ import Github from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
 
 import { LoginSchema } from '@/services/schemas';
-import { getUserByEmail, getUserById } from '@/services/data/user';
+import { getUserByEmail, getUserById, getUserByIdWithPermissions } from '@/services/data/user';
 import { getAccountByUserId } from '@/services/data/account';
 import { getTwoFactorConfirmationByUserId } from '@/services/data/two-factor-confirmation';
 import { db } from '../db-client';
 
-/**
- * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
- * object and keep type safety.
- *
- * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
- */
-declare module 'next-auth' {
-  interface Session extends DefaultSession {
-    user: {
-      id: string;
-      permissions: string[];
-      isTwoFactorEnabled: boolean;
-      isOAuth: boolean;
-      tenantId: string;
-      // ...other properties
-      // role: UserRole;
-    } & DefaultSession['user'];
-  }
-
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
-}
-
 export type ExtendedUser = DefaultSession['user'] & {
   id: string;
-  permissions: string[];
   isTwoFactorEnabled: boolean;
   isOAuth: boolean;
   tenantId: string;
-  // role: UserRole;
+  permissions: string[];
+  roles: string[];
 };
 
 /**
@@ -90,22 +65,17 @@ export const authConfig: NextAuthConfig = {
       return true;
     },
     async session({ token, session }) {
-      if (token.sub && session.user) {
+      if (!session.user) return session;
+
+      session.user.name = token.name;
+      session.user.email = token.email!;
+      session.user.isOAuth = token.isOAuth as boolean;
+      session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
+      session.user.permissions = token.permissions as string[] | [];
+      session.user.roles = token.roles as string[] | [];
+
+      if (token.sub) {
         session.user.id = token.sub;
-      }
-
-      if (token.role && session.user) {
-        session.user.permissions = token.permissions as string[];
-      }
-
-      if (session.user) {
-        session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
-      }
-
-      if (session.user) {
-        session.user.name = token.name;
-        session.user.email = token.email!;
-        session.user.isOAuth = token.isOAuth as boolean;
       }
 
       return session;
@@ -113,7 +83,7 @@ export const authConfig: NextAuthConfig = {
     async jwt({ token }) {
       if (!token.sub) return token;
 
-      const existingUser = await getUserById(token.sub);
+      const existingUser = await getUserByIdWithPermissions(token.sub);
 
       if (!existingUser) return token;
 
@@ -124,6 +94,8 @@ export const authConfig: NextAuthConfig = {
       token.email = existingUser.email;
       token.picture = existingUser.image;
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
+      token.permissions = existingUser.permissions || [];
+      token.roles = existingUser.roles || [];
 
       return token;
     },
