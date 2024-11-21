@@ -5,7 +5,7 @@ import { auth } from './server/auth';
 import { locales, routing } from './i18n/routing';
 import { apiAuthPrefix, authRoutes, DEFAULT_LOGIN_REDIRECT, publicRoutes } from './routes';
 
-const publicPages = ['/', '/auth/*'];
+const publicPages = ['/', '/auth/*', '/about/*'];
 
 const intlMiddleware = createIntlMiddleware(routing);
 

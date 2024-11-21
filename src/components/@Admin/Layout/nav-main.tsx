@@ -13,21 +13,20 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
+import { Link } from '@/i18n/routing';
 
-export function NavMain({
-  items,
-}: {
-  items: {
+export type MenuItem = {
+  title: string;
+  icon?: LucideIcon;
+  isActive?: boolean;
+  items?: {
     title: string;
     url: string;
     icon?: LucideIcon;
-    isActive?: boolean;
-    items?: {
-      title: string;
-      url: string;
-    }[];
   }[];
-}) {
+};
+
+export function NavMain({ items }: { items: MenuItem[] }) {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -47,9 +46,10 @@ export function NavMain({
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
                       <SidebarMenuSubButton asChild>
-                        <a href={subItem.url}>
-                          <span>{subItem.title}</span>
-                        </a>
+                        <Link href={subItem.url}>
+                          {subItem.icon && <subItem.icon />}
+                          {subItem.title}
+                        </Link>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   ))}

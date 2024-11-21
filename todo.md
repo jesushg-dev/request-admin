@@ -12,7 +12,7 @@
 
 - Role-Based Access Control (RBAC)
 - Permissions Management
-- Middleware for Protected Routes
+- Middleware for Protected Routes {cm:2024-11-21}
 
 ## **Multi-Tenant System**
 

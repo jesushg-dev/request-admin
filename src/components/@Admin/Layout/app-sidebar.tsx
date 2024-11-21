@@ -1,42 +1,139 @@
 'use client';
 
 import * as React from 'react';
-import { AudioWaveform, BookOpen, Bot, Command, Frame, GalleryVerticalEnd, Map, PieChart, Settings2, SquareTerminal } from 'lucide-react';
-
-import { NavMain } from '@/components/@Admin/Layout/nav-main';
-import { NavProjects } from '@/components/@Admin/Layout/nav-projects';
+import { MenuItem, NavMain } from '@/components/@Admin/Layout/nav-main';
+import { MenuProject, NavProjects } from '@/components/@Admin/Layout/nav-projects';
 import { NavUser } from '@/components/@Admin/Layout/nav-user';
 import { TeamSwitcher } from '@/components/@Admin/Layout/team-switcher';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '@/components/ui/sidebar';
 
-// This is sample data.
-const data = {
-  user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
+import { PieChartIcon, FolderIcon, SettingsIcon } from 'lucide-react';
+import { AudioWaveform, BookOpen, Bot, Command, Frame, GalleryVerticalEnd, Map, PieChart, Settings2, SquareTerminal } from 'lucide-react';
+import { HomeIcon, FileTextIcon, BriefcaseIcon, UsersIcon, LockIcon, LayersIcon, ShieldIcon, ClipboardIcon, GridIcon, ListIcon } from 'lucide-react';
+
+import { logout } from '@/actions/logout';
+import { useCurrentUser } from '@/hooks/use-current-user.hook';
+import { useTranslations } from 'next-intl';
+
+const teams = [
+  {
+    name: 'Acme Inc',
+    logo: GalleryVerticalEnd,
+    plan: 'Enterprise',
   },
-  teams: [
+  {
+    name: 'Acme Corp.',
+    logo: AudioWaveform,
+    plan: 'Startup',
+  },
+  {
+    name: 'Evil Corp.',
+    logo: Command,
+    plan: 'Free',
+  },
+];
+
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const user = useCurrentUser();
+  const t = useTranslations('admin.sidebar');
+
+  const navMain: MenuItem[] = [
     {
-      name: 'Acme Inc',
-      logo: GalleryVerticalEnd,
-      plan: 'Enterprise',
+      title: t('mainMenu'),
+      icon: PieChartIcon, // Icon for "Main Menu"
+      items: [
+        {
+          title: t('dashboard'),
+          url: '/admin',
+          icon: HomeIcon,
+        },
+      ],
     },
     {
-      name: 'Acme Corp.',
-      logo: AudioWaveform,
-      plan: 'Startup',
+      title: t('requests'),
+      icon: FolderIcon, // Icon for "Incidents and Documents"
+      items: [
+        {
+          title: t('case'),
+          url: '/admin/request',
+          icon: ClipboardIcon,
+        },
+        {
+          title: t('documents'),
+          url: '/admin/document',
+          icon: FileTextIcon,
+        },
+        {
+          title: t('serviceType'),
+          url: '/admin/service-type',
+          icon: LayersIcon,
+        },
+        {
+          title: t('salesChannel'),
+          url: '/admin/sales-channel',
+          icon: BriefcaseIcon,
+        },
+        {
+          title: t('requirements'),
+          url: '/admin/requirement',
+          icon: ListIcon,
+        },
+        {
+          title: t('formDesigner'),
+          url: '/admin/form-designer',
+          icon: GridIcon,
+        },
+      ],
     },
     {
-      name: 'Evil Corp.',
-      logo: Command,
-      plan: 'Free',
+      title: t('management'),
+      icon: SettingsIcon, // Icon for "Management and Organization"
+      items: [
+        {
+          title: t('area'),
+          url: '/admin/area',
+          icon: GridIcon,
+        },
+        {
+          title: t('caseType'),
+          url: '/admin/request-type',
+          icon: ClipboardIcon,
+        },
+        {
+          title: t('category'),
+          url: '/admin/category',
+          icon: LayersIcon,
+        },
+        {
+          title: t('client'),
+          url: '/admin/client',
+          icon: UsersIcon,
+        },
+      ],
     },
-  ],
-  navMain: [
+    {
+      title: t('security'),
+      icon: ShieldIcon, // Icon for "Security and Access"
+      items: [
+        {
+          title: t('role'),
+          url: '/admin/role',
+          icon: ShieldIcon,
+        },
+        {
+          title: t('module'),
+          url: '/admin/module',
+          icon: LockIcon,
+        },
+        {
+          title: t('user'),
+          url: '/admin/user',
+          icon: UsersIcon,
+        },
+      ],
+    },
     {
       title: 'Orc Warrior Ground',
-      url: '#',
       icon: SquareTerminal,
       isActive: true,
       items: [
@@ -56,7 +153,6 @@ const data = {
     },
     {
       title: 'Models',
-      url: '#',
       icon: Bot,
       items: [
         {
@@ -75,7 +171,6 @@ const data = {
     },
     {
       title: 'Documentation',
-      url: '#',
       icon: BookOpen,
       items: [
         {
@@ -98,7 +193,6 @@ const data = {
     },
     {
       title: 'Settings',
-      url: '#',
       icon: Settings2,
       items: [
         {
@@ -119,8 +213,9 @@ const data = {
         },
       ],
     },
-  ],
-  projects: [
+  ];
+
+  const projects: MenuProject[] = [
     {
       name: 'Design Engineering',
       url: '#',
@@ -136,22 +231,22 @@ const data = {
       url: '#',
       icon: Map,
     },
-  ],
-};
+  ];
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const onLogout = () => {
+    logout();
+  };
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher teams={teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <NavMain items={navMain} />
+        <NavProjects projects={projects} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
+      <SidebarFooter>{user && <NavUser onLogout={onLogout} user={user} />}</SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

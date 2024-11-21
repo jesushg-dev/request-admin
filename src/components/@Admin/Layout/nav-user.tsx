@@ -16,12 +16,14 @@ import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/c
 
 export function NavUser({
   user,
+  onLogout,
 }: {
   user: {
-    name: string;
-    email: string;
-    avatar: string;
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
   };
+  onLogout: () => void;
 }) {
   const { isMobile } = useSidebar();
 
@@ -32,8 +34,8 @@ export function NavUser({
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarImage src={user.image ?? '/avatars/shadcn.jpg'} alt={user.name ?? 'user'} />
+                <AvatarFallback className="rounded-lg"> {getAvatarFallback(user.name)}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{user.name}</span>
@@ -46,8 +48,8 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarImage src={user.image ?? '/avatars/shadcn.jpg'} alt={user.name ?? 'user'} />
+                  <AvatarFallback className="rounded-lg"> {getAvatarFallback(user.name)}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">{user.name}</span>
@@ -78,7 +80,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={onLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>
@@ -88,3 +90,11 @@ export function NavUser({
     </SidebarMenu>
   );
 }
+
+const getAvatarFallback = (name?: string | null) => {
+  if (!name) return 'CN'; // Default fallback
+  const nameParts = name.trim().split(' '); // Split the name by spaces
+  return nameParts.length > 1
+    ? `${nameParts[0]?.[0] ?? ''}${nameParts[1]?.[0] ?? ''}`.toUpperCase() // Use initials of the first and last name
+    : (nameParts[0]?.[0] ?? '').toUpperCase(); // Use the first letter of the single name
+};
