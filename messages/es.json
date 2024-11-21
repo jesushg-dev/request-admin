@@ -1,4 +1,10 @@
 {
+  "home": {
+    "title": "Request Engine",
+    "description": "Un sistema robusto y escalable diseñado para optimizar la gestión de solicitudes de servicios de telecomunicaciones, siguiendo las mejores prácticas de ITIL.",
+    "applicationName": "Gestor de Servicios",
+    "keywords": "telecomunicaciones, gestión de servicios, ITIL, cumplimiento de solicitudes, flujo de trabajo, multi-tenant"
+  },
   "admin": {
     "sidebar": {
       "mainMenu": "Menú Principal",

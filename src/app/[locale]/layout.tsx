@@ -30,14 +30,25 @@ const geistMono = localFont({
 
 // Metadata configuration with localization support
 export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'LocaleLayout' });
+  const { locale } = params;
+  const t = await getTranslations({ locale, namespace: 'home' });
 
   return {
-    metadataBase: new URL('http://localhost:3000'),
     title: t('title'),
     description: t('description'),
+    applicationName: t('applicationName'),
     icons: [{ rel: 'icon', url: '/favicon.ico' }],
+    authors: [
+      {
+        name: 'Jesús Hernández',
+        url: 'https://www.jesushg.com',
+      },
+      {
+        name: 'Danilo Acevedo',
+        url: 'https://www.daniloacevedo.com',
+      },
+    ],
+    keywords: t('keywords'),
   };
 }
 

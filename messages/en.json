@@ -1,4 +1,10 @@
 {
+  "home": {
+    "title": "Request Engine",
+    "description": "A robust and scalable system designed to streamline the management of telecommunication service requests, adhering to ITIL best practices.",
+    "applicationName": "Service Manager",
+    "keywords": "telecommunications, service management, ITIL, request fulfillment, workflow, multi-tenant"
+  },
   "admin": {
     "sidebar": {
       "mainMenu": "Main Menu",
