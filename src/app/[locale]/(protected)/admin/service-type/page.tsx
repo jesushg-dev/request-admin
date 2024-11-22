@@ -23,7 +23,7 @@ import { api, RouterOutputs } from '@/trpc/react';
 import { Link } from '@/i18n/routing';
 import { triggerConfirm } from '@/services/lib/message';
 import useSubmit from '@/hooks/use-submit.hook';
-import ErrorRetryFallback from '@/components/ErrorRetryFallback';
+import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 
 type ServiceTypeOutputType = RouterOutputs['serviceType']['findMany'][0];
 

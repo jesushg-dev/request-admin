@@ -14,8 +14,8 @@ import { settings } from '@/actions/settings';
 import { Form, FormField, FormControl, FormItem, FormLabel, FormDescription, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useCurrentUser } from '@/hooks/use-current-user.hook';
-import { FormError } from '@/components/form-error';
-import { FormSuccess } from '@/components/form-success';
+import { FormError } from '@/components/prullenbak/form-error';
+import { FormSuccess } from '@/components/prullenbak/form-success';
 import { SettingsSchema } from '@/services/schemas';
 
 const SettingsPage = () => {

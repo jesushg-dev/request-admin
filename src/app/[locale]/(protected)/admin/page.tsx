@@ -1,7 +1,7 @@
-import Kanban from '@/components/@Admin/dashboard/Kanban';
+import Kanban from '@/components/admin/dashboard/Kanban';
 
 const DashboardPage = () => {
-  return <></>;
+  return <Kanban />;
 };
 
 export default DashboardPage;

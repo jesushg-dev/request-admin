@@ -8,8 +8,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FormCreateSchema } from '@zenstackhq/runtime/zod/models';
 
 import { api } from '@/trpc/react';
-import { Input } from '@/components/Form';
-import ErrorList from '@/components/Form/ErrorList';
+import { Input } from '@/components/form';
+import ErrorList from '@/components/form/error-list';
 import useSubmit from '@/hooks/use-submit.hook';
 
 type FormCreateType = z.infer<typeof FormCreateSchema>;

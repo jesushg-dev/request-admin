@@ -1,7 +1,7 @@
 'use client';
 
 import { useCurrentRole } from '@/hooks/use-current-role.hook';
-import { FormError } from '@/components/form-error';
+import { FormError } from '@/components/prullenbak/form-error';
 import { useTranslations } from 'next-intl';
 
 interface RoleGateProps {

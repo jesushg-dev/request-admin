@@ -9,9 +9,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { UserUpdateSchema } from '@zenstackhq/runtime/zod/models';
 
 import { api } from '@/trpc/react';
-import { Input } from '@/components/Form';
-import ErrorList from '@/components/Form/ErrorList';
-import ErrorRetryFallback from '@/components/ErrorRetryFallback';
+import { Input } from '@/components/form';
+import ErrorList from '@/components/form/error-list';
+import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import useSubmit from '@/hooks/use-submit.hook';
 
 type UserUpdateType = z.infer<typeof UserUpdateSchema>;

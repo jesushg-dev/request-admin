@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
-import { AppSidebar } from '@/components/@Admin/Layout/app-sidebar';
-import { ModeToggle } from '@/components/@Admin/Layout/mode-toogle';
+import { AppSidebar } from '@/components/admin/layout/app-sidebar';
+import { ModeToggle } from '@/components/admin/layout/mode-toogle';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { getTranslations } from 'next-intl/server';
 

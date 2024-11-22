@@ -2,7 +2,7 @@
 
 import { admin } from '@/actions/admin';
 import { RoleGate } from '@/components/auth/role-gate';
-import { FormSuccess } from '@/components/form-success';
+import { FormSuccess } from '@/components/prullenbak/form-success';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { toast } from 'sonner';

@@ -6,8 +6,8 @@ import { useSearchParams } from 'next/navigation';
 
 import { newVerification } from '@/actions/new-verification';
 import { CardWrapper } from '@/components/auth/card-wrapper';
-import { FormError } from '@/components/form-error';
-import { FormSuccess } from '@/components/form-success';
+import { FormError } from '@/components/prullenbak/form-error';
+import { FormSuccess } from '@/components/prullenbak/form-success';
 import { useTranslations } from 'next-intl';
 
 export const NewVerificationForm = () => {
