@@ -39,15 +39,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const navMain: MenuItem[] = [
     {
-      title: t('mainMenu'),
-      icon: PieChartIcon, // Icon for "Main Menu"
-      items: [
-        {
-          title: t('dashboard'),
-          url: '/admin',
-          icon: HomeIcon,
-        },
-      ],
+      title: t('dashboard'),
+      icon: HomeIcon, // Icon for "Main Menu"
+      url: '/admin',
+      items: [],
     },
     {
       title: t('requests'),
@@ -129,43 +124,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           title: t('user'),
           url: '/admin/user',
           icon: UsersIcon,
-        },
-      ],
-    },
-    {
-      title: 'Orc Warrior Ground',
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: 'History',
-          url: '#',
-        },
-        {
-          title: 'Starred',
-          url: '#',
-        },
-        {
-          title: 'Settings',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Models',
-      icon: Bot,
-      items: [
-        {
-          title: 'Genesis',
-          url: '#',
-        },
-        {
-          title: 'Explorer',
-          url: '#',
-        },
-        {
-          title: 'Quantum',
-          url: '#',
         },
       ],
     },

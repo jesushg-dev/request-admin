@@ -15,11 +15,13 @@ import { FormError } from '@/components/form-error';
 import { FormSuccess } from '@/components/form-success';
 import { login } from '@/actions/login';
 import { LoginSchema } from '@/services/schemas';
+import { useTranslations } from 'next-intl';
 
 export const LoginForm = () => {
+  const t = useTranslations('auth.loginForm'); // Namespace for translations
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl');
-  const urlError = searchParams.get('error') === 'OAuthAccountNotLinked' ? 'Email already in use with different provider!' : '';
+  const urlError = searchParams.get('error') === 'OAuthAccountNotLinked' ? t('errors.emailInUse') : '';
 
   const [showTwoFactor, setShowTwoFactor] = useState(false);
   const [error, setError] = useState<string | undefined>('');
@@ -56,12 +58,12 @@ export const LoginForm = () => {
             setShowTwoFactor(true);
           }
         })
-        .catch(() => setError('Something went wrong'));
+        .catch(() => setError(t('errors.generic')));
     });
   };
 
   return (
-    <CardWrapper headerLabel="Welcome back" backButtonLabel="Don't have an account?" backButtonHref="/auth/register" showSocial>
+    <CardWrapper headerLabel={t('welcome')} backButtonLabel={t('noAccount')} backButtonHref="/auth/register" showSocial>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
@@ -71,9 +73,9 @@ export const LoginForm = () => {
                 name="code"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Two Factor Code</FormLabel>
+                    <FormLabel>{t('fields.twoFactor')}</FormLabel>
                     <FormControl>
-                      <Input {...field} disabled={isPending} placeholder="123456" />
+                      <Input {...field} disabled={isPending} placeholder={t('placeholders.code')} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -87,9 +89,9 @@ export const LoginForm = () => {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>{t('fields.email')}</FormLabel>
                       <FormControl>
-                        <Input {...field} disabled={isPending} placeholder="john.doe@example.com" type="email" />
+                        <Input {...field} disabled={isPending} placeholder={t('placeholders.email')} type="email" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -100,12 +102,12 @@ export const LoginForm = () => {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel>{t('fields.password')}</FormLabel>
                       <FormControl>
-                        <Input {...field} disabled={isPending} placeholder="******" type="password" />
+                        <Input {...field} disabled={isPending} placeholder={t('placeholders.password')} type="password" />
                       </FormControl>
                       <Button size="sm" variant="link" asChild className="px-0 font-normal">
-                        <Link href="/auth/reset">Forgot password?</Link>
+                        <Link href="/auth/reset">{t('forgotPassword')}</Link>
                       </Button>
                       <FormMessage />
                     </FormItem>
@@ -117,7 +119,7 @@ export const LoginForm = () => {
           <FormError message={error ?? urlError} />
           <FormSuccess message={success} />
           <Button disabled={isPending} type="submit" className="w-full">
-            {showTwoFactor ? 'Confirm' : 'Login'}
+            {showTwoFactor ? t('actions.confirm') : t('actions.login')}
           </Button>
         </form>
       </Form>

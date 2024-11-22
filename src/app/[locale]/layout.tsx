@@ -5,7 +5,7 @@ import { TRPCReactProvider } from '@/trpc/react';
 import { ThemeProvider } from 'next-themes';
 
 import localFont from 'next/font/local';
-import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
+import { getMessages, getTranslations } from 'next-intl/server';
 import { NextIntlClientProvider } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { Locale, routing } from '@/i18n/routing';
@@ -29,7 +29,8 @@ const geistMono = localFont({
 });
 
 // Metadata configuration with localization support
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: { locale: string } }): Promise<Metadata> {
+  const params = await props.params;
   const { locale } = params;
   const t = await getTranslations({ locale, namespace: 'home' });
 

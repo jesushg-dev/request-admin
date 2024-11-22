@@ -13,8 +13,10 @@ import { Button } from '@/components/ui/button';
 import { FormError } from '@/components/form-error';
 import { FormSuccess } from '@/components/form-success';
 import { register } from '@/actions/register';
+import { useTranslations } from 'next-intl';
 
 export const RegisterForm = () => {
+  const t = useTranslations('auth.registerForm');
   const [error, setError] = useState<string | undefined>('');
   const [success, setSuccess] = useState<string | undefined>('');
   const [isPending, startTransition] = useTransition();
@@ -41,7 +43,7 @@ export const RegisterForm = () => {
   };
 
   return (
-    <CardWrapper headerLabel="Create an account" backButtonLabel="Already have an account?" backButtonHref="/auth/login" showSocial>
+    <CardWrapper headerLabel={t('header')} backButtonLabel={t('alreadyHaveAccount')} backButtonHref="/auth/login" showSocial>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
@@ -50,9 +52,9 @@ export const RegisterForm = () => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>{t('fields.name')}</FormLabel>
                   <FormControl>
-                    <Input {...field} disabled={isPending} placeholder="John Doe" />
+                    <Input {...field} disabled={isPending} placeholder={t('placeholders.name')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -63,9 +65,9 @@ export const RegisterForm = () => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{t('fields.email')}</FormLabel>
                   <FormControl>
-                    <Input {...field} disabled={isPending} placeholder="john.doe@example.com" type="email" />
+                    <Input {...field} disabled={isPending} placeholder={t('placeholders.email')} type="email" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -76,9 +78,9 @@ export const RegisterForm = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>{t('fields.password')}</FormLabel>
                   <FormControl>
-                    <Input {...field} disabled={isPending} placeholder="******" type="password" />
+                    <Input {...field} disabled={isPending} placeholder={t('placeholders.password')} type="password" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -88,7 +90,7 @@ export const RegisterForm = () => {
           <FormError message={error} />
           <FormSuccess message={success} />
           <Button disabled={isPending} type="submit" className="w-full">
-            Create an account
+            {t('actions.createAccount')}
           </Button>
         </form>
       </Form>

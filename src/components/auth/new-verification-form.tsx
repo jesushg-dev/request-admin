@@ -8,8 +8,10 @@ import { newVerification } from '@/actions/new-verification';
 import { CardWrapper } from '@/components/auth/card-wrapper';
 import { FormError } from '@/components/form-error';
 import { FormSuccess } from '@/components/form-success';
+import { useTranslations } from 'next-intl';
 
 export const NewVerificationForm = () => {
+  const t = useTranslations('auth.newVerificationForm'); // Namespace for translations
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
 
@@ -21,7 +23,7 @@ export const NewVerificationForm = () => {
     if (success || error) return;
 
     if (!token) {
-      setError('Missing token!');
+      setError(t('errors.missingToken'));
       return;
     }
 
@@ -31,16 +33,16 @@ export const NewVerificationForm = () => {
         setError(data.error);
       })
       .catch(() => {
-        setError('Something went wrong!');
+        setError(t('errors.generic'));
       });
-  }, [token, success, error]);
+  }, [token, success, error, t]);
 
   useEffect(() => {
     onSubmit();
   }, [onSubmit]);
 
   return (
-    <CardWrapper headerLabel="Confirming your verification" backButtonLabel="Back to login" backButtonHref="/auth/login">
+    <CardWrapper headerLabel={t('header')} backButtonLabel={t('backToLogin')} backButtonHref="/auth/login">
       <div className="flex w-full items-center justify-center">
         {!success && !error && <BeatLoader />}
         <FormSuccess message={success} />

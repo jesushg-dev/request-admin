@@ -1,11 +1,108 @@
 {
+  "system": {
+    "roleGate": {
+      "errors": {
+        "noPermission": "You do not have permission to view this content!"
+      }
+    }
+  },
   "home": {
     "title": "Request Engine",
     "description": "A robust and scalable system designed to streamline the management of telecommunication service requests, adhering to ITIL best practices.",
     "applicationName": "Service Manager",
-    "keywords": "telecommunications, service management, ITIL, request fulfillment, workflow, multi-tenant"
+    "keywords": "telecommunications, service management, ITIL, request fulfillment, workflow, multi-tenant",
+    "subHeading": "Optimize, track, and streamline your service request processes.",
+    "signInButton": "Access System"
+  },
+  "auth": {
+    "loginForm": {
+      "welcome": "Welcome back",
+      "noAccount": "Don't have an account?",
+      "fields": {
+        "email": "Email",
+        "password": "Password",
+        "twoFactor": "Two Factor Code"
+      },
+      "placeholders": {
+        "email": "john.doe@example.com",
+        "password": "******",
+        "code": "123456"
+      },
+      "forgotPassword": "Forgot password?",
+      "actions": {
+        "login": "Login",
+        "confirm": "Confirm"
+      },
+      "errors": {
+        "generic": "Something went wrong",
+        "emailInUse": "Email already in use with a different provider!"
+      }
+    },
+    "registerForm": {
+      "header": "Create an account",
+      "alreadyHaveAccount": "Already have an account?",
+      "fields": {
+        "name": "Name",
+        "email": "Email",
+        "password": "Password"
+      },
+      "placeholders": {
+        "name": "John Doe",
+        "email": "john.doe@example.com",
+        "password": "******"
+      },
+      "actions": {
+        "createAccount": "Create an account"
+      }
+    },
+    "newPasswordForm": {
+      "header": "Enter a new password",
+      "backToLogin": "Back to login",
+      "fields": {
+        "password": "Password"
+      },
+      "placeholders": {
+        "password": "******"
+      },
+      "actions": {
+        "resetPassword": "Reset password"
+      },
+      "errors": {
+        "generic": "Something went wrong",
+        "invalidToken": "Invalid or expired token"
+      }
+    },
+    "newVerificationForm": {
+      "header": "Confirming your verification",
+      "backToLogin": "Back to login",
+      "errors": {
+        "missingToken": "Missing token!",
+        "generic": "Something went wrong!"
+      }
+    },
+    "resetForm": {
+      "header": "Forgot your password?",
+      "backToLogin": "Back to login",
+      "fields": {
+        "email": "Email"
+      },
+      "placeholders": {
+        "email": "john.doe@example.com"
+      },
+      "actions": {
+        "sendResetEmail": "Send reset email"
+      },
+      "errors": {
+        "generic": "Something went wrong",
+        "invalidEmail": "Invalid email address"
+      }
+    }
   },
   "admin": {
+    "title": "Admin Panel",
+    "description": "Manage and monitor system operations with efficiency and control.",
+    "applicationName": "Admin Console",
+    "keywords": "admin, dashboard, system management, control panel, operations",
     "sidebar": {
       "mainMenu": "Main Menu",
       "dashboard": "Dashboard",

@@ -1,11 +1,108 @@
 {
+  "system": {
+    "roleGate": {
+      "errors": {
+        "noPermission": "¡No tienes permiso para ver este contenido!"
+      }
+    }
+  },
   "home": {
     "title": "Request Engine",
     "description": "Un sistema robusto y escalable diseñado para optimizar la gestión de solicitudes de servicios de telecomunicaciones, siguiendo las mejores prácticas de ITIL.",
     "applicationName": "Gestor de Servicios",
-    "keywords": "telecomunicaciones, gestión de servicios, ITIL, cumplimiento de solicitudes, flujo de trabajo, multi-tenant"
+    "keywords": "telecomunicaciones, gestión de servicios, ITIL, cumplimiento de solicitudes, flujo de trabajo, multi-tenant",
+    "subHeading": "Optimiza, supervisa y simplifica tus procesos de solicitudes de servicio.",
+    "signInButton": "Acceder al Sistema"
+  },
+  "auth": {
+    "loginForm": {
+      "welcome": "Bienvenido de nuevo",
+      "noAccount": "¿No tienes una cuenta?",
+      "fields": {
+        "email": "Correo electrónico",
+        "password": "Contraseña",
+        "twoFactor": "Código de autenticación"
+      },
+      "placeholders": {
+        "email": "juan.perez@ejemplo.com",
+        "password": "******",
+        "code": "123456"
+      },
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "actions": {
+        "login": "Iniciar sesión",
+        "confirm": "Confirmar"
+      },
+      "errors": {
+        "generic": "Algo salió mal",
+        "emailInUse": "¡El correo ya está en uso con un proveedor diferente!"
+      }
+    },
+    "registerForm": {
+      "header": "Crear una cuenta",
+      "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+      "fields": {
+        "name": "Nombre",
+        "email": "Correo electrónico",
+        "password": "Contraseña"
+      },
+      "placeholders": {
+        "name": "Juan Pérez",
+        "email": "juan.perez@ejemplo.com",
+        "password": "******"
+      },
+      "actions": {
+        "createAccount": "Crear una cuenta"
+      }
+    },
+    "newPasswordForm": {
+      "header": "Introduce una nueva contraseña",
+      "backToLogin": "Volver al inicio de sesión",
+      "fields": {
+        "password": "Contraseña"
+      },
+      "placeholders": {
+        "password": "******"
+      },
+      "actions": {
+        "resetPassword": "Restablecer contraseña"
+      },
+      "errors": {
+        "generic": "Algo salió mal",
+        "invalidToken": "Token inválido o expirado"
+      }
+    },
+    "newVerificationForm": {
+      "header": "Confirmando tu verificación",
+      "backToLogin": "Volver al inicio de sesión",
+      "errors": {
+        "missingToken": "¡Falta el token!",
+        "generic": "¡Algo salió mal!"
+      }
+    },
+    "resetForm": {
+      "header": "¿Olvidaste tu contraseña?",
+      "backToLogin": "Volver al inicio de sesión",
+      "fields": {
+        "email": "Correo electrónico"
+      },
+      "placeholders": {
+        "email": "juan.perez@ejemplo.com"
+      },
+      "actions": {
+        "sendResetEmail": "Enviar correo de restablecimiento"
+      },
+      "errors": {
+        "generic": "Algo salió mal",
+        "invalidEmail": "Dirección de correo no válida"
+      }
+    }
   },
   "admin": {
+    "title": "Panel de Administración",
+    "description": "Gestiona y supervisa las operaciones del sistema con eficiencia y control.",
+    "applicationName": "Consola de Administración",
+    "keywords": "administración, panel de control, gestión del sistema, operaciones",
     "sidebar": {
       "mainMenu": "Menú Principal",
       "dashboard": "Panel",
