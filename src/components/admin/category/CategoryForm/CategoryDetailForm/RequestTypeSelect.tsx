@@ -7,7 +7,7 @@ import type { FC } from 'react';
 import type { CreateCategoryInputs } from '@/connections/category';
 
 // Relative imports
-import { api } from '@/hoc/TRPCReactProvider';
+import { api } from '@/hoc/tanstack-query-provider';
 import Select from '@/components/form/select';
 
 // Icons

@@ -3,7 +3,7 @@ import React, { type FC, useState } from 'react';
 import { MdOutlineEmail, MdPhone, MdHome, MdWeb, MdPalette } from 'react-icons/md';
 import { FaBuilding } from 'react-icons/fa';
 
-import { api } from '@/hoc/TRPCReactProvider';
+import { api } from '@/hoc/tanstack-query-provider';
 import useFormSubmit from '@/hooks/useFormSubmit';
 import { Input, Button, Textarea } from '@/components/form';
 import { useCreateTenantForm } from '@/connections/tenant/useTenantForm';

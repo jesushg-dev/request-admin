@@ -1,6 +1,6 @@
 'use client';
 
-import { FormElementInstance } from '@/components/@BuilderForm/FormElements';
+import { FormElementInstance } from '@/components/builder-form/form-elements';
 import { Dispatch, ReactNode, SetStateAction, createContext, useState } from 'react';
 
 type DesignerContextType = {
@@ -49,10 +49,8 @@ export default function DesignerContextProvider({ children }: { children: ReactN
         setElements,
         addElement,
         removeElement,
-
         selectedElement,
         setSelectedElement,
-
         updateElement,
       }}>
       {children}

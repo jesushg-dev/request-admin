@@ -12,7 +12,7 @@ import SalesChannelSelector from './SalesChannelSelector';
 import ServiceTypeSelector from '../../serviceType/ServiceTypeSelector';
 
 import rswitch from '@/services/lib/rswitch';
-import { api } from '@/hoc/TRPCReactProvider';
+import { api } from '@/hoc/tanstack-query-provider';
 import { CreateClientInputs } from '@/connections/client';
 import type { ClientType } from '@/utils/types';
 import type { RouterOutputs } from '@/server/server';

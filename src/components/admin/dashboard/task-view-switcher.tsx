@@ -1,39 +1,37 @@
-"use client";
+'use client';
 
-import { useCallback } from "react";
-import { useQueryState } from "nuqs";
-import { Loader, Plus } from "lucide-react";
+import { useCallback } from 'react';
+import { useQueryState } from 'nuqs';
+import { Loader, Plus } from 'lucide-react';
 
-import { DottedSeparator } from "@/components/dotted-separator";
-import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
-import { useProjectId } from "@/features/projects/hooks/use-project-id";
+import { DottedSeparator } from '@/components/dotted-separator';
+import { useWorkspaceId } from '@/features/workspaces/hooks/use-workspace-id';
+import { useProjectId } from '@/features/projects/hooks/use-project-id';
 
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-import { columns } from "./columns";
-import { DataTable } from "./data-table";
-import { DataKanban } from "./data-kanban";
-import { DataFilters } from "./data-filters";
-import { DataCalendar } from "./data-calendar";
+import { columns } from './columns';
+import { DataTable } from './data-table';
+import { DataKanban } from './data-kanban';
+import { DataFilters } from './data-filters';
+import { DataCalendar } from './data-calendar';
 
-import { TaskStatus } from "../types";
-import { useGetTasks } from "../api/use-get-tasks";
-import { useTaskFilters } from "../hooks/use-task-filters";
-import { useCreateTaskModal } from "../hooks/use-create-task-modal";
-import { useBulkUpdateTasks } from "../api/use-bulk-update-tasks";
+import { TaskStatus } from '../types';
+import { useGetTasks } from '../api/use-get-tasks';
+import { useTaskFilters } from '../hooks/use-task-filters';
+import { useCreateTaskModal } from '../hooks/use-create-task-modal';
+import { useBulkUpdateTasks } from '../api/use-bulk-update-tasks';
 
 interface TaskViewSwitcherProps {
   hideProjectFilter?: boolean;
 }
 
-export const TaskViewSwitcher = ({
-  hideProjectFilter,
-}: TaskViewSwitcherProps) => {
+export const TaskViewSwitcher = ({ hideProjectFilter }: TaskViewSwitcherProps) => {
   const [{ status, assigneeId, projectId, dueDate }] = useTaskFilters();
 
-  const [view, setView] = useQueryState("task-view", {
-    defaultValue: "table",
+  const [view, setView] = useQueryState('task-view', {
+    defaultValue: 'table',
   });
 
   const workspaceId = useWorkspaceId();
@@ -60,16 +58,14 @@ export const TaskViewSwitcher = ({
       bulkUpdate({
         json: { tasks },
       });
-    }, []);
+    },
+    []
+  );
 
   return (
-    <Tabs
-      defaultValue={view}
-      onValueChange={setView}
-      className="flex-1 w-full border rounded-lg"
-    >
-      <div className="h-full flex flex-col overflow-auto p-4">
-        <div className="flex  lg:flex-row gap-y-2 items-center justify-start w-full">
+    <Tabs defaultValue={view} onValueChange={setView} className="w-full flex-1 rounded-lg border">
+      <div className="flex h-full flex-col overflow-auto p-4">
+        <div className="flex w-full items-center justify-start gap-y-2 lg:flex-row">
           <TabsList className="w-full lg:w-auto">
             <TabsTrigger className="h-8 w-full lg:w-auto" value="table">
               Table
@@ -86,7 +82,7 @@ export const TaskViewSwitcher = ({
             </TabsTrigger>
           </TabsList>
           <Button onClick={open} size="sm" className="w-full lg:w-auto">
-            <Plus className="size-4 mr-2" />
+            <Plus className="mr-2 size-4" />
             New
           </Button>
         </div>
@@ -94,7 +90,7 @@ export const TaskViewSwitcher = ({
         <DataFilters hideProjectFilter={hideProjectFilter} />
         <DottedSeparator className="my-4" />
         {isLoadingTasks ? (
-          <div className="w-full border rounded-lg h-[200px] flex flex-col items-center justify-center">
+          <div className="flex h-[200px] w-full flex-col items-center justify-center rounded-lg border">
             <Loader className="size-5 animate-spin text-muted-foreground" />
           </div>
         ) : (

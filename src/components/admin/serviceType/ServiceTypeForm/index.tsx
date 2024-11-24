@@ -8,7 +8,7 @@ import RequerimentSelector from './RequerimentSelector';
 import ServiceTypeDetailForm from './ServiceTypeDetailForm';
 
 import rswitch from '@/services/lib/rswitch';
-import { api } from '@/hoc/TRPCReactProvider';
+import { api } from '@/hoc/tanstack-query-provider';
 import type { CreateServiceTypeInputs, CreateServiceTypeWithRequirementInputs } from '@/connections/service-type';
 import type { UpdateRequirementInputs as RequirementInputs } from '@/connections/requirement';
 

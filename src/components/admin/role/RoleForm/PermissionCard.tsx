@@ -1,7 +1,7 @@
 import React, { type FC } from 'react';
 
 import { Select } from '@/components/form';
-import { type RouterOutputs } from '@/hoc/TRPCReactProvider';
+import { type RouterOutputs } from '@/hoc/tanstack-query-provider';
 import { type SelectPermissionInputs } from '@/connections/role';
 import type { Control, FormState } from 'react-hook-form';
 

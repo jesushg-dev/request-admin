@@ -80,6 +80,7 @@ model User {
   twoFactorConfirmationId String?                @db.UniqueIdentifier()
   twoFactorConfirmation   TwoFactorConfirmation?
   Authenticators          Authenticator[]
+  superAdmin              Boolean                @default(false)
   name                    String?
   image                   String?
   personId                String?                @db.UniqueIdentifier()

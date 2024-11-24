@@ -2,7 +2,7 @@
 
 import React, { FC } from 'react';
 
-import { api } from '@/hoc/TRPCReactProvider';
+import { api } from '@/hoc/tanstack-query-provider';
 import { useCreaterequestTypeForm } from '@/connections/request-type/useRequestTypeForm';
 import { CreateRequestTypeInputs } from '@/connections/request-type/requestTypeSchemas';
 
