@@ -14,7 +14,8 @@ import { auth } from '@/server/auth';
 import NextTopLoader from 'nextjs-toploader';
 import { Toaster } from '@/components/ui/sonner';
 import { ToastContainer } from 'react-toastify';
-import TanstackQueryProvider from '@/hoc/tanstack-query-provider';
+import TanstackQueryProvider from '@/components/hoc/tanstack-query-provider';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 // Font configuration
 const geistSans = localFont({
@@ -87,7 +88,9 @@ export default async function RootLayout({ children, params }: Props) {
               <Toaster />
               <ToastContainer />
               <TanstackQueryProvider>
-                <TRPCReactProvider>{children}</TRPCReactProvider>
+                <TRPCReactProvider>
+                  <NuqsAdapter>{children}</NuqsAdapter>
+                </TRPCReactProvider>
               </TanstackQueryProvider>
             </NextIntlClientProvider>
           </ThemeProvider>

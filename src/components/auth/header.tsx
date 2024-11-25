@@ -1,6 +1,6 @@
 import { Poppins } from 'next/font/google';
 
-import { cn } from '@/services/lib/utils';
+import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 
 const font = Poppins({

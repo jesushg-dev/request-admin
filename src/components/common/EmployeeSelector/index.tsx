@@ -1,6 +1,6 @@
 import React, { FC, useState, useEffect, useRef } from 'react';
 
-import { api } from '@/hoc/tanstack-query-provider';
+import { api } from '@/components/hoc/tanstack-query-provider';
 import EmployeeCard from './EmployeeCard';
 import { type IEmployee } from '@/utils/types';
 

@@ -12,7 +12,7 @@ import { IoMdCheckbox } from 'react-icons/io';
 
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Switch } from '@/components/ui/switch';
-import { cn } from '@/services/lib/utils';
+import { cn } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
 
 const type: ElementsType = 'CheckboxField';

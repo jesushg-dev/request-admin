@@ -1,7 +1,7 @@
 'use client';
 
 import { useContext } from 'react';
-import { DesignerContext } from '../hoc/designer-context';
+import { DesignerContext } from '../components/hoc/designer-context';
 
 function useDesigner() {
   const context = useContext(DesignerContext);

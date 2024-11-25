@@ -1,4 +1,4 @@
-import { currentUser } from '@/services/lib/auth';
+import { currentUser } from '@/lib/auth';
 import { UserInfo } from '@/components/prullenbak/user-info';
 
 const ServerPage = async () => {

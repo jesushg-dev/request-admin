@@ -7,9 +7,9 @@ import { db } from '@/server/db-client';
 import { LoginSchema } from '@/services/schemas';
 import { getUserByEmail } from '@/services/data/user';
 import { getTwoFactorTokenByEmail } from '@/services/data/two-factor-token';
-import { sendVerificationEmail, sendTwoFactorTokenEmail } from '@/services/lib/mail';
+import { sendVerificationEmail, sendTwoFactorTokenEmail } from '@/lib/mail';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
-import { generateVerificationToken, generateTwoFactorToken } from '@/services/lib/tokens';
+import { generateVerificationToken, generateTwoFactorToken } from '@/lib/tokens';
 import { getTwoFactorConfirmationByUserId } from '@/services/data/two-factor-confirmation';
 import { signIn } from '@/server/auth';
 

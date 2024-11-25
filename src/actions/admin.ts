@@ -1,6 +1,6 @@
 'use server';
 
-import { currentPermissions } from '@/services/lib/auth';
+import { currentPermissions } from '@/lib/auth';
 
 export const admin = async () => {
   const permissions = await currentPermissions();

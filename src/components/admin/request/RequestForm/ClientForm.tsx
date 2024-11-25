@@ -7,7 +7,7 @@ import { MdPerson, MdRestore } from 'react-icons/md';
 
 import ClientDetailForm from '@/components/admin/client/ClientDetailForm';
 
-import rswitch from '@/services/lib/rswitch';
+import rswitch from '@/lib/rswitch';
 import ClientSelector from '@/components/admin/client/ClientSelector';
 import type { ClientType } from '@/utils/types';
 import type { CreateClientInputs } from '@/connections/client';

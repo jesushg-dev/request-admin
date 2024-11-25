@@ -7,7 +7,7 @@ import type { FC } from 'react';
 import type { CreateRequestAssigneeInputs } from '@/connections/request';
 
 // Relative imports
-import { api } from '@/hoc/tanstack-query-provider';
+import { api } from '@/components/hoc/tanstack-query-provider';
 import Select from '@/components/form/select';
 
 // Icons

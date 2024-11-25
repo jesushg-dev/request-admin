@@ -1,7 +1,7 @@
 import { Poppins } from 'next/font/google';
 import { Button } from '@/components/ui/button';
 import { LoginButton } from '@/components/auth/login-button';
-import { cn } from '@/services/lib/utils';
+import { cn } from '@/lib/utils';
 import { getTranslations } from 'next-intl/server';
 
 const font = Poppins({

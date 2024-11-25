@@ -8,7 +8,7 @@ import ModuleForm from './ModuleForm';
 import SummaryForm from './SummaryForm';
 import PermissionsForm from './PermissionsForm';
 
-import rswitch from '@/services/lib/rswitch';
+import rswitch from '@/lib/rswitch';
 import CardForm from '@/components/common/CardForm';
 import { type CreatePermissionsInputs } from '@/connections/permission';
 import { type CreateModuleWithPermissionInputs, type CreateModuleInputs } from '@/connections/module';

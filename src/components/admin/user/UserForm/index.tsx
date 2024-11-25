@@ -7,7 +7,7 @@ import SummaryForm from './SummaryForm';
 import UserDataForm from './UserDataForm';
 import HierarchyTree from './HierarchyTree';
 
-import rswitch from '@/services/lib/rswitch';
+import rswitch from '@/lib/rswitch';
 import { extractRelations } from '@/utils/tools/hierarchy';
 import type { CreateHierarchyInputs, CreateUserInputs } from '@/connections/user';
 import type { AreaUserHierarchy } from '@/server/api/routers/userRouter';

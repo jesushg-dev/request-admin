@@ -21,7 +21,7 @@ import { CommandClickEventArgs, CommandModel } from '@syncfusion/ej2-grids/src/g
 
 import { api, RouterOutputs } from '@/trpc/react';
 import { Link } from '@/i18n/routing';
-import { triggerConfirm } from '@/services/lib/message';
+import { triggerConfirm } from '@/lib/message';
 import useSubmit from '@/hooks/use-submit.hook';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 

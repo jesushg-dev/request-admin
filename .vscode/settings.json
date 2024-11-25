@@ -1,3 +1,3 @@
 {
-    "typescript.tsserver.maxMemory": 4096
+  "typescript.tsserver.maxMemory": 4096
 }

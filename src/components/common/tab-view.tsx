@@ -1,4 +1,4 @@
-import { triggerError } from '@/services/lib/message';
+import { triggerError } from '@/lib/message';
 import React, { createContext, useState, useContext, useEffect, ReactNode, FunctionComponent, SVGProps } from 'react';
 import { twMerge } from 'tailwind-merge';
 

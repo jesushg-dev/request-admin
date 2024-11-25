@@ -5,7 +5,7 @@ import { MdOutlineEmail, MdArchitecture, MdPersonOutline, MdDateRange, MdImage, 
 
 import { ErrorList, Button, Input, Select } from '@/components/form';
 
-import { api } from '@/hoc/tanstack-query-provider';
+import { api } from '@/components/hoc/tanstack-query-provider';
 import { useCreateUserForm } from '@/connections/user';
 import type { CreateUserInputs } from '@/connections/user';
 

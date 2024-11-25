@@ -3,7 +3,7 @@
 import React, { type FC, useState } from 'react';
 import { StepperComponent, StepsDirective, StepDirective } from '@syncfusion/ej2-react-navigations';
 
-import rswitch from '@/services/lib/rswitch';
+import rswitch from '@/lib/rswitch';
 import SubCategoryForm from './SubCategoryForm';
 import CardForm from '@/components/common/CardForm';
 import CategoryDetailForm from './CategoryDetailForm';

@@ -4,7 +4,7 @@ import { MdOutlineFormatListNumbered, MdPerson } from 'react-icons/md';
 import { FiUser, FiMail, FiCalendar, FiImage, FiKey, FiShieldOff, FiLock, FiUserCheck, FiUsers, FiArchive, FiTag } from 'react-icons/fi';
 
 import TabView, { Tab } from '@/components/TabView';
-import rswitch from '@/services/lib/rswitch';
+import rswitch from '@/lib/rswitch';
 
 import { type CreateUserInputs } from '@/connections/user';
 import { type AreaUserHierarchy } from '@/server/api/routers/userRouter';

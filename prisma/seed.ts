@@ -1,5 +1,5 @@
-import { UNSTABLE_TENANT_ID } from '@/services/lib/constant';
-import { hashPassword } from '@/services/lib/password';
+import { UNSTABLE_TENANT_ID } from '@/lib/constant';
+import { hashPassword } from '@/lib/password';
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 

@@ -9,7 +9,7 @@ import useDesigner from '@/hooks/use-designer.hook';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-import { cn } from '@/services/lib/utils';
+import { cn } from '@/lib/utils';
 import { CalendarIcon } from '@radix-ui/react-icons';
 import { format } from 'date-fns';
 import { BsFillCalendarDateFill } from 'react-icons/bs';

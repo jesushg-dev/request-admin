@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { type DefaultError, type UseMutateAsyncFunction } from '@tanstack/react-query';
 
-import MySwal, { triggerError } from '@/services/lib/message';
+import MySwal, { triggerError } from '@/lib/message';
 
 // Update the interface to allow messages to be a string or a function that returns a string
 interface FormSubmitProps<TData = unknown> {

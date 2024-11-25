@@ -10,7 +10,7 @@ import BackAndContinue from '@/components/common/back-and-continue';
 import Scrollable from '@/components/Scrollable';
 import { IoMdTrash } from 'react-icons/io';
 import { triggerConfirmCallback } from '@/utils/tools/message';
-import { api } from '@/hoc/tanstack-query-provider';
+import { api } from '@/components/hoc/tanstack-query-provider';
 
 interface CreateSubCategoryFormProps {
   goBack: () => void;

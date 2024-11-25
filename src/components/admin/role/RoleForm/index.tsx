@@ -9,7 +9,7 @@ import RoleDetailForm from './RoleDetailForm';
 import PermissionSelector from './PermissionSelector';
 
 import { toast } from 'react-toastify';
-import rswitch from '@/services/lib/rswitch';
+import rswitch from '@/lib/rswitch';
 import type { CreateRoleWithPermissionsAndEmployeesInputs, SelectPermissionInputs, CreateRoleInputs } from '@/connections/role';
 import type { IEmployee } from '@/utils/types';
 

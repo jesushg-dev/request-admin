@@ -7,7 +7,7 @@ import { HiCursorClick } from 'react-icons/hi';
 import { toast } from '@/components/ui/use-toast';
 import { ImSpinner2 } from 'react-icons/im';
 import { SubmitForm } from '@/actions/form';
-import { UNSTABLE_TENANT_ID } from '@/services/lib/constant';
+import { UNSTABLE_TENANT_ID } from '@/lib/constant';
 
 function FormSubmitComponent({ formUrl, content }: { content: FormElementInstance[]; formUrl: string }) {
   const formValues = useRef<Record<string, string>>({});

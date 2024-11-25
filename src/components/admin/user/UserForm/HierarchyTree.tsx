@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, type FC } from 'react';
 
-import { api, RouterOutputs } from '@/hoc/tanstack-query-provider';
-import { TreeHierarchyProvider, useTreeHierarchyContext } from '@/hoc/TreeHierarchyContext';
+import { api, RouterOutputs } from '@/components/hoc/tanstack-query-provider';
+import { TreeHierarchyProvider, useTreeHierarchyContext } from '@/components/hoc/tree-hierarchy-context';
 import { SortableTree, FolderTreeItemWrapper, TreeItemComponentProps } from 'dnd-kit-sortable-tree';
 import { Button } from '@/components/form';
 

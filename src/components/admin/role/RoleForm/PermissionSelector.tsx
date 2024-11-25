@@ -5,7 +5,7 @@ import React, { useEffect, type FC } from 'react';
 import PermissionCard from './PermissionCard';
 import BackAndContinue from '@/components/common/back-and-continue';
 
-import { api } from '@/hoc/tanstack-query-provider';
+import { api } from '@/components/hoc/tanstack-query-provider';
 import { ErrorList } from '@/components/form';
 import { useSelectPermissionForm, type SelectPermissionInputs } from '@/connections/role';
 

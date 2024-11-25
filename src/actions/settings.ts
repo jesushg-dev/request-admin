@@ -6,9 +6,9 @@ import bcrypt from 'bcryptjs';
 import { db } from '@/server/db-client';
 import { SettingsSchema } from '@/services/schemas';
 import { getUserByEmail, getUserById } from '@/services/data/user';
-import { currentUser } from '@/services/lib/auth';
-import { generateVerificationToken } from '@/services/lib/tokens';
-import { sendVerificationEmail } from '@/services/lib/mail';
+import { currentUser } from '@/lib/auth';
+import { generateVerificationToken } from '@/lib/tokens';
+import { sendVerificationEmail } from '@/lib/mail';
 import { update } from '@/server/auth';
 
 export const settings = async (values: z.infer<typeof SettingsSchema>) => {
