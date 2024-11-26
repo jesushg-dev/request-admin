@@ -165,6 +165,7 @@ model Area extends TenantScoped, Auditable {
   // Area details
   name            String   @db.VarChar(100) @unique // Unique name of the area
   description     String?  @db.VarChar(255) // Optional description of the area
+  status          Boolean  @default(true) // Indicates if the area is active
 
   // Relationships
   user            User[] // Users linked to the area
