@@ -1,4 +1,3 @@
-import '@/styles/globals.css';
 import { type Metadata } from 'next';
 import { SessionProvider } from 'next-auth/react';
 import { TRPCReactProvider } from '@/trpc/react';
