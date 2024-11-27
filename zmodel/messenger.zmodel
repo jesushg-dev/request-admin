@@ -63,7 +63,6 @@ model Channel extends TenantScoped {
   @@index([workspaceId]) // Index for efficient queries by workspaceId
 }
 
-
 // Conversation model: Represents a direct conversation between two members
 model Conversation extends TenantScoped {
   // Primary identifier
@@ -114,7 +113,6 @@ model Message extends TenantScoped {
   @@index([conversationId]) // Index for conversation queries
   @@index([channelId, parentMessageId, conversationId]) // Composite index for multi-dimensional queries
 }
-
 
 // Reaction model: Represents reactions to messages in a workspace
 model Reaction extends TenantScoped {

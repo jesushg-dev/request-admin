@@ -415,13 +415,16 @@ export function useCheckRequest<TError = DefaultError>(
       modifiedBy?: string;
       tenantId?: string;
       id?: string;
-      serviceTypeId?: string;
       clientId?: string;
       issueSubject?: string;
       description?: string;
       priority?: string;
       closedBy?: string;
       closedComment?: string;
+      status?: string;
+      comment?: string;
+      serviceCategoryId?: string;
+      assignmentCategoryId?: string;
       formSubmissionId?: string;
     };
   },

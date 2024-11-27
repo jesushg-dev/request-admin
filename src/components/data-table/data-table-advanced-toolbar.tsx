@@ -8,6 +8,8 @@ import { cn } from '@/lib/utils';
 import { DataTableFilterList } from '@/components/data-table/data-table-filter-list';
 import { DataTableSortList } from '@/components/data-table/data-table-sort-list';
 import { DataTableViewOptions } from '@/components/data-table/data-table-view-options';
+import { Skeleton } from '../ui/skeleton';
+import { DateRangePicker } from '../date-range-picker';
 
 interface DataTableAdvancedToolbarProps<TData> extends React.HTMLAttributes<HTMLDivElement> {
   /**
@@ -68,6 +70,9 @@ export function DataTableAdvancedToolbar<TData>({
       <div className="flex items-center gap-2">
         <DataTableFilterList table={table} filterFields={filterFields} debounceMs={debounceMs} shallow={shallow} />
         <DataTableSortList table={table} debounceMs={debounceMs} shallow={shallow} />
+        <React.Suspense fallback={<Skeleton className="h-7 w-52" />}>
+          <DateRangePicker triggerSize="sm" triggerClassName="ml-auto w-56 sm:w-60" align="end" shallow={false} />
+        </React.Suspense>
       </div>
       <div className="flex items-center gap-2">
         {children}

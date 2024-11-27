@@ -23,19 +23,15 @@ import createPasswordResetTokenRouter from './PasswordResetToken.router';
 import createTwoFactorTokenRouter from './TwoFactorToken.router';
 import createTwoFactorConfirmationRouter from './TwoFactorConfirmation.router';
 import createAuthenticatorRouter from './Authenticator.router';
+import createHierarchyRouter from './Hierarchy.router';
+import createHierarchyLevelRouter from './HierarchyLevel.router';
+import createCategoryRouter from './Category.router';
 import createRequestRouter from './Request.router';
 import createRequestAssignmentRouter from './RequestAssignment.router';
-import createRequestStateRouter from './RequestState.router';
-import createRequirementRouter from './Requirement.router';
-import createRequirementComplianceTrackingRouter from './RequirementComplianceTracking.router';
-import createRequirementServiceTypeAssociationRouter from './RequirementServiceTypeAssociation.router';
-import createServiceTypeRouter from './ServiceType.router';
-import createSalesChannelRouter from './SalesChannel.router';
-import createCategoryRequirementRouter from './CategoryRequirement.router';
 import createAreaRouter from './Area.router';
-import createRequestTypeRouter from './RequestType.router';
-import createCategoryRouter from './Category.router';
-import createSubCategoryRouter from './SubCategory.router';
+import createRequirementRouter from './Requirement.router';
+import createCategoryRequirementRouter from './CategoryRequirement.router';
+import createRequirementComplianceTrackingRouter from './RequirementComplianceTracking.router';
 import createFormRouter from './Form.router';
 import createFormSubmissionRouter from './FormSubmission.router';
 import createDocumentRouter from './Document.router';
@@ -74,19 +70,15 @@ export function createRouter() {
     twoFactorToken: createTwoFactorTokenRouter(),
     twoFactorConfirmation: createTwoFactorConfirmationRouter(),
     authenticator: createAuthenticatorRouter(),
+    hierarchy: createHierarchyRouter(),
+    hierarchyLevel: createHierarchyLevelRouter(),
+    category: createCategoryRouter(),
     request: createRequestRouter(),
     requestAssignment: createRequestAssignmentRouter(),
-    requestState: createRequestStateRouter(),
-    requirement: createRequirementRouter(),
-    requirementComplianceTracking: createRequirementComplianceTrackingRouter(),
-    requirementServiceTypeAssociation: createRequirementServiceTypeAssociationRouter(),
-    serviceType: createServiceTypeRouter(),
-    salesChannel: createSalesChannelRouter(),
-    categoryRequirement: createCategoryRequirementRouter(),
     area: createAreaRouter(),
-    requestType: createRequestTypeRouter(),
-    category: createCategoryRouter(),
-    subCategory: createSubCategoryRouter(),
+    requirement: createRequirementRouter(),
+    categoryRequirement: createCategoryRequirementRouter(),
+    requirementComplianceTracking: createRequirementComplianceTrackingRouter(),
     form: createFormRouter(),
     formSubmission: createFormSubmissionRouter(),
     document: createDocumentRouter(),

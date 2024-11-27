@@ -1,35 +1,31 @@
 'use client';
 
 import React, { memo } from 'react';
-import { z } from 'zod';
 
-import { DateRangePicker } from '@/components/date-range-picker';
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-advanced-toolbar';
 import { DataTableSkeleton } from '@/components/data-table/data-table-skeleton';
-import { DataTableToolbar } from '@/components/data-table/data-table-toolbar';
 import { Shell } from '@/components/shell';
-import { Skeleton } from '@/components/ui/skeleton';
 import { getValidFilters } from '@/lib/data-table';
 import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFindManyArea } from '@/services/api/hooks';
 
 import { Area as AreaType } from '@zenstackhq/runtime/models';
-import { useQueryStates, parseAsArrayOf, parseAsInteger, parseAsString, parseAsStringEnum } from 'nuqs';
+import { useQueryStates, parseAsInteger, parseAsString, parseAsStringEnum } from 'nuqs';
 import { DataTableRowAction, DataTableFilterField, DataTableAdvancedFilterField } from '@/types';
 
-import { FeatureFlagsProvider } from './_components/feature-flags-provider';
 import { TasksTableFloatingBar } from './_components/tasks-table-floating-bar';
 import { TasksTableToolbarActions } from './_components/tasks-table-toolbar-actions';
 import { getColumns } from './_components/tasks-table-columns';
 import { UNSTABLE_TENANT_ID } from '@/lib/constant';
 
 const searchParamsParsers = {
-  flags: parseAsArrayOf(z.enum(['advancedTable', 'floatingBar'])).withDefault([]),
+  // pagination
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(10),
   sort: getSortingStateParser<AreaType>().withDefault([{ id: 'createdAt', desc: true }]),
+  // filter
   title: parseAsString.withDefault(''),
   from: parseAsString.withDefault(''),
   to: parseAsString.withDefault(''),
@@ -47,9 +43,9 @@ const AreaMainPage: React.FC<IAreaMainPageProps> = ({ searchParams }) => {
   const validFilters = getValidFilters(search.filters);
 
   const { data, isLoading, error, refetch } = useFindManyArea({
-    where: {
-      tenantId: UNSTABLE_TENANT_ID,
-    },
+    where: { tenantId: UNSTABLE_TENANT_ID },
+    take: search.perPage,
+    skip: (search.page - 1) * search.perPage,
   });
 
   const [rowAction, setRowAction] = React.useState<DataTableRowAction<AreaType> | null>(null);
@@ -66,15 +62,12 @@ const AreaMainPage: React.FC<IAreaMainPageProps> = ({ searchParams }) => {
     { id: 'createdAt', label: 'Created at', type: 'date' },
   ];
 
-  const enableAdvancedTable = search.flags.includes('advancedTable');
-  const enableFloatingBar = search.flags.includes('floatingBar');
-
   const { table } = useDataTable({
     data: data ?? [],
     columns,
     pageCount: 1,
     filterFields,
-    enableAdvancedFilter: enableAdvancedTable,
+    enableAdvancedFilter: true,
     initialState: {
       sorting: [{ id: 'createdAt', desc: true }],
       columnPinning: { right: ['actions'] },
@@ -90,22 +83,11 @@ const AreaMainPage: React.FC<IAreaMainPageProps> = ({ searchParams }) => {
 
   return (
     <Shell className="gap-2">
-      <FeatureFlagsProvider>
-        <React.Suspense fallback={<Skeleton className="h-7 w-52" />}>
-          <DateRangePicker triggerSize="sm" triggerClassName="ml-auto w-56 sm:w-60" align="end" shallow={false} />
-        </React.Suspense>
-        <DataTable table={table} floatingBar={enableFloatingBar ? <TasksTableFloatingBar table={table} /> : null}>
-          {enableAdvancedTable ? (
-            <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
-              <TasksTableToolbarActions table={table} />
-            </DataTableAdvancedToolbar>
-          ) : (
-            <DataTableToolbar table={table} filterFields={filterFields}>
-              <TasksTableToolbarActions table={table} />
-            </DataTableToolbar>
-          )}
-        </DataTable>
-      </FeatureFlagsProvider>
+      <DataTable table={table} floatingBar={<TasksTableFloatingBar table={table} />}>
+        <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
+          <TasksTableToolbarActions table={table} />
+        </DataTableAdvancedToolbar>
+      </DataTable>
     </Shell>
   );
 };

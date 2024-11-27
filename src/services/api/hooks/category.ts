@@ -416,7 +416,17 @@ export function useSuspenseCountCategory<
 export function useCheckCategory<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
-    where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; requestTypeId?: string; name?: string; description?: string };
+    where?: {
+      createdBy?: string;
+      modifiedBy?: string;
+      tenantId?: string;
+      id?: string;
+      name?: string;
+      description?: string;
+      parentCategoryId?: string;
+      hierarchyLevelId?: string;
+      hierarchyId?: string;
+    };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {

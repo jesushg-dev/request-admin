@@ -95,6 +95,20 @@ const metadata = {
           type: 'String',
           isOptional: true,
         },
+        hierarchies: {
+          name: 'hierarchies',
+          type: 'Hierarchy',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        hierarchyLevels: {
+          name: 'hierarchyLevels',
+          type: 'HierarchyLevel',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
         persons: {
           name: 'persons',
           type: 'Person',
@@ -119,27 +133,6 @@ const metadata = {
         categoryRequirements: {
           name: 'categoryRequirements',
           type: 'CategoryRequirement',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
-        salesChannels: {
-          name: 'salesChannels',
-          type: 'SalesChannel',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
-        serviceTypes: {
-          name: 'serviceTypes',
-          type: 'ServiceType',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
-        requirementServiceTypeAssociations: {
-          name: 'requirementServiceTypeAssociations',
-          type: 'RequirementServiceTypeAssociation',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
@@ -175,13 +168,6 @@ const metadata = {
         categories: {
           name: 'categories',
           type: 'Category',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
-        subCategories: {
-          name: 'subCategories',
-          type: 'SubCategory',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
@@ -228,13 +214,6 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
-        requestStates: {
-          name: 'requestStates',
-          type: 'RequestState',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
         identificationTypes: {
           name: 'identificationTypes',
           type: 'IdentificationType',
@@ -249,13 +228,6 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
-        requestTypes: {
-          name: 'requestTypes',
-          type: 'RequestType',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
         forms: {
           name: 'forms',
           type: 'Form',
@@ -263,8 +235,8 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
-        formSubmission: {
-          name: 'formSubmission',
+        formSubmissions: {
+          name: 'formSubmissions',
           type: 'FormSubmission',
           isDataModel: true,
           isArray: true,
@@ -573,6 +545,11 @@ const metadata = {
         },
         superAdmin: {
           name: 'superAdmin',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        isCurrent: {
+          name: 'isCurrent',
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: false }] }],
         },
@@ -1396,6 +1373,338 @@ const metadata = {
         },
       },
     },
+    hierarchy: {
+      name: 'Hierarchy',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Hierarchy$createdBy,
+        },
+        modifiedBy: {
+          name: 'modifiedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Hierarchy$modifiedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'hierarchies',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        description: {
+          name: 'description',
+          type: 'String',
+          isOptional: true,
+        },
+        levels: {
+          name: 'levels',
+          type: 'HierarchyLevel',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'hierarchy',
+        },
+        categories: {
+          name: 'categories',
+          type: 'Category',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'hierarchy',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    hierarchyLevel: {
+      name: 'HierarchyLevel',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$HierarchyLevel$createdBy,
+        },
+        modifiedBy: {
+          name: 'modifiedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$HierarchyLevel$modifiedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'hierarchyLevels',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        position: {
+          name: 'position',
+          type: 'Int',
+        },
+        hierarchyId: {
+          name: 'hierarchyId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'hierarchy',
+        },
+        hierarchy: {
+          name: 'hierarchy',
+          type: 'Hierarchy',
+          isDataModel: true,
+          backLink: 'levels',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'hierarchyId' },
+        },
+        categories: {
+          name: 'categories',
+          type: 'Category',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'hierarchyLevel',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    category: {
+      name: 'Category',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Category$createdBy,
+        },
+        modifiedBy: {
+          name: 'modifiedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Category$modifiedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'categories',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        description: {
+          name: 'description',
+          type: 'String',
+          isOptional: true,
+        },
+        parentCategoryId: {
+          name: 'parentCategoryId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'parentCategory',
+        },
+        parentCategory: {
+          name: 'parentCategory',
+          type: 'Category',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'subcategories',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'parentCategoryId' },
+        },
+        subcategories: {
+          name: 'subcategories',
+          type: 'Category',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'parentCategory',
+        },
+        hierarchyLevelId: {
+          name: 'hierarchyLevelId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'hierarchyLevel',
+        },
+        hierarchyLevel: {
+          name: 'hierarchyLevel',
+          type: 'HierarchyLevel',
+          isDataModel: true,
+          backLink: 'categories',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'hierarchyLevelId' },
+        },
+        hierarchyId: {
+          name: 'hierarchyId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'hierarchy',
+        },
+        hierarchy: {
+          name: 'hierarchy',
+          type: 'Hierarchy',
+          isDataModel: true,
+          backLink: 'categories',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'hierarchyId' },
+        },
+        forms: {
+          name: 'forms',
+          type: 'Form',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'Category',
+          isRelationOwner: true,
+        },
+        areas: {
+          name: 'areas',
+          type: 'Area',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'categories',
+          isRelationOwner: true,
+        },
+        serviceRequests: {
+          name: 'serviceRequests',
+          type: 'Request',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'serviceCategory',
+        },
+        assignmentRequests: {
+          name: 'assignmentRequests',
+          type: 'Request',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'assignmentCategory',
+        },
+        categoryRequirement: {
+          name: 'categoryRequirement',
+          type: 'CategoryRequirement',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'category',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
     request: {
       name: 'Request',
       fields: {
@@ -1449,12 +1758,6 @@ const metadata = {
           isId: true,
           attributes: [{ name: '@default', args: [] }],
         },
-        serviceTypeId: {
-          name: 'serviceTypeId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'serviceType',
-        },
         clientId: {
           name: 'clientId',
           type: 'String',
@@ -1491,6 +1794,51 @@ const metadata = {
           type: 'String',
           isOptional: true,
         },
+        status: {
+          name: 'status',
+          type: 'String',
+        },
+        comment: {
+          name: 'comment',
+          type: 'String',
+          isOptional: true,
+        },
+        serviceCategoryId: {
+          name: 'serviceCategoryId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'serviceCategory',
+        },
+        serviceCategory: {
+          name: 'serviceCategory',
+          type: 'Category',
+          isDataModel: true,
+          backLink: 'serviceRequests',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'serviceCategoryId' },
+        },
+        assignmentCategoryId: {
+          name: 'assignmentCategoryId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'assignmentCategory',
+        },
+        assignmentCategory: {
+          name: 'assignmentCategory',
+          type: 'Category',
+          isDataModel: true,
+          backLink: 'assignmentRequests',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'assignmentCategoryId' },
+        },
+        client: {
+          name: 'client',
+          type: 'Client',
+          isDataModel: true,
+          backLink: 'request',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'clientId' },
+        },
         formSubmissionId: {
           name: 'formSubmissionId',
           type: 'String',
@@ -1507,45 +1855,22 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'formSubmissionId' },
         },
-        serviceType: {
-          name: 'serviceType',
-          type: 'ServiceType',
-          isDataModel: true,
-          backLink: 'request',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'serviceTypeId' },
-        },
-        client: {
-          name: 'client',
-          type: 'Client',
-          isDataModel: true,
-          backLink: 'request',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'clientId' },
-        },
-        document: {
-          name: 'document',
+        documents: {
+          name: 'documents',
           type: 'Document',
           isDataModel: true,
           isArray: true,
           backLink: 'request',
         },
-        requestState: {
-          name: 'requestState',
-          type: 'RequestState',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'request',
-        },
-        requestAssignment: {
-          name: 'requestAssignment',
+        requestAssignments: {
+          name: 'requestAssignments',
           type: 'RequestAssignment',
           isDataModel: true,
           isArray: true,
           backLink: 'request',
         },
-        requirementComplianceTracking: {
-          name: 'requirementComplianceTracking',
+        complianceTrackings: {
+          name: 'complianceTrackings',
           type: 'RequirementComplianceTracking',
           isDataModel: true,
           isArray: true,
@@ -1618,6 +1943,14 @@ const metadata = {
           isForeignKey: true,
           relationField: 'request',
         },
+        request: {
+          name: 'request',
+          type: 'Request',
+          isDataModel: true,
+          backLink: 'requestAssignments',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'requestId' },
+        },
         userId: {
           name: 'userId',
           type: 'String',
@@ -1625,12 +1958,30 @@ const metadata = {
           isForeignKey: true,
           relationField: 'user',
         },
+        user: {
+          name: 'user',
+          type: 'User',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'requestAssignment',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'userId' },
+        },
         areaId: {
           name: 'areaId',
           type: 'String',
           isOptional: true,
           isForeignKey: true,
           relationField: 'area',
+        },
+        area: {
+          name: 'area',
+          type: 'Area',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'requestAssignment',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'areaId' },
         },
         priority: {
           name: 'priority',
@@ -1659,32 +2010,6 @@ const metadata = {
           name: 'type',
           type: 'String',
         },
-        request: {
-          name: 'request',
-          type: 'Request',
-          isDataModel: true,
-          backLink: 'requestAssignment',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'requestId' },
-        },
-        user: {
-          name: 'user',
-          type: 'User',
-          isDataModel: true,
-          isOptional: true,
-          backLink: 'requestAssignment',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'userId' },
-        },
-        area: {
-          name: 'area',
-          type: 'Area',
-          isDataModel: true,
-          isOptional: true,
-          backLink: 'requestAssignment',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'areaId' },
-        },
         documentAssignment: {
           name: 'documentAssignment',
           type: 'DocumentAssignment',
@@ -1697,647 +2022,6 @@ const metadata = {
         id: {
           name: 'id',
           fields: ['id'],
-        },
-      },
-    },
-    requestState: {
-      name: 'RequestState',
-      fields: {
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
-        },
-        deletedAt: {
-          name: 'deletedAt',
-          type: 'DateTime',
-          isOptional: true,
-        },
-        createdBy: {
-          name: 'createdBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$RequestState$createdBy,
-        },
-        modifiedBy: {
-          name: 'modifiedBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$RequestState$modifiedBy,
-        },
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'requestStates',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
-        },
-        requestId: {
-          name: 'requestId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'request',
-        },
-        status: {
-          name: 'status',
-          type: 'String',
-          isOptional: true,
-        },
-        comment: {
-          name: 'comment',
-          type: 'String',
-          isOptional: true,
-        },
-        request: {
-          name: 'request',
-          type: 'Request',
-          isDataModel: true,
-          backLink: 'requestState',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'requestId' },
-        },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
-        },
-      },
-    },
-    requirement: {
-      name: 'Requirement',
-      fields: {
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
-        },
-        deletedAt: {
-          name: 'deletedAt',
-          type: 'DateTime',
-          isOptional: true,
-        },
-        createdBy: {
-          name: 'createdBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$Requirement$createdBy,
-        },
-        modifiedBy: {
-          name: 'modifiedBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$Requirement$modifiedBy,
-        },
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'requirements',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
-        },
-        name: {
-          name: 'name',
-          type: 'String',
-        },
-        description: {
-          name: 'description',
-          type: 'String',
-        },
-        categoryRequirementId: {
-          name: 'categoryRequirementId',
-          type: 'String',
-          isOptional: true,
-          isForeignKey: true,
-          relationField: 'category',
-        },
-        onlyRequireInNewClients: {
-          name: 'onlyRequireInNewClients',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: false }] }],
-        },
-        requirementComplianceTracking: {
-          name: 'requirementComplianceTracking',
-          type: 'RequirementComplianceTracking',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'requirement',
-        },
-        requirementServiceTypeAssociation: {
-          name: 'requirementServiceTypeAssociation',
-          type: 'RequirementServiceTypeAssociation',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'requirement',
-        },
-        category: {
-          name: 'category',
-          type: 'CategoryRequirement',
-          isDataModel: true,
-          isOptional: true,
-          backLink: 'requirements',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'categoryRequirementId' },
-        },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
-        },
-        name: {
-          name: 'name',
-          fields: ['name'],
-        },
-      },
-    },
-    requirementComplianceTracking: {
-      name: 'RequirementComplianceTracking',
-      fields: {
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
-        },
-        deletedAt: {
-          name: 'deletedAt',
-          type: 'DateTime',
-          isOptional: true,
-        },
-        createdBy: {
-          name: 'createdBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$RequirementComplianceTracking$createdBy,
-        },
-        modifiedBy: {
-          name: 'modifiedBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$RequirementComplianceTracking$modifiedBy,
-        },
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'requirementComplianceTrackings',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
-        },
-        requestId: {
-          name: 'requestId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'request',
-        },
-        requirementId: {
-          name: 'requirementId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'requirement',
-        },
-        fulfilled: {
-          name: 'fulfilled',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: false }] }],
-        },
-        request: {
-          name: 'request',
-          type: 'Request',
-          isDataModel: true,
-          backLink: 'requirementComplianceTracking',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'requestId' },
-        },
-        requirement: {
-          name: 'requirement',
-          type: 'Requirement',
-          isDataModel: true,
-          backLink: 'requirementComplianceTracking',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'requirementId' },
-        },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
-        },
-      },
-    },
-    requirementServiceTypeAssociation: {
-      name: 'RequirementServiceTypeAssociation',
-      fields: {
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
-        },
-        deletedAt: {
-          name: 'deletedAt',
-          type: 'DateTime',
-          isOptional: true,
-        },
-        createdBy: {
-          name: 'createdBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$RequirementServiceTypeAssociation$createdBy,
-        },
-        modifiedBy: {
-          name: 'modifiedBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$RequirementServiceTypeAssociation$modifiedBy,
-        },
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'requirementServiceTypeAssociations',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
-        },
-        requirementId: {
-          name: 'requirementId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'requirement',
-        },
-        serviceTypeId: {
-          name: 'serviceTypeId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'serviceType',
-        },
-        requirement: {
-          name: 'requirement',
-          type: 'Requirement',
-          isDataModel: true,
-          backLink: 'requirementServiceTypeAssociation',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'requirementId' },
-        },
-        serviceType: {
-          name: 'serviceType',
-          type: 'ServiceType',
-          isDataModel: true,
-          backLink: 'requirementServiceTypeAssociation',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'serviceTypeId' },
-        },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
-        },
-      },
-    },
-    serviceType: {
-      name: 'ServiceType',
-      fields: {
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
-        },
-        deletedAt: {
-          name: 'deletedAt',
-          type: 'DateTime',
-          isOptional: true,
-        },
-        createdBy: {
-          name: 'createdBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$ServiceType$createdBy,
-        },
-        modifiedBy: {
-          name: 'modifiedBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$ServiceType$modifiedBy,
-        },
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'serviceTypes',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
-        },
-        salesChannelId: {
-          name: 'salesChannelId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'salesChannel',
-        },
-        name: {
-          name: 'name',
-          type: 'String',
-        },
-        description: {
-          name: 'description',
-          type: 'String',
-          isOptional: true,
-        },
-        acceptsNewClients: {
-          name: 'acceptsNewClients',
-          type: 'Boolean',
-          isOptional: true,
-        },
-        request: {
-          name: 'request',
-          type: 'Request',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'serviceType',
-        },
-        requirementServiceTypeAssociation: {
-          name: 'requirementServiceTypeAssociation',
-          type: 'RequirementServiceTypeAssociation',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'serviceType',
-        },
-        salesChannel: {
-          name: 'salesChannel',
-          type: 'SalesChannel',
-          isDataModel: true,
-          backLink: 'serviceType',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'salesChannelId' },
-        },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
-        },
-      },
-    },
-    salesChannel: {
-      name: 'SalesChannel',
-      fields: {
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
-        },
-        deletedAt: {
-          name: 'deletedAt',
-          type: 'DateTime',
-          isOptional: true,
-        },
-        createdBy: {
-          name: 'createdBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$SalesChannel$createdBy,
-        },
-        modifiedBy: {
-          name: 'modifiedBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$SalesChannel$modifiedBy,
-        },
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'salesChannels',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
-        },
-        name: {
-          name: 'name',
-          type: 'String',
-        },
-        description: {
-          name: 'description',
-          type: 'String',
-          isOptional: true,
-        },
-        serviceType: {
-          name: 'serviceType',
-          type: 'ServiceType',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'salesChannel',
-        },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
-        },
-        name: {
-          name: 'name',
-          fields: ['name'],
-        },
-      },
-    },
-    categoryRequirement: {
-      name: 'CategoryRequirement',
-      fields: {
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
-        },
-        deletedAt: {
-          name: 'deletedAt',
-          type: 'DateTime',
-          isOptional: true,
-        },
-        createdBy: {
-          name: 'createdBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$CategoryRequirement$createdBy,
-        },
-        modifiedBy: {
-          name: 'modifiedBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$CategoryRequirement$modifiedBy,
-        },
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'categoryRequirements',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
-        },
-        name: {
-          name: 'name',
-          type: 'String',
-        },
-        description: {
-          name: 'description',
-          type: 'String',
-          isOptional: true,
-        },
-        requirements: {
-          name: 'requirements',
-          type: 'Requirement',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'category',
-        },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
-        },
-        name: {
-          name: 'name',
-          fields: ['name'],
         },
       },
     },
@@ -2422,12 +2106,13 @@ const metadata = {
           isArray: true,
           backLink: 'area',
         },
-        requestType: {
-          name: 'requestType',
-          type: 'RequestType',
+        categories: {
+          name: 'categories',
+          type: 'Category',
           isDataModel: true,
           isArray: true,
-          backLink: 'area',
+          backLink: 'areas',
+          isRelationOwner: true,
         },
       },
       uniqueConstraints: {
@@ -2441,8 +2126,8 @@ const metadata = {
         },
       },
     },
-    requestType: {
-      name: 'RequestType',
+    requirement: {
+      name: 'Requirement',
       fields: {
         createdAt: {
           name: 'createdAt',
@@ -2465,14 +2150,14 @@ const metadata = {
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$RequestType$createdBy,
+          defaultValueProvider: $default$Requirement$createdBy,
         },
         modifiedBy: {
           name: 'modifiedBy',
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$RequestType$modifiedBy,
+          defaultValueProvider: $default$Requirement$modifiedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -2484,7 +2169,7 @@ const metadata = {
           name: 'tenant',
           type: 'Tenant',
           isDataModel: true,
-          backLink: 'requestTypes',
+          backLink: 'requirements',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
@@ -2494,12 +2179,6 @@ const metadata = {
           isId: true,
           attributes: [{ name: '@default', args: [] }],
         },
-        areaId: {
-          name: 'areaId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'area',
-        },
         name: {
           name: 'name',
           type: 'String',
@@ -2507,129 +2186,40 @@ const metadata = {
         description: {
           name: 'description',
           type: 'String',
-          isOptional: true,
         },
-        state: {
-          name: 'state',
+        onlyRequireInNewClients: {
+          name: 'onlyRequireInNewClients',
           type: 'Boolean',
-          isOptional: true,
+          attributes: [{ name: '@default', args: [{ value: false }] }],
         },
-        area: {
-          name: 'area',
-          type: 'Area',
-          isDataModel: true,
-          backLink: 'requestType',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'areaId' },
-        },
-        category: {
-          name: 'category',
-          type: 'Category',
+        requirementComplianceTracking: {
+          name: 'requirementComplianceTracking',
+          type: 'RequirementComplianceTracking',
           isDataModel: true,
           isArray: true,
-          backLink: 'requestType',
+          backLink: 'requirement',
+        },
+        categoryRequirement: {
+          name: 'categoryRequirement',
+          type: 'CategoryRequirement',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'requirement',
         },
       },
       uniqueConstraints: {
         id: {
           name: 'id',
           fields: ['id'],
-        },
-      },
-    },
-    category: {
-      name: 'Category',
-      fields: {
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
-        },
-        deletedAt: {
-          name: 'deletedAt',
-          type: 'DateTime',
-          isOptional: true,
-        },
-        createdBy: {
-          name: 'createdBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$Category$createdBy,
-        },
-        modifiedBy: {
-          name: 'modifiedBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$Category$modifiedBy,
-        },
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'categories',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
-        },
-        requestTypeId: {
-          name: 'requestTypeId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'requestType',
         },
         name: {
           name: 'name',
-          type: 'String',
-        },
-        description: {
-          name: 'description',
-          type: 'String',
-          isOptional: true,
-        },
-        requestType: {
-          name: 'requestType',
-          type: 'RequestType',
-          isDataModel: true,
-          backLink: 'category',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'requestTypeId' },
-        },
-        subCategories: {
-          name: 'subCategories',
-          type: 'SubCategory',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'category',
-        },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
+          fields: ['name'],
         },
       },
     },
-    subCategory: {
-      name: 'SubCategory',
+    categoryRequirement: {
+      name: 'CategoryRequirement',
       fields: {
         createdAt: {
           name: 'createdAt',
@@ -2652,14 +2242,14 @@ const metadata = {
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$SubCategory$createdBy,
+          defaultValueProvider: $default$CategoryRequirement$createdBy,
         },
         modifiedBy: {
           name: 'modifiedBy',
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$SubCategory$modifiedBy,
+          defaultValueProvider: $default$CategoryRequirement$modifiedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -2671,7 +2261,7 @@ const metadata = {
           name: 'tenant',
           type: 'Tenant',
           isDataModel: true,
-          backLink: 'subCategories',
+          backLink: 'categoryRequirements',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
@@ -2680,6 +2270,20 @@ const metadata = {
           type: 'String',
           isId: true,
           attributes: [{ name: '@default', args: [] }],
+        },
+        requirementId: {
+          name: 'requirementId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'requirement',
+        },
+        requirement: {
+          name: 'requirement',
+          type: 'Requirement',
+          isDataModel: true,
+          backLink: 'categoryRequirement',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'requirementId' },
         },
         categoryId: {
           name: 'categoryId',
@@ -2687,38 +2291,107 @@ const metadata = {
           isForeignKey: true,
           relationField: 'category',
         },
-        name: {
-          name: 'name',
-          type: 'String',
-        },
-        description: {
-          name: 'description',
-          type: 'String',
-          isOptional: true,
-        },
-        formId: {
-          name: 'formId',
-          type: 'String',
-          isOptional: true,
-          isForeignKey: true,
-          relationField: 'form',
-        },
         category: {
           name: 'category',
           type: 'Category',
           isDataModel: true,
-          backLink: 'subCategories',
+          backLink: 'categoryRequirement',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'categoryId' },
         },
-        form: {
-          name: 'form',
-          type: 'Form',
-          isDataModel: true,
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    requirementComplianceTracking: {
+      name: 'RequirementComplianceTracking',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
           isOptional: true,
-          backLink: 'SubCategory',
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$RequirementComplianceTracking$createdBy,
+        },
+        modifiedBy: {
+          name: 'modifiedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$RequirementComplianceTracking$modifiedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'requirementComplianceTrackings',
           isRelationOwner: true,
-          foreignKeyMapping: { id: 'formId' },
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        requestId: {
+          name: 'requestId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'request',
+        },
+        request: {
+          name: 'request',
+          type: 'Request',
+          isDataModel: true,
+          backLink: 'complianceTrackings',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'requestId' },
+        },
+        requirementId: {
+          name: 'requirementId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'requirement',
+        },
+        requirement: {
+          name: 'requirement',
+          type: 'Requirement',
+          isDataModel: true,
+          backLink: 'requirementComplianceTracking',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'requirementId' },
+        },
+        fulfilled: {
+          name: 'fulfilled',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
         },
       },
       uniqueConstraints: {
@@ -2819,12 +2492,13 @@ const metadata = {
           type: 'String',
           attributes: [{ name: '@default', args: [] }],
         },
-        SubCategory: {
-          name: 'SubCategory',
-          type: 'SubCategory',
+        Category: {
+          name: 'Category',
+          type: 'Category',
           isDataModel: true,
           isArray: true,
-          backLink: 'form',
+          backLink: 'forms',
+          isRelationOwner: true,
         },
         FormSubmission: {
           name: 'FormSubmission',
@@ -2892,7 +2566,7 @@ const metadata = {
           name: 'tenant',
           type: 'Tenant',
           isDataModel: true,
-          backLink: 'formSubmission',
+          backLink: 'formSubmissions',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
@@ -3006,7 +2680,7 @@ const metadata = {
           name: 'request',
           type: 'Request',
           isDataModel: true,
-          backLink: 'document',
+          backLink: 'documents',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'requestId' },
         },
@@ -4037,6 +3711,30 @@ function $default$RolePermission$modifiedBy(user: any): unknown {
   return user?.id;
 }
 
+function $default$Hierarchy$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Hierarchy$modifiedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$HierarchyLevel$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$HierarchyLevel$modifiedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Category$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Category$modifiedBy(user: any): unknown {
+  return user?.id;
+}
+
 function $default$Request$createdBy(user: any): unknown {
   return user?.id;
 }
@@ -4053,11 +3751,11 @@ function $default$RequestAssignment$modifiedBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$RequestState$createdBy(user: any): unknown {
+function $default$Area$createdBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$RequestState$modifiedBy(user: any): unknown {
+function $default$Area$modifiedBy(user: any): unknown {
   return user?.id;
 }
 
@@ -4069,38 +3767,6 @@ function $default$Requirement$modifiedBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$RequirementComplianceTracking$createdBy(user: any): unknown {
-  return user?.id;
-}
-
-function $default$RequirementComplianceTracking$modifiedBy(user: any): unknown {
-  return user?.id;
-}
-
-function $default$RequirementServiceTypeAssociation$createdBy(user: any): unknown {
-  return user?.id;
-}
-
-function $default$RequirementServiceTypeAssociation$modifiedBy(user: any): unknown {
-  return user?.id;
-}
-
-function $default$ServiceType$createdBy(user: any): unknown {
-  return user?.id;
-}
-
-function $default$ServiceType$modifiedBy(user: any): unknown {
-  return user?.id;
-}
-
-function $default$SalesChannel$createdBy(user: any): unknown {
-  return user?.id;
-}
-
-function $default$SalesChannel$modifiedBy(user: any): unknown {
-  return user?.id;
-}
-
 function $default$CategoryRequirement$createdBy(user: any): unknown {
   return user?.id;
 }
@@ -4109,35 +3775,11 @@ function $default$CategoryRequirement$modifiedBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$Area$createdBy(user: any): unknown {
+function $default$RequirementComplianceTracking$createdBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$Area$modifiedBy(user: any): unknown {
-  return user?.id;
-}
-
-function $default$RequestType$createdBy(user: any): unknown {
-  return user?.id;
-}
-
-function $default$RequestType$modifiedBy(user: any): unknown {
-  return user?.id;
-}
-
-function $default$Category$createdBy(user: any): unknown {
-  return user?.id;
-}
-
-function $default$Category$modifiedBy(user: any): unknown {
-  return user?.id;
-}
-
-function $default$SubCategory$createdBy(user: any): unknown {
-  return user?.id;
-}
-
-function $default$SubCategory$modifiedBy(user: any): unknown {
+function $default$RequirementComplianceTracking$modifiedBy(user: any): unknown {
   return user?.id;
 }
 

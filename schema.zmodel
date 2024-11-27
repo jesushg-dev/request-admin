@@ -32,52 +32,52 @@ generator client {
 }
 
 model Tenant extends Auditable {
-  id               String     @id @default(uuid()) @db.UniqueIdentifier
-  name             String
-  logoUrl          String?
-  websiteUrl       String?
-  title            String?
-  description      String?
-  primaryColor     String?
-  secondaryColor   String?
-  contactEmail     String?
-  contactPhone     String?
-  address          String?
+  id                 String   @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for the tenant
+  name               String   // Tenant name
+  logoUrl            String?  // URL for the tenant's logo
+  websiteUrl         String?  // URL for the tenant's website
+  title              String?  // Title or tagline for the tenant
+  description        String?  // Brief description of the tenant
+  primaryColor       String?  // Primary color for branding
+  secondaryColor     String?  // Secondary color for branding
+  contactEmail       String?  // Tenant's contact email
+  contactPhone       String?  // Tenant's contact phone number
+  address            String?  // Address for the tenant
 
   // Related entities
-  persons          Person[]
-  clients          Client[]
-  requirements              Requirement[]
-  categoryRequirements      CategoryRequirement[]
-  salesChannels             SalesChannel[]
-  serviceTypes              ServiceType[]
-  requirementServiceTypeAssociations RequirementServiceTypeAssociation[]
-  requests                  Request[]
-  requirementComplianceTrackings RequirementComplianceTracking[]
-  documents                 Document[]
-  areas                     Area[]
-  categories                Category[]
-  subCategories             SubCategory[]
-  requestAssignments        RequestAssignment[]
-  userRoles                 UserRole[]
-  roles                     Role[]
-  modules                   Module[]
-  permissions               Permission[]
-  rolePermissions           RolePermission[]
-  requestStates             RequestState[]
-  identificationTypes       IdentificationType[]
-  documentAssignments       DocumentAssignment[]
-  requestTypes              RequestType[]
-  forms                     Form[]
-  formSubmission            FormSubmission[]
-  workspaces                Workspace[]
-  members                   Member[]
-  channels                  Channel[]
-  conversations             Conversation[]
-  messages                  Message[]
-  reactions                 Reaction[]
+  hierarchies        Hierarchy[]                     // Linked hierarchies
+  hierarchyLevels    HierarchyLevel[]               // Linked hierarchy levels
+  persons            Person[]                       // Linked persons
+  clients            Client[]                       // Linked clients
+  requirements       Requirement[]                  // Linked requirements
+  categoryRequirements CategoryRequirement[]        // Linked category-requirement associations
+  requests           Request[]                      // Linked service requests
+  requirementComplianceTrackings RequirementComplianceTracking[] // Linked compliance tracking
+  documents          Document[]                     // Linked documents
+  areas              Area[]                         // Linked areas
+  categories         Category[]                     // Linked categories
+  requestAssignments RequestAssignment[]            // Linked request assignments
+  userRoles          UserRole[]                     // Linked user roles
+  roles              Role[]                         // Linked roles
+  modules            Module[]                       // Linked modules
+  permissions        Permission[]                   // Linked permissions
+  rolePermissions    RolePermission[]               // Linked role-permission associations
+  identificationTypes IdentificationType[]          // Linked identification types
+  documentAssignments DocumentAssignment[]          // Linked document assignments
+  forms              Form[]                         // Linked forms
+  formSubmissions    FormSubmission[]               // Linked form submissions
+  workspaces         Workspace[]                    // Linked workspaces
+  members            Member[]                       // Linked workspace members
+  channels           Channel[]                      // Linked communication channels
+  conversations      Conversation[]                 // Linked conversations
+  messages           Message[]                      // Linked messages
+  reactions          Reaction[]                     // Linked reactions
 
-  userTenants      UserTenant[] // Relation to UserTenant
+  userTenants        UserTenant[]                   // Linked user-tenant relationships
 
+  // Table mapping
   @@map("Tenants")
+
+  // Access control
+  @@allow('read', userTenants?[user.id == auth().id && isActive == true])
 }

@@ -18,7 +18,7 @@ model Form extends TenantScoped, Auditable {
   shareURL        String     @unique @default(uuid()) // Unique shareable URL
 
   // Relationships
-  SubCategory     SubCategory[] // Associated subcategories for categorization
+  Category     Category[] // Associated subcategories for categorization
   FormSubmission  FormSubmission[] // Submissions made to this form
 
   // Constraints

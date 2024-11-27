@@ -46,11 +46,14 @@ model UserTenant {
   isActive         Boolean   @default(true) // Indicates if the user is active in the tenant
   joinedAt         DateTime  @default(now()) // Timestamp of when the user joined the tenant
   superAdmin       Boolean   @default(false) // Flag for super admin status
+  isCurrent       Boolean   @default(false) // Flag for the current tenant
 
   user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   tenant           Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([userId, tenantId]) // Ensure unique user-tenant relationships
+
+  @@allow('read', isActive == true && (user.id == auth().id ))
 }
 
 model UserRole extends TenantScoped, Auditable {
@@ -165,7 +168,6 @@ model Account {
   @@map("Accounts")
 }
 
-
 model VerificationToken {
   // Primary identifier
   id          String    @id @default(uuid()) @db.UniqueIdentifier
@@ -192,7 +194,6 @@ model PasswordResetToken {
   @@map("PasswordResetTokens")
 }
 
-
 model TwoFactorToken {
   // Primary identifier
   id          String    @id @default(uuid()) @db.UniqueIdentifier
@@ -206,7 +207,6 @@ model TwoFactorToken {
   @@map("TwoFactorTokens")
 }
 
-
 model TwoFactorConfirmation {
   // Primary identifier
   id          String    @id @default(uuid()) @db.UniqueIdentifier
@@ -218,7 +218,6 @@ model TwoFactorConfirmation {
   @@unique([userId]) // Unique constraint for userId
   @@map("TwoFactorConfirmations")
 }
-
 
 model Authenticator {
   // Primary identifier

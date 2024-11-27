@@ -14,27 +14,33 @@ import { HomeIcon, FileTextIcon, BriefcaseIcon, UsersIcon, LockIcon, LayersIcon,
 import { logout } from '@/actions/logout';
 import { useCurrentUser } from '@/hooks/use-current-user.hook';
 import { useTranslations } from 'next-intl';
+import { useFindManyTenant } from '@/services/api/hooks';
+import { is } from 'date-fns/locale';
+import { Skeleton } from '@/components/ui/skeleton';
 
-const teams = [
+const projects: MenuProject[] = [
   {
-    name: 'Acme Inc',
-    logo: GalleryVerticalEnd,
-    plan: 'Enterprise',
+    name: 'Design Engineering',
+    url: '#',
+    icon: Frame,
   },
   {
-    name: 'Acme Corp.',
-    logo: AudioWaveform,
-    plan: 'Startup',
+    name: 'Sales & Marketing',
+    url: '#',
+    icon: PieChart,
   },
   {
-    name: 'Evil Corp.',
-    logo: Command,
-    plan: 'Free',
+    name: 'Travel',
+    url: '#',
+    icon: Map,
   },
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const user = useCurrentUser();
+  const { data: teams, isLoading } = useFindManyTenant({
+    where: { userTenants: { some: { userId: { equals: user?.id } } } },
+  });
   const t = useTranslations('admin.sidebar');
 
   const navMain: MenuItem[] = [
@@ -173,33 +179,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     },
   ];
 
-  const projects: MenuProject[] = [
-    {
-      name: 'Design Engineering',
-      url: '#',
-      icon: Frame,
-    },
-    {
-      name: 'Sales & Marketing',
-      url: '#',
-      icon: PieChart,
-    },
-    {
-      name: 'Travel',
-      url: '#',
-      icon: Map,
-    },
-  ];
-
   const onLogout = () => {
     logout();
   };
+  console.log('🚀 ~ AppSidebar ~ data:', teams);
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <TeamSwitcher teams={teams} />
-      </SidebarHeader>
+      <SidebarHeader>{isLoading ? <Skeleton className="h-2 w-full" /> : <TeamSwitcher teams={teams ?? []} />}</SidebarHeader>
       <SidebarContent>
         <NavMain items={navMain} />
         <NavProjects projects={projects} />

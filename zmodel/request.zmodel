@@ -4,218 +4,132 @@ import './form.zmodel'
 import './document.zmodel'
 import './person.zmodel'
 
-// Request model: Represents a service request
-model Request extends TenantScoped, Auditable {
-  // Primary identifier
-  id                    String      @id @default(uuid()) @db.UniqueIdentifier // Unique request ID
-
-  // Request details
-  serviceTypeId         String      @db.UniqueIdentifier // ID of the associated service type
-  clientId              String      @db.UniqueIdentifier // ID of the associated client
-  issueSubject          String?     @db.VarChar(255) // Optional subject of the issue
-  description           String?     @db.VarChar(5000) // Detailed description of the request
-  priority              String?     @db.VarChar(50) // Optional priority level of the request
-  closedAt              DateTime? // Timestamp when the request was closed
-  closedBy              String?     @db.VarChar(50) // ID of the user who closed the request
-  closedComment         String?     @db.VarChar(500) // Optional comment about the closure
-
-  // Relationships
-  formSubmissionId      String?     @db.UniqueIdentifier // ID of the associated form submission
-  formSubmission        FormSubmission? @relation(fields: [formSubmissionId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked form submission
-  serviceType           ServiceType     @relation(fields: [serviceTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked service type
-  client                Client          @relation(fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked client
-
-  // Linked entities
-  document              Document[] // Documents associated with the request
-  requestState          RequestState[] // State changes of the request
-  requestAssignment     RequestAssignment[] // Assignments related to the request
-  requirementComplianceTracking RequirementComplianceTracking[] // Compliance tracking for requirements
+/// Represents a hierarchy for categorization (e.g., "Sales Channel Hierarchy", "Assignment Hierarchy").
+model Hierarchy extends TenantScoped, Auditable {
+  id                    String   @id @default(uuid()) @db.UniqueIdentifier // Unique hierarchy ID
+  name                  String   @db.VarChar(100) // Name of the hierarchy
+  description           String?  @db.VarChar(255) // Optional description
+  levels                HierarchyLevel[] // Levels within the hierarchy
+  categories            Category[] // Categories directly associated with this hierarchy
 }
 
-// RequestAssignment model: Represents an assignment of a request to a user or area
-model RequestAssignment extends TenantScoped, Auditable {
-  // Primary identifier
-  id              String    @id @default(uuid()) @db.UniqueIdentifier // Unique assignment ID
-
-  // Assignment details
-  requestId       String    @db.UniqueIdentifier // ID of the associated request
-  userId          String?   @db.UniqueIdentifier // Optional user assigned to the request
-  areaId          String?   @db.UniqueIdentifier // Optional area assigned to the request
-  priority        String?   @db.VarChar(50) // Optional priority of the assignment
-  comment         String?   @db.VarChar(255) // Optional comment about the assignment
-  assignmentDate  DateTime // Date the assignment was made
-  unassignmentDate DateTime? // Date the assignment was unassigned
-  status          String    @db.VarChar(50) // Status of the assignment (e.g., "open", "closed")
-  type            String    @db.VarChar(50) // Type of assignment (e.g., "manual", "automatic")
-
-  // Relationships
-  request         Request   @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked request
-  user            User?     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked user
-  area            Area?     @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked area
-  documentAssignment DocumentAssignment[] // Document assignments related to this assignment
+/// Represents a single level in a hierarchy (e.g., "Area", "Case Type", "Service Type").
+model HierarchyLevel extends TenantScoped, Auditable {
+  id                    String   @id @default(uuid()) @db.UniqueIdentifier // Unique level ID
+  name                  String   @db.VarChar(100) // Name of the level
+  position              Int      // Position of the level within the hierarchy
+  hierarchyId           String   @db.UniqueIdentifier() // ID of the associated hierarchy
+  hierarchy             Hierarchy @relation(fields: [hierarchyId], references: [id]) // Linked hierarchy
+  categories            Category[] // Categories associated with this level
 }
 
-// RequestState model: Represents a state change in a request's lifecycle
-model RequestState extends TenantScoped, Auditable {
-  // Primary identifier
-  id              String     @id @default(uuid()) @db.UniqueIdentifier // Unique state ID
-
-  // State details
-  requestId       String     @db.UniqueIdentifier // ID of the associated request
-  status          String?    @db.VarChar(50) // Status of the request at this state
-  comment         String?    @db.VarChar(255) // Optional comment about the state change
-
-  // Relationships
-  request         Request    @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked request
-}
-
-// Requirement model: Represents a specific requirement for a service
-model Requirement extends TenantScoped, Auditable {
-  // Primary identifier
-  id                  String      @id @default(uuid()) @db.UniqueIdentifier // Unique requirement ID
-
-  // Requirement details
-  name                String      @db.VarChar(200) @unique // Name of the requirement
-  description         String      @db.VarChar(500) // Description of the requirement
-  categoryRequirementId String?   @db.UniqueIdentifier // ID of the associated category
-  onlyRequireInNewClients Boolean @default(false) // Indicates if this is only for new clients
-
-  // Relationships
-  requirementComplianceTracking RequirementComplianceTracking[] // Compliance tracking for this requirement
-  requirementServiceTypeAssociation RequirementServiceTypeAssociation[] // Service types associated with this requirement
-  category           CategoryRequirement? @relation(fields: [categoryRequirementId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked category
-}
-
-// RequirementComplianceTracking model: Tracks compliance of requirements in requests
-model RequirementComplianceTracking extends TenantScoped, Auditable {
-  // Primary identifier
-  id              String      @id @default(uuid()) @db.UniqueIdentifier // Unique compliance tracking ID
-
-  // Compliance details
-  requestId       String      @db.UniqueIdentifier // ID of the associated request
-  requirementId   String      @db.UniqueIdentifier // ID of the associated requirement
-  fulfilled       Boolean     @default(false) // Whether the requirement is fulfilled
-
-  // Relationships
-  request         Request     @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked request
-  requirement     Requirement @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked requirement
-}
-
-
-// RequirementServiceTypeAssociation model: Links requirements to service types
-model RequirementServiceTypeAssociation extends TenantScoped, Auditable {
-  // Primary identifier
-  id              String      @id @default(uuid()) @db.UniqueIdentifier // Unique association ID
-
-  // Relationships
-  requirementId   String      @db.UniqueIdentifier // ID of the linked requirement
-  serviceTypeId   String      @db.UniqueIdentifier // ID of the linked service type
-  requirement     Requirement @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked requirement
-  serviceType     ServiceType @relation(fields: [serviceTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked service type
-}
-
-// ServiceType model: Represents a type of service provided
-model ServiceType extends TenantScoped, Auditable {
-  // Primary identifier
-  id                    String      @id @default(uuid()) @db.UniqueIdentifier // Unique service type ID
-
-  // Service type details
-  salesChannelId        String      @db.UniqueIdentifier // ID of the sales channel
-  name                  String      @db.VarChar(100) // Name of the service type
-  description           String?     @db.VarChar(500) // Optional description of the service type
-  acceptsNewClients     Boolean? // Whether the service type accepts new clients
-
-  // Relationships
-  request               Request[] // Requests linked to this service type
-  requirementServiceTypeAssociation RequirementServiceTypeAssociation[] // Requirements associated with this service type
-  salesChannel          SalesChannel @relation(fields: [salesChannelId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked sales channel
-}
-
-// SalesChannel model: Represents a sales channel
-model SalesChannel extends TenantScoped, Auditable {
-  // Primary identifier
-  id              String   @id @default(uuid()) @db.UniqueIdentifier // Unique sales channel ID
-
-  // Sales channel details
-  name            String   @db.VarChar(100) @unique // Unique name of the sales channel
-  description     String?  @db.VarChar(500) // Optional description of the sales channel
-
-  // Relationships
-  serviceType     ServiceType[] // Service types offered by this sales channel
-}
-
-// CategoryRequirement model: Represents a category for grouping requirements
-model CategoryRequirement extends TenantScoped, Auditable {
-  // Primary identifier
-  id              String   @id @default(uuid()) @db.UniqueIdentifier // Unique category ID
-
-  // Category details
-  name            String   @db.VarChar(200) @unique // Unique name of the category
-  description     String?  @db.VarChar(500) // Optional description of the category
-
-  // Relationships
-  requirements    Requirement[] // Requirements grouped under this category
-}
-
-// Area model: Represents an organizational area
-model Area extends TenantScoped, Auditable {
-  // Primary identifier
-  id              String   @id @default(uuid()) @db.UniqueIdentifier // Unique area ID
-
-  // Area details
-  name            String   @db.VarChar(100) @unique // Unique name of the area
-  description     String?  @db.VarChar(255) // Optional description of the area
-  status          Boolean  @default(true) // Indicates if the area is active
-
-  // Relationships
-  user            User[] // Users linked to the area
-  requestAssignment RequestAssignment[] // Request assignments associated with this area
-  requestType     RequestType[] // Request types linked to the area
-}
-
-// RequestType model: Represents a type of request within an area
-model RequestType extends TenantScoped, Auditable {
-  // Primary identifier
-  id              String     @id @default(uuid()) @db.UniqueIdentifier // Unique request type ID
-
-  // Request type details
-  areaId          String     @db.UniqueIdentifier // ID of the associated area
-  name            String     @db.VarChar(100) // Name of the request type
-  description     String?    @db.VarChar(500) // Optional description of the request type
-  state           Boolean? // Indicates if the request type is active
-
-  // Relationships
-  area            Area       @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked area
-  category        Category[] // Categories under this request type
-}
-
-// Category model: Represents a category within a request type
+/// Represents a category or subcategory within a hierarchy.
 model Category extends TenantScoped, Auditable {
-  // Primary identifier
-  id              String   @id @default(uuid()) @db.UniqueIdentifier // Unique category ID
+  id                    String   @id @default(uuid()) @db.UniqueIdentifier // Unique category ID
+  name                  String   @db.VarChar(100) // Name of the category
+  description           String?  @db.VarChar(255) // Optional description
+  parentCategoryId      String?  @db.UniqueIdentifier @map("parent_id") // ID of the parent category, if this is a subcategory
+  parentCategory        Category? @relation("ParentCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked parent category
+  subcategories         Category[] @relation("ParentCategory") // Subcategories under this category
+  hierarchyLevelId      String   @db.UniqueIdentifier // ID of the associated hierarchy level
+  hierarchyLevel        HierarchyLevel @relation(fields: [hierarchyLevelId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked hierarchy level
+  hierarchyId           String   @db.UniqueIdentifier // ID of the associated hierarchy
+  hierarchy             Hierarchy @relation(fields: [hierarchyId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked hierarchy
+  forms                 Form[] // Forms linked to this category
+  areas                 Area[] // Areas linked to this category
 
-  // Category details
-  requestTypeId   String   @db.UniqueIdentifier // ID of the associated request type
-  name            String   @db.VarChar(50) // Name of the category
-  description     String?  @db.VarChar(255) // Optional description of the category
+  /// Linked service requests
+  serviceRequests       Request[] @relation("ServiceCategory") // Requests where this category is the service category
 
-  // Relationships
-  requestType     RequestType @relation(fields: [requestTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked request type
-  subCategories   SubCategory[] @relation("CategorySubCategory") // Subcategories under this category
+  /// Linked assignment requests
+  assignmentRequests    Request[] @relation("AssignmentCategory") // Requests where this category is the assignment category
+
+  categoryRequirement   CategoryRequirement[] // Requirement mappings
 }
 
-// SubCategory model: Represents a subcategory under a category
-model SubCategory extends TenantScoped, Auditable {
-  // Primary identifier
-  id              String   @id @default(uuid()) @db.UniqueIdentifier // Unique subcategory ID
+/// Represents a service request that includes categorization for both service and assignment.
+model Request extends TenantScoped, Auditable {
+  id                    String              @id @default(uuid()) @db.UniqueIdentifier // Request ID
+  clientId              String              @db.UniqueIdentifier // Client ID
+  issueSubject          String?             @db.VarChar(255) // Optional issue subject
+  description           String?             @db.VarChar(5000) // Detailed request description
+  priority              String?             @db.VarChar(50) // Optional priority level
+  closedAt              DateTime?           // Closure timestamp
+  closedBy              String?             @db.VarChar(50) // User ID who closed the request
+  closedComment         String?             @db.VarChar(500) // Closure comment
+  status                String              @db.VarChar(50) // Request status
+  comment               String?             @db.VarChar(255) // Optional comment
 
-  // Subcategory details
-  categoryId      String   @db.UniqueIdentifier // ID of the associated category
-  name            String   @db.VarChar(100) // Name of the subcategory
-  description     String?  @db.VarChar(355) // Optional description of the subcategory
-  formId          String?   @db.UniqueIdentifier // Optional ID of the associated form
+  /// Service categorization (e.g., "Sales Channel > Service Type").
+  serviceCategoryId     String              @db.UniqueIdentifier // Service category ID
+  serviceCategory       Category            @relation("ServiceCategory", fields: [serviceCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked service category
 
-  // Relationships
-  category        Category @relation("CategorySubCategory", fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked category
-  form            Form?    @relation(fields: [formId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked form
+  /// Assignment categorization (e.g., "Area > Case Type > Category > Subcategory").
+  assignmentCategoryId  String              @db.UniqueIdentifier // Assignment category ID
+  assignmentCategory    Category            @relation("AssignmentCategory", fields: [assignmentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked assignment category
+
+  client                Client              @relation(fields: [clientId], references: [id]) // Linked client
+  formSubmissionId      String?             @db.UniqueIdentifier // Form submission ID
+  formSubmission        FormSubmission?     @relation(fields: [formSubmissionId], references: [id]) // Linked form submission
+  documents             Document[]          // Linked documents
+  requestAssignments    RequestAssignment[] // Linked assignments
+  complianceTrackings   RequirementComplianceTracking[] // Compliance tracking
+}
+
+/// Represents an assignment of a request to a user or area.
+model RequestAssignment extends TenantScoped, Auditable {
+  id                    String   @id @default(uuid()) @db.UniqueIdentifier // Unique assignment ID
+  requestId             String   @db.UniqueIdentifier // ID of the associated request
+  request               Request  @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked request
+  userId                String?  @db.UniqueIdentifier // Optional user assigned to the request
+  user                  User?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked user
+  areaId                String?  @db.UniqueIdentifier // Optional area assigned to the request
+  area                  Area?    @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked area
+  priority              String?  @db.VarChar(50) // Optional priority
+  comment               String?  @db.VarChar(255) // Optional comment
+  assignmentDate        DateTime // Date of the assignment
+  unassignmentDate      DateTime? // Date the assignment was unassigned
+  status                String    @db.VarChar(50) // Status of the assignment
+  type                  String    @db.VarChar(50) // Type of assignment
+  documentAssignment    DocumentAssignment[] // Document assignments related to this request assignment
+}
+
+/// Represents an organizational area.
+model Area extends TenantScoped, Auditable {
+  id                    String   @id @default(uuid()) @db.UniqueIdentifier // Unique area ID
+  name                  String   @db.VarChar(100) @unique // Unique name of the area
+  description           String?  @db.VarChar(255) // Optional description
+  status                Boolean  @default(true) // Indicates if the area is active
+  user                  User[] // Users linked to the area
+  requestAssignment     RequestAssignment[] // Request assignments associated with this area
+  categories            Category[] // Categories associated with the area
+}
+
+/// Represents a specific requirement for a service or category.
+model Requirement extends TenantScoped, Auditable {
+  id                    String   @id @default(uuid()) @db.UniqueIdentifier // Unique requirement ID
+  name                  String   @db.VarChar(200) @unique // Name of the requirement
+  description           String   @db.VarChar(500) // Description of the requirement
+  onlyRequireInNewClients Boolean @default(false) // Indicates if the requirement applies only to new clients
+  requirementComplianceTracking RequirementComplianceTracking[] // Compliance tracking entries for this requirement
+  categoryRequirement CategoryRequirement[] // Associations with service types
+}
+
+/// Links a requirement to a specific service type.
+model CategoryRequirement extends TenantScoped, Auditable {
+  id                    String   @id @default(uuid()) @db.UniqueIdentifier // Unique association ID
+  requirementId         String   @db.UniqueIdentifier // ID of the linked requirement
+  requirement           Requirement @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked requirement
+  categoryId            String   @db.UniqueIdentifier // ID of the linked service type
+  category              Category @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked service type
+}
+
+/// Tracks compliance with requirements for a specific request.
+model RequirementComplianceTracking extends TenantScoped, Auditable {
+  id                    String   @id @default(uuid()) @db.UniqueIdentifier // Unique compliance tracking ID
+  requestId             String   @db.UniqueIdentifier // ID of the associated request
+  request               Request  @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked request
+  requirementId         String   @db.UniqueIdentifier // ID of the associated requirement
+  requirement           Requirement @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked requirement
+  fulfilled             Boolean  @default(false) // Whether the requirement is fulfilled
 }

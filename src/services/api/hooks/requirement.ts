@@ -462,16 +462,7 @@ export function useSuspenseCountRequirement<
 export function useCheckRequirement<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
-    where?: {
-      createdBy?: string;
-      modifiedBy?: string;
-      tenantId?: string;
-      id?: string;
-      name?: string;
-      description?: string;
-      categoryRequirementId?: string;
-      onlyRequireInNewClients?: boolean;
-    };
+    where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; name?: string; description?: string; onlyRequireInNewClients?: boolean };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
