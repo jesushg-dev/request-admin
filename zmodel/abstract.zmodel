@@ -2,15 +2,13 @@ import '../schema.zmodel'
 
 // Abstract model for tenant isolation policies
 abstract model TenantScoped {
-  // Tenant relationship
   tenantId String @db.UniqueIdentifier // ID of the tenant this entity belongs to
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Relation to Tenant entity
 
-  // Access policies
-  @@allow('read', tenant.users?[id == auth().id])   // Allow read access for authenticated users in the tenant
-  @@allow('create', tenant.users?[id == auth().id]) // Allow create access for authenticated users in the tenant
-  @@allow('update', tenant.users?[id == auth().id]) // Allow update access for authenticated users in the tenant
-  @@allow('delete', tenant.users?[id == auth().id]) // Allow delete access for authenticated users in the tenant
+  @@allow('read', tenant.userTenants?[user.id == auth().id])   // Allow read access for authenticated users in the tenant
+  @@allow('create', tenant.userTenants?[user.id == auth().id]) // Allow create access for authenticated users in the tenant
+  @@allow('update', tenant.userTenants?[user.id == auth().id]) // Allow update access for authenticated users in the tenant
+  @@allow('delete', tenant.userTenants?[user.id == auth().id]) // Allow delete access for authenticated users in the tenant
 }
 
 // Abstract model for auditable entities

@@ -10,6 +10,7 @@ import type { PrismaClient } from '@zenstackhq/runtime/models';
 import { createTRPCRouter } from '../../trpc';
 import createTenantRouter from './Tenant.router';
 import createUserRouter from './User.router';
+import createUserTenantRouter from './UserTenant.router';
 import createUserRoleRouter from './UserRole.router';
 import createRoleRouter from './Role.router';
 import createModuleRouter from './Module.router';
@@ -60,6 +61,7 @@ export function createRouter() {
   return createTRPCRouter({
     tenant: createTenantRouter(),
     user: createUserRouter(),
+    userTenant: createUserTenantRouter(),
     userRole: createUserRoleRouter(),
     role: createRoleRouter(),
     module: createModuleRouter(),

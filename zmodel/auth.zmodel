@@ -5,10 +5,7 @@ import './messenger.zmodel'
 import './person.zmodel'
 
 model User extends Auditable {
-  // Primary identifier
   id                   String    @id @default(uuid()) @db.UniqueIdentifier
-
-  // Authentication and authorization
   username             String?   @unique // Unique username for login
   email                String?   @unique // Unique email address
   emailVerified        DateTime? // Timestamp for email verification
@@ -17,16 +14,13 @@ model User extends Auditable {
   twoFactorConfirmationId String? @db.UniqueIdentifier // ID for two-factor confirmation
   twoFactorConfirmation TwoFactorConfirmation? // Related two-factor confirmation record
   Authenticators       Authenticator[] // WebAuthn authenticators (optional)
-  superAdmin           Boolean   @default(false) // Flag for super admin status
+  globalAdmin           Boolean   @default(false) // Flag for super admin status
 
-  // Personal details
   name                 String? // User's display name
   image                String? // User's profile image
   personId             String?    @db.UniqueIdentifier // Reference to the linked Person entity
   person               Person? // Optional link to Person entity
 
-  // Relationships to system entities
-  tenants              Tenant[]  @relation("UserTenants") // Tenants associated with the user
   workspaces           Workspace[] // Workspaces linked to the user
   accounts             Account[] // Linked authentication accounts (e.g., OAuth)
   sessions             Session[] // Active sessions of the user
@@ -34,14 +28,29 @@ model User extends Auditable {
   userRole             UserRole[] // User's roles in the system
   members              Member[] // Memberships in groups or projects
 
-  // Hierarchical relationships
   areaId               String?   @db.UniqueIdentifier // Reference to an associated Area
   coordinatorId        String?   @db.UniqueIdentifier // Reference to a coordinator (User)
   area                 Area?     @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Area linked to the user
   coordinator          User?     @relation("Coordination", fields: [coordinatorId], references: [id], onDelete: NoAction, onUpdate: NoAction) // User's coordinator
   employees            User[]    @relation("Coordination") // Users managed by this user
 
-  @@map("Users") // Maps the model to the "Users" table in the database
+  userTenants          UserTenant[] // Relation to UserTenant
+
+  @@map("Users")
+}
+
+model UserTenant {
+  id               String    @id @default(uuid()) @db.UniqueIdentifier
+  userId           String    @db.UniqueIdentifier
+  tenantId         String    @db.UniqueIdentifier
+  isActive         Boolean   @default(true) // Indicates if the user is active in the tenant
+  joinedAt         DateTime  @default(now()) // Timestamp of when the user joined the tenant
+  superAdmin       Boolean   @default(false) // Flag for super admin status
+
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant           Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tenantId]) // Ensure unique user-tenant relationships
 }
 
 model UserRole extends TenantScoped, Auditable {
@@ -129,7 +138,6 @@ model Session {
   @@index([userId]) // Index for userId to optimize lookups
   @@map("Sessions")
 }
-
 
 model Account {
   // Primary identifier

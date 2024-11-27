@@ -7,7 +7,7 @@
     "build": "next build",
     "check": "next lint && tsc --noEmit",
     "postinstall": "prisma generate",
-    "db:seed": "ts-node prisma/seed.ts",
+    "db:seed": "npx prisma/seed.ts",
     "db:generate": "prisma migrate dev",
     "db:migrate": "prisma migrate deploy",
     "db:postmigrate": "npx @snaplet/seed sync",

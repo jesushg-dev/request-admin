@@ -412,7 +412,7 @@ export function useCheckUser<TError = DefaultError>(
       password?: string;
       isTwoFactorEnabled?: boolean;
       twoFactorConfirmationId?: string;
-      superAdmin?: boolean;
+      globalAdmin?: boolean;
       name?: string;
       image?: string;
       personId?: string;

@@ -23,6 +23,7 @@ import { FeatureFlagsProvider } from './_components/feature-flags-provider';
 import { TasksTableFloatingBar } from './_components/tasks-table-floating-bar';
 import { TasksTableToolbarActions } from './_components/tasks-table-toolbar-actions';
 import { getColumns } from './_components/tasks-table-columns';
+import { UNSTABLE_TENANT_ID } from '@/lib/constant';
 
 const searchParamsParsers = {
   flags: parseAsArrayOf(z.enum(['advancedTable', 'floatingBar'])).withDefault([]),
@@ -45,7 +46,11 @@ const AreaMainPage: React.FC<IAreaMainPageProps> = ({ searchParams }) => {
   const [search] = useQueryStates(searchParamsParsers);
   const validFilters = getValidFilters(search.filters);
 
-  const { data, isLoading, error, refetch } = useFindManyArea({});
+  const { data, isLoading, error, refetch } = useFindManyArea({
+    where: {
+      tenantId: UNSTABLE_TENANT_ID,
+    },
+  });
 
   const [rowAction, setRowAction] = React.useState<DataTableRowAction<AreaType> | null>(null);
   const columns = React.useMemo(() => getColumns({ setRowAction }), [setRowAction]);

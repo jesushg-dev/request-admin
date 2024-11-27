@@ -8,9 +8,9 @@ async function main() {
   // Create Tenant
   //////////////////////////
 
-  await prisma.tenant.create({
+  const tenant = await prisma.tenant.create({
     data: {
-      id: '2DA1FC13-1F87-4A5D-A64C-05823686A111',
+      id: UNSTABLE_TENANT_ID,
       name: 'Claro',
       logoUrl: 'https://1000marcas.net/wp-content/uploads/2021/02/Claro-Logo.png',
       websiteUrl: 'https://www.claro.com.ni',
@@ -24,14 +24,24 @@ async function main() {
   //////////////////////////
   // Create users
   //////////////////////////
-  await prisma.user.create({
+  const user = await prisma.user.create({
     data: {
       id: '51C9BBA8-6C86-4E6C-8FE2-E98BB42A07F8',
       name: 'Jesus Hernandez',
-      email: 'jesus.hernandez@claro.com',
+      email: 'jess232016@gmail.com',
       password: await hashPassword('Lamisma123*'),
-      superAdmin: true,
+      globalAdmin: true,
       //userName: 'jesus.hernandez',
+    },
+  });
+
+  await prisma.userTenant.create({
+    data: {
+      tenantId: UNSTABLE_TENANT_ID,
+      userId: user.id,
+      isActive: true,
+      joinedAt: new Date(),
+      superAdmin: true,
     },
   });
 

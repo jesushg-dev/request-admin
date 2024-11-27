@@ -29,7 +29,9 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
-}model Tenant extends Auditable {
+}
+
+model Tenant extends Auditable {
   id               String     @id @default(uuid()) @db.UniqueIdentifier
   name             String
   logoUrl          String?
@@ -41,12 +43,10 @@ generator client {
   contactEmail     String?
   contactPhone     String?
   address          String?
-  
-  users            User[]     @relation("UserTenants")
-  persons           Person[]
-  clients          Client[]
 
   // Related entities
+  persons          Person[]
+  clients          Client[]
   requirements              Requirement[]
   categoryRequirements      CategoryRequirement[]
   salesChannels             SalesChannel[]
@@ -70,12 +70,14 @@ generator client {
   requestTypes              RequestType[]
   forms                     Form[]
   formSubmission            FormSubmission[]
-  workspaces       Workspace[]
-  members          Member[]
-  channels         Channel[]
-  conversations    Conversation[]
-  messages         Message[]
-  reactions        Reaction[]
+  workspaces                Workspace[]
+  members                   Member[]
+  channels                  Channel[]
+  conversations             Conversation[]
+  messages                  Message[]
+  reactions                 Reaction[]
+
+  userTenants      UserTenant[] // Relation to UserTenant
 
   @@map("Tenants")
 }

@@ -29,7 +29,6 @@ model Tenant {
   contactEmail                       String?
   contactPhone                       String?
   address                            String?
-  users                              User[]                              @relation("UserTenants")
   persons                            Person[]
   clients                            Client[]
   requirements                       Requirement[]
@@ -61,6 +60,7 @@ model Tenant {
   conversations                      Conversation[]
   messages                           Message[]
   reactions                          Reaction[]
+  userTenants                        UserTenant[]
 
   @@map("Tenants")
 }
@@ -80,12 +80,11 @@ model User {
   twoFactorConfirmationId String?                @db.UniqueIdentifier()
   twoFactorConfirmation   TwoFactorConfirmation?
   Authenticators          Authenticator[]
-  superAdmin              Boolean                @default(false)
+  globalAdmin             Boolean                @default(false)
   name                    String?
   image                   String?
   personId                String?                @db.UniqueIdentifier()
   person                  Person?
-  tenants                 Tenant[]               @relation("UserTenants")
   workspaces              Workspace[]
   accounts                Account[]
   sessions                Session[]
@@ -97,8 +96,22 @@ model User {
   area                    Area?                  @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   coordinator             User?                  @relation("Coordination", fields: [coordinatorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   employees               User[]                 @relation("Coordination")
+  userTenants             UserTenant[]
 
   @@map("Users")
+}
+
+model UserTenant {
+  id         String   @id() @default(uuid()) @db.UniqueIdentifier()
+  userId     String   @db.UniqueIdentifier()
+  tenantId   String   @db.UniqueIdentifier()
+  isActive   Boolean  @default(true)
+  joinedAt   DateTime @default(now())
+  superAdmin Boolean  @default(false)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tenantId])
 }
 
 model UserRole {

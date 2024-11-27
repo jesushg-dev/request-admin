@@ -95,13 +95,6 @@ const metadata = {
           type: 'String',
           isOptional: true,
         },
-        users: {
-          name: 'users',
-          type: 'User',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenants',
-        },
         persons: {
           name: 'persons',
           type: 'Person',
@@ -319,6 +312,13 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
+        userTenants: {
+          name: 'userTenants',
+          type: 'UserTenant',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
       },
       uniqueConstraints: {
         id: {
@@ -409,8 +409,8 @@ const metadata = {
           isArray: true,
           backLink: 'user',
         },
-        superAdmin: {
-          name: 'superAdmin',
+        globalAdmin: {
+          name: 'globalAdmin',
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: false }] }],
         },
@@ -435,13 +435,6 @@ const metadata = {
           isDataModel: true,
           isOptional: true,
           backLink: 'user',
-        },
-        tenants: {
-          name: 'tenants',
-          type: 'Tenant',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'users',
         },
         workspaces: {
           name: 'workspaces',
@@ -524,6 +517,13 @@ const metadata = {
           isArray: true,
           backLink: 'coordinator',
         },
+        userTenants: {
+          name: 'userTenants',
+          type: 'UserTenant',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'user',
+        },
       },
       uniqueConstraints: {
         id: {
@@ -537,6 +537,70 @@ const metadata = {
         email: {
           name: 'email',
           fields: ['email'],
+        },
+      },
+    },
+    userTenant: {
+      name: 'UserTenant',
+      fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        userId: {
+          name: 'userId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'user',
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
+        joinedAt: {
+          name: 'joinedAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        superAdmin: {
+          name: 'superAdmin',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        user: {
+          name: 'user',
+          type: 'User',
+          isDataModel: true,
+          backLink: 'userTenants',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'userId' },
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'userTenants',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        userId_tenantId: {
+          name: 'userId_tenantId',
+          fields: ['userId', 'tenantId'],
         },
       },
     },
@@ -3912,7 +3976,8 @@ const metadata = {
     },
   },
   deleteCascade: {
-    user: ['Session', 'Account', 'TwoFactorConfirmation', 'Authenticator'],
+    tenant: ['UserTenant'],
+    user: ['UserTenant', 'Session', 'Account', 'TwoFactorConfirmation', 'Authenticator'],
   },
   authModel: 'User',
 };

@@ -7,6 +7,7 @@
 
 export * from './tenant';
 export * from './user';
+export * from './user-tenant';
 export * from './user-role';
 export * from './role';
 export * from './module';
