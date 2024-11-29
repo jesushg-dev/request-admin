@@ -6,8 +6,8 @@ import { SelectFieldFormElement } from './fields/select-field';
 import { SeparatorFieldFormElement } from './fields/separator-field';
 import { SpacerFieldFormElement } from './fields/spacer-field';
 import { SubTitleFieldFormElement } from './fields/subtitle-field';
-import { TextAreaFormElement } from './fields/textarea-field';
 import { TextFieldFormElement } from './fields/text-field';
+import { TextAreaFormElement } from './fields/textarea-field';
 import { TitleFieldFormElement } from './fields/title-field';
 
 type StyleElementsType = {
@@ -50,7 +50,18 @@ export const styleElements = {
   },
 } satisfies StyleElementsType;
 
-export type ElementsType = 'TextField' | 'TitleField' | 'SubTitleField' | 'ParagraphField' | 'SeparatorField' | 'SpacerField' | 'NumberField' | 'TextAreaField' | 'DateField' | 'SelectField' | 'CheckboxField';
+export type ElementsType =
+  | 'TextField'
+  | 'TitleField'
+  | 'SubTitleField'
+  | 'ParagraphField'
+  | 'SeparatorField'
+  | 'SpacerField'
+  | 'NumberField'
+  | 'TextAreaField'
+  | 'DateField'
+  | 'SelectField'
+  | 'CheckboxField';
 
 export type SubmitFunction = (key: string, value: string) => void;
 

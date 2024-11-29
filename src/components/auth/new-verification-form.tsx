@@ -1,14 +1,14 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { BeatLoader } from 'react-spinners';
 import { useSearchParams } from 'next/navigation';
-
 import { newVerification } from '@/actions/new-verification';
+import { useTranslations } from 'next-intl';
+import { BeatLoader } from 'react-spinners';
+
 import { CardWrapper } from '@/components/auth/card-wrapper';
 import { FormError } from '@/components/prullenbak/form-error';
 import { FormSuccess } from '@/components/prullenbak/form-success';
-import { useTranslations } from 'next-intl';
 
 export const NewVerificationForm = () => {
   const t = useTranslations('auth.newVerificationForm'); // Namespace for translations

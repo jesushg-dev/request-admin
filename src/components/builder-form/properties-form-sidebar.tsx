@@ -1,9 +1,11 @@
 import React from 'react';
-import useDesigner from '@/hooks/use-designer.hook';
-import { FormElements } from './form-elements';
 import { AiOutlineClose } from 'react-icons/ai';
+
+import useDesigner from '@/hooks/use-designer.hook';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+
+import { FormElements } from './form-elements';
 
 function PropertiesFormSidebar() {
   const { selectedElement, setSelectedElement } = useDesigner();

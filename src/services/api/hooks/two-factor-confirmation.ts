@@ -5,26 +5,36 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import type { Prisma, TwoFactorConfirmation } from '@zenstackhq/runtime/models';
-import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/react-query';
-import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
+import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
 import type { PolicyCrudKind } from '@zenstackhq/runtime';
-import metadata from './__model_meta';
-type DefaultError = QueryError;
-import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
+import type { Prisma, TwoFactorConfirmation } from '@zenstackhq/runtime/models';
+import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
+import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
 
-export function useCreateTwoFactorConfirmation(options?: Omit<UseMutationOptions<TwoFactorConfirmation | undefined, DefaultError, Prisma.TwoFactorConfirmationCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
+import metadata from './__model_meta';
+
+type DefaultError = QueryError;
+
+export function useCreateTwoFactorConfirmation(
+  options?: Omit<UseMutationOptions<TwoFactorConfirmation | undefined, DefaultError, Prisma.TwoFactorConfirmationCreateArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.TwoFactorConfirmationCreateArgs, DefaultError, TwoFactorConfirmation, true>('TwoFactorConfirmation', 'POST', `${endpoint}/twoFactorConfirmation/create`, metadata, options, fetch, true);
+  const _mutation = useModelMutation<Prisma.TwoFactorConfirmationCreateArgs, DefaultError, TwoFactorConfirmation, true>(
+    'TwoFactorConfirmation',
+    'POST',
+    `${endpoint}/twoFactorConfirmation/create`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.TwoFactorConfirmationCreateArgs>(
       args: Prisma.SelectSubset<T, Prisma.TwoFactorConfirmationCreateArgs>,
       options?: Omit<
-        UseMutationOptions<CheckSelect<T, TwoFactorConfirmation, Prisma.TwoFactorConfirmationGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorConfirmationCreateArgs>> & ExtraMutationOptions,
+        UseMutationOptions<CheckSelect<T, TwoFactorConfirmation, Prisma.TwoFactorConfirmationGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorConfirmationCreateArgs>> &
+          ExtraMutationOptions,
         'mutationFn'
       >
     ) => {
@@ -34,7 +44,9 @@ export function useCreateTwoFactorConfirmation(options?: Omit<UseMutationOptions
   return mutation;
 }
 
-export function useCreateManyTwoFactorConfirmation(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.TwoFactorConfirmationCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
+export function useCreateManyTwoFactorConfirmation(
+  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.TwoFactorConfirmationCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
   const { endpoint, fetch } = getHooksContext();
   const _mutation = useModelMutation<Prisma.TwoFactorConfirmationCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
     'TwoFactorConfirmation',
@@ -67,10 +79,12 @@ export function useFindManyTwoFactorConfirmation<
   return useModelQuery<TQueryFnData, TData, TError>('TwoFactorConfirmation', `${endpoint}/twoFactorConfirmation/findMany`, args, options, fetch);
 }
 
-export function useInfiniteFindManyTwoFactorConfirmation<TArgs extends Prisma.TwoFactorConfirmationFindManyArgs, TQueryFnData = Array<Prisma.TwoFactorConfirmationGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorConfirmationFindManyArgs>,
-  options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
-) {
+export function useInfiniteFindManyTwoFactorConfirmation<
+  TArgs extends Prisma.TwoFactorConfirmationFindManyArgs,
+  TQueryFnData = Array<Prisma.TwoFactorConfirmationGetPayload<TArgs>>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorConfirmationFindManyArgs>, options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
   options = options ?? { getNextPageParam: () => null };
   const { endpoint, fetch } = getHooksContext();
   return useInfiniteModelQuery<TQueryFnData, TData, TError>('TwoFactorConfirmation', `${endpoint}/twoFactorConfirmation/findMany`, args, options, fetch);
@@ -91,7 +105,10 @@ export function useSuspenseInfiniteFindManyTwoFactorConfirmation<
   TQueryFnData = Array<Prisma.TwoFactorConfirmationGetPayload<TArgs>>,
   TData = TQueryFnData,
   TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorConfirmationFindManyArgs>, options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
+>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorConfirmationFindManyArgs>,
+  options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
+) {
   options = options ?? { getNextPageParam: () => null };
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('TwoFactorConfirmation', `${endpoint}/twoFactorConfirmation/findMany`, args, options, fetch);
@@ -137,15 +154,26 @@ export function useSuspenseFindFirstTwoFactorConfirmation<
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('TwoFactorConfirmation', `${endpoint}/twoFactorConfirmation/findFirst`, args, options, fetch);
 }
 
-export function useUpdateTwoFactorConfirmation(options?: Omit<UseMutationOptions<TwoFactorConfirmation | undefined, DefaultError, Prisma.TwoFactorConfirmationUpdateArgs> & ExtraMutationOptions, 'mutationFn'>) {
+export function useUpdateTwoFactorConfirmation(
+  options?: Omit<UseMutationOptions<TwoFactorConfirmation | undefined, DefaultError, Prisma.TwoFactorConfirmationUpdateArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.TwoFactorConfirmationUpdateArgs, DefaultError, TwoFactorConfirmation, true>('TwoFactorConfirmation', 'PUT', `${endpoint}/twoFactorConfirmation/update`, metadata, options, fetch, true);
+  const _mutation = useModelMutation<Prisma.TwoFactorConfirmationUpdateArgs, DefaultError, TwoFactorConfirmation, true>(
+    'TwoFactorConfirmation',
+    'PUT',
+    `${endpoint}/twoFactorConfirmation/update`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.TwoFactorConfirmationUpdateArgs>(
       args: Prisma.SelectSubset<T, Prisma.TwoFactorConfirmationUpdateArgs>,
       options?: Omit<
-        UseMutationOptions<CheckSelect<T, TwoFactorConfirmation, Prisma.TwoFactorConfirmationGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorConfirmationUpdateArgs>> & ExtraMutationOptions,
+        UseMutationOptions<CheckSelect<T, TwoFactorConfirmation, Prisma.TwoFactorConfirmationGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorConfirmationUpdateArgs>> &
+          ExtraMutationOptions,
         'mutationFn'
       >
     ) => {
@@ -155,7 +183,9 @@ export function useUpdateTwoFactorConfirmation(options?: Omit<UseMutationOptions
   return mutation;
 }
 
-export function useUpdateManyTwoFactorConfirmation(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.TwoFactorConfirmationUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
+export function useUpdateManyTwoFactorConfirmation(
+  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.TwoFactorConfirmationUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
   const { endpoint, fetch } = getHooksContext();
   const _mutation = useModelMutation<Prisma.TwoFactorConfirmationUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
     'TwoFactorConfirmation',
@@ -178,15 +208,26 @@ export function useUpdateManyTwoFactorConfirmation(options?: Omit<UseMutationOpt
   return mutation;
 }
 
-export function useUpsertTwoFactorConfirmation(options?: Omit<UseMutationOptions<TwoFactorConfirmation | undefined, DefaultError, Prisma.TwoFactorConfirmationUpsertArgs> & ExtraMutationOptions, 'mutationFn'>) {
+export function useUpsertTwoFactorConfirmation(
+  options?: Omit<UseMutationOptions<TwoFactorConfirmation | undefined, DefaultError, Prisma.TwoFactorConfirmationUpsertArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.TwoFactorConfirmationUpsertArgs, DefaultError, TwoFactorConfirmation, true>('TwoFactorConfirmation', 'POST', `${endpoint}/twoFactorConfirmation/upsert`, metadata, options, fetch, true);
+  const _mutation = useModelMutation<Prisma.TwoFactorConfirmationUpsertArgs, DefaultError, TwoFactorConfirmation, true>(
+    'TwoFactorConfirmation',
+    'POST',
+    `${endpoint}/twoFactorConfirmation/upsert`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.TwoFactorConfirmationUpsertArgs>(
       args: Prisma.SelectSubset<T, Prisma.TwoFactorConfirmationUpsertArgs>,
       options?: Omit<
-        UseMutationOptions<CheckSelect<T, TwoFactorConfirmation, Prisma.TwoFactorConfirmationGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorConfirmationUpsertArgs>> & ExtraMutationOptions,
+        UseMutationOptions<CheckSelect<T, TwoFactorConfirmation, Prisma.TwoFactorConfirmationGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorConfirmationUpsertArgs>> &
+          ExtraMutationOptions,
         'mutationFn'
       >
     ) => {
@@ -196,7 +237,9 @@ export function useUpsertTwoFactorConfirmation(options?: Omit<UseMutationOptions
   return mutation;
 }
 
-export function useDeleteTwoFactorConfirmation(options?: Omit<UseMutationOptions<TwoFactorConfirmation | undefined, DefaultError, Prisma.TwoFactorConfirmationDeleteArgs> & ExtraMutationOptions, 'mutationFn'>) {
+export function useDeleteTwoFactorConfirmation(
+  options?: Omit<UseMutationOptions<TwoFactorConfirmation | undefined, DefaultError, Prisma.TwoFactorConfirmationDeleteArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
   const { endpoint, fetch } = getHooksContext();
   const _mutation = useModelMutation<Prisma.TwoFactorConfirmationDeleteArgs, DefaultError, TwoFactorConfirmation, true>(
     'TwoFactorConfirmation',
@@ -212,7 +255,8 @@ export function useDeleteTwoFactorConfirmation(options?: Omit<UseMutationOptions
     mutateAsync: async <T extends Prisma.TwoFactorConfirmationDeleteArgs>(
       args: Prisma.SelectSubset<T, Prisma.TwoFactorConfirmationDeleteArgs>,
       options?: Omit<
-        UseMutationOptions<CheckSelect<T, TwoFactorConfirmation, Prisma.TwoFactorConfirmationGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorConfirmationDeleteArgs>> & ExtraMutationOptions,
+        UseMutationOptions<CheckSelect<T, TwoFactorConfirmation, Prisma.TwoFactorConfirmationGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorConfirmationDeleteArgs>> &
+          ExtraMutationOptions,
         'mutationFn'
       >
     ) => {
@@ -222,7 +266,9 @@ export function useDeleteTwoFactorConfirmation(options?: Omit<UseMutationOptions
   return mutation;
 }
 
-export function useDeleteManyTwoFactorConfirmation(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.TwoFactorConfirmationDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
+export function useDeleteManyTwoFactorConfirmation(
+  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.TwoFactorConfirmationDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
   const { endpoint, fetch } = getHooksContext();
   const _mutation = useModelMutation<Prisma.TwoFactorConfirmationDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
     'TwoFactorConfirmation',
@@ -245,18 +291,22 @@ export function useDeleteManyTwoFactorConfirmation(options?: Omit<UseMutationOpt
   return mutation;
 }
 
-export function useAggregateTwoFactorConfirmation<TArgs extends Prisma.TwoFactorConfirmationAggregateArgs, TQueryFnData = Prisma.GetTwoFactorConfirmationAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.TwoFactorConfirmationAggregateArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useAggregateTwoFactorConfirmation<
+  TArgs extends Prisma.TwoFactorConfirmationAggregateArgs,
+  TQueryFnData = Prisma.GetTwoFactorConfirmationAggregateType<TArgs>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.TwoFactorConfirmationAggregateArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('TwoFactorConfirmation', `${endpoint}/twoFactorConfirmation/aggregate`, args, options, fetch);
 }
 
-export function useSuspenseAggregateTwoFactorConfirmation<TArgs extends Prisma.TwoFactorConfirmationAggregateArgs, TQueryFnData = Prisma.GetTwoFactorConfirmationAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.TwoFactorConfirmationAggregateArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useSuspenseAggregateTwoFactorConfirmation<
+  TArgs extends Prisma.TwoFactorConfirmationAggregateArgs,
+  TQueryFnData = Prisma.GetTwoFactorConfirmationAggregateType<TArgs>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.TwoFactorConfirmationAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('TwoFactorConfirmation', `${endpoint}/twoFactorConfirmation/aggregate`, args, options, fetch);
 }
@@ -275,7 +325,11 @@ export function useGroupByTwoFactorConfirmation<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -333,7 +387,11 @@ export function useSuspenseGroupByTwoFactorConfirmation<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>

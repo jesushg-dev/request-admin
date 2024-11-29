@@ -56,7 +56,16 @@ interface DateRangePickerProps extends React.ComponentPropsWithoutRef<typeof Pop
   shallow?: boolean;
 }
 
-export function DateRangePicker({ defaultDateRange, placeholder = 'Pick a date', triggerVariant = 'outline', triggerSize = 'default', triggerClassName, shallow = true, className, ...props }: DateRangePickerProps) {
+export function DateRangePicker({
+  defaultDateRange,
+  placeholder = 'Pick a date',
+  triggerVariant = 'outline',
+  triggerSize = 'default',
+  triggerClassName,
+  shallow = true,
+  className,
+  ...props
+}: DateRangePickerProps) {
   const [dateParams, setDateParams] = useQueryStates(
     {
       from: parseAsString.withDefault(defaultDateRange?.from?.toISOString() ?? ''),

@@ -1,20 +1,19 @@
 import { type Metadata } from 'next';
-import { SessionProvider } from 'next-auth/react';
-import { TRPCReactProvider } from '@/trpc/react';
-import { ThemeProvider } from 'next-themes';
-
 import localFont from 'next/font/local';
-import { getMessages, getTranslations } from 'next-intl/server';
-import { NextIntlClientProvider } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { Locale, routing } from '@/i18n/routing';
-
 import { auth } from '@/server/auth';
+import { TRPCReactProvider } from '@/trpc/react';
+import { SessionProvider } from 'next-auth/react';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, getTranslations } from 'next-intl/server';
+import { ThemeProvider } from 'next-themes';
 import NextTopLoader from 'nextjs-toploader';
-import { Toaster } from '@/components/ui/sonner';
-import { ToastContainer } from 'react-toastify';
-import TanstackQueryProvider from '@/components/hoc/tanstack-query-provider';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import { ToastContainer } from 'react-toastify';
+
+import { Toaster } from '@/components/ui/sonner';
+import TanstackQueryProvider from '@/components/hoc/tanstack-query-provider';
 
 // Font configuration
 const geistSans = localFont({

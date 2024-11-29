@@ -1,9 +1,9 @@
 'use server';
 
+import { getUserByEmail } from '@/services/data/user';
+import { ResetSchema } from '@/services/schemas';
 import * as z from 'zod';
 
-import { ResetSchema } from '@/services/schemas';
-import { getUserByEmail } from '@/services/data/user';
 import { sendPasswordResetEmail } from '@/lib/mail';
 import { generatePasswordResetToken } from '@/lib/tokens';
 

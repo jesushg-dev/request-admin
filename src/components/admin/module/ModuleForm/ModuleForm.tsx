@@ -1,14 +1,12 @@
 'use client';
 
 import React, { FC } from 'react';
-
-import { Control, useController } from 'react-hook-form';
-
-import { MdPerson, MdDescription } from 'react-icons/md';
-
-import { Input, ErrorList, Button } from '@/components/form';
 import { useCreateModuleForm } from '@/connections/module';
 import type { CreateModuleInputs, CreateModuleWithPermissionInputs } from '@/connections/module';
+import { Control, useController } from 'react-hook-form';
+import { MdDescription, MdPerson } from 'react-icons/md';
+
+import { Button, ErrorList, Input } from '@/components/form';
 
 interface CreateModuleFormProps {
   defaultValues?: Partial<CreateModuleInputs> | null;

@@ -1,12 +1,10 @@
 'use client';
 
-import { ErrorMessage } from '@hookform/error-message';
 import React, { useEffect, useMemo, useState } from 'react';
+import { ErrorMessage } from '@hookform/error-message';
 import { Control, FieldValues, FormState, Path, useController } from 'react-hook-form';
-
 import ReactSelect, { StylesConfig } from 'react-select';
 import type { Props as SelectProps } from 'react-select';
-
 import { twMerge } from 'tailwind-merge';
 
 type OmitProps = 'name' | 'ref' | 'value' | 'onChange' | 'onBlur';
@@ -81,7 +79,17 @@ const Select = <K, TFieldValues extends FieldValues = FieldValues>({
             <Icon />
           </div>
         )}
-        <ReactSelect menuPortalTarget={menuPortalTarget} styles={styles} {...rest} getOptionValue={rest.getOptionValue} ref={ref} value={value} onChange={onChange} onBlur={onBlur} id={rest?.id || name} />
+        <ReactSelect
+          menuPortalTarget={menuPortalTarget}
+          styles={styles}
+          {...rest}
+          getOptionValue={rest.getOptionValue}
+          ref={ref}
+          value={value}
+          onChange={onChange}
+          onBlur={onBlur}
+          id={rest?.id || name}
+        />
       </div>
       {showHelper && formState && <ErrorMessage name={name as any} errors={formState} render={({ message }) => <p className="mt-2 text-xs text-red-600">{message}</p>} />}
     </div>

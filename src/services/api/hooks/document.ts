@@ -5,16 +5,15 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import type { Prisma, Document } from '@zenstackhq/runtime/models';
-import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/react-query';
-import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
+import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
 import type { PolicyCrudKind } from '@zenstackhq/runtime';
+import type { Document, Prisma } from '@zenstackhq/runtime/models';
+import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
+import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
+
 import metadata from './__model_meta';
+
 type DefaultError = QueryError;
-import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
 
 export function useCreateDocument(options?: Omit<UseMutationOptions<Document | undefined, DefaultError, Prisma.DocumentCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
@@ -23,7 +22,10 @@ export function useCreateDocument(options?: Omit<UseMutationOptions<Document | u
     ..._mutation,
     mutateAsync: async <T extends Prisma.DocumentCreateArgs>(
       args: Prisma.SelectSubset<T, Prisma.DocumentCreateArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, Document, Prisma.DocumentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.DocumentCreateArgs>> & ExtraMutationOptions, 'mutationFn'>
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, Document, Prisma.DocumentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.DocumentCreateArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Document, Prisma.DocumentGetPayload<T>> | undefined;
     },
@@ -46,10 +48,12 @@ export function useCreateManyDocument(options?: Omit<UseMutationOptions<Prisma.B
   return mutation;
 }
 
-export function useFindManyDocument<TArgs extends Prisma.DocumentFindManyArgs, TQueryFnData = Array<Prisma.DocumentGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.DocumentFindManyArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useFindManyDocument<
+  TArgs extends Prisma.DocumentFindManyArgs,
+  TQueryFnData = Array<Prisma.DocumentGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.DocumentFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Document', `${endpoint}/document/findMany`, args, options, fetch);
 }
@@ -63,10 +67,12 @@ export function useInfiniteFindManyDocument<TArgs extends Prisma.DocumentFindMan
   return useInfiniteModelQuery<TQueryFnData, TData, TError>('Document', `${endpoint}/document/findMany`, args, options, fetch);
 }
 
-export function useSuspenseFindManyDocument<TArgs extends Prisma.DocumentFindManyArgs, TQueryFnData = Array<Prisma.DocumentGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.DocumentFindManyArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useSuspenseFindManyDocument<
+  TArgs extends Prisma.DocumentFindManyArgs,
+  TQueryFnData = Array<Prisma.DocumentGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.DocumentFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Document', `${endpoint}/document/findMany`, args, options, fetch);
 }
@@ -80,34 +86,42 @@ export function useSuspenseInfiniteFindManyDocument<TArgs extends Prisma.Documen
   return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('Document', `${endpoint}/document/findMany`, args, options, fetch);
 }
 
-export function useFindUniqueDocument<TArgs extends Prisma.DocumentFindUniqueArgs, TQueryFnData = Prisma.DocumentGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.DocumentFindUniqueArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useFindUniqueDocument<
+  TArgs extends Prisma.DocumentFindUniqueArgs,
+  TQueryFnData = Prisma.DocumentGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.DocumentFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Document', `${endpoint}/document/findUnique`, args, options, fetch);
 }
 
-export function useSuspenseFindUniqueDocument<TArgs extends Prisma.DocumentFindUniqueArgs, TQueryFnData = Prisma.DocumentGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.DocumentFindUniqueArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useSuspenseFindUniqueDocument<
+  TArgs extends Prisma.DocumentFindUniqueArgs,
+  TQueryFnData = Prisma.DocumentGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.DocumentFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Document', `${endpoint}/document/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstDocument<TArgs extends Prisma.DocumentFindFirstArgs, TQueryFnData = Prisma.DocumentGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.DocumentFindFirstArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useFindFirstDocument<
+  TArgs extends Prisma.DocumentFindFirstArgs,
+  TQueryFnData = Prisma.DocumentGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.DocumentFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Document', `${endpoint}/document/findFirst`, args, options, fetch);
 }
 
-export function useSuspenseFindFirstDocument<TArgs extends Prisma.DocumentFindFirstArgs, TQueryFnData = Prisma.DocumentGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.DocumentFindFirstArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useSuspenseFindFirstDocument<
+  TArgs extends Prisma.DocumentFindFirstArgs,
+  TQueryFnData = Prisma.DocumentGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.DocumentFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Document', `${endpoint}/document/findFirst`, args, options, fetch);
 }
@@ -119,7 +133,10 @@ export function useUpdateDocument(options?: Omit<UseMutationOptions<Document | u
     ..._mutation,
     mutateAsync: async <T extends Prisma.DocumentUpdateArgs>(
       args: Prisma.SelectSubset<T, Prisma.DocumentUpdateArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, Document, Prisma.DocumentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.DocumentUpdateArgs>> & ExtraMutationOptions, 'mutationFn'>
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, Document, Prisma.DocumentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.DocumentUpdateArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Document, Prisma.DocumentGetPayload<T>> | undefined;
     },
@@ -149,7 +166,10 @@ export function useUpsertDocument(options?: Omit<UseMutationOptions<Document | u
     ..._mutation,
     mutateAsync: async <T extends Prisma.DocumentUpsertArgs>(
       args: Prisma.SelectSubset<T, Prisma.DocumentUpsertArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, Document, Prisma.DocumentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.DocumentUpsertArgs>> & ExtraMutationOptions, 'mutationFn'>
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, Document, Prisma.DocumentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.DocumentUpsertArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Document, Prisma.DocumentGetPayload<T>> | undefined;
     },
@@ -164,7 +184,10 @@ export function useDeleteDocument(options?: Omit<UseMutationOptions<Document | u
     ..._mutation,
     mutateAsync: async <T extends Prisma.DocumentDeleteArgs>(
       args: Prisma.SelectSubset<T, Prisma.DocumentDeleteArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, Document, Prisma.DocumentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.DocumentDeleteArgs>> & ExtraMutationOptions, 'mutationFn'>
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, Document, Prisma.DocumentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.DocumentDeleteArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Document, Prisma.DocumentGetPayload<T>> | undefined;
     },
@@ -217,7 +240,11 @@ export function useGroupByDocument<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -253,7 +280,10 @@ export function useGroupByDocument<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.DocumentGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.DocumentGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Document', `${endpoint}/document/groupBy`, args, options, fetch);
 }
@@ -272,7 +302,11 @@ export function useSuspenseGroupByDocument<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -308,7 +342,10 @@ export function useSuspenseGroupByDocument<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.DocumentGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.DocumentGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Document', `${endpoint}/document/groupBy`, args, options, fetch);
 }

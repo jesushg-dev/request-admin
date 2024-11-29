@@ -5,16 +5,15 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import type { Prisma, Area } from '@zenstackhq/runtime/models';
-import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/react-query';
-import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
+import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
 import type { PolicyCrudKind } from '@zenstackhq/runtime';
+import type { Area, Prisma } from '@zenstackhq/runtime/models';
+import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
+import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
+
 import metadata from './__model_meta';
+
 type DefaultError = QueryError;
-import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
 
 export function useCreateArea(options?: Omit<UseMutationOptions<Area | undefined, DefaultError, Prisma.AreaCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
@@ -63,10 +62,12 @@ export function useInfiniteFindManyArea<TArgs extends Prisma.AreaFindManyArgs, T
   return useInfiniteModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/findMany`, args, options, fetch);
 }
 
-export function useSuspenseFindManyArea<TArgs extends Prisma.AreaFindManyArgs, TQueryFnData = Array<Prisma.AreaGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.AreaFindManyArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useSuspenseFindManyArea<
+  TArgs extends Prisma.AreaFindManyArgs,
+  TQueryFnData = Array<Prisma.AreaGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.AreaFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/findMany`, args, options, fetch);
 }
@@ -88,10 +89,12 @@ export function useFindUniqueArea<TArgs extends Prisma.AreaFindUniqueArgs, TQuer
   return useModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/findUnique`, args, options, fetch);
 }
 
-export function useSuspenseFindUniqueArea<TArgs extends Prisma.AreaFindUniqueArgs, TQueryFnData = Prisma.AreaGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.AreaFindUniqueArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useSuspenseFindUniqueArea<
+  TArgs extends Prisma.AreaFindUniqueArgs,
+  TQueryFnData = Prisma.AreaGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.AreaFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/findUnique`, args, options, fetch);
 }
@@ -217,7 +220,11 @@ export function useGroupByArea<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -253,7 +260,10 @@ export function useGroupByArea<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.AreaGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.AreaGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/groupBy`, args, options, fetch);
 }
@@ -272,7 +282,11 @@ export function useSuspenseGroupByArea<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -308,7 +322,10 @@ export function useSuspenseGroupByArea<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.AreaGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.AreaGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/groupBy`, args, options, fetch);
 }

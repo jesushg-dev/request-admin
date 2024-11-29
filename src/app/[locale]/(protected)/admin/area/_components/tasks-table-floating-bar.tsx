@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { SelectTrigger } from '@radix-ui/react-select';
 import { type Table } from '@tanstack/react-table';
+import { Area as AreaType } from '@zenstackhq/runtime/models';
 import { ArrowUp, CheckCircle2, Download, Loader, Trash2, X } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -11,7 +12,6 @@ import { Select, SelectContent, SelectGroup, SelectItem } from '@/components/ui/
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Kbd } from '@/components/kbd';
-import { Area as AreaType } from '@zenstackhq/runtime/models';
 
 interface TasksTableFloatingBarProps {
   table: Table<AreaType>;

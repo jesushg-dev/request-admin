@@ -1,16 +1,16 @@
 'use client';
 
-import { ElementsType, FormElement, FormElementInstance } from '@/components/builder-form/form-elements';
-import { Label } from '@/components/ui/label';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
-import useDesigner from '@/hooks/use-designer.hook';
-
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 import { LuSeparatorHorizontal } from 'react-icons/lu';
+import { z } from 'zod';
+
+import useDesigner from '@/hooks/use-designer.hook';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
+import { ElementsType, FormElement, FormElementInstance } from '@/components/builder-form/form-elements';
 
 const type: ElementsType = 'SpacerField';
 

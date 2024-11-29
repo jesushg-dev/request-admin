@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import MySwal, { triggerError } from '@/lib/message';
 import { type DefaultError, type UseMutateAsyncFunction } from '@tanstack/react-query';
+
+import MySwal, { triggerError } from '@/lib/message';
 
 // Update the interface to allow messages to be a string or a function that returns a string
 interface FormSubmitProps<TData = unknown> {
@@ -15,7 +16,10 @@ interface FormSubmitProps<TData = unknown> {
   cancelButtonText?: string;
 }
 
-const useSubmit = <TData = unknown, TError = DefaultError, TVariables = unknown, TContext = unknown>(mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TContext>, opts?: FormSubmitProps<TData>) => {
+const useSubmit = <TData = unknown, TError = DefaultError, TVariables = unknown, TContext = unknown>(
+  mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TContext>,
+  opts?: FormSubmitProps<TData>
+) => {
   const router = useRouter();
 
   // Dedicated function for determining the redirect URL

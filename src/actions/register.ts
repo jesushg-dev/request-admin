@@ -1,11 +1,11 @@
 'use server';
 
-import * as z from 'zod';
-import bcrypt from 'bcryptjs';
-
 import { db } from '@/server/db-client';
-import { RegisterSchema } from '@/services/schemas';
 import { getUserByEmail } from '@/services/data/user';
+import { RegisterSchema } from '@/services/schemas';
+import bcrypt from 'bcryptjs';
+import * as z from 'zod';
+
 import { sendVerificationEmail } from '@/lib/mail';
 import { generateVerificationToken } from '@/lib/tokens';
 

@@ -1,16 +1,16 @@
 'use client';
 
 import React from 'react';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { useTranslations } from 'next-intl';
+import { api } from '@/trpc/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ClientCreateSchema } from '@zenstackhq/runtime/zod/models';
+import { useTranslations } from 'next-intl';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-import { api } from '@/trpc/react';
+import useSubmit from '@/hooks/use-submit.hook';
 import { Input } from '@/components/form';
 import ErrorList from '@/components/form/error-list';
-import useSubmit from '@/hooks/use-submit.hook';
 
 type ClientCreateType = z.infer<typeof ClientCreateSchema>;
 
@@ -37,11 +37,27 @@ const NewClientPage: React.FC = () => {
           <Input name="id" type="text" register={register} formState={formState} label={t('inputs.id.label')} placeholder={t('inputs.id.placeholder')} required />
           <Input name="name" type="text" register={register} formState={formState} label={t('inputs.name.label')} placeholder={t('inputs.name.placeholder')} required />
           <Input name="email" type="text" register={register} formState={formState} label={t('inputs.email.label')} placeholder={t('inputs.email.placeholder')} />
-          <Input name="identificationNumber" type="text" register={register} formState={formState} label={t('inputs.identificationNumber.label')} placeholder={t('inputs.identificationNumber.placeholder')} required />
+          <Input
+            name="identificationNumber"
+            type="text"
+            register={register}
+            formState={formState}
+            label={t('inputs.identificationNumber.label')}
+            placeholder={t('inputs.identificationNumber.placeholder')}
+            required
+          />
           <Input name="corporateName" type="text" register={register} formState={formState} label={t('inputs.corporateName.label')} placeholder={t('inputs.corporateName.placeholder')} />
           <Input name="monthlyIncome" type="text" register={register} formState={formState} label={t('inputs.monthlyIncome.label')} placeholder={t('inputs.monthlyIncome.placeholder')} />
           <Input name="phone" type="text" register={register} formState={formState} label={t('inputs.phone.label')} placeholder={t('inputs.phone.placeholder')} />
-          <Input name="identificationTypeId" type="text" register={register} formState={formState} label={t('inputs.identificationTypeId.label')} placeholder={t('inputs.identificationTypeId.placeholder')} required />
+          <Input
+            name="identificationTypeId"
+            type="text"
+            register={register}
+            formState={formState}
+            label={t('inputs.identificationTypeId.label')}
+            placeholder={t('inputs.identificationTypeId.placeholder')}
+            required
+          />
           <ErrorList formState={formState} />
           <button type="submit" className="flex w-full justify-center rounded bg-primary p-3 font-medium text-white hover:bg-opacity-90">
             {t('createButton')}

@@ -98,6 +98,9 @@ export function getFilterOperators(columnType: ColumnType) {
  */
 export function getValidFilters<TData>(filters: Filter<TData>[]): Filter<TData>[] {
   return filters.filter(
-    (filter) => filter.operator === 'isEmpty' || filter.operator === 'isNotEmpty' || (Array.isArray(filter.value) ? filter.value.length > 0 : filter.value !== '' && filter.value !== null && filter.value !== undefined)
+    (filter) =>
+      filter.operator === 'isEmpty' ||
+      filter.operator === 'isNotEmpty' ||
+      (Array.isArray(filter.value) ? filter.value.length > 0 : filter.value !== '' && filter.value !== null && filter.value !== undefined)
   );
 }

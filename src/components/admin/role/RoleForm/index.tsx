@@ -1,17 +1,17 @@
 'use client';
 
-import React, { type FC, useState } from 'react';
-import { StepperComponent, StepsDirective, StepDirective } from '@syncfusion/ej2-react-navigations';
-
-import UserSelector from './UserSelector';
-import SummaryForm from './SummaryForm';
-import RoleDetailForm from './RoleDetailForm';
-import PermissionSelector from './PermissionSelector';
-
-import { toast } from 'react-toastify';
-import rswitch from '@/lib/rswitch';
-import type { CreateRoleWithPermissionsAndEmployeesInputs, SelectPermissionInputs, CreateRoleInputs } from '@/connections/role';
+import React, { useState, type FC } from 'react';
+import type { CreateRoleInputs, CreateRoleWithPermissionsAndEmployeesInputs, SelectPermissionInputs } from '@/connections/role';
 import type { IEmployee } from '@/utils/types';
+import { StepDirective, StepperComponent, StepsDirective } from '@syncfusion/ej2-react-navigations';
+import { toast } from 'react-toastify';
+
+import rswitch from '@/lib/rswitch';
+
+import PermissionSelector from './PermissionSelector';
+import RoleDetailForm from './RoleDetailForm';
+import SummaryForm from './SummaryForm';
+import UserSelector from './UserSelector';
 
 interface RoleFormProps {
   roleId?: string;

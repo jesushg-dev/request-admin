@@ -1,24 +1,23 @@
 'use client';
 
 import React, { memo } from 'react';
+import { useFindManyArea } from '@/services/api/hooks';
+import { DataTableAdvancedFilterField, DataTableFilterField, DataTableRowAction } from '@/types';
+import { Area as AreaType } from '@zenstackhq/runtime/models';
+import { parseAsInteger, parseAsString, parseAsStringEnum, useQueryStates } from 'nuqs';
 
+import { UNSTABLE_TENANT_ID } from '@/lib/constant';
+import { getValidFilters } from '@/lib/data-table';
+import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
+import { useDataTable } from '@/hooks/use-data-table';
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-advanced-toolbar';
 import { DataTableSkeleton } from '@/components/data-table/data-table-skeleton';
 import { Shell } from '@/components/shell';
-import { getValidFilters } from '@/lib/data-table';
-import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
-import { useDataTable } from '@/hooks/use-data-table';
-import { useFindManyArea } from '@/services/api/hooks';
 
-import { Area as AreaType } from '@zenstackhq/runtime/models';
-import { useQueryStates, parseAsInteger, parseAsString, parseAsStringEnum } from 'nuqs';
-import { DataTableRowAction, DataTableFilterField, DataTableAdvancedFilterField } from '@/types';
-
+import { getColumns } from './_components/tasks-table-columns';
 import { TasksTableFloatingBar } from './_components/tasks-table-floating-bar';
 import { TasksTableToolbarActions } from './_components/tasks-table-toolbar-actions';
-import { getColumns } from './_components/tasks-table-columns';
-import { UNSTABLE_TENANT_ID } from '@/lib/constant';
 
 const searchParamsParsers = {
   // pagination

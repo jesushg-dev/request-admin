@@ -1,11 +1,11 @@
 import 'server-only';
 
-import { createHydrationHelpers } from '@trpc/react-query/rsc';
-import { headers } from 'next/headers';
 import { cache } from 'react';
-
+import { headers } from 'next/headers';
 import { createCaller, type AppRouter } from '@/server/root';
 import { createTRPCContext } from '@/server/trpc';
+import { createHydrationHelpers } from '@trpc/react-query/rsc';
+
 import { createQueryClient } from './query-client';
 
 /**

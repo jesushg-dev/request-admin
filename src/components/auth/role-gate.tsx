@@ -1,8 +1,9 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
+
 import { useCurrentRole } from '@/hooks/use-current-role.hook';
 import { FormError } from '@/components/prullenbak/form-error';
-import { useTranslations } from 'next-intl';
 
 interface RoleGateProps {
   children: React.ReactNode;

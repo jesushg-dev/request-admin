@@ -1,9 +1,12 @@
 'use client';
 
-import { extend, addClass } from '@syncfusion/ej2-base';
-import { KanbanComponent, ColumnsDirective, ColumnDirective, type DialogFieldsModel, type CardRenderedEventArgs } from '@syncfusion/ej2-react-kanban';
+import { addClass, extend } from '@syncfusion/ej2-base';
+import { ColumnDirective, ColumnsDirective, KanbanComponent, type CardRenderedEventArgs, type DialogFieldsModel } from '@syncfusion/ej2-react-kanban';
+
 import * as dataSource from './datasource.json';
+
 import './overview.css';
+
 /**
  * Kanban Overview sample
  */

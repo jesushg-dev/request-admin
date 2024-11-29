@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { type Row } from '@tanstack/react-table';
+import { Area as AreaType } from '@zenstackhq/runtime/models';
 import { Loader, Trash } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -9,8 +10,6 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
-
-import { Area as AreaType } from '@zenstackhq/runtime/models';
 
 interface DeleteTasksDialogProps extends React.ComponentPropsWithoutRef<typeof Dialog> {
   tasks: Row<AreaType>['original'][];

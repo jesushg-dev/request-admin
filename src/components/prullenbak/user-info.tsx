@@ -1,6 +1,7 @@
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { ExtendedUser } from '@/server/auth/config';
+
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 interface UserInfoProps {
   user?: ExtendedUser;

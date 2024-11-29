@@ -48,7 +48,13 @@ export function DataTablePagination<TData>({ table, pageSizeOptions = [10, 20, 3
           <Button aria-label="Go to next page" variant="outline" size="icon" className="size-8" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
             <ChevronRight className="size-4" aria-hidden="true" />
           </Button>
-          <Button aria-label="Go to last page" variant="outline" size="icon" className="hidden size-8 lg:flex" onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()}>
+          <Button
+            aria-label="Go to last page"
+            variant="outline"
+            size="icon"
+            className="hidden size-8 lg:flex"
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            disabled={!table.getCanNextPage()}>
             <ChevronsRight className="size-4" aria-hidden="true" />
           </Button>
         </div>

@@ -1,22 +1,43 @@
 'use client';
 
 import * as React from 'react';
+import { logout } from '@/actions/logout';
+import { useFindManyTenant } from '@/services/api/hooks';
+import { is } from 'date-fns/locale';
+import {
+  AudioWaveform,
+  BookOpen,
+  Bot,
+  BriefcaseIcon,
+  ClipboardIcon,
+  Command,
+  FileTextIcon,
+  FolderIcon,
+  Frame,
+  GalleryVerticalEnd,
+  GridIcon,
+  HomeIcon,
+  LayersIcon,
+  ListIcon,
+  LockIcon,
+  Map,
+  PieChart,
+  PieChartIcon,
+  Settings2,
+  SettingsIcon,
+  ShieldIcon,
+  SquareTerminal,
+  UsersIcon,
+} from 'lucide-react';
+import { useTranslations } from 'next-intl';
+
+import { useCurrentUser } from '@/hooks/use-current-user.hook';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '@/components/ui/sidebar';
+import { Skeleton } from '@/components/ui/skeleton';
 import { MenuItem, NavMain } from '@/components/admin/layout/nav-main';
 import { MenuProject, NavProjects } from '@/components/admin/layout/nav-projects';
 import { NavUser } from '@/components/admin/layout/nav-user';
 import { TeamSwitcher } from '@/components/admin/layout/team-switcher';
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '@/components/ui/sidebar';
-
-import { PieChartIcon, FolderIcon, SettingsIcon } from 'lucide-react';
-import { AudioWaveform, BookOpen, Bot, Command, Frame, GalleryVerticalEnd, Map, PieChart, Settings2, SquareTerminal } from 'lucide-react';
-import { HomeIcon, FileTextIcon, BriefcaseIcon, UsersIcon, LockIcon, LayersIcon, ShieldIcon, ClipboardIcon, GridIcon, ListIcon } from 'lucide-react';
-
-import { logout } from '@/actions/logout';
-import { useCurrentUser } from '@/hooks/use-current-user.hook';
-import { useTranslations } from 'next-intl';
-import { useFindManyTenant } from '@/services/api/hooks';
-import { is } from 'date-fns/locale';
-import { Skeleton } from '@/components/ui/skeleton';
 
 const projects: MenuProject[] = [
   {

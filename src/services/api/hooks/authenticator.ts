@@ -5,16 +5,15 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import type { Prisma, Authenticator } from '@zenstackhq/runtime/models';
-import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/react-query';
-import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
+import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
 import type { PolicyCrudKind } from '@zenstackhq/runtime';
+import type { Authenticator, Prisma } from '@zenstackhq/runtime/models';
+import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
+import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
+
 import metadata from './__model_meta';
+
 type DefaultError = QueryError;
-import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
 
 export function useCreateAuthenticator(options?: Omit<UseMutationOptions<Authenticator | undefined, DefaultError, Prisma.AuthenticatorCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
@@ -23,7 +22,10 @@ export function useCreateAuthenticator(options?: Omit<UseMutationOptions<Authent
     ..._mutation,
     mutateAsync: async <T extends Prisma.AuthenticatorCreateArgs>(
       args: Prisma.SelectSubset<T, Prisma.AuthenticatorCreateArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, Authenticator, Prisma.AuthenticatorGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AuthenticatorCreateArgs>> & ExtraMutationOptions, 'mutationFn'>
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, Authenticator, Prisma.AuthenticatorGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AuthenticatorCreateArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Authenticator, Prisma.AuthenticatorGetPayload<T>> | undefined;
     },
@@ -33,7 +35,15 @@ export function useCreateAuthenticator(options?: Omit<UseMutationOptions<Authent
 
 export function useCreateManyAuthenticator(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.AuthenticatorCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.AuthenticatorCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('Authenticator', 'POST', `${endpoint}/authenticator/createMany`, metadata, options, fetch, false);
+  const _mutation = useModelMutation<Prisma.AuthenticatorCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'Authenticator',
+    'POST',
+    `${endpoint}/authenticator/createMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.AuthenticatorCreateManyArgs>(
@@ -46,18 +56,22 @@ export function useCreateManyAuthenticator(options?: Omit<UseMutationOptions<Pri
   return mutation;
 }
 
-export function useFindManyAuthenticator<TArgs extends Prisma.AuthenticatorFindManyArgs, TQueryFnData = Array<Prisma.AuthenticatorGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.AuthenticatorFindManyArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useFindManyAuthenticator<
+  TArgs extends Prisma.AuthenticatorFindManyArgs,
+  TQueryFnData = Array<Prisma.AuthenticatorGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.AuthenticatorFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Authenticator', `${endpoint}/authenticator/findMany`, args, options, fetch);
 }
 
-export function useInfiniteFindManyAuthenticator<TArgs extends Prisma.AuthenticatorFindManyArgs, TQueryFnData = Array<Prisma.AuthenticatorGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.AuthenticatorFindManyArgs>,
-  options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
-) {
+export function useInfiniteFindManyAuthenticator<
+  TArgs extends Prisma.AuthenticatorFindManyArgs,
+  TQueryFnData = Array<Prisma.AuthenticatorGetPayload<TArgs>>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.AuthenticatorFindManyArgs>, options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
   options = options ?? { getNextPageParam: () => null };
   const { endpoint, fetch } = getHooksContext();
   return useInfiniteModelQuery<TQueryFnData, TData, TError>('Authenticator', `${endpoint}/authenticator/findMany`, args, options, fetch);
@@ -73,43 +87,53 @@ export function useSuspenseFindManyAuthenticator<
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Authenticator', `${endpoint}/authenticator/findMany`, args, options, fetch);
 }
 
-export function useSuspenseInfiniteFindManyAuthenticator<TArgs extends Prisma.AuthenticatorFindManyArgs, TQueryFnData = Array<Prisma.AuthenticatorGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.AuthenticatorFindManyArgs>,
-  options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
-) {
+export function useSuspenseInfiniteFindManyAuthenticator<
+  TArgs extends Prisma.AuthenticatorFindManyArgs,
+  TQueryFnData = Array<Prisma.AuthenticatorGetPayload<TArgs>>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.AuthenticatorFindManyArgs>, options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
   options = options ?? { getNextPageParam: () => null };
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('Authenticator', `${endpoint}/authenticator/findMany`, args, options, fetch);
 }
 
-export function useFindUniqueAuthenticator<TArgs extends Prisma.AuthenticatorFindUniqueArgs, TQueryFnData = Prisma.AuthenticatorGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.AuthenticatorFindUniqueArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useFindUniqueAuthenticator<
+  TArgs extends Prisma.AuthenticatorFindUniqueArgs,
+  TQueryFnData = Prisma.AuthenticatorGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.AuthenticatorFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Authenticator', `${endpoint}/authenticator/findUnique`, args, options, fetch);
 }
 
-export function useSuspenseFindUniqueAuthenticator<TArgs extends Prisma.AuthenticatorFindUniqueArgs, TQueryFnData = Prisma.AuthenticatorGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.AuthenticatorFindUniqueArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useSuspenseFindUniqueAuthenticator<
+  TArgs extends Prisma.AuthenticatorFindUniqueArgs,
+  TQueryFnData = Prisma.AuthenticatorGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.AuthenticatorFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Authenticator', `${endpoint}/authenticator/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstAuthenticator<TArgs extends Prisma.AuthenticatorFindFirstArgs, TQueryFnData = Prisma.AuthenticatorGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.AuthenticatorFindFirstArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useFindFirstAuthenticator<
+  TArgs extends Prisma.AuthenticatorFindFirstArgs,
+  TQueryFnData = Prisma.AuthenticatorGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.AuthenticatorFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Authenticator', `${endpoint}/authenticator/findFirst`, args, options, fetch);
 }
 
-export function useSuspenseFindFirstAuthenticator<TArgs extends Prisma.AuthenticatorFindFirstArgs, TQueryFnData = Prisma.AuthenticatorGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.AuthenticatorFindFirstArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useSuspenseFindFirstAuthenticator<
+  TArgs extends Prisma.AuthenticatorFindFirstArgs,
+  TQueryFnData = Prisma.AuthenticatorGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.AuthenticatorFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Authenticator', `${endpoint}/authenticator/findFirst`, args, options, fetch);
 }
@@ -121,7 +145,10 @@ export function useUpdateAuthenticator(options?: Omit<UseMutationOptions<Authent
     ..._mutation,
     mutateAsync: async <T extends Prisma.AuthenticatorUpdateArgs>(
       args: Prisma.SelectSubset<T, Prisma.AuthenticatorUpdateArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, Authenticator, Prisma.AuthenticatorGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AuthenticatorUpdateArgs>> & ExtraMutationOptions, 'mutationFn'>
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, Authenticator, Prisma.AuthenticatorGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AuthenticatorUpdateArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Authenticator, Prisma.AuthenticatorGetPayload<T>> | undefined;
     },
@@ -131,7 +158,15 @@ export function useUpdateAuthenticator(options?: Omit<UseMutationOptions<Authent
 
 export function useUpdateManyAuthenticator(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.AuthenticatorUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.AuthenticatorUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('Authenticator', 'PUT', `${endpoint}/authenticator/updateMany`, metadata, options, fetch, false);
+  const _mutation = useModelMutation<Prisma.AuthenticatorUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'Authenticator',
+    'PUT',
+    `${endpoint}/authenticator/updateMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.AuthenticatorUpdateManyArgs>(
@@ -151,7 +186,10 @@ export function useUpsertAuthenticator(options?: Omit<UseMutationOptions<Authent
     ..._mutation,
     mutateAsync: async <T extends Prisma.AuthenticatorUpsertArgs>(
       args: Prisma.SelectSubset<T, Prisma.AuthenticatorUpsertArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, Authenticator, Prisma.AuthenticatorGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AuthenticatorUpsertArgs>> & ExtraMutationOptions, 'mutationFn'>
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, Authenticator, Prisma.AuthenticatorGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AuthenticatorUpsertArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Authenticator, Prisma.AuthenticatorGetPayload<T>> | undefined;
     },
@@ -166,7 +204,10 @@ export function useDeleteAuthenticator(options?: Omit<UseMutationOptions<Authent
     ..._mutation,
     mutateAsync: async <T extends Prisma.AuthenticatorDeleteArgs>(
       args: Prisma.SelectSubset<T, Prisma.AuthenticatorDeleteArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, Authenticator, Prisma.AuthenticatorGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AuthenticatorDeleteArgs>> & ExtraMutationOptions, 'mutationFn'>
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, Authenticator, Prisma.AuthenticatorGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AuthenticatorDeleteArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Authenticator, Prisma.AuthenticatorGetPayload<T>> | undefined;
     },
@@ -176,7 +217,15 @@ export function useDeleteAuthenticator(options?: Omit<UseMutationOptions<Authent
 
 export function useDeleteManyAuthenticator(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.AuthenticatorDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.AuthenticatorDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('Authenticator', 'DELETE', `${endpoint}/authenticator/deleteMany`, metadata, options, fetch, false);
+  const _mutation = useModelMutation<Prisma.AuthenticatorDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'Authenticator',
+    'DELETE',
+    `${endpoint}/authenticator/deleteMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.AuthenticatorDeleteManyArgs>(
@@ -197,10 +246,12 @@ export function useAggregateAuthenticator<TArgs extends Prisma.AuthenticatorAggr
   return useModelQuery<TQueryFnData, TData, TError>('Authenticator', `${endpoint}/authenticator/aggregate`, args, options, fetch);
 }
 
-export function useSuspenseAggregateAuthenticator<TArgs extends Prisma.AuthenticatorAggregateArgs, TQueryFnData = Prisma.GetAuthenticatorAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.AuthenticatorAggregateArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useSuspenseAggregateAuthenticator<
+  TArgs extends Prisma.AuthenticatorAggregateArgs,
+  TQueryFnData = Prisma.GetAuthenticatorAggregateType<TArgs>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.AuthenticatorAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Authenticator', `${endpoint}/authenticator/aggregate`, args, options, fetch);
 }
@@ -219,7 +270,11 @@ export function useGroupByAuthenticator<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -255,7 +310,10 @@ export function useGroupByAuthenticator<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.AuthenticatorGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.AuthenticatorGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Authenticator', `${endpoint}/authenticator/groupBy`, args, options, fetch);
 }
@@ -274,7 +332,11 @@ export function useSuspenseGroupByAuthenticator<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -341,7 +403,17 @@ export function useSuspenseCountAuthenticator<
 export function useCheckAuthenticator<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
-    where?: { id?: string; credentialID?: string; userId?: string; providerAccountId?: string; credentialPublicKey?: string; counter?: number; credentialDeviceType?: string; credentialBackedUp?: boolean; transports?: string };
+    where?: {
+      id?: string;
+      credentialID?: string;
+      userId?: string;
+      providerAccountId?: string;
+      credentialPublicKey?: string;
+      counter?: number;
+      credentialDeviceType?: string;
+      credentialBackedUp?: boolean;
+      transports?: string;
+    };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {

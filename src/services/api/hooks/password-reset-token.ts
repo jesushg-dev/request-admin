@@ -5,26 +5,36 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import type { Prisma, PasswordResetToken } from '@zenstackhq/runtime/models';
-import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/react-query';
-import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
+import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
 import type { PolicyCrudKind } from '@zenstackhq/runtime';
-import metadata from './__model_meta';
-type DefaultError = QueryError;
-import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
+import type { PasswordResetToken, Prisma } from '@zenstackhq/runtime/models';
+import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
+import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
 
-export function useCreatePasswordResetToken(options?: Omit<UseMutationOptions<PasswordResetToken | undefined, DefaultError, Prisma.PasswordResetTokenCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
+import metadata from './__model_meta';
+
+type DefaultError = QueryError;
+
+export function useCreatePasswordResetToken(
+  options?: Omit<UseMutationOptions<PasswordResetToken | undefined, DefaultError, Prisma.PasswordResetTokenCreateArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.PasswordResetTokenCreateArgs, DefaultError, PasswordResetToken, true>('PasswordResetToken', 'POST', `${endpoint}/passwordResetToken/create`, metadata, options, fetch, true);
+  const _mutation = useModelMutation<Prisma.PasswordResetTokenCreateArgs, DefaultError, PasswordResetToken, true>(
+    'PasswordResetToken',
+    'POST',
+    `${endpoint}/passwordResetToken/create`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.PasswordResetTokenCreateArgs>(
       args: Prisma.SelectSubset<T, Prisma.PasswordResetTokenCreateArgs>,
       options?: Omit<
-        UseMutationOptions<CheckSelect<T, PasswordResetToken, Prisma.PasswordResetTokenGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.PasswordResetTokenCreateArgs>> & ExtraMutationOptions,
+        UseMutationOptions<CheckSelect<T, PasswordResetToken, Prisma.PasswordResetTokenGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.PasswordResetTokenCreateArgs>> &
+          ExtraMutationOptions,
         'mutationFn'
       >
     ) => {
@@ -36,7 +46,15 @@ export function useCreatePasswordResetToken(options?: Omit<UseMutationOptions<Pa
 
 export function useCreateManyPasswordResetToken(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.PasswordResetTokenCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.PasswordResetTokenCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('PasswordResetToken', 'POST', `${endpoint}/passwordResetToken/createMany`, metadata, options, fetch, false);
+  const _mutation = useModelMutation<Prisma.PasswordResetTokenCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'PasswordResetToken',
+    'POST',
+    `${endpoint}/passwordResetToken/createMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.PasswordResetTokenCreateManyArgs>(
@@ -59,10 +77,12 @@ export function useFindManyPasswordResetToken<
   return useModelQuery<TQueryFnData, TData, TError>('PasswordResetToken', `${endpoint}/passwordResetToken/findMany`, args, options, fetch);
 }
 
-export function useInfiniteFindManyPasswordResetToken<TArgs extends Prisma.PasswordResetTokenFindManyArgs, TQueryFnData = Array<Prisma.PasswordResetTokenGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.PasswordResetTokenFindManyArgs>,
-  options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
-) {
+export function useInfiniteFindManyPasswordResetToken<
+  TArgs extends Prisma.PasswordResetTokenFindManyArgs,
+  TQueryFnData = Array<Prisma.PasswordResetTokenGetPayload<TArgs>>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.PasswordResetTokenFindManyArgs>, options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
   options = options ?? { getNextPageParam: () => null };
   const { endpoint, fetch } = getHooksContext();
   return useInfiniteModelQuery<TQueryFnData, TData, TError>('PasswordResetToken', `${endpoint}/passwordResetToken/findMany`, args, options, fetch);
@@ -78,7 +98,12 @@ export function useSuspenseFindManyPasswordResetToken<
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('PasswordResetToken', `${endpoint}/passwordResetToken/findMany`, args, options, fetch);
 }
 
-export function useSuspenseInfiniteFindManyPasswordResetToken<TArgs extends Prisma.PasswordResetTokenFindManyArgs, TQueryFnData = Array<Prisma.PasswordResetTokenGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
+export function useSuspenseInfiniteFindManyPasswordResetToken<
+  TArgs extends Prisma.PasswordResetTokenFindManyArgs,
+  TQueryFnData = Array<Prisma.PasswordResetTokenGetPayload<TArgs>>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
   args?: Prisma.SelectSubset<TArgs, Prisma.PasswordResetTokenFindManyArgs>,
   options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
 ) {
@@ -127,15 +152,26 @@ export function useSuspenseFindFirstPasswordResetToken<
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('PasswordResetToken', `${endpoint}/passwordResetToken/findFirst`, args, options, fetch);
 }
 
-export function useUpdatePasswordResetToken(options?: Omit<UseMutationOptions<PasswordResetToken | undefined, DefaultError, Prisma.PasswordResetTokenUpdateArgs> & ExtraMutationOptions, 'mutationFn'>) {
+export function useUpdatePasswordResetToken(
+  options?: Omit<UseMutationOptions<PasswordResetToken | undefined, DefaultError, Prisma.PasswordResetTokenUpdateArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.PasswordResetTokenUpdateArgs, DefaultError, PasswordResetToken, true>('PasswordResetToken', 'PUT', `${endpoint}/passwordResetToken/update`, metadata, options, fetch, true);
+  const _mutation = useModelMutation<Prisma.PasswordResetTokenUpdateArgs, DefaultError, PasswordResetToken, true>(
+    'PasswordResetToken',
+    'PUT',
+    `${endpoint}/passwordResetToken/update`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.PasswordResetTokenUpdateArgs>(
       args: Prisma.SelectSubset<T, Prisma.PasswordResetTokenUpdateArgs>,
       options?: Omit<
-        UseMutationOptions<CheckSelect<T, PasswordResetToken, Prisma.PasswordResetTokenGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.PasswordResetTokenUpdateArgs>> & ExtraMutationOptions,
+        UseMutationOptions<CheckSelect<T, PasswordResetToken, Prisma.PasswordResetTokenGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.PasswordResetTokenUpdateArgs>> &
+          ExtraMutationOptions,
         'mutationFn'
       >
     ) => {
@@ -147,7 +183,15 @@ export function useUpdatePasswordResetToken(options?: Omit<UseMutationOptions<Pa
 
 export function useUpdateManyPasswordResetToken(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.PasswordResetTokenUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.PasswordResetTokenUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('PasswordResetToken', 'PUT', `${endpoint}/passwordResetToken/updateMany`, metadata, options, fetch, false);
+  const _mutation = useModelMutation<Prisma.PasswordResetTokenUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'PasswordResetToken',
+    'PUT',
+    `${endpoint}/passwordResetToken/updateMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.PasswordResetTokenUpdateManyArgs>(
@@ -160,15 +204,26 @@ export function useUpdateManyPasswordResetToken(options?: Omit<UseMutationOption
   return mutation;
 }
 
-export function useUpsertPasswordResetToken(options?: Omit<UseMutationOptions<PasswordResetToken | undefined, DefaultError, Prisma.PasswordResetTokenUpsertArgs> & ExtraMutationOptions, 'mutationFn'>) {
+export function useUpsertPasswordResetToken(
+  options?: Omit<UseMutationOptions<PasswordResetToken | undefined, DefaultError, Prisma.PasswordResetTokenUpsertArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.PasswordResetTokenUpsertArgs, DefaultError, PasswordResetToken, true>('PasswordResetToken', 'POST', `${endpoint}/passwordResetToken/upsert`, metadata, options, fetch, true);
+  const _mutation = useModelMutation<Prisma.PasswordResetTokenUpsertArgs, DefaultError, PasswordResetToken, true>(
+    'PasswordResetToken',
+    'POST',
+    `${endpoint}/passwordResetToken/upsert`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.PasswordResetTokenUpsertArgs>(
       args: Prisma.SelectSubset<T, Prisma.PasswordResetTokenUpsertArgs>,
       options?: Omit<
-        UseMutationOptions<CheckSelect<T, PasswordResetToken, Prisma.PasswordResetTokenGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.PasswordResetTokenUpsertArgs>> & ExtraMutationOptions,
+        UseMutationOptions<CheckSelect<T, PasswordResetToken, Prisma.PasswordResetTokenGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.PasswordResetTokenUpsertArgs>> &
+          ExtraMutationOptions,
         'mutationFn'
       >
     ) => {
@@ -178,15 +233,26 @@ export function useUpsertPasswordResetToken(options?: Omit<UseMutationOptions<Pa
   return mutation;
 }
 
-export function useDeletePasswordResetToken(options?: Omit<UseMutationOptions<PasswordResetToken | undefined, DefaultError, Prisma.PasswordResetTokenDeleteArgs> & ExtraMutationOptions, 'mutationFn'>) {
+export function useDeletePasswordResetToken(
+  options?: Omit<UseMutationOptions<PasswordResetToken | undefined, DefaultError, Prisma.PasswordResetTokenDeleteArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.PasswordResetTokenDeleteArgs, DefaultError, PasswordResetToken, true>('PasswordResetToken', 'DELETE', `${endpoint}/passwordResetToken/delete`, metadata, options, fetch, true);
+  const _mutation = useModelMutation<Prisma.PasswordResetTokenDeleteArgs, DefaultError, PasswordResetToken, true>(
+    'PasswordResetToken',
+    'DELETE',
+    `${endpoint}/passwordResetToken/delete`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.PasswordResetTokenDeleteArgs>(
       args: Prisma.SelectSubset<T, Prisma.PasswordResetTokenDeleteArgs>,
       options?: Omit<
-        UseMutationOptions<CheckSelect<T, PasswordResetToken, Prisma.PasswordResetTokenGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.PasswordResetTokenDeleteArgs>> & ExtraMutationOptions,
+        UseMutationOptions<CheckSelect<T, PasswordResetToken, Prisma.PasswordResetTokenGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.PasswordResetTokenDeleteArgs>> &
+          ExtraMutationOptions,
         'mutationFn'
       >
     ) => {
@@ -198,7 +264,15 @@ export function useDeletePasswordResetToken(options?: Omit<UseMutationOptions<Pa
 
 export function useDeleteManyPasswordResetToken(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.PasswordResetTokenDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.PasswordResetTokenDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('PasswordResetToken', 'DELETE', `${endpoint}/passwordResetToken/deleteMany`, metadata, options, fetch, false);
+  const _mutation = useModelMutation<Prisma.PasswordResetTokenDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'PasswordResetToken',
+    'DELETE',
+    `${endpoint}/passwordResetToken/deleteMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.PasswordResetTokenDeleteManyArgs>(
@@ -211,18 +285,22 @@ export function useDeleteManyPasswordResetToken(options?: Omit<UseMutationOption
   return mutation;
 }
 
-export function useAggregatePasswordResetToken<TArgs extends Prisma.PasswordResetTokenAggregateArgs, TQueryFnData = Prisma.GetPasswordResetTokenAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.PasswordResetTokenAggregateArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useAggregatePasswordResetToken<
+  TArgs extends Prisma.PasswordResetTokenAggregateArgs,
+  TQueryFnData = Prisma.GetPasswordResetTokenAggregateType<TArgs>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.PasswordResetTokenAggregateArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('PasswordResetToken', `${endpoint}/passwordResetToken/aggregate`, args, options, fetch);
 }
 
-export function useSuspenseAggregatePasswordResetToken<TArgs extends Prisma.PasswordResetTokenAggregateArgs, TQueryFnData = Prisma.GetPasswordResetTokenAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.PasswordResetTokenAggregateArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useSuspenseAggregatePasswordResetToken<
+  TArgs extends Prisma.PasswordResetTokenAggregateArgs,
+  TQueryFnData = Prisma.GetPasswordResetTokenAggregateType<TArgs>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.PasswordResetTokenAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('PasswordResetToken', `${endpoint}/passwordResetToken/aggregate`, args, options, fetch);
 }
@@ -241,7 +319,11 @@ export function useGroupByPasswordResetToken<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -277,7 +359,10 @@ export function useGroupByPasswordResetToken<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.PasswordResetTokenGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.PasswordResetTokenGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('PasswordResetToken', `${endpoint}/passwordResetToken/groupBy`, args, options, fetch);
 }
@@ -296,7 +381,11 @@ export function useSuspenseGroupByPasswordResetToken<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>

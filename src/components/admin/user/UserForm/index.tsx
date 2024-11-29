@@ -1,16 +1,16 @@
 'use client';
 
-import React, { type FC, useState } from 'react';
-import { StepperComponent, StepsDirective, StepDirective } from '@syncfusion/ej2-react-navigations';
-
-import SummaryForm from './SummaryForm';
-import UserDataForm from './UserDataForm';
-import HierarchyTree from './HierarchyTree';
-
-import rswitch from '@/lib/rswitch';
-import { extractRelations } from '@/utils/tools/hierarchy';
+import React, { useState, type FC } from 'react';
 import type { CreateHierarchyInputs, CreateUserInputs } from '@/connections/user';
 import type { AreaUserHierarchy } from '@/server/api/routers/userRouter';
+import { extractRelations } from '@/utils/tools/hierarchy';
+import { StepDirective, StepperComponent, StepsDirective } from '@syncfusion/ej2-react-navigations';
+
+import rswitch from '@/lib/rswitch';
+
+import HierarchyTree from './HierarchyTree';
+import SummaryForm from './SummaryForm';
+import UserDataForm from './UserDataForm';
 
 interface UserFormProps {
   userId?: string;
@@ -59,7 +59,11 @@ const UserForm: FC<UserFormProps> = ({ userId, defaultValues, onSubmit }) => {
         0: <UserDataForm defaultValues={user} onSubmit={onSubmitUser} onAreaChange={setAreaId} />,
         1: (
           <div className="p-8">
-            {!!areaId ? <HierarchyTree goBack={() => setStep(0)} defaultValues={hierarchies} submitForm={onSubmitHierarchy} userId={userId} areaId={areaId} /> : <p>Seleccione un área para interactuar con su jerarquía</p>}
+            {!!areaId ? (
+              <HierarchyTree goBack={() => setStep(0)} defaultValues={hierarchies} submitForm={onSubmitHierarchy} userId={userId} areaId={areaId} />
+            ) : (
+              <p>Seleccione un área para interactuar con su jerarquía</p>
+            )}
           </div>
         ),
         2: <>{!!user && !!hierarchies.length ? <SummaryForm goBack={() => setStep(1)} user={user} hierarchies={hierarchies} onSubmit={onSubmitSummary} /> : <p>Complete los pasos anteriores</p>}</>,

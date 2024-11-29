@@ -1,13 +1,12 @@
 'use client';
+
 import React, { FC } from 'react';
-
-import { MdArchitecture } from 'react-icons/md';
-
-import Modal, { CloseModal } from '@/components/Modal';
-import { Button, ErrorList, Input, Textarea } from '@/components/form';
-
 import { useCreateAreaForm } from '@/connections/area';
 import type { CreateAreaInputs } from '@/connections/area';
+import { MdArchitecture } from 'react-icons/md';
+
+import { Button, ErrorList, Input, Textarea } from '@/components/form';
+import Modal, { CloseModal } from '@/components/Modal';
 
 interface IAreaFormModalProps {
   onClose?: () => void;

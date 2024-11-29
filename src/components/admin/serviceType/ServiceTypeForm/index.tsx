@@ -1,16 +1,16 @@
 'use client';
 
-import React, { type FC, useState } from 'react';
-import { StepperComponent, StepsDirective, StepDirective } from '@syncfusion/ej2-react-navigations';
-
-import SummaryForm from './SummaryForm';
-import RequerimentSelector from './RequerimentSelector';
-import ServiceTypeDetailForm from './ServiceTypeDetailForm';
+import React, { useState, type FC } from 'react';
+import type { UpdateRequirementInputs as RequirementInputs } from '@/connections/requirement';
+import type { CreateServiceTypeInputs, CreateServiceTypeWithRequirementInputs } from '@/connections/service-type';
+import { StepDirective, StepperComponent, StepsDirective } from '@syncfusion/ej2-react-navigations';
 
 import rswitch from '@/lib/rswitch';
 import { api } from '@/components/hoc/tanstack-query-provider';
-import type { CreateServiceTypeInputs, CreateServiceTypeWithRequirementInputs } from '@/connections/service-type';
-import type { UpdateRequirementInputs as RequirementInputs } from '@/connections/requirement';
+
+import RequerimentSelector from './RequerimentSelector';
+import ServiceTypeDetailForm from './ServiceTypeDetailForm';
+import SummaryForm from './SummaryForm';
 
 interface ServiceTypeFormProps {
   defaultValues?: CreateServiceTypeWithRequirementInputs | null;
@@ -52,7 +52,9 @@ const ServiceTypeForm: FC<ServiceTypeFormProps> = ({ defaultValues, onSubmit }) 
 
       {rswitch(step, {
         0: <ServiceTypeDetailForm defaultValues={serviceType} options={salesChannel || []} onSubmit={onSubmitServiceType} />,
-        1: <>{step === 1 && requirementsData && <RequerimentSelector goBack={() => setStep(0)} defaultValues={requirements} requirementsData={requirementsData} submitForm={onSubmitRequirements} />}</>,
+        1: (
+          <>{step === 1 && requirementsData && <RequerimentSelector goBack={() => setStep(0)} defaultValues={requirements} requirementsData={requirementsData} submitForm={onSubmitRequirements} />}</>
+        ),
         2: <>{serviceType && requirements && <SummaryForm serviceType={serviceType} requirements={requirements} goBack={() => setStep(1)} onSubmit={onSubmit} />}</>,
       })}
     </div>

@@ -5,16 +5,15 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import type { Prisma, StatusType } from '@zenstackhq/runtime/models';
-import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/react-query';
-import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
+import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
 import type { PolicyCrudKind } from '@zenstackhq/runtime';
+import type { Prisma, StatusType } from '@zenstackhq/runtime/models';
+import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
+import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
+
 import metadata from './__model_meta';
+
 type DefaultError = QueryError;
-import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
 
 export function useCreateStatusType(options?: Omit<UseMutationOptions<StatusType | undefined, DefaultError, Prisma.StatusTypeCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
@@ -23,7 +22,10 @@ export function useCreateStatusType(options?: Omit<UseMutationOptions<StatusType
     ..._mutation,
     mutateAsync: async <T extends Prisma.StatusTypeCreateArgs>(
       args: Prisma.SelectSubset<T, Prisma.StatusTypeCreateArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, StatusType, Prisma.StatusTypeGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.StatusTypeCreateArgs>> & ExtraMutationOptions, 'mutationFn'>
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, StatusType, Prisma.StatusTypeGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.StatusTypeCreateArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, StatusType, Prisma.StatusTypeGetPayload<T>> | undefined;
     },
@@ -33,7 +35,15 @@ export function useCreateStatusType(options?: Omit<UseMutationOptions<StatusType
 
 export function useCreateManyStatusType(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.StatusTypeCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.StatusTypeCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('StatusType', 'POST', `${endpoint}/statusType/createMany`, metadata, options, fetch, false);
+  const _mutation = useModelMutation<Prisma.StatusTypeCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'StatusType',
+    'POST',
+    `${endpoint}/statusType/createMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.StatusTypeCreateManyArgs>(
@@ -46,10 +56,12 @@ export function useCreateManyStatusType(options?: Omit<UseMutationOptions<Prisma
   return mutation;
 }
 
-export function useFindManyStatusType<TArgs extends Prisma.StatusTypeFindManyArgs, TQueryFnData = Array<Prisma.StatusTypeGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.StatusTypeFindManyArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useFindManyStatusType<
+  TArgs extends Prisma.StatusTypeFindManyArgs,
+  TQueryFnData = Array<Prisma.StatusTypeGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.StatusTypeFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('StatusType', `${endpoint}/statusType/findMany`, args, options, fetch);
 }
@@ -63,51 +75,63 @@ export function useInfiniteFindManyStatusType<TArgs extends Prisma.StatusTypeFin
   return useInfiniteModelQuery<TQueryFnData, TData, TError>('StatusType', `${endpoint}/statusType/findMany`, args, options, fetch);
 }
 
-export function useSuspenseFindManyStatusType<TArgs extends Prisma.StatusTypeFindManyArgs, TQueryFnData = Array<Prisma.StatusTypeGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.StatusTypeFindManyArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useSuspenseFindManyStatusType<
+  TArgs extends Prisma.StatusTypeFindManyArgs,
+  TQueryFnData = Array<Prisma.StatusTypeGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.StatusTypeFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('StatusType', `${endpoint}/statusType/findMany`, args, options, fetch);
 }
 
-export function useSuspenseInfiniteFindManyStatusType<TArgs extends Prisma.StatusTypeFindManyArgs, TQueryFnData = Array<Prisma.StatusTypeGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.StatusTypeFindManyArgs>,
-  options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
-) {
+export function useSuspenseInfiniteFindManyStatusType<
+  TArgs extends Prisma.StatusTypeFindManyArgs,
+  TQueryFnData = Array<Prisma.StatusTypeGetPayload<TArgs>>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.StatusTypeFindManyArgs>, options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
   options = options ?? { getNextPageParam: () => null };
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('StatusType', `${endpoint}/statusType/findMany`, args, options, fetch);
 }
 
-export function useFindUniqueStatusType<TArgs extends Prisma.StatusTypeFindUniqueArgs, TQueryFnData = Prisma.StatusTypeGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.StatusTypeFindUniqueArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useFindUniqueStatusType<
+  TArgs extends Prisma.StatusTypeFindUniqueArgs,
+  TQueryFnData = Prisma.StatusTypeGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.StatusTypeFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('StatusType', `${endpoint}/statusType/findUnique`, args, options, fetch);
 }
 
-export function useSuspenseFindUniqueStatusType<TArgs extends Prisma.StatusTypeFindUniqueArgs, TQueryFnData = Prisma.StatusTypeGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.StatusTypeFindUniqueArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useSuspenseFindUniqueStatusType<
+  TArgs extends Prisma.StatusTypeFindUniqueArgs,
+  TQueryFnData = Prisma.StatusTypeGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.StatusTypeFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('StatusType', `${endpoint}/statusType/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstStatusType<TArgs extends Prisma.StatusTypeFindFirstArgs, TQueryFnData = Prisma.StatusTypeGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.StatusTypeFindFirstArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useFindFirstStatusType<
+  TArgs extends Prisma.StatusTypeFindFirstArgs,
+  TQueryFnData = Prisma.StatusTypeGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.StatusTypeFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('StatusType', `${endpoint}/statusType/findFirst`, args, options, fetch);
 }
 
-export function useSuspenseFindFirstStatusType<TArgs extends Prisma.StatusTypeFindFirstArgs, TQueryFnData = Prisma.StatusTypeGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.StatusTypeFindFirstArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useSuspenseFindFirstStatusType<
+  TArgs extends Prisma.StatusTypeFindFirstArgs,
+  TQueryFnData = Prisma.StatusTypeGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.StatusTypeFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('StatusType', `${endpoint}/statusType/findFirst`, args, options, fetch);
 }
@@ -119,7 +143,10 @@ export function useUpdateStatusType(options?: Omit<UseMutationOptions<StatusType
     ..._mutation,
     mutateAsync: async <T extends Prisma.StatusTypeUpdateArgs>(
       args: Prisma.SelectSubset<T, Prisma.StatusTypeUpdateArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, StatusType, Prisma.StatusTypeGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.StatusTypeUpdateArgs>> & ExtraMutationOptions, 'mutationFn'>
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, StatusType, Prisma.StatusTypeGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.StatusTypeUpdateArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, StatusType, Prisma.StatusTypeGetPayload<T>> | undefined;
     },
@@ -129,7 +156,15 @@ export function useUpdateStatusType(options?: Omit<UseMutationOptions<StatusType
 
 export function useUpdateManyStatusType(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.StatusTypeUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.StatusTypeUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('StatusType', 'PUT', `${endpoint}/statusType/updateMany`, metadata, options, fetch, false);
+  const _mutation = useModelMutation<Prisma.StatusTypeUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'StatusType',
+    'PUT',
+    `${endpoint}/statusType/updateMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.StatusTypeUpdateManyArgs>(
@@ -149,7 +184,10 @@ export function useUpsertStatusType(options?: Omit<UseMutationOptions<StatusType
     ..._mutation,
     mutateAsync: async <T extends Prisma.StatusTypeUpsertArgs>(
       args: Prisma.SelectSubset<T, Prisma.StatusTypeUpsertArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, StatusType, Prisma.StatusTypeGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.StatusTypeUpsertArgs>> & ExtraMutationOptions, 'mutationFn'>
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, StatusType, Prisma.StatusTypeGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.StatusTypeUpsertArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, StatusType, Prisma.StatusTypeGetPayload<T>> | undefined;
     },
@@ -164,7 +202,10 @@ export function useDeleteStatusType(options?: Omit<UseMutationOptions<StatusType
     ..._mutation,
     mutateAsync: async <T extends Prisma.StatusTypeDeleteArgs>(
       args: Prisma.SelectSubset<T, Prisma.StatusTypeDeleteArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, StatusType, Prisma.StatusTypeGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.StatusTypeDeleteArgs>> & ExtraMutationOptions, 'mutationFn'>
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, StatusType, Prisma.StatusTypeGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.StatusTypeDeleteArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, StatusType, Prisma.StatusTypeGetPayload<T>> | undefined;
     },
@@ -174,7 +215,15 @@ export function useDeleteStatusType(options?: Omit<UseMutationOptions<StatusType
 
 export function useDeleteManyStatusType(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.StatusTypeDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.StatusTypeDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('StatusType', 'DELETE', `${endpoint}/statusType/deleteMany`, metadata, options, fetch, false);
+  const _mutation = useModelMutation<Prisma.StatusTypeDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'StatusType',
+    'DELETE',
+    `${endpoint}/statusType/deleteMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.StatusTypeDeleteManyArgs>(
@@ -217,7 +266,11 @@ export function useGroupByStatusType<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -253,7 +306,10 @@ export function useGroupByStatusType<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.StatusTypeGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.StatusTypeGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('StatusType', `${endpoint}/statusType/groupBy`, args, options, fetch);
 }
@@ -272,7 +328,11 @@ export function useSuspenseGroupByStatusType<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -308,7 +368,10 @@ export function useSuspenseGroupByStatusType<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.StatusTypeGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.StatusTypeGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('StatusType', `${endpoint}/statusType/groupBy`, args, options, fetch);
 }

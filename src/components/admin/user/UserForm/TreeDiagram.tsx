@@ -1,24 +1,24 @@
-import React, { type FC, useMemo } from 'react';
+import React, { useMemo, type FC } from 'react';
+import { flattenTree, type TreeNode } from '@/utils/tools/hierarchy';
+import { DataManager } from '@syncfusion/ej2-data';
 import {
-  HierarchicalTree,
+  Connector,
+  ConnectorModel,
   Container,
-  StackPanel,
+  DataBinding,
+  Diagram,
+  DiagramComponent,
+  DiagramTools,
+  HierarchicalTree,
   ImageElement,
+  Inject,
+  Node,
+  OverviewComponent,
+  SnapConstraints,
+  StackPanel,
   TextElement,
   TreeInfo,
-  SnapConstraints,
-  DiagramComponent,
-  ConnectorModel,
-  Node,
-  Connector,
-  Diagram,
-  Inject,
-  DataBinding,
-  OverviewComponent,
-  DiagramTools,
 } from '@syncfusion/ej2-react-diagrams';
-import { DataManager } from '@syncfusion/ej2-data';
-import { flattenTree, type TreeNode } from '@/utils/tools/hierarchy';
 
 let diagramInstance: DiagramComponent;
 

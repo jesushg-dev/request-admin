@@ -1,12 +1,11 @@
 'use client';
 
 import React, { useState, type FC } from 'react';
+import { triggerError } from '@/utils/tools/message';
+import { type IEmployee } from '@/utils/types';
 
 import BackAndContinue from '@/components/common/back-and-continue';
 import EmployeeSelector from '@/components/common/EmployeeSelector';
-
-import { type IEmployee } from '@/utils/types';
-import { triggerError } from '@/utils/tools/message';
 
 interface IUserSelectorProps {
   goBack: () => void;

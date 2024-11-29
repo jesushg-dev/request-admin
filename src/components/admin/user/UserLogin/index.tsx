@@ -1,11 +1,11 @@
 'use client';
 
 import React, { type FC } from 'react';
+import { useLoginUserSchema, type LoginUserInputs } from '@/connections/user';
+import { Link } from '@/navigation';
 import { signIn } from 'next-auth/react';
 
 import { Input } from '@/components/form';
-import { useLoginUserSchema, type LoginUserInputs } from '@/connections/user';
-import { Link } from '@/navigation';
 
 interface IUserLoginProps {}
 

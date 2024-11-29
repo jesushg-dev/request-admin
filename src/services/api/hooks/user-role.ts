@@ -5,16 +5,15 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import type { Prisma, UserRole } from '@zenstackhq/runtime/models';
-import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/react-query';
-import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
+import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
 import type { PolicyCrudKind } from '@zenstackhq/runtime';
+import type { Prisma, UserRole } from '@zenstackhq/runtime/models';
+import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
+import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
+
 import metadata from './__model_meta';
+
 type DefaultError = QueryError;
-import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
 
 export function useCreateUserRole(options?: Omit<UseMutationOptions<UserRole | undefined, DefaultError, Prisma.UserRoleCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
@@ -23,7 +22,10 @@ export function useCreateUserRole(options?: Omit<UseMutationOptions<UserRole | u
     ..._mutation,
     mutateAsync: async <T extends Prisma.UserRoleCreateArgs>(
       args: Prisma.SelectSubset<T, Prisma.UserRoleCreateArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, UserRole, Prisma.UserRoleGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.UserRoleCreateArgs>> & ExtraMutationOptions, 'mutationFn'>
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, UserRole, Prisma.UserRoleGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.UserRoleCreateArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, UserRole, Prisma.UserRoleGetPayload<T>> | undefined;
     },
@@ -46,10 +48,12 @@ export function useCreateManyUserRole(options?: Omit<UseMutationOptions<Prisma.B
   return mutation;
 }
 
-export function useFindManyUserRole<TArgs extends Prisma.UserRoleFindManyArgs, TQueryFnData = Array<Prisma.UserRoleGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.UserRoleFindManyArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useFindManyUserRole<
+  TArgs extends Prisma.UserRoleFindManyArgs,
+  TQueryFnData = Array<Prisma.UserRoleGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.UserRoleFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('UserRole', `${endpoint}/userRole/findMany`, args, options, fetch);
 }
@@ -63,10 +67,12 @@ export function useInfiniteFindManyUserRole<TArgs extends Prisma.UserRoleFindMan
   return useInfiniteModelQuery<TQueryFnData, TData, TError>('UserRole', `${endpoint}/userRole/findMany`, args, options, fetch);
 }
 
-export function useSuspenseFindManyUserRole<TArgs extends Prisma.UserRoleFindManyArgs, TQueryFnData = Array<Prisma.UserRoleGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.UserRoleFindManyArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useSuspenseFindManyUserRole<
+  TArgs extends Prisma.UserRoleFindManyArgs,
+  TQueryFnData = Array<Prisma.UserRoleGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.UserRoleFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('UserRole', `${endpoint}/userRole/findMany`, args, options, fetch);
 }
@@ -80,34 +86,42 @@ export function useSuspenseInfiniteFindManyUserRole<TArgs extends Prisma.UserRol
   return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('UserRole', `${endpoint}/userRole/findMany`, args, options, fetch);
 }
 
-export function useFindUniqueUserRole<TArgs extends Prisma.UserRoleFindUniqueArgs, TQueryFnData = Prisma.UserRoleGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.UserRoleFindUniqueArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useFindUniqueUserRole<
+  TArgs extends Prisma.UserRoleFindUniqueArgs,
+  TQueryFnData = Prisma.UserRoleGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.UserRoleFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('UserRole', `${endpoint}/userRole/findUnique`, args, options, fetch);
 }
 
-export function useSuspenseFindUniqueUserRole<TArgs extends Prisma.UserRoleFindUniqueArgs, TQueryFnData = Prisma.UserRoleGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.UserRoleFindUniqueArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useSuspenseFindUniqueUserRole<
+  TArgs extends Prisma.UserRoleFindUniqueArgs,
+  TQueryFnData = Prisma.UserRoleGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.UserRoleFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('UserRole', `${endpoint}/userRole/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstUserRole<TArgs extends Prisma.UserRoleFindFirstArgs, TQueryFnData = Prisma.UserRoleGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.UserRoleFindFirstArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useFindFirstUserRole<
+  TArgs extends Prisma.UserRoleFindFirstArgs,
+  TQueryFnData = Prisma.UserRoleGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.UserRoleFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('UserRole', `${endpoint}/userRole/findFirst`, args, options, fetch);
 }
 
-export function useSuspenseFindFirstUserRole<TArgs extends Prisma.UserRoleFindFirstArgs, TQueryFnData = Prisma.UserRoleGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.UserRoleFindFirstArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useSuspenseFindFirstUserRole<
+  TArgs extends Prisma.UserRoleFindFirstArgs,
+  TQueryFnData = Prisma.UserRoleGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.UserRoleFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('UserRole', `${endpoint}/userRole/findFirst`, args, options, fetch);
 }
@@ -119,7 +133,10 @@ export function useUpdateUserRole(options?: Omit<UseMutationOptions<UserRole | u
     ..._mutation,
     mutateAsync: async <T extends Prisma.UserRoleUpdateArgs>(
       args: Prisma.SelectSubset<T, Prisma.UserRoleUpdateArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, UserRole, Prisma.UserRoleGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.UserRoleUpdateArgs>> & ExtraMutationOptions, 'mutationFn'>
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, UserRole, Prisma.UserRoleGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.UserRoleUpdateArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, UserRole, Prisma.UserRoleGetPayload<T>> | undefined;
     },
@@ -149,7 +166,10 @@ export function useUpsertUserRole(options?: Omit<UseMutationOptions<UserRole | u
     ..._mutation,
     mutateAsync: async <T extends Prisma.UserRoleUpsertArgs>(
       args: Prisma.SelectSubset<T, Prisma.UserRoleUpsertArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, UserRole, Prisma.UserRoleGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.UserRoleUpsertArgs>> & ExtraMutationOptions, 'mutationFn'>
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, UserRole, Prisma.UserRoleGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.UserRoleUpsertArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, UserRole, Prisma.UserRoleGetPayload<T>> | undefined;
     },
@@ -164,7 +184,10 @@ export function useDeleteUserRole(options?: Omit<UseMutationOptions<UserRole | u
     ..._mutation,
     mutateAsync: async <T extends Prisma.UserRoleDeleteArgs>(
       args: Prisma.SelectSubset<T, Prisma.UserRoleDeleteArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, UserRole, Prisma.UserRoleGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.UserRoleDeleteArgs>> & ExtraMutationOptions, 'mutationFn'>
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, UserRole, Prisma.UserRoleGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.UserRoleDeleteArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, UserRole, Prisma.UserRoleGetPayload<T>> | undefined;
     },
@@ -217,7 +240,11 @@ export function useGroupByUserRole<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -253,7 +280,10 @@ export function useGroupByUserRole<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.UserRoleGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.UserRoleGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('UserRole', `${endpoint}/userRole/groupBy`, args, options, fetch);
 }
@@ -272,7 +302,11 @@ export function useSuspenseGroupByUserRole<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -308,7 +342,10 @@ export function useSuspenseGroupByUserRole<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.UserRoleGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.UserRoleGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('UserRole', `${endpoint}/userRole/groupBy`, args, options, fetch);
 }

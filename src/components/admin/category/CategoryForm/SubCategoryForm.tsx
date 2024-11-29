@@ -1,16 +1,16 @@
 'use client';
 
 import React, { FC } from 'react';
-import { MdDynamicForm, MdTextFields, MdSubdirectoryArrowRight } from 'react-icons/md';
-
-import { Input, ErrorList, Button, Textarea, Select } from '@/components/form';
 import { useCreateSubcategoryArrayForm } from '@/connections/category';
 import type { CreateSubcategoryArrayInputs } from '@/connections/category';
-import BackAndContinue from '@/components/common/back-and-continue';
-import Scrollable from '@/components/Scrollable';
-import { IoMdTrash } from 'react-icons/io';
 import { triggerConfirmCallback } from '@/utils/tools/message';
+import { IoMdTrash } from 'react-icons/io';
+import { MdDynamicForm, MdSubdirectoryArrowRight, MdTextFields } from 'react-icons/md';
+
+import BackAndContinue from '@/components/common/back-and-continue';
+import { Button, ErrorList, Input, Select, Textarea } from '@/components/form';
 import { api } from '@/components/hoc/tanstack-query-provider';
+import Scrollable from '@/components/Scrollable';
 
 interface CreateSubCategoryFormProps {
   goBack: () => void;
@@ -40,7 +40,16 @@ const SubCategoryForm: FC<CreateSubCategoryFormProps> = ({ goBack, onSubmit, def
               <div className="flex gap-4">
                 <div className="mb-2 grid w-full grid-cols-3 items-start gap-2">
                   <input type="hidden" {...register(`subCategories.${index}.subCategoryId`)} />
-                  <Input required name={`subCategories.${index}.name`} type="text" register={register} formState={formState} label={`#${index + 1} Name`} placeholder={`Name of Category`} Icon={MdSubdirectoryArrowRight} />
+                  <Input
+                    required
+                    name={`subCategories.${index}.name`}
+                    type="text"
+                    register={register}
+                    formState={formState}
+                    label={`#${index + 1} Name`}
+                    placeholder={`Name of Category`}
+                    Icon={MdSubdirectoryArrowRight}
+                  />
                   <Textarea
                     name={`subCategories.${index}.description`}
                     register={register}

@@ -1,9 +1,8 @@
 import React, { FC } from 'react';
-
+import { type IEmployee } from '@/utils/types';
 import { MdCheck } from 'react-icons/md';
 
 import Card from '@/components/Card';
-import { type IEmployee } from '@/utils/types';
 
 interface IEmployeeCardProps extends IEmployee {
   isSelected: boolean;

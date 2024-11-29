@@ -1,19 +1,19 @@
 'use client';
 
-import * as z from 'zod';
 import { useState, useTransition } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-
+import { register } from '@/actions/register';
 import { RegisterSchema } from '@/services/schemas';
-import { Input } from '@/components/ui/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { CardWrapper } from '@/components/auth/card-wrapper';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslations } from 'next-intl';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+
 import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { CardWrapper } from '@/components/auth/card-wrapper';
 import { FormError } from '@/components/prullenbak/form-error';
 import { FormSuccess } from '@/components/prullenbak/form-success';
-import { register } from '@/actions/register';
-import { useTranslations } from 'next-intl';
 
 export const RegisterForm = () => {
   const t = useTranslations('auth.registerForm');

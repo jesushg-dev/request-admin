@@ -5,16 +5,15 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import type { Prisma, Account } from '@zenstackhq/runtime/models';
-import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/react-query';
-import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
+import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
 import type { PolicyCrudKind } from '@zenstackhq/runtime';
+import type { Account, Prisma } from '@zenstackhq/runtime/models';
+import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
+import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
+
 import metadata from './__model_meta';
+
 type DefaultError = QueryError;
-import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
 
 export function useCreateAccount(options?: Omit<UseMutationOptions<Account | undefined, DefaultError, Prisma.AccountCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
@@ -23,7 +22,10 @@ export function useCreateAccount(options?: Omit<UseMutationOptions<Account | und
     ..._mutation,
     mutateAsync: async <T extends Prisma.AccountCreateArgs>(
       args: Prisma.SelectSubset<T, Prisma.AccountCreateArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, Account, Prisma.AccountGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AccountCreateArgs>> & ExtraMutationOptions, 'mutationFn'>
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, Account, Prisma.AccountGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AccountCreateArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Account, Prisma.AccountGetPayload<T>> | undefined;
     },
@@ -46,10 +48,12 @@ export function useCreateManyAccount(options?: Omit<UseMutationOptions<Prisma.Ba
   return mutation;
 }
 
-export function useFindManyAccount<TArgs extends Prisma.AccountFindManyArgs, TQueryFnData = Array<Prisma.AccountGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.AccountFindManyArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useFindManyAccount<
+  TArgs extends Prisma.AccountFindManyArgs,
+  TQueryFnData = Array<Prisma.AccountGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.AccountFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Account', `${endpoint}/account/findMany`, args, options, fetch);
 }
@@ -63,10 +67,12 @@ export function useInfiniteFindManyAccount<TArgs extends Prisma.AccountFindManyA
   return useInfiniteModelQuery<TQueryFnData, TData, TError>('Account', `${endpoint}/account/findMany`, args, options, fetch);
 }
 
-export function useSuspenseFindManyAccount<TArgs extends Prisma.AccountFindManyArgs, TQueryFnData = Array<Prisma.AccountGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.AccountFindManyArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useSuspenseFindManyAccount<
+  TArgs extends Prisma.AccountFindManyArgs,
+  TQueryFnData = Array<Prisma.AccountGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.AccountFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Account', `${endpoint}/account/findMany`, args, options, fetch);
 }
@@ -80,18 +86,22 @@ export function useSuspenseInfiniteFindManyAccount<TArgs extends Prisma.AccountF
   return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('Account', `${endpoint}/account/findMany`, args, options, fetch);
 }
 
-export function useFindUniqueAccount<TArgs extends Prisma.AccountFindUniqueArgs, TQueryFnData = Prisma.AccountGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.AccountFindUniqueArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useFindUniqueAccount<
+  TArgs extends Prisma.AccountFindUniqueArgs,
+  TQueryFnData = Prisma.AccountGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.AccountFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Account', `${endpoint}/account/findUnique`, args, options, fetch);
 }
 
-export function useSuspenseFindUniqueAccount<TArgs extends Prisma.AccountFindUniqueArgs, TQueryFnData = Prisma.AccountGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.AccountFindUniqueArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useSuspenseFindUniqueAccount<
+  TArgs extends Prisma.AccountFindUniqueArgs,
+  TQueryFnData = Prisma.AccountGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.AccountFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Account', `${endpoint}/account/findUnique`, args, options, fetch);
 }
@@ -104,10 +114,12 @@ export function useFindFirstAccount<TArgs extends Prisma.AccountFindFirstArgs, T
   return useModelQuery<TQueryFnData, TData, TError>('Account', `${endpoint}/account/findFirst`, args, options, fetch);
 }
 
-export function useSuspenseFindFirstAccount<TArgs extends Prisma.AccountFindFirstArgs, TQueryFnData = Prisma.AccountGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.AccountFindFirstArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useSuspenseFindFirstAccount<
+  TArgs extends Prisma.AccountFindFirstArgs,
+  TQueryFnData = Prisma.AccountGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.AccountFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Account', `${endpoint}/account/findFirst`, args, options, fetch);
 }
@@ -119,7 +131,10 @@ export function useUpdateAccount(options?: Omit<UseMutationOptions<Account | und
     ..._mutation,
     mutateAsync: async <T extends Prisma.AccountUpdateArgs>(
       args: Prisma.SelectSubset<T, Prisma.AccountUpdateArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, Account, Prisma.AccountGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AccountUpdateArgs>> & ExtraMutationOptions, 'mutationFn'>
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, Account, Prisma.AccountGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AccountUpdateArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Account, Prisma.AccountGetPayload<T>> | undefined;
     },
@@ -149,7 +164,10 @@ export function useUpsertAccount(options?: Omit<UseMutationOptions<Account | und
     ..._mutation,
     mutateAsync: async <T extends Prisma.AccountUpsertArgs>(
       args: Prisma.SelectSubset<T, Prisma.AccountUpsertArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, Account, Prisma.AccountGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AccountUpsertArgs>> & ExtraMutationOptions, 'mutationFn'>
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, Account, Prisma.AccountGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AccountUpsertArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Account, Prisma.AccountGetPayload<T>> | undefined;
     },
@@ -164,7 +182,10 @@ export function useDeleteAccount(options?: Omit<UseMutationOptions<Account | und
     ..._mutation,
     mutateAsync: async <T extends Prisma.AccountDeleteArgs>(
       args: Prisma.SelectSubset<T, Prisma.AccountDeleteArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, Account, Prisma.AccountGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AccountDeleteArgs>> & ExtraMutationOptions, 'mutationFn'>
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, Account, Prisma.AccountGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AccountDeleteArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Account, Prisma.AccountGetPayload<T>> | undefined;
     },
@@ -217,7 +238,11 @@ export function useGroupByAccount<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -253,7 +278,10 @@ export function useGroupByAccount<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.AccountGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.AccountGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Account', `${endpoint}/account/groupBy`, args, options, fetch);
 }
@@ -272,7 +300,11 @@ export function useSuspenseGroupByAccount<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -308,7 +340,10 @@ export function useSuspenseGroupByAccount<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.AccountGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.AccountGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Account', `${endpoint}/account/groupBy`, args, options, fetch);
 }

@@ -5,12 +5,13 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { db } from '.';
-import { createTRPCRouter } from '../../trpc';
-import { procedure } from '../../trpc';
 import * as _Schema from '@zenstackhq/runtime/zod/input';
+
+import { db } from '.';
+import { createTRPCRouter, procedure } from '../../trpc';
+import { checkMutate, checkRead } from '../helper';
+
 const $Schema: typeof _Schema = (_Schema as any).default ?? _Schema;
-import { checkRead, checkMutate } from '../helper';
 
 export default function createRouter() {
   return createTRPCRouter({

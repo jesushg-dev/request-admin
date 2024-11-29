@@ -1,7 +1,8 @@
 import React from 'react';
 import type { FC } from 'react';
-import BackAndContinue from '@/components/common/back-and-continue';
 import { UploaderComponent } from '@syncfusion/ej2-react-inputs';
+
+import BackAndContinue from '@/components/common/back-and-continue';
 
 interface IDocumentFormProps {
   goBack: () => void;

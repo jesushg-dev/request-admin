@@ -1,14 +1,12 @@
 'use client';
 
 import React, { FC } from 'react';
-
-import { FaAlignJustify, FaPlusCircle, FaUserTag } from 'react-icons/fa';
-
-import ErrorList from '@/components/form/error-list';
-import { Button, Input, Textarea } from '@/components/form';
-
 import { CreateRoleInputs } from '@/connections/role/roleSchemas';
 import { useCreateRoleForm } from '@/connections/role/useRoleForm';
+import { FaAlignJustify, FaPlusCircle, FaUserTag } from 'react-icons/fa';
+
+import { Button, Input, Textarea } from '@/components/form';
+import ErrorList from '@/components/form/error-list';
 
 interface RoleAndUserFormProps {
   onSubmit: (data: CreateRoleInputs) => void;

@@ -1,12 +1,12 @@
 import React, { useEffect, useState, type FC } from 'react';
-
-import BackAndContinue from '@/components/common/back-and-continue';
-
-import LoadingComponent from './LoadingComponent';
-import HandleListState from '@/components/common/handle-data-state';
+import type { RouterOutputs } from '@/server/server';
 import { triggerError } from '@/utils/tools/message';
 import { MdShoppingCart } from 'react-icons/md';
-import type { RouterOutputs } from '@/server/server';
+
+import BackAndContinue from '@/components/common/back-and-continue';
+import HandleListState from '@/components/common/handle-data-state';
+
+import LoadingComponent from './LoadingComponent';
 
 type SalesChannel = RouterOutputs['salesChannel']['getAll'];
 
@@ -41,7 +41,14 @@ const SalesChannelSelector: FC<ISaleChannelSelectorProps> = ({ channels, loading
         <div className="item grid flex-1 grid-cols-2 gap-5">
           {channels.map((channel) => (
             <label key={channel.salesChannelId} className="w-full cursor-pointer">
-              <input type="radio" className="peer sr-only" name="salesChannel" value={channel.salesChannelId} onChange={() => setSelectedChannelId(channel.salesChannelId)} checked={selectedChannelId === channel.salesChannelId} />
+              <input
+                type="radio"
+                className="peer sr-only"
+                name="salesChannel"
+                value={channel.salesChannelId}
+                onChange={() => setSelectedChannelId(channel.salesChannelId)}
+                checked={selectedChannelId === channel.salesChannelId}
+              />
               <div className="flex h-full w-full rounded-md bg-white p-5 text-gray-600 ring-2 ring-blue-100 transition-all hover:shadow peer-checked:text-black peer-checked:ring-blue-600 peer-checked:ring-offset-2">
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-2">

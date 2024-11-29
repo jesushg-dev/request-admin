@@ -1,15 +1,16 @@
 'use client';
 
+import { Suspense } from 'react';
 import { type Table } from '@tanstack/react-table';
+import { Area as AreaType } from '@zenstackhq/runtime/models';
 import { Download } from 'lucide-react';
 
 import { exportTableToCSV } from '@/lib/export';
 import { Button } from '@/components/ui/button';
-import { Area as AreaType } from '@zenstackhq/runtime/models';
-import { DeleteTasksDialog } from './delete-tasks-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Suspense } from 'react';
 import { DateRangePicker } from '@/components/date-range-picker';
+
+import { DeleteTasksDialog } from './delete-tasks-dialog';
 
 interface TasksTableToolbarActionsProps {
   table: Table<AreaType>;
@@ -18,7 +19,9 @@ interface TasksTableToolbarActionsProps {
 export function TasksTableToolbarActions({ table }: TasksTableToolbarActionsProps) {
   return (
     <div className="flex items-center gap-2">
-      {table.getFilteredSelectedRowModel().rows.length > 0 ? <DeleteTasksDialog tasks={table.getFilteredSelectedRowModel().rows.map((row) => row.original)} onSuccess={() => table.toggleAllRowsSelected(false)} /> : null}
+      {table.getFilteredSelectedRowModel().rows.length > 0 ? (
+        <DeleteTasksDialog tasks={table.getFilteredSelectedRowModel().rows.map((row) => row.original)} onSuccess={() => table.toggleAllRowsSelected(false)} />
+      ) : null}
       <Button
         variant="outline"
         size="sm"

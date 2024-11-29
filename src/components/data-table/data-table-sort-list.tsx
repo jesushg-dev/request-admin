@@ -109,7 +109,10 @@ export function DataTableSortList<TData>({ table, debounceMs, shallow }: DataTab
           id={`${id}-sort-dialog`}
           align="start"
           collisionPadding={16}
-          className={cn('flex w-[calc(100vw-theme(spacing.20))] min-w-72 max-w-[25rem] origin-[var(--radix-popover-content-transform-origin)] flex-col p-4 sm:w-[25rem]', sorting.length > 0 ? 'gap-3.5' : 'gap-2')}>
+          className={cn(
+            'flex w-[calc(100vw-theme(spacing.20))] min-w-72 max-w-[25rem] origin-[var(--radix-popover-content-transform-origin)] flex-col p-4 sm:w-[25rem]',
+            sorting.length > 0 ? 'gap-3.5' : 'gap-2'
+          )}>
           {uniqueSorting.length > 0 ? (
             <h4 className="font-medium leading-none">Sort by</h4>
           ) : (
@@ -131,7 +134,13 @@ export function DataTableSortList<TData>({ table, debounceMs, shallow }: DataTab
                     <div className="flex items-center gap-2">
                       <Popover modal>
                         <PopoverTrigger asChild>
-                          <Button id={fieldTriggerId} variant="outline" size="sm" role="combobox" className="h-8 w-44 justify-between gap-2 rounded focus:outline-none focus:ring-1 focus:ring-ring" aria-controls={fieldListboxId}>
+                          <Button
+                            id={fieldTriggerId}
+                            variant="outline"
+                            size="sm"
+                            role="combobox"
+                            className="h-8 w-44 justify-between gap-2 rounded focus:outline-none focus:ring-1 focus:ring-ring"
+                            aria-controls={fieldListboxId}>
                             <span className="truncate">{toSentenceCase(sort.id)}</span>
                             <div className="ml-auto flex items-center gap-1">
                               {initialSorting.length === 1 && initialSorting[0]?.id === sort.id ? (

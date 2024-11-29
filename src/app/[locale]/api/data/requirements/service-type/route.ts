@@ -1,7 +1,6 @@
+import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/server/db-server';
 import { getToken } from 'next-auth/jwt';
-
-import { NextRequest, NextResponse } from 'next/server';
 
 //https://spin.atomicobject.com/api-route-handlers-app-router/
 //https://ej2.syncfusion.com/documentation/data/adaptors#custom-data-adaptor

@@ -1,14 +1,13 @@
 'use client';
+
 import React, { FC } from 'react';
-
-import { MdLockOpen } from 'react-icons/md';
-
-import Modal, { CloseModal } from '@/components/Modal';
-import { Button, ErrorList, Input, Textarea } from '@/components/form';
-
 import { RouterOutputType } from '@/connections/generic_types';
 import { useCreateRequirementForm } from '@/connections/requirement';
 import type { CreateRequirementInputs } from '@/connections/requirement';
+import { MdLockOpen } from 'react-icons/md';
+
+import { Button, ErrorList, Input, Textarea } from '@/components/form';
+import Modal, { CloseModal } from '@/components/Modal';
 
 type InferredOutput = RouterOutputType['salesChannel']['getAll'];
 

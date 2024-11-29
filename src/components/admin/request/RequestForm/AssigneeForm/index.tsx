@@ -1,16 +1,15 @@
 import React, { type FC } from 'react';
-
 // Type imports
 import type { CreateRequestAssigneeInputs } from '@/connections/request';
-
-// Relative imports from external to more internal or specific components
-import { ErrorList } from '@/components/form';
-import BackAndContinue from '@/components/common/back-and-continue';
 import { useCreateAssigneeForm } from '@/connections/request';
 
+import BackAndContinue from '@/components/common/back-and-continue';
+// Relative imports from external to more internal or specific components
+import { ErrorList } from '@/components/form';
+
 import AreaSelect from './AreaSelect';
-import RequestTypeSelect from './RequestTypeSelect';
 import CategorySelect from './CategorySelect';
+import RequestTypeSelect from './RequestTypeSelect';
 import SubCategorySelect from './SubCategorySelect';
 
 interface ISaleChannelSelectorProps {

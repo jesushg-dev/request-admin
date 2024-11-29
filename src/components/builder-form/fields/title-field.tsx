@@ -1,16 +1,16 @@
 'use client';
 
-import { ElementsType, FormElement, FormElementInstance } from '@/components/builder-form/form-elements';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
-import useDesigner from '@/hooks/use-designer.hook';
-
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 import { LuHeading1 } from 'react-icons/lu';
+import { z } from 'zod';
+
+import useDesigner from '@/hooks/use-designer.hook';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { ElementsType, FormElement, FormElementInstance } from '@/components/builder-form/form-elements';
 
 const type: ElementsType = 'TitleField';
 

@@ -1,9 +1,9 @@
 import React, { type FC } from 'react';
+import { type SelectPermissionInputs } from '@/connections/role';
+import type { Control, FormState } from 'react-hook-form';
 
 import { Select } from '@/components/form';
 import { type RouterOutputs } from '@/components/hoc/tanstack-query-provider';
-import { type SelectPermissionInputs } from '@/connections/role';
-import type { Control, FormState } from 'react-hook-form';
 
 type ModuleWithPermissions = RouterOutputs['module']['getModulesPermissions'][number];
 

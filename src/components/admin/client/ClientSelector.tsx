@@ -2,16 +2,14 @@
 
 import React from 'react';
 import type { FC } from 'react';
-
-import Skeleton from 'react-loading-skeleton';
-import { Inject, Search, Toolbar, Page } from '@syncfusion/ej2-react-grids';
-import { ColumnDirective, ColumnsDirective, GridComponent } from '@syncfusion/ej2-react-grids';
-
-import BackAndContinue from '@/components/common/back-and-continue';
-import useSelection from '@/hooks/useSelection';
 import { triggerError } from '@/utils/tools/message';
 import type { ClientType } from '@/utils/types';
+import { ColumnDirective, ColumnsDirective, GridComponent, Inject, Page, Search, Toolbar } from '@syncfusion/ej2-react-grids';
 import { MdEmail, MdPhone } from 'react-icons/md';
+import Skeleton from 'react-loading-skeleton';
+
+import useSelection from '@/hooks/useSelection';
+import BackAndContinue from '@/components/common/back-and-continue';
 
 interface IClientSelectorProps {
   loading: boolean;

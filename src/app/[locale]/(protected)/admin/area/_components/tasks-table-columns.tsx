@@ -3,15 +3,14 @@
 import * as React from 'react';
 import { type DataTableRowAction } from '@/types';
 import { type ColumnDef } from '@tanstack/react-table';
+import { Area as AreaType } from '@zenstackhq/runtime/models';
 import { Ellipsis } from 'lucide-react';
 
 import { formatDate } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-
-import { Area as AreaType } from '@zenstackhq/runtime/models';
 import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 
 interface GetColumnsProps {
   setRowAction: React.Dispatch<React.SetStateAction<DataTableRowAction<AreaType> | null>>;

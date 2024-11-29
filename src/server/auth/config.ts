@@ -1,15 +1,15 @@
-import bcrypt from 'bcryptjs';
+import { getAccountByUserId } from '@/services/data/account';
+import { getTwoFactorConfirmationByUserId } from '@/services/data/two-factor-confirmation';
+import { getUserByEmail, getUserById, getUserByIdWithPermissions } from '@/services/data/user';
+import { LoginSchema } from '@/services/schemas';
 import { PrismaAdapter } from '@auth/prisma-adapter';
+import bcrypt from 'bcryptjs';
 import { type DefaultSession, type NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import DiscordProvider from 'next-auth/providers/discord';
 import Github from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
 
-import { LoginSchema } from '@/services/schemas';
-import { getUserByEmail, getUserById, getUserByIdWithPermissions } from '@/services/data/user';
-import { getAccountByUserId } from '@/services/data/account';
-import { getTwoFactorConfirmationByUserId } from '@/services/data/two-factor-confirmation';
 import { db } from '../db-client';
 
 export type ExtendedUser = DefaultSession['user'] & {

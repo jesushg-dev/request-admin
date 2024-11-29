@@ -1,9 +1,10 @@
 import React from 'react';
-import { twMerge } from 'tailwind-merge';
 import { ErrorMessage } from '@hookform/error-message';
 import { FieldValues, FormState, Path, UseFormRegister } from 'react-hook-form';
+import { twMerge } from 'tailwind-merge';
 
-interface ITextareaProps<TFieldValues extends FieldValues = FieldValues> extends Omit<React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>, 'name' | 'ref' | 'required'> {
+interface ITextareaProps<TFieldValues extends FieldValues = FieldValues>
+  extends Omit<React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>, 'name' | 'ref' | 'required'> {
   name: Path<TFieldValues>;
   formState: FormState<TFieldValues>;
   register: UseFormRegister<TFieldValues>;
@@ -68,7 +69,9 @@ const Textarea = <TFieldValues extends FieldValues = FieldValues>({
           disabled={isSubmitting}
           id={rest?.id || name}
         />
-        {RightIcon && <RightIcon className="absolute right-4 z-10 h-full w-8 items-center justify-center rounded-md bg-transparent py-2 pl-3 text-center text-xs font-normal leading-snug text-black" />}
+        {RightIcon && (
+          <RightIcon className="absolute right-4 z-10 h-full w-8 items-center justify-center rounded-md bg-transparent py-2 pl-3 text-center text-xs font-normal leading-snug text-black" />
+        )}
       </div>
 
       <ErrorMessage name={name as any} errors={errors} render={({ message }) => <p className={twMerge('mt-2 text-xs text-red-600', helperClass)}>{message}</p>} />

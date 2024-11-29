@@ -1,17 +1,15 @@
 // Libraries
 import React, { useEffect } from 'react';
-import { type UseFormResetField, useWatch, type Control, type FormState } from 'react-hook-form';
-
 // Type imports
 import type { FC } from 'react';
 import type { CreateRequestAssigneeInputs } from '@/connections/request';
-
-// Relative imports
-import { api } from '@/components/hoc/tanstack-query-provider';
-import Select from '@/components/form/select';
-
+import { useWatch, type Control, type FormState, type UseFormResetField } from 'react-hook-form';
 // Icons
 import { MdOutlineCategory } from 'react-icons/md';
+
+import Select from '@/components/form/select';
+// Relative imports
+import { api } from '@/components/hoc/tanstack-query-provider';
 
 interface ICategorySelectProps {
   control: Control<CreateRequestAssigneeInputs>;

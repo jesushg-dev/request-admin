@@ -1,16 +1,16 @@
 'use client';
 
 import React from 'react';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { useTranslations } from 'next-intl';
+import { api } from '@/trpc/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { RequirementCreateSchema } from '@zenstackhq/runtime/zod/models';
+import { useTranslations } from 'next-intl';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-import { api } from '@/trpc/react';
+import useSubmit from '@/hooks/use-submit.hook';
 import { Input } from '@/components/form';
 import ErrorList from '@/components/form/error-list';
-import useSubmit from '@/hooks/use-submit.hook';
 
 type RequirementCreateType = z.infer<typeof RequirementCreateSchema>;
 
@@ -37,8 +37,23 @@ const NewRequirementPage: React.FC = () => {
           <Input name="id" type="text" register={register} formState={formState} label={t('inputs.id.label')} placeholder={t('inputs.id.placeholder')} required />
           <Input name="name" type="text" register={register} formState={formState} label={t('inputs.name.label')} placeholder={t('inputs.name.placeholder')} required />
           <Input name="description" type="text" register={register} formState={formState} label={t('inputs.description.label')} placeholder={t('inputs.description.placeholder')} required />
-          <Input name="categoryRequirementId" type="text" register={register} formState={formState} label={t('inputs.categoryRequirementId.label')} placeholder={t('inputs.categoryRequirementId.placeholder')} />
-          <Input name="onlyRequireInNewClients" type="text" register={register} formState={formState} label={t('inputs.onlyRequireInNewClients.label')} placeholder={t('inputs.onlyRequireInNewClients.placeholder')} required />
+          <Input
+            name="categoryRequirementId"
+            type="text"
+            register={register}
+            formState={formState}
+            label={t('inputs.categoryRequirementId.label')}
+            placeholder={t('inputs.categoryRequirementId.placeholder')}
+          />
+          <Input
+            name="onlyRequireInNewClients"
+            type="text"
+            register={register}
+            formState={formState}
+            label={t('inputs.onlyRequireInNewClients.label')}
+            placeholder={t('inputs.onlyRequireInNewClients.placeholder')}
+            required
+          />
           <ErrorList formState={formState} />
           <button type="submit" className="flex w-full justify-center rounded bg-primary p-3 font-medium text-white hover:bg-opacity-90">
             {t('createButton')}

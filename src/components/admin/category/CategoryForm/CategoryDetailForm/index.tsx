@@ -1,15 +1,14 @@
 'use client';
 
 import React, { FC } from 'react';
-
+import { CreateCategoryInputs } from '@/connections/category/categorySchemas';
+import { useCreateCategoryForm } from '@/connections/category/useCategoryForm';
 import { MdOutlineCategory } from 'react-icons/md';
 
+import BackAndContinue from '@/components/common/back-and-continue';
 import { Input, Textarea } from '@/components/form';
 import ErrorList from '@/components/form/error-list';
 
-import BackAndContinue from '@/components/common/back-and-continue';
-import { CreateCategoryInputs } from '@/connections/category/categorySchemas';
-import { useCreateCategoryForm } from '@/connections/category/useCategoryForm';
 import AreaSelect from './AreaSelect';
 import RequestTypeSelect from './RequestTypeSelect';
 

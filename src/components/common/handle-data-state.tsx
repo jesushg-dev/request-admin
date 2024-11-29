@@ -12,7 +12,15 @@ interface HandleListStateProps {
   emptyComponent?: JSX.Element; // Optional, custom empty component
 }
 
-const HandleDataState: FC<HandleListStateProps> = ({ isLoading, isError, isEmpty, children, skeleton, errorComponent = 'Error loading data. Please try again.', emptyComponent = 'No data available.' }) => {
+const HandleDataState: FC<HandleListStateProps> = ({
+  isLoading,
+  isError,
+  isEmpty,
+  children,
+  skeleton,
+  errorComponent = 'Error loading data. Please try again.',
+  emptyComponent = 'No data available.',
+}) => {
   if (isLoading) {
     return skeleton || <Skeleton count={5} />;
   }

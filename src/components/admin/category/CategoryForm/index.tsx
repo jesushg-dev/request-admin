@@ -1,13 +1,14 @@
 'use client';
 
-import React, { type FC, useState } from 'react';
-import { StepperComponent, StepsDirective, StepDirective } from '@syncfusion/ej2-react-navigations';
+import React, { useState, type FC } from 'react';
+import type { CreateCategoryInputs, CreateSubcategoryArrayInputs } from '@/connections/category';
+import { StepDirective, StepperComponent, StepsDirective } from '@syncfusion/ej2-react-navigations';
 
 import rswitch from '@/lib/rswitch';
-import SubCategoryForm from './SubCategoryForm';
 import CardForm from '@/components/common/CardForm';
+
 import CategoryDetailForm from './CategoryDetailForm';
-import type { CreateCategoryInputs, CreateSubcategoryArrayInputs } from '@/connections/category';
+import SubCategoryForm from './SubCategoryForm';
 import SummaryForm from './SummaryForm';
 
 type SubCategoryState = CreateSubcategoryArrayInputs | null;

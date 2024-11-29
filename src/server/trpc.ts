@@ -7,12 +7,11 @@
  * need to use are documented accordingly near the end.
  */
 
+import { auth } from '@/server/auth';
 import { initTRPC, TRPCError } from '@trpc/server';
+import { enhance } from '@zenstackhq/runtime';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
-
-import { auth } from '@/server/auth';
-import { enhance } from '@zenstackhq/runtime';
 
 /**
  * 1. CONTEXT

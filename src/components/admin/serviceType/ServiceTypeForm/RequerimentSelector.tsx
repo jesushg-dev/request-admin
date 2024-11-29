@@ -1,12 +1,11 @@
 'use client';
 
-import React, { type FC, useEffect, useState } from 'react';
-
+import React, { useEffect, useState, type FC } from 'react';
+import type { UpdateRequirementInputs as RequirementInputs } from '@/connections/requirement';
+import { ColumnDirective, ColumnsDirective, GridComponent, Inject, Page, RowDD, type RowDragEventArgs } from '@syncfusion/ej2-react-grids';
 import { clone } from 'remeda';
-import { GridComponent, ColumnsDirective, ColumnDirective, Page, RowDD, Inject, type RowDragEventArgs } from '@syncfusion/ej2-react-grids';
 
 import BackAndContinue from '@/components/common/back-and-continue';
-import type { UpdateRequirementInputs as RequirementInputs } from '@/connections/requirement';
 
 const rowDropSettings = { targetID: 'DestGrid' };
 const rowDropSettings2 = { targetID: 'Grid' };
@@ -36,7 +35,15 @@ const RequerimentSelector: FC<CreateRequerimentSelectorProps> = ({ goBack, submi
     <div className="flex flex-1 flex-col gap-2 p-6">
       <div className="grid flex-1 grid-cols-2 gap-6">
         <div className="h-full w-full">
-          <GridComponent id="Grid" allowPaging={true} dataSource={sourceData} pageSettings={{ pageCount: 1 }} allowRowDragAndDrop={true} rowDropSettings={rowDropSettings} selectionSettings={{ type: 'Multiple' }} height="100%">
+          <GridComponent
+            id="Grid"
+            allowPaging={true}
+            dataSource={sourceData}
+            pageSettings={{ pageCount: 1 }}
+            allowRowDragAndDrop={true}
+            rowDropSettings={rowDropSettings}
+            selectionSettings={{ type: 'Multiple' }}
+            height="100%">
             <ColumnsDirective>
               <ColumnDirective field="name" headerText="Name (Source)" width="100%" textAlign="Left" />
             </ColumnsDirective>

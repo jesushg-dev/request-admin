@@ -1,10 +1,10 @@
-import React, { FC, useState, useEffect, useRef } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
+import { type IEmployee } from '@/utils/types';
+import { useVirtualizer } from '@tanstack/react-virtual';
 
 import { api } from '@/components/hoc/tanstack-query-provider';
-import EmployeeCard from './EmployeeCard';
-import { type IEmployee } from '@/utils/types';
 
-import { useVirtualizer } from '@tanstack/react-virtual';
+import EmployeeCard from './EmployeeCard';
 
 interface IEmployeeSelectorProps {
   values?: IEmployee[];
@@ -15,7 +15,10 @@ const EmployeeSelector: FC<IEmployeeSelectorProps> = ({ values, onChange }) => {
   const parentRef = useRef(null);
   const [selected, setSelected] = useState<IEmployee[]>(values || []);
 
-  const { status, data, error, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = api.user.infinite.useInfiniteQuery({ limit: 50 }, { getNextPageParam: (lastPage) => lastPage.nextCursor });
+  const { status, data, error, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = api.user.infinite.useInfiniteQuery(
+    { limit: 50 },
+    { getNextPageParam: (lastPage) => lastPage.nextCursor }
+  );
 
   // Flatten the pages of data into a single array of employees
   const employees = data ? data.pages.flatMap((page) => page.items) : [];

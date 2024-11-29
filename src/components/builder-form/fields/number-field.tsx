@@ -1,18 +1,18 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { Bs123 } from 'react-icons/bs';
 import { z } from 'zod';
-import { ElementsType, FormElement, FormElementInstance, SubmitFunction } from '@/components/builder-form/form-elements';
-import useDesigner from '@/hooks/use-designer.hook';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
 import { cn } from '@/lib/utils';
-import { Bs123 } from 'react-icons/bs';
+import useDesigner from '@/hooks/use-designer.hook';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { ElementsType, FormElement, FormElementInstance, SubmitFunction } from '@/components/builder-form/form-elements';
 
 const type: ElementsType = 'NumberField';
 

@@ -1,17 +1,16 @@
 'use client';
 
-import React, { type FC, useState } from 'react';
-
-import { StepperComponent, StepsDirective, StepDirective } from '@syncfusion/ej2-react-navigations';
-
-import ModuleForm from './ModuleForm';
-import SummaryForm from './SummaryForm';
-import PermissionsForm from './PermissionsForm';
+import React, { useState, type FC } from 'react';
+import { type CreateModuleInputs, type CreateModuleWithPermissionInputs } from '@/connections/module';
+import { type CreatePermissionsInputs } from '@/connections/permission';
+import { StepDirective, StepperComponent, StepsDirective } from '@syncfusion/ej2-react-navigations';
 
 import rswitch from '@/lib/rswitch';
 import CardForm from '@/components/common/CardForm';
-import { type CreatePermissionsInputs } from '@/connections/permission';
-import { type CreateModuleWithPermissionInputs, type CreateModuleInputs } from '@/connections/module';
+
+import ModuleForm from './ModuleForm';
+import PermissionsForm from './PermissionsForm';
+import SummaryForm from './SummaryForm';
 
 interface FormProps {
   defaultValues?: Partial<CreateModuleWithPermissionInputs>;

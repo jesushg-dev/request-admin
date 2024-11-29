@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import type { FC } from 'react';
-
+import type { UpdateRequirementInputs as RequirementInputs } from '@/connections/requirement';
 import { FiList } from 'react-icons/fi';
 
+import BackAndContinue from '@/components/common/back-and-continue';
+import HandleListState from '@/components/common/handle-data-state';
 import { Button } from '@/components/form';
 import Scrollable from '@/components/Scrollable';
-import LoadingComponent from './LoadingComponent';
-import HandleListState from '@/components/common/handle-data-state';
-import BackAndContinue from '@/components/common/back-and-continue';
 
-import type { UpdateRequirementInputs as RequirementInputs } from '@/connections/requirement';
+import LoadingComponent from './LoadingComponent';
 
 interface IRequirementsFormProps {
   loading: boolean;

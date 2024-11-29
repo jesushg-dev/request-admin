@@ -1,13 +1,11 @@
 import React, { useEffect } from 'react';
 import type { FC } from 'react';
-
-import { MdOutlineEmail, MdArchitecture, MdPersonOutline, MdDateRange, MdImage, MdLocationOn, MdAccountCircle, MdLockOutline, MdApproval } from 'react-icons/md';
-
-import { ErrorList, Button, Input, Select } from '@/components/form';
-
-import { api } from '@/components/hoc/tanstack-query-provider';
 import { useCreateUserForm } from '@/connections/user';
 import type { CreateUserInputs } from '@/connections/user';
+import { MdAccountCircle, MdApproval, MdArchitecture, MdDateRange, MdImage, MdLocationOn, MdLockOutline, MdOutlineEmail, MdPersonOutline } from 'react-icons/md';
+
+import { Button, ErrorList, Input, Select } from '@/components/form';
+import { api } from '@/components/hoc/tanstack-query-provider';
 
 interface IUserDataFormProps {
   onAreaChange?: (areaId: string) => void;

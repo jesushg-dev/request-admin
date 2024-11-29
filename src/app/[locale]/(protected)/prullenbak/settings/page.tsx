@@ -1,22 +1,22 @@
 'use client';
 
-import * as z from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useTransition, useState } from 'react';
-import { useSession } from 'next-auth/react';
-
-import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardHeader, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { useState, useTransition } from 'react';
 import { settings } from '@/actions/settings';
-import { Form, FormField, FormControl, FormItem, FormLabel, FormDescription, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { SettingsSchema } from '@/services/schemas';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useSession } from 'next-auth/react';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+
 import { useCurrentUser } from '@/hooks/use-current-user.hook';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { FormError } from '@/components/prullenbak/form-error';
 import { FormSuccess } from '@/components/prullenbak/form-success';
-import { SettingsSchema } from '@/services/schemas';
 
 const SettingsPage = () => {
   const user = useCurrentUser();

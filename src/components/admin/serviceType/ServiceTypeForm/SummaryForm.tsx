@@ -1,14 +1,13 @@
 import React from 'react';
 import type { FC } from 'react';
-
-import { TooltipComponent } from '@syncfusion/ej2-react-popups';
-import { ListViewComponent } from '@syncfusion/ej2-react-lists';
-import { FiCheckCircle, FiBookOpen, FiUserPlus, FiList, FiTag } from 'react-icons/fi';
-
-import Scrollable from '@/components/Scrollable';
-import BackAndContinue from '@/components/common/back-and-continue';
 import type { UpdateRequirementInputs as RequirementInputs } from '@/connections/requirement';
 import type { CreateServiceTypeInputs, CreateServiceTypeWithRequirementInputs } from '@/connections/service-type';
+import { ListViewComponent } from '@syncfusion/ej2-react-lists';
+import { TooltipComponent } from '@syncfusion/ej2-react-popups';
+import { FiBookOpen, FiCheckCircle, FiList, FiTag, FiUserPlus } from 'react-icons/fi';
+
+import BackAndContinue from '@/components/common/back-and-continue';
+import Scrollable from '@/components/Scrollable';
 
 interface ISummaryFormProps {
   requirements: RequirementInputs[];

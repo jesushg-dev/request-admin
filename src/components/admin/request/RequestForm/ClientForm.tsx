@@ -1,16 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { FC } from 'react';
-
-import TabView, { Tab } from '@/components/TabView';
-
+import type { CreateClientInputs } from '@/connections/client';
+import type { ClientType } from '@/utils/types';
 import { MdPerson, MdRestore } from 'react-icons/md';
 
-import ClientDetailForm from '@/components/admin/client/ClientDetailForm';
-
 import rswitch from '@/lib/rswitch';
+import ClientDetailForm from '@/components/admin/client/ClientDetailForm';
 import ClientSelector from '@/components/admin/client/ClientSelector';
-import type { ClientType } from '@/utils/types';
-import type { CreateClientInputs } from '@/connections/client';
+import TabView, { Tab } from '@/components/TabView';
 
 type ClientInputType = {
   newClientData: CreateClientInputs | null;

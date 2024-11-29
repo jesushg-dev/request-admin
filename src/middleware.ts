@@ -1,9 +1,9 @@
 import { type NextRequest } from 'next/server';
 import createIntlMiddleware from 'next-intl/middleware';
 
-import { auth } from './server/auth';
 import { locales, routing } from './i18n/routing';
 import { apiAuthPrefix, authRoutes, DEFAULT_LOGIN_REDIRECT, publicRoutes } from './routes';
+import { auth } from './server/auth';
 
 const publicPages = ['/', '/auth/*', '/about/*'];
 

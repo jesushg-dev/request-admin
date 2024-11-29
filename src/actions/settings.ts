@@ -1,15 +1,15 @@
 'use server';
 
-import * as z from 'zod';
-import bcrypt from 'bcryptjs';
-
-import { db } from '@/server/db-client';
-import { SettingsSchema } from '@/services/schemas';
-import { getUserByEmail, getUserById } from '@/services/data/user';
-import { currentUser } from '@/lib/auth';
-import { generateVerificationToken } from '@/lib/tokens';
-import { sendVerificationEmail } from '@/lib/mail';
 import { update } from '@/server/auth';
+import { db } from '@/server/db-client';
+import { getUserByEmail, getUserById } from '@/services/data/user';
+import { SettingsSchema } from '@/services/schemas';
+import bcrypt from 'bcryptjs';
+import * as z from 'zod';
+
+import { currentUser } from '@/lib/auth';
+import { sendVerificationEmail } from '@/lib/mail';
+import { generateVerificationToken } from '@/lib/tokens';
 
 export const settings = async (values: z.infer<typeof SettingsSchema>) => {
   const user = await currentUser();

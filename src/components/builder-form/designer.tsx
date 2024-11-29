@@ -1,16 +1,17 @@
 'use client';
 
 import React, { useState } from 'react';
-import { v4 as idGenerator } from 'uuid';
-
 import { DragEndEvent, useDndMonitor, useDraggable, useDroppable } from '@dnd-kit/core';
-import { Button } from '../form';
-import { cn } from '@/lib/utils';
-import DesignerSidebar from './designer-sidebar';
-import useDesigner from '@/hooks/use-designer.hook';
-import { ElementsType, FormElementInstance, FormElements, styleElements } from './form-elements';
 import { BiBookAlt, BiSolidTrash } from 'react-icons/bi';
 import { RiDragMove2Line } from 'react-icons/ri';
+import { v4 as idGenerator } from 'uuid';
+
+import { cn } from '@/lib/utils';
+import useDesigner from '@/hooks/use-designer.hook';
+
+import { Button } from '../form';
+import DesignerSidebar from './designer-sidebar';
+import { ElementsType, FormElementInstance, FormElements, styleElements } from './form-elements';
 
 function Designer() {
   const { elements, addElement, selectedElement, setSelectedElement, removeElement } = useDesigner();
@@ -112,7 +113,10 @@ function Designer() {
         }}>
         <div
           ref={droppable.setNodeRef}
-          className={cn('m-auto flex h-full max-w-[920px] flex-1 flex-grow flex-col items-center justify-start overflow-y-auto rounded-xl bg-background', droppable.isOver && 'ring-4 ring-inset ring-primary')}>
+          className={cn(
+            'm-auto flex h-full max-w-[920px] flex-1 flex-grow flex-col items-center justify-start overflow-y-auto rounded-xl bg-background',
+            droppable.isOver && 'ring-4 ring-inset ring-primary'
+          )}>
           {!droppable.isOver && elements.length === 0 && <p className="flex flex-grow items-center text-3xl font-bold text-muted-foreground">Drop here</p>}
 
           {droppable.isOver && elements.length === 0 && (

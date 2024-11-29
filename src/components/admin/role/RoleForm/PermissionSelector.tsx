@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useEffect, type FC } from 'react';
+import { useSelectPermissionForm, type SelectPermissionInputs } from '@/connections/role';
+
+import BackAndContinue from '@/components/common/back-and-continue';
+import { ErrorList } from '@/components/form';
+import { api } from '@/components/hoc/tanstack-query-provider';
 
 import PermissionCard from './PermissionCard';
-import BackAndContinue from '@/components/common/back-and-continue';
-
-import { api } from '@/components/hoc/tanstack-query-provider';
-import { ErrorList } from '@/components/form';
-import { useSelectPermissionForm, type SelectPermissionInputs } from '@/connections/role';
 
 interface IPermissionSelectorProps {
   goBack: () => void;

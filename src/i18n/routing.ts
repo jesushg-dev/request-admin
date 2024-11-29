@@ -1,5 +1,5 @@
-import { defineRouting, Pathnames } from 'next-intl/routing';
 import { createNavigation } from 'next-intl/navigation';
+import { defineRouting, Pathnames } from 'next-intl/routing';
 
 export type Locale = 'en' | 'es';
 export const defaultLocale = 'en';

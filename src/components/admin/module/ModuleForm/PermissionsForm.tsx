@@ -1,15 +1,15 @@
 'use client';
 
 import React, { FC } from 'react';
-import { MdRemove, MdPerson, MdDescription } from 'react-icons/md';
-
-import { Input, ErrorList, Button, Textarea } from '@/components/form';
 import { useCreatePermissionsArrayForm } from '@/connections/permission';
 import type { CreatePermissionInputs } from '@/connections/permission';
-import BackAndContinue from '@/components/common/back-and-continue';
-import Scrollable from '@/components/Scrollable';
-import { IoMdTrash } from 'react-icons/io';
 import { triggerConfirmCallback } from '@/utils/tools/message';
+import { IoMdTrash } from 'react-icons/io';
+import { MdDescription, MdPerson, MdRemove } from 'react-icons/md';
+
+import BackAndContinue from '@/components/common/back-and-continue';
+import { Button, ErrorList, Input, Textarea } from '@/components/form';
+import Scrollable from '@/components/Scrollable';
 
 interface CreatePermissionsFormProps {
   goBack: () => void;
@@ -38,7 +38,16 @@ const PermissionsForm: FC<CreatePermissionsFormProps> = ({ goBack, submitForm, d
             <div key={permission.id || index} className="rounded border border-gray-200 p-2 shadow-sm">
               <div className="flex gap-4">
                 <div className="mb-2 grid w-full grid-cols-3 items-start gap-2">
-                  <Input required name={`permissions.${index}.name`} type="text" register={register} formState={formState} label={`#${index + 1} Name`} placeholder={`Name of Permission`} Icon={MdPerson} />
+                  <Input
+                    required
+                    name={`permissions.${index}.name`}
+                    type="text"
+                    register={register}
+                    formState={formState}
+                    label={`#${index + 1} Name`}
+                    placeholder={`Name of Permission`}
+                    Icon={MdPerson}
+                  />
                   <Textarea
                     containerClassName="col-span-2"
                     name={`permissions.${index}.description`}

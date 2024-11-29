@@ -1,17 +1,15 @@
 // Libraries
 import React from 'react';
-import { type Control, type FormState } from 'react-hook-form';
-
 // Type imports
 import type { FC } from 'react';
 import type { CreateRequestAssigneeInputs } from '@/connections/request';
-
-// Relative imports
-import { api } from '@/components/hoc/tanstack-query-provider';
-import Select from '@/components/form/select';
-
+import { type Control, type FormState } from 'react-hook-form';
 // Icons
 import { MdOutlineGroupWork } from 'react-icons/md';
+
+import Select from '@/components/form/select';
+// Relative imports
+import { api } from '@/components/hoc/tanstack-query-provider';
 
 interface IAreaSelectProps {
   control: Control<CreateRequestAssigneeInputs>;

@@ -1,13 +1,12 @@
 'use client';
+
 import React, { FC } from 'react';
-
-import { MdArchitecture } from 'react-icons/md';
-
-import Modal, { CloseModal } from '@/components/Modal';
-import { Button, ErrorList, Input, Textarea } from '@/components/form';
-
 import { useCreateSalesChannelForm } from '@/connections/sales-channel';
 import type { CreateSalesChannelInputs } from '@/connections/sales-channel';
+import { MdArchitecture } from 'react-icons/md';
+
+import { Button, ErrorList, Input, Textarea } from '@/components/form';
+import Modal, { CloseModal } from '@/components/Modal';
 
 interface ISalesChannelFormModalProps {
   onClose?: () => void;

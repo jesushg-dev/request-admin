@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { ImShare } from 'react-icons/im';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ImShare } from 'react-icons/im';
 import { toast } from '@/components/ui/use-toast';
 
 function FormLinkShare({ shareUrl }: { shareUrl: string }) {

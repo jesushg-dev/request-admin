@@ -1,13 +1,12 @@
 'use client';
+
 import React, { FC } from 'react';
-
-import { MdArchitecture, MdNotes, MdStore } from 'react-icons/md';
-
-import { Button, ErrorList, Input, Select, Textarea } from '@/components/form';
-
 import { RouterOutputType } from '@/connections/generic_types';
 import { useCreateServiceTypeForm } from '@/connections/service-type';
 import type { CreateServiceTypeInputs } from '@/connections/service-type';
+import { MdArchitecture, MdNotes, MdStore } from 'react-icons/md';
+
+import { Button, ErrorList, Input, Select, Textarea } from '@/components/form';
 
 type InferredOutput = RouterOutputType['salesChannel']['getAll'];
 

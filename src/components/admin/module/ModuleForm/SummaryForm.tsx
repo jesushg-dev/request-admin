@@ -1,7 +1,8 @@
 import React, { FC } from 'react';
-import Button from '@/components/form/nutton';
 import type { CreateModuleWithPermissionInputs } from '@/connections/module/moduleSchemas';
 import { FiBookOpen, FiKey, FiSave } from 'react-icons/fi'; // Import icons
+
+import Button from '@/components/form/nutton';
 
 interface ISummaryFormProps {
   module?: CreateModuleWithPermissionInputs['module'] | null;

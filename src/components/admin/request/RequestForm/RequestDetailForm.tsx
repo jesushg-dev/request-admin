@@ -1,17 +1,30 @@
 import React, { FC } from 'react';
+import { useCreateRequestForm, type CreateRequestInputs } from '@/connections/request';
+import { addClass, Browser, createElement, removeClass } from '@syncfusion/ej2-base';
+import {
+  Audio,
+  Count,
+  EmojiPicker,
+  FileManager,
+  FormatPainter,
+  HtmlEditor,
+  Image,
+  Inject,
+  Link,
+  PasteCleanup,
+  QuickToolbar,
+  RichTextEditorComponent,
+  Table,
+  Toolbar,
+  Video,
+} from '@syncfusion/ej2-react-richtexteditor';
 import { MdSubject } from 'react-icons/md';
 
-import { createElement } from '@syncfusion/ej2-base';
-import { FileManager } from '@syncfusion/ej2-react-richtexteditor';
-import { addClass, removeClass, Browser } from '@syncfusion/ej2-base';
-import { RichTextEditorComponent, Toolbar, Inject, Image, Link, HtmlEditor, Count, QuickToolbar, Table, EmojiPicker, Video, Audio, FormatPainter, PasteCleanup } from '@syncfusion/ej2-react-richtexteditor';
-
-import { Input, ErrorList } from '@/components/form';
-import Scrollable from '@/components/Scrollable';
 import { FormElementInstance } from '@/components/@BuilderForm/FormElements';
 import FormSubmitComponent from '@/components/@BuilderForm/FormSubmitComponent';
-import { useCreateRequestForm, type CreateRequestInputs } from '@/connections/request';
+import { ErrorList, Input } from '@/components/form';
 import { api } from '@/components/hoc/tanstack-query-provider';
+import Scrollable from '@/components/Scrollable';
 
 import BackAndContinue from '../../common/BackAndContinue';
 

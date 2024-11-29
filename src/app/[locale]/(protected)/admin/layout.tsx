@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/admin/layout/app-sidebar';
 import { ModeToggle } from '@/components/admin/layout/mode-toogle';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { getTranslations } from 'next-intl/server';
 
 export async function generateMetadata(props: { params: { locale: string } }): Promise<Metadata> {
   const params = await props.params;

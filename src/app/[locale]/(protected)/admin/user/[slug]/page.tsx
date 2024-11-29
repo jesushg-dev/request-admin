@@ -1,18 +1,18 @@
 'use client';
 
 import React from 'react';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
+import { api } from '@/trpc/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { UserUpdateSchema } from '@zenstackhq/runtime/zod/models';
+import { useTranslations } from 'next-intl';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-import { api } from '@/trpc/react';
+import useSubmit from '@/hooks/use-submit.hook';
+import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { Input } from '@/components/form';
 import ErrorList from '@/components/form/error-list';
-import ErrorRetryFallback from '@/components/common/error-retry-fallback';
-import useSubmit from '@/hooks/use-submit.hook';
 
 type UserUpdateType = z.infer<typeof UserUpdateSchema>;
 
@@ -55,7 +55,15 @@ const UpdateUserPage: React.FC = () => {
           <Input name="email" type="text" register={register} formState={formState} label={t('inputs.email.label')} placeholder={t('inputs.email.placeholder')} />
           <Input name="emailVerified" type="text" register={register} formState={formState} label={t('inputs.emailVerified.label')} placeholder={t('inputs.emailVerified.placeholder')} />
           <Input name="password" type="text" register={register} formState={formState} label={t('inputs.password.label')} placeholder={t('inputs.password.placeholder')} required />
-          <Input name="isTwoFactorEnabled" type="text" register={register} formState={formState} label={t('inputs.isTwoFactorEnabled.label')} placeholder={t('inputs.isTwoFactorEnabled.placeholder')} required />
+          <Input
+            name="isTwoFactorEnabled"
+            type="text"
+            register={register}
+            formState={formState}
+            label={t('inputs.isTwoFactorEnabled.label')}
+            placeholder={t('inputs.isTwoFactorEnabled.placeholder')}
+            required
+          />
           <Input name="areaId" type="text" register={register} formState={formState} label={t('inputs.areaId.label')} placeholder={t('inputs.areaId.placeholder')} />
           <Input name="coordinatorId" type="text" register={register} formState={formState} label={t('inputs.coordinatorId.label')} placeholder={t('inputs.coordinatorId.placeholder')} />
           <ErrorList formState={formState} />

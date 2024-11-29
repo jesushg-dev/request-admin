@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
-import { MdAccountCircle, MdEmail, MdPhone, MdWork, MdBusiness, MdAttachMoney, MdCreditCard } from 'react-icons/md';
-
-import ErrorList from '@/components/form/error-list';
-import { Input } from '@/components/form';
-
 import { useCreateClientForm, type CreateClientInputs } from '@/connections/client';
+import { MdAccountCircle, MdAttachMoney, MdBusiness, MdCreditCard, MdEmail, MdPhone, MdWork } from 'react-icons/md';
+
+import { Input } from '@/components/form';
+import ErrorList from '@/components/form/error-list';
+
 import BackAndContinue from '../../common/back-and-continue';
 
 interface ClientDetailFormProps {
@@ -23,7 +23,16 @@ const ClientDetailForm: FC<ClientDetailFormProps> = ({ defaultValues, goBack, on
           <Input required name="name" type="text" register={register} formState={formState} label="Name" placeholder="Enter Name" Icon={MdAccountCircle} />
         </div>
         <div className="md:col-span-3">
-          <Input required name="identificationNumber" type="text" register={register} formState={formState} label="Identification Number" placeholder="Enter Identification Number" Icon={MdCreditCard} />
+          <Input
+            required
+            name="identificationNumber"
+            type="text"
+            register={register}
+            formState={formState}
+            label="Identification Number"
+            placeholder="Enter Identification Number"
+            Icon={MdCreditCard}
+          />
         </div>
         <div className="md:col-span-3">
           <Input name="email" type="email" register={register} formState={formState} label="Email (Optional)" placeholder="Enter Email" Icon={MdEmail} />

@@ -1,16 +1,15 @@
-import React, { type FC, useState } from 'react';
-
-import { MdOutlineFormatListNumbered, MdPerson } from 'react-icons/md';
-import { FiUser, FiMail, FiCalendar, FiImage, FiKey, FiShieldOff, FiLock, FiUserCheck, FiUsers, FiArchive, FiTag } from 'react-icons/fi';
-
-import TabView, { Tab } from '@/components/TabView';
-import rswitch from '@/lib/rswitch';
-
+import React, { useState, type FC } from 'react';
 import { type CreateUserInputs } from '@/connections/user';
 import { type AreaUserHierarchy } from '@/server/api/routers/userRouter';
-import { Button } from '@/components/form';
-import TreeDiagram from './TreeDiagram';
+import { FiArchive, FiCalendar, FiImage, FiKey, FiLock, FiMail, FiShieldOff, FiTag, FiUser, FiUserCheck, FiUsers } from 'react-icons/fi';
+import { MdOutlineFormatListNumbered, MdPerson } from 'react-icons/md';
+
+import rswitch from '@/lib/rswitch';
 import BackAndContinue from '@/components/common/back-and-continue';
+import { Button } from '@/components/form';
+import TabView, { Tab } from '@/components/TabView';
+
+import TreeDiagram from './TreeDiagram';
 
 interface ISummaryFormProps {
   user: Partial<CreateUserInputs>;

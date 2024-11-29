@@ -1,8 +1,9 @@
 import React from 'react';
 import type { FC } from 'react';
 import type { CreateCategoryInputs, CreateSubcategoryArrayInputs } from '@/connections/category';
-import BackAndContinue from '@/components/common/back-and-continue';
 import { ColumnDirective, ColumnsDirective, GridComponent } from '@syncfusion/ej2-react-grids';
+
+import BackAndContinue from '@/components/common/back-and-continue';
 import Scrollable from '@/components/Scrollable';
 
 interface ISummaryFormProps {

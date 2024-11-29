@@ -5,26 +5,34 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import type { Prisma, RequestAssignment } from '@zenstackhq/runtime/models';
-import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/react-query';
-import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
+import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
 import type { PolicyCrudKind } from '@zenstackhq/runtime';
+import type { Prisma, RequestAssignment } from '@zenstackhq/runtime/models';
+import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
+import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
+
 import metadata from './__model_meta';
+
 type DefaultError = QueryError;
-import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
 
 export function useCreateRequestAssignment(options?: Omit<UseMutationOptions<RequestAssignment | undefined, DefaultError, Prisma.RequestAssignmentCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.RequestAssignmentCreateArgs, DefaultError, RequestAssignment, true>('RequestAssignment', 'POST', `${endpoint}/requestAssignment/create`, metadata, options, fetch, true);
+  const _mutation = useModelMutation<Prisma.RequestAssignmentCreateArgs, DefaultError, RequestAssignment, true>(
+    'RequestAssignment',
+    'POST',
+    `${endpoint}/requestAssignment/create`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.RequestAssignmentCreateArgs>(
       args: Prisma.SelectSubset<T, Prisma.RequestAssignmentCreateArgs>,
       options?: Omit<
-        UseMutationOptions<CheckSelect<T, RequestAssignment, Prisma.RequestAssignmentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.RequestAssignmentCreateArgs>> & ExtraMutationOptions,
+        UseMutationOptions<CheckSelect<T, RequestAssignment, Prisma.RequestAssignmentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.RequestAssignmentCreateArgs>> &
+          ExtraMutationOptions,
         'mutationFn'
       >
     ) => {
@@ -36,7 +44,15 @@ export function useCreateRequestAssignment(options?: Omit<UseMutationOptions<Req
 
 export function useCreateManyRequestAssignment(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.RequestAssignmentCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.RequestAssignmentCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('RequestAssignment', 'POST', `${endpoint}/requestAssignment/createMany`, metadata, options, fetch, false);
+  const _mutation = useModelMutation<Prisma.RequestAssignmentCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'RequestAssignment',
+    'POST',
+    `${endpoint}/requestAssignment/createMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.RequestAssignmentCreateManyArgs>(
@@ -59,10 +75,12 @@ export function useFindManyRequestAssignment<
   return useModelQuery<TQueryFnData, TData, TError>('RequestAssignment', `${endpoint}/requestAssignment/findMany`, args, options, fetch);
 }
 
-export function useInfiniteFindManyRequestAssignment<TArgs extends Prisma.RequestAssignmentFindManyArgs, TQueryFnData = Array<Prisma.RequestAssignmentGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.RequestAssignmentFindManyArgs>,
-  options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
-) {
+export function useInfiniteFindManyRequestAssignment<
+  TArgs extends Prisma.RequestAssignmentFindManyArgs,
+  TQueryFnData = Array<Prisma.RequestAssignmentGetPayload<TArgs>>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.RequestAssignmentFindManyArgs>, options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
   options = options ?? { getNextPageParam: () => null };
   const { endpoint, fetch } = getHooksContext();
   return useInfiniteModelQuery<TQueryFnData, TData, TError>('RequestAssignment', `${endpoint}/requestAssignment/findMany`, args, options, fetch);
@@ -78,7 +96,12 @@ export function useSuspenseFindManyRequestAssignment<
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('RequestAssignment', `${endpoint}/requestAssignment/findMany`, args, options, fetch);
 }
 
-export function useSuspenseInfiniteFindManyRequestAssignment<TArgs extends Prisma.RequestAssignmentFindManyArgs, TQueryFnData = Array<Prisma.RequestAssignmentGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
+export function useSuspenseInfiniteFindManyRequestAssignment<
+  TArgs extends Prisma.RequestAssignmentFindManyArgs,
+  TQueryFnData = Array<Prisma.RequestAssignmentGetPayload<TArgs>>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
   args?: Prisma.SelectSubset<TArgs, Prisma.RequestAssignmentFindManyArgs>,
   options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
 ) {
@@ -107,10 +130,12 @@ export function useSuspenseFindUniqueRequestAssignment<
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('RequestAssignment', `${endpoint}/requestAssignment/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstRequestAssignment<TArgs extends Prisma.RequestAssignmentFindFirstArgs, TQueryFnData = Prisma.RequestAssignmentGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.RequestAssignmentFindFirstArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useFindFirstRequestAssignment<
+  TArgs extends Prisma.RequestAssignmentFindFirstArgs,
+  TQueryFnData = Prisma.RequestAssignmentGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.RequestAssignmentFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('RequestAssignment', `${endpoint}/requestAssignment/findFirst`, args, options, fetch);
 }
@@ -127,13 +152,22 @@ export function useSuspenseFindFirstRequestAssignment<
 
 export function useUpdateRequestAssignment(options?: Omit<UseMutationOptions<RequestAssignment | undefined, DefaultError, Prisma.RequestAssignmentUpdateArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.RequestAssignmentUpdateArgs, DefaultError, RequestAssignment, true>('RequestAssignment', 'PUT', `${endpoint}/requestAssignment/update`, metadata, options, fetch, true);
+  const _mutation = useModelMutation<Prisma.RequestAssignmentUpdateArgs, DefaultError, RequestAssignment, true>(
+    'RequestAssignment',
+    'PUT',
+    `${endpoint}/requestAssignment/update`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.RequestAssignmentUpdateArgs>(
       args: Prisma.SelectSubset<T, Prisma.RequestAssignmentUpdateArgs>,
       options?: Omit<
-        UseMutationOptions<CheckSelect<T, RequestAssignment, Prisma.RequestAssignmentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.RequestAssignmentUpdateArgs>> & ExtraMutationOptions,
+        UseMutationOptions<CheckSelect<T, RequestAssignment, Prisma.RequestAssignmentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.RequestAssignmentUpdateArgs>> &
+          ExtraMutationOptions,
         'mutationFn'
       >
     ) => {
@@ -145,7 +179,15 @@ export function useUpdateRequestAssignment(options?: Omit<UseMutationOptions<Req
 
 export function useUpdateManyRequestAssignment(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.RequestAssignmentUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.RequestAssignmentUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('RequestAssignment', 'PUT', `${endpoint}/requestAssignment/updateMany`, metadata, options, fetch, false);
+  const _mutation = useModelMutation<Prisma.RequestAssignmentUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'RequestAssignment',
+    'PUT',
+    `${endpoint}/requestAssignment/updateMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.RequestAssignmentUpdateManyArgs>(
@@ -160,13 +202,22 @@ export function useUpdateManyRequestAssignment(options?: Omit<UseMutationOptions
 
 export function useUpsertRequestAssignment(options?: Omit<UseMutationOptions<RequestAssignment | undefined, DefaultError, Prisma.RequestAssignmentUpsertArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.RequestAssignmentUpsertArgs, DefaultError, RequestAssignment, true>('RequestAssignment', 'POST', `${endpoint}/requestAssignment/upsert`, metadata, options, fetch, true);
+  const _mutation = useModelMutation<Prisma.RequestAssignmentUpsertArgs, DefaultError, RequestAssignment, true>(
+    'RequestAssignment',
+    'POST',
+    `${endpoint}/requestAssignment/upsert`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.RequestAssignmentUpsertArgs>(
       args: Prisma.SelectSubset<T, Prisma.RequestAssignmentUpsertArgs>,
       options?: Omit<
-        UseMutationOptions<CheckSelect<T, RequestAssignment, Prisma.RequestAssignmentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.RequestAssignmentUpsertArgs>> & ExtraMutationOptions,
+        UseMutationOptions<CheckSelect<T, RequestAssignment, Prisma.RequestAssignmentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.RequestAssignmentUpsertArgs>> &
+          ExtraMutationOptions,
         'mutationFn'
       >
     ) => {
@@ -178,13 +229,22 @@ export function useUpsertRequestAssignment(options?: Omit<UseMutationOptions<Req
 
 export function useDeleteRequestAssignment(options?: Omit<UseMutationOptions<RequestAssignment | undefined, DefaultError, Prisma.RequestAssignmentDeleteArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.RequestAssignmentDeleteArgs, DefaultError, RequestAssignment, true>('RequestAssignment', 'DELETE', `${endpoint}/requestAssignment/delete`, metadata, options, fetch, true);
+  const _mutation = useModelMutation<Prisma.RequestAssignmentDeleteArgs, DefaultError, RequestAssignment, true>(
+    'RequestAssignment',
+    'DELETE',
+    `${endpoint}/requestAssignment/delete`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.RequestAssignmentDeleteArgs>(
       args: Prisma.SelectSubset<T, Prisma.RequestAssignmentDeleteArgs>,
       options?: Omit<
-        UseMutationOptions<CheckSelect<T, RequestAssignment, Prisma.RequestAssignmentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.RequestAssignmentDeleteArgs>> & ExtraMutationOptions,
+        UseMutationOptions<CheckSelect<T, RequestAssignment, Prisma.RequestAssignmentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.RequestAssignmentDeleteArgs>> &
+          ExtraMutationOptions,
         'mutationFn'
       >
     ) => {
@@ -196,7 +256,15 @@ export function useDeleteRequestAssignment(options?: Omit<UseMutationOptions<Req
 
 export function useDeleteManyRequestAssignment(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.RequestAssignmentDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.RequestAssignmentDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('RequestAssignment', 'DELETE', `${endpoint}/requestAssignment/deleteMany`, metadata, options, fetch, false);
+  const _mutation = useModelMutation<Prisma.RequestAssignmentDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'RequestAssignment',
+    'DELETE',
+    `${endpoint}/requestAssignment/deleteMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.RequestAssignmentDeleteManyArgs>(
@@ -209,18 +277,22 @@ export function useDeleteManyRequestAssignment(options?: Omit<UseMutationOptions
   return mutation;
 }
 
-export function useAggregateRequestAssignment<TArgs extends Prisma.RequestAssignmentAggregateArgs, TQueryFnData = Prisma.GetRequestAssignmentAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.RequestAssignmentAggregateArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useAggregateRequestAssignment<
+  TArgs extends Prisma.RequestAssignmentAggregateArgs,
+  TQueryFnData = Prisma.GetRequestAssignmentAggregateType<TArgs>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.RequestAssignmentAggregateArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('RequestAssignment', `${endpoint}/requestAssignment/aggregate`, args, options, fetch);
 }
 
-export function useSuspenseAggregateRequestAssignment<TArgs extends Prisma.RequestAssignmentAggregateArgs, TQueryFnData = Prisma.GetRequestAssignmentAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.RequestAssignmentAggregateArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+export function useSuspenseAggregateRequestAssignment<
+  TArgs extends Prisma.RequestAssignmentAggregateArgs,
+  TQueryFnData = Prisma.GetRequestAssignmentAggregateType<TArgs>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.RequestAssignmentAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('RequestAssignment', `${endpoint}/requestAssignment/aggregate`, args, options, fetch);
 }
@@ -239,7 +311,11 @@ export function useGroupByRequestAssignment<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -275,7 +351,10 @@ export function useGroupByRequestAssignment<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.RequestAssignmentGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.RequestAssignmentGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('RequestAssignment', `${endpoint}/requestAssignment/groupBy`, args, options, fetch);
 }
@@ -294,7 +373,11 @@ export function useSuspenseGroupByRequestAssignment<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -361,7 +444,19 @@ export function useSuspenseCountRequestAssignment<
 export function useCheckRequestAssignment<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
-    where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; priority?: string; comment?: string; type?: string; requestId?: string; userId?: string; areaId?: string; statusId?: string };
+    where?: {
+      createdBy?: string;
+      modifiedBy?: string;
+      tenantId?: string;
+      id?: string;
+      priority?: string;
+      comment?: string;
+      type?: string;
+      requestId?: string;
+      userId?: string;
+      areaId?: string;
+      statusId?: string;
+    };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {

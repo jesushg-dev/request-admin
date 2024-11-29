@@ -1,16 +1,14 @@
-import React, { type FC, useState } from 'react';
-
-import { MdOutlineEmail, MdPhone, MdHome, MdWeb, MdPalette } from 'react-icons/md';
-import { FaBuilding } from 'react-icons/fa';
-
-import { api } from '@/components/hoc/tanstack-query-provider';
-import useFormSubmit from '@/hooks/useFormSubmit';
-import { Input, Button, Textarea } from '@/components/form';
-import { useCreateTenantForm } from '@/connections/tenant/useTenantForm';
+import React, { useState, type FC } from 'react';
 import type { CreateTenantInputs } from '@/connections/tenant/tenantSchemas';
+import { useCreateTenantForm } from '@/connections/tenant/useTenantForm';
+import { StepDirective, StepperComponent, StepsDirective } from '@syncfusion/ej2-react-navigations';
+import { FaBuilding } from 'react-icons/fa';
+import { MdHome, MdOutlineEmail, MdPalette, MdPhone, MdWeb } from 'react-icons/md';
 
-import { StepperComponent, StepsDirective, StepDirective } from '@syncfusion/ej2-react-navigations';
 import rswitch from '@/lib/rswitch';
+import useFormSubmit from '@/hooks/useFormSubmit';
+import { Button, Input, Textarea } from '@/components/form';
+import { api } from '@/components/hoc/tanstack-query-provider';
 
 interface ITenantFormProps {
   defaultValues?: Partial<CreateTenantInputs>;

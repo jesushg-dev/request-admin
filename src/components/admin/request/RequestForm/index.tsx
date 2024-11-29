@@ -1,23 +1,23 @@
 'use client';
 
-import React, { type FC, useState } from 'react';
-import { StepperComponent, StepsDirective, StepDirective } from '@syncfusion/ej2-react-navigations';
-
-import ClientForm from './ClientForm';
-import SummaryForm from './SummaryForm';
-import AssigneeForm from './AssigneeForm';
-import RequestDetailForm from './RequestDetailForm';
-import RequirementsForm from './RequirementsForm';
-import SalesChannelSelector from './SalesChannelSelector';
-import ServiceTypeSelector from '../../serviceType/ServiceTypeSelector';
+import React, { useState, type FC } from 'react';
+import { CreateClientInputs } from '@/connections/client';
+import type { CreateRequestAssigneeInputs, CreateRequestDetailInputs, CreateRequestInputs } from '@/connections/request';
+import type { RouterOutputs } from '@/server/server';
+import type { ClientType } from '@/utils/types';
+import { StepDirective, StepperComponent, StepsDirective } from '@syncfusion/ej2-react-navigations';
 
 import rswitch from '@/lib/rswitch';
 import { api } from '@/components/hoc/tanstack-query-provider';
-import { CreateClientInputs } from '@/connections/client';
-import type { ClientType } from '@/utils/types';
-import type { RouterOutputs } from '@/server/server';
-import type { CreateRequestInputs, CreateRequestDetailInputs, CreateRequestAssigneeInputs } from '@/connections/request';
+
+import ServiceTypeSelector from '../../serviceType/ServiceTypeSelector';
+import AssigneeForm from './AssigneeForm';
+import ClientForm from './ClientForm';
 import DocumentForm from './DocumentForm';
+import RequestDetailForm from './RequestDetailForm';
+import RequirementsForm from './RequirementsForm';
+import SalesChannelSelector from './SalesChannelSelector';
+import SummaryForm from './SummaryForm';
 
 type ServiceTypeType = RouterOutputs['serviceType']['infinite']['items'][number];
 type ClientInputType = {
@@ -45,9 +45,16 @@ const RequestForm: FC<RequestFormProps> = ({ defaultValues, onSubmit }) => {
   const { data: salesChannel, isLoading: loadingSales } = api.salesChannel.getAll.useQuery();
 
   // Data fetching with parameters and dependencies
-  const { data: requirementsData, isLoading: loadingRequirements } = api.requirement.getByServiceTypeId.useQuery({ serviceTypeId: serviceType?.serviceTypeId as unknown as string }, { enabled: !!serviceType });
+  const { data: requirementsData, isLoading: loadingRequirements } = api.requirement.getByServiceTypeId.useQuery(
+    { serviceTypeId: serviceType?.serviceTypeId as unknown as string },
+    { enabled: !!serviceType }
+  );
 
-  const { data: serviceTypeData, isLoading: loadingServices, refetch } = api.serviceType.getBySalesChannelId.useQuery({ salesChannelId: selectedChannelId! }, { enabled: selectedChannelId !== undefined });
+  const {
+    data: serviceTypeData,
+    isLoading: loadingServices,
+    refetch,
+  } = api.serviceType.getBySalesChannelId.useQuery({ salesChannelId: selectedChannelId! }, { enabled: selectedChannelId !== undefined });
 
   const [step, setStep] = useState(0);
 

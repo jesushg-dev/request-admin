@@ -1,27 +1,25 @@
 'use client';
 
 import { useCallback } from 'react';
-import { useQueryState } from 'nuqs';
-import { Loader, Plus } from 'lucide-react';
-
-import { DottedSeparator } from '@/components/dotted-separator';
-import { useWorkspaceId } from '@/features/workspaces/hooks/use-workspace-id';
 import { useProjectId } from '@/features/projects/hooks/use-project-id';
+import { useWorkspaceId } from '@/features/workspaces/hooks/use-workspace-id';
+import { Loader, Plus } from 'lucide-react';
+import { useQueryState } from 'nuqs';
 
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { DottedSeparator } from '@/components/dotted-separator';
 
-import { columns } from './columns';
-import { DataTable } from './data-table';
-import { DataKanban } from './data-kanban';
-import { DataFilters } from './data-filters';
-import { DataCalendar } from './data-calendar';
-
-import { TaskStatus } from '../types';
-import { useGetTasks } from '../api/use-get-tasks';
-import { useTaskFilters } from '../hooks/use-task-filters';
-import { useCreateTaskModal } from '../hooks/use-create-task-modal';
 import { useBulkUpdateTasks } from '../api/use-bulk-update-tasks';
+import { useGetTasks } from '../api/use-get-tasks';
+import { useCreateTaskModal } from '../hooks/use-create-task-modal';
+import { useTaskFilters } from '../hooks/use-task-filters';
+import { TaskStatus } from '../types';
+import { columns } from './columns';
+import { DataCalendar } from './data-calendar';
+import { DataFilters } from './data-filters';
+import { DataKanban } from './data-kanban';
+import { DataTable } from './data-table';
 
 interface TaskViewSwitcherProps {
   hideProjectFilter?: boolean;

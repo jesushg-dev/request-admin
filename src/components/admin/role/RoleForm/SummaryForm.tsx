@@ -1,11 +1,10 @@
 import React from 'react';
 import type { FC } from 'react';
-
-import Kbd from '@/components/Kbd';
-import BackAndContinue from '@/components/common/back-and-continue';
-
+import type { CreateRoleInputs, CreateRoleWithPermissionsAndEmployeesInputs, SelectPermissionInputs } from '@/connections/role';
 import type { IEmployee } from '@/utils/types';
-import type { SelectPermissionInputs, CreateRoleInputs, CreateRoleWithPermissionsAndEmployeesInputs } from '@/connections/role';
+
+import BackAndContinue from '@/components/common/back-and-continue';
+import Kbd from '@/components/Kbd';
 
 interface ISummaryFormProps {
   role: CreateRoleInputs;

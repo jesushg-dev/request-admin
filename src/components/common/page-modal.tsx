@@ -2,8 +2,10 @@
 
 import React, { Suspense } from 'react';
 import { Dialog, DialogContent } from '@radix-ui/react-dialog';
-import LoadingSpinner from './loading-spinner';
+
 import { cn } from '@/lib/utils';
+
+import LoadingSpinner from './loading-spinner';
 
 interface PageOrModalProps {
   children: React.ReactNode;
