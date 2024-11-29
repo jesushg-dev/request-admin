@@ -12,10 +12,7 @@ const BackAndContinue: FC<IBackAndContinueProps> = ({ goBack, goContinue, type =
   return (
     <div className="flex w-full items-center justify-between">
       {goBack ? (
-        <Button
-          type="button"
-          onClick={goBack}
-          className="rounded bg-white px-4 py-2 font-bold text-gray-800 hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700">
+        <Button type="button" onClick={goBack} className="rounded bg-white px-4 py-2 font-bold text-gray-800 hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700">
           Back
         </Button>
       ) : (

@@ -16,30 +16,15 @@ type DefaultError = QueryError;
 import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
 import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
 
-export function useCreateIdentificationType(
-  options?: Omit<UseMutationOptions<IdentificationType | undefined, DefaultError, Prisma.IdentificationTypeCreateArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useCreateIdentificationType(options?: Omit<UseMutationOptions<IdentificationType | undefined, DefaultError, Prisma.IdentificationTypeCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.IdentificationTypeCreateArgs, DefaultError, IdentificationType, true>(
-    'IdentificationType',
-    'POST',
-    `${endpoint}/identificationType/create`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.IdentificationTypeCreateArgs, DefaultError, IdentificationType, true>('IdentificationType', 'POST', `${endpoint}/identificationType/create`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.IdentificationTypeCreateArgs>(
       args: Prisma.SelectSubset<T, Prisma.IdentificationTypeCreateArgs>,
       options?: Omit<
-        UseMutationOptions<
-          CheckSelect<T, IdentificationType, Prisma.IdentificationTypeGetPayload<T>> | undefined,
-          DefaultError,
-          Prisma.SelectSubset<T, Prisma.IdentificationTypeCreateArgs>
-        > &
-          ExtraMutationOptions,
+        UseMutationOptions<CheckSelect<T, IdentificationType, Prisma.IdentificationTypeGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.IdentificationTypeCreateArgs>> & ExtraMutationOptions,
         'mutationFn'
       >
     ) => {
@@ -49,19 +34,9 @@ export function useCreateIdentificationType(
   return mutation;
 }
 
-export function useCreateManyIdentificationType(
-  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.IdentificationTypeCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useCreateManyIdentificationType(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.IdentificationTypeCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.IdentificationTypeCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'IdentificationType',
-    'POST',
-    `${endpoint}/identificationType/createMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.IdentificationTypeCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('IdentificationType', 'POST', `${endpoint}/identificationType/createMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.IdentificationTypeCreateManyArgs>(
@@ -84,12 +59,7 @@ export function useFindManyIdentificationType<
   return useModelQuery<TQueryFnData, TData, TError>('IdentificationType', `${endpoint}/identificationType/findMany`, args, options, fetch);
 }
 
-export function useInfiniteFindManyIdentificationType<
-  TArgs extends Prisma.IdentificationTypeFindManyArgs,
-  TQueryFnData = Array<Prisma.IdentificationTypeGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
+export function useInfiniteFindManyIdentificationType<TArgs extends Prisma.IdentificationTypeFindManyArgs, TQueryFnData = Array<Prisma.IdentificationTypeGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
   args?: Prisma.SelectSubset<TArgs, Prisma.IdentificationTypeFindManyArgs>,
   options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
 ) {
@@ -108,12 +78,7 @@ export function useSuspenseFindManyIdentificationType<
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('IdentificationType', `${endpoint}/identificationType/findMany`, args, options, fetch);
 }
 
-export function useSuspenseInfiniteFindManyIdentificationType<
-  TArgs extends Prisma.IdentificationTypeFindManyArgs,
-  TQueryFnData = Array<Prisma.IdentificationTypeGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
+export function useSuspenseInfiniteFindManyIdentificationType<TArgs extends Prisma.IdentificationTypeFindManyArgs, TQueryFnData = Array<Prisma.IdentificationTypeGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
   args?: Prisma.SelectSubset<TArgs, Prisma.IdentificationTypeFindManyArgs>,
   options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
 ) {
@@ -162,30 +127,15 @@ export function useSuspenseFindFirstIdentificationType<
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('IdentificationType', `${endpoint}/identificationType/findFirst`, args, options, fetch);
 }
 
-export function useUpdateIdentificationType(
-  options?: Omit<UseMutationOptions<IdentificationType | undefined, DefaultError, Prisma.IdentificationTypeUpdateArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useUpdateIdentificationType(options?: Omit<UseMutationOptions<IdentificationType | undefined, DefaultError, Prisma.IdentificationTypeUpdateArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.IdentificationTypeUpdateArgs, DefaultError, IdentificationType, true>(
-    'IdentificationType',
-    'PUT',
-    `${endpoint}/identificationType/update`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.IdentificationTypeUpdateArgs, DefaultError, IdentificationType, true>('IdentificationType', 'PUT', `${endpoint}/identificationType/update`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.IdentificationTypeUpdateArgs>(
       args: Prisma.SelectSubset<T, Prisma.IdentificationTypeUpdateArgs>,
       options?: Omit<
-        UseMutationOptions<
-          CheckSelect<T, IdentificationType, Prisma.IdentificationTypeGetPayload<T>> | undefined,
-          DefaultError,
-          Prisma.SelectSubset<T, Prisma.IdentificationTypeUpdateArgs>
-        > &
-          ExtraMutationOptions,
+        UseMutationOptions<CheckSelect<T, IdentificationType, Prisma.IdentificationTypeGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.IdentificationTypeUpdateArgs>> & ExtraMutationOptions,
         'mutationFn'
       >
     ) => {
@@ -195,19 +145,9 @@ export function useUpdateIdentificationType(
   return mutation;
 }
 
-export function useUpdateManyIdentificationType(
-  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.IdentificationTypeUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useUpdateManyIdentificationType(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.IdentificationTypeUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.IdentificationTypeUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'IdentificationType',
-    'PUT',
-    `${endpoint}/identificationType/updateMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.IdentificationTypeUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('IdentificationType', 'PUT', `${endpoint}/identificationType/updateMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.IdentificationTypeUpdateManyArgs>(
@@ -220,30 +160,15 @@ export function useUpdateManyIdentificationType(
   return mutation;
 }
 
-export function useUpsertIdentificationType(
-  options?: Omit<UseMutationOptions<IdentificationType | undefined, DefaultError, Prisma.IdentificationTypeUpsertArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useUpsertIdentificationType(options?: Omit<UseMutationOptions<IdentificationType | undefined, DefaultError, Prisma.IdentificationTypeUpsertArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.IdentificationTypeUpsertArgs, DefaultError, IdentificationType, true>(
-    'IdentificationType',
-    'POST',
-    `${endpoint}/identificationType/upsert`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.IdentificationTypeUpsertArgs, DefaultError, IdentificationType, true>('IdentificationType', 'POST', `${endpoint}/identificationType/upsert`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.IdentificationTypeUpsertArgs>(
       args: Prisma.SelectSubset<T, Prisma.IdentificationTypeUpsertArgs>,
       options?: Omit<
-        UseMutationOptions<
-          CheckSelect<T, IdentificationType, Prisma.IdentificationTypeGetPayload<T>> | undefined,
-          DefaultError,
-          Prisma.SelectSubset<T, Prisma.IdentificationTypeUpsertArgs>
-        > &
-          ExtraMutationOptions,
+        UseMutationOptions<CheckSelect<T, IdentificationType, Prisma.IdentificationTypeGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.IdentificationTypeUpsertArgs>> & ExtraMutationOptions,
         'mutationFn'
       >
     ) => {
@@ -253,30 +178,15 @@ export function useUpsertIdentificationType(
   return mutation;
 }
 
-export function useDeleteIdentificationType(
-  options?: Omit<UseMutationOptions<IdentificationType | undefined, DefaultError, Prisma.IdentificationTypeDeleteArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useDeleteIdentificationType(options?: Omit<UseMutationOptions<IdentificationType | undefined, DefaultError, Prisma.IdentificationTypeDeleteArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.IdentificationTypeDeleteArgs, DefaultError, IdentificationType, true>(
-    'IdentificationType',
-    'DELETE',
-    `${endpoint}/identificationType/delete`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.IdentificationTypeDeleteArgs, DefaultError, IdentificationType, true>('IdentificationType', 'DELETE', `${endpoint}/identificationType/delete`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.IdentificationTypeDeleteArgs>(
       args: Prisma.SelectSubset<T, Prisma.IdentificationTypeDeleteArgs>,
       options?: Omit<
-        UseMutationOptions<
-          CheckSelect<T, IdentificationType, Prisma.IdentificationTypeGetPayload<T>> | undefined,
-          DefaultError,
-          Prisma.SelectSubset<T, Prisma.IdentificationTypeDeleteArgs>
-        > &
-          ExtraMutationOptions,
+        UseMutationOptions<CheckSelect<T, IdentificationType, Prisma.IdentificationTypeGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.IdentificationTypeDeleteArgs>> & ExtraMutationOptions,
         'mutationFn'
       >
     ) => {
@@ -286,19 +196,9 @@ export function useDeleteIdentificationType(
   return mutation;
 }
 
-export function useDeleteManyIdentificationType(
-  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.IdentificationTypeDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useDeleteManyIdentificationType(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.IdentificationTypeDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.IdentificationTypeDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'IdentificationType',
-    'DELETE',
-    `${endpoint}/identificationType/deleteMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.IdentificationTypeDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('IdentificationType', 'DELETE', `${endpoint}/identificationType/deleteMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.IdentificationTypeDeleteManyArgs>(
@@ -311,22 +211,18 @@ export function useDeleteManyIdentificationType(
   return mutation;
 }
 
-export function useAggregateIdentificationType<
-  TArgs extends Prisma.IdentificationTypeAggregateArgs,
-  TQueryFnData = Prisma.GetIdentificationTypeAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.IdentificationTypeAggregateArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useAggregateIdentificationType<TArgs extends Prisma.IdentificationTypeAggregateArgs, TQueryFnData = Prisma.GetIdentificationTypeAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.IdentificationTypeAggregateArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('IdentificationType', `${endpoint}/identificationType/aggregate`, args, options, fetch);
 }
 
-export function useSuspenseAggregateIdentificationType<
-  TArgs extends Prisma.IdentificationTypeAggregateArgs,
-  TQueryFnData = Prisma.GetIdentificationTypeAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.IdentificationTypeAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseAggregateIdentificationType<TArgs extends Prisma.IdentificationTypeAggregateArgs, TQueryFnData = Prisma.GetIdentificationTypeAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.IdentificationTypeAggregateArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('IdentificationType', `${endpoint}/identificationType/aggregate`, args, options, fetch);
 }
@@ -334,9 +230,7 @@ export function useSuspenseAggregateIdentificationType<
 export function useGroupByIdentificationType<
   TArgs extends Prisma.IdentificationTypeGroupByArgs,
   HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
-  OrderByArg extends Prisma.True extends HasSelectOrTake
-    ? { orderBy: Prisma.IdentificationTypeGroupByArgs['orderBy'] }
-    : { orderBy?: Prisma.IdentificationTypeGroupByArgs['orderBy'] },
+  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.IdentificationTypeGroupByArgs['orderBy'] } : { orderBy?: Prisma.IdentificationTypeGroupByArgs['orderBy'] },
   OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
   ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
   ByValid extends Prisma.Has<ByFields, OrderFields>,
@@ -347,11 +241,7 @@ export function useGroupByIdentificationType<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -387,10 +277,7 @@ export function useGroupByIdentificationType<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.IdentificationTypeGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.IdentificationTypeGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('IdentificationType', `${endpoint}/identificationType/groupBy`, args, options, fetch);
 }
@@ -398,9 +285,7 @@ export function useGroupByIdentificationType<
 export function useSuspenseGroupByIdentificationType<
   TArgs extends Prisma.IdentificationTypeGroupByArgs,
   HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
-  OrderByArg extends Prisma.True extends HasSelectOrTake
-    ? { orderBy: Prisma.IdentificationTypeGroupByArgs['orderBy'] }
-    : { orderBy?: Prisma.IdentificationTypeGroupByArgs['orderBy'] },
+  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.IdentificationTypeGroupByArgs['orderBy'] } : { orderBy?: Prisma.IdentificationTypeGroupByArgs['orderBy'] },
   OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
   ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
   ByValid extends Prisma.Has<ByFields, OrderFields>,
@@ -411,11 +296,7 @@ export function useSuspenseGroupByIdentificationType<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -461,11 +342,7 @@ export function useSuspenseGroupByIdentificationType<
 
 export function useCountIdentificationType<
   TArgs extends Prisma.IdentificationTypeCountArgs,
-  TQueryFnData = TArgs extends { select: any }
-    ? TArgs['select'] extends true
-      ? number
-      : Prisma.GetScalarType<TArgs['select'], Prisma.IdentificationTypeCountAggregateOutputType>
-    : number,
+  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.IdentificationTypeCountAggregateOutputType>) : number,
   TData = TQueryFnData,
   TError = DefaultError,
 >(args?: Prisma.SelectSubset<TArgs, Prisma.IdentificationTypeCountArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
@@ -475,11 +352,7 @@ export function useCountIdentificationType<
 
 export function useSuspenseCountIdentificationType<
   TArgs extends Prisma.IdentificationTypeCountArgs,
-  TQueryFnData = TArgs extends { select: any }
-    ? TArgs['select'] extends true
-      ? number
-      : Prisma.GetScalarType<TArgs['select'], Prisma.IdentificationTypeCountAggregateOutputType>
-    : number,
+  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.IdentificationTypeCountAggregateOutputType>) : number,
   TData = TQueryFnData,
   TError = DefaultError,
 >(args?: Prisma.SelectSubset<TArgs, Prisma.IdentificationTypeCountArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {

@@ -28,8 +28,10 @@ import createHierarchyLevelRouter from './HierarchyLevel.router';
 import createCategoryRouter from './Category.router';
 import createRequestRouter from './Request.router';
 import createRequestAssignmentRouter from './RequestAssignment.router';
+import createStatusTypeRouter from './StatusType.router';
 import createAreaRouter from './Area.router';
 import createRequirementRouter from './Requirement.router';
+import createRequirementTypeRouter from './RequirementType.router';
 import createCategoryRequirementRouter from './CategoryRequirement.router';
 import createRequirementComplianceTrackingRouter from './RequirementComplianceTracking.router';
 import createFormRouter from './Form.router';
@@ -75,8 +77,10 @@ export function createRouter() {
     category: createCategoryRouter(),
     request: createRequestRouter(),
     requestAssignment: createRequestAssignmentRouter(),
+    statusType: createStatusTypeRouter(),
     area: createAreaRouter(),
     requirement: createRequirementRouter(),
+    requirementType: createRequirementTypeRouter(),
     categoryRequirement: createCategoryRequirementRouter(),
     requirementComplianceTracking: createRequirementComplianceTrackingRouter(),
     form: createFormRouter(),

@@ -130,6 +130,13 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
+        requirementTypes: {
+          name: 'requirementTypes',
+          type: 'RequirementType',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
         categoryRequirements: {
           name: 'categoryRequirements',
           type: 'CategoryRequirement',
@@ -151,6 +158,20 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
+        requestAssignments: {
+          name: 'requestAssignments',
+          type: 'RequestAssignment',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        StatusType: {
+          name: 'StatusType',
+          type: 'StatusType',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
         documents: {
           name: 'documents',
           type: 'Document',
@@ -168,13 +189,6 @@ const metadata = {
         categories: {
           name: 'categories',
           type: 'Category',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
-        requestAssignments: {
-          name: 'requestAssignments',
-          type: 'RequestAssignment',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
@@ -1449,11 +1463,19 @@ const metadata = {
           isArray: true,
           backLink: 'hierarchy',
         },
+        type: {
+          name: 'type',
+          type: 'String',
+        },
       },
       uniqueConstraints: {
         id: {
           name: 'id',
           fields: ['id'],
+        },
+        type: {
+          name: 'type',
+          fields: ['type'],
         },
       },
     },
@@ -1608,6 +1630,11 @@ const metadata = {
           name: 'description',
           type: 'String',
           isOptional: true,
+        },
+        isEligibleForNewClients: {
+          name: 'isEligibleForNewClients',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
         },
         parentCategoryId: {
           name: 'parentCategoryId',
@@ -1794,14 +1821,24 @@ const metadata = {
           type: 'String',
           isOptional: true,
         },
-        status: {
-          name: 'status',
-          type: 'String',
-        },
         comment: {
           name: 'comment',
           type: 'String',
           isOptional: true,
+        },
+        statusId: {
+          name: 'statusId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'status',
+        },
+        status: {
+          name: 'status',
+          type: 'StatusType',
+          isDataModel: true,
+          backLink: 'requests',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'statusId' },
         },
         serviceCategoryId: {
           name: 'serviceCategoryId',
@@ -1937,6 +1974,29 @@ const metadata = {
           isId: true,
           attributes: [{ name: '@default', args: [] }],
         },
+        priority: {
+          name: 'priority',
+          type: 'String',
+          isOptional: true,
+        },
+        comment: {
+          name: 'comment',
+          type: 'String',
+          isOptional: true,
+        },
+        assignmentDate: {
+          name: 'assignmentDate',
+          type: 'DateTime',
+        },
+        unAssignmentDate: {
+          name: 'unAssignmentDate',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        type: {
+          name: 'type',
+          type: 'String',
+        },
         requestId: {
           name: 'requestId',
           type: 'String',
@@ -1983,32 +2043,19 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'areaId' },
         },
-        priority: {
-          name: 'priority',
+        statusId: {
+          name: 'statusId',
           type: 'String',
-          isOptional: true,
-        },
-        comment: {
-          name: 'comment',
-          type: 'String',
-          isOptional: true,
-        },
-        assignmentDate: {
-          name: 'assignmentDate',
-          type: 'DateTime',
-        },
-        unassignmentDate: {
-          name: 'unassignmentDate',
-          type: 'DateTime',
-          isOptional: true,
+          isForeignKey: true,
+          relationField: 'status',
         },
         status: {
           name: 'status',
-          type: 'String',
-        },
-        type: {
-          name: 'type',
-          type: 'String',
+          type: 'StatusType',
+          isDataModel: true,
+          backLink: 'assignments',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'statusId' },
         },
         documentAssignment: {
           name: 'documentAssignment',
@@ -2022,6 +2069,99 @@ const metadata = {
         id: {
           name: 'id',
           fields: ['id'],
+        },
+      },
+    },
+    statusType: {
+      name: 'StatusType',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$StatusType$createdBy,
+        },
+        modifiedBy: {
+          name: 'modifiedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$StatusType$modifiedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'StatusType',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        description: {
+          name: 'description',
+          type: 'String',
+          isOptional: true,
+        },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
+        requests: {
+          name: 'requests',
+          type: 'Request',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'status',
+        },
+        assignments: {
+          name: 'assignments',
+          type: 'RequestAssignment',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'status',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        name: {
+          name: 'name',
+          fields: ['name'],
         },
       },
     },
@@ -2087,8 +2227,8 @@ const metadata = {
           type: 'String',
           isOptional: true,
         },
-        status: {
-          name: 'status',
+        isActive: {
+          name: 'isActive',
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: true }] }],
         },
@@ -2187,8 +2327,8 @@ const metadata = {
           name: 'description',
           type: 'String',
         },
-        onlyRequireInNewClients: {
-          name: 'onlyRequireInNewClients',
+        isRequiredOnlyForNewClients: {
+          name: 'isRequiredOnlyForNewClients',
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: false }] }],
         },
@@ -2205,6 +2345,100 @@ const metadata = {
           isDataModel: true,
           isArray: true,
           backLink: 'requirement',
+        },
+        requirementTypeId: {
+          name: 'requirementTypeId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'requirementType',
+        },
+        requirementType: {
+          name: 'requirementType',
+          type: 'RequirementType',
+          isDataModel: true,
+          backLink: 'requirements',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'requirementTypeId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        name: {
+          name: 'name',
+          fields: ['name'],
+        },
+      },
+    },
+    requirementType: {
+      name: 'RequirementType',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$RequirementType$createdBy,
+        },
+        modifiedBy: {
+          name: 'modifiedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$RequirementType$modifiedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'requirementTypes',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        description: {
+          name: 'description',
+          type: 'String',
+        },
+        requirements: {
+          name: 'requirements',
+          type: 'Requirement',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'requirementType',
         },
       },
       uniqueConstraints: {
@@ -2388,8 +2622,8 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'requirementId' },
         },
-        fulfilled: {
-          name: 'fulfilled',
+        isFulfilled: {
+          name: 'isFulfilled',
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: false }] }],
         },
@@ -3751,6 +3985,14 @@ function $default$RequestAssignment$modifiedBy(user: any): unknown {
   return user?.id;
 }
 
+function $default$StatusType$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$StatusType$modifiedBy(user: any): unknown {
+  return user?.id;
+}
+
 function $default$Area$createdBy(user: any): unknown {
   return user?.id;
 }
@@ -3764,6 +4006,14 @@ function $default$Requirement$createdBy(user: any): unknown {
 }
 
 function $default$Requirement$modifiedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequirementType$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequirementType$modifiedBy(user: any): unknown {
   return user?.id;
 }
 

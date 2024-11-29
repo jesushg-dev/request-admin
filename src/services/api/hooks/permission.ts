@@ -18,24 +18,12 @@ import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@
 
 export function useCreatePermission(options?: Omit<UseMutationOptions<Permission | undefined, DefaultError, Prisma.PermissionCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.PermissionCreateArgs, DefaultError, Permission, true>(
-    'Permission',
-    'POST',
-    `${endpoint}/permission/create`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.PermissionCreateArgs, DefaultError, Permission, true>('Permission', 'POST', `${endpoint}/permission/create`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.PermissionCreateArgs>(
       args: Prisma.SelectSubset<T, Prisma.PermissionCreateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Permission, Prisma.PermissionGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.PermissionCreateArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Permission, Prisma.PermissionGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.PermissionCreateArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Permission, Prisma.PermissionGetPayload<T>> | undefined;
     },
@@ -43,19 +31,9 @@ export function useCreatePermission(options?: Omit<UseMutationOptions<Permission
   return mutation;
 }
 
-export function useCreateManyPermission(
-  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.PermissionCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useCreateManyPermission(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.PermissionCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.PermissionCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'Permission',
-    'POST',
-    `${endpoint}/permission/createMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.PermissionCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('Permission', 'POST', `${endpoint}/permission/createMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.PermissionCreateManyArgs>(
@@ -68,22 +46,15 @@ export function useCreateManyPermission(
   return mutation;
 }
 
-export function useFindManyPermission<
-  TArgs extends Prisma.PermissionFindManyArgs,
-  TQueryFnData = Array<Prisma.PermissionGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.PermissionFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindManyPermission<TArgs extends Prisma.PermissionFindManyArgs, TQueryFnData = Array<Prisma.PermissionGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.PermissionFindManyArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Permission', `${endpoint}/permission/findMany`, args, options, fetch);
 }
 
-export function useInfiniteFindManyPermission<
-  TArgs extends Prisma.PermissionFindManyArgs,
-  TQueryFnData = Array<Prisma.PermissionGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
+export function useInfiniteFindManyPermission<TArgs extends Prisma.PermissionFindManyArgs, TQueryFnData = Array<Prisma.PermissionGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
   args?: Prisma.SelectSubset<TArgs, Prisma.PermissionFindManyArgs>,
   options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
 ) {
@@ -92,22 +63,15 @@ export function useInfiniteFindManyPermission<
   return useInfiniteModelQuery<TQueryFnData, TData, TError>('Permission', `${endpoint}/permission/findMany`, args, options, fetch);
 }
 
-export function useSuspenseFindManyPermission<
-  TArgs extends Prisma.PermissionFindManyArgs,
-  TQueryFnData = Array<Prisma.PermissionGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.PermissionFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseFindManyPermission<TArgs extends Prisma.PermissionFindManyArgs, TQueryFnData = Array<Prisma.PermissionGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.PermissionFindManyArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Permission', `${endpoint}/permission/findMany`, args, options, fetch);
 }
 
-export function useSuspenseInfiniteFindManyPermission<
-  TArgs extends Prisma.PermissionFindManyArgs,
-  TQueryFnData = Array<Prisma.PermissionGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
+export function useSuspenseInfiniteFindManyPermission<TArgs extends Prisma.PermissionFindManyArgs, TQueryFnData = Array<Prisma.PermissionGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
   args?: Prisma.SelectSubset<TArgs, Prisma.PermissionFindManyArgs>,
   options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
 ) {
@@ -116,66 +80,46 @@ export function useSuspenseInfiniteFindManyPermission<
   return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('Permission', `${endpoint}/permission/findMany`, args, options, fetch);
 }
 
-export function useFindUniquePermission<
-  TArgs extends Prisma.PermissionFindUniqueArgs,
-  TQueryFnData = Prisma.PermissionGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.PermissionFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindUniquePermission<TArgs extends Prisma.PermissionFindUniqueArgs, TQueryFnData = Prisma.PermissionGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.PermissionFindUniqueArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Permission', `${endpoint}/permission/findUnique`, args, options, fetch);
 }
 
-export function useSuspenseFindUniquePermission<
-  TArgs extends Prisma.PermissionFindUniqueArgs,
-  TQueryFnData = Prisma.PermissionGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.PermissionFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseFindUniquePermission<TArgs extends Prisma.PermissionFindUniqueArgs, TQueryFnData = Prisma.PermissionGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.PermissionFindUniqueArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Permission', `${endpoint}/permission/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstPermission<
-  TArgs extends Prisma.PermissionFindFirstArgs,
-  TQueryFnData = Prisma.PermissionGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.PermissionFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindFirstPermission<TArgs extends Prisma.PermissionFindFirstArgs, TQueryFnData = Prisma.PermissionGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.PermissionFindFirstArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Permission', `${endpoint}/permission/findFirst`, args, options, fetch);
 }
 
-export function useSuspenseFindFirstPermission<
-  TArgs extends Prisma.PermissionFindFirstArgs,
-  TQueryFnData = Prisma.PermissionGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.PermissionFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseFindFirstPermission<TArgs extends Prisma.PermissionFindFirstArgs, TQueryFnData = Prisma.PermissionGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.PermissionFindFirstArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Permission', `${endpoint}/permission/findFirst`, args, options, fetch);
 }
 
 export function useUpdatePermission(options?: Omit<UseMutationOptions<Permission | undefined, DefaultError, Prisma.PermissionUpdateArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.PermissionUpdateArgs, DefaultError, Permission, true>(
-    'Permission',
-    'PUT',
-    `${endpoint}/permission/update`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.PermissionUpdateArgs, DefaultError, Permission, true>('Permission', 'PUT', `${endpoint}/permission/update`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.PermissionUpdateArgs>(
       args: Prisma.SelectSubset<T, Prisma.PermissionUpdateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Permission, Prisma.PermissionGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.PermissionUpdateArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Permission, Prisma.PermissionGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.PermissionUpdateArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Permission, Prisma.PermissionGetPayload<T>> | undefined;
     },
@@ -183,19 +127,9 @@ export function useUpdatePermission(options?: Omit<UseMutationOptions<Permission
   return mutation;
 }
 
-export function useUpdateManyPermission(
-  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.PermissionUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useUpdateManyPermission(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.PermissionUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.PermissionUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'Permission',
-    'PUT',
-    `${endpoint}/permission/updateMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.PermissionUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('Permission', 'PUT', `${endpoint}/permission/updateMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.PermissionUpdateManyArgs>(
@@ -210,24 +144,12 @@ export function useUpdateManyPermission(
 
 export function useUpsertPermission(options?: Omit<UseMutationOptions<Permission | undefined, DefaultError, Prisma.PermissionUpsertArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.PermissionUpsertArgs, DefaultError, Permission, true>(
-    'Permission',
-    'POST',
-    `${endpoint}/permission/upsert`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.PermissionUpsertArgs, DefaultError, Permission, true>('Permission', 'POST', `${endpoint}/permission/upsert`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.PermissionUpsertArgs>(
       args: Prisma.SelectSubset<T, Prisma.PermissionUpsertArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Permission, Prisma.PermissionGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.PermissionUpsertArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Permission, Prisma.PermissionGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.PermissionUpsertArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Permission, Prisma.PermissionGetPayload<T>> | undefined;
     },
@@ -237,24 +159,12 @@ export function useUpsertPermission(options?: Omit<UseMutationOptions<Permission
 
 export function useDeletePermission(options?: Omit<UseMutationOptions<Permission | undefined, DefaultError, Prisma.PermissionDeleteArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.PermissionDeleteArgs, DefaultError, Permission, true>(
-    'Permission',
-    'DELETE',
-    `${endpoint}/permission/delete`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.PermissionDeleteArgs, DefaultError, Permission, true>('Permission', 'DELETE', `${endpoint}/permission/delete`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.PermissionDeleteArgs>(
       args: Prisma.SelectSubset<T, Prisma.PermissionDeleteArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Permission, Prisma.PermissionGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.PermissionDeleteArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Permission, Prisma.PermissionGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.PermissionDeleteArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Permission, Prisma.PermissionGetPayload<T>> | undefined;
     },
@@ -262,19 +172,9 @@ export function useDeletePermission(options?: Omit<UseMutationOptions<Permission
   return mutation;
 }
 
-export function useDeleteManyPermission(
-  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.PermissionDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useDeleteManyPermission(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.PermissionDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.PermissionDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'Permission',
-    'DELETE',
-    `${endpoint}/permission/deleteMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.PermissionDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('Permission', 'DELETE', `${endpoint}/permission/deleteMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.PermissionDeleteManyArgs>(
@@ -287,22 +187,18 @@ export function useDeleteManyPermission(
   return mutation;
 }
 
-export function useAggregatePermission<
-  TArgs extends Prisma.PermissionAggregateArgs,
-  TQueryFnData = Prisma.GetPermissionAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.PermissionAggregateArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useAggregatePermission<TArgs extends Prisma.PermissionAggregateArgs, TQueryFnData = Prisma.GetPermissionAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.PermissionAggregateArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Permission', `${endpoint}/permission/aggregate`, args, options, fetch);
 }
 
-export function useSuspenseAggregatePermission<
-  TArgs extends Prisma.PermissionAggregateArgs,
-  TQueryFnData = Prisma.GetPermissionAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.PermissionAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseAggregatePermission<TArgs extends Prisma.PermissionAggregateArgs, TQueryFnData = Prisma.GetPermissionAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.PermissionAggregateArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Permission', `${endpoint}/permission/aggregate`, args, options, fetch);
 }
@@ -321,11 +217,7 @@ export function useGroupByPermission<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -361,10 +253,7 @@ export function useGroupByPermission<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.PermissionGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.PermissionGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Permission', `${endpoint}/permission/groupBy`, args, options, fetch);
 }
@@ -383,11 +272,7 @@ export function useSuspenseGroupByPermission<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -423,21 +308,14 @@ export function useSuspenseGroupByPermission<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.PermissionGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.PermissionGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Permission', `${endpoint}/permission/groupBy`, args, options, fetch);
 }
 
 export function useCountPermission<
   TArgs extends Prisma.PermissionCountArgs,
-  TQueryFnData = TArgs extends { select: any }
-    ? TArgs['select'] extends true
-      ? number
-      : Prisma.GetScalarType<TArgs['select'], Prisma.PermissionCountAggregateOutputType>
-    : number,
+  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.PermissionCountAggregateOutputType>) : number,
   TData = TQueryFnData,
   TError = DefaultError,
 >(args?: Prisma.SelectSubset<TArgs, Prisma.PermissionCountArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
@@ -447,11 +325,7 @@ export function useCountPermission<
 
 export function useSuspenseCountPermission<
   TArgs extends Prisma.PermissionCountArgs,
-  TQueryFnData = TArgs extends { select: any }
-    ? TArgs['select'] extends true
-      ? number
-      : Prisma.GetScalarType<TArgs['select'], Prisma.PermissionCountAggregateOutputType>
-    : number,
+  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.PermissionCountAggregateOutputType>) : number,
   TData = TQueryFnData,
   TError = DefaultError,
 >(args?: Prisma.SelectSubset<TArgs, Prisma.PermissionCountArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {

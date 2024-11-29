@@ -35,43 +35,14 @@ const NewRequestPage: React.FC = () => {
       <div className="border-stroke shadow-default dark:border-strokedark dark:bg-boxdark rounded-sm border bg-white">
         <form className="grid grid-cols-2 gap-4 p-6" onSubmit={handleSubmit((data) => onSubmit({ data }))}>
           <Input name="id" type="text" register={register} formState={formState} label={t('inputs.id.label')} placeholder={t('inputs.id.placeholder')} required />
-          <Input
-            name="serviceTypeId"
-            type="text"
-            register={register}
-            formState={formState}
-            label={t('inputs.serviceTypeId.label')}
-            placeholder={t('inputs.serviceTypeId.placeholder')}
-            required
-          />
+          <Input name="serviceTypeId" type="text" register={register} formState={formState} label={t('inputs.serviceTypeId.label')} placeholder={t('inputs.serviceTypeId.placeholder')} required />
           <Input name="clientId" type="text" register={register} formState={formState} label={t('inputs.clientId.label')} placeholder={t('inputs.clientId.placeholder')} required />
-          <Input
-            name="issueSubject"
-            type="text"
-            register={register}
-            formState={formState}
-            label={t('inputs.issueSubject.label')}
-            placeholder={t('inputs.issueSubject.placeholder')}
-          />
+          <Input name="issueSubject" type="text" register={register} formState={formState} label={t('inputs.issueSubject.label')} placeholder={t('inputs.issueSubject.placeholder')} />
           <Input name="description" type="text" register={register} formState={formState} label={t('inputs.description.label')} placeholder={t('inputs.description.placeholder')} />
           <Input name="priority" type="text" register={register} formState={formState} label={t('inputs.priority.label')} placeholder={t('inputs.priority.placeholder')} />
           <Input name="closedAt" type="text" register={register} formState={formState} label={t('inputs.closedAt.label')} placeholder={t('inputs.closedAt.placeholder')} />
-          <Input
-            name="closedComment"
-            type="text"
-            register={register}
-            formState={formState}
-            label={t('inputs.closedComment.label')}
-            placeholder={t('inputs.closedComment.placeholder')}
-          />
-          <Input
-            name="formSubmissionId"
-            type="text"
-            register={register}
-            formState={formState}
-            label={t('inputs.formSubmissionId.label')}
-            placeholder={t('inputs.formSubmissionId.placeholder')}
-          />
+          <Input name="closedComment" type="text" register={register} formState={formState} label={t('inputs.closedComment.label')} placeholder={t('inputs.closedComment.placeholder')} />
+          <Input name="formSubmissionId" type="text" register={register} formState={formState} label={t('inputs.formSubmissionId.label')} placeholder={t('inputs.formSubmissionId.placeholder')} />
           <ErrorList formState={formState} />
           <button type="submit" className="flex w-full justify-center rounded bg-primary p-3 font-medium text-white hover:bg-opacity-90">
             {t('createButton')}

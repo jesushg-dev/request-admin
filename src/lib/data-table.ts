@@ -32,13 +32,7 @@ export function getCommonPinningStyles<TData>({
   const isFirstRightPinnedColumn = isPinned === 'right' && column.getIsFirstColumn('right');
 
   return {
-    boxShadow: withBorder
-      ? isLastLeftPinnedColumn
-        ? '-4px 0 4px -4px hsl(var(--border)) inset'
-        : isFirstRightPinnedColumn
-          ? '4px 0 4px -4px hsl(var(--border)) inset'
-          : undefined
-      : undefined,
+    boxShadow: withBorder ? (isLastLeftPinnedColumn ? '-4px 0 4px -4px hsl(var(--border)) inset' : isFirstRightPinnedColumn ? '4px 0 4px -4px hsl(var(--border)) inset' : undefined) : undefined,
     left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
     right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
     opacity: isPinned ? 0.97 : 1,
@@ -104,9 +98,6 @@ export function getFilterOperators(columnType: ColumnType) {
  */
 export function getValidFilters<TData>(filters: Filter<TData>[]): Filter<TData>[] {
   return filters.filter(
-    (filter) =>
-      filter.operator === 'isEmpty' ||
-      filter.operator === 'isNotEmpty' ||
-      (Array.isArray(filter.value) ? filter.value.length > 0 : filter.value !== '' && filter.value !== null && filter.value !== undefined)
+    (filter) => filter.operator === 'isEmpty' || filter.operator === 'isNotEmpty' || (Array.isArray(filter.value) ? filter.value.length > 0 : filter.value !== '' && filter.value !== null && filter.value !== undefined)
   );
 }

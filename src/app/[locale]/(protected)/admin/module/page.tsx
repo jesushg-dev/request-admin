@@ -4,19 +4,7 @@ import React, { memo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { FabComponent } from '@syncfusion/ej2-react-buttons';
-import {
-  ColumnDirective,
-  ColumnsDirective,
-  GridComponent,
-  Inject,
-  Page,
-  Sort,
-  Filter,
-  Group,
-  CommandColumn,
-  FilterSettingsModel,
-  PageSettingsModel,
-} from '@syncfusion/ej2-react-grids';
+import { ColumnDirective, ColumnsDirective, GridComponent, Inject, Page, Sort, Filter, Group, CommandColumn, FilterSettingsModel, PageSettingsModel } from '@syncfusion/ej2-react-grids';
 import { CommandClickEventArgs, CommandModel } from '@syncfusion/ej2-grids/src/grid/base/interface';
 
 import { api, RouterOutputs } from '@/trpc/react';

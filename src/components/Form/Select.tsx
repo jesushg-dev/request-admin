@@ -81,17 +81,7 @@ const Select = <K, TFieldValues extends FieldValues = FieldValues>({
             <Icon />
           </div>
         )}
-        <ReactSelect
-          menuPortalTarget={menuPortalTarget}
-          styles={styles}
-          {...rest}
-          getOptionValue={rest.getOptionValue}
-          ref={ref}
-          value={value}
-          onChange={onChange}
-          onBlur={onBlur}
-          id={rest?.id || name}
-        />
+        <ReactSelect menuPortalTarget={menuPortalTarget} styles={styles} {...rest} getOptionValue={rest.getOptionValue} ref={ref} value={value} onChange={onChange} onBlur={onBlur} id={rest?.id || name} />
       </div>
       {showHelper && formState && <ErrorMessage name={name as any} errors={formState} render={({ message }) => <p className="mt-2 text-xs text-red-600">{message}</p>} />}
     </div>

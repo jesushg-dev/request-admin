@@ -39,12 +39,7 @@ export function DataTablePagination<TData>({ table, pageSizeOptions = [10, 20, 3
           Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
         </div>
         <div className="flex items-center space-x-2">
-          <Button
-            aria-label="Go to first page"
-            variant="outline"
-            className="hidden size-8 p-0 lg:flex"
-            onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}>
+          <Button aria-label="Go to first page" variant="outline" className="hidden size-8 p-0 lg:flex" onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()}>
             <ChevronsLeft className="size-4" aria-hidden="true" />
           </Button>
           <Button aria-label="Go to previous page" variant="outline" size="icon" className="size-8" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
@@ -53,13 +48,7 @@ export function DataTablePagination<TData>({ table, pageSizeOptions = [10, 20, 3
           <Button aria-label="Go to next page" variant="outline" size="icon" className="size-8" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
             <ChevronRight className="size-4" aria-hidden="true" />
           </Button>
-          <Button
-            aria-label="Go to last page"
-            variant="outline"
-            size="icon"
-            className="hidden size-8 lg:flex"
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}>
+          <Button aria-label="Go to last page" variant="outline" size="icon" className="hidden size-8 lg:flex" onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()}>
             <ChevronsRight className="size-4" aria-hidden="true" />
           </Button>
         </div>

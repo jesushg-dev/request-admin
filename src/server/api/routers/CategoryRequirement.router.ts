@@ -16,39 +16,27 @@ export default function createRouter() {
   return createTRPCRouter({
     aggregate: procedure.input($Schema.CategoryRequirementInputSchema.aggregate).query(({ ctx, input }) => checkRead(db(ctx).categoryRequirement.aggregate(input as any))),
 
-    createMany: procedure
-      .input($Schema.CategoryRequirementInputSchema.createMany.optional())
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).categoryRequirement.createMany(input as any))),
+    createMany: procedure.input($Schema.CategoryRequirementInputSchema.createMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).categoryRequirement.createMany(input as any))),
 
     create: procedure.input($Schema.CategoryRequirementInputSchema.create).mutation(async ({ ctx, input }) => checkMutate(db(ctx).categoryRequirement.create(input as any))),
 
-    deleteMany: procedure
-      .input($Schema.CategoryRequirementInputSchema.deleteMany.optional())
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).categoryRequirement.deleteMany(input as any))),
+    deleteMany: procedure.input($Schema.CategoryRequirementInputSchema.deleteMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).categoryRequirement.deleteMany(input as any))),
 
     delete: procedure.input($Schema.CategoryRequirementInputSchema.delete).mutation(async ({ ctx, input }) => checkMutate(db(ctx).categoryRequirement.delete(input as any))),
 
-    findFirst: procedure
-      .input($Schema.CategoryRequirementInputSchema.findFirst.optional())
-      .query(({ ctx, input }) => checkRead(db(ctx).categoryRequirement.findFirst(input as any))),
+    findFirst: procedure.input($Schema.CategoryRequirementInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).categoryRequirement.findFirst(input as any))),
 
-    findFirstOrThrow: procedure
-      .input($Schema.CategoryRequirementInputSchema.findFirst.optional())
-      .query(({ ctx, input }) => checkRead(db(ctx).categoryRequirement.findFirstOrThrow(input as any))),
+    findFirstOrThrow: procedure.input($Schema.CategoryRequirementInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).categoryRequirement.findFirstOrThrow(input as any))),
 
     findMany: procedure.input($Schema.CategoryRequirementInputSchema.findMany.optional()).query(({ ctx, input }) => checkRead(db(ctx).categoryRequirement.findMany(input as any))),
 
     findUnique: procedure.input($Schema.CategoryRequirementInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).categoryRequirement.findUnique(input as any))),
 
-    findUniqueOrThrow: procedure
-      .input($Schema.CategoryRequirementInputSchema.findUnique)
-      .query(({ ctx, input }) => checkRead(db(ctx).categoryRequirement.findUniqueOrThrow(input as any))),
+    findUniqueOrThrow: procedure.input($Schema.CategoryRequirementInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).categoryRequirement.findUniqueOrThrow(input as any))),
 
     groupBy: procedure.input($Schema.CategoryRequirementInputSchema.groupBy).query(({ ctx, input }) => checkRead(db(ctx).categoryRequirement.groupBy(input as any))),
 
-    updateMany: procedure
-      .input($Schema.CategoryRequirementInputSchema.updateMany)
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).categoryRequirement.updateMany(input as any))),
+    updateMany: procedure.input($Schema.CategoryRequirementInputSchema.updateMany).mutation(async ({ ctx, input }) => checkMutate(db(ctx).categoryRequirement.updateMany(input as any))),
 
     update: procedure.input($Schema.CategoryRequirementInputSchema.update).mutation(async ({ ctx, input }) => checkMutate(db(ctx).categoryRequirement.update(input as any))),
 

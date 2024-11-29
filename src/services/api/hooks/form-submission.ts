@@ -16,28 +16,14 @@ type DefaultError = QueryError;
 import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
 import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
 
-export function useCreateFormSubmission(
-  options?: Omit<UseMutationOptions<FormSubmission | undefined, DefaultError, Prisma.FormSubmissionCreateArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useCreateFormSubmission(options?: Omit<UseMutationOptions<FormSubmission | undefined, DefaultError, Prisma.FormSubmissionCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.FormSubmissionCreateArgs, DefaultError, FormSubmission, true>(
-    'FormSubmission',
-    'POST',
-    `${endpoint}/formSubmission/create`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.FormSubmissionCreateArgs, DefaultError, FormSubmission, true>('FormSubmission', 'POST', `${endpoint}/formSubmission/create`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.FormSubmissionCreateArgs>(
       args: Prisma.SelectSubset<T, Prisma.FormSubmissionCreateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, FormSubmission, Prisma.FormSubmissionGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.FormSubmissionCreateArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, FormSubmission, Prisma.FormSubmissionGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.FormSubmissionCreateArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, FormSubmission, Prisma.FormSubmissionGetPayload<T>> | undefined;
     },
@@ -45,19 +31,9 @@ export function useCreateFormSubmission(
   return mutation;
 }
 
-export function useCreateManyFormSubmission(
-  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.FormSubmissionCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useCreateManyFormSubmission(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.FormSubmissionCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.FormSubmissionCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'FormSubmission',
-    'POST',
-    `${endpoint}/formSubmission/createMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.FormSubmissionCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('FormSubmission', 'POST', `${endpoint}/formSubmission/createMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.FormSubmissionCreateManyArgs>(
@@ -70,22 +46,15 @@ export function useCreateManyFormSubmission(
   return mutation;
 }
 
-export function useFindManyFormSubmission<
-  TArgs extends Prisma.FormSubmissionFindManyArgs,
-  TQueryFnData = Array<Prisma.FormSubmissionGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.FormSubmissionFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindManyFormSubmission<TArgs extends Prisma.FormSubmissionFindManyArgs, TQueryFnData = Array<Prisma.FormSubmissionGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.FormSubmissionFindManyArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('FormSubmission', `${endpoint}/formSubmission/findMany`, args, options, fetch);
 }
 
-export function useInfiniteFindManyFormSubmission<
-  TArgs extends Prisma.FormSubmissionFindManyArgs,
-  TQueryFnData = Array<Prisma.FormSubmissionGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
+export function useInfiniteFindManyFormSubmission<TArgs extends Prisma.FormSubmissionFindManyArgs, TQueryFnData = Array<Prisma.FormSubmissionGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
   args?: Prisma.SelectSubset<TArgs, Prisma.FormSubmissionFindManyArgs>,
   options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
 ) {
@@ -104,12 +73,7 @@ export function useSuspenseFindManyFormSubmission<
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('FormSubmission', `${endpoint}/formSubmission/findMany`, args, options, fetch);
 }
 
-export function useSuspenseInfiniteFindManyFormSubmission<
-  TArgs extends Prisma.FormSubmissionFindManyArgs,
-  TQueryFnData = Array<Prisma.FormSubmissionGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
+export function useSuspenseInfiniteFindManyFormSubmission<TArgs extends Prisma.FormSubmissionFindManyArgs, TQueryFnData = Array<Prisma.FormSubmissionGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
   args?: Prisma.SelectSubset<TArgs, Prisma.FormSubmissionFindManyArgs>,
   options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
 ) {
@@ -118,12 +82,10 @@ export function useSuspenseInfiniteFindManyFormSubmission<
   return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('FormSubmission', `${endpoint}/formSubmission/findMany`, args, options, fetch);
 }
 
-export function useFindUniqueFormSubmission<
-  TArgs extends Prisma.FormSubmissionFindUniqueArgs,
-  TQueryFnData = Prisma.FormSubmissionGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.FormSubmissionFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindUniqueFormSubmission<TArgs extends Prisma.FormSubmissionFindUniqueArgs, TQueryFnData = Prisma.FormSubmissionGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.FormSubmissionFindUniqueArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('FormSubmission', `${endpoint}/formSubmission/findUnique`, args, options, fetch);
 }
@@ -138,48 +100,30 @@ export function useSuspenseFindUniqueFormSubmission<
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('FormSubmission', `${endpoint}/formSubmission/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstFormSubmission<
-  TArgs extends Prisma.FormSubmissionFindFirstArgs,
-  TQueryFnData = Prisma.FormSubmissionGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.FormSubmissionFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindFirstFormSubmission<TArgs extends Prisma.FormSubmissionFindFirstArgs, TQueryFnData = Prisma.FormSubmissionGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.FormSubmissionFindFirstArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('FormSubmission', `${endpoint}/formSubmission/findFirst`, args, options, fetch);
 }
 
-export function useSuspenseFindFirstFormSubmission<
-  TArgs extends Prisma.FormSubmissionFindFirstArgs,
-  TQueryFnData = Prisma.FormSubmissionGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.FormSubmissionFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseFindFirstFormSubmission<TArgs extends Prisma.FormSubmissionFindFirstArgs, TQueryFnData = Prisma.FormSubmissionGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.FormSubmissionFindFirstArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('FormSubmission', `${endpoint}/formSubmission/findFirst`, args, options, fetch);
 }
 
-export function useUpdateFormSubmission(
-  options?: Omit<UseMutationOptions<FormSubmission | undefined, DefaultError, Prisma.FormSubmissionUpdateArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useUpdateFormSubmission(options?: Omit<UseMutationOptions<FormSubmission | undefined, DefaultError, Prisma.FormSubmissionUpdateArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.FormSubmissionUpdateArgs, DefaultError, FormSubmission, true>(
-    'FormSubmission',
-    'PUT',
-    `${endpoint}/formSubmission/update`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.FormSubmissionUpdateArgs, DefaultError, FormSubmission, true>('FormSubmission', 'PUT', `${endpoint}/formSubmission/update`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.FormSubmissionUpdateArgs>(
       args: Prisma.SelectSubset<T, Prisma.FormSubmissionUpdateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, FormSubmission, Prisma.FormSubmissionGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.FormSubmissionUpdateArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, FormSubmission, Prisma.FormSubmissionGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.FormSubmissionUpdateArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, FormSubmission, Prisma.FormSubmissionGetPayload<T>> | undefined;
     },
@@ -187,19 +131,9 @@ export function useUpdateFormSubmission(
   return mutation;
 }
 
-export function useUpdateManyFormSubmission(
-  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.FormSubmissionUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useUpdateManyFormSubmission(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.FormSubmissionUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.FormSubmissionUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'FormSubmission',
-    'PUT',
-    `${endpoint}/formSubmission/updateMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.FormSubmissionUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('FormSubmission', 'PUT', `${endpoint}/formSubmission/updateMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.FormSubmissionUpdateManyArgs>(
@@ -212,28 +146,14 @@ export function useUpdateManyFormSubmission(
   return mutation;
 }
 
-export function useUpsertFormSubmission(
-  options?: Omit<UseMutationOptions<FormSubmission | undefined, DefaultError, Prisma.FormSubmissionUpsertArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useUpsertFormSubmission(options?: Omit<UseMutationOptions<FormSubmission | undefined, DefaultError, Prisma.FormSubmissionUpsertArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.FormSubmissionUpsertArgs, DefaultError, FormSubmission, true>(
-    'FormSubmission',
-    'POST',
-    `${endpoint}/formSubmission/upsert`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.FormSubmissionUpsertArgs, DefaultError, FormSubmission, true>('FormSubmission', 'POST', `${endpoint}/formSubmission/upsert`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.FormSubmissionUpsertArgs>(
       args: Prisma.SelectSubset<T, Prisma.FormSubmissionUpsertArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, FormSubmission, Prisma.FormSubmissionGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.FormSubmissionUpsertArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, FormSubmission, Prisma.FormSubmissionGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.FormSubmissionUpsertArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, FormSubmission, Prisma.FormSubmissionGetPayload<T>> | undefined;
     },
@@ -241,28 +161,14 @@ export function useUpsertFormSubmission(
   return mutation;
 }
 
-export function useDeleteFormSubmission(
-  options?: Omit<UseMutationOptions<FormSubmission | undefined, DefaultError, Prisma.FormSubmissionDeleteArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useDeleteFormSubmission(options?: Omit<UseMutationOptions<FormSubmission | undefined, DefaultError, Prisma.FormSubmissionDeleteArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.FormSubmissionDeleteArgs, DefaultError, FormSubmission, true>(
-    'FormSubmission',
-    'DELETE',
-    `${endpoint}/formSubmission/delete`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.FormSubmissionDeleteArgs, DefaultError, FormSubmission, true>('FormSubmission', 'DELETE', `${endpoint}/formSubmission/delete`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.FormSubmissionDeleteArgs>(
       args: Prisma.SelectSubset<T, Prisma.FormSubmissionDeleteArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, FormSubmission, Prisma.FormSubmissionGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.FormSubmissionDeleteArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, FormSubmission, Prisma.FormSubmissionGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.FormSubmissionDeleteArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, FormSubmission, Prisma.FormSubmissionGetPayload<T>> | undefined;
     },
@@ -270,19 +176,9 @@ export function useDeleteFormSubmission(
   return mutation;
 }
 
-export function useDeleteManyFormSubmission(
-  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.FormSubmissionDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useDeleteManyFormSubmission(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.FormSubmissionDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.FormSubmissionDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'FormSubmission',
-    'DELETE',
-    `${endpoint}/formSubmission/deleteMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.FormSubmissionDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('FormSubmission', 'DELETE', `${endpoint}/formSubmission/deleteMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.FormSubmissionDeleteManyArgs>(
@@ -295,22 +191,18 @@ export function useDeleteManyFormSubmission(
   return mutation;
 }
 
-export function useAggregateFormSubmission<
-  TArgs extends Prisma.FormSubmissionAggregateArgs,
-  TQueryFnData = Prisma.GetFormSubmissionAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.FormSubmissionAggregateArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useAggregateFormSubmission<TArgs extends Prisma.FormSubmissionAggregateArgs, TQueryFnData = Prisma.GetFormSubmissionAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.FormSubmissionAggregateArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('FormSubmission', `${endpoint}/formSubmission/aggregate`, args, options, fetch);
 }
 
-export function useSuspenseAggregateFormSubmission<
-  TArgs extends Prisma.FormSubmissionAggregateArgs,
-  TQueryFnData = Prisma.GetFormSubmissionAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.FormSubmissionAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseAggregateFormSubmission<TArgs extends Prisma.FormSubmissionAggregateArgs, TQueryFnData = Prisma.GetFormSubmissionAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.FormSubmissionAggregateArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('FormSubmission', `${endpoint}/formSubmission/aggregate`, args, options, fetch);
 }
@@ -329,11 +221,7 @@ export function useGroupByFormSubmission<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -369,10 +257,7 @@ export function useGroupByFormSubmission<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.FormSubmissionGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.FormSubmissionGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('FormSubmission', `${endpoint}/formSubmission/groupBy`, args, options, fetch);
 }
@@ -391,11 +276,7 @@ export function useSuspenseGroupByFormSubmission<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -441,11 +322,7 @@ export function useSuspenseGroupByFormSubmission<
 
 export function useCountFormSubmission<
   TArgs extends Prisma.FormSubmissionCountArgs,
-  TQueryFnData = TArgs extends { select: any }
-    ? TArgs['select'] extends true
-      ? number
-      : Prisma.GetScalarType<TArgs['select'], Prisma.FormSubmissionCountAggregateOutputType>
-    : number,
+  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.FormSubmissionCountAggregateOutputType>) : number,
   TData = TQueryFnData,
   TError = DefaultError,
 >(args?: Prisma.SelectSubset<TArgs, Prisma.FormSubmissionCountArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
@@ -455,11 +332,7 @@ export function useCountFormSubmission<
 
 export function useSuspenseCountFormSubmission<
   TArgs extends Prisma.FormSubmissionCountArgs,
-  TQueryFnData = TArgs extends { select: any }
-    ? TArgs['select'] extends true
-      ? number
-      : Prisma.GetScalarType<TArgs['select'], Prisma.FormSubmissionCountAggregateOutputType>
-    : number,
+  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.FormSubmissionCountAggregateOutputType>) : number,
   TData = TQueryFnData,
   TError = DefaultError,
 >(args?: Prisma.SelectSubset<TArgs, Prisma.FormSubmissionCountArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {

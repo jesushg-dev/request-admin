@@ -23,10 +23,7 @@ export function useCreateChannel(options?: Omit<UseMutationOptions<Channel | und
     ..._mutation,
     mutateAsync: async <T extends Prisma.ChannelCreateArgs>(
       args: Prisma.SelectSubset<T, Prisma.ChannelCreateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Channel, Prisma.ChannelGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ChannelCreateArgs>> & ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Channel, Prisma.ChannelGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ChannelCreateArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Channel, Prisma.ChannelGetPayload<T>> | undefined;
     },
@@ -36,15 +33,7 @@ export function useCreateChannel(options?: Omit<UseMutationOptions<Channel | und
 
 export function useCreateManyChannel(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.ChannelCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.ChannelCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'Channel',
-    'POST',
-    `${endpoint}/channel/createMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.ChannelCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('Channel', 'POST', `${endpoint}/channel/createMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.ChannelCreateManyArgs>(
@@ -57,22 +46,15 @@ export function useCreateManyChannel(options?: Omit<UseMutationOptions<Prisma.Ba
   return mutation;
 }
 
-export function useFindManyChannel<
-  TArgs extends Prisma.ChannelFindManyArgs,
-  TQueryFnData = Array<Prisma.ChannelGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.ChannelFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindManyChannel<TArgs extends Prisma.ChannelFindManyArgs, TQueryFnData = Array<Prisma.ChannelGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.ChannelFindManyArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Channel', `${endpoint}/channel/findMany`, args, options, fetch);
 }
 
-export function useInfiniteFindManyChannel<
-  TArgs extends Prisma.ChannelFindManyArgs,
-  TQueryFnData = Array<Prisma.ChannelGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
+export function useInfiniteFindManyChannel<TArgs extends Prisma.ChannelFindManyArgs, TQueryFnData = Array<Prisma.ChannelGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
   args?: Prisma.SelectSubset<TArgs, Prisma.ChannelFindManyArgs>,
   options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
 ) {
@@ -81,22 +63,15 @@ export function useInfiniteFindManyChannel<
   return useInfiniteModelQuery<TQueryFnData, TData, TError>('Channel', `${endpoint}/channel/findMany`, args, options, fetch);
 }
 
-export function useSuspenseFindManyChannel<
-  TArgs extends Prisma.ChannelFindManyArgs,
-  TQueryFnData = Array<Prisma.ChannelGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.ChannelFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseFindManyChannel<TArgs extends Prisma.ChannelFindManyArgs, TQueryFnData = Array<Prisma.ChannelGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.ChannelFindManyArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Channel', `${endpoint}/channel/findMany`, args, options, fetch);
 }
 
-export function useSuspenseInfiniteFindManyChannel<
-  TArgs extends Prisma.ChannelFindManyArgs,
-  TQueryFnData = Array<Prisma.ChannelGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
+export function useSuspenseInfiniteFindManyChannel<TArgs extends Prisma.ChannelFindManyArgs, TQueryFnData = Array<Prisma.ChannelGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
   args?: Prisma.SelectSubset<TArgs, Prisma.ChannelFindManyArgs>,
   options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
 ) {
@@ -105,42 +80,34 @@ export function useSuspenseInfiniteFindManyChannel<
   return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('Channel', `${endpoint}/channel/findMany`, args, options, fetch);
 }
 
-export function useFindUniqueChannel<
-  TArgs extends Prisma.ChannelFindUniqueArgs,
-  TQueryFnData = Prisma.ChannelGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.ChannelFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindUniqueChannel<TArgs extends Prisma.ChannelFindUniqueArgs, TQueryFnData = Prisma.ChannelGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.ChannelFindUniqueArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Channel', `${endpoint}/channel/findUnique`, args, options, fetch);
 }
 
-export function useSuspenseFindUniqueChannel<
-  TArgs extends Prisma.ChannelFindUniqueArgs,
-  TQueryFnData = Prisma.ChannelGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.ChannelFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseFindUniqueChannel<TArgs extends Prisma.ChannelFindUniqueArgs, TQueryFnData = Prisma.ChannelGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.ChannelFindUniqueArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Channel', `${endpoint}/channel/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstChannel<
-  TArgs extends Prisma.ChannelFindFirstArgs,
-  TQueryFnData = Prisma.ChannelGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.ChannelFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindFirstChannel<TArgs extends Prisma.ChannelFindFirstArgs, TQueryFnData = Prisma.ChannelGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.ChannelFindFirstArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Channel', `${endpoint}/channel/findFirst`, args, options, fetch);
 }
 
-export function useSuspenseFindFirstChannel<
-  TArgs extends Prisma.ChannelFindFirstArgs,
-  TQueryFnData = Prisma.ChannelGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.ChannelFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseFindFirstChannel<TArgs extends Prisma.ChannelFindFirstArgs, TQueryFnData = Prisma.ChannelGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.ChannelFindFirstArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Channel', `${endpoint}/channel/findFirst`, args, options, fetch);
 }
@@ -152,10 +119,7 @@ export function useUpdateChannel(options?: Omit<UseMutationOptions<Channel | und
     ..._mutation,
     mutateAsync: async <T extends Prisma.ChannelUpdateArgs>(
       args: Prisma.SelectSubset<T, Prisma.ChannelUpdateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Channel, Prisma.ChannelGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ChannelUpdateArgs>> & ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Channel, Prisma.ChannelGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ChannelUpdateArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Channel, Prisma.ChannelGetPayload<T>> | undefined;
     },
@@ -165,15 +129,7 @@ export function useUpdateChannel(options?: Omit<UseMutationOptions<Channel | und
 
 export function useUpdateManyChannel(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.ChannelUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.ChannelUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'Channel',
-    'PUT',
-    `${endpoint}/channel/updateMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.ChannelUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('Channel', 'PUT', `${endpoint}/channel/updateMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.ChannelUpdateManyArgs>(
@@ -193,10 +149,7 @@ export function useUpsertChannel(options?: Omit<UseMutationOptions<Channel | und
     ..._mutation,
     mutateAsync: async <T extends Prisma.ChannelUpsertArgs>(
       args: Prisma.SelectSubset<T, Prisma.ChannelUpsertArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Channel, Prisma.ChannelGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ChannelUpsertArgs>> & ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Channel, Prisma.ChannelGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ChannelUpsertArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Channel, Prisma.ChannelGetPayload<T>> | undefined;
     },
@@ -211,10 +164,7 @@ export function useDeleteChannel(options?: Omit<UseMutationOptions<Channel | und
     ..._mutation,
     mutateAsync: async <T extends Prisma.ChannelDeleteArgs>(
       args: Prisma.SelectSubset<T, Prisma.ChannelDeleteArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Channel, Prisma.ChannelGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ChannelDeleteArgs>> & ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Channel, Prisma.ChannelGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ChannelDeleteArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Channel, Prisma.ChannelGetPayload<T>> | undefined;
     },
@@ -224,15 +174,7 @@ export function useDeleteChannel(options?: Omit<UseMutationOptions<Channel | und
 
 export function useDeleteManyChannel(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.ChannelDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.ChannelDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'Channel',
-    'DELETE',
-    `${endpoint}/channel/deleteMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.ChannelDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('Channel', 'DELETE', `${endpoint}/channel/deleteMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.ChannelDeleteManyArgs>(
@@ -253,12 +195,10 @@ export function useAggregateChannel<TArgs extends Prisma.ChannelAggregateArgs, T
   return useModelQuery<TQueryFnData, TData, TError>('Channel', `${endpoint}/channel/aggregate`, args, options, fetch);
 }
 
-export function useSuspenseAggregateChannel<
-  TArgs extends Prisma.ChannelAggregateArgs,
-  TQueryFnData = Prisma.GetChannelAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.ChannelAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseAggregateChannel<TArgs extends Prisma.ChannelAggregateArgs, TQueryFnData = Prisma.GetChannelAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.ChannelAggregateArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Channel', `${endpoint}/channel/aggregate`, args, options, fetch);
 }
@@ -277,11 +217,7 @@ export function useGroupByChannel<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -317,10 +253,7 @@ export function useGroupByChannel<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.ChannelGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.ChannelGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Channel', `${endpoint}/channel/groupBy`, args, options, fetch);
 }
@@ -339,11 +272,7 @@ export function useSuspenseGroupByChannel<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -379,10 +308,7 @@ export function useSuspenseGroupByChannel<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.ChannelGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.ChannelGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Channel', `${endpoint}/channel/groupBy`, args, options, fetch);
 }

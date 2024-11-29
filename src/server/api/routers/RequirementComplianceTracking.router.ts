@@ -14,64 +14,34 @@ import { checkRead, checkMutate } from '../helper';
 
 export default function createRouter() {
   return createTRPCRouter({
-    aggregate: procedure
-      .input($Schema.RequirementComplianceTrackingInputSchema.aggregate)
-      .query(({ ctx, input }) => checkRead(db(ctx).requirementComplianceTracking.aggregate(input as any))),
+    aggregate: procedure.input($Schema.RequirementComplianceTrackingInputSchema.aggregate).query(({ ctx, input }) => checkRead(db(ctx).requirementComplianceTracking.aggregate(input as any))),
 
-    createMany: procedure
-      .input($Schema.RequirementComplianceTrackingInputSchema.createMany.optional())
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).requirementComplianceTracking.createMany(input as any))),
+    createMany: procedure.input($Schema.RequirementComplianceTrackingInputSchema.createMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).requirementComplianceTracking.createMany(input as any))),
 
-    create: procedure
-      .input($Schema.RequirementComplianceTrackingInputSchema.create)
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).requirementComplianceTracking.create(input as any))),
+    create: procedure.input($Schema.RequirementComplianceTrackingInputSchema.create).mutation(async ({ ctx, input }) => checkMutate(db(ctx).requirementComplianceTracking.create(input as any))),
 
-    deleteMany: procedure
-      .input($Schema.RequirementComplianceTrackingInputSchema.deleteMany.optional())
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).requirementComplianceTracking.deleteMany(input as any))),
+    deleteMany: procedure.input($Schema.RequirementComplianceTrackingInputSchema.deleteMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).requirementComplianceTracking.deleteMany(input as any))),
 
-    delete: procedure
-      .input($Schema.RequirementComplianceTrackingInputSchema.delete)
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).requirementComplianceTracking.delete(input as any))),
+    delete: procedure.input($Schema.RequirementComplianceTrackingInputSchema.delete).mutation(async ({ ctx, input }) => checkMutate(db(ctx).requirementComplianceTracking.delete(input as any))),
 
-    findFirst: procedure
-      .input($Schema.RequirementComplianceTrackingInputSchema.findFirst.optional())
-      .query(({ ctx, input }) => checkRead(db(ctx).requirementComplianceTracking.findFirst(input as any))),
+    findFirst: procedure.input($Schema.RequirementComplianceTrackingInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).requirementComplianceTracking.findFirst(input as any))),
 
-    findFirstOrThrow: procedure
-      .input($Schema.RequirementComplianceTrackingInputSchema.findFirst.optional())
-      .query(({ ctx, input }) => checkRead(db(ctx).requirementComplianceTracking.findFirstOrThrow(input as any))),
+    findFirstOrThrow: procedure.input($Schema.RequirementComplianceTrackingInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).requirementComplianceTracking.findFirstOrThrow(input as any))),
 
-    findMany: procedure
-      .input($Schema.RequirementComplianceTrackingInputSchema.findMany.optional())
-      .query(({ ctx, input }) => checkRead(db(ctx).requirementComplianceTracking.findMany(input as any))),
+    findMany: procedure.input($Schema.RequirementComplianceTrackingInputSchema.findMany.optional()).query(({ ctx, input }) => checkRead(db(ctx).requirementComplianceTracking.findMany(input as any))),
 
-    findUnique: procedure
-      .input($Schema.RequirementComplianceTrackingInputSchema.findUnique)
-      .query(({ ctx, input }) => checkRead(db(ctx).requirementComplianceTracking.findUnique(input as any))),
+    findUnique: procedure.input($Schema.RequirementComplianceTrackingInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).requirementComplianceTracking.findUnique(input as any))),
 
-    findUniqueOrThrow: procedure
-      .input($Schema.RequirementComplianceTrackingInputSchema.findUnique)
-      .query(({ ctx, input }) => checkRead(db(ctx).requirementComplianceTracking.findUniqueOrThrow(input as any))),
+    findUniqueOrThrow: procedure.input($Schema.RequirementComplianceTrackingInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).requirementComplianceTracking.findUniqueOrThrow(input as any))),
 
-    groupBy: procedure
-      .input($Schema.RequirementComplianceTrackingInputSchema.groupBy)
-      .query(({ ctx, input }) => checkRead(db(ctx).requirementComplianceTracking.groupBy(input as any))),
+    groupBy: procedure.input($Schema.RequirementComplianceTrackingInputSchema.groupBy).query(({ ctx, input }) => checkRead(db(ctx).requirementComplianceTracking.groupBy(input as any))),
 
-    updateMany: procedure
-      .input($Schema.RequirementComplianceTrackingInputSchema.updateMany)
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).requirementComplianceTracking.updateMany(input as any))),
+    updateMany: procedure.input($Schema.RequirementComplianceTrackingInputSchema.updateMany).mutation(async ({ ctx, input }) => checkMutate(db(ctx).requirementComplianceTracking.updateMany(input as any))),
 
-    update: procedure
-      .input($Schema.RequirementComplianceTrackingInputSchema.update)
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).requirementComplianceTracking.update(input as any))),
+    update: procedure.input($Schema.RequirementComplianceTrackingInputSchema.update).mutation(async ({ ctx, input }) => checkMutate(db(ctx).requirementComplianceTracking.update(input as any))),
 
-    upsert: procedure
-      .input($Schema.RequirementComplianceTrackingInputSchema.upsert)
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).requirementComplianceTracking.upsert(input as any))),
+    upsert: procedure.input($Schema.RequirementComplianceTrackingInputSchema.upsert).mutation(async ({ ctx, input }) => checkMutate(db(ctx).requirementComplianceTracking.upsert(input as any))),
 
-    count: procedure
-      .input($Schema.RequirementComplianceTrackingInputSchema.count.optional())
-      .query(({ ctx, input }) => checkRead(db(ctx).requirementComplianceTracking.count(input as any))),
+    count: procedure.input($Schema.RequirementComplianceTrackingInputSchema.count.optional()).query(({ ctx, input }) => checkRead(db(ctx).requirementComplianceTracking.count(input as any))),
   });
 }

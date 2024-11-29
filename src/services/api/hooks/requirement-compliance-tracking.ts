@@ -34,11 +34,7 @@ export function useCreateRequirementComplianceTracking(
     mutateAsync: async <T extends Prisma.RequirementComplianceTrackingCreateArgs>(
       args: Prisma.SelectSubset<T, Prisma.RequirementComplianceTrackingCreateArgs>,
       options?: Omit<
-        UseMutationOptions<
-          CheckSelect<T, RequirementComplianceTracking, Prisma.RequirementComplianceTrackingGetPayload<T>> | undefined,
-          DefaultError,
-          Prisma.SelectSubset<T, Prisma.RequirementComplianceTrackingCreateArgs>
-        > &
+        UseMutationOptions<CheckSelect<T, RequirementComplianceTracking, Prisma.RequirementComplianceTrackingGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.RequirementComplianceTrackingCreateArgs>> &
           ExtraMutationOptions,
         'mutationFn'
       >
@@ -49,9 +45,7 @@ export function useCreateRequirementComplianceTracking(
   return mutation;
 }
 
-export function useCreateManyRequirementComplianceTracking(
-  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.RequirementComplianceTrackingCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useCreateManyRequirementComplianceTracking(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.RequirementComplianceTrackingCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
   const _mutation = useModelMutation<Prisma.RequirementComplianceTrackingCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
     'RequirementComplianceTracking',
@@ -66,10 +60,7 @@ export function useCreateManyRequirementComplianceTracking(
     ..._mutation,
     mutateAsync: async <T extends Prisma.RequirementComplianceTrackingCreateManyArgs>(
       args: Prisma.SelectSubset<T, Prisma.RequirementComplianceTrackingCreateManyArgs>,
-      options?: Omit<
-        UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.RequirementComplianceTrackingCreateManyArgs>> & ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.RequirementComplianceTrackingCreateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
     },
@@ -82,10 +73,7 @@ export function useFindManyRequirementComplianceTracking<
   TQueryFnData = Array<Prisma.RequirementComplianceTrackingGetPayload<TArgs> & { $optimistic?: boolean }>,
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args?: Prisma.SelectSubset<TArgs, Prisma.RequirementComplianceTrackingFindManyArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args?: Prisma.SelectSubset<TArgs, Prisma.RequirementComplianceTrackingFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('RequirementComplianceTracking', `${endpoint}/requirementComplianceTracking/findMany`, args, options, fetch);
 }
@@ -95,10 +83,7 @@ export function useInfiniteFindManyRequirementComplianceTracking<
   TQueryFnData = Array<Prisma.RequirementComplianceTrackingGetPayload<TArgs>>,
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args?: Prisma.SelectSubset<TArgs, Prisma.RequirementComplianceTrackingFindManyArgs>,
-  options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
-) {
+>(args?: Prisma.SelectSubset<TArgs, Prisma.RequirementComplianceTrackingFindManyArgs>, options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
   options = options ?? { getNextPageParam: () => null };
   const { endpoint, fetch } = getHooksContext();
   return useInfiniteModelQuery<TQueryFnData, TData, TError>('RequirementComplianceTracking', `${endpoint}/requirementComplianceTracking/findMany`, args, options, fetch);
@@ -109,10 +94,7 @@ export function useSuspenseFindManyRequirementComplianceTracking<
   TQueryFnData = Array<Prisma.RequirementComplianceTrackingGetPayload<TArgs> & { $optimistic?: boolean }>,
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args?: Prisma.SelectSubset<TArgs, Prisma.RequirementComplianceTrackingFindManyArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args?: Prisma.SelectSubset<TArgs, Prisma.RequirementComplianceTrackingFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('RequirementComplianceTracking', `${endpoint}/requirementComplianceTracking/findMany`, args, options, fetch);
 }
@@ -122,10 +104,7 @@ export function useSuspenseInfiniteFindManyRequirementComplianceTracking<
   TQueryFnData = Array<Prisma.RequirementComplianceTrackingGetPayload<TArgs>>,
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args?: Prisma.SelectSubset<TArgs, Prisma.RequirementComplianceTrackingFindManyArgs>,
-  options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
-) {
+>(args?: Prisma.SelectSubset<TArgs, Prisma.RequirementComplianceTrackingFindManyArgs>, options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
   options = options ?? { getNextPageParam: () => null };
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('RequirementComplianceTracking', `${endpoint}/requirementComplianceTracking/findMany`, args, options, fetch);
@@ -136,10 +115,7 @@ export function useFindUniqueRequirementComplianceTracking<
   TQueryFnData = Prisma.RequirementComplianceTrackingGetPayload<TArgs> & { $optimistic?: boolean },
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.RequirementComplianceTrackingFindUniqueArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args: Prisma.SelectSubset<TArgs, Prisma.RequirementComplianceTrackingFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('RequirementComplianceTracking', `${endpoint}/requirementComplianceTracking/findUnique`, args, options, fetch);
 }
@@ -149,10 +125,7 @@ export function useSuspenseFindUniqueRequirementComplianceTracking<
   TQueryFnData = Prisma.RequirementComplianceTrackingGetPayload<TArgs> & { $optimistic?: boolean },
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.RequirementComplianceTrackingFindUniqueArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args: Prisma.SelectSubset<TArgs, Prisma.RequirementComplianceTrackingFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('RequirementComplianceTracking', `${endpoint}/requirementComplianceTracking/findUnique`, args, options, fetch);
 }
@@ -162,10 +135,7 @@ export function useFindFirstRequirementComplianceTracking<
   TQueryFnData = Prisma.RequirementComplianceTrackingGetPayload<TArgs> & { $optimistic?: boolean },
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args?: Prisma.SelectSubset<TArgs, Prisma.RequirementComplianceTrackingFindFirstArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args?: Prisma.SelectSubset<TArgs, Prisma.RequirementComplianceTrackingFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('RequirementComplianceTracking', `${endpoint}/requirementComplianceTracking/findFirst`, args, options, fetch);
 }
@@ -175,10 +145,7 @@ export function useSuspenseFindFirstRequirementComplianceTracking<
   TQueryFnData = Prisma.RequirementComplianceTrackingGetPayload<TArgs> & { $optimistic?: boolean },
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args?: Prisma.SelectSubset<TArgs, Prisma.RequirementComplianceTrackingFindFirstArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args?: Prisma.SelectSubset<TArgs, Prisma.RequirementComplianceTrackingFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('RequirementComplianceTracking', `${endpoint}/requirementComplianceTracking/findFirst`, args, options, fetch);
 }
@@ -201,11 +168,7 @@ export function useUpdateRequirementComplianceTracking(
     mutateAsync: async <T extends Prisma.RequirementComplianceTrackingUpdateArgs>(
       args: Prisma.SelectSubset<T, Prisma.RequirementComplianceTrackingUpdateArgs>,
       options?: Omit<
-        UseMutationOptions<
-          CheckSelect<T, RequirementComplianceTracking, Prisma.RequirementComplianceTrackingGetPayload<T>> | undefined,
-          DefaultError,
-          Prisma.SelectSubset<T, Prisma.RequirementComplianceTrackingUpdateArgs>
-        > &
+        UseMutationOptions<CheckSelect<T, RequirementComplianceTracking, Prisma.RequirementComplianceTrackingGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.RequirementComplianceTrackingUpdateArgs>> &
           ExtraMutationOptions,
         'mutationFn'
       >
@@ -216,9 +179,7 @@ export function useUpdateRequirementComplianceTracking(
   return mutation;
 }
 
-export function useUpdateManyRequirementComplianceTracking(
-  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.RequirementComplianceTrackingUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useUpdateManyRequirementComplianceTracking(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.RequirementComplianceTrackingUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
   const _mutation = useModelMutation<Prisma.RequirementComplianceTrackingUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
     'RequirementComplianceTracking',
@@ -233,10 +194,7 @@ export function useUpdateManyRequirementComplianceTracking(
     ..._mutation,
     mutateAsync: async <T extends Prisma.RequirementComplianceTrackingUpdateManyArgs>(
       args: Prisma.SelectSubset<T, Prisma.RequirementComplianceTrackingUpdateManyArgs>,
-      options?: Omit<
-        UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.RequirementComplianceTrackingUpdateManyArgs>> & ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.RequirementComplianceTrackingUpdateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
     },
@@ -262,11 +220,7 @@ export function useUpsertRequirementComplianceTracking(
     mutateAsync: async <T extends Prisma.RequirementComplianceTrackingUpsertArgs>(
       args: Prisma.SelectSubset<T, Prisma.RequirementComplianceTrackingUpsertArgs>,
       options?: Omit<
-        UseMutationOptions<
-          CheckSelect<T, RequirementComplianceTracking, Prisma.RequirementComplianceTrackingGetPayload<T>> | undefined,
-          DefaultError,
-          Prisma.SelectSubset<T, Prisma.RequirementComplianceTrackingUpsertArgs>
-        > &
+        UseMutationOptions<CheckSelect<T, RequirementComplianceTracking, Prisma.RequirementComplianceTrackingGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.RequirementComplianceTrackingUpsertArgs>> &
           ExtraMutationOptions,
         'mutationFn'
       >
@@ -295,11 +249,7 @@ export function useDeleteRequirementComplianceTracking(
     mutateAsync: async <T extends Prisma.RequirementComplianceTrackingDeleteArgs>(
       args: Prisma.SelectSubset<T, Prisma.RequirementComplianceTrackingDeleteArgs>,
       options?: Omit<
-        UseMutationOptions<
-          CheckSelect<T, RequirementComplianceTracking, Prisma.RequirementComplianceTrackingGetPayload<T>> | undefined,
-          DefaultError,
-          Prisma.SelectSubset<T, Prisma.RequirementComplianceTrackingDeleteArgs>
-        > &
+        UseMutationOptions<CheckSelect<T, RequirementComplianceTracking, Prisma.RequirementComplianceTrackingGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.RequirementComplianceTrackingDeleteArgs>> &
           ExtraMutationOptions,
         'mutationFn'
       >
@@ -310,9 +260,7 @@ export function useDeleteRequirementComplianceTracking(
   return mutation;
 }
 
-export function useDeleteManyRequirementComplianceTracking(
-  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.RequirementComplianceTrackingDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useDeleteManyRequirementComplianceTracking(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.RequirementComplianceTrackingDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
   const _mutation = useModelMutation<Prisma.RequirementComplianceTrackingDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
     'RequirementComplianceTracking',
@@ -327,10 +275,7 @@ export function useDeleteManyRequirementComplianceTracking(
     ..._mutation,
     mutateAsync: async <T extends Prisma.RequirementComplianceTrackingDeleteManyArgs>(
       args: Prisma.SelectSubset<T, Prisma.RequirementComplianceTrackingDeleteManyArgs>,
-      options?: Omit<
-        UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.RequirementComplianceTrackingDeleteManyArgs>> & ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.RequirementComplianceTrackingDeleteManyArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
     },
@@ -343,10 +288,7 @@ export function useAggregateRequirementComplianceTracking<
   TQueryFnData = Prisma.GetRequirementComplianceTrackingAggregateType<TArgs>,
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.RequirementComplianceTrackingAggregateArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args: Prisma.SelectSubset<TArgs, Prisma.RequirementComplianceTrackingAggregateArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('RequirementComplianceTracking', `${endpoint}/requirementComplianceTracking/aggregate`, args, options, fetch);
 }
@@ -356,10 +298,7 @@ export function useSuspenseAggregateRequirementComplianceTracking<
   TQueryFnData = Prisma.GetRequirementComplianceTrackingAggregateType<TArgs>,
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.RequirementComplianceTrackingAggregateArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args: Prisma.SelectSubset<TArgs, Prisma.RequirementComplianceTrackingAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('RequirementComplianceTracking', `${endpoint}/requirementComplianceTracking/aggregate`, args, options, fetch);
 }
@@ -367,9 +306,7 @@ export function useSuspenseAggregateRequirementComplianceTracking<
 export function useGroupByRequirementComplianceTracking<
   TArgs extends Prisma.RequirementComplianceTrackingGroupByArgs,
   HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
-  OrderByArg extends Prisma.True extends HasSelectOrTake
-    ? { orderBy: Prisma.RequirementComplianceTrackingGroupByArgs['orderBy'] }
-    : { orderBy?: Prisma.RequirementComplianceTrackingGroupByArgs['orderBy'] },
+  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.RequirementComplianceTrackingGroupByArgs['orderBy'] } : { orderBy?: Prisma.RequirementComplianceTrackingGroupByArgs['orderBy'] },
   OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
   ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
   ByValid extends Prisma.Has<ByFields, OrderFields>,
@@ -380,11 +317,7 @@ export function useGroupByRequirementComplianceTracking<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -431,9 +364,7 @@ export function useGroupByRequirementComplianceTracking<
 export function useSuspenseGroupByRequirementComplianceTracking<
   TArgs extends Prisma.RequirementComplianceTrackingGroupByArgs,
   HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
-  OrderByArg extends Prisma.True extends HasSelectOrTake
-    ? { orderBy: Prisma.RequirementComplianceTrackingGroupByArgs['orderBy'] }
-    : { orderBy?: Prisma.RequirementComplianceTrackingGroupByArgs['orderBy'] },
+  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.RequirementComplianceTrackingGroupByArgs['orderBy'] } : { orderBy?: Prisma.RequirementComplianceTrackingGroupByArgs['orderBy'] },
   OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
   ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
   ByValid extends Prisma.Has<ByFields, OrderFields>,
@@ -444,11 +375,7 @@ export function useSuspenseGroupByRequirementComplianceTracking<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -494,11 +421,7 @@ export function useSuspenseGroupByRequirementComplianceTracking<
 
 export function useCountRequirementComplianceTracking<
   TArgs extends Prisma.RequirementComplianceTrackingCountArgs,
-  TQueryFnData = TArgs extends { select: any }
-    ? TArgs['select'] extends true
-      ? number
-      : Prisma.GetScalarType<TArgs['select'], Prisma.RequirementComplianceTrackingCountAggregateOutputType>
-    : number,
+  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.RequirementComplianceTrackingCountAggregateOutputType>) : number,
   TData = TQueryFnData,
   TError = DefaultError,
 >(args?: Prisma.SelectSubset<TArgs, Prisma.RequirementComplianceTrackingCountArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
@@ -508,26 +431,16 @@ export function useCountRequirementComplianceTracking<
 
 export function useSuspenseCountRequirementComplianceTracking<
   TArgs extends Prisma.RequirementComplianceTrackingCountArgs,
-  TQueryFnData = TArgs extends { select: any }
-    ? TArgs['select'] extends true
-      ? number
-      : Prisma.GetScalarType<TArgs['select'], Prisma.RequirementComplianceTrackingCountAggregateOutputType>
-    : number,
+  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.RequirementComplianceTrackingCountAggregateOutputType>) : number,
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args?: Prisma.SelectSubset<TArgs, Prisma.RequirementComplianceTrackingCountArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args?: Prisma.SelectSubset<TArgs, Prisma.RequirementComplianceTrackingCountArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('RequirementComplianceTracking', `${endpoint}/requirementComplianceTracking/count`, args, options, fetch);
 }
 
 export function useCheckRequirementComplianceTracking<TError = DefaultError>(
-  args: {
-    operation: PolicyCrudKind;
-    where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; requestId?: string; requirementId?: string; fulfilled?: boolean };
-  },
+  args: { operation: PolicyCrudKind; where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; requestId?: string; requirementId?: string; isFulfilled?: boolean } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

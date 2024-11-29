@@ -74,8 +74,6 @@ export const getFiltersStateParser = <T>(originalRow?: Row<T>['original']) => {
       }
     },
     serialize: (value) => JSON.stringify(value),
-    eq: (a, b) =>
-      a.length === b.length &&
-      a.every((filter, index) => filter.id === b[index]?.id && filter.value === b[index]?.value && filter.type === b[index]?.type && filter.operator === b[index]?.operator),
+    eq: (a, b) => a.length === b.length && a.every((filter, index) => filter.id === b[index]?.id && filter.value === b[index]?.value && filter.type === b[index]?.type && filter.operator === b[index]?.operator),
   });
 };

@@ -16,10 +16,7 @@ interface FormSubmitProps<TData = unknown> {
   cancelButtonText?: string;
 }
 
-const useFormSubmit = <TData = unknown, TError = DefaultError, TVariables = unknown, TContext = unknown>(
-  mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TContext>,
-  opts?: FormSubmitProps<TData>
-) => {
+const useFormSubmit = <TData = unknown, TError = DefaultError, TVariables = unknown, TContext = unknown>(mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TContext>, opts?: FormSubmitProps<TData>) => {
   const router = useRouter();
 
   // Dedicated function for determining the redirect URL

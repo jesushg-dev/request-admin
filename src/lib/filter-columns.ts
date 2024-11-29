@@ -59,29 +59,13 @@ export function filterColumns<T extends Table>({ table, filters, joinOperator }:
       case 'notILike':
         return filter.type === 'text' && typeof filter.value === 'string' ? notIlike(column, `%${filter.value}%`) : undefined;
       case 'lt':
-        return filter.type === 'number'
-          ? lt(column, filter.value)
-          : filter.type === 'date' && typeof filter.value === 'string'
-            ? lt(column, endOfDay(new Date(filter.value)))
-            : undefined;
+        return filter.type === 'number' ? lt(column, filter.value) : filter.type === 'date' && typeof filter.value === 'string' ? lt(column, endOfDay(new Date(filter.value))) : undefined;
       case 'lte':
-        return filter.type === 'number'
-          ? lte(column, filter.value)
-          : filter.type === 'date' && typeof filter.value === 'string'
-            ? lte(column, endOfDay(new Date(filter.value)))
-            : undefined;
+        return filter.type === 'number' ? lte(column, filter.value) : filter.type === 'date' && typeof filter.value === 'string' ? lte(column, endOfDay(new Date(filter.value))) : undefined;
       case 'gt':
-        return filter.type === 'number'
-          ? gt(column, filter.value)
-          : filter.type === 'date' && typeof filter.value === 'string'
-            ? gt(column, startOfDay(new Date(filter.value)))
-            : undefined;
+        return filter.type === 'number' ? gt(column, filter.value) : filter.type === 'date' && typeof filter.value === 'string' ? gt(column, startOfDay(new Date(filter.value))) : undefined;
       case 'gte':
-        return filter.type === 'number'
-          ? gte(column, filter.value)
-          : filter.type === 'date' && typeof filter.value === 'string'
-            ? gte(column, startOfDay(new Date(filter.value)))
-            : undefined;
+        return filter.type === 'number' ? gte(column, filter.value) : filter.type === 'date' && typeof filter.value === 'string' ? gte(column, startOfDay(new Date(filter.value))) : undefined;
       case 'isBetween':
         return filter.type === 'date' && Array.isArray(filter.value) && filter.value.length === 2
           ? and(filter.value[0] ? gte(column, startOfDay(new Date(filter.value[0]))) : undefined, filter.value[1] ? lte(column, endOfDay(new Date(filter.value[1]))) : undefined)

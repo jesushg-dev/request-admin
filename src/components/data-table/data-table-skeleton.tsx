@@ -63,18 +63,7 @@ interface DataTableSkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export function DataTableSkeleton(props: DataTableSkeletonProps) {
-  const {
-    columnCount,
-    rowCount = 10,
-    searchableColumnCount = 0,
-    filterableColumnCount = 0,
-    showViewOptions = true,
-    cellWidths = ['auto'],
-    withPagination = true,
-    shrinkZero = false,
-    className,
-    ...skeletonProps
-  } = props;
+  const { columnCount, rowCount = 10, searchableColumnCount = 0, filterableColumnCount = 0, showViewOptions = true, cellWidths = ['auto'], withPagination = true, shrinkZero = false, className, ...skeletonProps } = props;
 
   return (
     <Shell className="gap-2">

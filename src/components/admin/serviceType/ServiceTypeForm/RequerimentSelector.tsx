@@ -19,8 +19,7 @@ interface CreateRequerimentSelectorProps {
 }
 
 const RequerimentSelector: FC<CreateRequerimentSelectorProps> = ({ goBack, submitForm, defaultValues, requirementsData }) => {
-  let sourceData: RequirementInputs[] =
-    clone(requirementsData?.filter((requirement) => !defaultValues?.some((defVal) => defVal.requirementId === requirement.requirementId))) || [];
+  let sourceData: RequirementInputs[] = clone(requirementsData?.filter((requirement) => !defaultValues?.some((defVal) => defVal.requirementId === requirement.requirementId))) || [];
   let destinationData: RequirementInputs[] = clone(defaultValues) || [];
 
   const handleGoBack = () => {
@@ -37,15 +36,7 @@ const RequerimentSelector: FC<CreateRequerimentSelectorProps> = ({ goBack, submi
     <div className="flex flex-1 flex-col gap-2 p-6">
       <div className="grid flex-1 grid-cols-2 gap-6">
         <div className="h-full w-full">
-          <GridComponent
-            id="Grid"
-            allowPaging={true}
-            dataSource={sourceData}
-            pageSettings={{ pageCount: 1 }}
-            allowRowDragAndDrop={true}
-            rowDropSettings={rowDropSettings}
-            selectionSettings={{ type: 'Multiple' }}
-            height="100%">
+          <GridComponent id="Grid" allowPaging={true} dataSource={sourceData} pageSettings={{ pageCount: 1 }} allowRowDragAndDrop={true} rowDropSettings={rowDropSettings} selectionSettings={{ type: 'Multiple' }} height="100%">
             <ColumnsDirective>
               <ColumnDirective field="name" headerText="Name (Source)" width="100%" textAlign="Left" />
             </ColumnsDirective>

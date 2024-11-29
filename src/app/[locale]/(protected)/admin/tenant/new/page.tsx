@@ -38,22 +38,8 @@ const NewTenantPage: React.FC = () => {
           <Input name="name" type="text" register={register} formState={formState} label={t('inputs.name.label')} placeholder={t('inputs.name.placeholder')} required />
           <Input name="websiteUrl" type="text" register={register} formState={formState} label={t('inputs.websiteUrl.label')} placeholder={t('inputs.websiteUrl.placeholder')} />
           <Input name="description" type="text" register={register} formState={formState} label={t('inputs.description.label')} placeholder={t('inputs.description.placeholder')} />
-          <Input
-            name="secondaryColor"
-            type="text"
-            register={register}
-            formState={formState}
-            label={t('inputs.secondaryColor.label')}
-            placeholder={t('inputs.secondaryColor.placeholder')}
-          />
-          <Input
-            name="contactPhone"
-            type="text"
-            register={register}
-            formState={formState}
-            label={t('inputs.contactPhone.label')}
-            placeholder={t('inputs.contactPhone.placeholder')}
-          />
+          <Input name="secondaryColor" type="text" register={register} formState={formState} label={t('inputs.secondaryColor.label')} placeholder={t('inputs.secondaryColor.placeholder')} />
+          <Input name="contactPhone" type="text" register={register} formState={formState} label={t('inputs.contactPhone.label')} placeholder={t('inputs.contactPhone.placeholder')} />
           <ErrorList formState={formState} />
           <button type="submit" className="flex w-full justify-center rounded bg-primary p-3 font-medium text-white hover:bg-opacity-90">
             {t('createButton')}

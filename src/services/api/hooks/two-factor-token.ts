@@ -16,28 +16,14 @@ type DefaultError = QueryError;
 import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
 import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
 
-export function useCreateTwoFactorToken(
-  options?: Omit<UseMutationOptions<TwoFactorToken | undefined, DefaultError, Prisma.TwoFactorTokenCreateArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useCreateTwoFactorToken(options?: Omit<UseMutationOptions<TwoFactorToken | undefined, DefaultError, Prisma.TwoFactorTokenCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.TwoFactorTokenCreateArgs, DefaultError, TwoFactorToken, true>(
-    'TwoFactorToken',
-    'POST',
-    `${endpoint}/twoFactorToken/create`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.TwoFactorTokenCreateArgs, DefaultError, TwoFactorToken, true>('TwoFactorToken', 'POST', `${endpoint}/twoFactorToken/create`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.TwoFactorTokenCreateArgs>(
       args: Prisma.SelectSubset<T, Prisma.TwoFactorTokenCreateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, TwoFactorToken, Prisma.TwoFactorTokenGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorTokenCreateArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, TwoFactorToken, Prisma.TwoFactorTokenGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorTokenCreateArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, TwoFactorToken, Prisma.TwoFactorTokenGetPayload<T>> | undefined;
     },
@@ -45,19 +31,9 @@ export function useCreateTwoFactorToken(
   return mutation;
 }
 
-export function useCreateManyTwoFactorToken(
-  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.TwoFactorTokenCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useCreateManyTwoFactorToken(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.TwoFactorTokenCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.TwoFactorTokenCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'TwoFactorToken',
-    'POST',
-    `${endpoint}/twoFactorToken/createMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.TwoFactorTokenCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('TwoFactorToken', 'POST', `${endpoint}/twoFactorToken/createMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.TwoFactorTokenCreateManyArgs>(
@@ -70,22 +46,15 @@ export function useCreateManyTwoFactorToken(
   return mutation;
 }
 
-export function useFindManyTwoFactorToken<
-  TArgs extends Prisma.TwoFactorTokenFindManyArgs,
-  TQueryFnData = Array<Prisma.TwoFactorTokenGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorTokenFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindManyTwoFactorToken<TArgs extends Prisma.TwoFactorTokenFindManyArgs, TQueryFnData = Array<Prisma.TwoFactorTokenGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorTokenFindManyArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('TwoFactorToken', `${endpoint}/twoFactorToken/findMany`, args, options, fetch);
 }
 
-export function useInfiniteFindManyTwoFactorToken<
-  TArgs extends Prisma.TwoFactorTokenFindManyArgs,
-  TQueryFnData = Array<Prisma.TwoFactorTokenGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
+export function useInfiniteFindManyTwoFactorToken<TArgs extends Prisma.TwoFactorTokenFindManyArgs, TQueryFnData = Array<Prisma.TwoFactorTokenGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
   args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorTokenFindManyArgs>,
   options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
 ) {
@@ -104,12 +73,7 @@ export function useSuspenseFindManyTwoFactorToken<
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('TwoFactorToken', `${endpoint}/twoFactorToken/findMany`, args, options, fetch);
 }
 
-export function useSuspenseInfiniteFindManyTwoFactorToken<
-  TArgs extends Prisma.TwoFactorTokenFindManyArgs,
-  TQueryFnData = Array<Prisma.TwoFactorTokenGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
+export function useSuspenseInfiniteFindManyTwoFactorToken<TArgs extends Prisma.TwoFactorTokenFindManyArgs, TQueryFnData = Array<Prisma.TwoFactorTokenGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
   args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorTokenFindManyArgs>,
   options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
 ) {
@@ -118,12 +82,10 @@ export function useSuspenseInfiniteFindManyTwoFactorToken<
   return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('TwoFactorToken', `${endpoint}/twoFactorToken/findMany`, args, options, fetch);
 }
 
-export function useFindUniqueTwoFactorToken<
-  TArgs extends Prisma.TwoFactorTokenFindUniqueArgs,
-  TQueryFnData = Prisma.TwoFactorTokenGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.TwoFactorTokenFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindUniqueTwoFactorToken<TArgs extends Prisma.TwoFactorTokenFindUniqueArgs, TQueryFnData = Prisma.TwoFactorTokenGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.TwoFactorTokenFindUniqueArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('TwoFactorToken', `${endpoint}/twoFactorToken/findUnique`, args, options, fetch);
 }
@@ -138,48 +100,30 @@ export function useSuspenseFindUniqueTwoFactorToken<
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('TwoFactorToken', `${endpoint}/twoFactorToken/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstTwoFactorToken<
-  TArgs extends Prisma.TwoFactorTokenFindFirstArgs,
-  TQueryFnData = Prisma.TwoFactorTokenGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorTokenFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindFirstTwoFactorToken<TArgs extends Prisma.TwoFactorTokenFindFirstArgs, TQueryFnData = Prisma.TwoFactorTokenGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorTokenFindFirstArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('TwoFactorToken', `${endpoint}/twoFactorToken/findFirst`, args, options, fetch);
 }
 
-export function useSuspenseFindFirstTwoFactorToken<
-  TArgs extends Prisma.TwoFactorTokenFindFirstArgs,
-  TQueryFnData = Prisma.TwoFactorTokenGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorTokenFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseFindFirstTwoFactorToken<TArgs extends Prisma.TwoFactorTokenFindFirstArgs, TQueryFnData = Prisma.TwoFactorTokenGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorTokenFindFirstArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('TwoFactorToken', `${endpoint}/twoFactorToken/findFirst`, args, options, fetch);
 }
 
-export function useUpdateTwoFactorToken(
-  options?: Omit<UseMutationOptions<TwoFactorToken | undefined, DefaultError, Prisma.TwoFactorTokenUpdateArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useUpdateTwoFactorToken(options?: Omit<UseMutationOptions<TwoFactorToken | undefined, DefaultError, Prisma.TwoFactorTokenUpdateArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.TwoFactorTokenUpdateArgs, DefaultError, TwoFactorToken, true>(
-    'TwoFactorToken',
-    'PUT',
-    `${endpoint}/twoFactorToken/update`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.TwoFactorTokenUpdateArgs, DefaultError, TwoFactorToken, true>('TwoFactorToken', 'PUT', `${endpoint}/twoFactorToken/update`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.TwoFactorTokenUpdateArgs>(
       args: Prisma.SelectSubset<T, Prisma.TwoFactorTokenUpdateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, TwoFactorToken, Prisma.TwoFactorTokenGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorTokenUpdateArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, TwoFactorToken, Prisma.TwoFactorTokenGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorTokenUpdateArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, TwoFactorToken, Prisma.TwoFactorTokenGetPayload<T>> | undefined;
     },
@@ -187,19 +131,9 @@ export function useUpdateTwoFactorToken(
   return mutation;
 }
 
-export function useUpdateManyTwoFactorToken(
-  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.TwoFactorTokenUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useUpdateManyTwoFactorToken(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.TwoFactorTokenUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.TwoFactorTokenUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'TwoFactorToken',
-    'PUT',
-    `${endpoint}/twoFactorToken/updateMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.TwoFactorTokenUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('TwoFactorToken', 'PUT', `${endpoint}/twoFactorToken/updateMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.TwoFactorTokenUpdateManyArgs>(
@@ -212,28 +146,14 @@ export function useUpdateManyTwoFactorToken(
   return mutation;
 }
 
-export function useUpsertTwoFactorToken(
-  options?: Omit<UseMutationOptions<TwoFactorToken | undefined, DefaultError, Prisma.TwoFactorTokenUpsertArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useUpsertTwoFactorToken(options?: Omit<UseMutationOptions<TwoFactorToken | undefined, DefaultError, Prisma.TwoFactorTokenUpsertArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.TwoFactorTokenUpsertArgs, DefaultError, TwoFactorToken, true>(
-    'TwoFactorToken',
-    'POST',
-    `${endpoint}/twoFactorToken/upsert`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.TwoFactorTokenUpsertArgs, DefaultError, TwoFactorToken, true>('TwoFactorToken', 'POST', `${endpoint}/twoFactorToken/upsert`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.TwoFactorTokenUpsertArgs>(
       args: Prisma.SelectSubset<T, Prisma.TwoFactorTokenUpsertArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, TwoFactorToken, Prisma.TwoFactorTokenGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorTokenUpsertArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, TwoFactorToken, Prisma.TwoFactorTokenGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorTokenUpsertArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, TwoFactorToken, Prisma.TwoFactorTokenGetPayload<T>> | undefined;
     },
@@ -241,28 +161,14 @@ export function useUpsertTwoFactorToken(
   return mutation;
 }
 
-export function useDeleteTwoFactorToken(
-  options?: Omit<UseMutationOptions<TwoFactorToken | undefined, DefaultError, Prisma.TwoFactorTokenDeleteArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useDeleteTwoFactorToken(options?: Omit<UseMutationOptions<TwoFactorToken | undefined, DefaultError, Prisma.TwoFactorTokenDeleteArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.TwoFactorTokenDeleteArgs, DefaultError, TwoFactorToken, true>(
-    'TwoFactorToken',
-    'DELETE',
-    `${endpoint}/twoFactorToken/delete`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.TwoFactorTokenDeleteArgs, DefaultError, TwoFactorToken, true>('TwoFactorToken', 'DELETE', `${endpoint}/twoFactorToken/delete`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.TwoFactorTokenDeleteArgs>(
       args: Prisma.SelectSubset<T, Prisma.TwoFactorTokenDeleteArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, TwoFactorToken, Prisma.TwoFactorTokenGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorTokenDeleteArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, TwoFactorToken, Prisma.TwoFactorTokenGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorTokenDeleteArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, TwoFactorToken, Prisma.TwoFactorTokenGetPayload<T>> | undefined;
     },
@@ -270,19 +176,9 @@ export function useDeleteTwoFactorToken(
   return mutation;
 }
 
-export function useDeleteManyTwoFactorToken(
-  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.TwoFactorTokenDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useDeleteManyTwoFactorToken(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.TwoFactorTokenDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.TwoFactorTokenDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'TwoFactorToken',
-    'DELETE',
-    `${endpoint}/twoFactorToken/deleteMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.TwoFactorTokenDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('TwoFactorToken', 'DELETE', `${endpoint}/twoFactorToken/deleteMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.TwoFactorTokenDeleteManyArgs>(
@@ -295,22 +191,18 @@ export function useDeleteManyTwoFactorToken(
   return mutation;
 }
 
-export function useAggregateTwoFactorToken<
-  TArgs extends Prisma.TwoFactorTokenAggregateArgs,
-  TQueryFnData = Prisma.GetTwoFactorTokenAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.TwoFactorTokenAggregateArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useAggregateTwoFactorToken<TArgs extends Prisma.TwoFactorTokenAggregateArgs, TQueryFnData = Prisma.GetTwoFactorTokenAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.TwoFactorTokenAggregateArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('TwoFactorToken', `${endpoint}/twoFactorToken/aggregate`, args, options, fetch);
 }
 
-export function useSuspenseAggregateTwoFactorToken<
-  TArgs extends Prisma.TwoFactorTokenAggregateArgs,
-  TQueryFnData = Prisma.GetTwoFactorTokenAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.TwoFactorTokenAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseAggregateTwoFactorToken<TArgs extends Prisma.TwoFactorTokenAggregateArgs, TQueryFnData = Prisma.GetTwoFactorTokenAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.TwoFactorTokenAggregateArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('TwoFactorToken', `${endpoint}/twoFactorToken/aggregate`, args, options, fetch);
 }
@@ -329,11 +221,7 @@ export function useGroupByTwoFactorToken<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -369,10 +257,7 @@ export function useGroupByTwoFactorToken<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.TwoFactorTokenGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.TwoFactorTokenGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('TwoFactorToken', `${endpoint}/twoFactorToken/groupBy`, args, options, fetch);
 }
@@ -391,11 +276,7 @@ export function useSuspenseGroupByTwoFactorToken<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -441,11 +322,7 @@ export function useSuspenseGroupByTwoFactorToken<
 
 export function useCountTwoFactorToken<
   TArgs extends Prisma.TwoFactorTokenCountArgs,
-  TQueryFnData = TArgs extends { select: any }
-    ? TArgs['select'] extends true
-      ? number
-      : Prisma.GetScalarType<TArgs['select'], Prisma.TwoFactorTokenCountAggregateOutputType>
-    : number,
+  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.TwoFactorTokenCountAggregateOutputType>) : number,
   TData = TQueryFnData,
   TError = DefaultError,
 >(args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorTokenCountArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
@@ -455,11 +332,7 @@ export function useCountTwoFactorToken<
 
 export function useSuspenseCountTwoFactorToken<
   TArgs extends Prisma.TwoFactorTokenCountArgs,
-  TQueryFnData = TArgs extends { select: any }
-    ? TArgs['select'] extends true
-      ? number
-      : Prisma.GetScalarType<TArgs['select'], Prisma.TwoFactorTokenCountAggregateOutputType>
-    : number,
+  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.TwoFactorTokenCountAggregateOutputType>) : number,
   TData = TQueryFnData,
   TError = DefaultError,
 >(args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorTokenCountArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {

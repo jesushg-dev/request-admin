@@ -16,23 +16,17 @@ export default function createRouter() {
   return createTRPCRouter({
     aggregate: procedure.input($Schema.TwoFactorTokenInputSchema.aggregate).query(({ ctx, input }) => checkRead(db(ctx).twoFactorToken.aggregate(input as any))),
 
-    createMany: procedure
-      .input($Schema.TwoFactorTokenInputSchema.createMany.optional())
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).twoFactorToken.createMany(input as any))),
+    createMany: procedure.input($Schema.TwoFactorTokenInputSchema.createMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).twoFactorToken.createMany(input as any))),
 
     create: procedure.input($Schema.TwoFactorTokenInputSchema.create).mutation(async ({ ctx, input }) => checkMutate(db(ctx).twoFactorToken.create(input as any))),
 
-    deleteMany: procedure
-      .input($Schema.TwoFactorTokenInputSchema.deleteMany.optional())
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).twoFactorToken.deleteMany(input as any))),
+    deleteMany: procedure.input($Schema.TwoFactorTokenInputSchema.deleteMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).twoFactorToken.deleteMany(input as any))),
 
     delete: procedure.input($Schema.TwoFactorTokenInputSchema.delete).mutation(async ({ ctx, input }) => checkMutate(db(ctx).twoFactorToken.delete(input as any))),
 
     findFirst: procedure.input($Schema.TwoFactorTokenInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).twoFactorToken.findFirst(input as any))),
 
-    findFirstOrThrow: procedure
-      .input($Schema.TwoFactorTokenInputSchema.findFirst.optional())
-      .query(({ ctx, input }) => checkRead(db(ctx).twoFactorToken.findFirstOrThrow(input as any))),
+    findFirstOrThrow: procedure.input($Schema.TwoFactorTokenInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).twoFactorToken.findFirstOrThrow(input as any))),
 
     findMany: procedure.input($Schema.TwoFactorTokenInputSchema.findMany.optional()).query(({ ctx, input }) => checkRead(db(ctx).twoFactorToken.findMany(input as any))),
 

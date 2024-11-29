@@ -16,23 +16,17 @@ export default function createRouter() {
   return createTRPCRouter({
     aggregate: procedure.input($Schema.RolePermissionInputSchema.aggregate).query(({ ctx, input }) => checkRead(db(ctx).rolePermission.aggregate(input as any))),
 
-    createMany: procedure
-      .input($Schema.RolePermissionInputSchema.createMany.optional())
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).rolePermission.createMany(input as any))),
+    createMany: procedure.input($Schema.RolePermissionInputSchema.createMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).rolePermission.createMany(input as any))),
 
     create: procedure.input($Schema.RolePermissionInputSchema.create).mutation(async ({ ctx, input }) => checkMutate(db(ctx).rolePermission.create(input as any))),
 
-    deleteMany: procedure
-      .input($Schema.RolePermissionInputSchema.deleteMany.optional())
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).rolePermission.deleteMany(input as any))),
+    deleteMany: procedure.input($Schema.RolePermissionInputSchema.deleteMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).rolePermission.deleteMany(input as any))),
 
     delete: procedure.input($Schema.RolePermissionInputSchema.delete).mutation(async ({ ctx, input }) => checkMutate(db(ctx).rolePermission.delete(input as any))),
 
     findFirst: procedure.input($Schema.RolePermissionInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).rolePermission.findFirst(input as any))),
 
-    findFirstOrThrow: procedure
-      .input($Schema.RolePermissionInputSchema.findFirst.optional())
-      .query(({ ctx, input }) => checkRead(db(ctx).rolePermission.findFirstOrThrow(input as any))),
+    findFirstOrThrow: procedure.input($Schema.RolePermissionInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).rolePermission.findFirstOrThrow(input as any))),
 
     findMany: procedure.input($Schema.RolePermissionInputSchema.findMany.optional()).query(({ ctx, input }) => checkRead(db(ctx).rolePermission.findMany(input as any))),
 

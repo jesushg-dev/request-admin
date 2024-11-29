@@ -31,13 +31,7 @@ export function DataTableColumnHeader<TData, TValue>({ column, title, className 
           else if (value === hideValue) column.toggleVisibility(false);
         }}>
         <SelectTrigger
-          aria-label={
-            column.getIsSorted() === 'desc'
-              ? 'Sorted descending. Click to sort ascending.'
-              : column.getIsSorted() === 'asc'
-                ? 'Sorted ascending. Click to sort descending.'
-                : 'Not sorted. Click to sort ascending.'
-          }
+          aria-label={column.getIsSorted() === 'desc' ? 'Sorted descending. Click to sort ascending.' : column.getIsSorted() === 'asc' ? 'Sorted ascending. Click to sort descending.' : 'Not sorted. Click to sort ascending.'}
           className="-ml-3 h-8 w-fit border-none text-xs hover:bg-accent hover:text-accent-foreground data-[state=open]:bg-accent [&>svg:last-child]:hidden">
           {title}
           <SelectIcon asChild>

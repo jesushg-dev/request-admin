@@ -26,16 +26,51 @@
     "template": "node ./.templates/config.js && prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\" --cache"
   },
   "prettier": {
-    "plugins": [
-      "prettier-plugin-tailwindcss"
-    ],
-    "trailingComma": "es5",
-    "tabWidth": 2,
+    "endOfLine": "lf",
     "semi": true,
     "singleQuote": true,
-    "printWidth": 180,
+    "tabWidth": 2,
+    "trailingComma": "es5",
     "bracketSpacing": true,
-    "bracketSameLine": true
+    "bracketSameLine": true,
+    "importOrder": [
+      "^(react/(.*)$)|^(react$)",
+      "^(next/(.*)$)|^(next$)",
+      "<THIRD_PARTY_MODULES>",
+      "",
+      "^types$",
+      "^@/types/(.*)$",
+      "^@/config/(.*)$",
+      "^@/lib/(.*)$",
+      "^@/hooks/(.*)$",
+      "^@/components/ui/(.*)$",
+      "^@/components/(.*)$",
+      "^@/styles/(.*)$",
+      "^@/app/(.*)$",
+      "",
+      "^[./]"
+    ],
+    "importOrderSeparation": false,
+    "importOrderSortSpecifiers": true,
+    "importOrderBuiltinModulesToTop": true,
+    "importOrderParserPlugins": [
+      "typescript",
+      "jsx",
+      "decorators-legacy"
+    ],
+    "importOrderMergeDuplicateImports": true,
+    "importOrderCombineTypeAndValueImports": true,
+    "tailwindAttributes": [
+      "tw"
+    ],
+    "tailwindFunctions": [
+      "cva"
+    ],
+    "plugins": [
+      "@ianvs/prettier-plugin-sort-imports",
+      "prettier-plugin-tailwindcss"
+    ],
+    "printWidth": 200
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -155,6 +190,7 @@
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.15.0",
     "@hookform/devtools": "^4.3.1",
+    "@ianvs/prettier-plugin-sort-imports": "^4.4.0",
     "@jest/globals": "^29.7.0",
     "@next/eslint-plugin-next": "^15.0.3",
     "@playwright/test": "^1.49.0",

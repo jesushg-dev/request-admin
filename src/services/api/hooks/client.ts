@@ -23,10 +23,7 @@ export function useCreateClient(options?: Omit<UseMutationOptions<Client | undef
     ..._mutation,
     mutateAsync: async <T extends Prisma.ClientCreateArgs>(
       args: Prisma.SelectSubset<T, Prisma.ClientCreateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Client, Prisma.ClientGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ClientCreateArgs>> & ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Client, Prisma.ClientGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ClientCreateArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Client, Prisma.ClientGetPayload<T>> | undefined;
     },
@@ -36,15 +33,7 @@ export function useCreateClient(options?: Omit<UseMutationOptions<Client | undef
 
 export function useCreateManyClient(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.ClientCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.ClientCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'Client',
-    'POST',
-    `${endpoint}/client/createMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.ClientCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('Client', 'POST', `${endpoint}/client/createMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.ClientCreateManyArgs>(
@@ -57,22 +46,15 @@ export function useCreateManyClient(options?: Omit<UseMutationOptions<Prisma.Bat
   return mutation;
 }
 
-export function useFindManyClient<
-  TArgs extends Prisma.ClientFindManyArgs,
-  TQueryFnData = Array<Prisma.ClientGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.ClientFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindManyClient<TArgs extends Prisma.ClientFindManyArgs, TQueryFnData = Array<Prisma.ClientGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.ClientFindManyArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Client', `${endpoint}/client/findMany`, args, options, fetch);
 }
 
-export function useInfiniteFindManyClient<
-  TArgs extends Prisma.ClientFindManyArgs,
-  TQueryFnData = Array<Prisma.ClientGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
+export function useInfiniteFindManyClient<TArgs extends Prisma.ClientFindManyArgs, TQueryFnData = Array<Prisma.ClientGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
   args?: Prisma.SelectSubset<TArgs, Prisma.ClientFindManyArgs>,
   options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
 ) {
@@ -81,22 +63,15 @@ export function useInfiniteFindManyClient<
   return useInfiniteModelQuery<TQueryFnData, TData, TError>('Client', `${endpoint}/client/findMany`, args, options, fetch);
 }
 
-export function useSuspenseFindManyClient<
-  TArgs extends Prisma.ClientFindManyArgs,
-  TQueryFnData = Array<Prisma.ClientGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.ClientFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseFindManyClient<TArgs extends Prisma.ClientFindManyArgs, TQueryFnData = Array<Prisma.ClientGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.ClientFindManyArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Client', `${endpoint}/client/findMany`, args, options, fetch);
 }
 
-export function useSuspenseInfiniteFindManyClient<
-  TArgs extends Prisma.ClientFindManyArgs,
-  TQueryFnData = Array<Prisma.ClientGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
+export function useSuspenseInfiniteFindManyClient<TArgs extends Prisma.ClientFindManyArgs, TQueryFnData = Array<Prisma.ClientGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
   args?: Prisma.SelectSubset<TArgs, Prisma.ClientFindManyArgs>,
   options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
 ) {
@@ -105,42 +80,34 @@ export function useSuspenseInfiniteFindManyClient<
   return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('Client', `${endpoint}/client/findMany`, args, options, fetch);
 }
 
-export function useFindUniqueClient<
-  TArgs extends Prisma.ClientFindUniqueArgs,
-  TQueryFnData = Prisma.ClientGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.ClientFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindUniqueClient<TArgs extends Prisma.ClientFindUniqueArgs, TQueryFnData = Prisma.ClientGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.ClientFindUniqueArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Client', `${endpoint}/client/findUnique`, args, options, fetch);
 }
 
-export function useSuspenseFindUniqueClient<
-  TArgs extends Prisma.ClientFindUniqueArgs,
-  TQueryFnData = Prisma.ClientGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.ClientFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseFindUniqueClient<TArgs extends Prisma.ClientFindUniqueArgs, TQueryFnData = Prisma.ClientGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.ClientFindUniqueArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Client', `${endpoint}/client/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstClient<
-  TArgs extends Prisma.ClientFindFirstArgs,
-  TQueryFnData = Prisma.ClientGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.ClientFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindFirstClient<TArgs extends Prisma.ClientFindFirstArgs, TQueryFnData = Prisma.ClientGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.ClientFindFirstArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Client', `${endpoint}/client/findFirst`, args, options, fetch);
 }
 
-export function useSuspenseFindFirstClient<
-  TArgs extends Prisma.ClientFindFirstArgs,
-  TQueryFnData = Prisma.ClientGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.ClientFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseFindFirstClient<TArgs extends Prisma.ClientFindFirstArgs, TQueryFnData = Prisma.ClientGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.ClientFindFirstArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Client', `${endpoint}/client/findFirst`, args, options, fetch);
 }
@@ -152,10 +119,7 @@ export function useUpdateClient(options?: Omit<UseMutationOptions<Client | undef
     ..._mutation,
     mutateAsync: async <T extends Prisma.ClientUpdateArgs>(
       args: Prisma.SelectSubset<T, Prisma.ClientUpdateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Client, Prisma.ClientGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ClientUpdateArgs>> & ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Client, Prisma.ClientGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ClientUpdateArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Client, Prisma.ClientGetPayload<T>> | undefined;
     },
@@ -165,15 +129,7 @@ export function useUpdateClient(options?: Omit<UseMutationOptions<Client | undef
 
 export function useUpdateManyClient(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.ClientUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.ClientUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'Client',
-    'PUT',
-    `${endpoint}/client/updateMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.ClientUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('Client', 'PUT', `${endpoint}/client/updateMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.ClientUpdateManyArgs>(
@@ -193,10 +149,7 @@ export function useUpsertClient(options?: Omit<UseMutationOptions<Client | undef
     ..._mutation,
     mutateAsync: async <T extends Prisma.ClientUpsertArgs>(
       args: Prisma.SelectSubset<T, Prisma.ClientUpsertArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Client, Prisma.ClientGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ClientUpsertArgs>> & ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Client, Prisma.ClientGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ClientUpsertArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Client, Prisma.ClientGetPayload<T>> | undefined;
     },
@@ -211,10 +164,7 @@ export function useDeleteClient(options?: Omit<UseMutationOptions<Client | undef
     ..._mutation,
     mutateAsync: async <T extends Prisma.ClientDeleteArgs>(
       args: Prisma.SelectSubset<T, Prisma.ClientDeleteArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Client, Prisma.ClientGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ClientDeleteArgs>> & ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Client, Prisma.ClientGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ClientDeleteArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Client, Prisma.ClientGetPayload<T>> | undefined;
     },
@@ -224,15 +174,7 @@ export function useDeleteClient(options?: Omit<UseMutationOptions<Client | undef
 
 export function useDeleteManyClient(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.ClientDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.ClientDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'Client',
-    'DELETE',
-    `${endpoint}/client/deleteMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.ClientDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('Client', 'DELETE', `${endpoint}/client/deleteMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.ClientDeleteManyArgs>(
@@ -253,12 +195,10 @@ export function useAggregateClient<TArgs extends Prisma.ClientAggregateArgs, TQu
   return useModelQuery<TQueryFnData, TData, TError>('Client', `${endpoint}/client/aggregate`, args, options, fetch);
 }
 
-export function useSuspenseAggregateClient<
-  TArgs extends Prisma.ClientAggregateArgs,
-  TQueryFnData = Prisma.GetClientAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.ClientAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseAggregateClient<TArgs extends Prisma.ClientAggregateArgs, TQueryFnData = Prisma.GetClientAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.ClientAggregateArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Client', `${endpoint}/client/aggregate`, args, options, fetch);
 }
@@ -277,11 +217,7 @@ export function useGroupByClient<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -317,10 +253,7 @@ export function useGroupByClient<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.ClientGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.ClientGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Client', `${endpoint}/client/groupBy`, args, options, fetch);
 }
@@ -339,11 +272,7 @@ export function useSuspenseGroupByClient<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -379,10 +308,7 @@ export function useSuspenseGroupByClient<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.ClientGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.ClientGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Client', `${endpoint}/client/groupBy`, args, options, fetch);
 }
@@ -410,19 +336,7 @@ export function useSuspenseCountClient<
 export function useCheckClient<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
-    where?: {
-      createdBy?: string;
-      modifiedBy?: string;
-      tenantId?: string;
-      id?: string;
-      name?: string;
-      email?: string;
-      identificationNumber?: string;
-      corporateName?: string;
-      occupation?: string;
-      phone?: string;
-      personId?: string;
-    };
+    where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; name?: string; email?: string; identificationNumber?: string; corporateName?: string; occupation?: string; phone?: string; personId?: string };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {

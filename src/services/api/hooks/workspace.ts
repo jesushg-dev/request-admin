@@ -18,24 +18,12 @@ import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@
 
 export function useCreateWorkspace(options?: Omit<UseMutationOptions<Workspace | undefined, DefaultError, Prisma.WorkspaceCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.WorkspaceCreateArgs, DefaultError, Workspace, true>(
-    'Workspace',
-    'POST',
-    `${endpoint}/workspace/create`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.WorkspaceCreateArgs, DefaultError, Workspace, true>('Workspace', 'POST', `${endpoint}/workspace/create`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.WorkspaceCreateArgs>(
       args: Prisma.SelectSubset<T, Prisma.WorkspaceCreateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Workspace, Prisma.WorkspaceGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.WorkspaceCreateArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Workspace, Prisma.WorkspaceGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.WorkspaceCreateArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Workspace, Prisma.WorkspaceGetPayload<T>> | undefined;
     },
@@ -45,15 +33,7 @@ export function useCreateWorkspace(options?: Omit<UseMutationOptions<Workspace |
 
 export function useCreateManyWorkspace(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.WorkspaceCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.WorkspaceCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'Workspace',
-    'POST',
-    `${endpoint}/workspace/createMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.WorkspaceCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('Workspace', 'POST', `${endpoint}/workspace/createMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.WorkspaceCreateManyArgs>(
@@ -66,22 +46,15 @@ export function useCreateManyWorkspace(options?: Omit<UseMutationOptions<Prisma.
   return mutation;
 }
 
-export function useFindManyWorkspace<
-  TArgs extends Prisma.WorkspaceFindManyArgs,
-  TQueryFnData = Array<Prisma.WorkspaceGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.WorkspaceFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindManyWorkspace<TArgs extends Prisma.WorkspaceFindManyArgs, TQueryFnData = Array<Prisma.WorkspaceGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.WorkspaceFindManyArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Workspace', `${endpoint}/workspace/findMany`, args, options, fetch);
 }
 
-export function useInfiniteFindManyWorkspace<
-  TArgs extends Prisma.WorkspaceFindManyArgs,
-  TQueryFnData = Array<Prisma.WorkspaceGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
+export function useInfiniteFindManyWorkspace<TArgs extends Prisma.WorkspaceFindManyArgs, TQueryFnData = Array<Prisma.WorkspaceGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
   args?: Prisma.SelectSubset<TArgs, Prisma.WorkspaceFindManyArgs>,
   options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
 ) {
@@ -90,22 +63,15 @@ export function useInfiniteFindManyWorkspace<
   return useInfiniteModelQuery<TQueryFnData, TData, TError>('Workspace', `${endpoint}/workspace/findMany`, args, options, fetch);
 }
 
-export function useSuspenseFindManyWorkspace<
-  TArgs extends Prisma.WorkspaceFindManyArgs,
-  TQueryFnData = Array<Prisma.WorkspaceGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.WorkspaceFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseFindManyWorkspace<TArgs extends Prisma.WorkspaceFindManyArgs, TQueryFnData = Array<Prisma.WorkspaceGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.WorkspaceFindManyArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Workspace', `${endpoint}/workspace/findMany`, args, options, fetch);
 }
 
-export function useSuspenseInfiniteFindManyWorkspace<
-  TArgs extends Prisma.WorkspaceFindManyArgs,
-  TQueryFnData = Array<Prisma.WorkspaceGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
+export function useSuspenseInfiniteFindManyWorkspace<TArgs extends Prisma.WorkspaceFindManyArgs, TQueryFnData = Array<Prisma.WorkspaceGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
   args?: Prisma.SelectSubset<TArgs, Prisma.WorkspaceFindManyArgs>,
   options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
 ) {
@@ -114,42 +80,34 @@ export function useSuspenseInfiniteFindManyWorkspace<
   return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('Workspace', `${endpoint}/workspace/findMany`, args, options, fetch);
 }
 
-export function useFindUniqueWorkspace<
-  TArgs extends Prisma.WorkspaceFindUniqueArgs,
-  TQueryFnData = Prisma.WorkspaceGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.WorkspaceFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindUniqueWorkspace<TArgs extends Prisma.WorkspaceFindUniqueArgs, TQueryFnData = Prisma.WorkspaceGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.WorkspaceFindUniqueArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Workspace', `${endpoint}/workspace/findUnique`, args, options, fetch);
 }
 
-export function useSuspenseFindUniqueWorkspace<
-  TArgs extends Prisma.WorkspaceFindUniqueArgs,
-  TQueryFnData = Prisma.WorkspaceGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.WorkspaceFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseFindUniqueWorkspace<TArgs extends Prisma.WorkspaceFindUniqueArgs, TQueryFnData = Prisma.WorkspaceGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.WorkspaceFindUniqueArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Workspace', `${endpoint}/workspace/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstWorkspace<
-  TArgs extends Prisma.WorkspaceFindFirstArgs,
-  TQueryFnData = Prisma.WorkspaceGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.WorkspaceFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindFirstWorkspace<TArgs extends Prisma.WorkspaceFindFirstArgs, TQueryFnData = Prisma.WorkspaceGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.WorkspaceFindFirstArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Workspace', `${endpoint}/workspace/findFirst`, args, options, fetch);
 }
 
-export function useSuspenseFindFirstWorkspace<
-  TArgs extends Prisma.WorkspaceFindFirstArgs,
-  TQueryFnData = Prisma.WorkspaceGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.WorkspaceFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseFindFirstWorkspace<TArgs extends Prisma.WorkspaceFindFirstArgs, TQueryFnData = Prisma.WorkspaceGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.WorkspaceFindFirstArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Workspace', `${endpoint}/workspace/findFirst`, args, options, fetch);
 }
@@ -161,11 +119,7 @@ export function useUpdateWorkspace(options?: Omit<UseMutationOptions<Workspace |
     ..._mutation,
     mutateAsync: async <T extends Prisma.WorkspaceUpdateArgs>(
       args: Prisma.SelectSubset<T, Prisma.WorkspaceUpdateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Workspace, Prisma.WorkspaceGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.WorkspaceUpdateArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Workspace, Prisma.WorkspaceGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.WorkspaceUpdateArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Workspace, Prisma.WorkspaceGetPayload<T>> | undefined;
     },
@@ -175,15 +129,7 @@ export function useUpdateWorkspace(options?: Omit<UseMutationOptions<Workspace |
 
 export function useUpdateManyWorkspace(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.WorkspaceUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.WorkspaceUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'Workspace',
-    'PUT',
-    `${endpoint}/workspace/updateMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.WorkspaceUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('Workspace', 'PUT', `${endpoint}/workspace/updateMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.WorkspaceUpdateManyArgs>(
@@ -198,24 +144,12 @@ export function useUpdateManyWorkspace(options?: Omit<UseMutationOptions<Prisma.
 
 export function useUpsertWorkspace(options?: Omit<UseMutationOptions<Workspace | undefined, DefaultError, Prisma.WorkspaceUpsertArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.WorkspaceUpsertArgs, DefaultError, Workspace, true>(
-    'Workspace',
-    'POST',
-    `${endpoint}/workspace/upsert`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.WorkspaceUpsertArgs, DefaultError, Workspace, true>('Workspace', 'POST', `${endpoint}/workspace/upsert`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.WorkspaceUpsertArgs>(
       args: Prisma.SelectSubset<T, Prisma.WorkspaceUpsertArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Workspace, Prisma.WorkspaceGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.WorkspaceUpsertArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Workspace, Prisma.WorkspaceGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.WorkspaceUpsertArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Workspace, Prisma.WorkspaceGetPayload<T>> | undefined;
     },
@@ -225,24 +159,12 @@ export function useUpsertWorkspace(options?: Omit<UseMutationOptions<Workspace |
 
 export function useDeleteWorkspace(options?: Omit<UseMutationOptions<Workspace | undefined, DefaultError, Prisma.WorkspaceDeleteArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.WorkspaceDeleteArgs, DefaultError, Workspace, true>(
-    'Workspace',
-    'DELETE',
-    `${endpoint}/workspace/delete`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.WorkspaceDeleteArgs, DefaultError, Workspace, true>('Workspace', 'DELETE', `${endpoint}/workspace/delete`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.WorkspaceDeleteArgs>(
       args: Prisma.SelectSubset<T, Prisma.WorkspaceDeleteArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Workspace, Prisma.WorkspaceGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.WorkspaceDeleteArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Workspace, Prisma.WorkspaceGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.WorkspaceDeleteArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Workspace, Prisma.WorkspaceGetPayload<T>> | undefined;
     },
@@ -252,15 +174,7 @@ export function useDeleteWorkspace(options?: Omit<UseMutationOptions<Workspace |
 
 export function useDeleteManyWorkspace(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.WorkspaceDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.WorkspaceDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'Workspace',
-    'DELETE',
-    `${endpoint}/workspace/deleteMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.WorkspaceDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('Workspace', 'DELETE', `${endpoint}/workspace/deleteMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.WorkspaceDeleteManyArgs>(
@@ -273,22 +187,18 @@ export function useDeleteManyWorkspace(options?: Omit<UseMutationOptions<Prisma.
   return mutation;
 }
 
-export function useAggregateWorkspace<
-  TArgs extends Prisma.WorkspaceAggregateArgs,
-  TQueryFnData = Prisma.GetWorkspaceAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.WorkspaceAggregateArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useAggregateWorkspace<TArgs extends Prisma.WorkspaceAggregateArgs, TQueryFnData = Prisma.GetWorkspaceAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.WorkspaceAggregateArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Workspace', `${endpoint}/workspace/aggregate`, args, options, fetch);
 }
 
-export function useSuspenseAggregateWorkspace<
-  TArgs extends Prisma.WorkspaceAggregateArgs,
-  TQueryFnData = Prisma.GetWorkspaceAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.WorkspaceAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseAggregateWorkspace<TArgs extends Prisma.WorkspaceAggregateArgs, TQueryFnData = Prisma.GetWorkspaceAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.WorkspaceAggregateArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Workspace', `${endpoint}/workspace/aggregate`, args, options, fetch);
 }
@@ -307,11 +217,7 @@ export function useGroupByWorkspace<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -347,10 +253,7 @@ export function useGroupByWorkspace<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.WorkspaceGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.WorkspaceGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Workspace', `${endpoint}/workspace/groupBy`, args, options, fetch);
 }
@@ -369,11 +272,7 @@ export function useSuspenseGroupByWorkspace<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -409,10 +308,7 @@ export function useSuspenseGroupByWorkspace<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.WorkspaceGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.WorkspaceGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Workspace', `${endpoint}/workspace/groupBy`, args, options, fetch);
 }

@@ -56,16 +56,7 @@ interface DateRangePickerProps extends React.ComponentPropsWithoutRef<typeof Pop
   shallow?: boolean;
 }
 
-export function DateRangePicker({
-  defaultDateRange,
-  placeholder = 'Pick a date',
-  triggerVariant = 'outline',
-  triggerSize = 'default',
-  triggerClassName,
-  shallow = true,
-  className,
-  ...props
-}: DateRangePickerProps) {
+export function DateRangePicker({ defaultDateRange, placeholder = 'Pick a date', triggerVariant = 'outline', triggerSize = 'default', triggerClassName, shallow = true, className, ...props }: DateRangePickerProps) {
   const [dateParams, setDateParams] = useQueryStates(
     {
       from: parseAsString.withDefault(defaultDateRange?.from?.toISOString() ?? ''),
@@ -94,10 +85,7 @@ export function DateRangePicker({
     <div className="grid gap-2">
       <Popover>
         <PopoverTrigger asChild>
-          <Button
-            variant={triggerVariant}
-            size={triggerSize}
-            className={cn('w-full justify-start gap-2 truncate text-left font-normal', !date && 'text-muted-foreground', triggerClassName)}>
+          <Button variant={triggerVariant} size={triggerSize} className={cn('w-full justify-start gap-2 truncate text-left font-normal', !date && 'text-muted-foreground', triggerClassName)}>
             <CalendarIcon className="size-4" />
             {date?.from ? (
               date.to ? (

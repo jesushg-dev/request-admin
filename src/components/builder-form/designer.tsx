@@ -112,10 +112,7 @@ function Designer() {
         }}>
         <div
           ref={droppable.setNodeRef}
-          className={cn(
-            'm-auto flex h-full max-w-[920px] flex-1 flex-grow flex-col items-center justify-start overflow-y-auto rounded-xl bg-background',
-            droppable.isOver && 'ring-4 ring-inset ring-primary'
-          )}>
+          className={cn('m-auto flex h-full max-w-[920px] flex-1 flex-grow flex-col items-center justify-start overflow-y-auto rounded-xl bg-background', droppable.isOver && 'ring-4 ring-inset ring-primary')}>
           {!droppable.isOver && elements.length === 0 && <p className="flex flex-grow items-center text-3xl font-bold text-muted-foreground">Drop here</p>}
 
           {droppable.isOver && elements.length === 0 && (

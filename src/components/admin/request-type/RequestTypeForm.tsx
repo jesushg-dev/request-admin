@@ -25,27 +25,8 @@ const requestTypeForm: FC<requestTypeFormProps> = ({ defaultValues, submitForm }
       <form onSubmit={handleSubmit(submitForm)} className="flex flex-col gap-4 p-6">
         <div className="grid grid-cols-2 gap-4">
           <Input name="name" type="text" register={register} formState={formState} label="Name" placeholder="Enter Name" maxLength={50} required />
-          <Select
-            options={areas}
-            getOptionLabel={(option) => option.name}
-            getOptionValue={(option) => option.areaId}
-            name="area"
-            control={control}
-            formState={formState}
-            label="Area"
-            placeholder="Enter Area ID"
-            required
-          />
-          <Textarea
-            name="description"
-            containerClassName="col-span-2"
-            rows={5}
-            register={register}
-            formState={formState}
-            label="Description"
-            placeholder="Enter Description"
-            maxLength={255}
-          />
+          <Select options={areas} getOptionLabel={(option) => option.name} getOptionValue={(option) => option.areaId} name="area" control={control} formState={formState} label="Area" placeholder="Enter Area ID" required />
+          <Textarea name="description" containerClassName="col-span-2" rows={5} register={register} formState={formState} label="Description" placeholder="Enter Description" maxLength={255} />
           <Input name="state" type="checkbox" register={register} formState={formState} label="State" />
         </div>
         <ErrorList formState={formState} />

@@ -4,22 +4,7 @@ import { MdSubject } from 'react-icons/md';
 import { createElement } from '@syncfusion/ej2-base';
 import { FileManager } from '@syncfusion/ej2-react-richtexteditor';
 import { addClass, removeClass, Browser } from '@syncfusion/ej2-base';
-import {
-  RichTextEditorComponent,
-  Toolbar,
-  Inject,
-  Image,
-  Link,
-  HtmlEditor,
-  Count,
-  QuickToolbar,
-  Table,
-  EmojiPicker,
-  Video,
-  Audio,
-  FormatPainter,
-  PasteCleanup,
-} from '@syncfusion/ej2-react-richtexteditor';
+import { RichTextEditorComponent, Toolbar, Inject, Image, Link, HtmlEditor, Count, QuickToolbar, Table, EmojiPicker, Video, Audio, FormatPainter, PasteCleanup } from '@syncfusion/ej2-react-richtexteditor';
 
 import { Input, ErrorList } from '@/components/form';
 import Scrollable from '@/components/Scrollable';

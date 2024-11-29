@@ -50,18 +50,7 @@ export const styleElements = {
   },
 } satisfies StyleElementsType;
 
-export type ElementsType =
-  | 'TextField'
-  | 'TitleField'
-  | 'SubTitleField'
-  | 'ParagraphField'
-  | 'SeparatorField'
-  | 'SpacerField'
-  | 'NumberField'
-  | 'TextAreaField'
-  | 'DateField'
-  | 'SelectField'
-  | 'CheckboxField';
+export type ElementsType = 'TextField' | 'TitleField' | 'SubTitleField' | 'ParagraphField' | 'SeparatorField' | 'SpacerField' | 'NumberField' | 'TextAreaField' | 'DateField' | 'SelectField' | 'CheckboxField';
 
 export type SubmitFunction = (key: string, value: string) => void;
 

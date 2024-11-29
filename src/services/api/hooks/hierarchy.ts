@@ -18,24 +18,12 @@ import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@
 
 export function useCreateHierarchy(options?: Omit<UseMutationOptions<Hierarchy | undefined, DefaultError, Prisma.HierarchyCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.HierarchyCreateArgs, DefaultError, Hierarchy, true>(
-    'Hierarchy',
-    'POST',
-    `${endpoint}/hierarchy/create`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.HierarchyCreateArgs, DefaultError, Hierarchy, true>('Hierarchy', 'POST', `${endpoint}/hierarchy/create`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.HierarchyCreateArgs>(
       args: Prisma.SelectSubset<T, Prisma.HierarchyCreateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Hierarchy, Prisma.HierarchyGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.HierarchyCreateArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Hierarchy, Prisma.HierarchyGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.HierarchyCreateArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Hierarchy, Prisma.HierarchyGetPayload<T>> | undefined;
     },
@@ -45,15 +33,7 @@ export function useCreateHierarchy(options?: Omit<UseMutationOptions<Hierarchy |
 
 export function useCreateManyHierarchy(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.HierarchyCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.HierarchyCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'Hierarchy',
-    'POST',
-    `${endpoint}/hierarchy/createMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.HierarchyCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('Hierarchy', 'POST', `${endpoint}/hierarchy/createMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.HierarchyCreateManyArgs>(
@@ -66,22 +46,15 @@ export function useCreateManyHierarchy(options?: Omit<UseMutationOptions<Prisma.
   return mutation;
 }
 
-export function useFindManyHierarchy<
-  TArgs extends Prisma.HierarchyFindManyArgs,
-  TQueryFnData = Array<Prisma.HierarchyGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.HierarchyFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindManyHierarchy<TArgs extends Prisma.HierarchyFindManyArgs, TQueryFnData = Array<Prisma.HierarchyGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.HierarchyFindManyArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Hierarchy', `${endpoint}/hierarchy/findMany`, args, options, fetch);
 }
 
-export function useInfiniteFindManyHierarchy<
-  TArgs extends Prisma.HierarchyFindManyArgs,
-  TQueryFnData = Array<Prisma.HierarchyGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
+export function useInfiniteFindManyHierarchy<TArgs extends Prisma.HierarchyFindManyArgs, TQueryFnData = Array<Prisma.HierarchyGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
   args?: Prisma.SelectSubset<TArgs, Prisma.HierarchyFindManyArgs>,
   options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
 ) {
@@ -90,22 +63,15 @@ export function useInfiniteFindManyHierarchy<
   return useInfiniteModelQuery<TQueryFnData, TData, TError>('Hierarchy', `${endpoint}/hierarchy/findMany`, args, options, fetch);
 }
 
-export function useSuspenseFindManyHierarchy<
-  TArgs extends Prisma.HierarchyFindManyArgs,
-  TQueryFnData = Array<Prisma.HierarchyGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.HierarchyFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseFindManyHierarchy<TArgs extends Prisma.HierarchyFindManyArgs, TQueryFnData = Array<Prisma.HierarchyGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.HierarchyFindManyArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Hierarchy', `${endpoint}/hierarchy/findMany`, args, options, fetch);
 }
 
-export function useSuspenseInfiniteFindManyHierarchy<
-  TArgs extends Prisma.HierarchyFindManyArgs,
-  TQueryFnData = Array<Prisma.HierarchyGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
+export function useSuspenseInfiniteFindManyHierarchy<TArgs extends Prisma.HierarchyFindManyArgs, TQueryFnData = Array<Prisma.HierarchyGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
   args?: Prisma.SelectSubset<TArgs, Prisma.HierarchyFindManyArgs>,
   options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
 ) {
@@ -114,42 +80,34 @@ export function useSuspenseInfiniteFindManyHierarchy<
   return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('Hierarchy', `${endpoint}/hierarchy/findMany`, args, options, fetch);
 }
 
-export function useFindUniqueHierarchy<
-  TArgs extends Prisma.HierarchyFindUniqueArgs,
-  TQueryFnData = Prisma.HierarchyGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.HierarchyFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindUniqueHierarchy<TArgs extends Prisma.HierarchyFindUniqueArgs, TQueryFnData = Prisma.HierarchyGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.HierarchyFindUniqueArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Hierarchy', `${endpoint}/hierarchy/findUnique`, args, options, fetch);
 }
 
-export function useSuspenseFindUniqueHierarchy<
-  TArgs extends Prisma.HierarchyFindUniqueArgs,
-  TQueryFnData = Prisma.HierarchyGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.HierarchyFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseFindUniqueHierarchy<TArgs extends Prisma.HierarchyFindUniqueArgs, TQueryFnData = Prisma.HierarchyGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.HierarchyFindUniqueArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Hierarchy', `${endpoint}/hierarchy/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstHierarchy<
-  TArgs extends Prisma.HierarchyFindFirstArgs,
-  TQueryFnData = Prisma.HierarchyGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.HierarchyFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindFirstHierarchy<TArgs extends Prisma.HierarchyFindFirstArgs, TQueryFnData = Prisma.HierarchyGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.HierarchyFindFirstArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Hierarchy', `${endpoint}/hierarchy/findFirst`, args, options, fetch);
 }
 
-export function useSuspenseFindFirstHierarchy<
-  TArgs extends Prisma.HierarchyFindFirstArgs,
-  TQueryFnData = Prisma.HierarchyGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.HierarchyFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseFindFirstHierarchy<TArgs extends Prisma.HierarchyFindFirstArgs, TQueryFnData = Prisma.HierarchyGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.HierarchyFindFirstArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Hierarchy', `${endpoint}/hierarchy/findFirst`, args, options, fetch);
 }
@@ -161,11 +119,7 @@ export function useUpdateHierarchy(options?: Omit<UseMutationOptions<Hierarchy |
     ..._mutation,
     mutateAsync: async <T extends Prisma.HierarchyUpdateArgs>(
       args: Prisma.SelectSubset<T, Prisma.HierarchyUpdateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Hierarchy, Prisma.HierarchyGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.HierarchyUpdateArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Hierarchy, Prisma.HierarchyGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.HierarchyUpdateArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Hierarchy, Prisma.HierarchyGetPayload<T>> | undefined;
     },
@@ -175,15 +129,7 @@ export function useUpdateHierarchy(options?: Omit<UseMutationOptions<Hierarchy |
 
 export function useUpdateManyHierarchy(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.HierarchyUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.HierarchyUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'Hierarchy',
-    'PUT',
-    `${endpoint}/hierarchy/updateMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.HierarchyUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('Hierarchy', 'PUT', `${endpoint}/hierarchy/updateMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.HierarchyUpdateManyArgs>(
@@ -198,24 +144,12 @@ export function useUpdateManyHierarchy(options?: Omit<UseMutationOptions<Prisma.
 
 export function useUpsertHierarchy(options?: Omit<UseMutationOptions<Hierarchy | undefined, DefaultError, Prisma.HierarchyUpsertArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.HierarchyUpsertArgs, DefaultError, Hierarchy, true>(
-    'Hierarchy',
-    'POST',
-    `${endpoint}/hierarchy/upsert`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.HierarchyUpsertArgs, DefaultError, Hierarchy, true>('Hierarchy', 'POST', `${endpoint}/hierarchy/upsert`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.HierarchyUpsertArgs>(
       args: Prisma.SelectSubset<T, Prisma.HierarchyUpsertArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Hierarchy, Prisma.HierarchyGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.HierarchyUpsertArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Hierarchy, Prisma.HierarchyGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.HierarchyUpsertArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Hierarchy, Prisma.HierarchyGetPayload<T>> | undefined;
     },
@@ -225,24 +159,12 @@ export function useUpsertHierarchy(options?: Omit<UseMutationOptions<Hierarchy |
 
 export function useDeleteHierarchy(options?: Omit<UseMutationOptions<Hierarchy | undefined, DefaultError, Prisma.HierarchyDeleteArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.HierarchyDeleteArgs, DefaultError, Hierarchy, true>(
-    'Hierarchy',
-    'DELETE',
-    `${endpoint}/hierarchy/delete`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.HierarchyDeleteArgs, DefaultError, Hierarchy, true>('Hierarchy', 'DELETE', `${endpoint}/hierarchy/delete`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.HierarchyDeleteArgs>(
       args: Prisma.SelectSubset<T, Prisma.HierarchyDeleteArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Hierarchy, Prisma.HierarchyGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.HierarchyDeleteArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Hierarchy, Prisma.HierarchyGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.HierarchyDeleteArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Hierarchy, Prisma.HierarchyGetPayload<T>> | undefined;
     },
@@ -252,15 +174,7 @@ export function useDeleteHierarchy(options?: Omit<UseMutationOptions<Hierarchy |
 
 export function useDeleteManyHierarchy(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.HierarchyDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.HierarchyDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'Hierarchy',
-    'DELETE',
-    `${endpoint}/hierarchy/deleteMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.HierarchyDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('Hierarchy', 'DELETE', `${endpoint}/hierarchy/deleteMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.HierarchyDeleteManyArgs>(
@@ -273,22 +187,18 @@ export function useDeleteManyHierarchy(options?: Omit<UseMutationOptions<Prisma.
   return mutation;
 }
 
-export function useAggregateHierarchy<
-  TArgs extends Prisma.HierarchyAggregateArgs,
-  TQueryFnData = Prisma.GetHierarchyAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.HierarchyAggregateArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useAggregateHierarchy<TArgs extends Prisma.HierarchyAggregateArgs, TQueryFnData = Prisma.GetHierarchyAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.HierarchyAggregateArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Hierarchy', `${endpoint}/hierarchy/aggregate`, args, options, fetch);
 }
 
-export function useSuspenseAggregateHierarchy<
-  TArgs extends Prisma.HierarchyAggregateArgs,
-  TQueryFnData = Prisma.GetHierarchyAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.HierarchyAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseAggregateHierarchy<TArgs extends Prisma.HierarchyAggregateArgs, TQueryFnData = Prisma.GetHierarchyAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.HierarchyAggregateArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Hierarchy', `${endpoint}/hierarchy/aggregate`, args, options, fetch);
 }
@@ -307,11 +217,7 @@ export function useGroupByHierarchy<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -347,10 +253,7 @@ export function useGroupByHierarchy<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.HierarchyGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.HierarchyGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Hierarchy', `${endpoint}/hierarchy/groupBy`, args, options, fetch);
 }
@@ -369,11 +272,7 @@ export function useSuspenseGroupByHierarchy<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -409,10 +308,7 @@ export function useSuspenseGroupByHierarchy<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.HierarchyGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.HierarchyGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Hierarchy', `${endpoint}/hierarchy/groupBy`, args, options, fetch);
 }
@@ -438,7 +334,7 @@ export function useSuspenseCountHierarchy<
 }
 
 export function useCheckHierarchy<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; name?: string; description?: string } },
+  args: { operation: PolicyCrudKind; where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; name?: string; description?: string; type?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

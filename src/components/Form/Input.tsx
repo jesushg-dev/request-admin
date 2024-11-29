@@ -4,8 +4,7 @@ import { twMerge } from 'tailwind-merge';
 import { ErrorMessage } from '@hookform/error-message';
 import { FieldValues, FormState, Path, UseFormRegister } from 'react-hook-form';
 
-interface IInputProps<TFieldValues extends FieldValues = FieldValues>
-  extends Omit<React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, 'name' | 'ref' | 'required'> {
+interface IInputProps<TFieldValues extends FieldValues = FieldValues> extends Omit<React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, 'name' | 'ref' | 'required'> {
   name: Path<TFieldValues>;
   formState: FormState<TFieldValues>;
   register: UseFormRegister<TFieldValues>;
@@ -62,9 +61,7 @@ const Input = <TFieldValues extends FieldValues = FieldValues>({
       )}
 
       <div className="relative flex w-full flex-wrap items-stretch">
-        {Icon && (
-          <Icon className="absolute z-[1] h-full w-8 items-center justify-center rounded-md bg-transparent py-2 pl-3 text-center text-base font-normal leading-snug text-black" />
-        )}
+        {Icon && <Icon className="absolute z-[1] h-full w-8 items-center justify-center rounded-md bg-transparent py-2 pl-3 text-center text-base font-normal leading-snug text-black" />}
         <input
           {...finalInputProps}
           className={twMerge(
@@ -75,9 +72,7 @@ const Input = <TFieldValues extends FieldValues = FieldValues>({
           aria-invalid={!!errors[name]}
           disabled={isSubmitting || disabled}
         />
-        {RightIcon && (
-          <RightIcon className="absolute right-4 z-10 h-full w-8 items-center justify-center rounded-md bg-transparent py-2 pl-3 text-center text-base font-normal leading-snug text-black" />
-        )}
+        {RightIcon && <RightIcon className="absolute right-4 z-10 h-full w-8 items-center justify-center rounded-md bg-transparent py-2 pl-3 text-center text-base font-normal leading-snug text-black" />}
       </div>
       {showHelper && <ErrorMessage name={name as any} errors={errors} render={({ message }) => <p className="mt-2 text-xs text-red-600">{message}</p>} />}
     </div>

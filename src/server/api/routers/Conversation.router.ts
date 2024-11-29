@@ -16,23 +16,17 @@ export default function createRouter() {
   return createTRPCRouter({
     aggregate: procedure.input($Schema.ConversationInputSchema.aggregate).query(({ ctx, input }) => checkRead(db(ctx).conversation.aggregate(input as any))),
 
-    createMany: procedure
-      .input($Schema.ConversationInputSchema.createMany.optional())
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).conversation.createMany(input as any))),
+    createMany: procedure.input($Schema.ConversationInputSchema.createMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).conversation.createMany(input as any))),
 
     create: procedure.input($Schema.ConversationInputSchema.create).mutation(async ({ ctx, input }) => checkMutate(db(ctx).conversation.create(input as any))),
 
-    deleteMany: procedure
-      .input($Schema.ConversationInputSchema.deleteMany.optional())
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).conversation.deleteMany(input as any))),
+    deleteMany: procedure.input($Schema.ConversationInputSchema.deleteMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).conversation.deleteMany(input as any))),
 
     delete: procedure.input($Schema.ConversationInputSchema.delete).mutation(async ({ ctx, input }) => checkMutate(db(ctx).conversation.delete(input as any))),
 
     findFirst: procedure.input($Schema.ConversationInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).conversation.findFirst(input as any))),
 
-    findFirstOrThrow: procedure
-      .input($Schema.ConversationInputSchema.findFirst.optional())
-      .query(({ ctx, input }) => checkRead(db(ctx).conversation.findFirstOrThrow(input as any))),
+    findFirstOrThrow: procedure.input($Schema.ConversationInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).conversation.findFirstOrThrow(input as any))),
 
     findMany: procedure.input($Schema.ConversationInputSchema.findMany.optional()).query(({ ctx, input }) => checkRead(db(ctx).conversation.findMany(input as any))),
 

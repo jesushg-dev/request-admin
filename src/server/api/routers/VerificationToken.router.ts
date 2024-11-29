@@ -16,37 +16,27 @@ export default function createRouter() {
   return createTRPCRouter({
     aggregate: procedure.input($Schema.VerificationTokenInputSchema.aggregate).query(({ ctx, input }) => checkRead(db(ctx).verificationToken.aggregate(input as any))),
 
-    createMany: procedure
-      .input($Schema.VerificationTokenInputSchema.createMany.optional())
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).verificationToken.createMany(input as any))),
+    createMany: procedure.input($Schema.VerificationTokenInputSchema.createMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).verificationToken.createMany(input as any))),
 
     create: procedure.input($Schema.VerificationTokenInputSchema.create).mutation(async ({ ctx, input }) => checkMutate(db(ctx).verificationToken.create(input as any))),
 
-    deleteMany: procedure
-      .input($Schema.VerificationTokenInputSchema.deleteMany.optional())
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).verificationToken.deleteMany(input as any))),
+    deleteMany: procedure.input($Schema.VerificationTokenInputSchema.deleteMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).verificationToken.deleteMany(input as any))),
 
     delete: procedure.input($Schema.VerificationTokenInputSchema.delete).mutation(async ({ ctx, input }) => checkMutate(db(ctx).verificationToken.delete(input as any))),
 
     findFirst: procedure.input($Schema.VerificationTokenInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).verificationToken.findFirst(input as any))),
 
-    findFirstOrThrow: procedure
-      .input($Schema.VerificationTokenInputSchema.findFirst.optional())
-      .query(({ ctx, input }) => checkRead(db(ctx).verificationToken.findFirstOrThrow(input as any))),
+    findFirstOrThrow: procedure.input($Schema.VerificationTokenInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).verificationToken.findFirstOrThrow(input as any))),
 
     findMany: procedure.input($Schema.VerificationTokenInputSchema.findMany.optional()).query(({ ctx, input }) => checkRead(db(ctx).verificationToken.findMany(input as any))),
 
     findUnique: procedure.input($Schema.VerificationTokenInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).verificationToken.findUnique(input as any))),
 
-    findUniqueOrThrow: procedure
-      .input($Schema.VerificationTokenInputSchema.findUnique)
-      .query(({ ctx, input }) => checkRead(db(ctx).verificationToken.findUniqueOrThrow(input as any))),
+    findUniqueOrThrow: procedure.input($Schema.VerificationTokenInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).verificationToken.findUniqueOrThrow(input as any))),
 
     groupBy: procedure.input($Schema.VerificationTokenInputSchema.groupBy).query(({ ctx, input }) => checkRead(db(ctx).verificationToken.groupBy(input as any))),
 
-    updateMany: procedure
-      .input($Schema.VerificationTokenInputSchema.updateMany)
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).verificationToken.updateMany(input as any))),
+    updateMany: procedure.input($Schema.VerificationTokenInputSchema.updateMany).mutation(async ({ ctx, input }) => checkMutate(db(ctx).verificationToken.updateMany(input as any))),
 
     update: procedure.input($Schema.VerificationTokenInputSchema.update).mutation(async ({ ctx, input }) => checkMutate(db(ctx).verificationToken.update(input as any))),
 

@@ -45,16 +45,9 @@ const RequestForm: FC<RequestFormProps> = ({ defaultValues, onSubmit }) => {
   const { data: salesChannel, isLoading: loadingSales } = api.salesChannel.getAll.useQuery();
 
   // Data fetching with parameters and dependencies
-  const { data: requirementsData, isLoading: loadingRequirements } = api.requirement.getByServiceTypeId.useQuery(
-    { serviceTypeId: serviceType?.serviceTypeId as unknown as string },
-    { enabled: !!serviceType }
-  );
+  const { data: requirementsData, isLoading: loadingRequirements } = api.requirement.getByServiceTypeId.useQuery({ serviceTypeId: serviceType?.serviceTypeId as unknown as string }, { enabled: !!serviceType });
 
-  const {
-    data: serviceTypeData,
-    isLoading: loadingServices,
-    refetch,
-  } = api.serviceType.getBySalesChannelId.useQuery({ salesChannelId: selectedChannelId! }, { enabled: selectedChannelId !== undefined });
+  const { data: serviceTypeData, isLoading: loadingServices, refetch } = api.serviceType.getBySalesChannelId.useQuery({ salesChannelId: selectedChannelId! }, { enabled: selectedChannelId !== undefined });
 
   const [step, setStep] = useState(0);
 
@@ -115,15 +108,7 @@ const RequestForm: FC<RequestFormProps> = ({ defaultValues, onSubmit }) => {
       {rswitch(step, {
         0: <SalesChannelSelector loading={loadingSales} channels={salesChannel || []} defaultValue={selectedChannelId} onChange={onSaleChannelSubmit} goBack={() => setStep(0)} />,
         1: <ServiceTypeSelector loading={loadingServices} services={serviceTypeData || []} defaultValue={serviceType} onChange={onServiceTypeSubmit} goBack={() => setStep(0)} />,
-        2: (
-          <RequirementsForm
-            loading={loadingRequirements}
-            requirements={requirementsData || []}
-            defaultValues={checkedRequirements}
-            onChange={onRequirementsSubmit}
-            goBack={() => setStep(1)}
-          />
-        ),
+        2: <RequirementsForm loading={loadingRequirements} requirements={requirementsData || []} defaultValues={checkedRequirements} onChange={onRequirementsSubmit} goBack={() => setStep(1)} />,
         3: <AssigneeForm defaultValue={assigneeData} onChange={onAssigneeSubmit} goBack={() => setStep(2)} />,
         4: <RequestDetailForm defaultValues={caseData} onSubmit={onRequestSubmit} goBack={() => setStep(3)} subCategoryId={assigneeData?.subCategory.subCategoryId} />,
         5: <ClientForm loading={loadingClients} clients={clients || []} defaultValues={clientDetail} onChange={onClientSubmit} goBack={() => setStep(4)} />,

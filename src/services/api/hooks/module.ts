@@ -23,10 +23,7 @@ export function useCreateModule(options?: Omit<UseMutationOptions<Module | undef
     ..._mutation,
     mutateAsync: async <T extends Prisma.ModuleCreateArgs>(
       args: Prisma.SelectSubset<T, Prisma.ModuleCreateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Module, Prisma.ModuleGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ModuleCreateArgs>> & ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Module, Prisma.ModuleGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ModuleCreateArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Module, Prisma.ModuleGetPayload<T>> | undefined;
     },
@@ -36,15 +33,7 @@ export function useCreateModule(options?: Omit<UseMutationOptions<Module | undef
 
 export function useCreateManyModule(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.ModuleCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.ModuleCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'Module',
-    'POST',
-    `${endpoint}/module/createMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.ModuleCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('Module', 'POST', `${endpoint}/module/createMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.ModuleCreateManyArgs>(
@@ -57,22 +46,15 @@ export function useCreateManyModule(options?: Omit<UseMutationOptions<Prisma.Bat
   return mutation;
 }
 
-export function useFindManyModule<
-  TArgs extends Prisma.ModuleFindManyArgs,
-  TQueryFnData = Array<Prisma.ModuleGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.ModuleFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindManyModule<TArgs extends Prisma.ModuleFindManyArgs, TQueryFnData = Array<Prisma.ModuleGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.ModuleFindManyArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Module', `${endpoint}/module/findMany`, args, options, fetch);
 }
 
-export function useInfiniteFindManyModule<
-  TArgs extends Prisma.ModuleFindManyArgs,
-  TQueryFnData = Array<Prisma.ModuleGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
+export function useInfiniteFindManyModule<TArgs extends Prisma.ModuleFindManyArgs, TQueryFnData = Array<Prisma.ModuleGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
   args?: Prisma.SelectSubset<TArgs, Prisma.ModuleFindManyArgs>,
   options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
 ) {
@@ -81,22 +63,15 @@ export function useInfiniteFindManyModule<
   return useInfiniteModelQuery<TQueryFnData, TData, TError>('Module', `${endpoint}/module/findMany`, args, options, fetch);
 }
 
-export function useSuspenseFindManyModule<
-  TArgs extends Prisma.ModuleFindManyArgs,
-  TQueryFnData = Array<Prisma.ModuleGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.ModuleFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseFindManyModule<TArgs extends Prisma.ModuleFindManyArgs, TQueryFnData = Array<Prisma.ModuleGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.ModuleFindManyArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Module', `${endpoint}/module/findMany`, args, options, fetch);
 }
 
-export function useSuspenseInfiniteFindManyModule<
-  TArgs extends Prisma.ModuleFindManyArgs,
-  TQueryFnData = Array<Prisma.ModuleGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
+export function useSuspenseInfiniteFindManyModule<TArgs extends Prisma.ModuleFindManyArgs, TQueryFnData = Array<Prisma.ModuleGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
   args?: Prisma.SelectSubset<TArgs, Prisma.ModuleFindManyArgs>,
   options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
 ) {
@@ -105,42 +80,34 @@ export function useSuspenseInfiniteFindManyModule<
   return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('Module', `${endpoint}/module/findMany`, args, options, fetch);
 }
 
-export function useFindUniqueModule<
-  TArgs extends Prisma.ModuleFindUniqueArgs,
-  TQueryFnData = Prisma.ModuleGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.ModuleFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindUniqueModule<TArgs extends Prisma.ModuleFindUniqueArgs, TQueryFnData = Prisma.ModuleGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.ModuleFindUniqueArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Module', `${endpoint}/module/findUnique`, args, options, fetch);
 }
 
-export function useSuspenseFindUniqueModule<
-  TArgs extends Prisma.ModuleFindUniqueArgs,
-  TQueryFnData = Prisma.ModuleGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.ModuleFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseFindUniqueModule<TArgs extends Prisma.ModuleFindUniqueArgs, TQueryFnData = Prisma.ModuleGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.ModuleFindUniqueArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Module', `${endpoint}/module/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstModule<
-  TArgs extends Prisma.ModuleFindFirstArgs,
-  TQueryFnData = Prisma.ModuleGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.ModuleFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useFindFirstModule<TArgs extends Prisma.ModuleFindFirstArgs, TQueryFnData = Prisma.ModuleGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.ModuleFindFirstArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Module', `${endpoint}/module/findFirst`, args, options, fetch);
 }
 
-export function useSuspenseFindFirstModule<
-  TArgs extends Prisma.ModuleFindFirstArgs,
-  TQueryFnData = Prisma.ModuleGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.ModuleFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseFindFirstModule<TArgs extends Prisma.ModuleFindFirstArgs, TQueryFnData = Prisma.ModuleGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.ModuleFindFirstArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Module', `${endpoint}/module/findFirst`, args, options, fetch);
 }
@@ -152,10 +119,7 @@ export function useUpdateModule(options?: Omit<UseMutationOptions<Module | undef
     ..._mutation,
     mutateAsync: async <T extends Prisma.ModuleUpdateArgs>(
       args: Prisma.SelectSubset<T, Prisma.ModuleUpdateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Module, Prisma.ModuleGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ModuleUpdateArgs>> & ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Module, Prisma.ModuleGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ModuleUpdateArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Module, Prisma.ModuleGetPayload<T>> | undefined;
     },
@@ -165,15 +129,7 @@ export function useUpdateModule(options?: Omit<UseMutationOptions<Module | undef
 
 export function useUpdateManyModule(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.ModuleUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.ModuleUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'Module',
-    'PUT',
-    `${endpoint}/module/updateMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.ModuleUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('Module', 'PUT', `${endpoint}/module/updateMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.ModuleUpdateManyArgs>(
@@ -193,10 +149,7 @@ export function useUpsertModule(options?: Omit<UseMutationOptions<Module | undef
     ..._mutation,
     mutateAsync: async <T extends Prisma.ModuleUpsertArgs>(
       args: Prisma.SelectSubset<T, Prisma.ModuleUpsertArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Module, Prisma.ModuleGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ModuleUpsertArgs>> & ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Module, Prisma.ModuleGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ModuleUpsertArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Module, Prisma.ModuleGetPayload<T>> | undefined;
     },
@@ -211,10 +164,7 @@ export function useDeleteModule(options?: Omit<UseMutationOptions<Module | undef
     ..._mutation,
     mutateAsync: async <T extends Prisma.ModuleDeleteArgs>(
       args: Prisma.SelectSubset<T, Prisma.ModuleDeleteArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, Module, Prisma.ModuleGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ModuleDeleteArgs>> & ExtraMutationOptions,
-        'mutationFn'
-      >
+      options?: Omit<UseMutationOptions<CheckSelect<T, Module, Prisma.ModuleGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.ModuleDeleteArgs>> & ExtraMutationOptions, 'mutationFn'>
     ) => {
       return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Module, Prisma.ModuleGetPayload<T>> | undefined;
     },
@@ -224,15 +174,7 @@ export function useDeleteModule(options?: Omit<UseMutationOptions<Module | undef
 
 export function useDeleteManyModule(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.ModuleDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.ModuleDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'Module',
-    'DELETE',
-    `${endpoint}/module/deleteMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.ModuleDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('Module', 'DELETE', `${endpoint}/module/deleteMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.ModuleDeleteManyArgs>(
@@ -253,12 +195,10 @@ export function useAggregateModule<TArgs extends Prisma.ModuleAggregateArgs, TQu
   return useModelQuery<TQueryFnData, TData, TError>('Module', `${endpoint}/module/aggregate`, args, options, fetch);
 }
 
-export function useSuspenseAggregateModule<
-  TArgs extends Prisma.ModuleAggregateArgs,
-  TQueryFnData = Prisma.GetModuleAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.ModuleAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseAggregateModule<TArgs extends Prisma.ModuleAggregateArgs, TQueryFnData = Prisma.GetModuleAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.ModuleAggregateArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Module', `${endpoint}/module/aggregate`, args, options, fetch);
 }
@@ -277,11 +217,7 @@ export function useGroupByModule<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -317,10 +253,7 @@ export function useGroupByModule<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.ModuleGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.ModuleGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('Module', `${endpoint}/module/groupBy`, args, options, fetch);
 }
@@ -339,11 +272,7 @@ export function useSuspenseGroupByModule<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -379,10 +308,7 @@ export function useSuspenseGroupByModule<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.ModuleGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.ModuleGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('Module', `${endpoint}/module/groupBy`, args, options, fetch);
 }

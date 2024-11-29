@@ -35,15 +35,7 @@ const NewCategoryPage: React.FC = () => {
       <div className="border-stroke shadow-default dark:border-strokedark dark:bg-boxdark rounded-sm border bg-white">
         <form className="grid grid-cols-2 gap-4 p-6" onSubmit={handleSubmit((data) => onSubmit({ data }))}>
           <Input name="id" type="text" register={register} formState={formState} label={t('inputs.id.label')} placeholder={t('inputs.id.placeholder')} required />
-          <Input
-            name="requestTypeId"
-            type="text"
-            register={register}
-            formState={formState}
-            label={t('inputs.requestTypeId.label')}
-            placeholder={t('inputs.requestTypeId.placeholder')}
-            required
-          />
+          <Input name="requestTypeId" type="text" register={register} formState={formState} label={t('inputs.requestTypeId.label')} placeholder={t('inputs.requestTypeId.placeholder')} required />
           <Input name="name" type="text" register={register} formState={formState} label={t('inputs.name.label')} placeholder={t('inputs.name.placeholder')} required />
           <Input name="description" type="text" register={register} formState={formState} label={t('inputs.description.label')} placeholder={t('inputs.description.placeholder')} />
           <ErrorList formState={formState} />

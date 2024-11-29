@@ -69,16 +69,7 @@ const SummaryForm: FC<ISummaryFormProps> = ({ serviceType, requirements, goBack,
           <Scrollable>
             {requirements.length > 0 ? (
               <TooltipComponent id="details" target=".e-info" position="RightCenter">
-                <ListViewComponent
-                  id="list"
-                  dataSource={requirements}
-                  sortOrder="Ascending"
-                  width="100%"
-                  height="100%"
-                  template={listTemplate}
-                  fields={fields}
-                  cssClass="e-list-template"
-                />
+                <ListViewComponent id="list" dataSource={requirements} sortOrder="Ascending" width="100%" height="100%" template={listTemplate} fields={fields} cssClass="e-list-template" />
               </TooltipComponent>
             ) : (
               <p>No requirements specified.</p>

@@ -16,30 +16,15 @@ type DefaultError = QueryError;
 import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
 import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
 
-export function useCreateDocumentAssignment(
-  options?: Omit<UseMutationOptions<DocumentAssignment | undefined, DefaultError, Prisma.DocumentAssignmentCreateArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useCreateDocumentAssignment(options?: Omit<UseMutationOptions<DocumentAssignment | undefined, DefaultError, Prisma.DocumentAssignmentCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.DocumentAssignmentCreateArgs, DefaultError, DocumentAssignment, true>(
-    'DocumentAssignment',
-    'POST',
-    `${endpoint}/documentAssignment/create`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.DocumentAssignmentCreateArgs, DefaultError, DocumentAssignment, true>('DocumentAssignment', 'POST', `${endpoint}/documentAssignment/create`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.DocumentAssignmentCreateArgs>(
       args: Prisma.SelectSubset<T, Prisma.DocumentAssignmentCreateArgs>,
       options?: Omit<
-        UseMutationOptions<
-          CheckSelect<T, DocumentAssignment, Prisma.DocumentAssignmentGetPayload<T>> | undefined,
-          DefaultError,
-          Prisma.SelectSubset<T, Prisma.DocumentAssignmentCreateArgs>
-        > &
-          ExtraMutationOptions,
+        UseMutationOptions<CheckSelect<T, DocumentAssignment, Prisma.DocumentAssignmentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.DocumentAssignmentCreateArgs>> & ExtraMutationOptions,
         'mutationFn'
       >
     ) => {
@@ -49,19 +34,9 @@ export function useCreateDocumentAssignment(
   return mutation;
 }
 
-export function useCreateManyDocumentAssignment(
-  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.DocumentAssignmentCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useCreateManyDocumentAssignment(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.DocumentAssignmentCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.DocumentAssignmentCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'DocumentAssignment',
-    'POST',
-    `${endpoint}/documentAssignment/createMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.DocumentAssignmentCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('DocumentAssignment', 'POST', `${endpoint}/documentAssignment/createMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.DocumentAssignmentCreateManyArgs>(
@@ -84,12 +59,7 @@ export function useFindManyDocumentAssignment<
   return useModelQuery<TQueryFnData, TData, TError>('DocumentAssignment', `${endpoint}/documentAssignment/findMany`, args, options, fetch);
 }
 
-export function useInfiniteFindManyDocumentAssignment<
-  TArgs extends Prisma.DocumentAssignmentFindManyArgs,
-  TQueryFnData = Array<Prisma.DocumentAssignmentGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
+export function useInfiniteFindManyDocumentAssignment<TArgs extends Prisma.DocumentAssignmentFindManyArgs, TQueryFnData = Array<Prisma.DocumentAssignmentGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
   args?: Prisma.SelectSubset<TArgs, Prisma.DocumentAssignmentFindManyArgs>,
   options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
 ) {
@@ -108,12 +78,7 @@ export function useSuspenseFindManyDocumentAssignment<
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('DocumentAssignment', `${endpoint}/documentAssignment/findMany`, args, options, fetch);
 }
 
-export function useSuspenseInfiniteFindManyDocumentAssignment<
-  TArgs extends Prisma.DocumentAssignmentFindManyArgs,
-  TQueryFnData = Array<Prisma.DocumentAssignmentGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
+export function useSuspenseInfiniteFindManyDocumentAssignment<TArgs extends Prisma.DocumentAssignmentFindManyArgs, TQueryFnData = Array<Prisma.DocumentAssignmentGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
   args?: Prisma.SelectSubset<TArgs, Prisma.DocumentAssignmentFindManyArgs>,
   options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
 ) {
@@ -162,30 +127,15 @@ export function useSuspenseFindFirstDocumentAssignment<
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('DocumentAssignment', `${endpoint}/documentAssignment/findFirst`, args, options, fetch);
 }
 
-export function useUpdateDocumentAssignment(
-  options?: Omit<UseMutationOptions<DocumentAssignment | undefined, DefaultError, Prisma.DocumentAssignmentUpdateArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useUpdateDocumentAssignment(options?: Omit<UseMutationOptions<DocumentAssignment | undefined, DefaultError, Prisma.DocumentAssignmentUpdateArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.DocumentAssignmentUpdateArgs, DefaultError, DocumentAssignment, true>(
-    'DocumentAssignment',
-    'PUT',
-    `${endpoint}/documentAssignment/update`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.DocumentAssignmentUpdateArgs, DefaultError, DocumentAssignment, true>('DocumentAssignment', 'PUT', `${endpoint}/documentAssignment/update`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.DocumentAssignmentUpdateArgs>(
       args: Prisma.SelectSubset<T, Prisma.DocumentAssignmentUpdateArgs>,
       options?: Omit<
-        UseMutationOptions<
-          CheckSelect<T, DocumentAssignment, Prisma.DocumentAssignmentGetPayload<T>> | undefined,
-          DefaultError,
-          Prisma.SelectSubset<T, Prisma.DocumentAssignmentUpdateArgs>
-        > &
-          ExtraMutationOptions,
+        UseMutationOptions<CheckSelect<T, DocumentAssignment, Prisma.DocumentAssignmentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.DocumentAssignmentUpdateArgs>> & ExtraMutationOptions,
         'mutationFn'
       >
     ) => {
@@ -195,19 +145,9 @@ export function useUpdateDocumentAssignment(
   return mutation;
 }
 
-export function useUpdateManyDocumentAssignment(
-  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.DocumentAssignmentUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useUpdateManyDocumentAssignment(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.DocumentAssignmentUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.DocumentAssignmentUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'DocumentAssignment',
-    'PUT',
-    `${endpoint}/documentAssignment/updateMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.DocumentAssignmentUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('DocumentAssignment', 'PUT', `${endpoint}/documentAssignment/updateMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.DocumentAssignmentUpdateManyArgs>(
@@ -220,30 +160,15 @@ export function useUpdateManyDocumentAssignment(
   return mutation;
 }
 
-export function useUpsertDocumentAssignment(
-  options?: Omit<UseMutationOptions<DocumentAssignment | undefined, DefaultError, Prisma.DocumentAssignmentUpsertArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useUpsertDocumentAssignment(options?: Omit<UseMutationOptions<DocumentAssignment | undefined, DefaultError, Prisma.DocumentAssignmentUpsertArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.DocumentAssignmentUpsertArgs, DefaultError, DocumentAssignment, true>(
-    'DocumentAssignment',
-    'POST',
-    `${endpoint}/documentAssignment/upsert`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.DocumentAssignmentUpsertArgs, DefaultError, DocumentAssignment, true>('DocumentAssignment', 'POST', `${endpoint}/documentAssignment/upsert`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.DocumentAssignmentUpsertArgs>(
       args: Prisma.SelectSubset<T, Prisma.DocumentAssignmentUpsertArgs>,
       options?: Omit<
-        UseMutationOptions<
-          CheckSelect<T, DocumentAssignment, Prisma.DocumentAssignmentGetPayload<T>> | undefined,
-          DefaultError,
-          Prisma.SelectSubset<T, Prisma.DocumentAssignmentUpsertArgs>
-        > &
-          ExtraMutationOptions,
+        UseMutationOptions<CheckSelect<T, DocumentAssignment, Prisma.DocumentAssignmentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.DocumentAssignmentUpsertArgs>> & ExtraMutationOptions,
         'mutationFn'
       >
     ) => {
@@ -253,30 +178,15 @@ export function useUpsertDocumentAssignment(
   return mutation;
 }
 
-export function useDeleteDocumentAssignment(
-  options?: Omit<UseMutationOptions<DocumentAssignment | undefined, DefaultError, Prisma.DocumentAssignmentDeleteArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useDeleteDocumentAssignment(options?: Omit<UseMutationOptions<DocumentAssignment | undefined, DefaultError, Prisma.DocumentAssignmentDeleteArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.DocumentAssignmentDeleteArgs, DefaultError, DocumentAssignment, true>(
-    'DocumentAssignment',
-    'DELETE',
-    `${endpoint}/documentAssignment/delete`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
+  const _mutation = useModelMutation<Prisma.DocumentAssignmentDeleteArgs, DefaultError, DocumentAssignment, true>('DocumentAssignment', 'DELETE', `${endpoint}/documentAssignment/delete`, metadata, options, fetch, true);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.DocumentAssignmentDeleteArgs>(
       args: Prisma.SelectSubset<T, Prisma.DocumentAssignmentDeleteArgs>,
       options?: Omit<
-        UseMutationOptions<
-          CheckSelect<T, DocumentAssignment, Prisma.DocumentAssignmentGetPayload<T>> | undefined,
-          DefaultError,
-          Prisma.SelectSubset<T, Prisma.DocumentAssignmentDeleteArgs>
-        > &
-          ExtraMutationOptions,
+        UseMutationOptions<CheckSelect<T, DocumentAssignment, Prisma.DocumentAssignmentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.DocumentAssignmentDeleteArgs>> & ExtraMutationOptions,
         'mutationFn'
       >
     ) => {
@@ -286,19 +196,9 @@ export function useDeleteDocumentAssignment(
   return mutation;
 }
 
-export function useDeleteManyDocumentAssignment(
-  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.DocumentAssignmentDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
+export function useDeleteManyDocumentAssignment(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.DocumentAssignmentDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
   const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.DocumentAssignmentDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'DocumentAssignment',
-    'DELETE',
-    `${endpoint}/documentAssignment/deleteMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
+  const _mutation = useModelMutation<Prisma.DocumentAssignmentDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('DocumentAssignment', 'DELETE', `${endpoint}/documentAssignment/deleteMany`, metadata, options, fetch, false);
   const mutation = {
     ..._mutation,
     mutateAsync: async <T extends Prisma.DocumentAssignmentDeleteManyArgs>(
@@ -311,22 +211,18 @@ export function useDeleteManyDocumentAssignment(
   return mutation;
 }
 
-export function useAggregateDocumentAssignment<
-  TArgs extends Prisma.DocumentAssignmentAggregateArgs,
-  TQueryFnData = Prisma.GetDocumentAssignmentAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.DocumentAssignmentAggregateArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useAggregateDocumentAssignment<TArgs extends Prisma.DocumentAssignmentAggregateArgs, TQueryFnData = Prisma.GetDocumentAssignmentAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.DocumentAssignmentAggregateArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('DocumentAssignment', `${endpoint}/documentAssignment/aggregate`, args, options, fetch);
 }
 
-export function useSuspenseAggregateDocumentAssignment<
-  TArgs extends Prisma.DocumentAssignmentAggregateArgs,
-  TQueryFnData = Prisma.GetDocumentAssignmentAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.DocumentAssignmentAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+export function useSuspenseAggregateDocumentAssignment<TArgs extends Prisma.DocumentAssignmentAggregateArgs, TQueryFnData = Prisma.GetDocumentAssignmentAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.DocumentAssignmentAggregateArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
   const { endpoint, fetch } = getHooksContext();
   return useSuspenseModelQuery<TQueryFnData, TData, TError>('DocumentAssignment', `${endpoint}/documentAssignment/aggregate`, args, options, fetch);
 }
@@ -334,9 +230,7 @@ export function useSuspenseAggregateDocumentAssignment<
 export function useGroupByDocumentAssignment<
   TArgs extends Prisma.DocumentAssignmentGroupByArgs,
   HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
-  OrderByArg extends Prisma.True extends HasSelectOrTake
-    ? { orderBy: Prisma.DocumentAssignmentGroupByArgs['orderBy'] }
-    : { orderBy?: Prisma.DocumentAssignmentGroupByArgs['orderBy'] },
+  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.DocumentAssignmentGroupByArgs['orderBy'] } : { orderBy?: Prisma.DocumentAssignmentGroupByArgs['orderBy'] },
   OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
   ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
   ByValid extends Prisma.Has<ByFields, OrderFields>,
@@ -347,11 +241,7 @@ export function useGroupByDocumentAssignment<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -387,10 +277,7 @@ export function useGroupByDocumentAssignment<
     : InputErrors,
   TData = TQueryFnData,
   TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.DocumentAssignmentGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
+>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.DocumentAssignmentGroupByArgs, OrderByArg> & InputErrors>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
   const { endpoint, fetch } = getHooksContext();
   return useModelQuery<TQueryFnData, TData, TError>('DocumentAssignment', `${endpoint}/documentAssignment/groupBy`, args, options, fetch);
 }
@@ -398,9 +285,7 @@ export function useGroupByDocumentAssignment<
 export function useSuspenseGroupByDocumentAssignment<
   TArgs extends Prisma.DocumentAssignmentGroupByArgs,
   HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
-  OrderByArg extends Prisma.True extends HasSelectOrTake
-    ? { orderBy: Prisma.DocumentAssignmentGroupByArgs['orderBy'] }
-    : { orderBy?: Prisma.DocumentAssignmentGroupByArgs['orderBy'] },
+  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.DocumentAssignmentGroupByArgs['orderBy'] } : { orderBy?: Prisma.DocumentAssignmentGroupByArgs['orderBy'] },
   OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
   ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
   ByValid extends Prisma.Has<ByFields, OrderFields>,
@@ -411,11 +296,7 @@ export function useSuspenseGroupByDocumentAssignment<
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
       ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+          [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
         }[HavingFields]
       : 'take' extends Prisma.Keys<TArgs>
         ? 'orderBy' extends Prisma.Keys<TArgs>
@@ -461,11 +342,7 @@ export function useSuspenseGroupByDocumentAssignment<
 
 export function useCountDocumentAssignment<
   TArgs extends Prisma.DocumentAssignmentCountArgs,
-  TQueryFnData = TArgs extends { select: any }
-    ? TArgs['select'] extends true
-      ? number
-      : Prisma.GetScalarType<TArgs['select'], Prisma.DocumentAssignmentCountAggregateOutputType>
-    : number,
+  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.DocumentAssignmentCountAggregateOutputType>) : number,
   TData = TQueryFnData,
   TError = DefaultError,
 >(args?: Prisma.SelectSubset<TArgs, Prisma.DocumentAssignmentCountArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
@@ -475,11 +352,7 @@ export function useCountDocumentAssignment<
 
 export function useSuspenseCountDocumentAssignment<
   TArgs extends Prisma.DocumentAssignmentCountArgs,
-  TQueryFnData = TArgs extends { select: any }
-    ? TArgs['select'] extends true
-      ? number
-      : Prisma.GetScalarType<TArgs['select'], Prisma.DocumentAssignmentCountAggregateOutputType>
-    : number,
+  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.DocumentAssignmentCountAggregateOutputType>) : number,
   TData = TQueryFnData,
   TError = DefaultError,
 >(args?: Prisma.SelectSubset<TArgs, Prisma.DocumentAssignmentCountArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
@@ -488,10 +361,7 @@ export function useSuspenseCountDocumentAssignment<
 }
 
 export function useCheckDocumentAssignment<TError = DefaultError>(
-  args: {
-    operation: PolicyCrudKind;
-    where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; name?: string; status?: string; requestAssignmentId?: string };
-  },
+  args: { operation: PolicyCrudKind; where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; name?: string; status?: string; requestAssignmentId?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

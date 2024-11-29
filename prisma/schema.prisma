@@ -34,13 +34,15 @@ model Tenant {
   persons                        Person[]
   clients                        Client[]
   requirements                   Requirement[]
+  requirementTypes               RequirementType[]
   categoryRequirements           CategoryRequirement[]
   requests                       Request[]
   requirementComplianceTrackings RequirementComplianceTracking[]
+  requestAssignments             RequestAssignment[]
+  StatusType                     StatusType[]
   documents                      Document[]
   areas                          Area[]
   categories                     Category[]
-  requestAssignments             RequestAssignment[]
   userRoles                      UserRole[]
   roles                          Role[]
   modules                        Module[]
@@ -289,6 +291,9 @@ model Hierarchy {
   description String?          @db.VarChar(255)
   levels      HierarchyLevel[]
   categories  Category[]
+  type        String           @unique() @db.VarChar(50)
+
+  @@index([name], name: "idx_hierarchy_name")
 }
 
 /// Represents a single level in a hierarchy (e.g., "Area", "Case Type", "Service Type").
@@ -306,34 +311,42 @@ model HierarchyLevel {
   hierarchyId String     @db.UniqueIdentifier()
   hierarchy   Hierarchy  @relation(fields: [hierarchyId], references: [id])
   categories  Category[]
+
+  @@index([hierarchyId], name: "idx_hierarchy_id")
+  @@index([name], name: "idx_hierarchy_level_name")
 }
 
 /// Represents a category or subcategory within a hierarchy.
 model Category {
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime?             @updatedAt()
-  deletedAt           DateTime?
-  createdBy           String?               @db.VarChar(50)
-  modifiedBy          String?               @db.VarChar(50)
-  tenantId            String                @db.UniqueIdentifier()
-  tenant              Tenant                @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                  String                @id() @default(uuid()) @db.UniqueIdentifier()
-  name                String                @db.VarChar(100)
-  description         String?               @db.VarChar(255)
-  parentCategoryId    String?               @map("parent_id") @db.UniqueIdentifier()
-  parentCategory      Category?             @relation("ParentCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  subcategories       Category[]            @relation("ParentCategory")
-  hierarchyLevelId    String                @db.UniqueIdentifier()
-  hierarchyLevel      HierarchyLevel        @relation(fields: [hierarchyLevelId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  hierarchyId         String                @db.UniqueIdentifier()
-  hierarchy           Hierarchy             @relation(fields: [hierarchyId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  forms               Form[]
-  areas               Area[]
+  createdAt               DateTime              @default(now())
+  updatedAt               DateTime?             @updatedAt()
+  deletedAt               DateTime?
+  createdBy               String?               @db.VarChar(50)
+  modifiedBy              String?               @db.VarChar(50)
+  tenantId                String                @db.UniqueIdentifier()
+  tenant                  Tenant                @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                      String                @id() @default(uuid()) @db.UniqueIdentifier()
+  name                    String                @db.VarChar(100)
+  description             String?               @db.VarChar(255)
+  isEligibleForNewClients Boolean               @default(true)
+  parentCategoryId        String?               @map("parent_id") @db.UniqueIdentifier()
+  parentCategory          Category?             @relation("ParentCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subcategories           Category[]            @relation("ParentCategory")
+  hierarchyLevelId        String                @db.UniqueIdentifier()
+  hierarchyLevel          HierarchyLevel        @relation(fields: [hierarchyLevelId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  hierarchyId             String                @db.UniqueIdentifier()
+  hierarchy               Hierarchy             @relation(fields: [hierarchyId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  forms                   Form[]
+  areas                   Area[]
   /// Linked service requests
-  serviceRequests     Request[]             @relation("ServiceCategory")
+  serviceRequests         Request[]             @relation("ServiceCategory")
   /// Linked assignment requests
-  assignmentRequests  Request[]             @relation("AssignmentCategory")
-  categoryRequirement CategoryRequirement[]
+  assignmentRequests      Request[]             @relation("AssignmentCategory")
+  categoryRequirement     CategoryRequirement[]
+
+  @@index([hierarchyId], name: "idx_category_hierarchy_id")
+  @@index([hierarchyLevelId], name: "idx_category_hierarchy_level_id")
+  @@index([name], name: "idx_category_name")
 }
 
 /// Represents a service request that includes categorization for both service and assignment.
@@ -353,8 +366,10 @@ model Request {
   closedAt             DateTime?
   closedBy             String?                         @db.VarChar(50)
   closedComment        String?                         @db.VarChar(500)
-  status               String                          @db.VarChar(50)
   comment              String?                         @db.VarChar(255)
+  /// Status categorization (e.g., "Open", "Closed", "In Progress").
+  statusId             String                          @db.UniqueIdentifier()
+  status               StatusType                      @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   /// Service categorization (e.g., "Sales Channel > Service Type").
   serviceCategoryId    String                          @db.UniqueIdentifier()
   serviceCategory      Category                        @relation("ServiceCategory", fields: [serviceCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -367,6 +382,10 @@ model Request {
   documents            Document[]
   requestAssignments   RequestAssignment[]
   complianceTrackings  RequirementComplianceTracking[]
+
+  @@index([serviceCategoryId], name: "idx_request_service_category_id")
+  @@index([assignmentCategoryId], name: "idx_request_assignment_category_id")
+  @@index([clientId], name: "idx_request_client_id")
 }
 
 /// Represents an assignment of a request to a user or area.
@@ -379,19 +398,38 @@ model RequestAssignment {
   tenantId           String               @db.UniqueIdentifier()
   tenant             Tenant               @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id                 String               @id() @default(uuid()) @db.UniqueIdentifier()
+  priority           String?              @db.VarChar(50)
+  comment            String?              @db.VarChar(255)
+  assignmentDate     DateTime
+  unAssignmentDate   DateTime?
+  type               String               @db.VarChar(50)
   requestId          String               @db.UniqueIdentifier()
   request            Request              @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   userId             String?              @db.UniqueIdentifier()
   user               User?                @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   areaId             String?              @db.UniqueIdentifier()
   area               Area?                @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  priority           String?              @db.VarChar(50)
-  comment            String?              @db.VarChar(255)
-  assignmentDate     DateTime
-  unassignmentDate   DateTime?
-  status             String               @db.VarChar(50)
-  type               String               @db.VarChar(50)
+  /// Status categorization (e.g., "Open", "Closed", "In Progress").
+  statusId           String               @db.UniqueIdentifier()
+  status             StatusType           @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   documentAssignment DocumentAssignment[]
+}
+
+/// Represents a catalog of possible statuses for requests or assignments.
+model StatusType {
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime?           @updatedAt()
+  deletedAt   DateTime?
+  createdBy   String?             @db.VarChar(50)
+  modifiedBy  String?             @db.VarChar(50)
+  tenantId    String              @db.UniqueIdentifier()
+  tenant      Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id          String              @id() @default(uuid()) @db.UniqueIdentifier()
+  name        String              @unique() @db.VarChar(50)
+  description String?             @db.VarChar(255)
+  isActive    Boolean             @default(true)
+  requests    Request[]
+  assignments RequestAssignment[]
 }
 
 /// Represents an organizational area.
@@ -406,7 +444,7 @@ model Area {
   id                String              @id() @default(uuid()) @db.UniqueIdentifier()
   name              String              @unique() @db.VarChar(100)
   description       String?             @db.VarChar(255)
-  status            Boolean             @default(true)
+  isActive          Boolean             @default(true)
   user              User[]
   requestAssignment RequestAssignment[]
   categories        Category[]
@@ -424,12 +462,33 @@ model Requirement {
   id                            String                          @id() @default(uuid()) @db.UniqueIdentifier()
   name                          String                          @unique() @db.VarChar(200)
   description                   String                          @db.VarChar(500)
-  onlyRequireInNewClients       Boolean                         @default(false)
+  isRequiredOnlyForNewClients   Boolean                         @default(false)
   requirementComplianceTracking RequirementComplianceTracking[]
   categoryRequirement           CategoryRequirement[]
+  requirementTypeId             String                          @db.UniqueIdentifier()
+  requirementType               RequirementType                 @relation(fields: [requirementTypeId], references: [id])
+
+  @@index([name], name: "idx_requirement_name")
 }
 
-/// Links a requirement to a specific service type.
+/// Represents a type of a requirement.
+model RequirementType {
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime?     @updatedAt()
+  deletedAt    DateTime?
+  createdBy    String?       @db.VarChar(50)
+  modifiedBy   String?       @db.VarChar(50)
+  tenantId     String        @db.UniqueIdentifier()
+  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id           String        @id() @default(uuid()) @db.UniqueIdentifier()
+  name         String        @unique() @db.VarChar(100)
+  description  String        @db.VarChar(255)
+  requirements Requirement[]
+
+  @@index([name], name: "idx_requirement_type_name")
+}
+
+/// Links a requirement to a specific category.
 model CategoryRequirement {
   createdAt     DateTime    @default(now())
   updatedAt     DateTime?   @updatedAt()
@@ -443,6 +502,9 @@ model CategoryRequirement {
   requirement   Requirement @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   categoryId    String      @db.UniqueIdentifier()
   category      Category    @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([requirementId], name: "idx_category_requirement_id")
+  @@index([categoryId], name: "idx_category_category_id")
 }
 
 /// Tracks compliance with requirements for a specific request.
@@ -459,7 +521,10 @@ model RequirementComplianceTracking {
   request       Request     @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   requirementId String      @db.UniqueIdentifier()
   requirement   Requirement @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  fulfilled     Boolean     @default(false)
+  isFulfilled   Boolean     @default(false)
+
+  @@index([requestId], name: "idx_compliance_request_id")
+  @@index([requirementId], name: "idx_compliance_requirement_id")
 }
 
 model Form {

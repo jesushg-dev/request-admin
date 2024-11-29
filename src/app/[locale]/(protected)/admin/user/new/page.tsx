@@ -37,33 +37,11 @@ const NewUserPage: React.FC = () => {
           <Input name="id" type="text" register={register} formState={formState} label={t('inputs.id.label')} placeholder={t('inputs.id.placeholder')} required />
           <Input name="name" type="text" register={register} formState={formState} label={t('inputs.name.label')} placeholder={t('inputs.name.placeholder')} />
           <Input name="email" type="text" register={register} formState={formState} label={t('inputs.email.label')} placeholder={t('inputs.email.placeholder')} />
-          <Input
-            name="emailVerified"
-            type="text"
-            register={register}
-            formState={formState}
-            label={t('inputs.emailVerified.label')}
-            placeholder={t('inputs.emailVerified.placeholder')}
-          />
+          <Input name="emailVerified" type="text" register={register} formState={formState} label={t('inputs.emailVerified.label')} placeholder={t('inputs.emailVerified.placeholder')} />
           <Input name="password" type="text" register={register} formState={formState} label={t('inputs.password.label')} placeholder={t('inputs.password.placeholder')} required />
-          <Input
-            name="isTwoFactorEnabled"
-            type="text"
-            register={register}
-            formState={formState}
-            label={t('inputs.isTwoFactorEnabled.label')}
-            placeholder={t('inputs.isTwoFactorEnabled.placeholder')}
-            required
-          />
+          <Input name="isTwoFactorEnabled" type="text" register={register} formState={formState} label={t('inputs.isTwoFactorEnabled.label')} placeholder={t('inputs.isTwoFactorEnabled.placeholder')} required />
           <Input name="areaId" type="text" register={register} formState={formState} label={t('inputs.areaId.label')} placeholder={t('inputs.areaId.placeholder')} />
-          <Input
-            name="coordinatorId"
-            type="text"
-            register={register}
-            formState={formState}
-            label={t('inputs.coordinatorId.label')}
-            placeholder={t('inputs.coordinatorId.placeholder')}
-          />
+          <Input name="coordinatorId" type="text" register={register} formState={formState} label={t('inputs.coordinatorId.label')} placeholder={t('inputs.coordinatorId.placeholder')} />
           <ErrorList formState={formState} />
           <button type="submit" className="flex w-full justify-center rounded bg-primary p-3 font-medium text-white hover:bg-opacity-90">
             {t('createButton')}

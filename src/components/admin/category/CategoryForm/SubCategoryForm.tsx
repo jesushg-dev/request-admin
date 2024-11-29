@@ -40,16 +40,7 @@ const SubCategoryForm: FC<CreateSubCategoryFormProps> = ({ goBack, onSubmit, def
               <div className="flex gap-4">
                 <div className="mb-2 grid w-full grid-cols-3 items-start gap-2">
                   <input type="hidden" {...register(`subCategories.${index}.subCategoryId`)} />
-                  <Input
-                    required
-                    name={`subCategories.${index}.name`}
-                    type="text"
-                    register={register}
-                    formState={formState}
-                    label={`#${index + 1} Name`}
-                    placeholder={`Name of Category`}
-                    Icon={MdSubdirectoryArrowRight}
-                  />
+                  <Input required name={`subCategories.${index}.name`} type="text" register={register} formState={formState} label={`#${index + 1} Name`} placeholder={`Name of Category`} Icon={MdSubdirectoryArrowRight} />
                   <Textarea
                     name={`subCategories.${index}.description`}
                     register={register}

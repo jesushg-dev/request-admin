@@ -88,11 +88,7 @@ const Tab = ({ label, index, Icon, clickable = false, className, btnClass, btnCl
       <button type="button" title={label} onClick={onClick} className={finalClassName}>
         {Icon && <Icon className={`mr-2 h-4 w-4 ${isActive ? 'text-blue-600 dark:text-blue-500' : 'text-gray-400 dark:text-gray-500'}`} />}
         {label}
-        {badge && (
-          <span className="absolute -right-1 -top-1 inline-flex h-4 w-4 transform items-center justify-center rounded-full bg-red-500 text-xs font-bold leading-none text-white">
-            {badge}
-          </span>
-        )}
+        {badge && <span className="absolute -right-1 -top-1 inline-flex h-4 w-4 transform items-center justify-center rounded-full bg-red-500 text-xs font-bold leading-none text-white">{badge}</span>}
       </button>
     </li>
   );

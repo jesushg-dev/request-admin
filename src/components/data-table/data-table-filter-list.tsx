@@ -16,16 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
-import {
-  FacetedFilter,
-  FacetedFilterContent,
-  FacetedFilterEmpty,
-  FacetedFilterGroup,
-  FacetedFilterInput,
-  FacetedFilterItem,
-  FacetedFilterList,
-  FacetedFilterTrigger,
-} from '@/components/ui/faceted-filter';
+import { FacetedFilter, FacetedFilterContent, FacetedFilterEmpty, FacetedFilterGroup, FacetedFilterInput, FacetedFilterItem, FacetedFilterList, FacetedFilterTrigger } from '@/components/ui/faceted-filter';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -109,15 +100,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
     if (!filterField) return null;
 
     if (filter.operator === 'isEmpty' || filter.operator === 'isNotEmpty') {
-      return (
-        <div
-          id={inputId}
-          role="status"
-          aria-live="polite"
-          aria-label={`${filterField.label} filter is ${filter.operator === 'isEmpty' ? 'empty' : 'not empty'}`}
-          className="h-8 w-full rounded border border-dashed"
-        />
-      );
+      return <div id={inputId} role="status" aria-live="polite" aria-label={`${filterField.label} filter is ${filter.operator === 'isEmpty' ? 'empty' : 'not empty'}`} className="h-8 w-full rounded border border-dashed" />;
     }
 
     switch (filter.type) {
@@ -267,11 +250,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
         const dateValue = Array.isArray(filter.value) ? filter.value.filter(Boolean) : [filter.value, filter.value].filter(Boolean);
 
         const displayValue =
-          filter.operator === 'isBetween' && dateValue.length === 2
-            ? `${formatDate(dateValue[0] ?? new Date())} - ${formatDate(dateValue[1] ?? new Date())}`
-            : dateValue[0]
-              ? formatDate(dateValue[0])
-              : 'Pick a date';
+          filter.operator === 'isBetween' && dateValue.length === 2 ? `${formatDate(dateValue[0] ?? new Date())} - ${formatDate(dateValue[1] ?? new Date())}` : dateValue[0] ? formatDate(dateValue[0]) : 'Pick a date';
 
         return (
           <Popover>
@@ -387,10 +366,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
           id={`${id}-filter-dialog`}
           align="start"
           collisionPadding={16}
-          className={cn(
-            'flex w-[calc(100vw-theme(spacing.12))] min-w-60 origin-[var(--radix-popover-content-transform-origin)] flex-col p-4 sm:w-[36rem]',
-            filters.length > 0 ? 'gap-3.5' : 'gap-2'
-          )}>
+          className={cn('flex w-[calc(100vw-theme(spacing.12))] min-w-60 origin-[var(--radix-popover-content-transform-origin)] flex-col p-4 sm:w-[36rem]', filters.length > 0 ? 'gap-3.5' : 'gap-2')}>
           {filters.length > 0 ? (
             <h4 className="font-medium leading-none">Filters</h4>
           ) : (

@@ -96,18 +96,7 @@ interface SortableProps<TData extends { id: UniqueIdentifier }> extends DndConte
   overlay?: React.ReactNode | null;
 }
 
-function Sortable<TData extends { id: UniqueIdentifier }>({
-  value,
-  onValueChange,
-  collisionDetection = closestCenter,
-  modifiers,
-  strategy,
-  onMove,
-  orientation = 'vertical',
-  overlay,
-  children,
-  ...props
-}: SortableProps<TData>) {
+function Sortable<TData extends { id: UniqueIdentifier }>({ value, onValueChange, collisionDetection = closestCenter, modifiers, strategy, onMove, orientation = 'vertical', overlay, children, ...props }: SortableProps<TData>) {
   const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor), useSensor(KeyboardSensor));
 
@@ -256,16 +245,7 @@ interface SortableDragHandleProps extends ButtonProps {
 const SortableDragHandle = React.forwardRef<HTMLButtonElement, SortableDragHandleProps>(({ className, ...props }, ref) => {
   const { attributes, listeners, isDragging } = useSortableItem();
 
-  return (
-    <Button
-      ref={composeRefs(ref)}
-      data-state={isDragging ? 'dragging' : undefined}
-      className={cn('cursor-grab data-[state=dragging]:cursor-grabbing', className)}
-      {...attributes}
-      {...listeners}
-      {...props}
-    />
-  );
+  return <Button ref={composeRefs(ref)} data-state={isDragging ? 'dragging' : undefined} className={cn('cursor-grab data-[state=dragging]:cursor-grabbing', className)} {...attributes} {...listeners} {...props} />;
 });
 SortableDragHandle.displayName = 'SortableDragHandle';
 

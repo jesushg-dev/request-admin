@@ -50,13 +50,15 @@ model Tenant extends Auditable {
   persons            Person[]                       // Linked persons
   clients            Client[]                       // Linked clients
   requirements       Requirement[]                  // Linked requirements
+  requirementTypes  RequirementType[]              // Linked requirement types
   categoryRequirements CategoryRequirement[]        // Linked category-requirement associations
   requests           Request[]                      // Linked service requests
   requirementComplianceTrackings RequirementComplianceTracking[] // Linked compliance tracking
+  requestAssignments RequestAssignment[]            // Linked request assignments
+  StatusType         StatusType[]                   // Linked status types
   documents          Document[]                     // Linked documents
   areas              Area[]                         // Linked areas
   categories         Category[]                     // Linked categories
-  requestAssignments RequestAssignment[]            // Linked request assignments
   userRoles          UserRole[]                     // Linked user roles
   roles              Role[]                         // Linked roles
   modules            Module[]                       // Linked modules

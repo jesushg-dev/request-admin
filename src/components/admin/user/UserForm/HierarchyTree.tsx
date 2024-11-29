@@ -51,10 +51,7 @@ const HierarchyTree: FC<IHierarchyTreeProps> = ({ areaId, userId, defaultValues,
         <SortableTree items={items} onItemsChanged={setItems} TreeItemComponent={MinimalTreeItemComponent} />
       </TreeHierarchyProvider>
       <div className="mt-5 flex w-full items-center justify-between">
-        <Button
-          type="button"
-          onClick={goBack}
-          className="rounded bg-white px-4 py-2 font-bold text-gray-800 hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700">
+        <Button type="button" onClick={goBack} className="rounded bg-white px-4 py-2 font-bold text-gray-800 hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700">
           Back
         </Button>
         <Button type="button" onClick={handleSubmit}>

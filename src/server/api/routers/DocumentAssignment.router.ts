@@ -16,37 +16,27 @@ export default function createRouter() {
   return createTRPCRouter({
     aggregate: procedure.input($Schema.DocumentAssignmentInputSchema.aggregate).query(({ ctx, input }) => checkRead(db(ctx).documentAssignment.aggregate(input as any))),
 
-    createMany: procedure
-      .input($Schema.DocumentAssignmentInputSchema.createMany.optional())
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).documentAssignment.createMany(input as any))),
+    createMany: procedure.input($Schema.DocumentAssignmentInputSchema.createMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).documentAssignment.createMany(input as any))),
 
     create: procedure.input($Schema.DocumentAssignmentInputSchema.create).mutation(async ({ ctx, input }) => checkMutate(db(ctx).documentAssignment.create(input as any))),
 
-    deleteMany: procedure
-      .input($Schema.DocumentAssignmentInputSchema.deleteMany.optional())
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).documentAssignment.deleteMany(input as any))),
+    deleteMany: procedure.input($Schema.DocumentAssignmentInputSchema.deleteMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).documentAssignment.deleteMany(input as any))),
 
     delete: procedure.input($Schema.DocumentAssignmentInputSchema.delete).mutation(async ({ ctx, input }) => checkMutate(db(ctx).documentAssignment.delete(input as any))),
 
     findFirst: procedure.input($Schema.DocumentAssignmentInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).documentAssignment.findFirst(input as any))),
 
-    findFirstOrThrow: procedure
-      .input($Schema.DocumentAssignmentInputSchema.findFirst.optional())
-      .query(({ ctx, input }) => checkRead(db(ctx).documentAssignment.findFirstOrThrow(input as any))),
+    findFirstOrThrow: procedure.input($Schema.DocumentAssignmentInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).documentAssignment.findFirstOrThrow(input as any))),
 
     findMany: procedure.input($Schema.DocumentAssignmentInputSchema.findMany.optional()).query(({ ctx, input }) => checkRead(db(ctx).documentAssignment.findMany(input as any))),
 
     findUnique: procedure.input($Schema.DocumentAssignmentInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).documentAssignment.findUnique(input as any))),
 
-    findUniqueOrThrow: procedure
-      .input($Schema.DocumentAssignmentInputSchema.findUnique)
-      .query(({ ctx, input }) => checkRead(db(ctx).documentAssignment.findUniqueOrThrow(input as any))),
+    findUniqueOrThrow: procedure.input($Schema.DocumentAssignmentInputSchema.findUnique).query(({ ctx, input }) => checkRead(db(ctx).documentAssignment.findUniqueOrThrow(input as any))),
 
     groupBy: procedure.input($Schema.DocumentAssignmentInputSchema.groupBy).query(({ ctx, input }) => checkRead(db(ctx).documentAssignment.groupBy(input as any))),
 
-    updateMany: procedure
-      .input($Schema.DocumentAssignmentInputSchema.updateMany)
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).documentAssignment.updateMany(input as any))),
+    updateMany: procedure.input($Schema.DocumentAssignmentInputSchema.updateMany).mutation(async ({ ctx, input }) => checkMutate(db(ctx).documentAssignment.updateMany(input as any))),
 
     update: procedure.input($Schema.DocumentAssignmentInputSchema.update).mutation(async ({ ctx, input }) => checkMutate(db(ctx).documentAssignment.update(input as any))),
 

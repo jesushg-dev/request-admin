@@ -52,13 +52,7 @@ const ServiceTypeForm: FC<ServiceTypeFormProps> = ({ defaultValues, onSubmit }) 
 
       {rswitch(step, {
         0: <ServiceTypeDetailForm defaultValues={serviceType} options={salesChannel || []} onSubmit={onSubmitServiceType} />,
-        1: (
-          <>
-            {step === 1 && requirementsData && (
-              <RequerimentSelector goBack={() => setStep(0)} defaultValues={requirements} requirementsData={requirementsData} submitForm={onSubmitRequirements} />
-            )}
-          </>
-        ),
+        1: <>{step === 1 && requirementsData && <RequerimentSelector goBack={() => setStep(0)} defaultValues={requirements} requirementsData={requirementsData} submitForm={onSubmitRequirements} />}</>,
         2: <>{serviceType && requirements && <SummaryForm serviceType={serviceType} requirements={requirements} goBack={() => setStep(1)} onSubmit={onSubmit} />}</>,
       })}
     </div>

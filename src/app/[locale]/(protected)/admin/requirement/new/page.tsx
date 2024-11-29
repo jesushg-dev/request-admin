@@ -36,32 +36,9 @@ const NewRequirementPage: React.FC = () => {
         <form className="grid grid-cols-2 gap-4 p-6" onSubmit={handleSubmit((data) => onSubmit({ data }))}>
           <Input name="id" type="text" register={register} formState={formState} label={t('inputs.id.label')} placeholder={t('inputs.id.placeholder')} required />
           <Input name="name" type="text" register={register} formState={formState} label={t('inputs.name.label')} placeholder={t('inputs.name.placeholder')} required />
-          <Input
-            name="description"
-            type="text"
-            register={register}
-            formState={formState}
-            label={t('inputs.description.label')}
-            placeholder={t('inputs.description.placeholder')}
-            required
-          />
-          <Input
-            name="categoryRequirementId"
-            type="text"
-            register={register}
-            formState={formState}
-            label={t('inputs.categoryRequirementId.label')}
-            placeholder={t('inputs.categoryRequirementId.placeholder')}
-          />
-          <Input
-            name="onlyRequireInNewClients"
-            type="text"
-            register={register}
-            formState={formState}
-            label={t('inputs.onlyRequireInNewClients.label')}
-            placeholder={t('inputs.onlyRequireInNewClients.placeholder')}
-            required
-          />
+          <Input name="description" type="text" register={register} formState={formState} label={t('inputs.description.label')} placeholder={t('inputs.description.placeholder')} required />
+          <Input name="categoryRequirementId" type="text" register={register} formState={formState} label={t('inputs.categoryRequirementId.label')} placeholder={t('inputs.categoryRequirementId.placeholder')} />
+          <Input name="onlyRequireInNewClients" type="text" register={register} formState={formState} label={t('inputs.onlyRequireInNewClients.label')} placeholder={t('inputs.onlyRequireInNewClients.placeholder')} required />
           <ErrorList formState={formState} />
           <button type="submit" className="flex w-full justify-center rounded bg-primary p-3 font-medium text-white hover:bg-opacity-90">
             {t('createButton')}

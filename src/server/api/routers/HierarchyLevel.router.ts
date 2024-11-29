@@ -16,23 +16,17 @@ export default function createRouter() {
   return createTRPCRouter({
     aggregate: procedure.input($Schema.HierarchyLevelInputSchema.aggregate).query(({ ctx, input }) => checkRead(db(ctx).hierarchyLevel.aggregate(input as any))),
 
-    createMany: procedure
-      .input($Schema.HierarchyLevelInputSchema.createMany.optional())
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).hierarchyLevel.createMany(input as any))),
+    createMany: procedure.input($Schema.HierarchyLevelInputSchema.createMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).hierarchyLevel.createMany(input as any))),
 
     create: procedure.input($Schema.HierarchyLevelInputSchema.create).mutation(async ({ ctx, input }) => checkMutate(db(ctx).hierarchyLevel.create(input as any))),
 
-    deleteMany: procedure
-      .input($Schema.HierarchyLevelInputSchema.deleteMany.optional())
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).hierarchyLevel.deleteMany(input as any))),
+    deleteMany: procedure.input($Schema.HierarchyLevelInputSchema.deleteMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).hierarchyLevel.deleteMany(input as any))),
 
     delete: procedure.input($Schema.HierarchyLevelInputSchema.delete).mutation(async ({ ctx, input }) => checkMutate(db(ctx).hierarchyLevel.delete(input as any))),
 
     findFirst: procedure.input($Schema.HierarchyLevelInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).hierarchyLevel.findFirst(input as any))),
 
-    findFirstOrThrow: procedure
-      .input($Schema.HierarchyLevelInputSchema.findFirst.optional())
-      .query(({ ctx, input }) => checkRead(db(ctx).hierarchyLevel.findFirstOrThrow(input as any))),
+    findFirstOrThrow: procedure.input($Schema.HierarchyLevelInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).hierarchyLevel.findFirstOrThrow(input as any))),
 
     findMany: procedure.input($Schema.HierarchyLevelInputSchema.findMany.optional()).query(({ ctx, input }) => checkRead(db(ctx).hierarchyLevel.findMany(input as any))),
 

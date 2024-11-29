@@ -18,9 +18,7 @@ interface TasksTableToolbarActionsProps {
 export function TasksTableToolbarActions({ table }: TasksTableToolbarActionsProps) {
   return (
     <div className="flex items-center gap-2">
-      {table.getFilteredSelectedRowModel().rows.length > 0 ? (
-        <DeleteTasksDialog tasks={table.getFilteredSelectedRowModel().rows.map((row) => row.original)} onSuccess={() => table.toggleAllRowsSelected(false)} />
-      ) : null}
+      {table.getFilteredSelectedRowModel().rows.length > 0 ? <DeleteTasksDialog tasks={table.getFilteredSelectedRowModel().rows.map((row) => row.original)} onSuccess={() => table.toggleAllRowsSelected(false)} /> : null}
       <Button
         variant="outline"
         size="sm"

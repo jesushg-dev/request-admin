@@ -59,22 +59,10 @@ const UserForm: FC<UserFormProps> = ({ userId, defaultValues, onSubmit }) => {
         0: <UserDataForm defaultValues={user} onSubmit={onSubmitUser} onAreaChange={setAreaId} />,
         1: (
           <div className="p-8">
-            {!!areaId ? (
-              <HierarchyTree goBack={() => setStep(0)} defaultValues={hierarchies} submitForm={onSubmitHierarchy} userId={userId} areaId={areaId} />
-            ) : (
-              <p>Seleccione un área para interactuar con su jerarquía</p>
-            )}
+            {!!areaId ? <HierarchyTree goBack={() => setStep(0)} defaultValues={hierarchies} submitForm={onSubmitHierarchy} userId={userId} areaId={areaId} /> : <p>Seleccione un área para interactuar con su jerarquía</p>}
           </div>
         ),
-        2: (
-          <>
-            {!!user && !!hierarchies.length ? (
-              <SummaryForm goBack={() => setStep(1)} user={user} hierarchies={hierarchies} onSubmit={onSubmitSummary} />
-            ) : (
-              <p>Complete los pasos anteriores</p>
-            )}
-          </>
-        ),
+        2: <>{!!user && !!hierarchies.length ? <SummaryForm goBack={() => setStep(1)} user={user} hierarchies={hierarchies} onSubmit={onSubmitSummary} /> : <p>Complete los pasos anteriores</p>}</>,
       })}
     </div>
   );

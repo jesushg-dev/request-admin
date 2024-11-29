@@ -16,23 +16,17 @@ export default function createRouter() {
   return createTRPCRouter({
     aggregate: procedure.input($Schema.AuthenticatorInputSchema.aggregate).query(({ ctx, input }) => checkRead(db(ctx).authenticator.aggregate(input as any))),
 
-    createMany: procedure
-      .input($Schema.AuthenticatorInputSchema.createMany.optional())
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).authenticator.createMany(input as any))),
+    createMany: procedure.input($Schema.AuthenticatorInputSchema.createMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).authenticator.createMany(input as any))),
 
     create: procedure.input($Schema.AuthenticatorInputSchema.create).mutation(async ({ ctx, input }) => checkMutate(db(ctx).authenticator.create(input as any))),
 
-    deleteMany: procedure
-      .input($Schema.AuthenticatorInputSchema.deleteMany.optional())
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).authenticator.deleteMany(input as any))),
+    deleteMany: procedure.input($Schema.AuthenticatorInputSchema.deleteMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).authenticator.deleteMany(input as any))),
 
     delete: procedure.input($Schema.AuthenticatorInputSchema.delete).mutation(async ({ ctx, input }) => checkMutate(db(ctx).authenticator.delete(input as any))),
 
     findFirst: procedure.input($Schema.AuthenticatorInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).authenticator.findFirst(input as any))),
 
-    findFirstOrThrow: procedure
-      .input($Schema.AuthenticatorInputSchema.findFirst.optional())
-      .query(({ ctx, input }) => checkRead(db(ctx).authenticator.findFirstOrThrow(input as any))),
+    findFirstOrThrow: procedure.input($Schema.AuthenticatorInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).authenticator.findFirstOrThrow(input as any))),
 
     findMany: procedure.input($Schema.AuthenticatorInputSchema.findMany.optional()).query(({ ctx, input }) => checkRead(db(ctx).authenticator.findMany(input as any))),
 

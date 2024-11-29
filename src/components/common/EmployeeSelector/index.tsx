@@ -15,10 +15,7 @@ const EmployeeSelector: FC<IEmployeeSelectorProps> = ({ values, onChange }) => {
   const parentRef = useRef(null);
   const [selected, setSelected] = useState<IEmployee[]>(values || []);
 
-  const { status, data, error, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = api.user.infinite.useInfiniteQuery(
-    { limit: 50 },
-    { getNextPageParam: (lastPage) => lastPage.nextCursor }
-  );
+  const { status, data, error, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = api.user.infinite.useInfiniteQuery({ limit: 50 }, { getNextPageParam: (lastPage) => lastPage.nextCursor });
 
   // Flatten the pages of data into a single array of employees
   const employees = data ? data.pages.flatMap((page) => page.items) : [];

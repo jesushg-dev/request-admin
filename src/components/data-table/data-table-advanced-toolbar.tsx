@@ -56,15 +56,7 @@ interface DataTableAdvancedToolbarProps<TData> extends React.HTMLAttributes<HTML
   shallow?: boolean;
 }
 
-export function DataTableAdvancedToolbar<TData>({
-  table,
-  filterFields = [],
-  debounceMs = 300,
-  shallow = true,
-  children,
-  className,
-  ...props
-}: DataTableAdvancedToolbarProps<TData>) {
+export function DataTableAdvancedToolbar<TData>({ table, filterFields = [], debounceMs = 300, shallow = true, children, className, ...props }: DataTableAdvancedToolbarProps<TData>) {
   return (
     <div className={cn('flex w-full items-center justify-between gap-2 overflow-auto p-1', className)} {...props}>
       <div className="flex items-center gap-2">

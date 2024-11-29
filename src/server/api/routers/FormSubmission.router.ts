@@ -16,23 +16,17 @@ export default function createRouter() {
   return createTRPCRouter({
     aggregate: procedure.input($Schema.FormSubmissionInputSchema.aggregate).query(({ ctx, input }) => checkRead(db(ctx).formSubmission.aggregate(input as any))),
 
-    createMany: procedure
-      .input($Schema.FormSubmissionInputSchema.createMany.optional())
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).formSubmission.createMany(input as any))),
+    createMany: procedure.input($Schema.FormSubmissionInputSchema.createMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).formSubmission.createMany(input as any))),
 
     create: procedure.input($Schema.FormSubmissionInputSchema.create).mutation(async ({ ctx, input }) => checkMutate(db(ctx).formSubmission.create(input as any))),
 
-    deleteMany: procedure
-      .input($Schema.FormSubmissionInputSchema.deleteMany.optional())
-      .mutation(async ({ ctx, input }) => checkMutate(db(ctx).formSubmission.deleteMany(input as any))),
+    deleteMany: procedure.input($Schema.FormSubmissionInputSchema.deleteMany.optional()).mutation(async ({ ctx, input }) => checkMutate(db(ctx).formSubmission.deleteMany(input as any))),
 
     delete: procedure.input($Schema.FormSubmissionInputSchema.delete).mutation(async ({ ctx, input }) => checkMutate(db(ctx).formSubmission.delete(input as any))),
 
     findFirst: procedure.input($Schema.FormSubmissionInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).formSubmission.findFirst(input as any))),
 
-    findFirstOrThrow: procedure
-      .input($Schema.FormSubmissionInputSchema.findFirst.optional())
-      .query(({ ctx, input }) => checkRead(db(ctx).formSubmission.findFirstOrThrow(input as any))),
+    findFirstOrThrow: procedure.input($Schema.FormSubmissionInputSchema.findFirst.optional()).query(({ ctx, input }) => checkRead(db(ctx).formSubmission.findFirstOrThrow(input as any))),
 
     findMany: procedure.input($Schema.FormSubmissionInputSchema.findMany.optional()).query(({ ctx, input }) => checkRead(db(ctx).formSubmission.findMany(input as any))),
 

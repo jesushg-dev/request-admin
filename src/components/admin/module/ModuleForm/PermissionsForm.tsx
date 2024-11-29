@@ -38,16 +38,7 @@ const PermissionsForm: FC<CreatePermissionsFormProps> = ({ goBack, submitForm, d
             <div key={permission.id || index} className="rounded border border-gray-200 p-2 shadow-sm">
               <div className="flex gap-4">
                 <div className="mb-2 grid w-full grid-cols-3 items-start gap-2">
-                  <Input
-                    required
-                    name={`permissions.${index}.name`}
-                    type="text"
-                    register={register}
-                    formState={formState}
-                    label={`#${index + 1} Name`}
-                    placeholder={`Name of Permission`}
-                    Icon={MdPerson}
-                  />
+                  <Input required name={`permissions.${index}.name`} type="text" register={register} formState={formState} label={`#${index + 1} Name`} placeholder={`Name of Permission`} Icon={MdPerson} />
                   <Textarea
                     containerClassName="col-span-2"
                     name={`permissions.${index}.description`}
