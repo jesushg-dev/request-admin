@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 
-import { useCurrentRole } from '@/hooks/use-current-role.hook';
+import { useCurrentRole } from '@/hooks/use-current-role';
 import { FormError } from '@/components/prullenbak/form-error';
 
 interface RoleGateProps {

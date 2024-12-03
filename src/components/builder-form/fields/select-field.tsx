@@ -8,7 +8,7 @@ import { RxDropdownMenu } from 'react-icons/rx';
 import { z } from 'zod';
 
 import { cn } from '@/lib/utils';
-import useDesigner from '@/hooks/use-designer.hook';
+import useDesigner from '@/hooks/use-designer';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';

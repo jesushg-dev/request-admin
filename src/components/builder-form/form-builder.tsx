@@ -8,7 +8,7 @@ import Confetti from 'react-confetti';
 import { BsArrowLeft, BsArrowRight } from 'react-icons/bs';
 import { ImSpinner2 } from 'react-icons/im';
 
-import useDesigner from '@/hooks/use-designer.hook';
+import useDesigner from '@/hooks/use-designer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';

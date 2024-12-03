@@ -1,16 +1,34 @@
 'use client';
 
 import * as React from 'react';
-import { Tenant } from '@zenstackhq/runtime/models';
 import { ChevronsUpDown, Plus } from 'lucide-react';
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
 
-export function TeamSwitcher({ teams }: { teams: Tenant[] }) {
+interface TeamUser {
+  id: string;
+  name: string;
+  logoUrl: string | null;
+  description: string | null;
+  userTenants: {
+    isCurrent: boolean;
+  }[];
+}
+
+export function TeamSwitcher({ teams, onTeamChange }: { teams: TeamUser[]; onTeamChange: (teamId: string) => void }) {
   const { isMobile } = useSidebar();
-  const [activeTeam, setActiveTeam] = React.useState<Tenant | undefined>(teams[0]);
-  console.log('🚀 ~ TeamSwitcher ~ activeTeam:', activeTeam);
+  const [activeTeam, setActiveTeam] = React.useState<TeamUser | undefined>();
+
+  React.useEffect(() => {
+    const activeTeam = teams.find((team) => team.userTenants.some((userTenant) => userTenant.isCurrent));
+
+    if (activeTeam) {
+      setActiveTeam(activeTeam);
+    } else if (teams.length > 0) {
+      setActiveTeam(teams[0]);
+    }
+  }, [teams]);
 
   return (
     <SidebarMenu>
@@ -31,7 +49,7 @@ export function TeamSwitcher({ teams }: { teams: Tenant[] }) {
           <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg" align="start" side={isMobile ? 'bottom' : 'right'} sideOffset={4}>
             <DropdownMenuLabel className="text-xs text-muted-foreground">Teams</DropdownMenuLabel>
             {teams.map((team, index) => (
-              <DropdownMenuItem key={team.name} onClick={() => setActiveTeam(team)} className="gap-2 p-2">
+              <DropdownMenuItem key={team.id} onClick={() => onTeamChange(team.id)} className="gap-2 p-2">
                 <div className="flex size-6 items-center justify-center rounded-sm border">{team.logoUrl && <img src={team.logoUrl} className="size-4" />}</div>
                 {team.name}
                 <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>

@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { LuHeading2 } from 'react-icons/lu';
 import { z } from 'zod';
 
-import useDesigner from '@/hooks/use-designer.hook';
+import useDesigner from '@/hooks/use-designer';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

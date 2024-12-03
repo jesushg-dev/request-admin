@@ -7,7 +7,7 @@ import { IoMdCheckbox } from 'react-icons/io';
 import { z } from 'zod';
 
 import { cn } from '@/lib/utils';
-import useDesigner from '@/hooks/use-designer.hook';
+import useDesigner from '@/hooks/use-designer';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';

@@ -7,7 +7,7 @@ import { RiDragMove2Line } from 'react-icons/ri';
 import { v4 as idGenerator } from 'uuid';
 
 import { cn } from '@/lib/utils';
-import useDesigner from '@/hooks/use-designer.hook';
+import useDesigner from '@/hooks/use-designer';
 
 import { Button } from '../form';
 import DesignerSidebar from './designer-sidebar';

@@ -9,7 +9,7 @@ import { BsFillCalendarDateFill } from 'react-icons/bs';
 import { z } from 'zod';
 
 import { cn } from '@/lib/utils';
-import useDesigner from '@/hooks/use-designer.hook';
+import useDesigner from '@/hooks/use-designer';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';

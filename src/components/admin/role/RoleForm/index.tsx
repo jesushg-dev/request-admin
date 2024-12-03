@@ -4,7 +4,6 @@ import React, { useState, type FC } from 'react';
 import type { CreateRoleInputs, CreateRoleWithPermissionsAndEmployeesInputs, SelectPermissionInputs } from '@/connections/role';
 import type { IEmployee } from '@/utils/types';
 import { StepDirective, StepperComponent, StepsDirective } from '@syncfusion/ej2-react-navigations';
-import { toast } from 'react-toastify';
 
 import rswitch from '@/lib/rswitch';
 

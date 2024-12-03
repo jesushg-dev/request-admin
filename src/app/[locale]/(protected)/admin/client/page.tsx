@@ -10,7 +10,7 @@ import { ColumnDirective, ColumnsDirective, CommandColumn, Filter, FilterSetting
 import { useTranslations } from 'next-intl';
 
 import { triggerConfirm } from '@/lib/message';
-import useSubmit from '@/hooks/use-submit.hook';
+import useSubmit from '@/hooks/use-submit';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 
 type ClientOutputType = RouterOutputs['client']['findMany'][0];

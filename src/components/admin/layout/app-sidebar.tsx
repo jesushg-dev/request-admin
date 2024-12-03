@@ -2,19 +2,14 @@
 
 import * as React from 'react';
 import { logout } from '@/actions/logout';
-import { useFindManyTenant } from '@/services/api/hooks';
-import { is } from 'date-fns/locale';
+import { useFindManyTenant, useUpdateUserTenant } from '@/services/api/hooks';
 import {
-  AudioWaveform,
   BookOpen,
-  Bot,
   BriefcaseIcon,
   ClipboardIcon,
-  Command,
   FileTextIcon,
   FolderIcon,
   Frame,
-  GalleryVerticalEnd,
   GridIcon,
   HomeIcon,
   LayersIcon,
@@ -22,16 +17,15 @@ import {
   LockIcon,
   Map,
   PieChart,
-  PieChartIcon,
   Settings2,
   SettingsIcon,
   ShieldIcon,
-  SquareTerminal,
   UsersIcon,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
-import { useCurrentUser } from '@/hooks/use-current-user.hook';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { MenuItem, NavMain } from '@/components/admin/layout/nav-main';
@@ -60,9 +54,12 @@ const projects: MenuProject[] = [
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const user = useCurrentUser();
   const { data: teams, isLoading } = useFindManyTenant({
+    select: { id: true, name: true, description: true, logoUrl: true, userTenants: { select: { isCurrent: true } } },
     where: { userTenants: { some: { userId: { equals: user?.id } } } },
   });
   const t = useTranslations('admin.sidebar');
+
+  const { mutateAsync } = useUpdateUserTenant();
 
   const navMain: MenuItem[] = [
     {
@@ -203,11 +200,27 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const onLogout = () => {
     logout();
   };
-  console.log('🚀 ~ AppSidebar ~ data:', teams);
+
+  const onTeamChange = async (tenantId: string) => {
+    try {
+      if (!user?.id) throw new Error('User not found');
+      //find the current user tenant and set it to false
+      const userTenant = teams?.find((team) => team.userTenants.some((userTenant) => userTenant.isCurrent));
+      if (userTenant) {
+        await mutateAsync({ data: { isCurrent: false }, where: { userId_tenantId: { userId: user?.id, tenantId: userTenant.id } } });
+      }
+
+      await mutateAsync({ data: { isCurrent: true }, where: { userId_tenantId: { userId: user?.id, tenantId } } });
+
+      toast.success(t('success.changeTenantSuccess'));
+    } catch (error) {
+      toast.error(t('errors.changeTenantError'));
+    }
+  };
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>{isLoading ? <Skeleton className="h-2 w-full" /> : <TeamSwitcher teams={teams ?? []} />}</SidebarHeader>
+      <SidebarHeader>{isLoading ? <Skeleton className="h-2 w-full" /> : <TeamSwitcher teams={teams ?? []} onTeamChange={onTeamChange} />}</SidebarHeader>
       <SidebarContent>
         <NavMain items={navMain} />
         <NavProjects projects={projects} />

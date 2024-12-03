@@ -1,6 +1,6 @@
 'use client';
 
-import { useCurrentUser } from '@/hooks/use-current-user.hook';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import { UserInfo } from '@/components/prullenbak/user-info';
 
 const ClientPage = () => {

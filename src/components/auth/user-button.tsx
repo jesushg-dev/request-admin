@@ -3,7 +3,7 @@
 import { ExitIcon } from '@radix-ui/react-icons';
 import { FaUser } from 'react-icons/fa';
 
-import { useCurrentUser } from '@/hooks/use-current-user.hook';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { LogoutButton } from '@/components/auth/logout-button';

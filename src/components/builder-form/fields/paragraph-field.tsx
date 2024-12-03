@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { BsTextParagraph } from 'react-icons/bs';
 import { z } from 'zod';
 
-import useDesigner from '@/hooks/use-designer.hook';
+import useDesigner from '@/hooks/use-designer';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';

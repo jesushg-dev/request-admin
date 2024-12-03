@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 
-import useDesigner from '@/hooks/use-designer.hook';
+import useDesigner from '@/hooks/use-designer';
 
 import FormElementsSidebar from './form-elements-sidebar';
 import PropertiesFormSidebar from './properties-form-sidebar';

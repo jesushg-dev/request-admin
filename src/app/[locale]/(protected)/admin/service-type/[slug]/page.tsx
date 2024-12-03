@@ -9,7 +9,7 @@ import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import useSubmit from '@/hooks/use-submit.hook';
+import useSubmit from '@/hooks/use-submit';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { Input } from '@/components/form';
 import ErrorList from '@/components/form/error-list';

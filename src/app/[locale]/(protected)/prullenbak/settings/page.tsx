@@ -8,7 +8,7 @@ import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
-import { useCurrentUser } from '@/hooks/use-current-user.hook';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';

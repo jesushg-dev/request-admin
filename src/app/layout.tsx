@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 
 import './globals.css';
-import 'react-toastify/dist/ReactToastify.min.css';
 import 'react-loading-skeleton/dist/skeleton.css';
 import '@syncfusion/ej2-base/styles/tailwind.css';
 import '@syncfusion/ej2-buttons/styles/tailwind.css';

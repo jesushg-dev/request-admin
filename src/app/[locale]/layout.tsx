@@ -10,9 +10,7 @@ import { getMessages, getTranslations } from 'next-intl/server';
 import { ThemeProvider } from 'next-themes';
 import NextTopLoader from 'nextjs-toploader';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
-import { ToastContainer } from 'react-toastify';
 
-import { Toaster } from '@/components/ui/sonner';
 import TanstackQueryProvider from '@/components/hoc/tanstack-query-provider';
 
 // Font configuration
@@ -83,8 +81,6 @@ export default async function RootLayout({ children, params }: Props) {
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <NextIntlClientProvider locale={locale} messages={messages}>
               <NextTopLoader />
-              <Toaster />
-              <ToastContainer />
               <TanstackQueryProvider>
                 <TRPCReactProvider>
                   <NuqsAdapter>{children}</NuqsAdapter>
