@@ -1,27 +1,29 @@
+'use client';
+
 import * as React from 'react';
-import { SelectTrigger } from '@radix-ui/react-select';
 import { type Table } from '@tanstack/react-table';
-import { Area as AreaType } from '@zenstackhq/runtime/models';
-import { ArrowUp, CheckCircle2, Download, Loader, Trash2, X } from 'lucide-react';
-import { toast } from 'sonner';
+import { Download, Loader, Trash2, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { exportTableToCSV } from '@/lib/export';
 import { Button } from '@/components/ui/button';
 import { Portal } from '@/components/ui/portal';
-import { Select, SelectContent, SelectGroup, SelectItem } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Kbd } from '@/components/kbd';
 
-interface TasksTableFloatingBarProps {
-  table: Table<AreaType>;
+interface DataTableFloatingBarProps<T> {
+  table: Table<T>; // The table instance
+  entityLabel?: string; // Singular label for the entity (e.g., "task")
+  onDelete?: () => Promise<void>; // Optional delete action
 }
 
-export function TasksTableFloatingBar({ table }: TasksTableFloatingBarProps) {
+export function DataTableFloatingBar<T>({ table, entityLabel = 'item', onDelete }: DataTableFloatingBarProps<T>) {
+  const t = useTranslations('table.floating');
   const rows = table.getFilteredSelectedRowModel().rows;
 
   const [isPending, startTransition] = React.useTransition();
-  const [action, setAction] = React.useState<'update-status' | 'update-priority' | 'export' | 'delete'>();
+  const [action, setAction] = React.useState<'export' | 'delete'>();
 
   // Clear selection on Escape key press
   React.useEffect(() => {
@@ -41,7 +43,9 @@ export function TasksTableFloatingBar({ table }: TasksTableFloatingBarProps) {
         <div className="w-full overflow-x-auto">
           <div className="mx-auto flex w-fit items-center gap-2 rounded-md border bg-background p-2 text-foreground shadow">
             <div className="flex h-7 items-center rounded-md border border-dashed pl-2.5 pr-1">
-              <span className="whitespace-nowrap text-xs">{rows.length} selected</span>
+              <span className="whitespace-nowrap text-xs">
+                {rows.length} {rows.length === 1 ? entityLabel : `${entityLabel}s`} {t('selected')}
+              </span>
               <Separator orientation="vertical" className="ml-2 mr-1" />
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -50,7 +54,7 @@ export function TasksTableFloatingBar({ table }: TasksTableFloatingBarProps) {
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="flex items-center border bg-accent px-2 py-1 font-semibold text-foreground dark:bg-zinc-900">
-                  <p className="mr-2">Clear selection</p>
+                  <p className="mr-2">{t('clearSelection')}</p>
                   <Kbd abbrTitle="Escape" variant="outline">
                     Esc
                   </Kbd>
@@ -80,30 +84,33 @@ export function TasksTableFloatingBar({ table }: TasksTableFloatingBarProps) {
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="border bg-accent font-semibold text-foreground dark:bg-zinc-900">
-                  <p>Export tasks</p>
+                  <p>{t('export', { entity: entityLabel })}</p>
                 </TooltipContent>
               </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="secondary"
-                    size="icon"
-                    className="size-7 border"
-                    onClick={() => {
-                      setAction('delete');
+              {onDelete && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="secondary"
+                      size="icon"
+                      className="size-7 border"
+                      onClick={() => {
+                        setAction('delete');
 
-                      startTransition(async () => {
-                        table.toggleAllRowsSelected(false);
-                      });
-                    }}
-                    disabled={isPending}>
-                    {isPending && action === 'delete' ? <Loader className="size-3.5 animate-spin" aria-hidden="true" /> : <Trash2 className="size-3.5" aria-hidden="true" />}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent className="border bg-accent font-semibold text-foreground dark:bg-zinc-900">
-                  <p>Delete tasks</p>
-                </TooltipContent>
-              </Tooltip>
+                        startTransition(async () => {
+                          await onDelete();
+                          table.toggleAllRowsSelected(false);
+                        });
+                      }}
+                      disabled={isPending}>
+                      {isPending && action === 'delete' ? <Loader className="size-3.5 animate-spin" aria-hidden="true" /> : <Trash2 className="size-3.5" aria-hidden="true" />}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="border bg-accent font-semibold text-foreground dark:bg-zinc-900">
+                    <p>{t('delete', { entity: entityLabel })}</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
             </div>
           </div>
         </div>

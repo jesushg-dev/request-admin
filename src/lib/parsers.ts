@@ -10,11 +10,7 @@ export const sortingItemSchema = z.object({
   desc: z.boolean(),
 });
 
-/**
- * Creates a parser for TanStack Table sorting state.
- * @param originalRow The original row data to validate sorting keys against.
- * @returns A parser for TanStack Table sorting state.
- */
+// Parser for TanStack Table sorting state
 export const getSortingStateParser = <TData>(originalRow?: Row<TData>['original']) => {
   const validKeys = originalRow ? new Set(Object.keys(originalRow)) : null;
 
@@ -40,6 +36,7 @@ export const getSortingStateParser = <TData>(originalRow?: Row<TData>['original'
   });
 };
 
+// Filter schema and parsers (unchanged)
 export const filterSchema = z.object({
   id: z.string(),
   value: z.union([z.string(), z.array(z.string())]),
@@ -48,11 +45,6 @@ export const filterSchema = z.object({
   rowId: z.string(),
 });
 
-/**
- * Create a parser for data table filters.
- * @param originalRow The original row data to create the parser for.
- * @returns A parser for data table filters state.
- */
 export const getFiltersStateParser = <T>(originalRow?: Row<T>['original']) => {
   const validKeys = originalRow ? new Set(Object.keys(originalRow)) : null;
 

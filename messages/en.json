@@ -6,6 +6,26 @@
       }
     }
   },
+  "table": {
+    "actions": {
+      "export": "Export"
+    },
+    "delete": {
+      "title": "Are you absolutely sure?",
+      "description": "This action cannot be undone. This will permanently delete your {count} {entity}{count, plural, one {} other {s}} from our servers.",
+      "trigger": "Delete ({count} {entity}{count, plural, one {} other {s}})",
+      "confirm": "Delete",
+      "cancel": "Cancel",
+      "success": "Successfully deleted {count} {entity}{count, plural, one {} other {s}}.",
+      "error": "Failed to delete {entity}{count, plural, one {} other {s}}."
+    },
+    "floating": {
+      "selected": "selected",
+      "clearSelection": "Clear selection",
+      "export": "Export {entity}",
+      "delete": "Delete {entity}"
+    }
+  },
   "home": {
     "title": "Request Engine",
     "description": "A robust and scalable system designed to streamline the management of telecommunication service requests, adhering to ITIL best practices.",
@@ -121,7 +141,13 @@
       "security": "Security",
       "role": "Role",
       "module": "Module",
-      "user": "User"
+      "user": "User",
+      "errors": {
+        "changeTenantError": "Error changing tenant!"
+      },
+      "success": {
+        "changeTenantSuccess": "Tenant changed successfully!"
+      }
     },
     "area": {
       "main": {

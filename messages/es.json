@@ -6,6 +6,26 @@
       }
     }
   },
+  "table": {
+    "actions": {
+      "export": "Exportar"
+    },
+    "delete": {
+      "title": "¿Estás completamente seguro?",
+      "description": "Esta acción no se puede deshacer. Esto eliminará permanentemente tus {count} {entity}{count, plural, one {} other {s}} de nuestros servidores.",
+      "trigger": "Eliminar ({count} {entity}{count, plural, one {} other {s}})",
+      "confirm": "Eliminar",
+      "cancel": "Cancelar",
+      "success": "Se eliminaron correctamente {count} {entity}{count, plural, one {} other {s}}.",
+      "error": "No se pudieron eliminar {entity}{count, plural, one {} other {s}}."
+    },
+    "floating": {
+      "selected": "seleccionado",
+      "clearSelection": "Borrar selección",
+      "export": "Exportar {entity}",
+      "delete": "Eliminar {entity}"
+    }
+  },
   "home": {
     "title": "Request Engine",
     "description": "Un sistema robusto y escalable diseñado para optimizar la gestión de solicitudes de servicios de telecomunicaciones, siguiendo las mejores prácticas de ITIL.",
@@ -121,7 +141,13 @@
       "security": "Seguridad y Acceso",
       "role": "Rol",
       "module": "Módulo",
-      "user": "Usuario"
+      "user": "Usuario",
+      "errors": {
+        "changeTenantError": "Error al cambiar de workspace"
+      },
+      "success": {
+        "changeTenantSuccess": "¡Workspace cambiado con éxito!"
+      }
     },
     "area": {
       "main": {

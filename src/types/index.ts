@@ -1,5 +1,4 @@
 import type { ColumnSort, Row } from '@tanstack/react-table';
-import { type SQL } from 'drizzle-orm';
 import { type z } from 'zod';
 
 import { type DataTableConfig } from '@/config/data-table';
@@ -28,10 +27,19 @@ export interface ExtendedColumnSort<TData> extends Omit<ColumnSort, 'id'> {
 
 export type ExtendedSortingState<TData> = ExtendedColumnSort<TData>[];
 
+/**
+ * Represents the column type of a DataTable.
+ */
 export type ColumnType = DataTableConfig['columnTypes'][number];
 
+/**
+ * Represents the operators available for filters.
+ */
 export type FilterOperator = DataTableConfig['globalOperators'][number];
 
+/**
+ * Represents the join operators ('and', 'or') used in advanced filters.
+ */
 export type JoinOperator = DataTableConfig['joinOperators'][number]['value'];
 
 /**
@@ -66,20 +74,43 @@ export interface DataTableAdvancedFilterField<TData> extends DataTableFilterFiel
   type: ColumnType;
 }
 
+/**
+ * Represents a filter applied to a DataTable.
+ */
 export type Filter<TData> = Prettify<
   Omit<z.infer<typeof filterSchema>, 'id'> & {
     id: StringKeyOf<TData>;
   }
 >;
 
+/**
+ * Represents an action applied to a row in a DataTable.
+ * @prop {Row<TData>} row - The row data associated with the action.
+ * @prop {'update' | 'delete'} type - The type of action to perform on the row.
+ */
 export interface DataTableRowAction<TData> {
   row: Row<TData>;
   type: 'update' | 'delete';
 }
 
-export interface QueryBuilderOpts {
-  where?: SQL;
-  orderBy?: SQL;
-  distinct?: boolean;
-  nullish?: boolean;
+/**
+ * Options for building a query.
+ *
+ * This interface defines options that can be passed to a query builder
+ * to customize the generated query. It includes support for filters (`where`),
+ * sorting (`orderBy`), distinct results, and nullish values.
+ *
+ * @template TWhere - The specific `WhereInput` type for the model.
+ * @template TOrderBy - The specific `OrderByInput` type for the model.
+ *
+ * @prop {TWhere} where - A Prisma-compatible filter object for the model.
+ * @prop {TOrderBy} orderBy - A Prisma-compatible sort order object for the model.
+ * @prop {boolean} [distinct] - Whether to include distinct results in the query.
+ * @prop {boolean} [nullish] - Whether to include nullish values in the query.
+ */
+export interface QueryBuilderOpts<TWhere, TOrderBy> {
+  where?: TWhere; // Prisma-compatible "where" filter
+  orderBy?: TOrderBy; // Prisma-compatible "orderBy" filter
+  distinct?: boolean; // Whether to apply distinct results
+  nullish?: boolean; // Custom logic, if needed
 }

@@ -54,6 +54,7 @@ model UserTenant {
   @@unique([userId, tenantId]) // Ensure unique user-tenant relationships
 
   @@allow('read', isActive == true && (user.id == auth().id ))
+  @@allow('update', isActive == true && (user.id == auth().id)) 
 }
 
 model UserRole extends TenantScoped, Auditable {

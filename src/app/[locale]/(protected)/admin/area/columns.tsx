@@ -25,23 +25,23 @@ export function getColumns({ setRowAction }: GetColumnsProps): ColumnDef<AreaTyp
           checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
-          className="translate-y-0.5"
+          className="ml-2 translate-y-0.5"
         />
       ),
-      cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" className="translate-y-0.5" />,
+      cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" className="ml-2 translate-y-0.5" />,
       enableSorting: false,
       enableHiding: false,
+      size: 20,
     },
     {
       accessorKey: 'name',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
     },
     {
-      accessorKey: 'status',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
-      filterFn: (row, id, value) => {
-        return Array.isArray(value) && value.includes(row.getValue(id));
-      },
+      accessorKey: 'isActive',
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Active" />,
+      cell: ({ cell }) => <Checkbox checked={cell.getValue() as boolean} aria-label="Active" />,
+      size: 20,
     },
     {
       accessorKey: 'createdAt',
@@ -69,7 +69,7 @@ export function getColumns({ setRowAction }: GetColumnsProps): ColumnDef<AreaTyp
           </DropdownMenu>
         );
       },
-      size: 40,
+      size: 20,
     },
   ] satisfies ColumnDef<AreaType>[];
 }
