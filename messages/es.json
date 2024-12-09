@@ -151,18 +151,25 @@
     },
     "area": {
       "main": {
-        "title": "Área de administración",
-        "table": {
-          "header": {
-            "id": "ID",
-            "name": "Nombre",
-            "description": "Descripción",
-            "actions": "Acciones"
-          },
-          "actions": {
-            "edit": "Edit",
-            "delete": "Delete"
-          }
+        "entityLabel": "área",
+        "filename": "áreas",
+        "filters": {
+          "name": "Nombre",
+          "namePlaceholder": "Filtrar por nombre",
+          "isActive": "Activo",
+          "createdAt": "Creado el"
+        },
+        "columns": {
+          "select": "Seleccionar todos",
+          "selectRow": "Seleccionar fila",
+          "name": "Nombre",
+          "isActive": "Activo",
+          "createdAt": "Creado el",
+          "actions": "Acciones"
+        },
+        "actions": {
+          "edit": "Editar",
+          "delete": "Eliminar"
         }
       }
     }

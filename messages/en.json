@@ -151,18 +151,25 @@
     },
     "area": {
       "main": {
-        "title": "Admin area",
-        "table": {
-          "header": {
-            "id": "ID",
-            "name": "Name",
-            "description": "Description",
-            "actions": "Actions"
-          },
-          "actions": {
-            "edit": "Edit",
-            "delete": "Delete"
-          }
+        "entityLabel": "area",
+        "filename": "areas",
+        "filters": {
+          "name": "Name",
+          "namePlaceholder": "Filter name",
+          "isActive": "Active",
+          "createdAt": "Created at"
+        },
+        "columns": {
+          "select": "Select all",
+          "selectRow": "Select row",
+          "name": "Name",
+          "isActive": "Active",
+          "createdAt": "Created At",
+          "actions": "Actions"
+        },
+        "actions": {
+          "edit": "Edit",
+          "delete": "Delete"
         }
       }
     }

@@ -3,22 +3,27 @@
 import React, { memo } from 'react';
 import { useCountArea, useFindManyArea } from '@/services/api/hooks';
 import { DataTableAdvancedFilterField, DataTableFilterField, DataTableRowAction } from '@/types';
+import { ColumnDef } from '@tanstack/react-table';
 import { Area as AreaType } from '@zenstackhq/runtime/models';
+import { Ellipsis } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { parseAsInteger, parseAsString, parseAsStringEnum, useQueryStates } from 'nuqs';
 
 import { UNSTABLE_TENANT_ID } from '@/lib/constant';
 import { getValidFilters } from '@/lib/data-table';
 import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
+import { formatDate } from '@/lib/utils';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-advanced-toolbar';
+import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
-import { DataTableSkeleton } from '@/components/data-table/data-table-skeleton';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
 import { Shell } from '@/components/shell';
-
-import { getColumns } from './columns';
 
 const searchParamsParsers = {
   page: parseAsInteger.withDefault(1),
@@ -32,7 +37,8 @@ const searchParamsParsers = {
 
 interface IAreaMainPageProps {}
 
-const AreaMainPage: React.FC<IAreaMainPageProps> = ({}) => {
+const AreaMainPage: React.FC<IAreaMainPageProps> = () => {
+  const t = useTranslations('admin.area.main');
   const [search] = useQueryStates(searchParamsParsers);
   const validFilters = getValidFilters(search.filters);
 
@@ -45,17 +51,17 @@ const AreaMainPage: React.FC<IAreaMainPageProps> = ({}) => {
   });
 
   const [rowAction, setRowAction] = React.useState<DataTableRowAction<AreaType> | null>(null);
-  const columns = React.useMemo(() => getColumns({ setRowAction }), [setRowAction]);
+  const columns = React.useMemo(() => getColumns({ setRowAction, t }), [setRowAction, t]);
 
   const filterFields: DataTableFilterField<AreaType>[] = [
-    { id: 'name', label: 'Name', placeholder: 'Filter name' },
-    { id: 'isActive', label: 'Active' },
+    { id: 'name', label: t('filters.name'), placeholder: t('filters.namePlaceholder') },
+    { id: 'isActive', label: t('filters.isActive') },
   ];
 
   const advancedFilterFields: DataTableAdvancedFilterField<AreaType>[] = [
-    { id: 'name', label: 'Name', type: 'text' },
-    { id: 'isActive', label: 'Active', type: 'boolean' },
-    { id: 'createdAt', label: 'Created at', type: 'date' },
+    { id: 'name', label: t('filters.name'), type: 'text' },
+    { id: 'isActive', label: t('filters.isActive'), type: 'boolean' },
+    { id: 'createdAt', label: t('filters.createdAt'), type: 'date' },
   ];
 
   const { table } = useDataTable({
@@ -73,19 +79,76 @@ const AreaMainPage: React.FC<IAreaMainPageProps> = ({}) => {
     clearOnDefault: true,
   });
 
-  if (isLoading) {
-    return <DataTableSkeleton columnCount={6} searchableColumnCount={1} filterableColumnCount={2} cellWidths={['10rem', '40rem', '12rem', '12rem', '8rem', '8rem']} shrinkZero />;
-  }
-
   return (
     <Shell className="gap-2">
-      <DataTable table={table} floatingBar={<DataTableFloatingBar table={table} />}>
+      <DataTable isLoading={isLoading} table={table} floatingBar={<DataTableFloatingBar table={table} />}>
         <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
-          <DataTableToolbarActions table={table} />
+          <DataTableToolbarActions table={table} filename="areas" entityLabel={t('entityLabel')} />
         </DataTableAdvancedToolbar>
       </DataTable>
     </Shell>
   );
 };
+
+interface GetColumnsProps {
+  setRowAction: React.Dispatch<React.SetStateAction<DataTableRowAction<AreaType> | null>>;
+  t: ReturnType<typeof useTranslations>;
+}
+
+export function getColumns({ setRowAction, t }: GetColumnsProps): ColumnDef<AreaType>[] {
+  return [
+    {
+      id: 'select',
+      header: ({ table }) => (
+        <Checkbox
+          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label={t('columns.select')}
+          className="ml-2 translate-y-0.5"
+        />
+      ),
+      cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label={t('columns.selectRow')} className="ml-2 translate-y-0.5" />,
+      enableSorting: false,
+      enableHiding: false,
+      size: 20,
+    },
+    {
+      accessorKey: 'name',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.name')} />,
+    },
+    {
+      accessorKey: 'isActive',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.isActive')} />,
+      cell: ({ cell }) => <Checkbox checked={cell.getValue() as boolean} aria-label={t('columns.isActive')} />,
+      size: 20,
+    },
+    {
+      accessorKey: 'createdAt',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.createdAt')} />,
+      cell: ({ cell }) => formatDate(cell.getValue() as Date),
+    },
+    {
+      id: 'actions',
+      cell: ({ row }) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button aria-label={t('columns.actions')} variant="ghost" className="flex size-8 p-0 data-[state=open]:bg-muted">
+              <Ellipsis className="size-4" aria-hidden="true" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuItem onSelect={() => setRowAction({ row, type: 'update' })}>{t('actions.edit')}</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={() => setRowAction({ row, type: 'delete' })}>
+              {t('actions.delete')}
+              <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+      size: 20,
+    },
+  ] satisfies ColumnDef<AreaType>[];
+}
 
 export default memo(AreaMainPage);
