@@ -7,6 +7,11 @@
     }
   },
   "table": {
+    "columns": {
+      "actions": "Acciones",
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
     "actions": {
       "export": "Exportar"
     },
@@ -163,9 +168,28 @@
           "select": "Seleccionar todos",
           "selectRow": "Seleccionar fila",
           "name": "Nombre",
+          "categories": "Categorías",
+          "users": "Usuarios",
           "isActive": "Activo",
           "createdAt": "Creado el",
           "actions": "Acciones"
+        },
+        "subtable": {
+          "columns": {
+            "name": "Nombre",
+            "description": "Descripción",
+            "isEligibleForNewClients": "Elegible para Nuevos Clientes",
+            "subcategoriesCount": "Cantidad de Subcategorías",
+            "isActive": "Está Activo",
+            "categories": "Categorías",
+            "requirements": "Requisitos",
+            "users": "Usuarios",
+            "createdAt": "Creado En"
+          },
+          "common": {
+            "yes": "Sí",
+            "no": "No"
+          }
         },
         "actions": {
           "edit": "Editar",

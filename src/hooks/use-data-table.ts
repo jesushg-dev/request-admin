@@ -3,6 +3,7 @@
 import * as React from 'react';
 import type { DataTableFilterField, ExtendedSortingState } from '@/types';
 import {
+  ExpandedState,
   getCoreRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
@@ -145,6 +146,7 @@ export function useDataTable<TData>({
     };
   }, [history, scroll, shallow, throttleMs, debounceMs, clearOnDefault, startTransition]);
 
+  const [expanded, setExpanded] = React.useState<ExpandedState>(initialState?.expanded ?? {});
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>(initialState?.rowSelection ?? {});
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>(initialState?.columnVisibility ?? {});
 
@@ -266,6 +268,7 @@ export function useDataTable<TData>({
     initialState,
     pageCount,
     state: {
+      expanded,
       pagination,
       sorting,
       columnVisibility,
@@ -273,6 +276,7 @@ export function useDataTable<TData>({
       columnFilters: enableAdvancedFilter ? [] : columnFilters,
     },
     enableRowSelection: true,
+    onExpandedChange: setExpanded,
     onRowSelectionChange: setRowSelection,
     onPaginationChange,
     onSortingChange,

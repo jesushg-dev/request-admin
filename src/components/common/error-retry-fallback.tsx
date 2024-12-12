@@ -1,7 +1,8 @@
 import React from 'react';
+import { QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
 
 interface ErrorRetryFallbackProps {
-  message: string;
+  error: QueryError;
   onRetry: () => void;
   buttonText?: string;
   containerStyles?: string;
@@ -11,7 +12,7 @@ interface ErrorRetryFallbackProps {
 }
 
 const ErrorRetryFallback: React.FC<ErrorRetryFallbackProps> = ({
-  message,
+  error,
   onRetry,
   buttonText = 'Retry',
   containerStyles = '',
@@ -21,7 +22,7 @@ const ErrorRetryFallback: React.FC<ErrorRetryFallbackProps> = ({
 }) => {
   return (
     <div className={`p-6 text-center ${containerStyles}`}>
-      <p className={`text-lg font-medium ${messageStyles}`}>{message}</p>
+      <p className={`text-lg font-medium ${messageStyles}`}>{error.message ? error.message : 'An error occurred while fetching data.'}</p>
       <button
         onClick={onRetry}
         className={`mt-4 rounded px-4 py-2 transition ease-in-out ${buttonStyles}`}

@@ -96,7 +96,7 @@ async function main() {
   //                Categories
   //                        Subcategories
   //////////////////////////
-  const hierarchy = await createRoleHierarchy();
+  const hierarchy = await createAreaHierarchy();
 
   await createAreas(hierarchy.hierarchyId, hierarchy.hierarchyLevelRequestTypeId, hierarchy.hierarchyLevelCategoryId, hierarchy.hierarchyLevelSubcategoryId);
 
@@ -12242,7 +12242,7 @@ async function createAreas(hierarchyId: string, hierarchyLevelRequestTypeId: str
   });
 }
 
-async function createRoleHierarchy() {
+async function createAreaHierarchy() {
   const hierarchy = await prisma.hierarchy.create({
     data: {
       name: 'Gestión de solicitudes',

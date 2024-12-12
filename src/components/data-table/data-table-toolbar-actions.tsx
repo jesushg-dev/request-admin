@@ -12,12 +12,12 @@ import { DataTableDeleteDialog } from './data-table-delete-dialog';
 
 interface DataTableToolbarActionsProps<T> {
   table: Table<T>;
-  filename?: string;
+  exportFilename?: string;
   entityLabel: string;
   children?: React.ReactNode;
 }
 
-export function DataTableToolbarActions<T>({ table, entityLabel, filename, children }: DataTableToolbarActionsProps<T>) {
+export function DataTableToolbarActions<T>({ table, entityLabel, exportFilename, children }: DataTableToolbarActionsProps<T>) {
   const t = useTranslations('table');
 
   return (
@@ -30,7 +30,7 @@ export function DataTableToolbarActions<T>({ table, entityLabel, filename, child
         size="sm"
         onClick={() => {
           exportTableToCSV(table, {
-            filename: filename,
+            filename: exportFilename,
             excludeColumns: ['select', 'actions'],
           });
         }}

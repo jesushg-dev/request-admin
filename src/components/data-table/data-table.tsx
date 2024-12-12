@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { flexRender, type Table as TanstackTable } from '@tanstack/react-table';
+import { flexRender, Row, type Table as TanstackTable } from '@tanstack/react-table';
 
 import { getCommonPinningStyles } from '@/lib/data-table';
 import { cn } from '@/lib/utils';
@@ -27,39 +27,55 @@ interface DataTableProps<TData> extends React.HTMLAttributes<HTMLDivElement> {
    *
    */
   isLoading?: boolean;
+
+  /**
+   * The sub-component to render when a row is expanded.
+   * @type (props: { row: Row<TData> }) => React.ReactElement
+   */
+  renderSubComponent?: (props: { row: Row<TData>; isExpanded: boolean }) => React.ReactElement;
 }
 
-export function DataTable<TData>({ table, floatingBar = null, children, className, isLoading, ...props }: DataTableProps<TData>) {
+export function DataTableShell<TData>({ table, floatingBar = null, renderSubComponent, children, className, isLoading, ...props }: DataTableProps<TData>) {
   return (
     <div className={cn('w-full space-y-2.5 overflow-auto', className)} {...props}>
       {children}
+      <div className="flex flex-col gap-2.5">
+        <DataTablePagination table={table} />
+        {table.getFilteredSelectedRowModel().rows.length > 0 && floatingBar}
+      </div>
+    </div>
+  );
+}
+
+export function DataTable<TData>({ table, renderSubComponent, isLoading, children }: DataTableProps<TData>) {
+  if (isLoading) return <DataTableSkeleton columnCount={6} cellWidths={['10rem', '40rem', '12rem', '12rem', '8rem', '8rem']} shrinkZero />;
+
+  return (
+    <>
+      {children}
       <div className="overflow-hidden rounded-md border">
-        {isLoading ? (
-          <DataTableSkeleton columnCount={6} cellWidths={['10rem', '40rem', '12rem', '12rem', '8rem', '8rem']} shrinkZero />
-        ) : (
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead
-                        key={header.id}
-                        colSpan={header.colSpan}
-                        style={{
-                          ...getCommonPinningStyles({ column: header.column }),
-                        }}>
-                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead
+                    key={header.id}
+                    colSpan={header.colSpan}
+                    style={{
+                      ...getCommonPinningStyles({ column: header.column }),
+                    }}>
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <React.Fragment key={row.id}>
+                  <TableRow data-state={row.getIsSelected() && 'selected'}>
                     {row.getVisibleCells().map((cell) => (
                       <TableCell
                         key={cell.id}
@@ -70,22 +86,19 @@ export function DataTable<TData>({ table, floatingBar = null, children, classNam
                       </TableCell>
                     ))}
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={table.getAllColumns().length} className="h-24 text-center">
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        )}
+                  {renderSubComponent && <>{renderSubComponent({ row, isExpanded: row.getIsExpanded() })}</>}
+                </React.Fragment>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={table.getAllColumns().length} className="h-24 text-center">
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
-      <div className="flex flex-col gap-2.5">
-        <DataTablePagination table={table} />
-        {table.getFilteredSelectedRowModel().rows.length > 0 && floatingBar}
-      </div>
-    </div>
+    </>
   );
 }

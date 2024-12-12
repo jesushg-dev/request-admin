@@ -1,18 +1,33 @@
-import type { ExtendedColumnSort, ExtendedSortingState, Filter, StringKeyOf } from '@/types';
+import type { ExtendedSortingState, Filter, StringKeyOf } from '@/types';
 import { type QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
 
-interface UseFetchTableDataProps<TData, FindManyArgs, CountArgs> {
-  tenantId: string;
-  validFilters: Filter<TData>[]; // Already uses Prisma format
+import { getValidFilters } from '@/lib/data-table';
+
+import useTenantId from './use-tenant-id';
+
+//ensure FindManyArgs has select and include has keys
+type FindManyArgs<SelectArgs = any, IncludeArgs = any, WhereArgs = any, OrderByArgS = any, CursorArgs = any, DistinctArgs = any> = {
+  select?: SelectArgs | null;
+  include?: IncludeArgs | null;
+  where?: WhereArgs | null;
+  orderBy?: OrderByArgS | null;
+  cursor?: CursorArgs | null;
+  distinct?: DistinctArgs | null;
+  take?: number;
+  skip?: number;
+};
+
+interface UseFetchTableDataProps<TData, FMA extends FindManyArgs, CountArgs> {
   search: {
-    sort: ExtendedSortingState<TData>; // ExtendedSortingState ensures type-safe fields
-    filters: Filter<TData>[]; // Extended Filters
+    sort: ExtendedSortingState<TData>;
+    filters: Filter<TData>[];
     perPage: number;
     page: number;
   };
-  useFindManyHook: (args: FindManyArgs) => {
+  useFindManyHook: (args: FMA) => {
     data: TData[] | undefined;
     isLoading: boolean;
+    isError: boolean;
     error: QueryError | null;
     refetch: () => void;
   };
@@ -21,22 +36,27 @@ interface UseFetchTableDataProps<TData, FindManyArgs, CountArgs> {
     isLoading: boolean;
     error: QueryError | null;
   };
+  defaultArgs?: Pick<FMA, 'select' | 'include'>;
 }
 
-export function useFetchTableData<TData, FindManyArgs, CountArgs>({ tenantId, search, useFindManyHook, useCountHook }: UseFetchTableDataProps<TData, FindManyArgs, CountArgs>) {
+export function useFetchTableData<TData, FMA extends FindManyArgs, CountArgs>({ search, defaultArgs, useFindManyHook, useCountHook }: UseFetchTableDataProps<TData, FMA, CountArgs>) {
+  const tenantId = useTenantId();
+
   // Transform ExtendedSortingState to Prisma sorting state
   const prismaSortingState = extendedToPrismaSortingState(search.sort);
 
   // Transform Extended Filters to Prisma Filters
-  const prismaFilters = extendedToPrismaFilters(search.filters);
+  const prismaFilters = extendedToPrismaFilters(getValidFilters(search.filters));
 
   // Fetch data for the table
-  const { data, isLoading, error, refetch } = useFindManyHook({
+  const { data, isLoading, error, refetch, isError } = useFindManyHook({
     where: { tenantId, AND: prismaFilters },
     orderBy: prismaSortingState,
     take: search.perPage,
     skip: (search.page - 1) * search.perPage,
-  } as FindManyArgs);
+    include: defaultArgs?.include,
+    select: defaultArgs?.select,
+  } as FMA);
 
   // Fetch total count for pagination
   const { data: totalCountData, error: countError } = useCountHook({
@@ -49,6 +69,7 @@ export function useFetchTableData<TData, FindManyArgs, CountArgs>({ tenantId, se
 
   return {
     data,
+    isError,
     isLoading,
     error,
     countError,
