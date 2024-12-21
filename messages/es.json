@@ -123,6 +123,55 @@
       }
     }
   },
+  "tenants": {
+    "navbar": {
+      "brandName": "Motor de Solicitudes",
+      "resources": {
+        "title": "Recursos",
+        "helpCenter": {
+          "title": "Centro de Ayuda",
+          "description": "Obtén todas las respuestas que necesitas aquí"
+        },
+        "contactUs": {
+          "title": "Contáctanos",
+          "description": "Estamos aquí para ayudarte con cualquier pregunta"
+        },
+        "status": {
+          "title": "Estado",
+          "description": "Consulta el estado actual de nuestros servicios y APIs"
+        },
+        "termsOfService": {
+          "title": "Términos del Servicio",
+          "description": "Nuestros términos y condiciones para el uso de nuestros servicios"
+        },
+        "support": {
+          "title": "Soporte",
+          "description": "Ponte en contacto con nuestro equipo de soporte o visita nuestros foros comunitarios"
+        }
+      },
+      "pricing": "Precios",
+      "greeting": "Hola, {name}",
+      "userMenuToggle": "Alternar menú de usuario",
+      "profile": "Perfil",
+      "settings": "Configuraciones",
+      "signOut": "Cerrar sesión",
+      "footer": {
+        "press": "Prensa",
+        "contact": "Contacto",
+        "imprint": "Imprint",
+        "sitemap": "Mapa del sitio",
+        "legal": "Legal",
+        "cookieSettings": "Configuración de Cookies"
+      }
+    },
+    "tenants": {
+      "brandName": "Motor de Solicitudes",
+      "header": {
+        "messageLine1": "Tienes más de un inquilino asociado a tu cuenta.",
+        "messageLine2": "Selecciona un inquilino para gestionar."
+      }
+    }
+  },
   "admin": {
     "title": "Panel de Administración",
     "description": "Gestiona y supervisa las operaciones del sistema con eficiencia y control.",
@@ -132,20 +181,16 @@
       "mainMenu": "Menú Principal",
       "dashboard": "Panel",
       "requests": "Solicitudes",
-      "case": "Caso",
+      "request": "Solicitud",
       "documents": "Documentos",
-      "serviceType": "Tipo de Servicio",
-      "salesChannel": "Canal de Ventas",
+      "requestType": "Tipo de Solicitud",
       "requirements": "Requisitos",
       "formDesigner": "Diseñador de Formularios",
       "management": "Gestión y Organización",
       "area": "Área",
-      "caseType": "Tipo de Caso",
-      "category": "Categoría",
       "client": "Cliente",
       "security": "Seguridad y Acceso",
       "role": "Rol",
-      "module": "Módulo",
       "user": "Usuario",
       "errors": {
         "changeTenantError": "Error al cambiar de workspace"
@@ -174,27 +219,192 @@
           "createdAt": "Creado el",
           "actions": "Acciones"
         },
-        "subtable": {
-          "columns": {
-            "name": "Nombre",
-            "description": "Descripción",
-            "isEligibleForNewClients": "Elegible para Nuevos Clientes",
-            "subcategoriesCount": "Cantidad de Subcategorías",
-            "isActive": "Está Activo",
-            "categories": "Categorías",
-            "requirements": "Requisitos",
-            "users": "Usuarios",
-            "createdAt": "Creado En"
-          },
-          "common": {
-            "yes": "Sí",
-            "no": "No"
-          }
-        },
+
         "actions": {
           "edit": "Editar",
           "delete": "Eliminar"
         }
+      },
+      "create": {
+        "title": "Categoría de Asignación",
+        "subtitle": "Crea una nueva categoría de asignación. Una categoría puede tener múltiples subcategorías recursivas según las necesidades de tu negocio.",
+        "steps": {
+          "navigationLabel": "Pasos de Progreso",
+          "area": "Área",
+          "assignationCategory": "Categoría de Asignación",
+          "user": "Usuario",
+          "finish": "Finalizar",
+          "areaStep": "Ir al paso de Área",
+          "assignationCategoryStep": "Ir al paso de Categoría de Asignación",
+          "userStep": "Ir al paso de Usuario",
+          "finishStep": "Ir al paso Finalizar",
+          "backButton": "Atrás",
+          "nextButton": "Siguiente",
+          "finishButton": "Finalizar",
+          "userTitle": "Paso de Usuario",
+          "userDescription": "Por favor, complete los detalles relacionados con el usuario aquí.",
+          "continueButton": "Continuar",
+          "finishTitle": "Todos los pasos completados",
+          "finishDescription": "Su formulario ha sido completado con éxito."
+        }
+      }
+    },
+    "client": {
+      "main": {
+        "entityLabel": "Client",
+        "columns": {
+          "firstName": "Nombre",
+          "lastName": "Apellido",
+          "email": "Correo Electrónico",
+          "phone": "Teléfono",
+          "corporateName": "Nombre Corporativo",
+          "monthlyIncome": "Ingreso Mensual",
+          "occupation": "Ocupación",
+          "createdAt": "Fecha de Creación"
+        },
+        "filters": {
+          "name": "Name",
+          "namePlaceholder": "Filter by Name",
+          "createdAt": "Created At"
+        }
+      }
+    },
+    "requestType": {
+      "main": {
+        "entityLabel": "tipo de Solicitud",
+        "columns": {
+          "name": "Nombre",
+          "categories": "Subcategorías",
+          "requirements": "Requisitos",
+          "isEligibleForNewClients": "Elegible para Nuevos Clientes",
+          "createdAt": "Fecha de Creación",
+          "selectRow": "Seleccionar Fila"
+        },
+        "filters": {
+          "name": "Nombre",
+          "namePlaceholder": "Filtrar por nombre",
+          "createdAt": "Fecha de Creación"
+        },
+        "actions": {
+          "delete": "Eliminar",
+          "update": "Actualizar"
+        },
+        "common": {
+          "yes": "Sí",
+          "no": "No"
+        }
+      },
+      "create": {
+        "title": "Categoría de Solicitud",
+        "subtitle": "Crea una nueva categoría de solicitud. Una categoría puede tener múltiples subcategorías recursivas según las necesidades de tu negocio."
+      }
+    },
+    "requirement": {
+      "main": {
+        "entityLabel": "Requisito",
+        "columns": {
+          "name": "Nombre",
+          "description": "Descripción",
+          "createdAt": "Creado En",
+          "requirementType": "Tipo de Requisito",
+          "selectRow": "Seleccionar Fila"
+        },
+        "filters": {
+          "name": "Nombre",
+          "namePlaceholder": "Ingresar nombre",
+          "createdAt": "Creado En"
+        }
+      }
+    },
+    "security": {
+      "users": {
+        "title": "Usuarios",
+        "view": "Ver Usuarios",
+        "add": "Añadir Usuario",
+        "softwareEngineer": "Ingeniero de Software",
+        "productManager": "Gerente de Producto"
+      },
+      "roles": {
+        "title": "Roles",
+        "view": "Ver Roles",
+        "add": "Añadir Rol",
+        "admin": "Administrador",
+        "manager": "Gerente"
+      },
+      "permissions": {
+        "title": "Permisos",
+        "view": "Ver Permisos",
+        "add": "Añadir Permiso"
+      },
+      "recentUsers": "Usuarios Recientes",
+      "table": {
+        "name": "Nombre",
+        "email": "Correo Electrónico",
+        "role": "Rol",
+        "actions": "Acciones"
+      }
+    }
+  },
+  "component": {
+    "categoryTable": {
+      "columns": {
+        "name": "Nombre",
+        "description": "Descripción",
+        "isEligibleForNewClients": "Elegible para Nuevos Clientes",
+        "subcategoriesCount": "Cantidad de Subcategorías",
+        "isActive": "Está Activo",
+        "categories": "Categorías",
+        "requirements": "Requisitos",
+        "users": "Usuarios",
+        "createdAt": "Creado En"
+      },
+      "common": {
+        "yes": "Sí",
+        "no": "No"
+      }
+    },
+    "categoryForm": {
+      "categoryNameLabel": "Nombre de la {categoryName} #{index}",
+      "categoryNamePlaceholder": "Ingrese el nombre de la {categoryName}",
+      "editSubcategoryButton": "Editar detalles de la {categoryName}",
+      "editSubcategoryTitle": "Editar {categoryName}",
+      "subcategoryDescriptionLabel": "Descripción de la {categoryName}",
+      "subcategoryDescriptionPlaceholder": "Proporcione una breve descripción de la {categoryName}",
+      "requirementsLabel": "Requisitos Asociados",
+      "requirementsPlaceholder": "Seleccione los requisitos aplicables",
+      "eligibleForNewClientsLabel": "Disponible para Nuevos Clientes",
+      "removeCategoryButton": "Eliminar {categoryName} #{index}",
+      "addCategoryButton": "Agregar {categoryName}",
+      "defaultCategoryName": "Categoría",
+      "requiredName": "El nombre es obligatorio",
+      "requiredRequirements": "Se requiere al menos un requisito",
+      "requiredCategories": "Se requiere al menos una categoría",
+      "minName": "El nombre debe tener al menos 3 caracteres",
+      "nameDescription": "Este es el nombre público de la {categoryName}.",
+      "descriptionDescription": "Este es un campo opcional para proporcionar una breve descripción de la {categoryName}."
+    },
+    "areaForm": {
+      "nameLabel": "Nombre",
+      "namePlaceholder": "Ingresa tu nombre",
+      "nameDescription": "Este es tu nombre público.",
+      "descriptionLabel": "Descripción",
+      "descriptionPlaceholder": "Ingresa una descripción",
+      "descriptionDescription": "Agrega detalles adicionales o una descripción aquí.",
+      "isActiveLabel": "Activo",
+      "isActiveDescription": "Marcar como activo o inactivo.",
+      "submitButton": "Enviar",
+      "errorToast": "Error al enviar el formulario. Inténtalo de nuevo.",
+      "requiredName": "El nombre es obligatorio",
+      "minName": "El nombre debe tener al menos 3 caracteres",
+      "Required": "Este campo es obligatorio"
+    },
+    "requirementDialogCell": {
+      "dialogTitle": "Requirementos asociados con {entity}",
+      "dialogDescription": "A continuación, se muestran los requirementos asociados con este {entity}:",
+      "noRequirements": "No hay {entity}s asociados con este elemento.",
+      "columns": {
+        "name": "Nombre",
+        "description": "Descripción"
       }
     }
   }

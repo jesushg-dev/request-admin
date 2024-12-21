@@ -15,6 +15,8 @@ declare module 'next-auth' {
       tenantId: string;
       permissions: string[];
       roles: string[];
+      firstName: string;
+      lastName: string;
     } & DefaultSession['user'];
   }
 }

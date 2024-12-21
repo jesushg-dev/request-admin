@@ -11,7 +11,8 @@ model Person extends TenantScoped, Auditable {
   lastName              String     @db.VarChar(100) // Last name of the person
   email                 String?    @unique // Optional unique email address
   phone                 String?    @db.VarChar(50) // Optional phone number
-  identificationNumber  String     @db.VarChar(110) @unique // Unique identification number
+  identificationNumber  String     @default("") @db.VarChar(110) @unique // Unique identification number
+  image                 String? // User's profile image
 
   // Relationships
   userId                String?    @db.UniqueIdentifier @unique // Optional link to a User
@@ -22,8 +23,6 @@ model Person extends TenantScoped, Auditable {
 
   identificationTypeId  String     @db.UniqueIdentifier // Link to IdentificationType
   identificationType    IdentificationType @relation(fields: [identificationTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Type of identification
-
-  @@map("Persons") // Map to the "Persons" table in the database
 }
 
 model Client extends TenantScoped, Auditable {
@@ -31,21 +30,15 @@ model Client extends TenantScoped, Auditable {
   id                    String     @id @default(uuid()) @db.UniqueIdentifier
 
   // Client details
-  name                  String     @db.VarChar(400) // Name of the client
-  email                 String?    @db.VarChar(100) @unique // Optional unique email address
-  identificationNumber  String     @db.VarChar(110) @unique // Unique identification number
   corporateName         String?    @db.VarChar(100) // Optional corporate name
   monthlyIncome         Float?     // Optional monthly income
   occupation            String?    @db.VarChar(100) // Optional occupation
-  phone                 String?    @db.VarChar(50) // Optional phone number
 
   // Relationships
   personId              String?    @db.UniqueIdentifier // Optional link to a Person
   person                Person? // Linked Person entity
 
   request               Request[] // Requests made by the client
-
-  @@map("Clients") // Map to the "Clients" table in the database
 
   // Policies
   @@allow('create', person != null) // Only allow creation if person is linked
@@ -61,6 +54,4 @@ model IdentificationType extends TenantScoped, Auditable {
 
   // Relationships
   client          Person[]   // Persons linked to this identification type
-
-  @@map("IdentificationTypes") // Map to the "IdentificationTypes" table in the database
 }

@@ -53,7 +53,7 @@ export function DataTable<TData>({ table, renderSubComponent, isLoading, childre
   return (
     <>
       {children}
-      <div className="overflow-hidden rounded-md border">
+      <div className="overflow-auto rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

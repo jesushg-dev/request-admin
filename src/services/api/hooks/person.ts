@@ -379,6 +379,7 @@ export function useCheckPerson<TError = DefaultError>(
       email?: string;
       phone?: string;
       identificationNumber?: string;
+      image?: string;
       userId?: string;
       clientId?: string;
       identificationTypeId?: string;

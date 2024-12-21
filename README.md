@@ -85,6 +85,10 @@ Develop a web system for managing service requests efficiently while adhering to
 - AI-based recommendations for request prioritization.
 - Support for internationalization (i18n).
 
+## Useful Commands
+
+- Seed database: npx prisma db seed
+
 ## Useful Links
 
 - [WAAPI App](https://waapi.app/)

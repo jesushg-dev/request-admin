@@ -18,7 +18,10 @@ model Hierarchy extends TenantScoped, Auditable {
   @@validate(type in ["Request", "Assignation"])
 }
 
-/// Represents a single level in a hierarchy (e.g., "Area", "Case Type", "Service Type").
+/// Represents a single level in a hierarchy 
+/// Each level can have multiple categories.
+/// (e.g., "Area" -> "Request Type" -> "Category" -> "Subcategory").
+/// (e.g., "Sales Channel" -> "Service Type").
 model HierarchyLevel extends TenantScoped, Auditable {
   id                    String   @id @default(uuid()) @db.UniqueIdentifier // Unique level ID
   name                  String   @db.VarChar(100) // Name of the level
@@ -133,15 +136,72 @@ model StatusType extends TenantScoped, Auditable {
   assignments RequestAssignment[] // Assignments associated with this status
 }
 
-/// Represents an organizational area.
+/// Represents an organizational area within a tenant.
+/// Areas allow grouping of users, categories, and request assignments in a specific organizational scope.
 model Area extends TenantScoped, Auditable {
-  id                    String   @id @default(uuid()) @db.UniqueIdentifier // Unique area ID
-  name                  String   @db.VarChar(100) @unique // Unique name of the area
-  description           String?  @db.VarChar(255) // Optional description
-  isActive                Boolean  @default(true) // Indicates if the area is active
-  user                  User[] // Users linked to the area
-  requestAssignment     RequestAssignment[] // Request assignments associated with this area
-  categories            Category[] // Categories associated with the area
+  id                    String   @id @default(uuid()) @db.UniqueIdentifier 
+  name                  String   @db.VarChar(100) @unique 
+  description           String?  @db.VarChar(255)
+  isActive              Boolean   @default(true) 
+
+  // Relationships
+  requestAssignments    RequestAssignment[] // Links request assignments to this area
+  categories            Category[]         // Links categories to this area
+  userAreas             UserArea[]         // Intermediate table to associate users with this area
+  areaRole              AreaRole[]         // Links roles specifically defined for this area
+
+  // Index for efficient lookups by area name
+  @@index([name], name: "idx_area_name")
+}
+
+/// Represents the assignment of users to areas with specific roles.
+/// This model acts as an intermediate table for associating users, areas, and area-specific roles.
+model UserArea extends TenantScoped, Auditable {
+  id                   String    @id @default(uuid()) @db.UniqueIdentifier
+  isActive             Boolean   @default(true)
+  userId               String    @db.UniqueIdentifier
+  areaId               String    @db.UniqueIdentifier
+  roleId               String?   @db.UniqueIdentifier
+
+  user                 User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  area                 Area      @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  role                 AreaRole? @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  // Ensures a user can have only one role within a specific area
+  @@unique([userId, areaId])
+}
+
+/// Represents roles that are specific to an area.
+/// Area roles define permissions and responsibilities of users within a specific organizational area.
+model AreaRole extends TenantScoped, Auditable {
+  id                   String    @id @default(uuid()) @db.UniqueIdentifier
+  name                 String    @db.VarChar(100)
+  description          String?   @db.VarChar(255)
+
+  // Relationships
+  areaId               String?   @db.UniqueIdentifier 
+  area                 Area?     @relation(fields: [areaId], references: [id]) // Links to the Area model
+  userAreas            UserArea[] // Links this role to users assigned within an area
+  areaRolePermissions  AreaRolePermission[] // Links this role to permissions specific to the area
+
+  // Ensures role names are unique within the same area
+  @@unique([name, areaId])
+}
+
+/// Links area-specific roles to permissions.
+/// This model defines which permissions are granted to roles within a specific area.
+model AreaRolePermission extends TenantScoped, Auditable {
+  id                   String     @id @default(uuid()) @db.UniqueIdentifier
+  isActive             Boolean    @default(true)
+
+  // Relationships
+  areaRoleId           String     @db.UniqueIdentifier
+  areaRole             AreaRole   @relation(fields: [areaRoleId], references: [id]) // Links to AreaRole
+  permissionId         String     @db.UniqueIdentifier
+  permission           Permission @relation(fields: [permissionId], references: [id]) // Links to Permission
+
+  // Ensures a role cannot have duplicate permissions within the same scope
+  @@unique([areaRoleId, permissionId])
 }
 
 /// Represents a specific requirement for a service or category.

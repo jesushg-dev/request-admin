@@ -123,6 +123,55 @@
       }
     }
   },
+  "tenants": {
+    "navbar": {
+      "brandName": "Request Engine",
+      "resources": {
+        "title": "Resources",
+        "helpCenter": {
+          "title": "Help Center",
+          "description": "Get all the answers you need right here"
+        },
+        "contactUs": {
+          "title": "Contact Us",
+          "description": "We are here to help you with any questions you have"
+        },
+        "status": {
+          "title": "Status",
+          "description": "Check the current status of our services and APIs"
+        },
+        "termsOfService": {
+          "title": "Terms of Service",
+          "description": "Our terms and conditions for using our services"
+        },
+        "support": {
+          "title": "Support",
+          "description": "Get in touch with our support team or visit our community forums"
+        }
+      },
+      "pricing": "Pricing",
+      "greeting": "Hi, {name}",
+      "userMenuToggle": "Toggle user menu",
+      "profile": "Profile",
+      "settings": "Settings",
+      "signOut": "Sign Out",
+      "footer": {
+        "press": "Press",
+        "contact": "Contact",
+        "imprint": "Imprint",
+        "sitemap": "Sitemap",
+        "legal": "Legal",
+        "cookieSettings": "Cookie Settings"
+      }
+    },
+    "tenants": {
+      "brandName": "Request Engine",
+      "header": {
+        "messageLine1": "You have more than one tenant associated with your account.",
+        "messageLine2": "Select a tenant to manage."
+      }
+    }
+  },
   "admin": {
     "title": "Admin Panel",
     "description": "Manage and monitor system operations with efficiency and control.",
@@ -132,20 +181,16 @@
       "mainMenu": "Main Menu",
       "dashboard": "Dashboard",
       "requests": "Requests",
-      "case": "Case",
+      "request": "Request",
       "documents": "Documents",
-      "serviceType": "Service Type",
-      "salesChannel": "Sales Channel",
+      "requestType": "Request Type",
       "requirements": "Requirements",
       "formDesigner": "Form Designer",
       "management": "Management",
       "area": "Area",
-      "caseType": "Case Type",
-      "category": "Category",
       "client": "Client",
       "security": "Security",
       "role": "Role",
-      "module": "Module",
       "user": "User",
       "errors": {
         "changeTenantError": "Error changing tenant!"
@@ -174,27 +219,192 @@
           "createdAt": "Created At",
           "actions": "Actions"
         },
-        "subtable": {
-          "columns": {
-            "name": "Name",
-            "description": "Description",
-            "isEligibleForNewClients": "Eligible for New Clients",
-            "subcategoriesCount": "Subcategories Count",
-            "isActive": "Is Active",
-            "categories": "Categories",
-            "requirements": "Requirements",
-            "users": "Users",
-            "createdAt": "Created At"
-          },
-          "common": {
-            "yes": "Yes",
-            "no": "No"
-          }
-        },
+
         "actions": {
           "edit": "Edit",
           "delete": "Delete"
         }
+      },
+      "create": {
+        "title": "Request Category",
+        "subtitle": "Create a new request category. A category can have multiple and recursive subcategories according to your business needs.",
+        "steps": {
+          "navigationLabel": "Progress Steps",
+          "area": "Area",
+          "assignationCategory": "Assignation Category",
+          "user": "User",
+          "finish": "Finish",
+          "areaStep": "Go to Area Step",
+          "assignationCategoryStep": "Go to Assignation Category Step",
+          "userStep": "Go to User Step",
+          "finishStep": "Go to Finish Step",
+          "backButton": "Back",
+          "nextButton": "Next",
+          "finishButton": "Finish",
+          "userTitle": "User Step",
+          "userDescription": "Please fill in user-related details here.",
+          "continueButton": "Continue",
+          "finishTitle": "All Steps Completed",
+          "finishDescription": "Your form has been successfully completed."
+        }
+      }
+    },
+    "client": {
+      "main": {
+        "entityLabel": "Cliente",
+        "columns": {
+          "firstName": "First Name",
+          "lastName": "Last Name",
+          "email": "Email",
+          "phone": "Phone",
+          "corporateName": "Corporate Name",
+          "monthlyIncome": "Monthly Income",
+          "occupation": "Occupation",
+          "createdAt": "Created At"
+        },
+        "filters": {
+          "name": "Nombre",
+          "namePlaceholder": "Filtrar por Nombre",
+          "createdAt": "Creado En"
+        }
+      }
+    },
+    "requestType": {
+      "main": {
+        "entityLabel": "request type",
+        "columns": {
+          "name": "Name",
+          "requirements": "Requirements",
+          "categories": "Subcategories",
+          "isEligibleForNewClients": "Eligible for New Clients",
+          "createdAt": "Created At",
+          "selectRow": "Select Row"
+        },
+        "filters": {
+          "name": "Name",
+          "namePlaceholder": "Filter by name",
+          "createdAt": "Created At"
+        },
+        "actions": {
+          "delete": "Delete",
+          "update": "Update"
+        },
+        "common": {
+          "yes": "Yes",
+          "no": "No"
+        }
+      },
+      "create": {
+        "title": "Assignation Category",
+        "subtitle": "Create a new assignation category. A category can have multiple and recursive subcategories according to your business needs."
+      }
+    },
+    "requirement": {
+      "main": {
+        "entityLabel": "Requirement",
+        "columns": {
+          "name": "Name",
+          "description": "Description",
+          "createdAt": "Created At",
+          "requirementType": "Requirement Type",
+          "selectRow": "Select Row"
+        },
+        "filters": {
+          "name": "Name",
+          "namePlaceholder": "Enter name",
+          "createdAt": "Created At"
+        }
+      }
+    },
+    "security": {
+      "users": {
+        "title": "Users",
+        "view": "View Users",
+        "add": "Add User",
+        "softwareEngineer": "Software Engineer",
+        "productManager": "Product Manager"
+      },
+      "roles": {
+        "title": "Roles",
+        "view": "View Roles",
+        "add": "Add Role",
+        "admin": "Admin",
+        "manager": "Manager"
+      },
+      "permissions": {
+        "title": "Permissions",
+        "view": "View Permissions",
+        "add": "Add Permission"
+      },
+      "recentUsers": "Recent Users",
+      "table": {
+        "name": "Name",
+        "email": "Email",
+        "role": "Role",
+        "actions": "Actions"
+      }
+    }
+  },
+  "component": {
+    "categoryTable": {
+      "columns": {
+        "name": "Name",
+        "description": "Description",
+        "isEligibleForNewClients": "Eligible for New Clients",
+        "subcategoriesCount": "Subcategories Count",
+        "isActive": "Is Active",
+        "categories": "Categories",
+        "requirements": "Requirements",
+        "users": "Users",
+        "createdAt": "Created At"
+      },
+      "common": {
+        "yes": "Yes",
+        "no": "No"
+      }
+    },
+    "categoryForm": {
+      "categoryNameLabel": "Name of the {categoryName} #{index}",
+      "categoryNamePlaceholder": "Enter the name of the {categoryName}",
+      "editSubcategoryButton": "Edit details of the {categoryName}",
+      "editSubcategoryTitle": "Edit {categoryName}",
+      "subcategoryDescriptionLabel": "Description of the {categoryName}",
+      "subcategoryDescriptionPlaceholder": "Provide a brief description for this {categoryName}",
+      "requirementsLabel": "Associated Requirements",
+      "requirementsPlaceholder": "Select applicable requirements",
+      "eligibleForNewClientsLabel": "Available to New Clients",
+      "removeCategoryButton": "Remove {categoryName} #{index}",
+      "addCategoryButton": "Add {categoryName}",
+      "defaultCategoryName": "Category",
+      "requiredName": "Name is required",
+      "requiredRequirements": "At least one requirement is required",
+      "requiredCategories": "At least one category is required",
+      "minName": "Name must be at least 3 characters",
+      "nameDescription": "This is the name of the {categoryName}.",
+      "descriptionDescription": "This is an optional field to provide a brief description of the {categoryName}."
+    },
+    "areaForm": {
+      "nameLabel": "Name",
+      "namePlaceholder": "Enter your name",
+      "nameDescription": "This is your public display name.",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Enter a description",
+      "descriptionDescription": "Add additional details or a description here.",
+      "isActiveLabel": "Active",
+      "isActiveDescription": "Mark as active or inactive.",
+      "submitButton": "Submit",
+      "errorToast": "Failed to submit the form. Please try again.",
+      "requiredName": "Name is required",
+      "minName": "Name must be at least 3 characters",
+      "Required": "This field is required"
+    },
+    "requirementDialogCell": {
+      "dialogTitle": "Requirements associated with {entity}",
+      "dialogDescription": "Below are the requirements associated with this {entity}:",
+      "noRequirements": "No {entity}s are associated with this item.",
+      "columns": {
+        "name": "Name",
+        "description": "Description"
       }
     }
   }

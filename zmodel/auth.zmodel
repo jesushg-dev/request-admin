@@ -14,29 +14,21 @@ model User extends Auditable {
   twoFactorConfirmationId String? @db.UniqueIdentifier // ID for two-factor confirmation
   twoFactorConfirmation TwoFactorConfirmation? // Related two-factor confirmation record
   Authenticators       Authenticator[] // WebAuthn authenticators (optional)
-  globalAdmin           Boolean   @default(false) // Flag for super admin status
-
-  name                 String? // User's display name
-  image                String? // User's profile image
-  personId             String?    @db.UniqueIdentifier // Reference to the linked Person entity
-  person               Person? // Optional link to Person entity
+  isGlobalAdmin        Boolean   @default(false) // Flag for super admin status
 
   workspaces           Workspace[] // Workspaces linked to the user
   accounts             Account[] // Linked authentication accounts (e.g., OAuth)
   sessions             Session[] // Active sessions of the user
-  requestAssignment    RequestAssignment[] // Requests assigned to the user
-  userRole             UserRole[] // User's roles in the system
+  requestAssignments   RequestAssignment[] // Requests assigned to the user
+  userRoles            UserRole[] // User's roles in the system
   members              Member[] // Memberships in groups or projects
 
-  areaId               String?   @db.UniqueIdentifier // Reference to an associated Area
-  coordinatorId        String?   @db.UniqueIdentifier // Reference to a coordinator (User)
-  area                 Area?     @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Area linked to the user
-  coordinator          User?     @relation("Coordination", fields: [coordinatorId], references: [id], onDelete: NoAction, onUpdate: NoAction) // User's coordinator
-  employees            User[]    @relation("Coordination") // Users managed by this user
-
+  personId             String?    @db.UniqueIdentifier // Reference to the linked Person entity
+  person               Person? // Optional link to Person entity
   userTenants          UserTenant[] // Relation to UserTenant
 
-  @@map("Users")
+  // New relationship with UserArea
+  userAreas            UserArea[] // Intermediate relationship between User and Area
 }
 
 model UserTenant {
@@ -45,7 +37,7 @@ model UserTenant {
   tenantId         String    @db.UniqueIdentifier
   isActive         Boolean   @default(true) // Indicates if the user is active in the tenant
   joinedAt         DateTime  @default(now()) // Timestamp of when the user joined the tenant
-  superAdmin       Boolean   @default(false) // Flag for super admin status
+  isSuperAdmin       Boolean   @default(false) // Flag for super admin status
   isCurrent       Boolean   @default(false) // Flag for the current tenant
 
   user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -60,6 +52,7 @@ model UserTenant {
 model UserRole extends TenantScoped, Auditable {
   // Primary identifier
   id              String    @id @default(uuid()) @db.UniqueIdentifier
+  isActive       Boolean   @default(true) // Flag for active user role
 
   // Relationships
   userId          String    @db.UniqueIdentifier // Reference to the linked User
@@ -68,21 +61,21 @@ model UserRole extends TenantScoped, Auditable {
   role            Role      @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-
+/// Represents a system role within a tenant.
+/// Roles define sets of permissions that can be assigned to users.
 model Role extends TenantScoped, Auditable {
-  // Primary identifier
   id              String     @id @default(uuid()) @db.UniqueIdentifier
-
-  // Role details
-  name            String     @db.VarChar(100) @unique // Role name (e.g., "Admin", "User")
-  description     String?    @db.VarChar(255) // Optional role description
+  name            String     @db.VarChar(100) @unique 
+  description     String?    @db.VarChar(255) 
 
   // Relationships
-  userRole        UserRole[] // Links to UserRole assignments
-  rolePermission  RolePermission[] // Links to associated permissions
+  userRole        UserRole[] // Links this role to users via the UserRole model
+  rolePermission  RolePermission[] // Links this role to permissions via RolePermission
 }
 
-
+/// Module also known as a feature or section of the application that can be enabled or disabled
+/// in other terms, it also works as feature flags for the application to enable or disable features
+/// based on if the module is enabled or disabled for the tenant or user
 model Module extends TenantScoped, Auditable {
   // Primary identifier
   id              String     @id @default(uuid()) @db.UniqueIdentifier
@@ -90,30 +83,43 @@ model Module extends TenantScoped, Auditable {
   // Module details
   name            String     @db.VarChar(100) @unique // Module name (e.g., "Orders", "Settings")
   description     String?    @db.VarChar(255) // Optional module description
+  isActive      Boolean    @default(true) // Flag for active module
 
   // Relationships
   permission      Permission[] // Permissions associated with this module
 }
 
-
+/// Represents permissions in the system. 
+/// A single table handles both global permissions and area-specific permissions using the `scope` field.
+/// Permissions are linked to modules for better organization and can be assigned to global roles or area roles.
 model Permission extends TenantScoped, Auditable {
-  // Primary identifier
+  // Unique identifier for the permission
   id              String     @id @default(uuid()) @db.UniqueIdentifier
+  name            String     @db.VarChar(50)
+  key             String     @db.VarChar(100) @unique // Unique key for the permission
+  description     String?    @db.VarChar(255) 
 
-  // Permission details
-  name            String     @db.VarChar(50) // Permission name (e.g., "Read", "Write")
-  description     String?    @db.VarChar(255) // Optional permission description
+  // Scope of the permission: "global" for system-wide permissions or "area" for area-specific permissions
+  scope           String     @default("global") // Example: "global", "area"
 
-  // Relationships
-  moduleId        String     @db.UniqueIdentifier // Reference to the Module
+  // Reference to the module this permission belongs to, used for logical grouping of permissions
+  moduleId        String     @db.UniqueIdentifier 
   module          Module     @relation(fields: [moduleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  rolePermission  RolePermission[] // Links to associated RolePermissions
-}
 
+  // Links this permission to global roles
+  rolePermission  RolePermission[] 
+
+  // Links this permission to area-specific roles
+  areaRolePermission AreaRolePermission[] 
+
+  
+  @@validate(scope in ["global", "area"])
+}
 
 model RolePermission extends TenantScoped, Auditable {
   // Primary identifier
   id              String     @id @default(uuid()) @db.UniqueIdentifier
+  isActive       Boolean    @default(true) // Flag for active role permission
 
   // Relationships
   roleId          String     @db.UniqueIdentifier // Reference to the linked Role
@@ -121,7 +127,6 @@ model RolePermission extends TenantScoped, Auditable {
   role            Role       @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   permission      Permission @relation(fields: [permissionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
-
 
 model Session {
   // Primary identifier
@@ -140,7 +145,6 @@ model Session {
   updatedAt       DateTime @updatedAt
 
   @@index([userId]) // Index for userId to optimize lookups
-  @@map("Sessions")
 }
 
 model Account {
@@ -166,7 +170,6 @@ model Account {
 
   @@unique([provider, providerAccountId]) // Unique constraint for provider accounts
   @@index([userId]) // Index for userId
-  @@map("Accounts")
 }
 
 model VerificationToken {
@@ -179,7 +182,6 @@ model VerificationToken {
   expires     DateTime  // Expiration timestamp
 
   @@unique([email, token]) // Unique constraint for email-token pairs
-  @@map("VerificationTokens")
 }
 
 model PasswordResetToken {
@@ -192,7 +194,6 @@ model PasswordResetToken {
   expires     DateTime  // Expiration timestamp
 
   @@unique([email, token]) // Unique constraint for email-token pairs
-  @@map("PasswordResetTokens")
 }
 
 model TwoFactorToken {
@@ -205,7 +206,6 @@ model TwoFactorToken {
   expires     DateTime  // Expiration timestamp
 
   @@unique([email, token]) // Unique constraint for email-token pairs
-  @@map("TwoFactorTokens")
 }
 
 model TwoFactorConfirmation {
@@ -217,7 +217,6 @@ model TwoFactorConfirmation {
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@unique([userId]) // Unique constraint for userId
-  @@map("TwoFactorConfirmations")
 }
 
 model Authenticator {
@@ -238,5 +237,4 @@ model Authenticator {
   user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@unique([userId, providerAccountId]) // Unique constraint for user-provider account pairs
-  @@map("Authenticators")
 }

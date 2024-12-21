@@ -59,8 +59,9 @@ model Tenant {
   messages                       Message[]
   reactions                      Reaction[]
   userTenants                    UserTenant[]
-
-  @@map("Tenants")
+  userAreas                      UserArea[]
+  areaRoles                      AreaRole[]
+  areaRolePermissions            AreaRolePermission[]
 }
 
 model User {
@@ -78,37 +79,29 @@ model User {
   twoFactorConfirmationId String?                @db.UniqueIdentifier()
   twoFactorConfirmation   TwoFactorConfirmation?
   Authenticators          Authenticator[]
-  globalAdmin             Boolean                @default(false)
-  name                    String?
-  image                   String?
-  personId                String?                @db.UniqueIdentifier()
-  person                  Person?
+  isGlobalAdmin           Boolean                @default(false)
   workspaces              Workspace[]
   accounts                Account[]
   sessions                Session[]
-  requestAssignment       RequestAssignment[]
-  userRole                UserRole[]
+  requestAssignments      RequestAssignment[]
+  userRoles               UserRole[]
   members                 Member[]
-  areaId                  String?                @db.UniqueIdentifier()
-  coordinatorId           String?                @db.UniqueIdentifier()
-  area                    Area?                  @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  coordinator             User?                  @relation("Coordination", fields: [coordinatorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  employees               User[]                 @relation("Coordination")
+  personId                String?                @db.UniqueIdentifier()
+  person                  Person?
   userTenants             UserTenant[]
-
-  @@map("Users")
+  userAreas               UserArea[]
 }
 
 model UserTenant {
-  id         String   @id() @default(uuid()) @db.UniqueIdentifier()
-  userId     String   @db.UniqueIdentifier()
-  tenantId   String   @db.UniqueIdentifier()
-  isActive   Boolean  @default(true)
-  joinedAt   DateTime @default(now())
-  superAdmin Boolean  @default(false)
-  isCurrent  Boolean  @default(false)
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  id           String   @id() @default(uuid()) @db.UniqueIdentifier()
+  userId       String   @db.UniqueIdentifier()
+  tenantId     String   @db.UniqueIdentifier()
+  isActive     Boolean  @default(true)
+  joinedAt     DateTime @default(now())
+  isSuperAdmin Boolean  @default(false)
+  isCurrent    Boolean  @default(false)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([userId, tenantId])
 }
@@ -122,12 +115,15 @@ model UserRole {
   tenantId   String    @db.UniqueIdentifier()
   tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id         String    @id() @default(uuid()) @db.UniqueIdentifier()
+  isActive   Boolean   @default(true)
   userId     String    @db.UniqueIdentifier()
   roleId     String    @db.UniqueIdentifier()
   user       User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   role       Role      @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
+/// Represents a system role within a tenant.
+/// Roles define sets of permissions that can be assigned to users.
 model Role {
   createdAt      DateTime         @default(now())
   updatedAt      DateTime?        @updatedAt()
@@ -143,6 +139,9 @@ model Role {
   rolePermission RolePermission[]
 }
 
+/// Module also known as a feature or section of the application that can be enabled or disabled
+/// in other terms, it also works as feature flags for the application to enable or disable features
+/// based on if the module is enabled or disabled for the tenant or user
 model Module {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime?    @updatedAt()
@@ -154,23 +153,30 @@ model Module {
   id          String       @id() @default(uuid()) @db.UniqueIdentifier()
   name        String       @unique() @db.VarChar(100)
   description String?      @db.VarChar(255)
+  isActive    Boolean      @default(true)
   permission  Permission[]
 }
 
+/// Represents permissions in the system. 
+/// A single table handles both global permissions and area-specific permissions using the `scope` field.
+/// Permissions are linked to modules for better organization and can be assigned to global roles or area roles.
 model Permission {
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime?        @updatedAt()
-  deletedAt      DateTime?
-  createdBy      String?          @db.VarChar(50)
-  modifiedBy     String?          @db.VarChar(50)
-  tenantId       String           @db.UniqueIdentifier()
-  tenant         Tenant           @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id             String           @id() @default(uuid()) @db.UniqueIdentifier()
-  name           String           @db.VarChar(50)
-  description    String?          @db.VarChar(255)
-  moduleId       String           @db.UniqueIdentifier()
-  module         Module           @relation(fields: [moduleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  rolePermission RolePermission[]
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime?            @updatedAt()
+  deletedAt          DateTime?
+  createdBy          String?              @db.VarChar(50)
+  modifiedBy         String?              @db.VarChar(50)
+  tenantId           String               @db.UniqueIdentifier()
+  tenant             Tenant               @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                 String               @id() @default(uuid()) @db.UniqueIdentifier()
+  name               String               @db.VarChar(50)
+  key                String               @unique() @db.VarChar(100)
+  description        String?              @db.VarChar(255)
+  scope              String               @default("global")
+  moduleId           String               @db.UniqueIdentifier()
+  module             Module               @relation(fields: [moduleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  rolePermission     RolePermission[]
+  areaRolePermission AreaRolePermission[]
 }
 
 model RolePermission {
@@ -182,6 +188,7 @@ model RolePermission {
   tenantId     String     @db.UniqueIdentifier()
   tenant       Tenant     @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id           String     @id() @default(uuid()) @db.UniqueIdentifier()
+  isActive     Boolean    @default(true)
   roleId       String     @db.UniqueIdentifier()
   permissionId String     @db.UniqueIdentifier()
   role         Role       @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -198,7 +205,6 @@ model Session {
   updatedAt    DateTime @updatedAt()
 
   @@index([userId])
-  @@map("Sessions")
 }
 
 model Account {
@@ -219,7 +225,6 @@ model Account {
 
   @@unique([provider, providerAccountId])
   @@index([userId])
-  @@map("Accounts")
 }
 
 model VerificationToken {
@@ -229,7 +234,6 @@ model VerificationToken {
   expires DateTime
 
   @@unique([email, token])
-  @@map("VerificationTokens")
 }
 
 model PasswordResetToken {
@@ -239,7 +243,6 @@ model PasswordResetToken {
   expires DateTime
 
   @@unique([email, token])
-  @@map("PasswordResetTokens")
 }
 
 model TwoFactorToken {
@@ -249,7 +252,6 @@ model TwoFactorToken {
   expires DateTime
 
   @@unique([email, token])
-  @@map("TwoFactorTokens")
 }
 
 model TwoFactorConfirmation {
@@ -258,7 +260,6 @@ model TwoFactorConfirmation {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@unique([userId])
-  @@map("TwoFactorConfirmations")
 }
 
 model Authenticator {
@@ -274,7 +275,6 @@ model Authenticator {
   user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@unique([userId, providerAccountId])
-  @@map("Authenticators")
 }
 
 /// Represents a hierarchy for categorization (e.g., "Sales Channel Hierarchy", "Assignment Hierarchy").
@@ -296,7 +296,10 @@ model Hierarchy {
   @@index([name], name: "idx_hierarchy_name")
 }
 
-/// Represents a single level in a hierarchy (e.g., "Area", "Case Type", "Service Type").
+/// Represents a single level in a hierarchy 
+/// Each level can have multiple categories.
+/// (e.g., "Area" -> "Request Type" -> "Category" -> "Subcategory").
+/// (e.g., "Sales Channel" -> "Service Type").
 model HierarchyLevel {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime?  @updatedAt()
@@ -432,22 +435,89 @@ model StatusType {
   assignments RequestAssignment[]
 }
 
-/// Represents an organizational area.
+/// Represents an organizational area within a tenant.
+/// Areas allow grouping of users, categories, and request assignments in a specific organizational scope.
 model Area {
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime?           @updatedAt()
-  deletedAt         DateTime?
-  createdBy         String?             @db.VarChar(50)
-  modifiedBy        String?             @db.VarChar(50)
-  tenantId          String              @db.UniqueIdentifier()
-  tenant            Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                String              @id() @default(uuid()) @db.UniqueIdentifier()
-  name              String              @unique() @db.VarChar(100)
-  description       String?             @db.VarChar(255)
-  isActive          Boolean             @default(true)
-  user              User[]
-  requestAssignment RequestAssignment[]
-  categories        Category[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime?           @updatedAt()
+  deletedAt          DateTime?
+  createdBy          String?             @db.VarChar(50)
+  modifiedBy         String?             @db.VarChar(50)
+  tenantId           String              @db.UniqueIdentifier()
+  tenant             Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                 String              @id() @default(uuid()) @db.UniqueIdentifier()
+  name               String              @unique() @db.VarChar(100)
+  description        String?             @db.VarChar(255)
+  isActive           Boolean             @default(true)
+  requestAssignments RequestAssignment[]
+  categories         Category[]
+  userAreas          UserArea[]
+  areaRole           AreaRole[]
+
+  @@index([name], name: "idx_area_name")
+}
+
+/// Represents the assignment of users to areas with specific roles.
+/// This model acts as an intermediate table for associating users, areas, and area-specific roles.
+model UserArea {
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @updatedAt()
+  deletedAt  DateTime?
+  createdBy  String?   @db.VarChar(50)
+  modifiedBy String?   @db.VarChar(50)
+  tenantId   String    @db.UniqueIdentifier()
+  tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id         String    @id() @default(uuid()) @db.UniqueIdentifier()
+  isActive   Boolean   @default(true)
+  userId     String    @db.UniqueIdentifier()
+  areaId     String    @db.UniqueIdentifier()
+  roleId     String?   @db.UniqueIdentifier()
+  user       User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  area       Area      @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  role       AreaRole? @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([userId, areaId])
+}
+
+/// Represents roles that are specific to an area.
+/// Area roles define permissions and responsibilities of users within a specific organizational area.
+model AreaRole {
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime?            @updatedAt()
+  deletedAt           DateTime?
+  createdBy           String?              @db.VarChar(50)
+  modifiedBy          String?              @db.VarChar(50)
+  tenantId            String               @db.UniqueIdentifier()
+  tenant              Tenant               @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                  String               @id() @default(uuid()) @db.UniqueIdentifier()
+  name                String               @db.VarChar(100)
+  description         String?              @db.VarChar(255)
+  areaId              String?              @db.UniqueIdentifier()
+  area                Area?                @relation(fields: [areaId], references: [id])
+  userAreas           UserArea[]
+  areaRolePermissions AreaRolePermission[]
+
+  @@unique([name, areaId])
+}
+
+/// Links area-specific roles to permissions.
+/// This model defines which permissions are granted to roles within a specific area.
+model AreaRolePermission {
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime?  @updatedAt()
+  deletedAt    DateTime?
+  createdBy    String?    @db.VarChar(50)
+  modifiedBy   String?    @db.VarChar(50)
+  tenantId     String     @db.UniqueIdentifier()
+  tenant       Tenant     @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id           String     @id() @default(uuid()) @db.UniqueIdentifier()
+  isActive     Boolean    @default(true)
+  areaRoleId   String     @db.UniqueIdentifier()
+  areaRole     AreaRole   @relation(fields: [areaRoleId], references: [id])
+  permissionId String     @db.UniqueIdentifier()
+  permission   Permission @relation(fields: [permissionId], references: [id])
+
+  @@unique([areaRoleId, permissionId])
 }
 
 /// Represents a specific requirement for a service or category.
@@ -608,38 +678,31 @@ model Person {
   lastName             String             @db.VarChar(100)
   email                String?            @unique()
   phone                String?            @db.VarChar(50)
-  identificationNumber String             @unique() @db.VarChar(110)
+  identificationNumber String             @unique() @default("") @db.VarChar(110)
+  image                String?
   userId               String?            @unique() @db.UniqueIdentifier()
   user                 User?              @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   clientId             String?            @unique() @db.UniqueIdentifier()
   client               Client?            @relation(fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   identificationTypeId String             @db.UniqueIdentifier()
   identificationType   IdentificationType @relation(fields: [identificationTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@map("Persons")
 }
 
 model Client {
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime? @updatedAt()
-  deletedAt            DateTime?
-  createdBy            String?   @db.VarChar(50)
-  modifiedBy           String?   @db.VarChar(50)
-  tenantId             String    @db.UniqueIdentifier()
-  tenant               Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                   String    @id() @default(uuid()) @db.UniqueIdentifier()
-  name                 String    @db.VarChar(400)
-  email                String?   @unique() @db.VarChar(100)
-  identificationNumber String    @unique() @db.VarChar(110)
-  corporateName        String?   @db.VarChar(100)
-  monthlyIncome        Float?
-  occupation           String?   @db.VarChar(100)
-  phone                String?   @db.VarChar(50)
-  personId             String?   @db.UniqueIdentifier()
-  person               Person?
-  request              Request[]
-
-  @@map("Clients")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime? @updatedAt()
+  deletedAt     DateTime?
+  createdBy     String?   @db.VarChar(50)
+  modifiedBy    String?   @db.VarChar(50)
+  tenantId      String    @db.UniqueIdentifier()
+  tenant        Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id            String    @id() @default(uuid()) @db.UniqueIdentifier()
+  corporateName String?   @db.VarChar(100)
+  monthlyIncome Float?
+  occupation    String?   @db.VarChar(100)
+  personId      String?   @db.UniqueIdentifier()
+  person        Person?
+  request       Request[]
 }
 
 model IdentificationType {
@@ -654,8 +717,6 @@ model IdentificationType {
   name        String    @unique() @db.VarChar(150)
   description String?   @db.VarChar(500)
   client      Person[]
-
-  @@map("IdentificationTypes")
 }
 
 model Workspace {

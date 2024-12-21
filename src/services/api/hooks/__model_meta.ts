@@ -305,6 +305,27 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
+        userAreas: {
+          name: 'userAreas',
+          type: 'UserArea',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        areaRoles: {
+          name: 'areaRoles',
+          type: 'AreaRole',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        areaRolePermissions: {
+          name: 'areaRolePermissions',
+          type: 'AreaRolePermission',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
       },
       uniqueConstraints: {
         id: {
@@ -395,32 +416,10 @@ const metadata = {
           isArray: true,
           backLink: 'user',
         },
-        globalAdmin: {
-          name: 'globalAdmin',
+        isGlobalAdmin: {
+          name: 'isGlobalAdmin',
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: false }] }],
-        },
-        name: {
-          name: 'name',
-          type: 'String',
-          isOptional: true,
-        },
-        image: {
-          name: 'image',
-          type: 'String',
-          isOptional: true,
-        },
-        personId: {
-          name: 'personId',
-          type: 'String',
-          isOptional: true,
-        },
-        person: {
-          name: 'person',
-          type: 'Person',
-          isDataModel: true,
-          isOptional: true,
-          backLink: 'user',
         },
         workspaces: {
           name: 'workspaces',
@@ -443,15 +442,15 @@ const metadata = {
           isArray: true,
           backLink: 'user',
         },
-        requestAssignment: {
-          name: 'requestAssignment',
+        requestAssignments: {
+          name: 'requestAssignments',
           type: 'RequestAssignment',
           isDataModel: true,
           isArray: true,
           backLink: 'user',
         },
-        userRole: {
-          name: 'userRole',
+        userRoles: {
+          name: 'userRoles',
           type: 'UserRole',
           isDataModel: true,
           isArray: true,
@@ -464,48 +463,28 @@ const metadata = {
           isArray: true,
           backLink: 'user',
         },
-        areaId: {
-          name: 'areaId',
+        personId: {
+          name: 'personId',
           type: 'String',
           isOptional: true,
-          isForeignKey: true,
-          relationField: 'area',
         },
-        coordinatorId: {
-          name: 'coordinatorId',
-          type: 'String',
-          isOptional: true,
-          isForeignKey: true,
-          relationField: 'coordinator',
-        },
-        area: {
-          name: 'area',
-          type: 'Area',
+        person: {
+          name: 'person',
+          type: 'Person',
           isDataModel: true,
           isOptional: true,
           backLink: 'user',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'areaId' },
-        },
-        coordinator: {
-          name: 'coordinator',
-          type: 'User',
-          isDataModel: true,
-          isOptional: true,
-          backLink: 'employees',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'coordinatorId' },
-        },
-        employees: {
-          name: 'employees',
-          type: 'User',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'coordinator',
         },
         userTenants: {
           name: 'userTenants',
           type: 'UserTenant',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'user',
+        },
+        userAreas: {
+          name: 'userAreas',
+          type: 'UserArea',
           isDataModel: true,
           isArray: true,
           backLink: 'user',
@@ -557,8 +536,8 @@ const metadata = {
           type: 'DateTime',
           attributes: [{ name: '@default', args: [] }],
         },
-        superAdmin: {
-          name: 'superAdmin',
+        isSuperAdmin: {
+          name: 'isSuperAdmin',
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: false }] }],
         },
@@ -648,6 +627,11 @@ const metadata = {
           isId: true,
           attributes: [{ name: '@default', args: [] }],
         },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
         userId: {
           name: 'userId',
           type: 'String',
@@ -664,7 +648,7 @@ const metadata = {
           name: 'user',
           type: 'User',
           isDataModel: true,
-          backLink: 'userRole',
+          backLink: 'userRoles',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'userId' },
         },
@@ -834,6 +818,11 @@ const metadata = {
           type: 'String',
           isOptional: true,
         },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
         permission: {
           name: 'permission',
           type: 'Permission',
@@ -910,10 +899,19 @@ const metadata = {
           name: 'name',
           type: 'String',
         },
+        key: {
+          name: 'key',
+          type: 'String',
+        },
         description: {
           name: 'description',
           type: 'String',
           isOptional: true,
+        },
+        scope: {
+          name: 'scope',
+          type: 'String',
+          attributes: [{ name: '@default', args: [{ value: 'global' }] }],
         },
         moduleId: {
           name: 'moduleId',
@@ -936,11 +934,22 @@ const metadata = {
           isArray: true,
           backLink: 'permission',
         },
+        areaRolePermission: {
+          name: 'areaRolePermission',
+          type: 'AreaRolePermission',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'permission',
+        },
       },
       uniqueConstraints: {
         id: {
           name: 'id',
           fields: ['id'],
+        },
+        key: {
+          name: 'key',
+          fields: ['key'],
         },
       },
     },
@@ -996,6 +1005,11 @@ const metadata = {
           type: 'String',
           isId: true,
           attributes: [{ name: '@default', args: [] }],
+        },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
         },
         roleId: {
           name: 'roleId',
@@ -2023,7 +2037,7 @@ const metadata = {
           type: 'User',
           isDataModel: true,
           isOptional: true,
-          backLink: 'requestAssignment',
+          backLink: 'requestAssignments',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'userId' },
         },
@@ -2039,7 +2053,7 @@ const metadata = {
           type: 'Area',
           isDataModel: true,
           isOptional: true,
-          backLink: 'requestAssignment',
+          backLink: 'requestAssignments',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'areaId' },
         },
@@ -2232,15 +2246,8 @@ const metadata = {
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: true }] }],
         },
-        user: {
-          name: 'user',
-          type: 'User',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'area',
-        },
-        requestAssignment: {
-          name: 'requestAssignment',
+        requestAssignments: {
+          name: 'requestAssignments',
           type: 'RequestAssignment',
           isDataModel: true,
           isArray: true,
@@ -2254,6 +2261,20 @@ const metadata = {
           backLink: 'areas',
           isRelationOwner: true,
         },
+        userAreas: {
+          name: 'userAreas',
+          type: 'UserArea',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'area',
+        },
+        areaRole: {
+          name: 'areaRole',
+          type: 'AreaRole',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'area',
+        },
       },
       uniqueConstraints: {
         id: {
@@ -2263,6 +2284,322 @@ const metadata = {
         name: {
           name: 'name',
           fields: ['name'],
+        },
+      },
+    },
+    userArea: {
+      name: 'UserArea',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$UserArea$createdBy,
+        },
+        modifiedBy: {
+          name: 'modifiedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$UserArea$modifiedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'userAreas',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
+        userId: {
+          name: 'userId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'user',
+        },
+        areaId: {
+          name: 'areaId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'area',
+        },
+        roleId: {
+          name: 'roleId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'role',
+        },
+        user: {
+          name: 'user',
+          type: 'User',
+          isDataModel: true,
+          backLink: 'userAreas',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'userId' },
+        },
+        area: {
+          name: 'area',
+          type: 'Area',
+          isDataModel: true,
+          backLink: 'userAreas',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'areaId' },
+        },
+        role: {
+          name: 'role',
+          type: 'AreaRole',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'userAreas',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'roleId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        userId_areaId: {
+          name: 'userId_areaId',
+          fields: ['userId', 'areaId'],
+        },
+      },
+    },
+    areaRole: {
+      name: 'AreaRole',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$AreaRole$createdBy,
+        },
+        modifiedBy: {
+          name: 'modifiedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$AreaRole$modifiedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'areaRoles',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        description: {
+          name: 'description',
+          type: 'String',
+          isOptional: true,
+        },
+        areaId: {
+          name: 'areaId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'area',
+        },
+        area: {
+          name: 'area',
+          type: 'Area',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'areaRole',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'areaId' },
+        },
+        userAreas: {
+          name: 'userAreas',
+          type: 'UserArea',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'role',
+        },
+        areaRolePermissions: {
+          name: 'areaRolePermissions',
+          type: 'AreaRolePermission',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'areaRole',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        name_areaId: {
+          name: 'name_areaId',
+          fields: ['name', 'areaId'],
+        },
+      },
+    },
+    areaRolePermission: {
+      name: 'AreaRolePermission',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$AreaRolePermission$createdBy,
+        },
+        modifiedBy: {
+          name: 'modifiedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$AreaRolePermission$modifiedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'areaRolePermissions',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
+        areaRoleId: {
+          name: 'areaRoleId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'areaRole',
+        },
+        areaRole: {
+          name: 'areaRole',
+          type: 'AreaRole',
+          isDataModel: true,
+          backLink: 'areaRolePermissions',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'areaRoleId' },
+        },
+        permissionId: {
+          name: 'permissionId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'permission',
+        },
+        permission: {
+          name: 'permission',
+          type: 'Permission',
+          isDataModel: true,
+          backLink: 'areaRolePermission',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'permissionId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        areaRoleId_permissionId: {
+          name: 'areaRoleId_permissionId',
+          fields: ['areaRoleId', 'permissionId'],
         },
       },
     },
@@ -3085,6 +3422,12 @@ const metadata = {
         identificationNumber: {
           name: 'identificationNumber',
           type: 'String',
+          attributes: [{ name: '@default', args: [{ value: '' }] }],
+        },
+        image: {
+          name: 'image',
+          type: 'String',
+          isOptional: true,
         },
         userId: {
           name: 'userId',
@@ -3209,19 +3552,6 @@ const metadata = {
           isId: true,
           attributes: [{ name: '@default', args: [] }],
         },
-        name: {
-          name: 'name',
-          type: 'String',
-        },
-        email: {
-          name: 'email',
-          type: 'String',
-          isOptional: true,
-        },
-        identificationNumber: {
-          name: 'identificationNumber',
-          type: 'String',
-        },
         corporateName: {
           name: 'corporateName',
           type: 'String',
@@ -3234,11 +3564,6 @@ const metadata = {
         },
         occupation: {
           name: 'occupation',
-          type: 'String',
-          isOptional: true,
-        },
-        phone: {
-          name: 'phone',
           type: 'String',
           isOptional: true,
         },
@@ -3266,14 +3591,6 @@ const metadata = {
         id: {
           name: 'id',
           fields: ['id'],
-        },
-        email: {
-          name: 'email',
-          fields: ['email'],
-        },
-        identificationNumber: {
-          name: 'identificationNumber',
-          fields: ['identificationNumber'],
         },
       },
     },
@@ -3998,6 +4315,30 @@ function $default$Area$createdBy(user: any): unknown {
 }
 
 function $default$Area$modifiedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$UserArea$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$UserArea$modifiedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AreaRole$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AreaRole$modifiedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AreaRolePermission$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AreaRolePermission$modifiedBy(user: any): unknown {
   return user?.id;
 }
 

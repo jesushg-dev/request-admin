@@ -77,8 +77,10 @@ model Tenant extends Auditable {
 
   userTenants        UserTenant[]                   // Linked user-tenant relationships
 
-  // Table mapping
-  @@map("Tenants")
+  userAreas         UserArea[]                     // Linked user-areas
+  areaRoles         AreaRole[]                     // Linked area roles
+  areaRolePermissions AreaRolePermission[]         // Linked area role permissions
+
 
   // Access control
   @@allow('read', userTenants?[user.id == auth().id && isActive == true])

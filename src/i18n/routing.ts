@@ -6,242 +6,186 @@ export const defaultLocale = 'en';
 export const locales = ['en', 'es'] as const;
 export const localePrefix = process.env.NEXT_PUBLIC_LOCALE_PREFIX === 'never' ? 'never' : 'as-needed';
 
+const securityPathnames = {
+  // security
+  '/[tenantId]/admin/security': {
+    en: '/[tenantId]/admin/security',
+    es: '/[tenantId]/admin/seguridad',
+  },
+  // roles
+  '/[tenantId]/admin/security/role': {
+    en: '/[tenantId]/admin/security/role',
+    es: '/[tenantId]/admin/seguridad/rol',
+  },
+  '/[tenantId]/admin/security/role/new': {
+    en: '/[tenantId]/admin/security/role/new',
+    es: '/[tenantId]/admin/seguridad/rol/nuevo',
+  },
+  '/[tenantId]/admin/security/role/[slug]': {
+    en: '/[tenantId]/admin/security/role/[slug]',
+    es: '/[tenantId]/admin/seguridad/rol/[slug]',
+  },
+  // user
+  '/[tenantId]/admin/security/user': {
+    en: '/[tenantId]/admin/security/user',
+    es: '/[tenantId]/admin/seguridad/usuario',
+  },
+  '/[tenantId]/admin/security/user/new': {
+    en: '/[tenantId]/admin/security/user/new',
+    es: '/[tenantId]/admin/seguridad/usuario/nuevo',
+  },
+  '/[tenantId]/admin/security/user/[slug]': {
+    en: '/[tenantId]/admin/security/user/[slug]',
+    es: '/[tenantId]/admin/seguridad/usuario/[slug]',
+  },
+} satisfies Pathnames<typeof locales>;
+
 export const pathnames = {
   '/': '/',
-  '/admin': '/admin',
-  '/admin/area': '/admin/area',
-  '/admin/area/new': {
-    en: '/admin/area/new',
-    es: '/admin/area/nuevo',
+  '/[tenantId]/admin': '/[tenantId]/admin',
+  '/[tenantId]/admin/management/area': '/[tenantId]/admin/management/area',
+  '/[tenantId]/admin/management/area/new': {
+    en: '/[tenantId]/admin/management/area/new',
+    es: '/[tenantId]/admin/gestion/area/nuevo',
   },
-  '/admin/area/[slug]': {
-    en: '/admin/area/[slug]',
-    es: '/admin/area/[slug]',
+  '/[tenantId]/admin/management/area/[slug]': {
+    en: '/[tenantId]/admin/management/area/[slug]',
+    es: '/[tenantId]/admin/gestion/area/[slug]',
   },
-  '/admin/request': {
-    en: '/admin/request',
-    es: '/admin/caso',
+  // client
+  '/[tenantId]/admin/management/client': {
+    en: '/[tenantId]/admin/management/client',
+    es: '/[tenantId]/admin/gestion/cliente',
   },
-  '/admin/request/new': {
-    en: '/admin/request/new',
-    es: '/admin/caso/nuevo',
+  '/[tenantId]/admin/client/new': {
+    en: '/[tenantId]/admin/client/new',
+    es: '/[tenantId]/admin/cliente/nuevo',
   },
-  '/admin/request/[slug]': {
-    en: '/admin/request/[slug]',
-    es: '/admin/caso/[slug]',
+  '/[tenantId]/admin/client/[slug]': {
+    en: '/[tenantId]/admin/client/[slug]',
+    es: '/[tenantId]/admin/cliente/[slug]',
   },
-  //request-type
-  '/admin/request-type': {
-    en: '/admin/request-type',
-    es: '/admin/tipo-de-caso',
+  '/[tenantId]/admin/request': {
+    en: '/[tenantId]/admin/request',
+    es: '/[tenantId]/admin/caso',
   },
-  '/admin/request-type/new': {
-    en: '/admin/request-type/new',
-    es: '/admin/tipo-de-caso/nuevo',
+  '/[tenantId]/admin/request/new': {
+    en: '/[tenantId]/admin/request/new',
+    es: '/[tenantId]/admin/caso/nuevo',
   },
-  '/admin/request-type/[slug]': {
-    en: '/admin/request-type/[slug]',
-    es: '/admin/tipo-de-caso/[slug]',
+  '/[tenantId]/admin/request/[slug]': {
+    en: '/[tenantId]/admin/request/[slug]',
+    es: '/[tenantId]/admin/caso/[slug]',
   },
-  // category
-  '/admin/category': {
-    en: '/admin/category',
-    es: '/admin/categoria',
+  // request-type
+  '/[tenantId]/admin/request-type': {
+    en: '/[tenantId]/admin/request-type',
+    es: '/[tenantId]/admin/tipo-de-caso',
   },
-  '/admin/category/new': {
-    en: '/admin/category/new',
-    es: '/admin/categoria/nuevo',
+  '/[tenantId]/admin/request-type/new': {
+    en: '/[tenantId]/admin/request-type/new',
+    es: '/[tenantId]/admin/tipo-de-caso/nuevo',
   },
-  '/admin/category/[slug]': {
-    en: '/admin/category/[slug]',
-    es: '/admin/categoria/[slug]',
+  '/[tenantId]/admin/request-type/[slug]': {
+    en: '/[tenantId]/admin/request-type/[slug]',
+    es: '/[tenantId]/admin/tipo-de-caso/[slug]',
   },
-  //client
-  '/admin/client': {
-    en: '/admin/client',
-    es: '/admin/cliente',
+  // requirement
+  '/[tenantId]/admin/requirement': {
+    en: '/[tenantId]/admin/requirement',
+    es: '/[tenantId]/admin/requisito',
   },
-  '/admin/client/new': {
-    en: '/admin/client/new',
-    es: '/admin/cliente/nuevo',
+  '/[tenantId]/admin/requirement/new': {
+    en: '/[tenantId]/admin/requirement/new',
+    es: '/[tenantId]/admin/requisito/nuevo',
   },
-  '/admin/client/[slug]': {
-    en: '/admin/client/[slug]',
-    es: '/admin/cliente/[slug]',
+  '/[tenantId]/admin/requirement/[slug]': {
+    en: '/[tenantId]/admin/requirement/[slug]',
+    es: '/[tenantId]/admin/requisito/[slug]',
   },
-  //module
-  '/admin/module': {
-    en: '/admin/module',
-    es: '/admin/modulo',
+  // document
+  '/[tenantId]/admin/document': {
+    en: '/[tenantId]/admin/document',
+    es: '/[tenantId]/admin/documento',
   },
-  '/admin/module/new': {
-    en: '/admin/module/new',
-    es: '/admin/modulo/nuevo',
+  '/[tenantId]/admin/document/new': {
+    en: '/[tenantId]/admin/document/new',
+    es: '/[tenantId]/admin/documento/nuevo',
   },
-  '/admin/module/[slug]': {
-    en: '/admin/module/[slug]',
-    es: '/admin/modulo/[slug]',
+  '/[tenantId]/admin/document/[slug]': {
+    en: '/[tenantId]/admin/document/[slug]',
+    es: '/[tenantId]/admin/documento/[slug]',
   },
-  //requeriment
-  '/admin/requirement': {
-    en: '/admin/requirement',
-    es: '/admin/requisito',
+  // form
+  '/[tenantId]/admin/form': {
+    en: '/[tenantId]/admin/form',
+    es: '/[tenantId]/admin/formulario',
   },
-  '/admin/requirement/new': {
-    en: '/admin/requirement/new',
-    es: '/admin/requisito/nuevo',
+  '/[tenantId]/admin/form/new': {
+    en: '/[tenantId]/admin/form/new',
+    es: '/[tenantId]/admin/formulario/nuevo',
   },
-  '/admin/requirement/[slug]': {
-    en: '/admin/requirement/[slug]',
-    es: '/admin/requisito/[slug]',
+  '/[tenantId]/admin/form/[slug]': {
+    en: '/[tenantId]/admin/form/[slug]',
+    es: '/[tenantId]/admin/formulario/[slug]',
   },
-  //roles
-  '/admin/role': {
-    en: '/admin/role',
-    es: '/admin/rol',
+  // settings
+  '/[tenantId]/admin/settings': {
+    en: '/[tenantId]/admin/settings',
+    es: '/[tenantId]/admin/configuracion',
   },
-  '/admin/role/new': {
-    en: '/admin/role/new',
-    es: '/admin/rol/nuevo',
+  '/[tenantId]/admin/settings/account': {
+    en: '/[tenantId]/admin/settings/account',
+    es: '/[tenantId]/admin/configuracion/cuenta',
   },
-  '/admin/role/[slug]': {
-    en: '/admin/role/[slug]',
-    es: '/admin/rol/[slug]',
+  '/[tenantId]/admin/settings/smtp': {
+    en: '/[tenantId]/admin/settings/smtp',
+    es: '/[tenantId]/admin/configuracion/smtp',
   },
-  //sales-channel
-  '/admin/sales-channel': {
-    en: '/admin/sales-channel',
-    es: '/admin/canal-de-ventas',
+  '/[tenantId]/admin/settings/credit-card': {
+    en: '/[tenantId]/admin/settings/credit-card',
+    es: '/[tenantId]/admin/configuracion/tarjeta-de-credito',
   },
-  '/admin/sales-channel/new': {
-    en: '/admin/sales-channel/new',
-    es: '/admin/canal-de-ventas/nuevo',
+  '/[tenantId]/admin/settings/social': {
+    en: '/[tenantId]/admin/settings/social',
+    es: '/[tenantId]/admin/configuracion/redes-sociales',
   },
-  '/admin/sales-channel/[slug]': {
-    en: '/admin/sales-channel/[slug]',
-    es: '/admin/canal-de-ventas/[slug]',
+  '/[tenantId]/admin/settings/tenant': {
+    en: '/[tenantId]/admin/settings/tenant',
+    es: '/[tenantId]/admin/configuracion/inquilino',
   },
-  //service-type
-  '/admin/service-type': {
-    en: '/admin/service-type',
-    es: '/admin/tipo-de-servicio',
+  // form-designer
+  '/[tenantId]/admin/form-designer': {
+    en: '/[tenantId]/admin/form-designer',
+    es: '/[tenantId]/admin/disenador-de-formularios',
   },
-  '/admin/service-type/new': {
-    en: '/admin/service-type/new',
-    es: '/admin/tipo-de-servicio/nuevo',
+  // identification-type
+  '/[tenantId]/admin/identification-type': {
+    en: '/[tenantId]/admin/identification-type',
+    es: '/[tenantId]/admin/tipo-de-identificacion',
   },
-  '/admin/service-type/[slug]': {
-    en: '/admin/service-type/[slug]',
-    es: '/admin/tipo-de-servicio/[slug]',
+  '/[tenantId]/admin/identification-type/new': {
+    en: '/[tenantId]/admin/identification-type/new',
+    es: '/[tenantId]/admin/tipo-de-identificacion/nuevo',
   },
-  //user
-  '/admin/user': {
-    en: '/admin/user',
-    es: '/admin/usuario',
+  '/[tenantId]/admin/identification-type/[slug]': {
+    en: '/[tenantId]/admin/identification-type/[slug]',
+    es: '/[tenantId]/admin/tipo-de-identificacion/[slug]',
   },
-  '/admin/user/new': {
-    en: '/admin/user/new',
-    es: '/admin/usuario/nuevo',
+  // tenant
+  '/[tenantId]/admin/tenant': {
+    en: '/[tenantId]/admin/tenant',
+    es: '/[tenantId]/admin/inquilino',
   },
-  '/admin/user/[slug]': {
-    en: '/admin/user/[slug]',
-    es: '/admin/usuario/[slug]',
+  '/[tenantId]/admin/tenant/new': {
+    en: '/[tenantId]/admin/tenant/new',
+    es: '/[tenantId]/admin/inquilino/nuevo',
   },
-  //document
-  '/admin/document': {
-    en: '/admin/document',
-    es: '/admin/documento',
+  '/[tenantId]/admin/tenant/[slug]': {
+    en: '/[tenantId]/admin/tenant/[slug]',
+    es: '/[tenantId]/admin/inquilino/[slug]',
   },
-  '/admin/document/new': {
-    en: '/admin/document/new',
-    es: '/admin/documento/nuevo',
-  },
-  '/admin/document/[slug]': {
-    en: '/admin/document/[slug]',
-    es: '/admin/documento/[slug]',
-  },
-  //form
-  '/admin/form': {
-    en: '/admin/form',
-    es: '/admin/formulario',
-  },
-  '/admin/form/new': {
-    en: '/admin/form/new',
-    es: '/admin/formulario/nuevo',
-  },
-  '/admin/form/[slug]': {
-    en: '/admin/form/[slug]',
-    es: '/admin/formulario/[slug]',
-  },
-  //settings
-  '/admin/settings': {
-    en: '/admin/settings',
-    es: '/admin/configuracion',
-  },
-  '/admin/settings/account': {
-    en: '/admin/settings/account',
-    es: '/admin/configuracion/cuenta',
-  },
-  '/admin/settings/smtp': {
-    en: '/admin/settings/smtp',
-    es: '/admin/configuracion/smtp',
-  },
-  '/admin/settings/credit-card': {
-    en: '/admin/settings/credit-card',
-    es: '/admin/configuracion/tarjeta-de-credito',
-  },
-  '/admin/settings/social': {
-    en: '/admin/settings/social',
-    es: '/admin/configuracion/redes-sociales',
-  },
-  '/admin/settings/tenant': {
-    en: '/admin/settings/tenant',
-    es: '/admin/configuracion/inquilino',
-  },
-  ///admin/form-designer
-  '/admin/form-designer': {
-    en: '/admin/form-designer',
-    es: '/admin/diseñador-de-formularios',
-  },
-  //identification-type
-  '/admin/identification-type': {
-    en: '/admin/identification-type',
-    es: '/admin/tipo-de-identificacion',
-  },
-  '/admin/identification-type/new': {
-    en: '/admin/identification-type/new',
-    es: '/admin/tipo-de-identificacion/nuevo',
-  },
-  '/admin/identification-type/[slug]': {
-    en: '/admin/identification-type/[slug]',
-    es: '/admin/tipo-de-identificacion/[slug]',
-  },
-  //tenant
-  '/admin/tenant': {
-    en: '/admin/tenant',
-    es: '/admin/inquilino',
-  },
-  '/admin/tenant/new': {
-    en: '/admin/tenant/new',
-    es: '/admin/inquilino/nuevo',
-  },
-  '/admin/tenant/[slug]': {
-    en: '/admin/tenant/[slug]',
-    es: '/admin/inquilino/[slug]',
-  },
-  //about
-  '/about/privacy-policy': {
-    en: '/about/privacy-policy',
-    es: '/acerca-de/politica-de-privacidad',
-  },
-  '/about/terms-of-service': {
-    en: '/about/terms-of-service',
-    es: '/acerca-de/terminos-de-servicio',
-  },
-  '/tenant/onboarding': {
-    en: '/tenant/onboarding',
-    es: '/inquilino/registro',
-  },
+  ...securityPathnames,
 } satisfies Pathnames<typeof locales>;
 
 export const routing = defineRouting({

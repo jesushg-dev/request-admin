@@ -11,6 +11,8 @@ import type { PrismaClient } from '@zenstackhq/runtime/models';
 import { createTRPCRouter } from '../../trpc';
 import createAccountRouter from './Account.router';
 import createAreaRouter from './Area.router';
+import createAreaRoleRouter from './AreaRole.router';
+import createAreaRolePermissionRouter from './AreaRolePermission.router';
 import createAuthenticatorRouter from './Authenticator.router';
 import createCategoryRouter from './Category.router';
 import createCategoryRequirementRouter from './CategoryRequirement.router';
@@ -44,6 +46,7 @@ import createTenantRouter from './Tenant.router';
 import createTwoFactorConfirmationRouter from './TwoFactorConfirmation.router';
 import createTwoFactorTokenRouter from './TwoFactorToken.router';
 import createUserRouter from './User.router';
+import createUserAreaRouter from './UserArea.router';
 import createUserRoleRouter from './UserRole.router';
 import createUserTenantRouter from './UserTenant.router';
 import createVerificationTokenRouter from './VerificationToken.router';
@@ -80,6 +83,9 @@ export function createRouter() {
     requestAssignment: createRequestAssignmentRouter(),
     statusType: createStatusTypeRouter(),
     area: createAreaRouter(),
+    userArea: createUserAreaRouter(),
+    areaRole: createAreaRoleRouter(),
+    areaRolePermission: createAreaRolePermissionRouter(),
     requirement: createRequirementRouter(),
     requirementType: createRequirementTypeRouter(),
     categoryRequirement: createCategoryRequirementRouter(),

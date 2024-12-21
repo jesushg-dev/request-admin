@@ -11,6 +11,7 @@ import { ThemeProvider } from 'next-themes';
 import NextTopLoader from 'nextjs-toploader';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
+import { Toaster } from '@/components/ui/sonner';
 import TanstackQueryProvider from '@/components/hoc/tanstack-query-provider';
 
 // Font configuration
@@ -84,6 +85,7 @@ export default async function RootLayout({ children, params }: Props) {
               <TanstackQueryProvider>
                 <TRPCReactProvider>
                   <NuqsAdapter>{children}</NuqsAdapter>
+                  <Toaster />
                 </TRPCReactProvider>
               </TanstackQueryProvider>
             </NextIntlClientProvider>

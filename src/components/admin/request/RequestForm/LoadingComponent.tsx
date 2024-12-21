@@ -1,6 +1,5 @@
 import React from 'react';
 import type { FC } from 'react';
-import Skeleton from 'react-loading-skeleton';
 
 interface ILoadingComponentProps {}
 

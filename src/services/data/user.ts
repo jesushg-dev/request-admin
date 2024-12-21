@@ -31,13 +31,24 @@ export const getUserByIdWithPermissions = async (id: string) => {
   try {
     const user = await db.user.findUnique({
       where: { id },
-      include: {
-        userRole: {
-          include: {
+      select: {
+        id: true,
+        email: true,
+        isTwoFactorEnabled: true,
+        person: {
+          select: {
+            firstName: true,
+            lastName: true,
+            image: true,
+          },
+        },
+        userRoles: {
+          select: {
             role: {
-              include: {
+              select: {
+                name: true,
                 rolePermission: {
-                  include: { permission: true },
+                  select: { permission: true },
                 },
               },
             },
@@ -49,8 +60,8 @@ export const getUserByIdWithPermissions = async (id: string) => {
     if (!user) return null;
 
     // Flatten roles and permissions
-    const roles = user.userRole?.map((ur) => ur.role.name) || [];
-    const permissions = user.userRole?.flatMap((ur) => ur.role.rolePermission.map((rp) => rp.permission.name)) || [];
+    const roles = user.userRoles?.map((ur) => ur.role.name) || [];
+    const permissions = user.userRoles?.flatMap((ur) => ur.role.rolePermission.map((rp) => rp.permission.name)) || [];
 
     return { ...user, roles, permissions };
   } catch (error) {

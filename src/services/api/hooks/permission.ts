@@ -397,7 +397,10 @@ export function useSuspenseCountPermission<
 }
 
 export function useCheckPermission<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; name?: string; description?: string; moduleId?: string } },
+  args: {
+    operation: PolicyCrudKind;
+    where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; name?: string; key?: string; description?: string; scope?: string; moduleId?: string };
+  },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

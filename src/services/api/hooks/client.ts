@@ -367,22 +367,7 @@ export function useSuspenseCountClient<
 }
 
 export function useCheckClient<TError = DefaultError>(
-  args: {
-    operation: PolicyCrudKind;
-    where?: {
-      createdBy?: string;
-      modifiedBy?: string;
-      tenantId?: string;
-      id?: string;
-      name?: string;
-      email?: string;
-      identificationNumber?: string;
-      corporateName?: string;
-      occupation?: string;
-      phone?: string;
-      personId?: string;
-    };
-  },
+  args: { operation: PolicyCrudKind; where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; corporateName?: string; occupation?: string; personId?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

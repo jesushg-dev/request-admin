@@ -19,6 +19,8 @@ export type ExtendedUser = DefaultSession['user'] & {
   tenantId: string;
   permissions: string[];
   roles: string[];
+  firstName: string;
+  lastName: string;
 };
 
 /**
@@ -73,6 +75,9 @@ export const authConfig: NextAuthConfig = {
       session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
       session.user.permissions = token.permissions as string[] | [];
       session.user.roles = token.roles as string[] | [];
+      session.user.image = token.image as string;
+      session.user.firstName = token.firstName as string;
+      session.user.lastName = token.lastName as string;
 
       if (token.sub) {
         session.user.id = token.sub;
@@ -90,12 +95,15 @@ export const authConfig: NextAuthConfig = {
       const existingAccount = await getAccountByUserId(existingUser.id);
 
       token.isOAuth = !!existingAccount;
-      token.name = existingUser.name;
       token.email = existingUser.email;
-      token.picture = existingUser.image;
+      token.picture = existingUser.person?.image;
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
       token.permissions = existingUser.permissions || [];
       token.roles = existingUser.roles || [];
+      token.name = existingUser.person?.firstName && existingUser.person?.lastName ? `${existingUser.person.firstName} ${existingUser.person.lastName}` : 'No Name';
+      token.image = existingUser.person?.image || '';
+      token.firstName = existingUser.person?.firstName || '';
+      token.lastName = existingUser.person?.lastName || '';
 
       return token;
     },

@@ -362,12 +362,8 @@ export function useCheckUser<TError = DefaultError>(
       password?: string;
       isTwoFactorEnabled?: boolean;
       twoFactorConfirmationId?: string;
-      globalAdmin?: boolean;
-      name?: string;
-      image?: string;
+      isGlobalAdmin?: boolean;
       personId?: string;
-      areaId?: string;
-      coordinatorId?: string;
     };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions

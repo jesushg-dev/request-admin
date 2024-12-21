@@ -36,7 +36,7 @@ interface UseFetchTableDataProps<TData, FMA extends FindManyArgs, CountArgs> {
     isLoading: boolean;
     error: QueryError | null;
   };
-  defaultArgs?: Pick<FMA, 'select' | 'include'>;
+  defaultArgs?: Pick<FMA, 'select' | 'include' | 'where'>;
 }
 
 export function useFetchTableData<TData, FMA extends FindManyArgs, CountArgs>({ search, defaultArgs, useFindManyHook, useCountHook }: UseFetchTableDataProps<TData, FMA, CountArgs>) {
@@ -50,17 +50,23 @@ export function useFetchTableData<TData, FMA extends FindManyArgs, CountArgs>({ 
 
   // Fetch data for the table
   const { data, isLoading, error, refetch, isError } = useFindManyHook({
-    where: { tenantId, AND: prismaFilters },
     orderBy: prismaSortingState,
     take: search.perPage,
     skip: (search.page - 1) * search.perPage,
     include: defaultArgs?.include,
     select: defaultArgs?.select,
+    where: {
+      tenantId,
+      AND: [defaultArgs?.where || {}, ...prismaFilters],
+    },
   } as FMA);
 
   // Fetch total count for pagination
   const { data: totalCountData, error: countError } = useCountHook({
-    where: { tenantId, AND: prismaFilters },
+    where: {
+      tenantId,
+      AND: [defaultArgs?.where || {}, ...prismaFilters],
+    },
   } as CountArgs);
 
   // Calculate total pages
