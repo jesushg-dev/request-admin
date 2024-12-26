@@ -1,0 +1,131 @@
+import './abstract.zmodel'
+import './auth.zmodel'
+import './person.zmodel'
+import './document.zmodel'
+import './form.zmodel'
+import './messenger.zmodel'
+import './request.zmodel'
+
+model Tenant extends Auditable {
+  id                 String   @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for the tenant
+  name               String   // Tenant name
+  logoUrl            String?  // URL for the tenant's logo
+  websiteUrl         String?  // URL for the tenant's website
+  title              String?  // Title or tagline for the tenant
+  description        String?  // Brief description of the tenant
+  primaryColor       String?  // Primary color for branding
+  secondaryColor     String?  // Secondary color for branding
+  contactEmail       String?  // Tenant's contact email
+  contactPhone       String?  // Tenant's contact phone number
+  address            String?  // Address for the tenant
+
+  // Related entities
+  hierarchies        Hierarchy[]                     // Linked hierarchies
+  hierarchyLevels    HierarchyLevel[]               // Linked hierarchy levels
+  persons            Person[]                       // Linked persons
+  clients            Client[]                       // Linked clients
+  requirements       Requirement[]                  // Linked requirements
+  requirementTypes  RequirementType[]              // Linked requirement types
+  categoryRequirements CategoryRequirement[]        // Linked category-requirement associations
+  requests           Request[]                      // Linked service requests
+  requirementComplianceTrackings RequirementComplianceTracking[] // Linked compliance tracking
+  requestAssignments RequestAssignment[]            // Linked request assignments
+  StatusType         StatusType[]                   // Linked status types
+  documents          Document[]                     // Linked documents
+  areas              Area[]                         // Linked areas
+  categories         Category[]                     // Linked categories
+  userRoles          UserRole[]                     // Linked user roles
+  roles              Role[]                         // Linked roles
+  modules            Module[]                       // Linked modules
+  features        Feature[]                   // Linked features
+  roleFeatures    RoleFeature[]               // Linked role-feature associations
+  identificationTypes IdentificationType[]          // Linked identification types
+  documentAssignments DocumentAssignment[]          // Linked document assignments
+  forms              Form[]                         // Linked forms
+  formSubmissions    FormSubmission[]               // Linked form submissions
+  workspaces         Workspace[]                    // Linked workspaces
+  members            Member[]                       // Linked workspace members
+  channels           Channel[]                      // Linked communication channels
+  conversations      Conversation[]                 // Linked conversations
+  messages           Message[]                      // Linked messages
+  reactions          Reaction[]                     // Linked reactions
+
+  userTenants        UserTenant[]                   // Linked user-tenant relationships
+
+  userAreas         UserArea[]                     // Linked user-areas
+  areaRoles         AreaRole[]                     // Linked area roles
+  areaRoleFeatures AreaRoleFeature[]         // Linked area role features
+
+  // Subscription and payment
+  subscriptions Subscription[]
+  usageTracking UsageTracking[]
+
+  // Access control
+  @@allow('read', userTenants?[user.id == auth().id && isActive == true])
+}
+
+
+model Subscription {
+  id              String     @id @default(uuid()) @db.UniqueIdentifier
+  tenant      Tenant           @relation(fields: [tenantId], references: [id])
+  tenantId    String           @db.UniqueIdentifier 
+  plan        Plan             @relation(fields: [planId], references: [id])
+  planId      String           @db.UniqueIdentifier
+  startDate   DateTime
+  endDate     DateTime
+  status      String           // Replaces ENUM
+  isLifetime  Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  payments    Payment[]
+}
+
+
+model Plan {
+  id              String     @id @default(uuid()) @db.UniqueIdentifier
+  name         String
+  description  String
+  price        Float
+  durationInDays Int?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  features     PlanFeature[]
+  subscriptions Subscription[]
+}
+
+
+model PlanFeature {
+  id              String     @id @default(uuid()) @db.UniqueIdentifier
+  plan         Plan            @relation(fields: [planId], references: [id])
+  planId       String       @db.UniqueIdentifier
+  feature      Feature         @relation(fields: [featureId], references: [id])
+  featureId    String         @db.UniqueIdentifier
+  dailyLimit   Int?
+  totalLimit   Int?
+  resetInterval String         // Replaces ENUM
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+}
+
+model UsageTracking {
+  id              String     @id @default(uuid()) @db.UniqueIdentifier
+  tenant       Tenant          @relation(fields: [tenantId], references: [id])
+  tenantId     String         @db.UniqueIdentifier
+  featureName  String
+  usageCount   Int
+  lastUsedAt   DateTime?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+}
+
+model Payment {
+  id              String     @id @default(uuid()) @db.UniqueIdentifier
+  subscription Subscription    @relation(fields: [subscriptionId], references: [id])
+  subscriptionId String       @db.UniqueIdentifier
+  amount       Float
+  paymentDate  DateTime
+  paymentMethod String
+  status       String           // Replaces ENUM
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+}

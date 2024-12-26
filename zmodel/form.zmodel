@@ -1,5 +1,6 @@
 import './abstract.zmodel'
 import './request.zmodel'
+import './tenant.zmodel'
 
 model Form extends TenantScoped, Auditable {
   // Primary identifier

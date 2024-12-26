@@ -17,7 +17,7 @@ export default async function NewAreaPage() {
   const requirements = await db.requirement.findMany({ ...RequirementDefaultArgs });
   const modules = await db.module.findMany({
     ...ModuleDefaultArgs,
-    where: { permission: { some: { NOT: { scope: 'global' } } } },
+    where: { feature: { some: { NOT: { scope: 'global' } } } },
   });
   const users = await db.user.findMany({ ...UserDefaultArgs });
 
@@ -29,5 +29,5 @@ export default async function NewAreaPage() {
 
   const levels = hierarchy.levels.sort((a, b) => a.position - b.position);
 
-  return <StepsComponent levels={levels} requirements={preparedRequirements} users={users} moduleWithPermissions={modules} />;
+  return <StepsComponent levels={levels} requirements={preparedRequirements} users={users} moduleWithFeatures={modules} />;
 }

@@ -1,6 +1,7 @@
 import './auth.zmodel'
 import './abstract.zmodel'
 import './request.zmodel'
+import './tenant.zmodel'
 
 model Person extends TenantScoped, Auditable {
   // Primary identifier

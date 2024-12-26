@@ -5,8 +5,8 @@ export const currentUser = async () => {
   return session?.user;
 };
 
-export const currentPermissions = async () => {
+export const currentFeatures = async () => {
   const session = await auth();
 
-  return session?.user?.permissions;
+  return session?.user?.features;
 };

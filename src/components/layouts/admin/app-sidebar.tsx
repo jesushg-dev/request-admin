@@ -4,7 +4,7 @@ import * as React from 'react';
 import { logout } from '@/actions/logout';
 import { ExtendedUser } from '@/server/auth/config';
 import { useUpdateUserTenant } from '@/services/api/hooks';
-import { ClipboardIcon, FileTextIcon, FolderIcon, Frame, GridIcon, HomeIcon, LayersIcon, ListIcon, Map, PieChart, SettingsIcon, ShieldIcon, UsersIcon } from 'lucide-react';
+import { ClipboardIcon, FileTextIcon, FolderIcon, Frame, GridIcon, HomeIcon, LandPlotIcon, LayersIcon, ListIcon, Map, PieChart, SettingsIcon, ShieldIcon, UsersIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
@@ -104,7 +104,7 @@ export function AppSidebar({ tenants, user, ...props }: AppSidebarProps) {
           {
             title: t('area'),
             url: { pathname: '/[tenantId]/admin/management/area', params: { tenantId } },
-            icon: SettingsIcon,
+            icon: LandPlotIcon,
           },
         ],
       },

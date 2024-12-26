@@ -1,28 +1,28 @@
 'use client';
 
 import React, { useState, type FC } from 'react';
-import type { CreateRoleInputs, CreateRoleWithPermissionsAndEmployeesInputs, SelectPermissionInputs } from '@/connections/role';
+import type { CreateRoleInputs, CreateRoleWithFeaturesAndEmployeesInputs, SelectFeatureInputs } from '@/connections/role';
 import type { IEmployee } from '@/utils/types';
 import { StepDirective, StepperComponent, StepsDirective } from '@syncfusion/ej2-react-navigations';
 
 import rswitch from '@/lib/rswitch';
 
-import PermissionSelector from './PermissionSelector';
+import FeatureSelector from './FeatureSelector';
 import RoleDetailForm from './RoleDetailForm';
 import SummaryForm from './SummaryForm';
 import UserSelector from './UserSelector';
 
 interface RoleFormProps {
   roleId?: string;
-  defaultValues?: CreateRoleWithPermissionsAndEmployeesInputs | null;
-  onSubmit: (data: CreateRoleWithPermissionsAndEmployeesInputs) => void;
+  defaultValues?: CreateRoleWithFeaturesAndEmployeesInputs | null;
+  onSubmit: (data: CreateRoleWithFeaturesAndEmployeesInputs) => void;
 }
 
 const RoleForm: FC<RoleFormProps> = ({ roleId, defaultValues, onSubmit }) => {
   const [step, setStep] = useState(0);
   const [role, setRole] = useState<CreateRoleInputs>();
   const [employees, setEmployees] = useState<IEmployee[]>();
-  const [permissions, setPermissions] = useState<SelectPermissionInputs>();
+  const [features, setFeatures] = useState<SelectFeatureInputs>();
 
   const onSubmitRole = (data: CreateRoleInputs) => {
     setRole(data);
@@ -54,8 +54,8 @@ const RoleForm: FC<RoleFormProps> = ({ roleId, defaultValues, onSubmit }) => {
     });
   };
 
-  const onSubmitPermission = (data: SelectPermissionInputs) => {
-    setPermissions(data);
+  const onSubmitFeature = (data: SelectFeatureInputs) => {
+    setFeatures(data);
     setStep(3);
   };
 
@@ -69,7 +69,7 @@ const RoleForm: FC<RoleFormProps> = ({ roleId, defaultValues, onSubmit }) => {
           <StepsDirective>
             <StepDirective label="Role" />
             <StepDirective label="User Role" />
-            <StepDirective label="Permission Role" />
+            <StepDirective label="Feature Role" />
             <StepDirective label="Review" />
           </StepsDirective>
         </StepperComponent>
@@ -78,8 +78,8 @@ const RoleForm: FC<RoleFormProps> = ({ roleId, defaultValues, onSubmit }) => {
       {rswitch(step, {
         0: <RoleDetailForm defaultValues={role} onSubmit={onSubmitRole} />,
         1: <UserSelector goBack={() => setStep(0)} defaultValues={employees} onSubmit={onSubmitEmployee} />,
-        2: <PermissionSelector defaultValues={permissions} goBack={() => setStep(1)} onSubmit={onSubmitPermission} />,
-        3: <>{role && employees && permissions && <SummaryForm role={role} employees={employees} permissions={permissions} goBack={() => setStep(2)} onSubmit={onSubmit} />}</>,
+        2: <FeatureSelector defaultValues={features} goBack={() => setStep(1)} onSubmit={onSubmitFeature} />,
+        3: <>{role && employees && features && <SummaryForm role={role} employees={employees} features={features} goBack={() => setStep(2)} onSubmit={onSubmit} />}</>,
       })}
     </div>
   );

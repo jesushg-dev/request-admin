@@ -30,9 +30,9 @@ export const UserInfo = ({ user, label }: UserInfoProps) => {
         <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
           <p className="text-sm font-medium">Role</p>
           <ul className="max-w-[180px] truncate rounded-md bg-slate-100 p-1 font-mono text-xs">
-            {user?.permissions.map((permission, index) => (
+            {user?.features.map((feature, index) => (
               <li key={index} className="truncate">
-                {permission}
+                {feature}
               </li>
             ))}
           </ul>

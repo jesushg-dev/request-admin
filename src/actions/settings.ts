@@ -63,15 +63,15 @@ export const settings = async (values: z.infer<typeof SettingsSchema>) => {
     },
   });
 
-  // todo: get permission from the user to update their permissions
+  // todo: get feature from the user to update their features
 
   void update({
     user: {
       name: updatedUser.name,
       email: updatedUser.email,
       isTwoFactorEnabled: updatedUser.isTwoFactorEnabled,
-      // todo: assign permissions to the user
-      // permissions: updatedUser.permissions,
+      // todo: assign features to the user
+      // features: updatedUser.features,
     },
   });
 

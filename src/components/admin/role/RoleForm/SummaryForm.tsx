@@ -1,6 +1,6 @@
 import React from 'react';
 import type { FC } from 'react';
-import type { CreateRoleInputs, CreateRoleWithPermissionsAndEmployeesInputs, SelectPermissionInputs } from '@/connections/role';
+import type { CreateRoleInputs, CreateRoleWithFeaturesAndEmployeesInputs, SelectFeatureInputs } from '@/connections/role';
 import type { IEmployee } from '@/utils/types';
 
 import BackAndContinue from '@/components/common/back-and-continue';
@@ -9,18 +9,18 @@ import Kbd from '@/components/Kbd';
 interface ISummaryFormProps {
   role: CreateRoleInputs;
   employees: IEmployee[];
-  permissions: SelectPermissionInputs;
+  features: SelectFeatureInputs;
   goBack: () => void;
-  onSubmit: (data: CreateRoleWithPermissionsAndEmployeesInputs) => void;
+  onSubmit: (data: CreateRoleWithFeaturesAndEmployeesInputs) => void;
 }
 
-const SummaryForm: FC<ISummaryFormProps> = ({ role, employees, permissions, goBack, onSubmit }) => {
+const SummaryForm: FC<ISummaryFormProps> = ({ role, employees, features, goBack, onSubmit }) => {
   const handleSubmit = () => {
-    const data: CreateRoleWithPermissionsAndEmployeesInputs = {
+    const data: CreateRoleWithFeaturesAndEmployeesInputs = {
       roleName: role.roleName,
       description: role.description,
       employees: employees.map((employee) => employee.id),
-      permissions: permissions.modulePermissions.flatMap((module) => module.permissions.map((permission) => permission.permissionId)),
+      features: features.moduleFeatures.flatMap((module) => module.features.map((feature) => feature.featureId)),
     };
     onSubmit(data);
   };
@@ -40,13 +40,13 @@ const SummaryForm: FC<ISummaryFormProps> = ({ role, employees, permissions, goBa
             </tr>
           </thead>
           <tbody>
-            {permissions.modulePermissions.map((module, idx) => (
-              <tr key={module.moduleId} className={'bg-white dark:bg-gray-900 ' + (idx !== permissions.modulePermissions.length - 1 ? 'border-b dark:border-gray-700' : '')}>
+            {features.moduleFeatures.map((module, idx) => (
+              <tr key={module.moduleId} className={'bg-white dark:bg-gray-900 ' + (idx !== features.moduleFeatures.length - 1 ? 'border-b dark:border-gray-700' : '')}>
                 <td className="px-6 py-4">{module.name}</td>
                 <th scope="row" className="whitespace-nowrap px-6 py-4 font-medium text-gray-500 dark:text-gray-400">
-                  {module.permissions.map((permission) => (
-                    <Kbd key={permission.permissionId} className="mr-2">
-                      {permission.name}
+                  {module.features.map((feature) => (
+                    <Kbd key={feature.featureId} className="mr-2">
+                      {feature.name}
                     </Kbd>
                   ))}
                 </th>

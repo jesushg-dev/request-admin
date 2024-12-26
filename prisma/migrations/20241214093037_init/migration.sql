@@ -104,8 +104,8 @@ CREATE TABLE [dbo].[Module] (
 );
 
 -- CreateTable
-CREATE TABLE [dbo].[Permission] (
-    [createdAt] DATETIME2 NOT NULL CONSTRAINT [Permission_createdAt_df] DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE [dbo].[Feature] (
+    [createdAt] DATETIME2 NOT NULL CONSTRAINT [Feature_createdAt_df] DEFAULT CURRENT_TIMESTAMP,
     [updatedAt] DATETIME2,
     [deletedAt] DATETIME2,
     [createdBy] VARCHAR(50),
@@ -115,12 +115,12 @@ CREATE TABLE [dbo].[Permission] (
     [name] VARCHAR(50) NOT NULL,
     [description] VARCHAR(255),
     [moduleId] UNIQUEIDENTIFIER NOT NULL,
-    CONSTRAINT [Permission_pkey] PRIMARY KEY CLUSTERED ([id])
+    CONSTRAINT [Feature_pkey] PRIMARY KEY CLUSTERED ([id])
 );
 
 -- CreateTable
-CREATE TABLE [dbo].[RolePermission] (
-    [createdAt] DATETIME2 NOT NULL CONSTRAINT [RolePermission_createdAt_df] DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE [dbo].[RoleFeature] (
+    [createdAt] DATETIME2 NOT NULL CONSTRAINT [RoleFeature_createdAt_df] DEFAULT CURRENT_TIMESTAMP,
     [updatedAt] DATETIME2,
     [deletedAt] DATETIME2,
     [createdBy] VARCHAR(50),
@@ -128,8 +128,8 @@ CREATE TABLE [dbo].[RolePermission] (
     [tenantId] UNIQUEIDENTIFIER NOT NULL,
     [id] UNIQUEIDENTIFIER NOT NULL,
     [roleId] UNIQUEIDENTIFIER NOT NULL,
-    [permissionId] UNIQUEIDENTIFIER NOT NULL,
-    CONSTRAINT [RolePermission_pkey] PRIMARY KEY CLUSTERED ([id])
+    [featureId] UNIQUEIDENTIFIER NOT NULL,
+    CONSTRAINT [RoleFeature_pkey] PRIMARY KEY CLUSTERED ([id])
 );
 
 -- CreateTable
@@ -737,19 +737,19 @@ ALTER TABLE [dbo].[Role] ADD CONSTRAINT [Role_tenantId_fkey] FOREIGN KEY ([tenan
 ALTER TABLE [dbo].[Module] ADD CONSTRAINT [Module_tenantId_fkey] FOREIGN KEY ([tenantId]) REFERENCES [dbo].[Tenant]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE [dbo].[Permission] ADD CONSTRAINT [Permission_tenantId_fkey] FOREIGN KEY ([tenantId]) REFERENCES [dbo].[Tenant]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE [dbo].[Feature] ADD CONSTRAINT [Feature_tenantId_fkey] FOREIGN KEY ([tenantId]) REFERENCES [dbo].[Tenant]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE [dbo].[Permission] ADD CONSTRAINT [Permission_moduleId_fkey] FOREIGN KEY ([moduleId]) REFERENCES [dbo].[Module]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE [dbo].[Feature] ADD CONSTRAINT [Feature_moduleId_fkey] FOREIGN KEY ([moduleId]) REFERENCES [dbo].[Module]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE [dbo].[RolePermission] ADD CONSTRAINT [RolePermission_tenantId_fkey] FOREIGN KEY ([tenantId]) REFERENCES [dbo].[Tenant]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE [dbo].[RoleFeature] ADD CONSTRAINT [RoleFeature_tenantId_fkey] FOREIGN KEY ([tenantId]) REFERENCES [dbo].[Tenant]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE [dbo].[RolePermission] ADD CONSTRAINT [RolePermission_roleId_fkey] FOREIGN KEY ([roleId]) REFERENCES [dbo].[Role]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE [dbo].[RoleFeature] ADD CONSTRAINT [RoleFeature_roleId_fkey] FOREIGN KEY ([roleId]) REFERENCES [dbo].[Role]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE [dbo].[RolePermission] ADD CONSTRAINT [RolePermission_permissionId_fkey] FOREIGN KEY ([permissionId]) REFERENCES [dbo].[Permission]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE [dbo].[RoleFeature] ADD CONSTRAINT [RoleFeature_featureId_fkey] FOREIGN KEY ([featureId]) REFERENCES [dbo].[Feature]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE [dbo].[Session] ADD CONSTRAINT [Session_userId_fkey] FOREIGN KEY ([userId]) REFERENCES [dbo].[User]([id]) ON DELETE CASCADE ON UPDATE NO ACTION;

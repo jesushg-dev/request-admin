@@ -23,7 +23,7 @@ async function main() {
     },
   });
 
-  await createModuleAndPermission();
+  await createModuleAndFeature();
 
   //////////////////////////
   // Create Identification Types
@@ -2405,18 +2405,18 @@ async function main() {
   });
 }
 
-async function createModuleAndPermission() {
+async function createModuleAndFeature() {
   await prisma.module.create({
     data: {
       id: '8086ec48-a74e-4ab8-a890-07534d1d57bd', // Module ID
       tenantId: UNSTABLE_TENANT_ID,
       name: 'Gestión de Solicitudes',
       description: 'Módulo para gestionar todo el ciclo de vida de las solicitudes, desde su creación hasta la asignación y seguimiento',
-      permission: {
+      feature: {
         create: [
-          // Global permissions
+          // Global features
           {
-            id: 'afffef09-71e5-4682-ba96-fd0e65323ba1', // Create Permission
+            id: 'afffef09-71e5-4682-ba96-fd0e65323ba1', // Create Feature
             tenantId: UNSTABLE_TENANT_ID,
             name: 'Crear',
             key: 'request_create', // Code-friendly key
@@ -2424,7 +2424,7 @@ async function createModuleAndPermission() {
             scope: 'global',
           },
           {
-            id: 'e938dcfb-07ff-4e57-82c4-abe4326d23dc', // View Permission
+            id: 'e938dcfb-07ff-4e57-82c4-abe4326d23dc', // View Feature
             tenantId: UNSTABLE_TENANT_ID,
             name: 'Ver',
             key: 'request_view', // Code-friendly key
@@ -2432,7 +2432,7 @@ async function createModuleAndPermission() {
             scope: 'global',
           },
           {
-            id: 'eeb3aaad-bb2e-40e5-a9c5-5473fd1e66bf', // Edit Permission
+            id: 'eeb3aaad-bb2e-40e5-a9c5-5473fd1e66bf', // Edit Feature
             tenantId: UNSTABLE_TENANT_ID,
             name: 'Editar',
             key: 'request_edit', // Code-friendly key
@@ -2440,16 +2440,16 @@ async function createModuleAndPermission() {
             scope: 'global',
           },
           {
-            id: '00b039bd-6a9e-46ce-945d-6bcf91982e88', // Disable Permission
+            id: '00b039bd-6a9e-46ce-945d-6bcf91982e88', // Disable Feature
             tenantId: UNSTABLE_TENANT_ID,
             name: 'Inhabilitar',
             key: 'request_disable', // Code-friendly key
             description: 'Permiso para inhabilitar solicitudes existentes en el sistema',
             scope: 'global',
           },
-          // Area-specific permissions
+          // Area-specific features
           {
-            id: '157f5216-866b-41ce-8da1-f4491d774d6c', // Assign User Permission
+            id: '157f5216-866b-41ce-8da1-f4491d774d6c', // Assign User Feature
             tenantId: UNSTABLE_TENANT_ID,
             name: 'Asignar',
             key: 'request_assign_user', // Code-friendly key
@@ -2457,7 +2457,7 @@ async function createModuleAndPermission() {
             scope: 'area',
           },
           {
-            id: '93a77660-56e6-4d46-8c81-b75dfb62847c', // Set Priority Permission
+            id: '93a77660-56e6-4d46-8c81-b75dfb62847c', // Set Priority Feature
             tenantId: UNSTABLE_TENANT_ID,
             name: 'Establecer prioridad',
             key: 'request_set_priority', // Code-friendly key
@@ -2465,7 +2465,7 @@ async function createModuleAndPermission() {
             scope: 'area',
           },
           {
-            id: '94f0fe04-0ea8-4e6a-afc9-ac8ff6a766af', // Send Documents Permission
+            id: '94f0fe04-0ea8-4e6a-afc9-ac8ff6a766af', // Send Documents Feature
             tenantId: UNSTABLE_TENANT_ID,
             name: 'Enviar documentos',
             key: 'request_send_documents', // Code-friendly key
@@ -2483,7 +2483,7 @@ async function createModuleAndPermission() {
       tenantId: UNSTABLE_TENANT_ID,
       name: 'Diseñador de Formularios',
       description: 'Módulo para diseñar, gestionar y publicar formularios personalizados',
-      permission: {
+      feature: {
         create: [
           {
             id: 'c9d0b87a-2c32-45b1-a86a-da8f79e9af3d', // Create Form
@@ -2536,7 +2536,7 @@ async function createModuleAndPermission() {
       tenantId: UNSTABLE_TENANT_ID,
       name: 'Tipos de Requerimientos',
       description: 'Módulo para gestionar los diferentes tipos de requerimientos del sistema',
-      permission: {
+      feature: {
         create: [
           {
             id: 'dc695619-ba2c-4872-9c19-796a654e4793', // Create Requirement Type
@@ -2589,7 +2589,7 @@ async function createModuleAndPermission() {
       tenantId: UNSTABLE_TENANT_ID,
       name: 'Requerimientos',
       description: 'Módulo para gestionar los requerimientos del sistema, incluyendo su creación, asignación y cierre',
-      permission: {
+      feature: {
         create: [
           {
             id: 'a40ad849-7d9e-4ad9-af7a-dda394e463ad', // Create Requirement
@@ -2650,7 +2650,7 @@ async function createModuleAndPermission() {
       tenantId: UNSTABLE_TENANT_ID,
       name: 'Tipos de Solicitud',
       description: 'Módulo para gestionar los diferentes tipos de solicitudes que pueden ser creadas en el sistema',
-      permission: {
+      feature: {
         create: [
           {
             id: '02ab78ff-9a82-42ed-b06b-082dbb141dc2', // Create Request Type
@@ -2703,7 +2703,7 @@ async function createModuleAndPermission() {
       tenantId: UNSTABLE_TENANT_ID,
       name: 'Cliente',
       description: 'Módulo para gestionar la información de clientes y sus asignaciones',
-      permission: {
+      feature: {
         create: [
           {
             id: '5bd5010f-1e6a-48ef-a143-8b41bfec59b9', // Create Client
@@ -2748,7 +2748,7 @@ async function createModuleAndPermission() {
       tenantId: UNSTABLE_TENANT_ID,
       name: 'Áreas',
       description: 'Módulo para gestionar las diferentes áreas dentro del sistema',
-      permission: {
+      feature: {
         create: [
           {
             id: '1c9c8b7c-d3bb-4c13-bba9-69ed33e7652e', // Create Area
@@ -2793,7 +2793,7 @@ async function createModuleAndPermission() {
       tenantId: UNSTABLE_TENANT_ID,
       name: 'Gestión de Usuarios',
       description: 'Módulo para gestionar usuarios y sus asignaciones de roles',
-      permission: {
+      feature: {
         create: [
           {
             id: '25be11e1-db3b-4eaa-8272-7f6fbb5fc4e3', // Create User
@@ -2838,7 +2838,7 @@ async function createModuleAndPermission() {
       tenantId: UNSTABLE_TENANT_ID,
       name: 'Gestión de Roles',
       description: 'Módulo para gestionar roles y asignaciones de roles',
-      permission: {
+      feature: {
         create: [
           {
             id: '53b056d6-5739-4a97-b62b-1aa16921347c', // Create Role

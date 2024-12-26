@@ -1,4 +1,4 @@
-import '../schema.zmodel'
+import './tenant.zmodel'
 
 abstract model TenantScoped {
   tenantId String @db.UniqueIdentifier // ID of the tenant this entity belongs to

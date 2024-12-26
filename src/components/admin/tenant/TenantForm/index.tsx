@@ -30,7 +30,7 @@ const TenantForm: FC<ITenantFormProps> = ({ defaultValues }) => {
           stepChanged={(e) => setStep(e.activeStep)}>
           <StepsDirective>
             <StepDirective label="Empresa" />
-            <StepDirective label="Permissions" />
+            <StepDirective label="Features" />
             <StepDirective label="Review" />
           </StepsDirective>
         </StepperComponent>

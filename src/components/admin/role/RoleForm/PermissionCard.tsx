@@ -1,21 +1,21 @@
 import React, { type FC } from 'react';
-import { type SelectPermissionInputs } from '@/connections/role';
+import { type SelectFeatureInputs } from '@/connections/role';
 import type { Control, FormState } from 'react-hook-form';
 
 import { Select } from '@/components/form';
 import { type RouterOutputs } from '@/components/hoc/tanstack-query-provider';
 
-type ModuleWithPermissions = RouterOutputs['module']['getModulesPermissions'][number];
+type ModuleWithFeatures = RouterOutputs['module']['getModulesFeatures'][number];
 
-interface IPermissionCardProps {
+interface IFeatureCardProps {
   index: number;
-  module: ModuleWithPermissions;
-  control: Control<SelectPermissionInputs>;
-  formState: FormState<SelectPermissionInputs>;
-  defaultValues?: SelectPermissionInputs | null;
+  module: ModuleWithFeatures;
+  control: Control<SelectFeatureInputs>;
+  formState: FormState<SelectFeatureInputs>;
+  defaultValues?: SelectFeatureInputs | null;
 }
 
-const PermissionCard: FC<IPermissionCardProps> = ({ index, control, formState, module }) => {
+const FeatureCard: FC<IFeatureCardProps> = ({ index, control, formState, module }) => {
   return (
     <div>
       <h1 className="font-bold capitalize">{module.name}</h1>
@@ -24,14 +24,14 @@ const PermissionCard: FC<IPermissionCardProps> = ({ index, control, formState, m
         control={control}
         formState={formState}
         isMulti
-        name={`modulePermissions.${index}.permissions`}
-        options={module.permissions}
+        name={`moduleFeatures.${index}.features`}
+        options={module.features}
         getOptionLabel={(option) => option.name}
-        getOptionValue={(option) => option.permissionId}
+        getOptionValue={(option) => option.featureId}
         className="w-full"
       />
     </div>
   );
 };
 
-export default PermissionCard;
+export default FeatureCard;

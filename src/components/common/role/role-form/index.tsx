@@ -5,20 +5,20 @@ import { Plus, Settings, Trash } from 'lucide-react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
-import { ModuleWithPermissionsType } from '@/types/prisma/module';
+import { ModuleWithFeaturesType } from '@/types/prisma/module';
 import { Button } from '@/components/ui/button';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 
-import { PermissionRoleFormDialog } from './permission-role-form-dialog';
+import { FeatureRoleFormDialog } from './feature-role-form-dialog';
 
 // Default role structure
 const DEFAULT_ROLE = {
   id: undefined,
   name: '',
   description: '',
-  permissions: [],
+  features: [],
 };
 
 // Validation Schema
@@ -29,7 +29,7 @@ export const areaRolesFormSchema = z.object({
         id: z.string().optional(),
         name: z.string().min(3, 'Role Name must be at least 3 characters').max(100, 'Role Name must not exceed 100 characters'),
         description: z.string().max(255, 'Description must not exceed 255 characters').optional(),
-        permissions: z.array(
+        features: z.array(
           z.object({
             id: z.string(),
             moduleId: z.string(),
@@ -46,10 +46,10 @@ export const areaRolesFormSchema = z.object({
 export type RoleFormValues = z.infer<typeof areaRolesFormSchema>;
 
 interface AreaRolesFormProps {
-  moduleWithPermissions: ModuleWithPermissionsType[];
+  moduleWithFeatures: ModuleWithFeaturesType[];
 }
 
-const AreaRolesForm: FC<AreaRolesFormProps> = ({ moduleWithPermissions }) => {
+const AreaRolesForm: FC<AreaRolesFormProps> = ({ moduleWithFeatures }) => {
   const { control, formState } = useFormContext<RoleFormValues>();
   console.log('🚀 ~ formState:', formState.errors);
   const { fields: roles, append: appendRole, remove: removeRole } = useFieldArray({ control, name: 'roles' });
@@ -75,7 +75,7 @@ const AreaRolesForm: FC<AreaRolesFormProps> = ({ moduleWithPermissions }) => {
             )}
           />
 
-          <PermissionRoleFormDialog roleIndex={roleIndex} modules={moduleWithPermissions} />
+          <FeatureRoleFormDialog roleIndex={roleIndex} modules={moduleWithFeatures} />
 
           <Button type="button" className="relative" variant="destructive" size="sm" onClick={() => removeRole(roleIndex)}>
             <Trash className="size-4" />

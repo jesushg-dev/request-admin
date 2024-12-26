@@ -214,16 +214,16 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
-        permissions: {
-          name: 'permissions',
-          type: 'Permission',
+        features: {
+          name: 'features',
+          type: 'Feature',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
         },
-        rolePermissions: {
-          name: 'rolePermissions',
-          type: 'RolePermission',
+        roleFeatures: {
+          name: 'roleFeatures',
+          type: 'RoleFeature',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
@@ -319,12 +319,343 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
-        areaRolePermissions: {
-          name: 'areaRolePermissions',
-          type: 'AreaRolePermission',
+        areaRoleFeatures: {
+          name: 'areaRoleFeatures',
+          type: 'AreaRoleFeature',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
+        },
+        subscriptions: {
+          name: 'subscriptions',
+          type: 'Subscription',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        usageTracking: {
+          name: 'usageTracking',
+          type: 'UsageTracking',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    subscription: {
+      name: 'Subscription',
+      fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'subscriptions',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        plan: {
+          name: 'plan',
+          type: 'Plan',
+          isDataModel: true,
+          backLink: 'subscriptions',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'planId' },
+        },
+        planId: {
+          name: 'planId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'plan',
+        },
+        startDate: {
+          name: 'startDate',
+          type: 'DateTime',
+        },
+        endDate: {
+          name: 'endDate',
+          type: 'DateTime',
+        },
+        status: {
+          name: 'status',
+          type: 'String',
+        },
+        isLifetime: {
+          name: 'isLifetime',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        payments: {
+          name: 'payments',
+          type: 'Payment',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'subscription',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    plan: {
+      name: 'Plan',
+      fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        description: {
+          name: 'description',
+          type: 'String',
+        },
+        price: {
+          name: 'price',
+          type: 'Float',
+        },
+        durationInDays: {
+          name: 'durationInDays',
+          type: 'Int',
+          isOptional: true,
+        },
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        features: {
+          name: 'features',
+          type: 'PlanFeature',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'plan',
+        },
+        subscriptions: {
+          name: 'subscriptions',
+          type: 'Subscription',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'plan',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    planFeature: {
+      name: 'PlanFeature',
+      fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        plan: {
+          name: 'plan',
+          type: 'Plan',
+          isDataModel: true,
+          backLink: 'features',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'planId' },
+        },
+        planId: {
+          name: 'planId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'plan',
+        },
+        feature: {
+          name: 'feature',
+          type: 'Feature',
+          isDataModel: true,
+          backLink: 'planFeatures',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'featureId' },
+        },
+        featureId: {
+          name: 'featureId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'feature',
+        },
+        dailyLimit: {
+          name: 'dailyLimit',
+          type: 'Int',
+          isOptional: true,
+        },
+        totalLimit: {
+          name: 'totalLimit',
+          type: 'Int',
+          isOptional: true,
+        },
+        resetInterval: {
+          name: 'resetInterval',
+          type: 'String',
+        },
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    usageTracking: {
+      name: 'UsageTracking',
+      fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'usageTracking',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        featureName: {
+          name: 'featureName',
+          type: 'String',
+        },
+        usageCount: {
+          name: 'usageCount',
+          type: 'Int',
+        },
+        lastUsedAt: {
+          name: 'lastUsedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    payment: {
+      name: 'Payment',
+      fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        subscription: {
+          name: 'subscription',
+          type: 'Subscription',
+          isDataModel: true,
+          backLink: 'payments',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'subscriptionId' },
+        },
+        subscriptionId: {
+          name: 'subscriptionId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'subscription',
+        },
+        amount: {
+          name: 'amount',
+          type: 'Float',
+        },
+        paymentDate: {
+          name: 'paymentDate',
+          type: 'DateTime',
+        },
+        paymentMethod: {
+          name: 'paymentMethod',
+          type: 'String',
+        },
+        status: {
+          name: 'status',
+          type: 'String',
+        },
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          attributes: [{ name: '@updatedAt', args: [] }],
         },
       },
       uniqueConstraints: {
@@ -737,9 +1068,9 @@ const metadata = {
           isArray: true,
           backLink: 'role',
         },
-        rolePermission: {
-          name: 'rolePermission',
-          type: 'RolePermission',
+        roleFeature: {
+          name: 'roleFeature',
+          type: 'RoleFeature',
           isDataModel: true,
           isArray: true,
           backLink: 'role',
@@ -823,9 +1154,9 @@ const metadata = {
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: true }] }],
         },
-        permission: {
-          name: 'permission',
-          type: 'Permission',
+        feature: {
+          name: 'feature',
+          type: 'Feature',
           isDataModel: true,
           isArray: true,
           backLink: 'module',
@@ -842,8 +1173,8 @@ const metadata = {
         },
       },
     },
-    permission: {
-      name: 'Permission',
+    feature: {
+      name: 'Feature',
       fields: {
         createdAt: {
           name: 'createdAt',
@@ -866,14 +1197,14 @@ const metadata = {
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$Permission$createdBy,
+          defaultValueProvider: $default$Feature$createdBy,
         },
         modifiedBy: {
           name: 'modifiedBy',
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$Permission$modifiedBy,
+          defaultValueProvider: $default$Feature$modifiedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -885,7 +1216,7 @@ const metadata = {
           name: 'tenant',
           type: 'Tenant',
           isDataModel: true,
-          backLink: 'permissions',
+          backLink: 'features',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
@@ -923,23 +1254,30 @@ const metadata = {
           name: 'module',
           type: 'Module',
           isDataModel: true,
-          backLink: 'permission',
+          backLink: 'feature',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'moduleId' },
         },
-        rolePermission: {
-          name: 'rolePermission',
-          type: 'RolePermission',
+        roleFeature: {
+          name: 'roleFeature',
+          type: 'RoleFeature',
           isDataModel: true,
           isArray: true,
-          backLink: 'permission',
+          backLink: 'feature',
         },
-        areaRolePermission: {
-          name: 'areaRolePermission',
-          type: 'AreaRolePermission',
+        areaRoleFeature: {
+          name: 'areaRoleFeature',
+          type: 'AreaRoleFeature',
           isDataModel: true,
           isArray: true,
-          backLink: 'permission',
+          backLink: 'feature',
+        },
+        planFeatures: {
+          name: 'planFeatures',
+          type: 'PlanFeature',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'feature',
         },
       },
       uniqueConstraints: {
@@ -953,8 +1291,8 @@ const metadata = {
         },
       },
     },
-    rolePermission: {
-      name: 'RolePermission',
+    roleFeature: {
+      name: 'RoleFeature',
       fields: {
         createdAt: {
           name: 'createdAt',
@@ -977,14 +1315,14 @@ const metadata = {
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$RolePermission$createdBy,
+          defaultValueProvider: $default$RoleFeature$createdBy,
         },
         modifiedBy: {
           name: 'modifiedBy',
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$RolePermission$modifiedBy,
+          defaultValueProvider: $default$RoleFeature$modifiedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -996,7 +1334,7 @@ const metadata = {
           name: 'tenant',
           type: 'Tenant',
           isDataModel: true,
-          backLink: 'rolePermissions',
+          backLink: 'roleFeatures',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
@@ -1017,27 +1355,27 @@ const metadata = {
           isForeignKey: true,
           relationField: 'role',
         },
-        permissionId: {
-          name: 'permissionId',
+        featureId: {
+          name: 'featureId',
           type: 'String',
           isForeignKey: true,
-          relationField: 'permission',
+          relationField: 'feature',
         },
         role: {
           name: 'role',
           type: 'Role',
           isDataModel: true,
-          backLink: 'rolePermission',
+          backLink: 'roleFeature',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'roleId' },
         },
-        permission: {
-          name: 'permission',
-          type: 'Permission',
+        feature: {
+          name: 'feature',
+          type: 'Feature',
           isDataModel: true,
-          backLink: 'rolePermission',
+          backLink: 'roleFeature',
           isRelationOwner: true,
-          foreignKeyMapping: { id: 'permissionId' },
+          foreignKeyMapping: { id: 'featureId' },
         },
       },
       uniqueConstraints: {
@@ -2486,9 +2824,9 @@ const metadata = {
           isArray: true,
           backLink: 'role',
         },
-        areaRolePermissions: {
-          name: 'areaRolePermissions',
-          type: 'AreaRolePermission',
+        areaRoleFeatures: {
+          name: 'areaRoleFeatures',
+          type: 'AreaRoleFeature',
           isDataModel: true,
           isArray: true,
           backLink: 'areaRole',
@@ -2505,8 +2843,8 @@ const metadata = {
         },
       },
     },
-    areaRolePermission: {
-      name: 'AreaRolePermission',
+    areaRoleFeature: {
+      name: 'AreaRoleFeature',
       fields: {
         createdAt: {
           name: 'createdAt',
@@ -2529,14 +2867,14 @@ const metadata = {
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$AreaRolePermission$createdBy,
+          defaultValueProvider: $default$AreaRoleFeature$createdBy,
         },
         modifiedBy: {
           name: 'modifiedBy',
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$AreaRolePermission$modifiedBy,
+          defaultValueProvider: $default$AreaRoleFeature$modifiedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -2548,7 +2886,7 @@ const metadata = {
           name: 'tenant',
           type: 'Tenant',
           isDataModel: true,
-          backLink: 'areaRolePermissions',
+          backLink: 'areaRoleFeatures',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
@@ -2573,23 +2911,23 @@ const metadata = {
           name: 'areaRole',
           type: 'AreaRole',
           isDataModel: true,
-          backLink: 'areaRolePermissions',
+          backLink: 'areaRoleFeatures',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'areaRoleId' },
         },
-        permissionId: {
-          name: 'permissionId',
+        featureId: {
+          name: 'featureId',
           type: 'String',
           isForeignKey: true,
-          relationField: 'permission',
+          relationField: 'feature',
         },
-        permission: {
-          name: 'permission',
-          type: 'Permission',
+        feature: {
+          name: 'feature',
+          type: 'Feature',
           isDataModel: true,
-          backLink: 'areaRolePermission',
+          backLink: 'areaRoleFeature',
           isRelationOwner: true,
-          foreignKeyMapping: { id: 'permissionId' },
+          foreignKeyMapping: { id: 'featureId' },
         },
       },
       uniqueConstraints: {
@@ -2597,9 +2935,9 @@ const metadata = {
           name: 'id',
           fields: ['id'],
         },
-        areaRoleId_permissionId: {
-          name: 'areaRoleId_permissionId',
-          fields: ['areaRoleId', 'permissionId'],
+        areaRoleId_featureId: {
+          name: 'areaRoleId_featureId',
+          fields: ['areaRoleId', 'featureId'],
         },
       },
     },
@@ -4246,19 +4584,19 @@ function $default$Module$modifiedBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$Permission$createdBy(user: any): unknown {
+function $default$Feature$createdBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$Permission$modifiedBy(user: any): unknown {
+function $default$Feature$modifiedBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$RolePermission$createdBy(user: any): unknown {
+function $default$RoleFeature$createdBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$RolePermission$modifiedBy(user: any): unknown {
+function $default$RoleFeature$modifiedBy(user: any): unknown {
   return user?.id;
 }
 
@@ -4334,11 +4672,11 @@ function $default$AreaRole$modifiedBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$AreaRolePermission$createdBy(user: any): unknown {
+function $default$AreaRoleFeature$createdBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$AreaRolePermission$modifiedBy(user: any): unknown {
+function $default$AreaRoleFeature$modifiedBy(user: any): unknown {
   return user?.id;
 }
 

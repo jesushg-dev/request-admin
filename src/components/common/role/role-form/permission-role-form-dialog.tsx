@@ -4,7 +4,7 @@ import React from 'react';
 import { Badge, CircleEllipsis, HelpCircle, Settings } from 'lucide-react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
-import { ModuleWithPermissionsType } from '@/types/prisma/module';
+import { ModuleWithFeaturesType } from '@/types/prisma/module';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -14,24 +14,24 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-interface PermissionRoleFormDialogProps {
+interface FeatureRoleFormDialogProps {
   roleIndex: number;
-  modules: ModuleWithPermissionsType[];
+  modules: ModuleWithFeaturesType[];
 }
 
-export function PermissionRoleFormDialog({ roleIndex, modules }: PermissionRoleFormDialogProps) {
+export function FeatureRoleFormDialog({ roleIndex, modules }: FeatureRoleFormDialogProps) {
   const { control, setValue } = useFormContext();
-  const permissions = useWatch({ control, name: `roles.${roleIndex}.permissions` });
+  const features = useWatch({ control, name: `roles.${roleIndex}.features` });
 
-  const togglePermission = (moduleId: string, permissionId: string, permissionName: string, isChecked: boolean) => {
+  const toggleFeature = (moduleId: string, featureId: string, featureName: string, isChecked: boolean) => {
     if (isChecked) {
-      // Add permission
-      setValue(`roles.${roleIndex}.permissions`, [...(permissions || []), { id: permissionId, moduleId, name: permissionName }]);
+      // Add feature
+      setValue(`roles.${roleIndex}.features`, [...(features || []), { id: featureId, moduleId, name: featureName }]);
     } else {
-      // Remove permission
+      // Remove feature
       setValue(
-        `roles.${roleIndex}.permissions`,
-        (permissions || []).filter((perm: any) => perm.id !== permissionId)
+        `roles.${roleIndex}.features`,
+        (features || []).filter((perm: any) => perm.id !== featureId)
       );
     }
   };
@@ -51,7 +51,7 @@ export function PermissionRoleFormDialog({ roleIndex, modules }: PermissionRoleF
       </DialogTrigger>
       <DialogContent className="flex max-h-[90vh] max-w-6xl flex-col gap-2 overflow-hidden">
         <DialogHeader>
-          <DialogTitle>Role Permissions</DialogTitle>
+          <DialogTitle>Role Features</DialogTitle>
         </DialogHeader>
 
         {/* Role Description */}
@@ -67,14 +67,14 @@ export function PermissionRoleFormDialog({ roleIndex, modules }: PermissionRoleF
             </FormItem>
           )}
         />
-        <span className="text-sm">Role Permissions</span>
+        <span className="text-sm">Role Features</span>
         <div className="flex-1 overflow-hidden rounded-lg border">
           <ScrollArea className="overflow-y-auto">
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
                   <TableHead className="w-[200px]">Module</TableHead>
-                  <TableHead>Permissions</TableHead>
+                  <TableHead>Features</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -99,15 +99,15 @@ export function PermissionRoleFormDialog({ roleIndex, modules }: PermissionRoleF
                     </TableCell>
                     <TableCell>
                       <div className="grid grid-cols-2 gap-4 py-1.5 md:grid-cols-3 lg:grid-cols-4">
-                        {module.permission.map((permission) => (
-                          <div key={permission.id} className="flex items-center space-x-2">
+                        {module.feature.map((feature) => (
+                          <div key={feature.id} className="flex items-center space-x-2">
                             <Checkbox
-                              id={`${module.id}-${permission.id}`}
-                              checked={(permissions || []).some((perm: any) => perm.id === permission.id)}
-                              onCheckedChange={(checked) => togglePermission(module.id, permission.id, permission.name, checked as boolean)}
+                              id={`${module.id}-${feature.id}`}
+                              checked={(features || []).some((perm: any) => perm.id === feature.id)}
+                              onCheckedChange={(checked) => toggleFeature(module.id, feature.id, feature.name, checked as boolean)}
                             />
-                            <label htmlFor={`${module.id}-${permission.id}`} className="cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                              {permission.name}
+                            <label htmlFor={`${module.id}-${feature.id}`} className="cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                              {feature.name}
                             </label>
                           </div>
                         ))}

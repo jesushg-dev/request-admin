@@ -10,7 +10,7 @@ export const getUserByEmail = async (email: string) => {
   }
 };
 
-// Fetch user without permissions
+// Fetch user without features
 export const getUserById = async (id: string) => {
   if (!id) throw new Error('User ID is required.');
 
@@ -24,8 +24,8 @@ export const getUserById = async (id: string) => {
   }
 };
 
-// Fetch user with permissions
-export const getUserByIdWithPermissions = async (id: string) => {
+// Fetch user with features
+export const getUserByIdWithFeatures = async (id: string) => {
   if (!id) throw new Error('User ID is required.');
 
   try {
@@ -47,8 +47,8 @@ export const getUserByIdWithPermissions = async (id: string) => {
             role: {
               select: {
                 name: true,
-                rolePermission: {
-                  select: { permission: true },
+                roleFeature: {
+                  select: { feature: true },
                 },
               },
             },
@@ -59,11 +59,11 @@ export const getUserByIdWithPermissions = async (id: string) => {
 
     if (!user) return null;
 
-    // Flatten roles and permissions
+    // Flatten roles and features
     const roles = user.userRoles?.map((ur) => ur.role.name) || [];
-    const permissions = user.userRoles?.flatMap((ur) => ur.role.rolePermission.map((rp) => rp.permission.name)) || [];
+    const features = user.userRoles?.flatMap((ur) => ur.role.roleFeature.map((rp) => rp.feature.name)) || [];
 
-    return { ...user, roles, permissions };
+    return { ...user, roles, features };
   } catch (error) {
     return null;
   }

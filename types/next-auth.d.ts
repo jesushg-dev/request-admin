@@ -13,7 +13,7 @@ declare module 'next-auth' {
       isTwoFactorEnabled: boolean;
       isOAuth: boolean;
       tenantId: string;
-      permissions: string[];
+      features: string[];
       roles: string[];
       firstName: string;
       lastName: string;

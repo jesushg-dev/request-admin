@@ -12,7 +12,7 @@ import { createTRPCRouter } from '../../trpc';
 import createAccountRouter from './Account.router';
 import createAreaRouter from './Area.router';
 import createAreaRoleRouter from './AreaRole.router';
-import createAreaRolePermissionRouter from './AreaRolePermission.router';
+import createAreaRoleFeatureRouter from './AreaRoleFeature.router';
 import createAuthenticatorRouter from './Authenticator.router';
 import createCategoryRouter from './Category.router';
 import createCategoryRequirementRouter from './CategoryRequirement.router';
@@ -21,6 +21,7 @@ import createClientRouter from './Client.router';
 import createConversationRouter from './Conversation.router';
 import createDocumentRouter from './Document.router';
 import createDocumentAssignmentRouter from './DocumentAssignment.router';
+import createFeatureRouter from './Feature.router';
 import createFormRouter from './Form.router';
 import createFormSubmissionRouter from './FormSubmission.router';
 import createHierarchyRouter from './Hierarchy.router';
@@ -30,8 +31,10 @@ import createMemberRouter from './Member.router';
 import createMessageRouter from './Message.router';
 import createModuleRouter from './Module.router';
 import createPasswordResetTokenRouter from './PasswordResetToken.router';
-import createPermissionRouter from './Permission.router';
+import createPaymentRouter from './Payment.router';
 import createPersonRouter from './Person.router';
+import createPlanRouter from './Plan.router';
+import createPlanFeatureRouter from './PlanFeature.router';
 import createReactionRouter from './Reaction.router';
 import createRequestRouter from './Request.router';
 import createRequestAssignmentRouter from './RequestAssignment.router';
@@ -39,12 +42,14 @@ import createRequirementRouter from './Requirement.router';
 import createRequirementComplianceTrackingRouter from './RequirementComplianceTracking.router';
 import createRequirementTypeRouter from './RequirementType.router';
 import createRoleRouter from './Role.router';
-import createRolePermissionRouter from './RolePermission.router';
+import createRoleFeatureRouter from './RoleFeature.router';
 import createSessionRouter from './Session.router';
 import createStatusTypeRouter from './StatusType.router';
+import createSubscriptionRouter from './Subscription.router';
 import createTenantRouter from './Tenant.router';
 import createTwoFactorConfirmationRouter from './TwoFactorConfirmation.router';
 import createTwoFactorTokenRouter from './TwoFactorToken.router';
+import createUsageTrackingRouter from './UsageTracking.router';
 import createUserRouter from './User.router';
 import createUserAreaRouter from './UserArea.router';
 import createUserRoleRouter from './UserRole.router';
@@ -62,13 +67,18 @@ export function db(ctx: any) {
 export function createRouter() {
   return createTRPCRouter({
     tenant: createTenantRouter(),
+    subscription: createSubscriptionRouter(),
+    plan: createPlanRouter(),
+    planFeature: createPlanFeatureRouter(),
+    usageTracking: createUsageTrackingRouter(),
+    payment: createPaymentRouter(),
     user: createUserRouter(),
     userTenant: createUserTenantRouter(),
     userRole: createUserRoleRouter(),
     role: createRoleRouter(),
     module: createModuleRouter(),
-    permission: createPermissionRouter(),
-    rolePermission: createRolePermissionRouter(),
+    feature: createFeatureRouter(),
+    roleFeature: createRoleFeatureRouter(),
     session: createSessionRouter(),
     account: createAccountRouter(),
     verificationToken: createVerificationTokenRouter(),
@@ -85,7 +95,7 @@ export function createRouter() {
     area: createAreaRouter(),
     userArea: createUserAreaRouter(),
     areaRole: createAreaRoleRouter(),
-    areaRolePermission: createAreaRolePermissionRouter(),
+    areaRoleFeature: createAreaRoleFeatureRouter(),
     requirement: createRequirementRouter(),
     requirementType: createRequirementTypeRouter(),
     categoryRequirement: createCategoryRequirementRouter(),

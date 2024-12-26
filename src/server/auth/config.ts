@@ -1,6 +1,6 @@
 import { getAccountByUserId } from '@/services/data/account';
 import { getTwoFactorConfirmationByUserId } from '@/services/data/two-factor-confirmation';
-import { getUserByEmail, getUserById, getUserByIdWithPermissions } from '@/services/data/user';
+import { getUserByEmail, getUserById, getUserByIdWithFeatures } from '@/services/data/user';
 import { LoginSchema } from '@/services/schemas';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import bcrypt from 'bcryptjs';
@@ -17,7 +17,7 @@ export type ExtendedUser = DefaultSession['user'] & {
   isTwoFactorEnabled: boolean;
   isOAuth: boolean;
   tenantId: string;
-  permissions: string[];
+  features: string[];
   roles: string[];
   firstName: string;
   lastName: string;
@@ -73,7 +73,7 @@ export const authConfig: NextAuthConfig = {
       session.user.email = token.email!;
       session.user.isOAuth = token.isOAuth as boolean;
       session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
-      session.user.permissions = token.permissions as string[] | [];
+      session.user.features = token.features as string[] | [];
       session.user.roles = token.roles as string[] | [];
       session.user.image = token.image as string;
       session.user.firstName = token.firstName as string;
@@ -88,7 +88,7 @@ export const authConfig: NextAuthConfig = {
     async jwt({ token }) {
       if (!token.sub) return token;
 
-      const existingUser = await getUserByIdWithPermissions(token.sub);
+      const existingUser = await getUserByIdWithFeatures(token.sub);
 
       if (!existingUser) return token;
 
@@ -98,7 +98,7 @@ export const authConfig: NextAuthConfig = {
       token.email = existingUser.email;
       token.picture = existingUser.person?.image;
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
-      token.permissions = existingUser.permissions || [];
+      token.features = existingUser.features || [];
       token.roles = existingUser.roles || [];
       token.name = existingUser.person?.firstName && existingUser.person?.lastName ? `${existingUser.person.firstName} ${existingUser.person.lastName}` : 'No Name';
       token.image = existingUser.person?.image || '';

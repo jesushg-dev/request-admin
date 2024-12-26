@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { LevelType } from '@/types/prisma/hierarchy';
-import { ModuleWithPermissionsType } from '@/types/prisma/module';
+import { ModuleWithFeaturesType } from '@/types/prisma/module';
 import { RequirementOptionType } from '@/types/prisma/requirement';
 import { UserType } from '@/types/prisma/user';
 import { Button } from '@/components/ui/button';
@@ -32,11 +32,11 @@ interface StepsComponentProps {
   users: UserType[];
   levels: LevelType[];
   requirements: RequirementOptionType[];
-  moduleWithPermissions: ModuleWithPermissionsType[];
+  moduleWithFeatures: ModuleWithFeaturesType[];
 }
 
 // StepsComponent: Renders stepper and step content
-const StepsComponent: FC<StepsComponentProps> = ({ levels, requirements, users, moduleWithPermissions }) => {
+const StepsComponent: FC<StepsComponentProps> = ({ levels, requirements, users, moduleWithFeatures }) => {
   const stepper = useStepper();
 
   // Initialize React Hook Form with current step schema
@@ -80,7 +80,7 @@ const StepsComponent: FC<StepsComponentProps> = ({ levels, requirements, users, 
             {stepper.switch({
               description: () => <AreaForm />,
               assignationCategory: () => <CategoryForm levels={levels} requirements={requirements} />,
-              role: () => <AreaRolesForm moduleWithPermissions={moduleWithPermissions} />,
+              role: () => <AreaRolesForm moduleWithFeatures={moduleWithFeatures} />,
               user: () => <UserRoleAssignmentForm userArray={users} roleArray={[]} />,
               finish: () => <div>Finish</div>,
             })}

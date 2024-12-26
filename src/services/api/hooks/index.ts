@@ -6,13 +6,18 @@
 // @ts-nocheck
 
 export * from './tenant';
+export * from './subscription';
+export * from './plan';
+export * from './plan-feature';
+export * from './usage-tracking';
+export * from './payment';
 export * from './user';
 export * from './user-tenant';
 export * from './user-role';
 export * from './role';
 export * from './module';
-export * from './permission';
-export * from './role-permission';
+export * from './feature';
+export * from './role-feature';
 export * from './session';
 export * from './account';
 export * from './verification-token';
@@ -29,7 +34,7 @@ export * from './status-type';
 export * from './area';
 export * from './user-area';
 export * from './area-role';
-export * from './area-role-permission';
+export * from './area-role-feature';
 export * from './requirement';
 export * from './requirement-type';
 export * from './category-requirement';

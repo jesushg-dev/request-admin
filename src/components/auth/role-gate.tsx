@@ -12,10 +12,10 @@ interface RoleGateProps {
 
 export const RoleGate = ({ children, allowedRole }: RoleGateProps) => {
   const t = useTranslations('system.roleGate');
-  const permissions = useCurrentRole();
+  const features = useCurrentRole();
 
-  if (!permissions?.includes(allowedRole)) {
-    return <FormError message={t('errors.noPermission')} />;
+  if (!features?.includes(allowedRole)) {
+    return <FormError message={t('errors.noFeature')} />;
   }
 
   return <>{children}</>;

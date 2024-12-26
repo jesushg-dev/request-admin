@@ -33,7 +33,7 @@ const SettingsPage = () => {
       newPassword: undefined,
       name: user?.name ?? undefined,
       email: user?.email ?? undefined,
-      permissions: user?.permissions ?? undefined,
+      features: user?.features ?? undefined,
       isTwoFactorEnabled: user?.isTwoFactorEnabled ?? undefined,
     },
   });
@@ -126,7 +126,7 @@ const SettingsPage = () => {
               )}
               <FormField
                 control={form.control}
-                name="permissions"
+                name="features"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Role</FormLabel>

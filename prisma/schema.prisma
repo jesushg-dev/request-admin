@@ -46,8 +46,8 @@ model Tenant {
   userRoles                      UserRole[]
   roles                          Role[]
   modules                        Module[]
-  permissions                    Permission[]
-  rolePermissions                RolePermission[]
+  features                       Feature[]
+  roleFeatures                   RoleFeature[]
   identificationTypes            IdentificationType[]
   documentAssignments            DocumentAssignment[]
   forms                          Form[]
@@ -61,7 +61,72 @@ model Tenant {
   userTenants                    UserTenant[]
   userAreas                      UserArea[]
   areaRoles                      AreaRole[]
-  areaRolePermissions            AreaRolePermission[]
+  areaRoleFeatures               AreaRoleFeature[]
+  subscriptions                  Subscription[]
+  usageTracking                  UsageTracking[]
+}
+
+model Subscription {
+  id         String    @id() @default(uuid()) @db.UniqueIdentifier()
+  tenant     Tenant    @relation(fields: [tenantId], references: [id])
+  tenantId   String    @db.UniqueIdentifier()
+  plan       Plan      @relation(fields: [planId], references: [id])
+  planId     String    @db.UniqueIdentifier()
+  startDate  DateTime
+  endDate    DateTime
+  status     String
+  isLifetime Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt()
+  payments   Payment[]
+}
+
+model Plan {
+  id             String         @id() @default(uuid()) @db.UniqueIdentifier()
+  name           String
+  description    String
+  price          Float
+  durationInDays Int?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt()
+  features       PlanFeature[]
+  subscriptions  Subscription[]
+}
+
+model PlanFeature {
+  id            String   @id() @default(uuid()) @db.UniqueIdentifier()
+  plan          Plan     @relation(fields: [planId], references: [id])
+  planId        String   @db.UniqueIdentifier()
+  feature       Feature  @relation(fields: [featureId], references: [id])
+  featureId     String   @db.UniqueIdentifier()
+  dailyLimit    Int?
+  totalLimit    Int?
+  resetInterval String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt()
+}
+
+model UsageTracking {
+  id          String    @id() @default(uuid()) @db.UniqueIdentifier()
+  tenant      Tenant    @relation(fields: [tenantId], references: [id])
+  tenantId    String    @db.UniqueIdentifier()
+  featureName String
+  usageCount  Int
+  lastUsedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt()
+}
+
+model Payment {
+  id             String       @id() @default(uuid()) @db.UniqueIdentifier()
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+  subscriptionId String       @db.UniqueIdentifier()
+  amount         Float
+  paymentDate    DateTime
+  paymentMethod  String
+  status         String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt()
 }
 
 model User {
@@ -123,76 +188,77 @@ model UserRole {
 }
 
 /// Represents a system role within a tenant.
-/// Roles define sets of permissions that can be assigned to users.
+/// Roles define sets of features that can be assigned to users.
 model Role {
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime?        @updatedAt()
-  deletedAt      DateTime?
-  createdBy      String?          @db.VarChar(50)
-  modifiedBy     String?          @db.VarChar(50)
-  tenantId       String           @db.UniqueIdentifier()
-  tenant         Tenant           @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id             String           @id() @default(uuid()) @db.UniqueIdentifier()
-  name           String           @unique() @db.VarChar(100)
-  description    String?          @db.VarChar(255)
-  userRole       UserRole[]
-  rolePermission RolePermission[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime?     @updatedAt()
+  deletedAt   DateTime?
+  createdBy   String?       @db.VarChar(50)
+  modifiedBy  String?       @db.VarChar(50)
+  tenantId    String        @db.UniqueIdentifier()
+  tenant      Tenant        @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id          String        @id() @default(uuid()) @db.UniqueIdentifier()
+  name        String        @unique() @db.VarChar(100)
+  description String?       @db.VarChar(255)
+  userRole    UserRole[]
+  roleFeature RoleFeature[]
 }
 
 /// Module also known as a feature or section of the application that can be enabled or disabled
 /// in other terms, it also works as feature flags for the application to enable or disable features
 /// based on if the module is enabled or disabled for the tenant or user
 model Module {
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime?    @updatedAt()
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt()
   deletedAt   DateTime?
-  createdBy   String?      @db.VarChar(50)
-  modifiedBy  String?      @db.VarChar(50)
-  tenantId    String       @db.UniqueIdentifier()
-  tenant      Tenant       @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id          String       @id() @default(uuid()) @db.UniqueIdentifier()
-  name        String       @unique() @db.VarChar(100)
-  description String?      @db.VarChar(255)
-  isActive    Boolean      @default(true)
-  permission  Permission[]
+  createdBy   String?   @db.VarChar(50)
+  modifiedBy  String?   @db.VarChar(50)
+  tenantId    String    @db.UniqueIdentifier()
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id          String    @id() @default(uuid()) @db.UniqueIdentifier()
+  name        String    @unique() @db.VarChar(100)
+  description String?   @db.VarChar(255)
+  isActive    Boolean   @default(true)
+  feature     Feature[]
 }
 
-/// Represents permissions in the system. 
-/// A single table handles both global permissions and area-specific permissions using the `scope` field.
-/// Permissions are linked to modules for better organization and can be assigned to global roles or area roles.
-model Permission {
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime?            @updatedAt()
-  deletedAt          DateTime?
-  createdBy          String?              @db.VarChar(50)
-  modifiedBy         String?              @db.VarChar(50)
-  tenantId           String               @db.UniqueIdentifier()
-  tenant             Tenant               @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                 String               @id() @default(uuid()) @db.UniqueIdentifier()
-  name               String               @db.VarChar(50)
-  key                String               @unique() @db.VarChar(100)
-  description        String?              @db.VarChar(255)
-  scope              String               @default("global")
-  moduleId           String               @db.UniqueIdentifier()
-  module             Module               @relation(fields: [moduleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  rolePermission     RolePermission[]
-  areaRolePermission AreaRolePermission[]
+/// Represents features in the system. 
+/// A single table handles both global features and area-specific features using the `scope` field.
+/// Features are linked to modules for better organization and can be assigned to global roles or area roles.
+model Feature {
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime?         @updatedAt()
+  deletedAt       DateTime?
+  createdBy       String?           @db.VarChar(50)
+  modifiedBy      String?           @db.VarChar(50)
+  tenantId        String            @db.UniqueIdentifier()
+  tenant          Tenant            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id              String            @id() @default(uuid()) @db.UniqueIdentifier()
+  name            String            @db.VarChar(50)
+  key             String            @unique() @db.VarChar(100)
+  description     String?           @db.VarChar(255)
+  scope           String            @default("global")
+  moduleId        String            @db.UniqueIdentifier()
+  module          Module            @relation(fields: [moduleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  roleFeature     RoleFeature[]
+  areaRoleFeature AreaRoleFeature[]
+  planFeatures    PlanFeature[]
 }
 
-model RolePermission {
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime?  @updatedAt()
-  deletedAt    DateTime?
-  createdBy    String?    @db.VarChar(50)
-  modifiedBy   String?    @db.VarChar(50)
-  tenantId     String     @db.UniqueIdentifier()
-  tenant       Tenant     @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id           String     @id() @default(uuid()) @db.UniqueIdentifier()
-  isActive     Boolean    @default(true)
-  roleId       String     @db.UniqueIdentifier()
-  permissionId String     @db.UniqueIdentifier()
-  role         Role       @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+model RoleFeature {
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @updatedAt()
+  deletedAt  DateTime?
+  createdBy  String?   @db.VarChar(50)
+  modifiedBy String?   @db.VarChar(50)
+  tenantId   String    @db.UniqueIdentifier()
+  tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id         String    @id() @default(uuid()) @db.UniqueIdentifier()
+  isActive   Boolean   @default(true)
+  roleId     String    @db.UniqueIdentifier()
+  featureId  String    @db.UniqueIdentifier()
+  role       Role      @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  feature    Feature   @relation(fields: [featureId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model Session {
@@ -480,44 +546,44 @@ model UserArea {
 }
 
 /// Represents roles that are specific to an area.
-/// Area roles define permissions and responsibilities of users within a specific organizational area.
+/// Area roles define features and responsibilities of users within a specific organizational area.
 model AreaRole {
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime?            @updatedAt()
-  deletedAt           DateTime?
-  createdBy           String?              @db.VarChar(50)
-  modifiedBy          String?              @db.VarChar(50)
-  tenantId            String               @db.UniqueIdentifier()
-  tenant              Tenant               @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                  String               @id() @default(uuid()) @db.UniqueIdentifier()
-  name                String               @db.VarChar(100)
-  description         String?              @db.VarChar(255)
-  areaId              String?              @db.UniqueIdentifier()
-  area                Area?                @relation(fields: [areaId], references: [id])
-  userAreas           UserArea[]
-  areaRolePermissions AreaRolePermission[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime?         @updatedAt()
+  deletedAt        DateTime?
+  createdBy        String?           @db.VarChar(50)
+  modifiedBy       String?           @db.VarChar(50)
+  tenantId         String            @db.UniqueIdentifier()
+  tenant           Tenant            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id               String            @id() @default(uuid()) @db.UniqueIdentifier()
+  name             String            @db.VarChar(100)
+  description      String?           @db.VarChar(255)
+  areaId           String?           @db.UniqueIdentifier()
+  area             Area?             @relation(fields: [areaId], references: [id])
+  userAreas        UserArea[]
+  areaRoleFeatures AreaRoleFeature[]
 
   @@unique([name, areaId])
 }
 
-/// Links area-specific roles to permissions.
-/// This model defines which permissions are granted to roles within a specific area.
-model AreaRolePermission {
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime?  @updatedAt()
-  deletedAt    DateTime?
-  createdBy    String?    @db.VarChar(50)
-  modifiedBy   String?    @db.VarChar(50)
-  tenantId     String     @db.UniqueIdentifier()
-  tenant       Tenant     @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id           String     @id() @default(uuid()) @db.UniqueIdentifier()
-  isActive     Boolean    @default(true)
-  areaRoleId   String     @db.UniqueIdentifier()
-  areaRole     AreaRole   @relation(fields: [areaRoleId], references: [id])
-  permissionId String     @db.UniqueIdentifier()
-  permission   Permission @relation(fields: [permissionId], references: [id])
+/// Links area-specific roles to features.
+/// This model defines which features are granted to roles within a specific area.
+model AreaRoleFeature {
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @updatedAt()
+  deletedAt  DateTime?
+  createdBy  String?   @db.VarChar(50)
+  modifiedBy String?   @db.VarChar(50)
+  tenantId   String    @db.UniqueIdentifier()
+  tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id         String    @id() @default(uuid()) @db.UniqueIdentifier()
+  isActive   Boolean   @default(true)
+  areaRoleId String    @db.UniqueIdentifier()
+  areaRole   AreaRole  @relation(fields: [areaRoleId], references: [id])
+  featureId  String    @db.UniqueIdentifier()
+  feature    Feature   @relation(fields: [featureId], references: [id])
 
-  @@unique([areaRoleId, permissionId])
+  @@unique([areaRoleId, featureId])
 }
 
 /// Represents a specific requirement for a service or category.

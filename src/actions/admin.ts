@@ -1,12 +1,12 @@
 'use server';
 
-import { currentPermissions } from '@/lib/auth';
+import { currentFeatures } from '@/lib/auth';
 
 export const admin = async () => {
-  const permissions = await currentPermissions();
+  const features = await currentFeatures();
 
   // todo: improve this
-  if ((permissions?.length ?? 0) > 0) {
+  if ((features?.length ?? 0) > 0) {
     return { success: 'Allowed Server Action!' };
   }
 

@@ -1,5 +1,6 @@
 import './abstract.zmodel'
 import './request.zmodel'
+import './tenant.zmodel'
 
 model Document extends TenantScoped, Auditable {
   // Primary identifier

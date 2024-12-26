@@ -18,7 +18,7 @@ export default async function SecurityDashboardPage() {
   //get user count
   const userCount = await db.user.count();
   const roleCount = await db.role.count();
-  const permissionCount = await db.permission.count();
+  const featureCount = await db.feature.count();
 
   return (
     <div className="flex flex-1 flex-col gap-4">
@@ -40,10 +40,10 @@ export default async function SecurityDashboardPage() {
           addLink={{ pathname: '/[tenantId]/admin/security/role/new', params: { tenantId } }}
         />
         <StatCard
-          title={t('permissions.title')}
-          count={permissionCount}
-          viewText={t('permissions.view')}
-          addText={t('permissions.add')}
+          title={t('features.title')}
+          count={featureCount}
+          viewText={t('features.view')}
+          addText={t('features.add')}
           viewLink={{ pathname: '/[tenantId]/admin/security/user', params: { tenantId } }}
           addLink={{ pathname: '/[tenantId]/admin/security/user/new', params: { tenantId } }}
         />

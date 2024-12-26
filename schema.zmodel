@@ -5,6 +5,7 @@ import './zmodel/document.zmodel'
 import './zmodel/form.zmodel'
 import './zmodel/messenger.zmodel'
 import './zmodel/request.zmodel'
+import './zmodel/tenant.zmodel'
 
 plugin trpc {
   provider = '@zenstackhq/trpc'
@@ -29,59 +30,4 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
-}
-
-model Tenant extends Auditable {
-  id                 String   @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for the tenant
-  name               String   // Tenant name
-  logoUrl            String?  // URL for the tenant's logo
-  websiteUrl         String?  // URL for the tenant's website
-  title              String?  // Title or tagline for the tenant
-  description        String?  // Brief description of the tenant
-  primaryColor       String?  // Primary color for branding
-  secondaryColor     String?  // Secondary color for branding
-  contactEmail       String?  // Tenant's contact email
-  contactPhone       String?  // Tenant's contact phone number
-  address            String?  // Address for the tenant
-
-  // Related entities
-  hierarchies        Hierarchy[]                     // Linked hierarchies
-  hierarchyLevels    HierarchyLevel[]               // Linked hierarchy levels
-  persons            Person[]                       // Linked persons
-  clients            Client[]                       // Linked clients
-  requirements       Requirement[]                  // Linked requirements
-  requirementTypes  RequirementType[]              // Linked requirement types
-  categoryRequirements CategoryRequirement[]        // Linked category-requirement associations
-  requests           Request[]                      // Linked service requests
-  requirementComplianceTrackings RequirementComplianceTracking[] // Linked compliance tracking
-  requestAssignments RequestAssignment[]            // Linked request assignments
-  StatusType         StatusType[]                   // Linked status types
-  documents          Document[]                     // Linked documents
-  areas              Area[]                         // Linked areas
-  categories         Category[]                     // Linked categories
-  userRoles          UserRole[]                     // Linked user roles
-  roles              Role[]                         // Linked roles
-  modules            Module[]                       // Linked modules
-  permissions        Permission[]                   // Linked permissions
-  rolePermissions    RolePermission[]               // Linked role-permission associations
-  identificationTypes IdentificationType[]          // Linked identification types
-  documentAssignments DocumentAssignment[]          // Linked document assignments
-  forms              Form[]                         // Linked forms
-  formSubmissions    FormSubmission[]               // Linked form submissions
-  workspaces         Workspace[]                    // Linked workspaces
-  members            Member[]                       // Linked workspace members
-  channels           Channel[]                      // Linked communication channels
-  conversations      Conversation[]                 // Linked conversations
-  messages           Message[]                      // Linked messages
-  reactions          Reaction[]                     // Linked reactions
-
-  userTenants        UserTenant[]                   // Linked user-tenant relationships
-
-  userAreas         UserArea[]                     // Linked user-areas
-  areaRoles         AreaRole[]                     // Linked area roles
-  areaRolePermissions AreaRolePermission[]         // Linked area role permissions
-
-
-  // Access control
-  @@allow('read', userTenants?[user.id == auth().id && isActive == true])
 }

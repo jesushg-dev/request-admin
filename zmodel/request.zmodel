@@ -3,6 +3,7 @@ import './auth.zmodel'
 import './form.zmodel'
 import './document.zmodel'
 import './person.zmodel'
+import './tenant.zmodel'
 
 /// Represents a hierarchy for categorization (e.g., "Sales Channel Hierarchy", "Assignment Hierarchy").
 model Hierarchy extends TenantScoped, Auditable {
@@ -172,7 +173,7 @@ model UserArea extends TenantScoped, Auditable {
 }
 
 /// Represents roles that are specific to an area.
-/// Area roles define permissions and responsibilities of users within a specific organizational area.
+/// Area roles define features and responsibilities of users within a specific organizational area.
 model AreaRole extends TenantScoped, Auditable {
   id                   String    @id @default(uuid()) @db.UniqueIdentifier
   name                 String    @db.VarChar(100)
@@ -182,26 +183,26 @@ model AreaRole extends TenantScoped, Auditable {
   areaId               String?   @db.UniqueIdentifier 
   area                 Area?     @relation(fields: [areaId], references: [id]) // Links to the Area model
   userAreas            UserArea[] // Links this role to users assigned within an area
-  areaRolePermissions  AreaRolePermission[] // Links this role to permissions specific to the area
+  areaRoleFeatures  AreaRoleFeature[] // Links this role to features specific to the area
 
   // Ensures role names are unique within the same area
   @@unique([name, areaId])
 }
 
-/// Links area-specific roles to permissions.
-/// This model defines which permissions are granted to roles within a specific area.
-model AreaRolePermission extends TenantScoped, Auditable {
+/// Links area-specific roles to features.
+/// This model defines which features are granted to roles within a specific area.
+model AreaRoleFeature extends TenantScoped, Auditable {
   id                   String     @id @default(uuid()) @db.UniqueIdentifier
   isActive             Boolean    @default(true)
 
   // Relationships
   areaRoleId           String     @db.UniqueIdentifier
   areaRole             AreaRole   @relation(fields: [areaRoleId], references: [id]) // Links to AreaRole
-  permissionId         String     @db.UniqueIdentifier
-  permission           Permission @relation(fields: [permissionId], references: [id]) // Links to Permission
+  featureId         String     @db.UniqueIdentifier
+  feature           Feature @relation(fields: [featureId], references: [id]) // Links to Feature
 
-  // Ensures a role cannot have duplicate permissions within the same scope
-  @@unique([areaRoleId, permissionId])
+  // Ensures a role cannot have duplicate features within the same scope
+  @@unique([areaRoleId, featureId])
 }
 
 /// Represents a specific requirement for a service or category.

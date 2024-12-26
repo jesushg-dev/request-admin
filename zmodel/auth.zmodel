@@ -1,4 +1,4 @@
-import '../schema.zmodel'
+import './tenant.zmodel'
 import './abstract.zmodel'
 import './request.zmodel'
 import './messenger.zmodel'
@@ -62,7 +62,7 @@ model UserRole extends TenantScoped, Auditable {
 }
 
 /// Represents a system role within a tenant.
-/// Roles define sets of permissions that can be assigned to users.
+/// Roles define sets of features that can be assigned to users.
 model Role extends TenantScoped, Auditable {
   id              String     @id @default(uuid()) @db.UniqueIdentifier
   name            String     @db.VarChar(100) @unique 
@@ -70,7 +70,7 @@ model Role extends TenantScoped, Auditable {
 
   // Relationships
   userRole        UserRole[] // Links this role to users via the UserRole model
-  rolePermission  RolePermission[] // Links this role to permissions via RolePermission
+  roleFeature  RoleFeature[] // Links this role to features via RoleFeature
 }
 
 /// Module also known as a feature or section of the application that can be enabled or disabled
@@ -86,46 +86,48 @@ model Module extends TenantScoped, Auditable {
   isActive      Boolean    @default(true) // Flag for active module
 
   // Relationships
-  permission      Permission[] // Permissions associated with this module
+  feature      Feature[] // Features associated with this module
 }
 
-/// Represents permissions in the system. 
-/// A single table handles both global permissions and area-specific permissions using the `scope` field.
-/// Permissions are linked to modules for better organization and can be assigned to global roles or area roles.
-model Permission extends TenantScoped, Auditable {
-  // Unique identifier for the permission
+/// Represents features in the system. 
+/// A single table handles both global features and area-specific features using the `scope` field.
+/// Features are linked to modules for better organization and can be assigned to global roles or area roles.
+model Feature extends TenantScoped, Auditable {
+  // Unique identifier for the feature
   id              String     @id @default(uuid()) @db.UniqueIdentifier
   name            String     @db.VarChar(50)
-  key             String     @db.VarChar(100) @unique // Unique key for the permission
+  key             String     @db.VarChar(100) @unique // Unique key for the feature
   description     String?    @db.VarChar(255) 
 
-  // Scope of the permission: "global" for system-wide permissions or "area" for area-specific permissions
+  // Scope of the feature: "global" for system-wide features or "area" for area-specific features
   scope           String     @default("global") // Example: "global", "area"
 
-  // Reference to the module this permission belongs to, used for logical grouping of permissions
+  // Reference to the module this feature belongs to, used for logical grouping of features
   moduleId        String     @db.UniqueIdentifier 
   module          Module     @relation(fields: [moduleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  // Links this permission to global roles
-  rolePermission  RolePermission[] 
+  // Links this feature to global roles
+  roleFeature  RoleFeature[] 
 
-  // Links this permission to area-specific roles
-  areaRolePermission AreaRolePermission[] 
+  // Links this feature to area-specific roles
+  areaRoleFeature AreaRoleFeature[] 
 
+  // Links this feature to permissions
+  planFeatures PlanFeature[]
   
   @@validate(scope in ["global", "area"])
 }
 
-model RolePermission extends TenantScoped, Auditable {
+model RoleFeature extends TenantScoped, Auditable {
   // Primary identifier
   id              String     @id @default(uuid()) @db.UniqueIdentifier
-  isActive       Boolean    @default(true) // Flag for active role permission
+  isActive       Boolean    @default(true) // Flag for active role feature
 
   // Relationships
   roleId          String     @db.UniqueIdentifier // Reference to the linked Role
-  permissionId    String     @db.UniqueIdentifier // Reference to the linked Permission
+  featureId    String     @db.UniqueIdentifier // Reference to the linked Feature
   role            Role       @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  permission      Permission @relation(fields: [permissionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  feature      Feature @relation(fields: [featureId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model Session {

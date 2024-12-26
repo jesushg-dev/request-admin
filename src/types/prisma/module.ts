@@ -6,9 +6,9 @@ export const ModuleDefaultArgs = Prisma.validator<Prisma.ModuleDefaultArgs>()({
     id: true,
     name: true,
     description: true,
-    permission: { select: { id: true, name: true, description: true } },
+    feature: { select: { id: true, name: true, description: true } },
   },
 });
 
 // Type for Modules with selected fields
-export type ModuleWithPermissionsType = Prisma.ModuleGetPayload<typeof ModuleDefaultArgs>;
+export type ModuleWithFeaturesType = Prisma.ModuleGetPayload<typeof ModuleDefaultArgs>;

@@ -1,5 +1,6 @@
 import "./abstract.zmodel"
 import "./auth.zmodel"
+import './tenant.zmodel'
 
 // Workspace model: Represents a workspace where users collaborate
 model Workspace extends TenantScoped {
