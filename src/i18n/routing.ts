@@ -6,188 +6,203 @@ export const defaultLocale = 'en';
 export const locales = ['en', 'es'] as const;
 export const localePrefix = process.env.NEXT_PUBLIC_LOCALE_PREFIX === 'never' ? 'never' : 'as-needed';
 
+const basePathnames = {
+  '/': {
+    en: '/',
+    es: '/',
+  },
+  '/admin': {
+    en: '/admin',
+    es: '/admin',
+  },
+  '/admin/[tenantId]': {
+    en: '/admin/[tenantId]',
+    es: '/admin/[tenantId]',
+  },
+} satisfies Pathnames<typeof locales>;
+
 const securityPathnames = {
   // security
-  '/[tenantId]/admin/security': {
-    en: '/[tenantId]/admin/security',
-    es: '/[tenantId]/admin/seguridad',
+  '/admin/[tenantId]/security': {
+    en: '/admin/[tenantId]/security',
+    es: '/admin/[tenantId]/seguridad',
   },
   // roles
-  '/[tenantId]/admin/security/role': {
-    en: '/[tenantId]/admin/security/role',
-    es: '/[tenantId]/admin/seguridad/rol',
+  '/admin/[tenantId]/security/roles': {
+    en: '/admin/[tenantId]/security/roles',
+    es: '/admin/[tenantId]/seguridad/roles',
   },
-  '/[tenantId]/admin/security/role/new': {
-    en: '/[tenantId]/admin/security/role/new',
-    es: '/[tenantId]/admin/seguridad/rol/nuevo',
+  '/admin/[tenantId]/security/roles/new': {
+    en: '/admin/[tenantId]/security/roles/new',
+    es: '/admin/[tenantId]/seguridad/roles/nuevo',
   },
-  '/[tenantId]/admin/security/role/[slug]': {
-    en: '/[tenantId]/admin/security/role/[slug]',
-    es: '/[tenantId]/admin/seguridad/rol/[slug]',
+  '/admin/[tenantId]/security/roles/[slug]': {
+    en: '/admin/[tenantId]/security/roles/[slug]',
+    es: '/admin/[tenantId]/seguridad/roles/[slug]',
   },
-  // user
-  '/[tenantId]/admin/security/user': {
-    en: '/[tenantId]/admin/security/user',
-    es: '/[tenantId]/admin/seguridad/usuario',
+  // users
+  '/admin/[tenantId]/security/users': {
+    en: '/admin/[tenantId]/security/users',
+    es: '/admin/[tenantId]/seguridad/usuarios',
   },
-  '/[tenantId]/admin/security/user/new': {
-    en: '/[tenantId]/admin/security/user/new',
-    es: '/[tenantId]/admin/seguridad/usuario/nuevo',
+  '/admin/[tenantId]/security/users/new': {
+    en: '/admin/[tenantId]/security/users/new',
+    es: '/admin/[tenantId]/seguridad/usuarios/nuevo',
   },
-  '/[tenantId]/admin/security/user/[slug]': {
-    en: '/[tenantId]/admin/security/user/[slug]',
-    es: '/[tenantId]/admin/seguridad/usuario/[slug]',
+  '/admin/[tenantId]/security/users/[slug]': {
+    en: '/admin/[tenantId]/security/users/[slug]',
+    es: '/admin/[tenantId]/seguridad/usuarios/[slug]',
+  },
+} satisfies Pathnames<typeof locales>;
+
+const managementPathnames = {
+  // areas
+  '/admin/[tenantId]/management/areas': {
+    en: '/admin/[tenantId]/management/areas',
+    es: '/admin/[tenantId]/gestion/areas',
+  },
+  '/admin/[tenantId]/management/areas/new': {
+    en: '/admin/[tenantId]/management/areas/new',
+    es: '/admin/[tenantId]/gestion/areas/nuevo',
+  },
+  '/admin/[tenantId]/management/areas/[slug]': {
+    en: '/admin/[tenantId]/management/areas/[slug]',
+    es: '/admin/[tenantId]/gestion/areas/[slug]',
+  },
+  // clients
+  '/admin/[tenantId]/management/clients': {
+    en: '/admin/[tenantId]/management/clients',
+    es: '/admin/[tenantId]/gestion/clientes',
+  },
+  '/admin/[tenantId]/management/clients/new': {
+    en: '/admin/[tenantId]/management/clients/new',
+    es: '/admin/[tenantId]/gestion/clientes/nuevo',
+  },
+  '/admin/[tenantId]/management/clients/[slug]': {
+    en: '/admin/[tenantId]/management/clients/[slug]',
+    es: '/admin/[tenantId]/gestion/clientes/[slug]',
+  },
+} satisfies Pathnames<typeof locales>;
+
+const requestsPathnames = {
+  // requests
+  '/admin/[tenantId]/requests': {
+    en: '/admin/[tenantId]/requests',
+    es: '/admin/[tenantId]/casos',
+  },
+  '/admin/[tenantId]/requests/new': {
+    en: '/admin/[tenantId]/requests/new',
+    es: '/admin/[tenantId]/casos/nuevo',
+  },
+  '/admin/[tenantId]/requests/[slug]': {
+    en: '/admin/[tenantId]/requests/[slug]',
+    es: '/admin/[tenantId]/casos/[slug]',
+  },
+  // request types
+  '/admin/[tenantId]/request-types': {
+    en: '/admin/[tenantId]/request-types',
+    es: '/admin/[tenantId]/tipo-de-casos',
+  },
+  '/admin/[tenantId]/request-types/new': {
+    en: '/admin/[tenantId]/request-types/new',
+    es: '/admin/[tenantId]/tipo-de-casos/nuevo',
+  },
+  '/admin/[tenantId]/request-types/[slug]': {
+    en: '/admin/[tenantId]/request-types/[slug]',
+    es: '/admin/[tenantId]/tipo-de-casos/[slug]',
+  },
+} satisfies Pathnames<typeof locales>;
+
+const requirementsPathnames = {
+  // requirements
+  '/admin/[tenantId]/requirements': {
+    en: '/admin/[tenantId]/requirements',
+    es: '/admin/[tenantId]/requisitos',
+  },
+  '/admin/[tenantId]/requirements/new': {
+    en: '/admin/[tenantId]/requirements/new',
+    es: '/admin/[tenantId]/requisitos/nuevo',
+  },
+  '/admin/[tenantId]/requirements/[slug]': {
+    en: '/admin/[tenantId]/requirements/[slug]',
+    es: '/admin/[tenantId]/requisitos/[slug]',
+  },
+} satisfies Pathnames<typeof locales>;
+
+const documentsPathnames = {
+  // documents
+  '/admin/[tenantId]/documents': {
+    en: '/admin/[tenantId]/documents',
+    es: '/admin/[tenantId]/documentos',
+  },
+  '/admin/[tenantId]/documents/new': {
+    en: '/admin/[tenantId]/documents/new',
+    es: '/admin/[tenantId]/documentos/nuevo',
+  },
+  '/admin/[tenantId]/documents/[slug]': {
+    en: '/admin/[tenantId]/documents/[slug]',
+    es: '/admin/[tenantId]/documentos/[slug]',
+  },
+} satisfies Pathnames<typeof locales>;
+
+const formsPathnames = {
+  // forms
+  '/admin/[tenantId]/forms': {
+    en: '/admin/[tenantId]/forms',
+    es: '/admin/[tenantId]/formularios',
+  },
+  '/admin/[tenantId]/forms/new': {
+    en: '/admin/[tenantId]/forms/new',
+    es: '/admin/[tenantId]/formularios/nuevo',
+  },
+  '/admin/[tenantId]/forms/[slug]': {
+    en: '/admin/[tenantId]/forms/[slug]',
+    es: '/admin/[tenantId]/formularios/[slug]',
+  },
+  // form designer
+  '/admin/[tenantId]/form-designer': {
+    en: '/admin/[tenantId]/form-designer',
+    es: '/admin/[tenantId]/disenador-de-formularios',
+  },
+} satisfies Pathnames<typeof locales>;
+
+const settingsPathnames = {
+  // settings
+  '/admin/[tenantId]/settings': {
+    en: '/admin/[tenantId]/settings',
+    es: '/admin/[tenantId]/configuracion',
+  },
+  '/admin/[tenantId]/settings/account': {
+    en: '/admin/[tenantId]/settings/account',
+    es: '/admin/[tenantId]/configuracion/cuenta',
+  },
+  '/admin/[tenantId]/settings/smtp': {
+    en: '/admin/[tenantId]/settings/smtp',
+    es: '/admin/[tenantId]/configuracion/smtp',
+  },
+  '/admin/[tenantId]/settings/credit-card': {
+    en: '/admin/[tenantId]/settings/credit-card',
+    es: '/admin/[tenantId]/configuracion/tarjeta-de-credito',
+  },
+  '/admin/[tenantId]/settings/social': {
+    en: '/admin/[tenantId]/settings/social',
+    es: '/admin/[tenantId]/configuracion/redes-sociales',
+  },
+  '/admin/[tenantId]/settings/tenant': {
+    en: '/admin/[tenantId]/settings/tenant',
+    es: '/admin/[tenantId]/configuracion/inquilino',
   },
 } satisfies Pathnames<typeof locales>;
 
 export const pathnames = {
-  '/': '/',
-  '/tenants': '/tenants',
-  '/tenants/admin/new': '/tenants/admin/new',
-  '/[tenantId]/admin': '/[tenantId]/admin',
-  '/[tenantId]/admin/management/area': '/[tenantId]/admin/management/area',
-  '/[tenantId]/admin/management/area/new': {
-    en: '/[tenantId]/admin/management/area/new',
-    es: '/[tenantId]/admin/gestion/area/nuevo',
-  },
-  '/[tenantId]/admin/management/area/[slug]': {
-    en: '/[tenantId]/admin/management/area/[slug]',
-    es: '/[tenantId]/admin/gestion/area/[slug]',
-  },
-  // client
-  '/[tenantId]/admin/management/client': {
-    en: '/[tenantId]/admin/management/client',
-    es: '/[tenantId]/admin/gestion/cliente',
-  },
-  '/[tenantId]/admin/client/new': {
-    en: '/[tenantId]/admin/client/new',
-    es: '/[tenantId]/admin/cliente/nuevo',
-  },
-  '/[tenantId]/admin/client/[slug]': {
-    en: '/[tenantId]/admin/client/[slug]',
-    es: '/[tenantId]/admin/cliente/[slug]',
-  },
-  '/[tenantId]/admin/request': {
-    en: '/[tenantId]/admin/request',
-    es: '/[tenantId]/admin/caso',
-  },
-  '/[tenantId]/admin/request/new': {
-    en: '/[tenantId]/admin/request/new',
-    es: '/[tenantId]/admin/caso/nuevo',
-  },
-  '/[tenantId]/admin/request/[slug]': {
-    en: '/[tenantId]/admin/request/[slug]',
-    es: '/[tenantId]/admin/caso/[slug]',
-  },
-  // request-type
-  '/[tenantId]/admin/request-type': {
-    en: '/[tenantId]/admin/request-type',
-    es: '/[tenantId]/admin/tipo-de-caso',
-  },
-  '/[tenantId]/admin/request-type/new': {
-    en: '/[tenantId]/admin/request-type/new',
-    es: '/[tenantId]/admin/tipo-de-caso/nuevo',
-  },
-  '/[tenantId]/admin/request-type/[slug]': {
-    en: '/[tenantId]/admin/request-type/[slug]',
-    es: '/[tenantId]/admin/tipo-de-caso/[slug]',
-  },
-  // requirement
-  '/[tenantId]/admin/requirement': {
-    en: '/[tenantId]/admin/requirement',
-    es: '/[tenantId]/admin/requisito',
-  },
-  '/[tenantId]/admin/requirement/new': {
-    en: '/[tenantId]/admin/requirement/new',
-    es: '/[tenantId]/admin/requisito/nuevo',
-  },
-  '/[tenantId]/admin/requirement/[slug]': {
-    en: '/[tenantId]/admin/requirement/[slug]',
-    es: '/[tenantId]/admin/requisito/[slug]',
-  },
-  // document
-  '/[tenantId]/admin/document': {
-    en: '/[tenantId]/admin/document',
-    es: '/[tenantId]/admin/documento',
-  },
-  '/[tenantId]/admin/document/new': {
-    en: '/[tenantId]/admin/document/new',
-    es: '/[tenantId]/admin/documento/nuevo',
-  },
-  '/[tenantId]/admin/document/[slug]': {
-    en: '/[tenantId]/admin/document/[slug]',
-    es: '/[tenantId]/admin/documento/[slug]',
-  },
-  // form
-  '/[tenantId]/admin/form': {
-    en: '/[tenantId]/admin/form',
-    es: '/[tenantId]/admin/formulario',
-  },
-  '/[tenantId]/admin/form/new': {
-    en: '/[tenantId]/admin/form/new',
-    es: '/[tenantId]/admin/formulario/nuevo',
-  },
-  '/[tenantId]/admin/form/[slug]': {
-    en: '/[tenantId]/admin/form/[slug]',
-    es: '/[tenantId]/admin/formulario/[slug]',
-  },
-  // settings
-  '/[tenantId]/admin/settings': {
-    en: '/[tenantId]/admin/settings',
-    es: '/[tenantId]/admin/configuracion',
-  },
-  '/[tenantId]/admin/settings/account': {
-    en: '/[tenantId]/admin/settings/account',
-    es: '/[tenantId]/admin/configuracion/cuenta',
-  },
-  '/[tenantId]/admin/settings/smtp': {
-    en: '/[tenantId]/admin/settings/smtp',
-    es: '/[tenantId]/admin/configuracion/smtp',
-  },
-  '/[tenantId]/admin/settings/credit-card': {
-    en: '/[tenantId]/admin/settings/credit-card',
-    es: '/[tenantId]/admin/configuracion/tarjeta-de-credito',
-  },
-  '/[tenantId]/admin/settings/social': {
-    en: '/[tenantId]/admin/settings/social',
-    es: '/[tenantId]/admin/configuracion/redes-sociales',
-  },
-  '/[tenantId]/admin/settings/tenant': {
-    en: '/[tenantId]/admin/settings/tenant',
-    es: '/[tenantId]/admin/configuracion/inquilino',
-  },
-  // form-designer
-  '/[tenantId]/admin/form-designer': {
-    en: '/[tenantId]/admin/form-designer',
-    es: '/[tenantId]/admin/disenador-de-formularios',
-  },
-  // identification-type
-  '/[tenantId]/admin/identification-type': {
-    en: '/[tenantId]/admin/identification-type',
-    es: '/[tenantId]/admin/tipo-de-identificacion',
-  },
-  '/[tenantId]/admin/identification-type/new': {
-    en: '/[tenantId]/admin/identification-type/new',
-    es: '/[tenantId]/admin/tipo-de-identificacion/nuevo',
-  },
-  '/[tenantId]/admin/identification-type/[slug]': {
-    en: '/[tenantId]/admin/identification-type/[slug]',
-    es: '/[tenantId]/admin/tipo-de-identificacion/[slug]',
-  },
-  // tenant
-  '/[tenantId]/admin/tenant': {
-    en: '/[tenantId]/admin/tenant',
-    es: '/[tenantId]/admin/inquilino',
-  },
-  '/[tenantId]/admin/tenant/new': {
-    en: '/[tenantId]/admin/tenant/new',
-    es: '/[tenantId]/admin/inquilino/nuevo',
-  },
-  '/[tenantId]/admin/tenant/[slug]': {
-    en: '/[tenantId]/admin/tenant/[slug]',
-    es: '/[tenantId]/admin/inquilino/[slug]',
-  },
+  ...basePathnames,
   ...securityPathnames,
+  ...managementPathnames,
+  ...requestsPathnames,
+  ...requirementsPathnames,
+  ...documentsPathnames,
+  ...formsPathnames,
+  ...settingsPathnames,
 } satisfies Pathnames<typeof locales>;
 
 export const routing = defineRouting({

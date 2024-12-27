@@ -31,10 +31,10 @@ const authMiddleware = auth(async (req) => {
 
   // Redirect to the tenant admin page if the user is trying to access the tenants page
   // and the user only has access to one tenant
-  if (new RegExp(`^/(${locales.join('|')})?/tenants(/)?$`).test(nextUrl.pathname) || /^\/tenants\/?$/.test(nextUrl.pathname)) {
+  if (new RegExp(`^/(${locales.join('|')})?/admin(/)?$`).test(nextUrl.pathname) || /^\/admin\/?$/.test(nextUrl.pathname)) {
     const tenants = await getTenantsForUser();
     if (tenants.length === 1) {
-      return Response.redirect(new URL(`/${tenants[0].id}/admin`, nextUrl));
+      return Response.redirect(new URL(`/admin/${tenants[0].id}`, nextUrl));
     }
   }
 

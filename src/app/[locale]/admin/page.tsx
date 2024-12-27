@@ -19,7 +19,7 @@ export default async function TenantsPage() {
   });
 
   return (
-    <div className="mx-auto flex max-w-2xl flex-1 flex-col gap-4 overflow-hidden">
+    <div className="mx-auto flex max-w-2xl flex-1 flex-col gap-4 overflow-hidden py-4 lg:py-12">
       {/* Header */}
       <div className="flex items-center gap-8">
         <div className="flex flex-col items-center justify-center gap-2 text-center">
@@ -41,7 +41,7 @@ export default async function TenantsPage() {
             {tenants.map((tenant) => (
               <Card key={tenant.id} className="overflow-hidden rounded-lg shadow-md hover:shadow-lg">
                 <CardContent className="p-0">
-                  <Link className="relative flex w-full items-center gap-6 px-6 py-4 text-left hover:bg-accent" href={{ pathname: '/[tenantId]/admin', params: { tenantId: tenant.id } }}>
+                  <Link className="relative flex w-full items-center gap-6 px-6 py-4 text-left hover:bg-accent" href={{ pathname: '/admin/[tenantId]', params: { tenantId: tenant.id } }}>
                     <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-dashed">
                       <Avatar>
                         <AvatarImage src={tenant.logoUrl ?? ''} alt={tenant.name} style={{ objectFit: 'contain', objectPosition: 'center' }} />

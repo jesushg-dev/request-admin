@@ -38,18 +38,24 @@ export function composeEventHandlers<E>(originalEventHandler?: (event: E) => voi
 }
 
 export const extractTenantId = (pathname: string, locales: readonly string[]) => {
-  const tenantIdRegex = new RegExp(`^/([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})/.*$`, 'i');
-  const tenantIdLocatedRegex = new RegExp(`^/(${locales.join('|')})/([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})/.*$`, 'i');
+  // Regex for routes with locales (e.g., /en/admin/[tenantId]/...)
+  const tenantIdLocatedRegex = new RegExp(`^/(${locales.join('|')})/admin/([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})(/.*|$)`, 'i');
 
-  // Extract tenant ID from the URL path (located)
+  // Regex for routes without locales (e.g., /admin/[tenantId]/...)
+  const tenantIdRegex = new RegExp(`^/admin/([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})(/.*|$)`, 'i');
+
+  // Try to extract tenantId from routes with locales
   const tenantIdLocatedMatch = pathname.match(tenantIdLocatedRegex);
   if (tenantIdLocatedMatch) {
-    return tenantIdLocatedMatch[2];
+    return tenantIdLocatedMatch[2]; // The tenantId is the second captured group
   }
 
-  // Extract tenant ID from the URL path (non located)
+  // Try to extract tenantId from routes without locales
   const tenantIdMatch = pathname.match(tenantIdRegex);
   if (tenantIdMatch) {
-    return tenantIdMatch[1];
+    return tenantIdMatch[1]; // The tenantId is the first captured group
   }
+
+  // Return null if no tenantId is found
+  return null;
 };

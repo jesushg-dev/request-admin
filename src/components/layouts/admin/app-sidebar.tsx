@@ -50,7 +50,7 @@ export function AppSidebar({ tenants, user, ...props }: AppSidebarProps) {
       {
         title: t('dashboard'),
         icon: HomeIcon,
-        url: { pathname: '/[tenantId]/admin', params: { tenantId } },
+        url: { pathname: '/admin/[tenantId]', params: { tenantId } },
         items: [],
       },
       {
@@ -58,28 +58,28 @@ export function AppSidebar({ tenants, user, ...props }: AppSidebarProps) {
         icon: FolderIcon,
         items: [
           {
-            title: t('request'),
-            url: { pathname: '/[tenantId]/admin/request', params: { tenantId } },
+            title: t('requests'),
+            url: { pathname: '/admin/[tenantId]/requests', params: { tenantId } },
             icon: ClipboardIcon,
           },
           {
-            title: t('requestType'),
-            url: { pathname: '/[tenantId]/admin/request-type', params: { tenantId } },
+            title: t('requestTypes'),
+            url: { pathname: '/admin/[tenantId]/request-types', params: { tenantId } },
             icon: LayersIcon,
           },
           {
             title: t('requirements'),
-            url: { pathname: '/[tenantId]/admin/requirement', params: { tenantId } },
+            url: { pathname: '/admin/[tenantId]/requirements', params: { tenantId } },
             icon: ListIcon,
           },
           {
             title: t('documents'),
-            url: { pathname: '/[tenantId]/admin/document', params: { tenantId } },
+            url: { pathname: '/admin/[tenantId]/documents', params: { tenantId } },
             icon: FileTextIcon,
           },
           {
             title: t('formDesigner'),
-            url: { pathname: '/[tenantId]/admin/form-designer', params: { tenantId } },
+            url: { pathname: '/admin/[tenantId]/form-designer', params: { tenantId } },
             icon: GridIcon,
           },
         ],
@@ -89,13 +89,13 @@ export function AppSidebar({ tenants, user, ...props }: AppSidebarProps) {
         icon: SettingsIcon,
         items: [
           {
-            title: t('client'),
-            url: { pathname: '/[tenantId]/admin/management/client', params: { tenantId } },
+            title: t('clients'),
+            url: { pathname: '/admin/[tenantId]/management/clients', params: { tenantId } },
             icon: UsersIcon,
           },
           {
-            title: t('area'),
-            url: { pathname: '/[tenantId]/admin/management/area', params: { tenantId } },
+            title: t('areas'),
+            url: { pathname: '/admin/[tenantId]/management/areas', params: { tenantId } },
             icon: LandPlotIcon,
           },
         ],
@@ -105,13 +105,13 @@ export function AppSidebar({ tenants, user, ...props }: AppSidebarProps) {
         icon: ShieldIcon,
         items: [
           {
-            title: t('role'),
-            url: { pathname: '/[tenantId]/admin/security/role', params: { tenantId } },
+            title: t('roles'),
+            url: { pathname: '/admin/[tenantId]/security/roles', params: { tenantId } },
             icon: ShieldIcon,
           },
           {
-            title: t('user'),
-            url: { pathname: '/[tenantId]/admin/security/user', params: { tenantId } },
+            title: t('users'),
+            url: { pathname: '/admin/[tenantId]/security/users', params: { tenantId } },
             icon: UsersIcon,
           },
         ],

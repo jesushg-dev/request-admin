@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation';
-import { locales } from '@/i18n/routing';
+import { locales, redirect } from '@/i18n/routing';
+import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 
 import { extractTenantId } from '@/lib/utils';
 
@@ -7,7 +7,7 @@ export const getTenantIdFromUrl = (url: string, redirectOnMissing: boolean = tru
   const tenantId = extractTenantId(url, locales);
 
   if (!tenantId && redirectOnMissing) {
-    redirect('/tenants');
+    redirect(DEFAULT_LOGIN_REDIRECT);
   }
 
   return tenantId ?? '';
