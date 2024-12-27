@@ -41,7 +41,7 @@ export async function GetFormStats() {
   };
 }
 
-export async function CreateForm(data: formSchemaType) {
+export async function CreateForm(data: formSchemaType, tenantId: string) {
   const validation = formSchema.safeParse(data);
   if (!validation.success) {
     throw new Error('form not valid');
@@ -59,7 +59,7 @@ export async function CreateForm(data: formSchemaType) {
       userId: session.user.id,
       name,
       description,
-      tenantId: session.user.tenantId,
+      tenantId,
     },
   });
 

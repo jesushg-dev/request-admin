@@ -5,13 +5,14 @@ import { SubmitForm } from '@/actions/form';
 import { HiCursorClick } from 'react-icons/hi';
 import { ImSpinner2 } from 'react-icons/im';
 
-import { UNSTABLE_TENANT_ID } from '@/lib/constant';
+import useTenantId from '@/hooks/use-tenant-id';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 
 import { FormElementInstance, FormElements } from './form-elements';
 
 function FormSubmitComponent({ formUrl, content }: { content: FormElementInstance[]; formUrl: string }) {
+  const tenantId = useTenantId();
   const formValues = useRef<Record<string, string>>({});
   const formErrors = useRef<Record<string, boolean>>({});
   const [renderKey, setRenderKey] = useState(new Date().getTime());
@@ -56,7 +57,7 @@ function FormSubmitComponent({ formUrl, content }: { content: FormElementInstanc
     try {
       const jsonContent = JSON.stringify(formValues.current);
       // todo: we need to find a way to get the tenant id
-      await SubmitForm(UNSTABLE_TENANT_ID, formUrl, jsonContent);
+      await SubmitForm(tenantId, formUrl, jsonContent);
       setSubmitted(true);
     } catch (error) {
       toast({

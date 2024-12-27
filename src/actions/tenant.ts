@@ -1,12 +1,14 @@
-'use server';
+import { redirect } from 'next/navigation';
+import { locales } from '@/i18n/routing';
 
-import { UNSTABLE_TENANT_ID } from '@/lib/constant';
+import { extractTenantId } from '@/lib/utils';
 
-export const getCurrentTenantId = async () => {
-  return UNSTABLE_TENANT_ID;
+export const getTenantIdFromUrl = (url: string, redirectOnMissing: boolean = true): string => {
+  const tenantId = extractTenantId(url, locales);
+
+  if (!tenantId && redirectOnMissing) {
+    redirect('/tenants');
+  }
+
+  return tenantId ?? '';
 };
-
-export async function changeTenantAction(data: FormData) {
-  const tenantId = data.get('tenantId') as string | null;
-  if (!tenantId) throw new Error('Tenant ID is required.');
-}

@@ -197,6 +197,12 @@
       },
       "success": {
         "changeTenantSuccess": "Tenant changed successfully!"
+      },
+      "tenantSwitcher": {
+        "label": {
+          "tenants": "Tenants"
+        },
+        "addTenant": "Add tenant"
       }
     },
     "area": {

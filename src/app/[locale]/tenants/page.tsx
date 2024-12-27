@@ -18,14 +18,6 @@ export default async function TenantsPage() {
     select: { id: true, name: true, logoUrl: true, description: true, websiteUrl: true },
   });
 
-  if (tenants.length === 1 && tenants[0]) {
-    await db.userTenant.update({
-      where: { userId_tenantId: { userId: user.user.id, tenantId: tenants[0].id } },
-      data: {},
-    });
-    redirect({ href: { pathname: '/[tenantId]/admin', params: { tenantId: tenants[0].id } }, locale: 'en' });
-  }
-
   return (
     <div className="mx-auto flex max-w-2xl flex-1 flex-col gap-4 overflow-hidden">
       {/* Header */}

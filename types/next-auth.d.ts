@@ -12,11 +12,11 @@ declare module 'next-auth' {
       id: string;
       isTwoFactorEnabled: boolean;
       isOAuth: boolean;
-      tenantId: string;
       features: string[];
       roles: string[];
       firstName: string;
       lastName: string;
+      isGlobalAdmin: boolean;
     } & DefaultSession['user'];
   }
 }

@@ -36,3 +36,20 @@ export function composeEventHandlers<E>(originalEventHandler?: (event: E) => voi
     }
   };
 }
+
+export const extractTenantId = (pathname: string, locales: readonly string[]) => {
+  const tenantIdRegex = new RegExp(`^/([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})/.*$`, 'i');
+  const tenantIdLocatedRegex = new RegExp(`^/(${locales.join('|')})/([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})/.*$`, 'i');
+
+  // Extract tenant ID from the URL path (located)
+  const tenantIdLocatedMatch = pathname.match(tenantIdLocatedRegex);
+  if (tenantIdLocatedMatch) {
+    return tenantIdLocatedMatch[2];
+  }
+
+  // Extract tenant ID from the URL path (non located)
+  const tenantIdMatch = pathname.match(tenantIdRegex);
+  if (tenantIdMatch) {
+    return tenantIdMatch[1];
+  }
+};

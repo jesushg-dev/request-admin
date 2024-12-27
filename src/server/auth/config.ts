@@ -16,11 +16,11 @@ export type ExtendedUser = DefaultSession['user'] & {
   id: string;
   isTwoFactorEnabled: boolean;
   isOAuth: boolean;
-  tenantId: string;
   features: string[];
   roles: string[];
   firstName: string;
   lastName: string;
+  isGlobalAdmin: boolean;
 };
 
 /**
@@ -78,6 +78,7 @@ export const authConfig: NextAuthConfig = {
       session.user.image = token.image as string;
       session.user.firstName = token.firstName as string;
       session.user.lastName = token.lastName as string;
+      session.user.isGlobalAdmin = token.isGlobalAdmin as boolean;
 
       if (token.sub) {
         session.user.id = token.sub;
@@ -104,6 +105,7 @@ export const authConfig: NextAuthConfig = {
       token.image = existingUser.person?.image || '';
       token.firstName = existingUser.person?.firstName || '';
       token.lastName = existingUser.person?.lastName || '';
+      token.isGlobalAdmin = existingUser.isGlobalAdmin;
 
       return token;
     },

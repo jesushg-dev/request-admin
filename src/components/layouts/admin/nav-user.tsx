@@ -1,5 +1,6 @@
 'use client';
 
+import { logout } from '@/actions/logout';
 import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles } from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -8,16 +9,18 @@ import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/c
 
 export function NavUser({
   user,
-  onLogout,
 }: {
   user: {
     name?: string | null;
     email?: string | null;
     image?: string | null;
   };
-  onLogout: () => void;
 }) {
   const { isMobile } = useSidebar();
+
+  const onLogout = () => {
+    logout();
+  };
 
   return (
     <SidebarMenu>

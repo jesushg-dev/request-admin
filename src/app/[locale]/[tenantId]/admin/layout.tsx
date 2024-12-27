@@ -6,7 +6,7 @@ import { getTranslations } from 'next-intl/server';
 
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/layouts/admin/app-sidebar';
-import { ModeToggle } from '@/components/layouts/admin/mode-toogle';
+import { ModeToggle } from '@/components/layouts/admin/mode-toggle';
 
 export async function generateMetadata(props: { params: { locale: string } }): Promise<Metadata> {
   const params = await props.params;
@@ -41,7 +41,7 @@ export default async function RootLayout({
   if (!session) return redirect({ href: '/', locale: 'en' });
 
   const tenants = await db.tenant.findMany({
-    select: { id: true, name: true, description: true, logoUrl: true, userTenants: { select: { isCurrent: true } } },
+    select: { id: true, name: true, description: true, logoUrl: true },
     where: { userTenants: { some: { userId: { equals: session.user.id } } } },
   });
 

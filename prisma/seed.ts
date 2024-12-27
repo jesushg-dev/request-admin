@@ -1,7 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 
-import { UNSTABLE_TENANT_ID } from '@/lib/constant';
 import { hashPassword } from '@/lib/password';
+
+const UNSTABLE_TENANT_ID = '2DA1FC13-1F87-4A5D-A64C-05823686A111';
 
 const prisma = new PrismaClient();
 

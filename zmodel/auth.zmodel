@@ -38,7 +38,6 @@ model UserTenant {
   isActive         Boolean   @default(true) // Indicates if the user is active in the tenant
   joinedAt         DateTime  @default(now()) // Timestamp of when the user joined the tenant
   isSuperAdmin       Boolean   @default(false) // Flag for super admin status
-  isCurrent       Boolean   @default(false) // Flag for the current tenant
 
   user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   tenant           Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)

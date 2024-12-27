@@ -42,6 +42,8 @@ const securityPathnames = {
 
 export const pathnames = {
   '/': '/',
+  '/tenants': '/tenants',
+  '/tenants/admin/new': '/tenants/admin/new',
   '/[tenantId]/admin': '/[tenantId]/admin',
   '/[tenantId]/admin/management/area': '/[tenantId]/admin/management/area',
   '/[tenantId]/admin/management/area/new': {

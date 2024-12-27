@@ -78,7 +78,7 @@ model Request extends TenantScoped, Auditable {
 
   /// Status categorization (e.g., "Open", "Closed", "In Progress").
   statusId          String                  @db.UniqueIdentifier // ID of the status type
-  status            StatusType              @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked status type
+  status            RequestStatusType              @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked status type
 
   /// Service categorization (e.g., "Sales Channel > Service Type").
   serviceCategoryId     String              @db.UniqueIdentifier // Service category ID
@@ -121,14 +121,14 @@ model RequestAssignment extends TenantScoped, Auditable {
 
   /// Status categorization (e.g., "Open", "Closed", "In Progress").
   statusId          String              @db.UniqueIdentifier // ID of the status type
-  status            StatusType          @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked status type
+  status            RequestStatusType          @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked status type
 
 
   documentAssignment    DocumentAssignment[] // Document assignments related to this request assignment
 }
 
 /// Represents a catalog of possible statuses for requests or assignments.
-model StatusType extends TenantScoped, Auditable {
+model RequestStatusType extends TenantScoped, Auditable {
   id          String   @id @default(uuid()) @db.UniqueIdentifier // Unique status ID
   name        String   @db.VarChar(50) @unique // Status name (e.g., "Open", "Closed", "In Progress")
   description String?  @db.VarChar(255) // Optional description of the status

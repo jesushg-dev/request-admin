@@ -872,11 +872,6 @@ const metadata = {
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: false }] }],
         },
-        isCurrent: {
-          name: 'isCurrent',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: false }] }],
-        },
         user: {
           name: 'user',
           type: 'User',

@@ -164,7 +164,6 @@ model UserTenant {
   isActive     Boolean  @default(true)
   joinedAt     DateTime @default(now())
   isSuperAdmin Boolean  @default(false)
-  isCurrent    Boolean  @default(false)
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 

@@ -2,30 +2,18 @@ import { type NextRequest } from 'next/server';
 import createIntlMiddleware from 'next-intl/middleware';
 
 import { locales, routing } from './i18n/routing';
-import { apiAuthPrefix, authRoutes, DEFAULT_LOGIN_REDIRECT, publicRoutes } from './routes';
+import { getTenantsForUser, validateTenantId } from './lib/tenant';
+import { extractTenantId } from './lib/utils';
+import { authRoutes, DEFAULT_LOGIN_REDIRECT, publicRoutes } from './routes';
 import { auth } from './server/auth';
-
-const publicPages = ['/', '/auth/*', '/about/*'];
 
 const intlMiddleware = createIntlMiddleware(routing);
 
-const authMiddleware = auth((req) => {
+const authMiddleware = auth(async (req) => {
   const { nextUrl } = req;
-  const isLoggedIn = !!req.auth;
-  const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
-  const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
-  const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
-  if (isApiAuthRoute) return;
-
-  if (isAuthRoute) {
-    if (isLoggedIn) {
-      return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
-    }
-    return;
-  }
-
-  if (!isLoggedIn && !isPublicRoute) {
+  // Redirect to login if not authenticated with a callback URL to return to the current page after login
+  if (!req.auth) {
     let callbackUrl = nextUrl.pathname;
     if (nextUrl.search) {
       callbackUrl += nextUrl.search;
@@ -36,9 +24,30 @@ const authMiddleware = auth((req) => {
     return Response.redirect(new URL(`/auth/login?callbackUrl=${encodedCallbackUrl}`, nextUrl));
   }
 
-  if (isLoggedIn) {
-    return intlMiddleware(req);
+  // Redirect to default login redirect if the user is trying to access an auth route while logged in
+  if (new RegExp(`^${authRoutes.replace('*', '.*')}$`).test(nextUrl.pathname)) {
+    return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
   }
+
+  // Redirect to the tenant admin page if the user is trying to access the tenants page
+  // and the user only has access to one tenant
+  if (new RegExp(`^/(${locales.join('|')})?/tenants(/)?$`).test(nextUrl.pathname) || /^\/tenants\/?$/.test(nextUrl.pathname)) {
+    const tenants = await getTenantsForUser();
+    if (tenants.length === 1) {
+      return Response.redirect(new URL(`/${tenants[0].id}/admin`, nextUrl));
+    }
+  }
+
+  // Redirect to 404 if the tenant ID is invalid in the URL path (non located)
+  const tenantId = extractTenantId(nextUrl.pathname, locales);
+  if (tenantId) {
+    const isValid = await validateTenantId(tenantId);
+    if (!isValid) {
+      return new Response(null, { status: 403 });
+    }
+  }
+
+  return intlMiddleware(req);
 });
 
 // Optionally, don't invoke Middleware on some paths
@@ -47,7 +56,7 @@ export const config = {
 };
 
 export default function middleware(req: NextRequest) {
-  const publicPathnameRegex = RegExp(`^(/(${locales.join('|')}))?((${publicPages.flatMap((p) => (p === '/' ? ['', '/'] : p.replace('*', '.*'))).join('|')}))/?$`, 'i');
+  const publicPathnameRegex = RegExp(`^(/(${locales.join('|')}))?((${publicRoutes.flatMap((p) => (p === '/' ? ['', '/'] : p.replace('*', '.*'))).join('|')}))/?$`, 'i');
   const isPublicPage = publicPathnameRegex.test(req.nextUrl.pathname);
 
   if (isPublicPage) {

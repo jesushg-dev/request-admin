@@ -35,6 +35,7 @@ export const getUserByIdWithFeatures = async (id: string) => {
         id: true,
         email: true,
         isTwoFactorEnabled: true,
+        isGlobalAdmin: true,
         person: {
           select: {
             firstName: true,

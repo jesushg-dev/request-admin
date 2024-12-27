@@ -30,7 +30,7 @@ model Tenant extends Auditable {
   requests           Request[]                      // Linked service requests
   requirementComplianceTrackings RequirementComplianceTracking[] // Linked compliance tracking
   requestAssignments RequestAssignment[]            // Linked request assignments
-  StatusType         StatusType[]                   // Linked status types
+  RequestStatusType         RequestStatusType[]                   // Linked status types
   documents          Document[]                     // Linked documents
   areas              Area[]                         // Linked areas
   categories         Category[]                     // Linked categories
@@ -64,7 +64,6 @@ model Tenant extends Auditable {
   @@allow('read', userTenants?[user.id == auth().id && isActive == true])
 }
 
-
 model Subscription {
   id              String     @id @default(uuid()) @db.UniqueIdentifier
   tenant      Tenant           @relation(fields: [tenantId], references: [id])
@@ -80,7 +79,6 @@ model Subscription {
   payments    Payment[]
 }
 
-
 model Plan {
   id              String     @id @default(uuid()) @db.UniqueIdentifier
   name         String
@@ -92,7 +90,6 @@ model Plan {
   features     PlanFeature[]
   subscriptions Subscription[]
 }
-
 
 model PlanFeature {
   id              String     @id @default(uuid()) @db.UniqueIdentifier

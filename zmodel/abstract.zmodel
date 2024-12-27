@@ -5,16 +5,16 @@ abstract model TenantScoped {
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Relation to Tenant entity
 
   // Allow read access for authenticated users in the tenant if their userTenant is active and current
-  @@allow('read', tenant.userTenants?[user.id == auth().id && isActive == true && isCurrent == true])
+  @@allow('read', tenant.userTenants?[user.id == auth().id && isActive == true])
   
   // Allow create access for authenticated users in the tenant if their userTenant is active and current
-  @@allow('create', tenant.userTenants?[user.id == auth().id && isActive == true && isCurrent == true]) 
+  @@allow('create', tenant.userTenants?[user.id == auth().id && isActive == true]) 
   
   // Allow update access for authenticated users in the tenant if their userTenant is active and current
-  @@allow('update', tenant.userTenants?[user.id == auth().id && isActive == true && isCurrent == true]) 
+  @@allow('update', tenant.userTenants?[user.id == auth().id && isActive == true]) 
   
   // Allow delete access for authenticated users in the tenant if their userTenant is active and current
-  @@allow('delete', tenant.userTenants?[user.id == auth().id && isActive == true && isCurrent == true]) 
+  @@allow('delete', tenant.userTenants?[user.id == auth().id && isActive == true]) 
 }
 
 // Abstract model for auditable entities

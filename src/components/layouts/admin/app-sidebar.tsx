@@ -1,12 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { logout } from '@/actions/logout';
 import { ExtendedUser } from '@/server/auth/config';
-import { useUpdateUserTenant } from '@/services/api/hooks';
 import { ClipboardIcon, FileTextIcon, FolderIcon, Frame, GridIcon, HomeIcon, LandPlotIcon, LayersIcon, ListIcon, Map, PieChart, SettingsIcon, ShieldIcon, UsersIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { toast } from 'sonner';
 
 import useTenantId from '@/hooks/use-tenant-id';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '@/components/ui/sidebar';
@@ -14,7 +11,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } fr
 import { MenuItem, NavMain } from './nav-main';
 import { MenuProject, NavProjects } from './nav-projects';
 import { NavUser } from './nav-user';
-import { TeamSwitcher } from './team-switcher';
+import { TenantSwitcher } from './tenant-switcher';
 
 const projects: MenuProject[] = [
   {
@@ -41,17 +38,12 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     name: string;
     logoUrl: string | null;
     description: string | null;
-    userTenants: {
-      isCurrent: boolean;
-    }[];
   }[];
 }
 
 export function AppSidebar({ tenants, user, ...props }: AppSidebarProps) {
   const tenantId = useTenantId();
   const t = useTranslations('admin.sidebar');
-
-  const { mutateAsync } = useUpdateUserTenant();
 
   const navMain: MenuItem[] = React.useMemo(() => {
     return [
@@ -127,36 +119,18 @@ export function AppSidebar({ tenants, user, ...props }: AppSidebarProps) {
     ];
   }, [t, tenantId]);
 
-  const onLogout = () => {
-    logout();
-  };
-
-  const onTeamChange = async (tenantId: string) => {
-    try {
-      //find the current user tenant and set it to false
-      const userTenant = tenants?.find((team) => team.userTenants.some((userTenant) => userTenant.isCurrent));
-      if (userTenant) {
-        await mutateAsync({ data: { isCurrent: false }, where: { userId_tenantId: { userId: user.id, tenantId: userTenant.id } } });
-      }
-
-      await mutateAsync({ data: { isCurrent: true }, where: { userId_tenantId: { userId: user.id, tenantId } } });
-
-      toast.success(t('success.changeTenantSuccess'));
-    } catch (error) {
-      toast.error(t('errors.changeTenantError'));
-    }
-  };
-
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={tenants ?? []} onTeamChange={onTeamChange} />
+        <TenantSwitcher isGlobalAdmin={user.isGlobalAdmin} tenants={tenants} tenantId={tenantId} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navMain} />
         <NavProjects projects={projects} />
       </SidebarContent>
-      <SidebarFooter>{user && <NavUser onLogout={onLogout} user={user} />}</SidebarFooter>
+      <SidebarFooter>
+        <NavUser user={user} />
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

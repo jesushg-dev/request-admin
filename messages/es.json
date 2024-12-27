@@ -197,6 +197,12 @@
       },
       "success": {
         "changeTenantSuccess": "¡Workspace cambiado con éxito!"
+      },
+      "tenantSwitcher": {
+        "label": {
+          "tenants": "Inquilinos"
+        },
+        "addTenant": "Agregar inquilino"
       }
     },
     "area": {
