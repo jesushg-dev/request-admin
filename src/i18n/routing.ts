@@ -194,6 +194,21 @@ const settingsPathnames = {
   },
 } satisfies Pathnames<typeof locales>;
 
+const globalPathnames = {
+  '/admin/global/tenants': {
+    en: '/admin/global/tenants',
+    es: '/admin/global/inquilinos',
+  },
+  '/admin/global/tenants/new': {
+    en: '/admin/global/tenants/new',
+    es: '/admin/global/inquilinos/nuevo',
+  },
+  '/admin/global/tenants/[slug]': {
+    en: '/admin/global/tenants/[slug]',
+    es: '/admin/global/inquilinos/[slug]',
+  },
+} satisfies Pathnames<typeof locales>;
+
 export const pathnames = {
   ...basePathnames,
   ...securityPathnames,
@@ -203,6 +218,7 @@ export const pathnames = {
   ...documentsPathnames,
   ...formsPathnames,
   ...settingsPathnames,
+  ...globalPathnames,
 } satisfies Pathnames<typeof locales>;
 
 export const routing = defineRouting({

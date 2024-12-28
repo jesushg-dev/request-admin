@@ -17,7 +17,7 @@ export function PlanSelectionForm({ plans }: PlanSelectionFormProps) {
       control={control}
       name="planId"
       render={({ field }) => (
-        <FormItem className="space-y-3">
+        <FormItem className="mx-1 flex flex-col gap-2">
           <FormControl>
             <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-1">
               {plans.map((plan) => (

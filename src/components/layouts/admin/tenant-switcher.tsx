@@ -50,7 +50,7 @@ export function TenantSwitcher({ tenants, tenantId, isGlobalAdmin }: { tenants: 
                   if (tenant.id === tenantId) return null;
                   return (
                     <DropdownMenuItem key={tenant.id} className="p-0">
-                      <Link className="flex w-full cursor-pointer items-center gap-2 p-2 hover:bg-accent" href={{ pathname: '/[tenantId]/admin', params: { tenantId: tenant.id } }} passHref>
+                      <Link className="flex w-full cursor-pointer items-center gap-2 p-2 hover:bg-accent" href={{ pathname: '/admin/[tenantId]', params: { tenantId: tenant.id } }} passHref>
                         <div className="flex aspect-square size-6 items-center justify-center rounded-lg border border-dashed bg-accent p-0.5">
                           {tenant?.logoUrl && (
                             <Avatar>
@@ -70,7 +70,7 @@ export function TenantSwitcher({ tenants, tenantId, isGlobalAdmin }: { tenants: 
             )}
             {isGlobalAdmin && (
               <DropdownMenuItem className="p-0">
-                <Link className="flex w-full cursor-pointer items-center gap-2 p-2 hover:bg-accent" href="/tenants/admin/new" passHref>
+                <Link className="flex w-full cursor-pointer items-center gap-2 p-2 hover:bg-accent" href="/admin/global/tenants/new" passHref>
                   <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                     <Plus className="size-4" />
                   </div>

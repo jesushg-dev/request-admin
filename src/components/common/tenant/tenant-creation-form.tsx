@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { defineStepper } from '@stepperize/react';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 
 import { ModulesForm } from './module-form';
@@ -17,7 +18,6 @@ import { Module, modulesSchema, Plan, planSelectionSchema, tenantDetailsSchema, 
 interface TenantCreationFormProps {
   modules: Module[];
   plans: Plan[];
-  onSubmit: (data: TenantFormData) => Promise<void>;
 }
 
 const { useStepper, steps } = defineStepper(
@@ -26,8 +26,7 @@ const { useStepper, steps } = defineStepper(
   { id: 'plan', label: 'Plan Selection', schema: planSelectionSchema }
 );
 
-export function TenantCreationForm({ modules, plans, onSubmit }: TenantCreationFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export function TenantCreationForm({ modules, plans }: TenantCreationFormProps) {
   const stepper = useStepper();
 
   const form = useForm<TenantFormData>({
@@ -38,16 +37,11 @@ export function TenantCreationForm({ modules, plans, onSubmit }: TenantCreationF
     },
   });
 
-  const handleSubmit = async (values: TenantFormData) => {
+  // Handle form submission
+  const onSubmit = (values: any) => {
+    console.log(`Step: ${stepper.current.id}, Values:`, values);
     if (stepper.isLast) {
-      setIsSubmitting(true);
-      try {
-        await onSubmit(values);
-      } catch (error) {
-        console.error('Error submitting form:', error);
-      } finally {
-        setIsSubmitting(false);
-      }
+      stepper.reset();
     } else {
       stepper.next();
     }
@@ -55,49 +49,38 @@ export function TenantCreationForm({ modules, plans, onSubmit }: TenantCreationF
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Create New Tenant</h2>
-          <span className="text-sm text-muted-foreground">
-            Step {stepper.current.index + 1} of {steps.length}
-          </span>
-        </div>
-
-        <nav aria-label="Tenant Creation Steps" className="my-4">
-          <ol className="flex items-center justify-between gap-2">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between space-y-6 overflow-hidden rounded-lg border p-6">
+        <nav aria-label="Steps">
+          <ol className="flex items-center gap-x-4">
             {stepper.all.map((step, index, array) => (
-              <li key={step.id} className="flex flex-shrink-0 items-center gap-4">
-                <Button
-                  type="button"
-                  role="tab"
-                  variant={index <= stepper.current.index ? 'default' : 'secondary'}
-                  aria-current={stepper.current.id === step.id ? 'step' : undefined}
-                  className="flex size-10 items-center justify-center rounded-full"
-                  onClick={() => stepper.goTo(step.id)}>
-                  {index + 1}
-                </Button>
-                <span className="text-sm font-medium">{step.label}</span>
+              <Fragment key={step.id}>
+                <li className="flex items-center gap-x-2">
+                  <Button type="button" variant={index <= stepper.current.index ? 'default' : 'outline'} className="size-8 rounded-full p-0" onClick={() => stepper.goTo(step.id)}>
+                    {index + 1}
+                  </Button>
+                  <span className="text-xs font-medium">{step.label}</span>
+                </li>
                 {index < array.length - 1 && <Separator className={`flex-1 ${index < stepper.current.index ? 'bg-primary' : 'bg-muted'}`} />}
-              </li>
+              </Fragment>
             ))}
           </ol>
         </nav>
 
-        <div className="space-y-6">
-          {stepper.switch({
-            tenant: () => <TenantForm />,
-            modules: () => <ModulesForm modules={modules} />,
-            plan: () => <PlanSelectionForm plans={plans} />,
-          })}
+        <div className="flex flex-1 overflow-y-hidden">
+          <ScrollArea className="w-full overflow-y-auto pl-2 pr-4">
+            {stepper.switch({
+              tenant: () => <TenantForm />,
+              modules: () => <ModulesForm modules={modules} />,
+              plan: () => <PlanSelectionForm plans={plans} />,
+            })}
+          </ScrollArea>
         </div>
 
         <div className="flex justify-end gap-4">
-          <Button type="button" variant="secondary" onClick={stepper.prev} disabled={stepper.isFirst}>
+          <Button type="button" variant="outline" onClick={stepper.prev} disabled={stepper.isFirst}>
             Back
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            {stepper.isLast ? 'Create Tenant' : 'Next'}
-          </Button>
+          <Button type="submit">{stepper.isLast ? 'Finish' : 'Next'}</Button>
         </div>
       </form>
     </Form>
