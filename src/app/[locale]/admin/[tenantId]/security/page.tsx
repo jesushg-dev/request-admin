@@ -1,5 +1,5 @@
 import { ComponentProps } from 'react';
-import { getCurrentTenantId } from '@/actions/tenant';
+import { getTenantIdFromUrl } from '@/actions/tenant';
 import { Link } from '@/i18n/routing';
 import { db } from '@/server/db-server';
 import { DeleteIcon, PlusIcon, TrashIcon } from 'lucide-react';
@@ -12,13 +12,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 export default async function SecurityDashboardPage() {
-  const tenantId = await getCurrentTenantId();
+  const tenantId = 'tenantId'; //getTenantIdFromUrl(pathname);
   const t = await getTranslations('admin.security');
 
   //get user count
   const userCount = await db.user.count();
   const roleCount = await db.role.count();
-  const featureCount = await db.feature.count();
 
   return (
     <div className="flex flex-1 flex-col gap-4">
@@ -28,25 +27,25 @@ export default async function SecurityDashboardPage() {
           title={t('users.title')}
           viewText={t('users.view')}
           addText={t('users.add')}
-          viewLink={{ pathname: '/[tenantId]/admin/security/user', params: { tenantId } }}
-          addLink={{ pathname: '/[tenantId]/admin/security/user/new', params: { tenantId } }}
+          viewLink={{ pathname: '/admin/[tenantId]/security/users', params: { tenantId } }}
+          addLink={{ pathname: '/admin/[tenantId]/security/users/new', params: { tenantId } }}
         />
         <StatCard
           count={roleCount}
           title={t('roles.title')}
           viewText={t('roles.view')}
           addText={t('roles.add')}
-          viewLink={{ pathname: '/[tenantId]/admin/security/role', params: { tenantId } }}
-          addLink={{ pathname: '/[tenantId]/admin/security/role/new', params: { tenantId } }}
+          viewLink={{ pathname: '/admin/[tenantId]/security/roles', params: { tenantId } }}
+          addLink={{ pathname: '/admin/[tenantId]/security/roles/new', params: { tenantId } }}
         />
-        <StatCard
+        {/* <StatCard
           title={t('features.title')}
           count={featureCount}
           viewText={t('features.view')}
           addText={t('features.add')}
-          viewLink={{ pathname: '/[tenantId]/admin/security/user', params: { tenantId } }}
-          addLink={{ pathname: '/[tenantId]/admin/security/user/new', params: { tenantId } }}
-        />
+          viewLink={{ pathname: '/admin/[tenantId]/security/user', params: { tenantId } }}
+          addLink={{ pathname: '/admin/[tenantId]/security/user/new', params: { tenantId } }}
+        />*/}
       </div>
       <div className="flex flex-col gap-2">
         <h2 className="text-2xl font-bold">{t('recentUsers')}</h2>

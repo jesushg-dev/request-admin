@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { ExtendedUser } from '@/server/auth/config';
-import { ClipboardIcon, FileTextIcon, FolderIcon, Frame, GridIcon, HomeIcon, LandPlotIcon, LayersIcon, ListIcon, Map, PieChart, SettingsIcon, ShieldIcon, UsersIcon } from 'lucide-react';
+import { ClipboardIcon, FileTextIcon, FolderIcon, Frame, GridIcon, HomeIcon, LandPlotIcon, LayersIcon, ListIcon, Map, PieChart, RadarIcon, SettingsIcon, ShieldIcon, UsersIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import useTenantId from '@/hooks/use-tenant-id';
@@ -104,6 +104,12 @@ export function AppSidebar({ tenants, user, ...props }: AppSidebarProps) {
         title: t('security'),
         icon: ShieldIcon,
         items: [
+          {
+            //dashboard
+            title: t('dashboard'),
+            url: { pathname: '/admin/[tenantId]/security', params: { tenantId } },
+            icon: RadarIcon,
+          },
           {
             title: t('roles'),
             url: { pathname: '/admin/[tenantId]/security/roles', params: { tenantId } },
