@@ -189,6 +189,7 @@
       "requirements": "Requirements",
       "formDesigner": "Form Designer",
       "management": "Management",
+      "identificationTypes": "Identification Types",
       "areas": "Areas",
       "clients": "Clients",
       "security": "Security",
@@ -277,6 +278,49 @@
         }
       }
     },
+    "identificationType": {
+      "main": {
+        "entityLabel": "Identification Types",
+        "columns": {
+          "name": "Name",
+          "description": "Description",
+          "clientCount": "Number of Clients",
+          "createdAt": "Created At"
+        },
+        "filters": {
+          "name": "Name",
+          "namePlaceholder": "Search by name",
+          "description": "Description",
+          "descriptionPlaceholder": "Search by description",
+          "createdAt": "Created At"
+        }
+      }
+    },
+    "request": {
+      "main": {
+        "entityLabel": "Requests",
+        "columns": {
+          "issueSubject": "Issue Subject",
+          "priority": "Priority",
+          "status": "Status",
+          "serviceCategory": "Service Category",
+          "assignmentCategory": "Assignment Category",
+          "client": "Client",
+          "documents": "Documents",
+          "requestAssignments": "Request Assignments",
+          "complianceTrackings": "Compliance Trackings"
+        },
+        "filters": {
+          "issueSubject": "Issue Subject",
+          "issueSubjectPlaceholder": "Search by issue subject",
+          "priority": "Priority",
+          "priorityPlaceholder": "Search by priority",
+          "status": "Status",
+          "serviceCategory": "Service Category",
+          "assignmentCategory": "Assignment Category"
+        }
+      }
+    },
     "requestType": {
       "main": {
         "entityLabel": "request type",
@@ -350,6 +394,90 @@
         "email": "Email",
         "role": "Role",
         "actions": "Actions"
+      }
+    },
+    "hierarchy": {
+      "main": {
+        "entityLabel": "Hierarchy",
+        "columns": {
+          "name": "Name",
+          "description": "Description",
+          "type": "Type",
+          "levels": "Levels",
+          "categories": "Categories",
+          "levelsCount": "Levels Count",
+          "selectRow": "Select Row"
+        },
+        "filters": {
+          "name": "Name",
+          "namePlaceholder": "Search by name",
+          "type": "Type",
+          "description": "Description"
+        }
+      }
+    },
+    "user": {
+      "main": {
+        "entityLabel": "Users",
+        "columns": {
+          "username": "Username",
+          "email": "Email",
+          "emailVerified": "Email Verified",
+          "isTwoFactorEnabled": "Two-Factor Enabled",
+          "roles": "Roles",
+          "userAreas": "User Areas",
+          "requestAssignments": "Request Assignments"
+        },
+        "filters": {
+          "username": "Username",
+          "usernamePlaceholder": "Search by username",
+          "email": "Email",
+          "emailPlaceholder": "Search by email",
+          "emailVerified": "Email Verified"
+        },
+        "common": {
+          "yes": "Yes",
+          "no": "No",
+          "enabled": "Enabled",
+          "disabled": "Disabled"
+        }
+      }
+    },
+    "document": {
+      "main": {
+        "entityLabel": "Documents",
+        "columns": {
+          "name": "Name",
+          "status": "Status",
+          "priority": "Priority",
+          "createdAt": "Created At"
+        },
+        "filters": {
+          "name": "Name",
+          "namePlaceholder": "Search by name",
+          "status": "Status",
+          "statusPlaceholder": "Search by status",
+          "createdAt": "Created At"
+        }
+      }
+    },
+    "role": {
+      "main": {
+        "entityLabel": "Roles",
+        "columns": {
+          "name": "Name",
+          "description": "Description",
+          "userCount": "Number of Users",
+          "featureCount": "Number of Features",
+          "createdAt": "Created At"
+        },
+        "filters": {
+          "name": "Name",
+          "namePlaceholder": "Search by name",
+          "description": "Description",
+          "descriptionPlaceholder": "Search by description",
+          "createdAt": "Created At"
+        }
       }
     }
   },

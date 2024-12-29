@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { BsFileEarmarkPlus } from 'react-icons/bs';
 import { ImSpinner2 } from 'react-icons/im';
 
+import useTenantId from '@/hooks/use-tenant-id';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -19,8 +20,9 @@ import { toast } from '@/components/ui/use-toast';
 interface IFormProps {}
 
 const handleFormSubmit = async (values: formSchemaType, toast: any, router: any) => {
+  const tenantId = useTenantId();
   try {
-    const formId = await CreateForm(values);
+    const formId = await CreateForm(values, tenantId);
     toast({
       title: 'Success',
       description: 'Form created successfully',

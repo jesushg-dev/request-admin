@@ -189,6 +189,7 @@
       "requirements": "Requisitos",
       "formDesigner": "Diseñador de Formularios",
       "management": "Gestión y Organización",
+      "identificationTypes": "Tipos de Identificación",
       "areas": "Áreas",
       "clients": "Clientes",
       "security": "Seguridad y Acceso",
@@ -277,6 +278,49 @@
         }
       }
     },
+    "identificationType": {
+      "main": {
+        "entityLabel": "Tipos de Identificación",
+        "columns": {
+          "name": "Nombre",
+          "description": "Descripción",
+          "clientCount": "Número de Clientes",
+          "createdAt": "Creado En"
+        },
+        "filters": {
+          "name": "Nombre",
+          "namePlaceholder": "Buscar por nombre",
+          "description": "Descripción",
+          "descriptionPlaceholder": "Buscar por descripción",
+          "createdAt": "Creado En"
+        }
+      }
+    },
+    "request": {
+      "main": {
+        "entityLabel": "Solicitudes",
+        "columns": {
+          "issueSubject": "Asunto",
+          "priority": "Prioridad",
+          "status": "Estado",
+          "serviceCategory": "Categoría de Servicio",
+          "assignmentCategory": "Categoría de Asignación",
+          "client": "Cliente",
+          "documents": "Documentos",
+          "requestAssignments": "Asignaciones de Solicitudes",
+          "complianceTrackings": "Seguimientos de Cumplimiento"
+        },
+        "filters": {
+          "issueSubject": "Asunto",
+          "issueSubjectPlaceholder": "Buscar por asunto",
+          "priority": "Prioridad",
+          "priorityPlaceholder": "Buscar por prioridad",
+          "status": "Estado",
+          "serviceCategory": "Categoría de Servicio",
+          "assignmentCategory": "Categoría de Asignación"
+        }
+      }
+    },
     "requestType": {
       "main": {
         "entityLabel": "tipo de Solicitud",
@@ -350,6 +394,90 @@
         "email": "Correo Electrónico",
         "role": "Rol",
         "actions": "Acciones"
+      }
+    },
+    "hierarchy": {
+      "main": {
+        "entityLabel": "Jerarquía",
+        "columns": {
+          "name": "Nombre",
+          "description": "Descripción",
+          "type": "Tipo",
+          "levels": "Niveles",
+          "categories": "Categorías",
+          "levelsCount": "Cantidad de niveles",
+          "selectRow": "Seleccionar Fila"
+        },
+        "filters": {
+          "name": "Nombre",
+          "namePlaceholder": "Buscar por nombre",
+          "type": "Tipo",
+          "description": "Descripción"
+        }
+      }
+    },
+    "user": {
+      "main": {
+        "entityLabel": "Usuarios",
+        "columns": {
+          "username": "Nombre de usuario",
+          "email": "Correo electrónico",
+          "emailVerified": "Correo verificado",
+          "isTwoFactorEnabled": "Autenticación de dos factores",
+          "roles": "Roles",
+          "userAreas": "Áreas de usuario",
+          "requestAssignments": "Asignaciones de solicitudes"
+        },
+        "filters": {
+          "username": "Nombre de usuario",
+          "usernamePlaceholder": "Buscar por nombre de usuario",
+          "email": "Correo electrónico",
+          "emailPlaceholder": "Buscar por correo electrónico",
+          "emailVerified": "Correo verificado"
+        },
+        "common": {
+          "yes": "Sí",
+          "no": "No",
+          "enabled": "Habilitado",
+          "disabled": "Deshabilitado"
+        }
+      }
+    },
+    "document": {
+      "main": {
+        "entityLabel": "Documentos",
+        "columns": {
+          "name": "Nombre",
+          "status": "Estado",
+          "priority": "Prioridad",
+          "createdAt": "Creado En"
+        },
+        "filters": {
+          "name": "Nombre",
+          "namePlaceholder": "Buscar por nombre",
+          "status": "Estado",
+          "statusPlaceholder": "Buscar por estado",
+          "createdAt": "Creado En"
+        }
+      }
+    },
+    "role": {
+      "main": {
+        "entityLabel": "Roles",
+        "columns": {
+          "name": "Nombre",
+          "description": "Descripción",
+          "userCount": "Número de Usuarios",
+          "featureCount": "Número de Funcionalidades",
+          "createdAt": "Creado En"
+        },
+        "filters": {
+          "name": "Nombre",
+          "namePlaceholder": "Buscar por nombre",
+          "description": "Descripción",
+          "descriptionPlaceholder": "Buscar por descripción",
+          "createdAt": "Creado En"
+        }
       }
     }
   },

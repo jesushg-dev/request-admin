@@ -1,12 +1,12 @@
 'use client';
 
 import React, { memo, useMemo, useState } from 'react';
-import { useCountDocument, useFindManyDocument } from '@/services/api/hooks';
+import { useCountRole, useFindManyRole } from '@/services/api/hooks';
 import { DataTableAdvancedFilterField, DataTableFilterField, DataTableRowAction } from '@/types';
 import { Prisma } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
-import { parseAsInteger, parseAsString, parseAsStringEnum, useQueryStates } from 'nuqs';
+import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 
 import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { formatDate } from '@/lib/utils';
@@ -20,49 +20,68 @@ import { DataTableColumnHeader } from '@/components/data-table/data-table-column
 import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
 
-const DocumentDefaultArgs = Prisma.validator<Prisma.DocumentDefaultArgs>()({
+const RoleDefaultArgs = Prisma.validator<Prisma.RoleDefaultArgs>()({
   select: {
     id: true,
     name: true,
+    description: true,
     createdAt: true,
-    status: true,
-    request: {
+    userRole: {
       select: {
-        id: true,
-        priority: true,
+        user: {
+          select: {
+            email: true,
+          },
+        },
+      },
+    },
+    roleFeature: {
+      select: {
+        feature: {
+          select: {
+            name: true,
+            module: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    },
+    _count: {
+      select: {
+        userRole: true,
+        roleFeature: true,
       },
     },
   },
 });
 
-type DocumentWithRelations = Prisma.DocumentGetPayload<typeof DocumentDefaultArgs>;
+type RoleWithRelations = Prisma.RoleGetPayload<typeof RoleDefaultArgs>;
 
 const searchParamsParsers = {
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(10),
-  sort: getSortingStateParser<DocumentWithRelations>().withDefault([{ id: 'createdAt', desc: true }]),
-  filters: getFiltersStateParser<DocumentWithRelations>().withDefault([]),
+  sort: getSortingStateParser<RoleWithRelations>().withDefault([{ id: 'createdAt', desc: true }]),
+  filters: getFiltersStateParser<RoleWithRelations>().withDefault([]),
   joinOperator: parseAsStringEnum(['and', 'or']).withDefault('and'),
-  from: parseAsString.withDefault(''),
-  to: parseAsString.withDefault(''),
 };
 
-interface IDocumentMainPageProps {}
+interface IRoleMainPageProps {}
 
-const DocumentMainPage: React.FC<IDocumentMainPageProps> = () => {
-  const t = useTranslations('admin.document.main');
+const RoleMainPage: React.FC<IRoleMainPageProps> = () => {
+  const t = useTranslations('admin.role.main');
   const [search] = useQueryStates(searchParamsParsers);
 
-  const { data, isLoading, isError, error, refetch, pageCount } = useFetchTableData<DocumentWithRelations, Prisma.DocumentFindManyArgs, Prisma.DocumentCountArgs>({
+  const { data, isLoading, isError, error, refetch, pageCount } = useFetchTableData<RoleWithRelations, Prisma.RoleFindManyArgs, Prisma.RoleCountArgs>({
     search,
-    useCountHook: useCountDocument,
-    useFindManyHook: useFindManyDocument,
-    defaultArgs: {
-      ...DocumentDefaultArgs,
-    },
+    useCountHook: useCountRole,
+    useFindManyHook: useFindManyRole,
+    defaultArgs: RoleDefaultArgs,
   });
 
-  const [rowAction, setRowAction] = useState<DataTableRowAction<DocumentWithRelations> | null>(null);
+  const [rowAction, setRowAction] = useState<DataTableRowAction<RoleWithRelations> | null>(null);
   const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ setRowAction, t }), [setRowAction, t]);
 
   const { table } = useDataTable({
@@ -89,7 +108,7 @@ const DocumentMainPage: React.FC<IDocumentMainPageProps> = () => {
     <DataTableShell table={table} isLoading={isLoading} floatingBar={<DataTableFloatingBar table={table} />}>
       <DataTable table={table}>
         <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
-          <DataTableToolbarActions table={table} exportFilename="documents" entityLabel={t('entityLabel')} />
+          <DataTableToolbarActions table={table} exportFilename="roles" entityLabel={t('entityLabel')} />
         </DataTableAdvancedToolbar>
       </DataTable>
     </DataTableShell>
@@ -97,25 +116,30 @@ const DocumentMainPage: React.FC<IDocumentMainPageProps> = () => {
 };
 
 interface GetTableConfigurationProps {
-  setRowAction: React.Dispatch<React.SetStateAction<DataTableRowAction<DocumentWithRelations> | null>>;
+  setRowAction: React.Dispatch<React.SetStateAction<DataTableRowAction<RoleWithRelations> | null>>;
   t: ReturnType<typeof useTranslations>;
 }
 
 export function getTableConfiguration({ setRowAction, t }: GetTableConfigurationProps) {
-  const columns: ColumnDef<DocumentWithRelations>[] = [
+  const columns: ColumnDef<RoleWithRelations>[] = [
     {
       accessorKey: 'name',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.name')} />,
       cell: ({ cell }) => cell.getValue(),
     },
     {
-      accessorKey: 'status',
-      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.status')} />,
+      accessorKey: 'description',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.description')} />,
+      cell: ({ cell }) => cell.getValue() ?? 'N/A',
+    },
+    {
+      accessorKey: '_count.userRole',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.userCount')} />,
       cell: ({ cell }) => cell.getValue(),
     },
     {
-      accessorKey: 'request.priority',
-      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.priority')} />,
+      accessorKey: '_count.roleFeature',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.featureCount')} />,
       cell: ({ cell }) => cell.getValue(),
     },
     {
@@ -130,18 +154,18 @@ export function getTableConfiguration({ setRowAction, t }: GetTableConfiguration
     },
   ];
 
-  const filterFields: DataTableFilterField<DocumentWithRelations>[] = [
+  const filterFields: DataTableFilterField<RoleWithRelations>[] = [
     { id: 'name', label: t('filters.name'), placeholder: t('filters.namePlaceholder') },
-    { id: 'status', label: t('filters.status'), placeholder: t('filters.statusPlaceholder') },
+    { id: 'description', label: t('filters.description'), placeholder: t('filters.descriptionPlaceholder') },
   ];
 
-  const advancedFilterFields: DataTableAdvancedFilterField<DocumentWithRelations>[] = [
+  const advancedFilterFields: DataTableAdvancedFilterField<RoleWithRelations>[] = [
     { id: 'name', label: t('filters.name'), type: 'text' },
-    { id: 'status', label: t('filters.status'), type: 'text' },
+    { id: 'description', label: t('filters.description'), type: 'text' },
     { id: 'createdAt', label: t('filters.createdAt'), type: 'date' },
   ];
 
   return { columns, filterFields, advancedFilterFields };
 }
 
-export default memo(DocumentMainPage);
+export default memo(RoleMainPage);

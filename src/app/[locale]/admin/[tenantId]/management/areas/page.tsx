@@ -89,15 +89,13 @@ const AreaMainPage: React.FC<IAreaMainPageProps> = () => {
   }
 
   return (
-    <Shell className="gap-2">
-      <DataTableShell table={table} isLoading={isLoading} floatingBar={<DataTableFloatingBar table={table} />}>
-        <DataTable table={table} subComponent={{ columns: categoryColumns, render: CategoryTable }}>
-          <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
-            <DataTableToolbarActions table={table} exportFilename="areas" entityLabel={t('entityLabel')} />
-          </DataTableAdvancedToolbar>
-        </DataTable>
-      </DataTableShell>
-    </Shell>
+    <DataTableShell table={table} isLoading={isLoading} floatingBar={<DataTableFloatingBar table={table} />}>
+      <DataTable table={table} subComponent={{ columns: categoryColumns, render: CategoryTable }}>
+        <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
+          <DataTableToolbarActions table={table} exportFilename="areas" entityLabel={t('entityLabel')} />
+        </DataTableAdvancedToolbar>
+      </DataTable>
+    </DataTableShell>
   );
 };
 

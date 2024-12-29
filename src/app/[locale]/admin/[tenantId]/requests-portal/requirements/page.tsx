@@ -21,7 +21,6 @@ import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-adv
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
-import { Shell } from '@/components/shell';
 
 const RequirementDefaultArgs = Prisma.validator<Prisma.RequirementDefaultArgs>()({
   select: {
@@ -82,15 +81,13 @@ const RequirementMainPage: React.FC<IRequirementMainPageProps> = () => {
   if (isError && error) return <ErrorRetryFallback error={error} onRetry={refetch} />;
 
   return (
-    <Shell className="gap-2">
-      <DataTableShell table={table} isLoading={isLoading} floatingBar={<DataTableFloatingBar table={table} />}>
-        <DataTable table={table}>
-          <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
-            <DataTableToolbarActions table={table} exportFilename="categories" entityLabel={t('entityLabel')} />
-          </DataTableAdvancedToolbar>
-        </DataTable>
-      </DataTableShell>
-    </Shell>
+    <DataTableShell table={table} isLoading={isLoading} floatingBar={<DataTableFloatingBar table={table} />}>
+      <DataTable table={table}>
+        <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
+          <DataTableToolbarActions table={table} exportFilename="categories" entityLabel={t('entityLabel')} />
+        </DataTableAdvancedToolbar>
+      </DataTable>
+    </DataTableShell>
   );
 };
 

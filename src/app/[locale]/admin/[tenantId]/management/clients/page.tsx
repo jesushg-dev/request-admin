@@ -5,15 +5,13 @@ import { useCountClient, useFindManyClient } from '@/services/api/hooks';
 import { DataTableAdvancedFilterField, DataTableFilterField, DataTableRowAction } from '@/types';
 import { Prisma } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
-import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { parseAsInteger, parseAsString, parseAsStringEnum, useQueryStates } from 'nuqs';
+import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 
 import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { formatDate } from '@/lib/utils';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
-import { Checkbox } from '@/components/ui/checkbox';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
@@ -81,15 +79,13 @@ const ClientMainPage: React.FC<IClientMainPageProps> = () => {
   if (isError && error) return <ErrorRetryFallback error={error} onRetry={refetch} />;
 
   return (
-    <Shell className="gap-2">
-      <DataTableShell table={table} isLoading={isLoading} floatingBar={<DataTableFloatingBar table={table} />}>
-        <DataTable table={table}>
-          <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
-            <DataTableToolbarActions table={table} exportFilename="clients" entityLabel={t('entityLabel')} />
-          </DataTableAdvancedToolbar>
-        </DataTable>
-      </DataTableShell>
-    </Shell>
+    <DataTableShell table={table} isLoading={isLoading} floatingBar={<DataTableFloatingBar table={table} />}>
+      <DataTable table={table}>
+        <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
+          <DataTableToolbarActions table={table} exportFilename="clients" entityLabel={t('entityLabel')} />
+        </DataTableAdvancedToolbar>
+      </DataTable>
+    </DataTableShell>
   );
 };
 

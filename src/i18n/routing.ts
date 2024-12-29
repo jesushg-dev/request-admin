@@ -95,6 +95,11 @@ const managementPathnames = {
     en: '/admin/[tenantId]/management/hierarchies/[slug]',
     es: '/admin/[tenantId]/gestion/jerarquias/[slug]',
   },
+  // identification types
+  '/admin/[tenantId]/management/identification-types': {
+    en: '/admin/[tenantId]/management/identification-types',
+    es: '/admin/[tenantId]/gestion/tipos-de-identificacion',
+  },
 } satisfies Pathnames<typeof locales>;
 
 const requestsPathnames = {

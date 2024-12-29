@@ -1,96 +1,197 @@
 'use client';
 
-import React, { memo } from 'react';
-import { useRouter } from 'next/navigation';
-import { Link } from '@/i18n/routing';
-import { api, RouterOutputs } from '@/trpc/react';
-import { CommandClickEventArgs, CommandModel } from '@syncfusion/ej2-grids/src/grid/base/interface';
-import { FabComponent } from '@syncfusion/ej2-react-buttons';
-import { ColumnDirective, ColumnsDirective, CommandColumn, Filter, FilterSettingsModel, GridComponent, Group, Inject, Page, PageSettingsModel, Sort } from '@syncfusion/ej2-react-grids';
+import React, { memo, useMemo, useState } from 'react';
+import { useCountRequest, useFindManyRequest } from '@/services/api/hooks';
+import { DataTableAdvancedFilterField, DataTableFilterField, DataTableRowAction } from '@/types';
+import { Prisma } from '@prisma/client';
+import { ColumnDef } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
+import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 
-import { triggerConfirm } from '@/lib/message';
-import useSubmit from '@/hooks/use-submit';
+import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
+import { useDataTable } from '@/hooks/use-data-table';
+import { useFetchTableData } from '@/hooks/use-fetch-table-data';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
+import { DataTable, DataTableShell } from '@/components/data-table/data-table';
+import { ActionCell } from '@/components/data-table/data-table-action-menu';
+import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-advanced-toolbar';
+import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
+import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
+import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
 
-type RequestOutputType = RouterOutputs['request']['findMany'][0];
+const RequestDefaultArgs = Prisma.validator<Prisma.RequestDefaultArgs>()({
+  select: {
+    id: true,
+    issueSubject: true,
+    description: true,
+    priority: true,
+    status: {
+      select: {
+        name: true,
+      },
+    },
+    serviceCategory: {
+      select: {
+        name: true,
+      },
+    },
+    assignmentCategory: {
+      select: {
+        name: true,
+      },
+    },
+    client: {
+      select: {
+        person: {
+          select: {
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
+    },
+    _count: {
+      select: {
+        documents: true,
+        requestAssignments: true,
+        complianceTrackings: true,
+      },
+    },
+  },
+});
 
-const pageSettings: PageSettingsModel = { pageSize: 11 };
-const filterSettings: FilterSettingsModel = { type: 'Excel' };
-const commands: CommandModel[] = [
-  { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-  { type: 'Delete', buttonOption: { cssClass: 'e-flat', iconCss: 'e-delete e-icons' } },
-];
-const editOptions = { allowEditing: true, allowAdding: true, allowDeleting: true, showConfirmDialog: false, mode: 'Dialog' };
+type RequestWithRelations = Prisma.RequestGetPayload<typeof RequestDefaultArgs>;
 
-const RequestMainPage: React.FC = () => {
+const searchParamsParsers = {
+  page: parseAsInteger.withDefault(1),
+  perPage: parseAsInteger.withDefault(10),
+  sort: getSortingStateParser<RequestWithRelations>().withDefault([{ id: 'priority', desc: true }]),
+  filters: getFiltersStateParser<RequestWithRelations>().withDefault([]),
+  joinOperator: parseAsStringEnum(['and', 'or']).withDefault('and'),
+};
+
+interface IRequestMainPageProps {}
+
+const RequestMainPage: React.FC<IRequestMainPageProps> = () => {
   const t = useTranslations('admin.request.main');
-  const router = useRouter();
+  const [search] = useQueryStates(searchParamsParsers);
 
-  const { mutateAsync: deleteRequestAsync } = api.request.delete.useMutation();
-  const { data, isLoading, error, refetch } = api.request.findMany.useQuery();
-
-  const submitDeleteForm = useSubmit(deleteRequestAsync, {
-    successMessage: t('deleteSuccess'),
+  const { data, isLoading, isError, error, refetch, pageCount } = useFetchTableData<RequestWithRelations, Prisma.RequestFindManyArgs, Prisma.RequestCountArgs>({
+    search,
+    useCountHook: useCountRequest,
+    useFindManyHook: useFindManyRequest,
+    defaultArgs: RequestDefaultArgs,
   });
 
-  const commandClick = async (args: CommandClickEventArgs) => {
-    if (!args.rowData || !args.commandColumn) return;
-    const rowData = args.rowData as RequestOutputType;
+  const [rowAction, setRowAction] = useState<DataTableRowAction<RequestWithRelations> | null>(null);
+  const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ setRowAction, t }), [setRowAction, t]);
 
-    if (args.commandColumn.type === 'Edit') {
-      router.push(`/admin/request/${rowData.id}`);
-    } else if (args.commandColumn.type === 'Delete') {
-      const confirm = await triggerConfirm(t('confirmDelete'));
-      if (!confirm) return;
-      await submitDeleteForm({ where: { id: rowData.id } });
-    }
-  };
+  const { table } = useDataTable({
+    data: data ?? [],
+    columns,
+    pageCount,
+    filterFields,
+    enableAdvancedFilter: true,
+    initialState: {
+      sorting: [{ id: 'priority', desc: true }],
+      columnPinning: { right: ['actions'] },
+    },
+    shallow: false,
+    clearOnDefault: true,
+    getRowId: (originalRow) => originalRow.id,
+  });
 
-  if (isLoading) {
-    return <p className="animate-pulse text-center text-lg font-medium text-gray-600 dark:text-gray-300">{t('loading')}</p>;
-  }
-
-  if (error) {
-    return <ErrorRetryFallback message={t('errorLoading')} onRetry={refetch} buttonText={t('retry')} />;
+  if (isError && error) {
+    return <ErrorRetryFallback error={error} onRetry={refetch} />;
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-10">
-      <div className="border-stroke dark:border-strokedark border-b px-6 py-4">
-        <h3 className="font-medium text-black dark:text-white">{t('title')}</h3>
-      </div>
-      <GridComponent
-        id="request-grid"
-        dataSource={data}
-        allowGrouping
-        allowSorting
-        allowFiltering
-        allowPaging
-        pageSettings={pageSettings}
-        filterSettings={filterSettings}
-        height="100%"
-        editSettings={editOptions}
-        commandClick={commandClick}>
-        <ColumnsDirective>
-          <ColumnDirective field="id" width="150" textAlign="Left" headerText={t('columns.id.header')} />
-          <ColumnDirective field="serviceTypeId" width="150" textAlign="Left" headerText={t('columns.serviceTypeId.header')} />
-          <ColumnDirective field="clientId" width="150" textAlign="Left" headerText={t('columns.clientId.header')} />
-          <ColumnDirective field="issueSubject" width="150" textAlign="Left" headerText={t('columns.issueSubject.header')} />
-          <ColumnDirective field="description" width="150" textAlign="Left" headerText={t('columns.description.header')} />
-          <ColumnDirective field="priority" width="150" textAlign="Left" headerText={t('columns.priority.header')} />
-          <ColumnDirective field="closedAt" width="150" textAlign="Left" headerText={t('columns.closedAt.header')} />
-          <ColumnDirective field="closedComment" width="150" textAlign="Left" headerText={t('columns.closedComment.header')} />
-          <ColumnDirective field="formSubmissionId" width="150" textAlign="Left" headerText={t('columns.formSubmissionId.header')} />
-          <ColumnDirective headerText={t('actions')} width="120" commands={commands} />
-        </ColumnsDirective>
-        <Inject services={[Page, Sort, Filter, Group, CommandColumn]} />
-      </GridComponent>
-      <Link href="/admin/request/new">
-        <FabComponent id="fab" title={t('addNew')} cssClass="-translate-y-12 -translate-x-4" iconCss="fab-icons fab-icon-add" target="#request-grid" />
-      </Link>
-    </div>
+    <DataTableShell table={table} isLoading={isLoading} floatingBar={<DataTableFloatingBar table={table} />}>
+      <DataTable table={table}>
+        <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
+          <DataTableToolbarActions table={table} exportFilename="requests" entityLabel={t('entityLabel')} />
+        </DataTableAdvancedToolbar>
+      </DataTable>
+    </DataTableShell>
   );
 };
+
+interface GetTableConfigurationProps {
+  setRowAction: React.Dispatch<React.SetStateAction<DataTableRowAction<RequestWithRelations> | null>>;
+  t: ReturnType<typeof useTranslations>;
+}
+
+export function getTableConfiguration({ setRowAction, t }: GetTableConfigurationProps) {
+  const columns: ColumnDef<RequestWithRelations>[] = [
+    {
+      accessorKey: 'issueSubject',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.issueSubject')} />,
+      cell: ({ cell }) => cell.getValue(),
+    },
+    {
+      accessorKey: 'priority',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.priority')} />,
+      cell: ({ cell }) => cell.getValue(),
+    },
+    {
+      accessorKey: 'status.name',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.status')} />,
+      cell: ({ cell }) => cell.getValue(),
+    },
+    {
+      accessorKey: 'serviceCategory.name',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.serviceCategory')} />,
+      cell: ({ cell }) => cell.getValue(),
+    },
+    {
+      accessorKey: 'assignmentCategory.name',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.assignmentCategory')} />,
+      cell: ({ cell }) => cell.getValue(),
+    },
+    {
+      accessorKey: 'client.person',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.client')} />,
+      cell: ({ cell }) => {
+        const person = cell.getValue() as { firstName: string; lastName: string };
+        return `${person.firstName} ${person.lastName}`;
+      },
+    },
+    {
+      accessorKey: '_count.documents',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.documents')} />,
+      cell: ({ cell }) => cell.getValue(),
+    },
+    {
+      accessorKey: '_count.requestAssignments',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.requestAssignments')} />,
+      cell: ({ cell }) => cell.getValue(),
+    },
+    {
+      accessorKey: '_count.complianceTrackings',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.complianceTrackings')} />,
+      cell: ({ cell }) => cell.getValue(),
+    },
+    {
+      id: 'actions',
+      cell: (data) => <ActionCell cell={data} onDelete={() => console.log('Delete', data.row.original)} onUpdate={() => console.log('Update', data.row.original)} />,
+      size: 20,
+    },
+  ];
+
+  const filterFields: DataTableFilterField<RequestWithRelations>[] = [
+    { id: 'issueSubject', label: t('filters.issueSubject'), placeholder: t('filters.issueSubjectPlaceholder') },
+    { id: 'priority', label: t('filters.priority'), placeholder: t('filters.priorityPlaceholder') },
+  ];
+
+  const advancedFilterFields: DataTableAdvancedFilterField<RequestWithRelations>[] = [
+    { id: 'issueSubject', label: t('filters.issueSubject'), type: 'text' },
+    { id: 'priority', label: t('filters.priority'), type: 'text' },
+    { id: 'status', label: t('filters.status'), type: 'text' },
+    { id: 'serviceCategory', label: t('filters.serviceCategory'), type: 'text' },
+    { id: 'assignmentCategory', label: t('filters.assignmentCategory'), type: 'text' },
+  ];
+
+  return { columns, filterFields, advancedFilterFields };
+}
 
 export default memo(RequestMainPage);

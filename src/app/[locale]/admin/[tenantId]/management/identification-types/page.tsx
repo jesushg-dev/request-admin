@@ -1,12 +1,12 @@
 'use client';
 
 import React, { memo, useMemo, useState } from 'react';
-import { useCountDocument, useFindManyDocument } from '@/services/api/hooks';
+import { useCountIdentificationType, useFindManyIdentificationType } from '@/services/api/hooks';
 import { DataTableAdvancedFilterField, DataTableFilterField, DataTableRowAction } from '@/types';
 import { Prisma } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
-import { parseAsInteger, parseAsString, parseAsStringEnum, useQueryStates } from 'nuqs';
+import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 
 import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { formatDate } from '@/lib/utils';
@@ -20,49 +20,44 @@ import { DataTableColumnHeader } from '@/components/data-table/data-table-column
 import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
 
-const DocumentDefaultArgs = Prisma.validator<Prisma.DocumentDefaultArgs>()({
+const IdentificationTypeDefaultArgs = Prisma.validator<Prisma.IdentificationTypeDefaultArgs>()({
   select: {
     id: true,
     name: true,
+    description: true,
     createdAt: true,
-    status: true,
-    request: {
+    _count: {
       select: {
-        id: true,
-        priority: true,
+        client: true,
       },
     },
   },
 });
 
-type DocumentWithRelations = Prisma.DocumentGetPayload<typeof DocumentDefaultArgs>;
+type IdentificationTypeWithRelations = Prisma.IdentificationTypeGetPayload<typeof IdentificationTypeDefaultArgs>;
 
 const searchParamsParsers = {
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(10),
-  sort: getSortingStateParser<DocumentWithRelations>().withDefault([{ id: 'createdAt', desc: true }]),
-  filters: getFiltersStateParser<DocumentWithRelations>().withDefault([]),
+  sort: getSortingStateParser<IdentificationTypeWithRelations>().withDefault([{ id: 'createdAt', desc: true }]),
+  filters: getFiltersStateParser<IdentificationTypeWithRelations>().withDefault([]),
   joinOperator: parseAsStringEnum(['and', 'or']).withDefault('and'),
-  from: parseAsString.withDefault(''),
-  to: parseAsString.withDefault(''),
 };
 
-interface IDocumentMainPageProps {}
+interface IIdentificationTypeMainPageProps {}
 
-const DocumentMainPage: React.FC<IDocumentMainPageProps> = () => {
-  const t = useTranslations('admin.document.main');
+const IdentificationTypeMainPage: React.FC<IIdentificationTypeMainPageProps> = () => {
+  const t = useTranslations('admin.identificationType.main');
   const [search] = useQueryStates(searchParamsParsers);
 
-  const { data, isLoading, isError, error, refetch, pageCount } = useFetchTableData<DocumentWithRelations, Prisma.DocumentFindManyArgs, Prisma.DocumentCountArgs>({
+  const { data, isLoading, isError, error, refetch, pageCount } = useFetchTableData<IdentificationTypeWithRelations, Prisma.IdentificationTypeFindManyArgs, Prisma.IdentificationTypeCountArgs>({
     search,
-    useCountHook: useCountDocument,
-    useFindManyHook: useFindManyDocument,
-    defaultArgs: {
-      ...DocumentDefaultArgs,
-    },
+    useCountHook: useCountIdentificationType,
+    useFindManyHook: useFindManyIdentificationType,
+    defaultArgs: IdentificationTypeDefaultArgs,
   });
 
-  const [rowAction, setRowAction] = useState<DataTableRowAction<DocumentWithRelations> | null>(null);
+  const [rowAction, setRowAction] = useState<DataTableRowAction<IdentificationTypeWithRelations> | null>(null);
   const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ setRowAction, t }), [setRowAction, t]);
 
   const { table } = useDataTable({
@@ -89,7 +84,7 @@ const DocumentMainPage: React.FC<IDocumentMainPageProps> = () => {
     <DataTableShell table={table} isLoading={isLoading} floatingBar={<DataTableFloatingBar table={table} />}>
       <DataTable table={table}>
         <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
-          <DataTableToolbarActions table={table} exportFilename="documents" entityLabel={t('entityLabel')} />
+          <DataTableToolbarActions table={table} exportFilename="identification-types" entityLabel={t('entityLabel')} />
         </DataTableAdvancedToolbar>
       </DataTable>
     </DataTableShell>
@@ -97,25 +92,25 @@ const DocumentMainPage: React.FC<IDocumentMainPageProps> = () => {
 };
 
 interface GetTableConfigurationProps {
-  setRowAction: React.Dispatch<React.SetStateAction<DataTableRowAction<DocumentWithRelations> | null>>;
+  setRowAction: React.Dispatch<React.SetStateAction<DataTableRowAction<IdentificationTypeWithRelations> | null>>;
   t: ReturnType<typeof useTranslations>;
 }
 
 export function getTableConfiguration({ setRowAction, t }: GetTableConfigurationProps) {
-  const columns: ColumnDef<DocumentWithRelations>[] = [
+  const columns: ColumnDef<IdentificationTypeWithRelations>[] = [
     {
       accessorKey: 'name',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.name')} />,
       cell: ({ cell }) => cell.getValue(),
     },
     {
-      accessorKey: 'status',
-      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.status')} />,
-      cell: ({ cell }) => cell.getValue(),
+      accessorKey: 'description',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.description')} />,
+      cell: ({ cell }) => cell.getValue() ?? 'N/A',
     },
     {
-      accessorKey: 'request.priority',
-      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.priority')} />,
+      accessorKey: '_count.client',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.clientCount')} />,
       cell: ({ cell }) => cell.getValue(),
     },
     {
@@ -130,18 +125,18 @@ export function getTableConfiguration({ setRowAction, t }: GetTableConfiguration
     },
   ];
 
-  const filterFields: DataTableFilterField<DocumentWithRelations>[] = [
+  const filterFields: DataTableFilterField<IdentificationTypeWithRelations>[] = [
     { id: 'name', label: t('filters.name'), placeholder: t('filters.namePlaceholder') },
-    { id: 'status', label: t('filters.status'), placeholder: t('filters.statusPlaceholder') },
+    { id: 'description', label: t('filters.description'), placeholder: t('filters.descriptionPlaceholder') },
   ];
 
-  const advancedFilterFields: DataTableAdvancedFilterField<DocumentWithRelations>[] = [
+  const advancedFilterFields: DataTableAdvancedFilterField<IdentificationTypeWithRelations>[] = [
     { id: 'name', label: t('filters.name'), type: 'text' },
-    { id: 'status', label: t('filters.status'), type: 'text' },
+    { id: 'description', label: t('filters.description'), type: 'text' },
     { id: 'createdAt', label: t('filters.createdAt'), type: 'date' },
   ];
 
   return { columns, filterFields, advancedFilterFields };
 }
 
-export default memo(DocumentMainPage);
+export default memo(IdentificationTypeMainPage);
