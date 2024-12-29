@@ -2,7 +2,24 @@
 
 import * as React from 'react';
 import { ExtendedUser } from '@/server/auth/config';
-import { ClipboardIcon, FileTextIcon, FolderIcon, Frame, GridIcon, HomeIcon, LandPlotIcon, LayersIcon, ListIcon, Map, PieChart, RadarIcon, SettingsIcon, ShieldIcon, UsersIcon } from 'lucide-react';
+import {
+  ClipboardIcon,
+  FileTextIcon,
+  FolderIcon,
+  Frame,
+  GridIcon,
+  HomeIcon,
+  LandPlotIcon,
+  LayersIcon,
+  ListIcon,
+  ListTreeIcon,
+  Map,
+  PieChart,
+  RadarIcon,
+  SettingsIcon,
+  ShieldIcon,
+  UsersIcon,
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import useTenantId from '@/hooks/use-tenant-id';
@@ -54,49 +71,56 @@ export function AppSidebar({ tenants, user, ...props }: AppSidebarProps) {
         items: [],
       },
       {
-        title: t('requests'),
+        title: t('requestsPortal'),
         icon: FolderIcon,
         items: [
           {
             title: t('requests'),
-            url: { pathname: '/admin/[tenantId]/requests', params: { tenantId } },
+            url: { pathname: '/admin/[tenantId]/requests-portal/requests', params: { tenantId } },
             icon: ClipboardIcon,
           },
           {
             title: t('requestTypes'),
-            url: { pathname: '/admin/[tenantId]/request-types', params: { tenantId } },
+            url: { pathname: '/admin/[tenantId]/requests-portal/request-types', params: { tenantId } },
             icon: LayersIcon,
           },
           {
             title: t('requirements'),
-            url: { pathname: '/admin/[tenantId]/requirements', params: { tenantId } },
+            url: { pathname: '/admin/[tenantId]/requests-portal/requirements', params: { tenantId } },
             icon: ListIcon,
           },
           {
             title: t('documents'),
-            url: { pathname: '/admin/[tenantId]/documents', params: { tenantId } },
+            url: { pathname: '/admin/[tenantId]/requests-portal/documents', params: { tenantId } },
             icon: FileTextIcon,
           },
-          {
-            title: t('formDesigner'),
-            url: { pathname: '/admin/[tenantId]/form-designer', params: { tenantId } },
-            icon: GridIcon,
-          },
         ],
+      },
+
+      {
+        title: t('formDesigner'),
+        url: { pathname: '/admin/[tenantId]/form-designer', params: { tenantId } },
+        icon: GridIcon,
+        items: [],
       },
       {
         title: t('management'),
         icon: SettingsIcon,
         items: [
           {
+            title: t('areas'),
+            url: { pathname: '/admin/[tenantId]/management/areas', params: { tenantId } },
+            icon: LandPlotIcon,
+          },
+          {
             title: t('clients'),
             url: { pathname: '/admin/[tenantId]/management/clients', params: { tenantId } },
             icon: UsersIcon,
           },
           {
-            title: t('areas'),
-            url: { pathname: '/admin/[tenantId]/management/areas', params: { tenantId } },
-            icon: LandPlotIcon,
+            title: t('hierarchies'),
+            url: { pathname: '/admin/[tenantId]/management/hierarchies', params: { tenantId } },
+            icon: ListTreeIcon,
           },
         ],
       },

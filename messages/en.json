@@ -183,6 +183,8 @@
       "requests": "Requests",
       "request": "Request",
       "documents": "Documents",
+      "requestsPortal": "Requests Portal",
+      "hierarchies": "Hierarchies",
       "requestTypes": "Request Types",
       "requirements": "Requirements",
       "formDesigner": "Form Designer",

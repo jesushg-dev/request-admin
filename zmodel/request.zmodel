@@ -33,6 +33,9 @@ model HierarchyLevel extends TenantScoped, Auditable {
 
   @@index([hierarchyId], name: "idx_hierarchy_id") // Index for hierarchy relation
   @@index([name], name: "idx_hierarchy_level_name") // Index for fast lookups by name
+
+  @@unique([position, hierarchyId])
+  @@validate(position > 0)
 }
 
 /// Represents a category or subcategory within a hierarchy.

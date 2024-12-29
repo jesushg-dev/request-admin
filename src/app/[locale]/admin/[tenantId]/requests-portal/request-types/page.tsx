@@ -14,7 +14,7 @@ import { formatDate } from '@/lib/utils';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
 import { Checkbox } from '@/components/ui/checkbox';
-import CategoryTable from '@/components/common/category/category-table';
+import { CategoryTable, useCategoryTableConfiguration } from '@/components/common/category/category-table';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import RequirementDialogCell from '@/components/common/requirement/requirement-dialog-cell';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
@@ -31,9 +31,7 @@ const CategoryDefaultArgs = Prisma.validator<Prisma.CategoryDefaultArgs>()({
     name: true,
     createdAt: true,
     subcategories: {
-      select: {
-        id: true,
-      },
+      select: { id: true },
     },
     _count: {
       select: {
@@ -77,6 +75,11 @@ const CategoryMainPage: React.FC<ICategoryMainPageProps> = () => {
   const [rowAction, setRowAction] = useState<DataTableRowAction<CategoryWithRelations> | null>(null);
   const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ setRowAction, t }), [setRowAction, t]);
 
+  // Grab the category columns from our new, fixed hook so we can pass them to the subcomponent.
+  const { columns: categoryColumns } = useCategoryTableConfiguration({
+    entity: 'requestType',
+  });
+
   const { table } = useDataTable({
     data: data ?? [],
     columns,
@@ -89,16 +92,18 @@ const CategoryMainPage: React.FC<ICategoryMainPageProps> = () => {
     },
     shallow: false,
     clearOnDefault: true,
-    getRowCanExpand: (row) => row.original.subcategories.length > 0,
+    getRowCanExpand: (row) => (row.original.subcategories?.length ?? 0) > 0,
     getRowId: (originalRow) => originalRow.id,
   });
 
-  if (isError && error) return <ErrorRetryFallback error={error} onRetry={refetch} />;
+  if (isError && error) {
+    return <ErrorRetryFallback error={error} onRetry={refetch} />;
+  }
 
   return (
     <Shell className="gap-2">
       <DataTableShell table={table} isLoading={isLoading} floatingBar={<DataTableFloatingBar table={table} />}>
-        <DataTable table={table} renderSubComponent={CategoryTable}>
+        <DataTable table={table} subComponent={{ columns: categoryColumns, render: CategoryTable }}>
           <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
             <DataTableToolbarActions table={table} exportFilename="categories" entityLabel={t('entityLabel')} />
           </DataTableAdvancedToolbar>

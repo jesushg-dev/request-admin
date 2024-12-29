@@ -82,66 +82,72 @@ const managementPathnames = {
     en: '/admin/[tenantId]/management/clients/[slug]',
     es: '/admin/[tenantId]/gestion/clientes/[slug]',
   },
+  // hierarchies
+  '/admin/[tenantId]/management/hierarchies': {
+    en: '/admin/[tenantId]/management/hierarchies',
+    es: '/admin/[tenantId]/gestion/jerarquias',
+  },
+  '/admin/[tenantId]/management/hierarchies/new': {
+    en: '/admin/[tenantId]/management/hierarchies/new',
+    es: '/admin/[tenantId]/gestion/jerarquias/nuevo',
+  },
+  '/admin/[tenantId]/management/hierarchies/[slug]': {
+    en: '/admin/[tenantId]/management/hierarchies/[slug]',
+    es: '/admin/[tenantId]/gestion/jerarquias/[slug]',
+  },
 } satisfies Pathnames<typeof locales>;
 
 const requestsPathnames = {
-  // requests
-  '/admin/[tenantId]/requests': {
-    en: '/admin/[tenantId]/requests',
-    es: '/admin/[tenantId]/casos',
+  '/admin/[tenantId]/requests-portal/requests': {
+    en: '/admin/[tenantId]/requests-portal/requests',
+    es: '/admin/[tenantId]/solicitudes-portal/solicitudes',
   },
-  '/admin/[tenantId]/requests/new': {
-    en: '/admin/[tenantId]/requests/new',
-    es: '/admin/[tenantId]/casos/nuevo',
+  '/admin/[tenantId]/requests-portal/requests/new': {
+    en: '/admin/[tenantId]/requests-portal/requests/new',
+    es: '/admin/[tenantId]/solicitudes-portal/solicitudes/nuevo',
   },
-  '/admin/[tenantId]/requests/[slug]': {
-    en: '/admin/[tenantId]/requests/[slug]',
-    es: '/admin/[tenantId]/casos/[slug]',
+  '/admin/[tenantId]/requests-portal/requests/[slug]': {
+    en: '/admin/[tenantId]/requests-portal/requests/[slug]',
+    es: '/admin/[tenantId]/solicitudes-portal/solicitudes/[slug]',
   },
-  // request types
-  '/admin/[tenantId]/request-types': {
-    en: '/admin/[tenantId]/request-types',
-    es: '/admin/[tenantId]/tipo-de-casos',
+  // Request types
+  '/admin/[tenantId]/requests-portal/request-types': {
+    en: '/admin/[tenantId]/requests-portal/request-types',
+    es: '/admin/[tenantId]/solicitudes-portal/tipo-de-solicitudes',
   },
-  '/admin/[tenantId]/request-types/new': {
-    en: '/admin/[tenantId]/request-types/new',
-    es: '/admin/[tenantId]/tipo-de-casos/nuevo',
+  '/admin/[tenantId]/requests-portal/request-types/new': {
+    en: '/admin/[tenantId]/requests-portal/request-types/new',
+    es: '/admin/[tenantId]/solicitudes-portal/tipo-de-solicitudes/nuevo',
   },
-  '/admin/[tenantId]/request-types/[slug]': {
-    en: '/admin/[tenantId]/request-types/[slug]',
-    es: '/admin/[tenantId]/tipo-de-casos/[slug]',
+  '/admin/[tenantId]/requests-portal/request-types/[slug]': {
+    en: '/admin/[tenantId]/requests-portal/request-types/[slug]',
+    es: '/admin/[tenantId]/solicitudes-portal/tipo-de-solicitudes/[slug]',
   },
-} satisfies Pathnames<typeof locales>;
-
-const requirementsPathnames = {
-  // requirements
-  '/admin/[tenantId]/requirements': {
-    en: '/admin/[tenantId]/requirements',
-    es: '/admin/[tenantId]/requisitos',
+  // Requirements
+  '/admin/[tenantId]/requests-portal/requirements': {
+    en: '/admin/[tenantId]/requests-portal/requirements',
+    es: '/admin/[tenantId]/solicitudes-portal/requisitos',
   },
-  '/admin/[tenantId]/requirements/new': {
-    en: '/admin/[tenantId]/requirements/new',
-    es: '/admin/[tenantId]/requisitos/nuevo',
+  '/admin/[tenantId]/requests-portal/requirements/new': {
+    en: '/admin/[tenantId]/requests-portal/requirements/new',
+    es: '/admin/[tenantId]/solicitudes-portal/requisitos/nuevo',
   },
-  '/admin/[tenantId]/requirements/[slug]': {
-    en: '/admin/[tenantId]/requirements/[slug]',
-    es: '/admin/[tenantId]/requisitos/[slug]',
+  '/admin/[tenantId]/requests-portal/requirements/[slug]': {
+    en: '/admin/[tenantId]/requests-portal/requirements/[slug]',
+    es: '/admin/[tenantId]/solicitudes-portal/requisitos/[slug]',
   },
-} satisfies Pathnames<typeof locales>;
-
-const documentsPathnames = {
-  // documents
-  '/admin/[tenantId]/documents': {
-    en: '/admin/[tenantId]/documents',
-    es: '/admin/[tenantId]/documentos',
+  // Documents
+  '/admin/[tenantId]/requests-portal/documents': {
+    en: '/admin/[tenantId]/requests-portal/documents',
+    es: '/admin/[tenantId]/solicitudes-portal/documentos',
   },
-  '/admin/[tenantId]/documents/new': {
-    en: '/admin/[tenantId]/documents/new',
-    es: '/admin/[tenantId]/documentos/nuevo',
+  '/admin/[tenantId]/requests-portal/documents/new': {
+    en: '/admin/[tenantId]/requests-portal/documents/new',
+    es: '/admin/[tenantId]/solicitudes-portal/documentos/nuevo',
   },
-  '/admin/[tenantId]/documents/[slug]': {
-    en: '/admin/[tenantId]/documents/[slug]',
-    es: '/admin/[tenantId]/documentos/[slug]',
+  '/admin/[tenantId]/requests-portal/documents/[slug]': {
+    en: '/admin/[tenantId]/requests-portal/documents/[slug]',
+    es: '/admin/[tenantId]/solicitudes-portal/documentos/[slug]',
   },
 } satisfies Pathnames<typeof locales>;
 
@@ -214,8 +220,6 @@ export const pathnames = {
   ...securityPathnames,
   ...managementPathnames,
   ...requestsPathnames,
-  ...requirementsPathnames,
-  ...documentsPathnames,
   ...formsPathnames,
   ...settingsPathnames,
   ...globalPathnames,

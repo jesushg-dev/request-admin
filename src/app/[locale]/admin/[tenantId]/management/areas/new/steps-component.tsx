@@ -10,14 +10,14 @@ import { LevelType } from '@/types/prisma/hierarchy';
 import { ModuleWithFeaturesType } from '@/types/prisma/module';
 import { RequirementOptionType } from '@/types/prisma/requirement';
 import { UserType } from '@/types/prisma/user';
-import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
 import AreaForm, { areaFormSchema } from '@/components/common/area/area-form';
 import CategoryForm, { categoryFormSchema } from '@/components/common/category/category-form';
 import AreaRolesForm, { areaRolesFormSchema } from '@/components/common/role/role-form';
 import UserRoleAssignmentForm, { userRoleFormSchema } from '@/components/common/role/user-role-assignment-form';
+import { StepNavigation } from '@/components/stepper/step-navigation';
+import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 
 // Stepper definition
 const { useStepper, steps } = defineStepper(
@@ -58,21 +58,7 @@ const StepsComponent: FC<StepsComponentProps> = ({ levels, requirements, users, 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between space-y-6 overflow-hidden rounded-lg border p-6">
-        <nav aria-label="Steps">
-          <ol className="flex items-center gap-x-4">
-            {stepper.all.map((step, index, array) => (
-              <React.Fragment key={step.id}>
-                <li className="flex items-center gap-x-2">
-                  <Button type="button" variant={index <= stepper.current.index ? 'default' : 'outline'} className="size-8 rounded-full p-0" onClick={() => stepper.goTo(step.id)}>
-                    {index + 1}
-                  </Button>
-                  <span className="text-xs font-medium">{step.label}</span>
-                </li>
-                {index < array.length - 1 && <Separator className={`flex-1 ${index < stepper.current.index ? 'bg-primary' : 'bg-muted'}`} />}
-              </React.Fragment>
-            ))}
-          </ol>
-        </nav>
+        <StepNavigation steps={stepper.all} currentStepIndex={stepper.current.index} onStepClick={stepper.goTo} />
 
         {/* Step Content */}
         <div className="flex flex-1 overflow-y-hidden">
@@ -87,13 +73,7 @@ const StepsComponent: FC<StepsComponentProps> = ({ levels, requirements, users, 
           </ScrollArea>
         </div>
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={stepper.prev} disabled={stepper.isFirst}>
-            Back
-          </Button>
-          <Button type="submit">{stepper.isLast ? 'Finish' : 'Next'}</Button>
-        </div>
+        <StepperNavigationButtons isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onNext={stepper.next} nextText="Next" submitText="Finish" />
       </form>
     </Form>
   );

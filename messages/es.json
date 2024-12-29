@@ -183,6 +183,8 @@
       "requests": "Solicitudes",
       "request": "Solicitud",
       "documents": "Documentos",
+      "requestsPortal": "Portal de Solicitudes",
+      "hierarchies": "Jerarquías",
       "requestTypes": "Tipos de Solicitud",
       "requirements": "Requisitos",
       "formDesigner": "Diseñador de Formularios",
