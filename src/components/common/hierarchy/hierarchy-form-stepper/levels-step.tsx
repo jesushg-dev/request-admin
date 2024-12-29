@@ -2,11 +2,11 @@ import { DragHandleDots2Icon, TrashIcon } from '@radix-ui/react-icons';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Sortable, SortableDragHandle, SortableItem } from '@/components/ui/sortable';
 
-import { HierarchyFormValues } from '../hierarchy-form-stepper';
+import { HierarchyFormValues } from './schemas';
 
 export function LevelsStep() {
   const { control } = useFormContext<HierarchyFormValues>();
@@ -16,7 +16,7 @@ export function LevelsStep() {
   });
 
   return (
-    <div className="m-2 flex flex-col gap-2">
+    <div className="m-1 flex flex-col gap-2">
       <Sortable
         value={fields}
         onMove={({ activeIndex, overIndex }) => move(activeIndex, overIndex)}

@@ -206,6 +206,7 @@ const settingsPathnames = {
 } satisfies Pathnames<typeof locales>;
 
 const globalPathnames = {
+  // tenants
   '/admin/global/tenants': {
     en: '/admin/global/tenants',
     es: '/admin/global/inquilinos',
@@ -217,6 +218,19 @@ const globalPathnames = {
   '/admin/global/tenants/[slug]': {
     en: '/admin/global/tenants/[slug]',
     es: '/admin/global/inquilinos/[slug]',
+  },
+  // plans
+  '/admin/global/plans': {
+    en: '/admin/global/plans',
+    es: '/admin/global/planes',
+  },
+  '/admin/global/plans/new': {
+    en: '/admin/global/plans/new',
+    es: '/admin/global/planes/nuevo',
+  },
+  '/admin/global/plans/[slug]': {
+    en: '/admin/global/plans/[slug]',
+    es: '/admin/global/planes/[slug]',
   },
 } satisfies Pathnames<typeof locales>;
 

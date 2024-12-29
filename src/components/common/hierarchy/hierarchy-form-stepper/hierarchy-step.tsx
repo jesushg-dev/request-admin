@@ -5,13 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 
-import { HierarchyFormValues } from '../hierarchy-form-stepper';
+import { HierarchyFormValues } from './schemas';
 
 export function HierarchyStep() {
   const { control } = useFormContext<HierarchyFormValues>();
 
   return (
-    <div className="m-2 flex flex-col gap-2">
+    <div className="m-1 flex flex-col gap-2">
       <FormField
         control={control}
         name="name"

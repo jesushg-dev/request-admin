@@ -9,7 +9,7 @@ interface PlanSelectionFormProps {
   plans: Plan[];
 }
 
-export function PlanSelectionForm({ plans }: PlanSelectionFormProps) {
+export function PlanSelectionStep({ plans }: PlanSelectionFormProps) {
   const { control } = useFormContext<PlanSelectionData>();
 
   return (

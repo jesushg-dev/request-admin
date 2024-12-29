@@ -2,15 +2,14 @@ import { useFormContext } from 'react-hook-form';
 
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 
 import { TenantDetailsData } from './types';
 
-export function TenantForm() {
+export function TenantStep() {
   const { control } = useFormContext<TenantDetailsData>();
 
   return (
-    <div className="space-y-4">
+    <div className="m-1 flex flex-col gap-2">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <FormField
           control={control}

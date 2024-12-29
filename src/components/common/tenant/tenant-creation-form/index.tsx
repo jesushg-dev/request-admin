@@ -10,9 +10,9 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { StepNavigation } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 
-import { ModulesForm } from './module-form';
-import { PlanSelectionForm } from './plan-selection-form';
-import { TenantForm } from './tenant-form';
+import { ModulesStep } from './module-step';
+import { PlanSelectionStep } from './plan-selection-step';
+import { TenantStep } from './tenant-step';
 import { Module, modulesSchema, Plan, planSelectionSchema, tenantDetailsSchema, TenantFormData } from './types';
 
 interface TenantCreationFormProps {
@@ -52,11 +52,11 @@ export function TenantCreationForm({ modules, plans }: TenantCreationFormProps) 
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between space-y-6 overflow-hidden rounded-lg border p-6">
         <StepNavigation steps={stepper.all} currentStepIndex={stepper.current.index} onStepClick={stepper.goTo} />
         <div className="flex flex-1 overflow-y-hidden">
-          <ScrollArea className="w-full overflow-y-auto pl-2 pr-4">
+          <ScrollArea className="w-full flex-1 overflow-y-hidden">
             {stepper.switch({
-              tenant: () => <TenantForm />,
-              modules: () => <ModulesForm modules={modules} />,
-              plan: () => <PlanSelectionForm plans={plans} />,
+              tenant: () => <TenantStep />,
+              modules: () => <ModulesStep modules={modules} />,
+              plan: () => <PlanSelectionStep plans={plans} />,
             })}
           </ScrollArea>
         </div>

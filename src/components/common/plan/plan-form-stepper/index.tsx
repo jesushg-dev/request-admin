@@ -1,45 +1,52 @@
 'use client';
 
-import * as React from 'react';
+import React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { defineStepper } from '@stepperize/react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import * as z from 'zod';
 
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { StepNavigation } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 
-import { HierarchyStep } from './hierarchy-step';
-import { LevelsStep } from './levels-step';
-import { HierarchyFormValues, hierarchySchema, levelsSchema, summarySchema } from './schemas';
+import { PlanFeaturesStep } from './plan-feature-step';
+import { PlanInfoStep } from './plan-step';
+import { planFeatureSchema, planInfoSchema } from './schemas';
 import { SummaryStep } from './summary-step';
 
+const summarySchema = z.object({});
+
+type PlanInfoFormValues = z.infer<typeof planInfoSchema>;
+type PlanFeatureFormValues = z.infer<typeof planFeatureSchema>;
+
 const { useStepper, steps } = defineStepper(
-  { id: 'hierarchy', label: 'Hierarchy', schema: hierarchySchema },
-  { id: 'levels', label: 'Levels', schema: levelsSchema },
+  { id: 'planInfo', label: 'Plan Information', schema: planInfoSchema },
+  { id: 'planFeatures', label: 'Plan Features', schema: planFeatureSchema },
   { id: 'summary', label: 'Summary', schema: summarySchema }
 );
 
-export function HierarchyFormStepper() {
+export default function PlanCreationForm() {
   const stepper = useStepper();
+  const [planData, setPlanData] = React.useState<PlanInfoFormValues & PlanFeatureFormValues>({
+    name: '',
+    description: '',
+    price: 0,
+    features: [],
+  });
 
-  const form = useForm<HierarchyFormValues>({
+  const form = useForm({
+    mode: 'onTouched',
     resolver: zodResolver(stepper.current.schema),
-    defaultValues: {
-      name: '',
-      description: '',
-      type: undefined,
-      levels: [{ name: '' }],
-    },
   });
 
   const onSubmit = (values: z.infer<typeof stepper.current.schema>) => {
     console.log(`Form values for step ${stepper.current.id}:`, values);
+    setPlanData((prevData) => ({ ...prevData, ...values }));
     if (stepper.isLast) {
-      console.log('Final form data:', form.getValues());
-      // Here you would typically send the data to your API
+      console.log('Final plan data:', planData);
+      // Here you would typically send the data to your backend
       stepper.reset();
     } else {
       stepper.next();
@@ -53,9 +60,9 @@ export function HierarchyFormStepper() {
         <div className="flex flex-1 overflow-y-hidden">
           <ScrollArea className="w-full flex-1 overflow-y-hidden">
             {stepper.switch({
-              hierarchy: () => <HierarchyStep />,
-              levels: () => <LevelsStep />,
-              summary: () => <SummaryStep />,
+              planInfo: () => <PlanInfoStep />,
+              planFeatures: () => <PlanFeaturesStep />,
+              summary: () => <SummaryStep planData={planData} />,
             })}
           </ScrollArea>
         </div>

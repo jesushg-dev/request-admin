@@ -9,11 +9,11 @@ interface ModulesFormProps {
   modules: Module[];
 }
 
-export function ModulesForm({ modules }: ModulesFormProps) {
+export function ModulesStep({ modules }: ModulesFormProps) {
   const { control } = useFormContext<ModulesData>();
 
   return (
-    <div className="space-y-4">
+    <div className="m-1 flex flex-col gap-2">
       {modules.map((module, index) => (
         <FormField
           key={module.id}

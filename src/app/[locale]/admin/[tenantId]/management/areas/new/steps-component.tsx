@@ -62,7 +62,7 @@ const StepsComponent: FC<StepsComponentProps> = ({ levels, requirements, users, 
 
         {/* Step Content */}
         <div className="flex flex-1 overflow-y-hidden">
-          <ScrollArea className="w-full overflow-y-auto pl-2 pr-4">
+          <ScrollArea className="w-full flex-1 overflow-y-hidden">
             {stepper.switch({
               description: () => <AreaForm />,
               assignationCategory: () => <CategoryForm levels={levels} requirements={requirements} />,

@@ -1,6 +1,6 @@
 import { useFormContext } from 'react-hook-form';
 
-import { HierarchyFormValues } from '../hierarchy-form-stepper';
+import { HierarchyFormValues } from './schemas';
 
 export function SummaryStep() {
   const { getValues } = useFormContext<HierarchyFormValues>();
