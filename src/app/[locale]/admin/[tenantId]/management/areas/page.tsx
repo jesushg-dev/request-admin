@@ -14,7 +14,7 @@ import { formatDate } from '@/lib/utils';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
 import { Checkbox } from '@/components/ui/checkbox';
-import CategoryTable from '@/components/common/category/category-table';
+import { CategoryTable, useCategoryTableConfiguration } from '@/components/common/category/category-table';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
@@ -63,6 +63,11 @@ const AreaMainPage: React.FC<IAreaMainPageProps> = () => {
   const [rowAction, setRowAction] = useState<DataTableRowAction<AreaWithRelations> | null>(null);
   const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ setRowAction, t }), [setRowAction, t]);
 
+  // Grab the category columns from our new, fixed hook so we can pass them to the subcomponent.
+  const { columns: categoryColumns } = useCategoryTableConfiguration({
+    entity: 'area',
+  });
+
   const { table } = useDataTable({
     data: data ?? [],
     columns,
@@ -75,16 +80,18 @@ const AreaMainPage: React.FC<IAreaMainPageProps> = () => {
     },
     shallow: false,
     clearOnDefault: true,
-    getRowCanExpand: (row) => row.original.categories.length > 0,
+    getRowCanExpand: (row) => (row.original.categories?.length ?? 0) > 0,
     getRowId: (originalRow) => originalRow.id,
   });
 
-  if (isError && error) return <ErrorRetryFallback error={error} onRetry={refetch} />;
+  if (isError && error) {
+    return <ErrorRetryFallback error={error} onRetry={refetch} />;
+  }
 
   return (
     <Shell className="gap-2">
       <DataTableShell table={table} isLoading={isLoading} floatingBar={<DataTableFloatingBar table={table} />}>
-        <DataTable table={table} renderSubComponent={CategoryTable}>
+        <DataTable table={table} subComponent={{ columns: categoryColumns, render: CategoryTable }}>
           <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
             <DataTableToolbarActions table={table} exportFilename="areas" entityLabel={t('entityLabel')} />
           </DataTableAdvancedToolbar>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { flexRender, Row, type Table as TanstackTable } from '@tanstack/react-table';
+import { ColumnDef, flexRender, type Row, type Table as TanstackTable } from '@tanstack/react-table';
 
 import { getCommonPinningStyles } from '@/lib/data-table';
 import { cn } from '@/lib/utils';
@@ -8,37 +8,21 @@ import { DataTablePagination } from '@/components/data-table/data-table-paginati
 
 import { DataTableSkeleton } from './data-table-skeleton';
 
-interface DataTableProps<TData> extends React.HTMLAttributes<HTMLDivElement> {
-  /**
-   * The table instance returned from useDataTable hook with pagination, sorting, filtering, etc.
-   * @type TanstackTable<TData>
-   */
+interface CommonDataTableProps<TData> {
   table: TanstackTable<TData>;
-
-  /**
-   * The floating bar to render at the bottom of the table on row selection.
-   * @default null
-   * @type React.ReactNode | null
-   * @example floatingBar={<TasksTableFloatingBar table={table} />}
-   */
-  floatingBar?: React.ReactNode | null;
-
-  /**
-   *
-   */
   isLoading?: boolean;
-
-  /**
-   * The sub-component to render when a row is expanded.
-   * @type (props: { row: Row<TData> }) => React.ReactElement
-   */
-  renderSubComponent?: (props: { row: Row<TData>; isExpanded: boolean }) => React.ReactElement;
 }
 
-export function DataTableShell<TData>({ table, floatingBar = null, renderSubComponent, children, className, isLoading, ...props }: DataTableProps<TData>) {
+interface DataTableShellProps<TData> extends CommonDataTableProps<TData>, React.HTMLAttributes<HTMLDivElement> {
+  floatingBar?: React.ReactNode | null;
+  children?: React.ReactNode;
+}
+
+export function DataTableShell<TData>({ table, floatingBar = null, isLoading, children, className, ...props }: DataTableShellProps<TData>) {
   return (
     <div className={cn('w-full space-y-2.5 overflow-auto', className)} {...props}>
       {children}
+
       <div className="flex flex-col gap-2.5">
         <DataTablePagination table={table} />
         {table.getFilteredSelectedRowModel().rows.length > 0 && floatingBar}
@@ -47,8 +31,18 @@ export function DataTableShell<TData>({ table, floatingBar = null, renderSubComp
   );
 }
 
-export function DataTable<TData>({ table, renderSubComponent, isLoading, children }: DataTableProps<TData>) {
-  if (isLoading) return <DataTableSkeleton columnCount={6} cellWidths={['10rem', '40rem', '12rem', '12rem', '8rem', '8rem']} shrinkZero />;
+interface DataTableProps<TData, TSubData> extends CommonDataTableProps<TData> {
+  children?: React.ReactNode;
+  subComponent?: {
+    columns: ColumnDef<TSubData>[];
+    render: (props: { row: Row<TData>; isExpanded: boolean; columns: ColumnDef<TSubData>[] }) => React.ReactNode;
+  };
+}
+
+export function DataTable<TData, TSubData>({ table, subComponent, isLoading, children }: DataTableProps<TData, TSubData>) {
+  if (isLoading) {
+    return <DataTableSkeleton columnCount={6} cellWidths={['10rem', '40rem', '12rem', '12rem', '8rem', '8rem']} shrinkZero />;
+  }
 
   return (
     <>
@@ -59,12 +53,7 @@ export function DataTable<TData>({ table, renderSubComponent, isLoading, childre
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead
-                    key={header.id}
-                    colSpan={header.colSpan}
-                    style={{
-                      ...getCommonPinningStyles({ column: header.column }),
-                    }}>
+                  <TableHead key={header.id} colSpan={header.colSpan} style={{ ...getCommonPinningStyles({ column: header.column }) }}>
                     {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}
@@ -75,18 +64,15 @@ export function DataTable<TData>({ table, renderSubComponent, isLoading, childre
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <React.Fragment key={row.id}>
-                  <TableRow data-state={row.getIsSelected() && 'selected'}>
+                  <TableRow data-state={row.getIsSelected() ? 'selected' : undefined}>
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell
-                        key={cell.id}
-                        style={{
-                          ...getCommonPinningStyles({ column: cell.column }),
-                        }}>
+                      <TableCell key={cell.id} style={{ ...getCommonPinningStyles({ column: cell.column }) }}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     ))}
                   </TableRow>
-                  {renderSubComponent && <>{renderSubComponent({ row, isExpanded: row.getIsExpanded() })}</>}
+
+                  {subComponent?.render && subComponent.render({ row, isExpanded: row.getIsExpanded(), columns: subComponent.columns })}
                 </React.Fragment>
               ))
             ) : (
