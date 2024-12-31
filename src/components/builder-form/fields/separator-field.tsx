@@ -1,6 +1,6 @@
 'use client';
 
-import { RiSeparator } from 'react-icons/ri';
+import { MinusIcon } from 'lucide-react';
 
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
@@ -15,7 +15,7 @@ export const SeparatorFieldFormElement: FormElement = {
     type,
   }),
   designerBtnElement: {
-    icon: RiSeparator,
+    icon: MinusIcon,
     label: 'Separator field',
   },
   designerComponent: DesignerComponent,

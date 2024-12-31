@@ -4,7 +4,7 @@ import React from 'react';
 import { useParams } from 'next/navigation';
 import { api } from '@/trpc/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { RequirementUpdateSchema } from '@zenstackhq/runtime/zod/models';
+import { IdentificationTypeUpdateSchema } from '@zenstackhq/runtime/zod/models';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -14,25 +14,25 @@ import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { Input } from '@/components/form';
 import ErrorList from '@/components/form/error-list';
 
-type RequirementUpdateType = z.infer<typeof RequirementUpdateSchema>;
+type IdentificationTypeUpdateType = z.infer<typeof IdentificationTypeUpdateSchema>;
 
-const UpdateRequirementPage: React.FC = () => {
+const UpdateIdentificationTypePage: React.FC = () => {
   const params = useParams<{ slug: string }>();
-  const t = useTranslations('admin.requirement.update');
+  const t = useTranslations('admin.identificationType.update');
 
-  const { data, isLoading, error, refetch } = api.requirement.findFirstOrThrow.useQuery({
+  const { data, isLoading, error, refetch } = api.identificationType.findFirstOrThrow.useQuery({
     where: { id: { equals: params.slug } },
   });
 
-  const { mutateAsync: updateRequirementAsync } = api.requirement.update.useMutation();
+  const { mutateAsync: updateIdentificationTypeAsync } = api.identificationType.update.useMutation();
 
-  const { register, handleSubmit, formState } = useForm<RequirementUpdateType>({
+  const { register, handleSubmit, formState } = useForm<IdentificationTypeUpdateType>({
     defaultValues: data,
-    resolver: zodResolver(RequirementUpdateSchema),
+    resolver: zodResolver(IdentificationTypeUpdateSchema),
   });
 
-  const onSubmit = useSubmit(updateRequirementAsync, {
-    redirectUrl: '/admin/requirement',
+  const onSubmit = useSubmit(updateIdentificationTypeAsync, {
+    redirectUrl: '/admin/identification-type',
   });
 
   if (isLoading) {
@@ -44,7 +44,7 @@ const UpdateRequirementPage: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex w-full flex-1 flex-col gap-4">
       <div className="border-stroke dark:border-strokedark border-b px-6 py-4">
         <h3 className="font-medium text-black dark:text-white">{t('updateTitle')}</h3>
       </div>
@@ -52,24 +52,7 @@ const UpdateRequirementPage: React.FC = () => {
         <form className="grid grid-cols-2 gap-4 p-6" onSubmit={handleSubmit((data) => onSubmit({ data, where: { id: params.slug } }))}>
           <Input name="id" type="text" register={register} formState={formState} label={t('inputs.id.label')} placeholder={t('inputs.id.placeholder')} required />
           <Input name="name" type="text" register={register} formState={formState} label={t('inputs.name.label')} placeholder={t('inputs.name.placeholder')} required />
-          <Input name="description" type="text" register={register} formState={formState} label={t('inputs.description.label')} placeholder={t('inputs.description.placeholder')} required />
-          <Input
-            name="categoryRequirementId"
-            type="text"
-            register={register}
-            formState={formState}
-            label={t('inputs.categoryRequirementId.label')}
-            placeholder={t('inputs.categoryRequirementId.placeholder')}
-          />
-          <Input
-            name="onlyRequireInNewClients"
-            type="text"
-            register={register}
-            formState={formState}
-            label={t('inputs.onlyRequireInNewClients.label')}
-            placeholder={t('inputs.onlyRequireInNewClients.placeholder')}
-            required
-          />
+          <Input name="description" type="text" register={register} formState={formState} label={t('inputs.description.label')} placeholder={t('inputs.description.placeholder')} />
           <ErrorList formState={formState} />
           <button type="submit" className="flex w-full justify-center rounded bg-primary p-3 font-medium text-white hover:bg-opacity-90">
             {t('updateButton')}
@@ -80,4 +63,4 @@ const UpdateRequirementPage: React.FC = () => {
   );
 };
 
-export default UpdateRequirementPage;
+export default UpdateIdentificationTypePage;

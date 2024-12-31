@@ -19,7 +19,7 @@ const basePathnames = {
     en: '/admin/[tenantId]',
     es: '/admin/[tenantId]',
   },
-} satisfies Pathnames<typeof locales>;
+} satisfies Pathnames<Locale[]>;
 
 const securityPathnames = {
   // security
@@ -40,6 +40,10 @@ const securityPathnames = {
     en: '/admin/[tenantId]/security/roles/[slug]',
     es: '/admin/[tenantId]/seguridad/roles/[slug]',
   },
+  '/admin/[tenantId]/security/roles/[slug]/edit': {
+    en: '/admin/[tenantId]/security/roles/[slug]/edit',
+    es: '/admin/[tenantId]/seguridad/roles/[slug]/editar',
+  },
   // users
   '/admin/[tenantId]/security/users': {
     en: '/admin/[tenantId]/security/users',
@@ -53,7 +57,11 @@ const securityPathnames = {
     en: '/admin/[tenantId]/security/users/[slug]',
     es: '/admin/[tenantId]/seguridad/usuarios/[slug]',
   },
-} satisfies Pathnames<typeof locales>;
+  '/admin/[tenantId]/security/users/[slug]/edit': {
+    en: '/admin/[tenantId]/security/users/[slug]/edit',
+    es: '/admin/[tenantId]/seguridad/usuarios/[slug]/editar',
+  },
+} satisfies Pathnames<Locale[]>;
 
 const managementPathnames = {
   // areas
@@ -69,6 +77,10 @@ const managementPathnames = {
     en: '/admin/[tenantId]/management/areas/[slug]',
     es: '/admin/[tenantId]/gestion/areas/[slug]',
   },
+  '/admin/[tenantId]/management/areas/[slug]/edit': {
+    en: '/admin/[tenantId]/management/areas/[slug]/edit',
+    es: '/admin/[tenantId]/gestion/areas/[slug]/editar',
+  },
   // clients
   '/admin/[tenantId]/management/clients': {
     en: '/admin/[tenantId]/management/clients',
@@ -81,6 +93,10 @@ const managementPathnames = {
   '/admin/[tenantId]/management/clients/[slug]': {
     en: '/admin/[tenantId]/management/clients/[slug]',
     es: '/admin/[tenantId]/gestion/clientes/[slug]',
+  },
+  '/admin/[tenantId]/management/clients/[slug]/edit': {
+    en: '/admin/[tenantId]/management/clients/[slug]/edit',
+    es: '/admin/[tenantId]/gestion/clientes/[slug]/editar',
   },
   // hierarchies
   '/admin/[tenantId]/management/hierarchies': {
@@ -95,12 +111,16 @@ const managementPathnames = {
     en: '/admin/[tenantId]/management/hierarchies/[slug]',
     es: '/admin/[tenantId]/gestion/jerarquias/[slug]',
   },
+  '/admin/[tenantId]/management/hierarchies/[slug]/edit': {
+    en: '/admin/[tenantId]/management/hierarchies/[slug]/edit',
+    es: '/admin/[tenantId]/gestion/jerarquias/[slug]/editar',
+  },
   // identification types
   '/admin/[tenantId]/management/identification-types': {
     en: '/admin/[tenantId]/management/identification-types',
     es: '/admin/[tenantId]/gestion/tipos-de-identificacion',
   },
-} satisfies Pathnames<typeof locales>;
+} satisfies Pathnames<Locale[]>;
 
 const requestsPathnames = {
   '/admin/[tenantId]/requests-portal/requests': {
@@ -115,6 +135,10 @@ const requestsPathnames = {
     en: '/admin/[tenantId]/requests-portal/requests/[slug]',
     es: '/admin/[tenantId]/solicitudes-portal/solicitudes/[slug]',
   },
+  '/admin/[tenantId]/requests-portal/requests/[slug]/edit': {
+    en: '/admin/[tenantId]/requests-portal/requests/[slug]/edit',
+    es: '/admin/[tenantId]/solicitudes-portal/solicitudes/[slug]/editar',
+  },
   // Request types
   '/admin/[tenantId]/requests-portal/request-types': {
     en: '/admin/[tenantId]/requests-portal/request-types',
@@ -127,6 +151,10 @@ const requestsPathnames = {
   '/admin/[tenantId]/requests-portal/request-types/[slug]': {
     en: '/admin/[tenantId]/requests-portal/request-types/[slug]',
     es: '/admin/[tenantId]/solicitudes-portal/tipo-de-solicitudes/[slug]',
+  },
+  '/admin/[tenantId]/requests-portal/request-types/[slug]/edit': {
+    en: '/admin/[tenantId]/requests-portal/request-types/[slug]/edit',
+    es: '/admin/[tenantId]/solicitudes-portal/tipo-de-solicitudes/[slug]/editar',
   },
   // Requirements
   '/admin/[tenantId]/requests-portal/requirements': {
@@ -141,6 +169,10 @@ const requestsPathnames = {
     en: '/admin/[tenantId]/requests-portal/requirements/[slug]',
     es: '/admin/[tenantId]/solicitudes-portal/requisitos/[slug]',
   },
+  '/admin/[tenantId]/requests-portal/requirements/[slug]/edit': {
+    en: '/admin/[tenantId]/requests-portal/requirements/[slug]/edit',
+    es: '/admin/[tenantId]/solicitudes-portal/requisitos/[slug]/editar',
+  },
   // Documents
   '/admin/[tenantId]/requests-portal/documents': {
     en: '/admin/[tenantId]/requests-portal/documents',
@@ -154,28 +186,27 @@ const requestsPathnames = {
     en: '/admin/[tenantId]/requests-portal/documents/[slug]',
     es: '/admin/[tenantId]/solicitudes-portal/documentos/[slug]',
   },
-} satisfies Pathnames<typeof locales>;
+  '/admin/[tenantId]/requests-portal/documents/[slug]/edit': {
+    en: '/admin/[tenantId]/requests-portal/documents/[slug]/edit',
+    es: '/admin/[tenantId]/solicitudes-portal/documentos/[slug]/editar',
+  },
+} satisfies Pathnames<Locale[]>;
 
 const formsPathnames = {
-  // forms
-  '/admin/[tenantId]/forms': {
-    en: '/admin/[tenantId]/forms',
-    es: '/admin/[tenantId]/formularios',
-  },
-  '/admin/[tenantId]/forms/new': {
-    en: '/admin/[tenantId]/forms/new',
-    es: '/admin/[tenantId]/formularios/nuevo',
-  },
-  '/admin/[tenantId]/forms/[slug]': {
-    en: '/admin/[tenantId]/forms/[slug]',
-    es: '/admin/[tenantId]/formularios/[slug]',
-  },
   // form designer
   '/admin/[tenantId]/form-designer': {
     en: '/admin/[tenantId]/form-designer',
     es: '/admin/[tenantId]/disenador-de-formularios',
   },
-} satisfies Pathnames<typeof locales>;
+  '/admin/[tenantId]/form-designer/[slug]': {
+    en: '/admin/[tenantId]/form-designer/[slug]',
+    es: '/admin/[tenantId]/disenador-de-formularios/[slug]',
+  },
+  '/admin/[tenantId]/form-designer/[slug]/edit': {
+    en: '/admin/[tenantId]/form-designer/[slug]/edit',
+    es: '/admin/[tenantId]/disenador-de-formularios/[slug]/editar',
+  },
+} satisfies Pathnames<Locale[]>;
 
 const settingsPathnames = {
   // settings
@@ -203,10 +234,14 @@ const settingsPathnames = {
     en: '/admin/[tenantId]/settings/tenant',
     es: '/admin/[tenantId]/configuracion/inquilino',
   },
-} satisfies Pathnames<typeof locales>;
+} satisfies Pathnames<Locale[]>;
 
 const globalPathnames = {
   // tenants
+  '/admin/global': {
+    en: '/admin/global',
+    es: '/admin/global',
+  },
   '/admin/global/tenants': {
     en: '/admin/global/tenants',
     es: '/admin/global/inquilinos',
@@ -218,6 +253,10 @@ const globalPathnames = {
   '/admin/global/tenants/[slug]': {
     en: '/admin/global/tenants/[slug]',
     es: '/admin/global/inquilinos/[slug]',
+  },
+  '/admin/global/tenants/[slug]/edit': {
+    en: '/admin/global/tenants/[slug]/edit',
+    es: '/admin/global/inquilinos/[slug]/editar',
   },
   // plans
   '/admin/global/plans': {
@@ -232,7 +271,11 @@ const globalPathnames = {
     en: '/admin/global/plans/[slug]',
     es: '/admin/global/planes/[slug]',
   },
-} satisfies Pathnames<typeof locales>;
+  '/admin/global/plans/[slug]/edit': {
+    en: '/admin/global/plans/[slug]/edit',
+    es: '/admin/global/planes/[slug]/editar',
+  },
+} satisfies Pathnames<Locale[]>;
 
 export const pathnames = {
   ...basePathnames,
@@ -242,7 +285,7 @@ export const pathnames = {
   ...formsPathnames,
   ...settingsPathnames,
   ...globalPathnames,
-} satisfies Pathnames<typeof locales>;
+} satisfies Pathnames<Locale[]>;
 
 export const routing = defineRouting({
   // A list of all locales that are supported
@@ -257,6 +300,34 @@ export const routing = defineRouting({
   // The pathnames for each page
   pathnames,
 });
+
+export const getSiblingRoutes = (currentRoute: string, locale: Locale, ignoreCurrent = true): string[] => {
+  // Extract the base path by removing the last segment
+  const basePath = currentRoute.replace(/\/[^/]+$/, '');
+  const segmentCount = currentRoute.split('/').length;
+
+  // Find all siblings with the same number of segments
+  const siblingKeys = Object.keys(pathnames).filter((path) => {
+    const isSibling =
+      path.startsWith(basePath + '/') && // Same base path
+      path.split('/').length === segmentCount && // Same number of segments
+      (ignoreCurrent ? path !== currentRoute : true); // Ignore the current route
+    return isSibling;
+  });
+
+  // Map sibling keys to their localized values
+  return siblingKeys.map((key) => {
+    const path = pathnames[key as keyof typeof pathnames];
+    if (path && typeof path === 'object' && locale in path) {
+      return path[locale];
+    }
+    return '';
+  });
+};
+
+export const IsExistingRoute = (currentRoute: string): boolean => {
+  return currentRoute in pathnames;
+};
 
 // Lightweight wrappers around Next.js' navigation APIs
 // that will consider the routing configuration

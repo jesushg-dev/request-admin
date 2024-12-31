@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { SquareCheckIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { IoMdCheckbox } from 'react-icons/io';
 import { z } from 'zod';
 
 import { cn } from '@/lib/utils';
@@ -37,7 +37,7 @@ export const CheckboxFieldFormElement: FormElement = {
     extraAttributes,
   }),
   designerBtnElement: {
-    icon: IoMdCheckbox,
+    icon: SquareCheckIcon,
     label: 'CheckBox Field',
   },
   designerComponent: DesignerComponent,

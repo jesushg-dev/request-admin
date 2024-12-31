@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { TypeIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { MdTextFields } from 'react-icons/md';
 import { z } from 'zod';
 
 import { cn } from '@/lib/utils';
@@ -38,7 +38,7 @@ export const TextFieldFormElement: FormElement = {
     extraAttributes,
   }),
   designerBtnElement: {
-    icon: MdTextFields,
+    icon: TypeIcon,
     label: 'Text Field',
   },
   designerComponent: DesignerComponent,

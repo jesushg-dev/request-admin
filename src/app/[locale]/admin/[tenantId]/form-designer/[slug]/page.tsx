@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { GetFormById, GetFormWithSubmissions } from '@/actions/form';
 import { format, formatDistance } from 'date-fns';
+import { getTranslations } from 'next-intl/server';
 import { FaWpforms } from 'react-icons/fa';
 import { HiCursorClick } from 'react-icons/hi';
 import { LuView } from 'react-icons/lu';
@@ -15,19 +16,20 @@ import { ElementsType, FormElementInstance } from '@/components/builder-form/for
 import FormLinkShare from '@/components/builder-form/form-link-share';
 import VisitBtn from '@/components/builder-form/visit-btn';
 
-import { StatsCard } from '../../page';
+import { StatsCard } from '../page';
 
 async function FormDetailPage({
   params,
 }: {
   params: {
-    id: string;
+    slug: string;
   };
 }) {
-  const { id } = params;
-  const form = await GetFormById(id);
+  const t = await getTranslations('admin.formBuilder.view');
+  const { slug } = await params;
+  const form = await GetFormById(slug);
   if (!form) {
-    throw new Error('form not found');
+    throw new Error(t('formNotFound'));
   }
 
   const { visits, submissions } = form;
@@ -59,35 +61,35 @@ async function FormDetailPage({
           </div>
           <div className="container grid w-full grid-cols-1 gap-4 pt-8 md:grid-cols-2 lg:grid-cols-4">
             <StatsCard
-              title="Total visits"
+              title={t('totalVisits')}
               icon={<LuView className="text-blue-600" />}
-              helperText="All time form visits"
+              helperText={t('visitsHelper')}
               value={visits.toLocaleString() ?? ''}
               loading={false}
               className="shadow-md shadow-blue-600"
             />
 
             <StatsCard
-              title="Total submissions"
+              title={t('totalSubmissions')}
               icon={<FaWpforms className="text-yellow-600" />}
-              helperText="All time form submissions"
+              helperText={t('submissionsHelper')}
               value={submissions.toLocaleString() ?? ''}
               loading={false}
               className="shadow-md shadow-yellow-600"
             />
             <StatsCard
-              title="Submission rate"
+              title={t('submissionRate')}
               icon={<HiCursorClick className="text-green-600" />}
-              helperText="Visits that result in form submission"
+              helperText={t('submissionRateHelper')}
               value={submissionRate.toLocaleString() + '%'}
               loading={false}
               className="shadow-md shadow-green-600"
             />
 
             <StatsCard
-              title="Bounce rate"
+              title={t('bounceRate')}
               icon={<TbArrowBounce className="text-red-600" />}
-              helperText="Visits that leaves without interacting"
+              helperText={t('bounceRateHelper')}
               value={bounceRate.toLocaleString() + '%'}
               loading={false}
               className="shadow-md shadow-red-600"
@@ -111,10 +113,11 @@ type Row = Record<string, string> & {
 };
 
 async function SubmissionsTable({ id }: { id: string }) {
+  const t = await getTranslations('admin.formBuilder.view');
   const form = await GetFormWithSubmissions(id);
 
   if (!form) {
-    throw new Error('form not found');
+    throw new Error(t('formNotFound'));
   }
 
   const formElements = JSON.parse(form.content) as FormElementInstance[];
@@ -156,7 +159,7 @@ async function SubmissionsTable({ id }: { id: string }) {
 
   return (
     <>
-      <h1 className="my-4 text-2xl font-bold">Submissions</h1>
+      <h1 className="my-4 text-2xl font-bold">{t('submissions')}</h1>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -166,7 +169,7 @@ async function SubmissionsTable({ id }: { id: string }) {
                   {column.label}
                 </TableHead>
               ))}
-              <TableHead className="text-right uppercase text-muted-foreground">Submitted at</TableHead>
+              <TableHead className="text-right uppercase text-muted-foreground">{t('submittedAt')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -189,14 +192,15 @@ async function SubmissionsTable({ id }: { id: string }) {
   );
 }
 
-function RowCell({ type, value }: { type: ElementsType; value: string }) {
+async function RowCell({ type, value }: { type: ElementsType; value: string }) {
+  const t = await getTranslations('admin.formBuilder.view');
   let node: ReactNode = value;
 
   switch (type) {
     case 'DateField':
       if (!value) break;
       const date = new Date(value);
-      node = <Badge variant={'outline'}>{format(date, 'dd/MM/yyyy')}</Badge>;
+      node = <Badge variant="outline">{format(date, 'dd/MM/yyyy')}</Badge>;
       break;
     case 'CheckboxField':
       const checked = value === 'true';

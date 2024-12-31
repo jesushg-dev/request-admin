@@ -37,7 +37,7 @@ export function DataTableSkeleton(props: DataTableSkeletonProps) {
   const { columnCount, rowCount = 10, cellWidths = ['auto'], shrinkZero = false, className, ...skeletonProps } = props;
 
   return (
-    <div className={cn('w-full space-y-2.5 overflow-auto', className)} {...skeletonProps}>
+    <div className={cn('flex w-full flex-col gap-1 overflow-auto', className)} {...skeletonProps}>
       <Table>
         <TableHeader>
           {Array.from({ length: 1 }).map((_, i) => (

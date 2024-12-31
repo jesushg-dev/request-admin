@@ -165,9 +165,9 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
-        StatusType: {
-          name: 'StatusType',
-          type: 'StatusType',
+        RequestStatusType: {
+          name: 'RequestStatusType',
+          type: 'RequestStatusType',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
@@ -1914,6 +1914,10 @@ const metadata = {
           name: 'id',
           fields: ['id'],
         },
+        position_hierarchyId: {
+          name: 'position_hierarchyId',
+          fields: ['position', 'hierarchyId'],
+        },
       },
     },
     category: {
@@ -2181,7 +2185,7 @@ const metadata = {
         },
         status: {
           name: 'status',
-          type: 'StatusType',
+          type: 'RequestStatusType',
           isDataModel: true,
           backLink: 'requests',
           isRelationOwner: true,
@@ -2398,7 +2402,7 @@ const metadata = {
         },
         status: {
           name: 'status',
-          type: 'StatusType',
+          type: 'RequestStatusType',
           isDataModel: true,
           backLink: 'assignments',
           isRelationOwner: true,
@@ -2419,8 +2423,8 @@ const metadata = {
         },
       },
     },
-    statusType: {
-      name: 'StatusType',
+    requestStatusType: {
+      name: 'RequestStatusType',
       fields: {
         createdAt: {
           name: 'createdAt',
@@ -2443,14 +2447,14 @@ const metadata = {
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$StatusType$createdBy,
+          defaultValueProvider: $default$RequestStatusType$createdBy,
         },
         modifiedBy: {
           name: 'modifiedBy',
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$StatusType$modifiedBy,
+          defaultValueProvider: $default$RequestStatusType$modifiedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -2462,7 +2466,7 @@ const metadata = {
           name: 'tenant',
           type: 'Tenant',
           isDataModel: true,
-          backLink: 'StatusType',
+          backLink: 'RequestStatusType',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
@@ -4635,11 +4639,11 @@ function $default$RequestAssignment$modifiedBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$StatusType$createdBy(user: any): unknown {
+function $default$RequestStatusType$createdBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$StatusType$modifiedBy(user: any): unknown {
+function $default$RequestStatusType$modifiedBy(user: any): unknown {
   return user?.id;
 }
 

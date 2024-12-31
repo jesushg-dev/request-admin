@@ -1,6 +1,9 @@
+'use client';
+
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { PublishForm } from '@/actions/form';
+import { useTranslations } from 'next-intl';
 import { FaSpinner } from 'react-icons/fa';
 import { MdOutlinePublish } from 'react-icons/md';
 
@@ -19,6 +22,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 
 function PublishFormBtn({ id }: { id: string }) {
+  const t = useTranslations('component.formBuilder');
   const [loading, startTransition] = useTransition();
   const router = useRouter();
 
@@ -26,14 +30,14 @@ function PublishFormBtn({ id }: { id: string }) {
     try {
       await PublishForm(id);
       toast({
-        title: 'Success',
-        description: 'Your form is now available to the public',
+        title: t('success'),
+        description: t('publishSuccess'),
       });
       router.refresh();
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Something went wrong',
+        title: t('error'),
+        description: t('publishError'),
       });
     }
   }
@@ -43,27 +47,27 @@ function PublishFormBtn({ id }: { id: string }) {
       <AlertDialogTrigger asChild>
         <Button className="gap-2 bg-gradient-to-r from-indigo-400 to-cyan-400 text-white">
           <MdOutlinePublish className="h-4 w-4" />
-          Publish
+          {t('publish')}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogTitle>{t('confirmTitle')}</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. After publishing you will not be able to edit this form. <br />
+            {t('confirmDescription')} <br />
             <br />
-            <span className="font-medium">By publishing this form you will make it available to the public and you will be able to collect submissions.</span>
+            <span className="font-medium">{t('confirmDetails')}</span>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
           <AlertDialogAction
             disabled={loading}
             onClick={(e) => {
               e.preventDefault();
               startTransition(publishForm);
             }}>
-            Proceed {loading && <FaSpinner className="animate-spin" />}
+            {t('proceed')} {loading && <FaSpinner className="animate-spin" />}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

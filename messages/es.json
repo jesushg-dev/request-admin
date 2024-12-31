@@ -41,7 +41,7 @@
   },
   "auth": {
     "loginForm": {
-      "welcome": "Bienvenido de nuevo",
+      "welcome": "¡Bienvenido de nuevo!",
       "noAccount": "¿No tienes una cuenta?",
       "fields": {
         "email": "Correo electrónico",
@@ -60,7 +60,11 @@
       },
       "errors": {
         "generic": "Algo salió mal",
-        "emailInUse": "¡El correo ya está en uso con un proveedor diferente!"
+        "emailInUse": "¡El correo ya está en uso con un proveedor diferente!",
+        "unauthenticated": "Necesitas iniciar sesión para acceder a esta página",
+        "unauthenticatedDescription": "Por favor, inicia sesión para continuar.",
+        "tenant": "No tienes permiso para acceder a este inquilino",
+        "tenantDescription": "Por favor, usa las credenciales asociadas con el inquilino que deseas acceder."
       }
     },
     "registerForm": {
@@ -479,6 +483,39 @@
           "createdAt": "Creado En"
         }
       }
+    },
+    "formBuilder": {
+      "main": {
+        "yourForms": "Tus formularios",
+        "totalVisits": "Visitas totales",
+        "visitsHelper": "Visitas totales al formulario",
+        "totalSubmissions": "Envíos totales",
+        "submissionsHelper": "Envíos totales del formulario",
+        "submissionRate": "Tasa de envío",
+        "submissionRateHelper": "Visitas que resultan en envío del formulario",
+        "bounceRate": "Tasa de rebote",
+        "bounceRateHelper": "Visitas que abandonan sin interactuar",
+        "published": "Publicado",
+        "draft": "Borrador",
+        "noDescription": "Sin descripción",
+        "viewSubmissions": "Ver envíos",
+        "editForm": "Editar formulario"
+      },
+      "view": {
+        "formNotFound": "Formulario no encontrado",
+        "totalVisits": "Visitas totales",
+        "visitsHelper": "Visitas totales al formulario",
+        "totalSubmissions": "Envíos totales",
+        "submissionsHelper": "Envíos totales del formulario",
+        "submissionRate": "Tasa de envío",
+        "submissionRateHelper": "Visitas que resultan en el envío del formulario",
+        "bounceRate": "Tasa de rebote",
+        "bounceRateHelper": "Visitas que abandonan sin interactuar",
+        "submissions": "Envíos",
+        "submittedAt": "Enviado el"
+      },
+      "create": {},
+      "edit": {}
     }
   },
   "component": {
@@ -541,6 +578,69 @@
       "columns": {
         "name": "Nombre",
         "description": "Descripción"
+      }
+    },
+    "formBuilder": {
+      "loading": "Cargando...",
+      "formPublished": "🎊🎊 Formulario publicado 🎊🎊",
+      "shareThisForm": "Comparte este formulario",
+      "shareInstructions": "Cualquier persona con el enlace puede ver y enviar el formulario",
+      "copied": "¡Copiado!",
+      "linkCopied": "Enlace copiado al portapapeles",
+      "copyLink": "Copiar enlace",
+      "goBackHome": "Volver a inicio",
+      "formDetails": "Detalles del formulario",
+      "form": "Formulario",
+      "createNewForm": "Crear nuevo formulario",
+      "dialogTitle": "Crear formulario",
+      "dialogDescription": "Crea un nuevo formulario para comenzar a recopilar respuestas",
+      "formNameLabel": "Nombre",
+      "formDescriptionLabel": "Descripción",
+      "saveButton": "Guardar",
+      "successTitle": "Éxito",
+      "successDescription": "Formulario creado exitosamente",
+      "errorTitle": "Error",
+      "errorDescription": "Algo salió mal, por favor inténtalo de nuevo más tarde",
+      "dropHere": "Suelta aquí",
+      "errors": {
+        "elementNotFound": "Elemento no encontrado"
+      },
+      "dragToMove": "Mantén presionado aquí y arrastra para mover",
+      "properties": "Propiedades",
+      "delete": "Eliminar",
+      "shareLink": "Compartir enlace",
+      "error": "Error",
+      "formError": "Por favor, verifica los errores en el formulario",
+      "submissionError": "Algo salió mal",
+      "formSubmitted": "Formulario enviado",
+      "submissionMessage": "Gracias por enviar el formulario. Ahora puedes cerrar esta página.",
+      "submit": "Enviar",
+      "preview": "Vista previa",
+      "formPreview": "Vista previa del formulario",
+      "formPreviewDescription": "Así es como tu formulario se verá para tus usuarios.",
+      "elementProperties": "Propiedades del elemento",
+      "publish": "Publicar",
+      "success": "Éxito",
+      "publishSuccess": "Tu formulario ahora está disponible para el público",
+      "publishError": "Algo salió mal",
+      "confirmTitle": "¿Estás completamente seguro?",
+      "confirmDescription": "Esta acción no se puede deshacer. Después de publicarlo, no podrás editar este formulario.",
+      "confirmDetails": "Al publicar este formulario, lo harás disponible para el público y podrás recibir envíos.",
+      "cancel": "Cancelar",
+      "proceed": "Continuar",
+      "save": "Guardar",
+      "visit": "Visitar",
+      "saveSuccess": "Tu formulario ha sido guardado",
+      "saveError": "Algo salió mal",
+      "dragDropElements": "Arrastra y suelta elementos",
+      "formElements": "Elementos del formulario",
+      "layoutElements": "Elementos de diseño"
+    },
+    "LocaleSwitcher": {
+      "label": "Seleccionar idioma",
+      "locale": {
+        "en": "Inglés",
+        "es": "Español"
       }
     }
   }

@@ -2,6 +2,7 @@
 
 import React, { useCallback, useRef, useState, useTransition } from 'react';
 import { SubmitForm } from '@/actions/form';
+import { useTranslations } from 'next-intl';
 import { HiCursorClick } from 'react-icons/hi';
 import { ImSpinner2 } from 'react-icons/im';
 
@@ -12,6 +13,7 @@ import { toast } from '@/components/ui/use-toast';
 import { FormElementInstance, FormElements } from './form-elements';
 
 function FormSubmitComponent({ formUrl, content }: { content: FormElementInstance[]; formUrl: string }) {
+  const t = useTranslations('component.formBuilder');
   const tenantId = useTenantId();
   const formValues = useRef<Record<string, string>>({});
   const formErrors = useRef<Record<string, boolean>>({});
@@ -47,8 +49,8 @@ function FormSubmitComponent({ formUrl, content }: { content: FormElementInstanc
     if (!validForm) {
       setRenderKey(new Date().getTime());
       toast({
-        title: 'Error',
-        description: 'please check the form for errors',
+        title: t('error'),
+        description: t('formError'),
         variant: 'destructive',
       });
       return;
@@ -56,13 +58,12 @@ function FormSubmitComponent({ formUrl, content }: { content: FormElementInstanc
 
     try {
       const jsonContent = JSON.stringify(formValues.current);
-      // todo: we need to find a way to get the tenant id
       await SubmitForm(tenantId, formUrl, jsonContent);
       setSubmitted(true);
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Something went wrong',
+        title: t('error'),
+        description: t('submissionError'),
         variant: 'destructive',
       });
     }
@@ -72,8 +73,8 @@ function FormSubmitComponent({ formUrl, content }: { content: FormElementInstanc
     return (
       <div className="flex h-full w-full items-center justify-center p-8">
         <div className="flex w-full max-w-[620px] flex-grow flex-col gap-4 overflow-y-auto rounded border bg-background p-8 shadow-xl shadow-blue-700">
-          <h1 className="text-2xl font-bold">Form submitted</h1>
-          <p className="text-muted-foreground">Thank you for submitting the form, you can close this page now.</p>
+          <h1 className="text-2xl font-bold">{t('formSubmitted')}</h1>
+          <p className="text-muted-foreground">{t('submissionMessage')}</p>
         </div>
       </div>
     );
@@ -94,7 +95,7 @@ function FormSubmitComponent({ formUrl, content }: { content: FormElementInstanc
         {!pending && (
           <>
             <HiCursorClick className="mr-2" />
-            Submit
+            {t('submit')}
           </>
         )}
         {pending && <ImSpinner2 className="animate-spin" />}

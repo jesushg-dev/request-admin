@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CalendarIcon } from '@radix-ui/react-icons';
 import { format } from 'date-fns';
+import { CalendarDaysIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { BsFillCalendarDateFill } from 'react-icons/bs';
 import { z } from 'zod';
 
 import { cn } from '@/lib/utils';
@@ -41,7 +41,7 @@ export const DateFieldFormElement: FormElement = {
     extraAttributes,
   }),
   designerBtnElement: {
-    icon: BsFillCalendarDateFill,
+    icon: CalendarDaysIcon,
     label: 'Date Field',
   },
   designerComponent: DesignerComponent,

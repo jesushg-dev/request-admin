@@ -10,7 +10,7 @@ model Form extends TenantScoped, Auditable {
   userId          String     @db.UniqueIdentifier // ID of the user who owns the form
   name            String     // Name of the form
   description     String     @default("") // Description of the form
-  content         String     @default("[]") // JSON content of the form (default: empty JSON)
+  content         String     @default("[]") @db.NVarChar(Max)
   published       Boolean    @default(false) // Publication status of the form
 
   // Form statistics

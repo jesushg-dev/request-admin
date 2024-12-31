@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { HashIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { Bs123 } from 'react-icons/bs';
 import { z } from 'zod';
 
 import { cn } from '@/lib/utils';
@@ -38,7 +38,7 @@ export const NumberFieldFormElement: FormElement = {
     extraAttributes,
   }),
   designerBtnElement: {
-    icon: Bs123,
+    icon: HashIcon,
     label: 'Number Field',
   },
   designerComponent: DesignerComponent,

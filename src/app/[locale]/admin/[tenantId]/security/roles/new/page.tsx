@@ -26,7 +26,7 @@ const NewRolePage: React.FC = () => {
   });
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex w-full flex-1 flex-col gap-4">
       <div className="border-stroke dark:border-strokedark border-b px-6 py-4">
         <h3 className="font-medium text-black dark:text-white">{t('createTitle')}</h3>
       </div>

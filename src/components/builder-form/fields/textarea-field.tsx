@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { PilcrowIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { BsTextareaResize } from 'react-icons/bs';
 import { z } from 'zod';
 
 import { cn } from '@/lib/utils';
@@ -42,7 +42,7 @@ export const TextAreaFormElement: FormElement = {
     extraAttributes,
   }),
   designerBtnElement: {
-    icon: BsTextareaResize,
+    icon: PilcrowIcon,
     label: 'TextArea Field',
   },
   designerComponent: DesignerComponent,

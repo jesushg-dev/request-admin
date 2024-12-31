@@ -41,7 +41,7 @@
   },
   "auth": {
     "loginForm": {
-      "welcome": "Welcome back",
+      "welcome": "Welcome back!",
       "noAccount": "Don't have an account?",
       "fields": {
         "email": "Email",
@@ -60,7 +60,11 @@
       },
       "errors": {
         "generic": "Something went wrong",
-        "emailInUse": "Email already in use with a different provider!"
+        "emailInUse": "Email already in use with a different provider!",
+        "unauthenticated": "You need to be authenticated to access this page!",
+        "unauthenticatedDescription": "Please login to access this page.",
+        "tenant": "You don't have access to this tenant!",
+        "tenantDescription": "Please, use the credential associated with the tenant you want to access."
       }
     },
     "registerForm": {
@@ -479,6 +483,39 @@
           "createdAt": "Created At"
         }
       }
+    },
+    "formBuilder": {
+      "main": {
+        "yourForms": "Your forms",
+        "totalVisits": "Total visits",
+        "visitsHelper": "All time form visits",
+        "totalSubmissions": "Total submissions",
+        "submissionsHelper": "All time form submissions",
+        "submissionRate": "Submission rate",
+        "submissionRateHelper": "Visits that result in form submission",
+        "bounceRate": "Bounce rate",
+        "bounceRateHelper": "Visits that leave without interacting",
+        "published": "Published",
+        "draft": "Draft",
+        "noDescription": "No description",
+        "viewSubmissions": "View submissions",
+        "editForm": "Edit form"
+      },
+      "view": {
+        "formNotFound": "Form not found",
+        "totalVisits": "Total visits",
+        "visitsHelper": "All time form visits",
+        "totalSubmissions": "Total submissions",
+        "submissionsHelper": "All time form submissions",
+        "submissionRate": "Submission rate",
+        "submissionRateHelper": "Visits that result in form submission",
+        "bounceRate": "Bounce rate",
+        "bounceRateHelper": "Visits that leave without interacting",
+        "submissions": "Submissions",
+        "submittedAt": "Submitted at"
+      },
+      "create": {},
+      "edit": {}
     }
   },
   "component": {
@@ -541,6 +578,69 @@
       "columns": {
         "name": "Name",
         "description": "Description"
+      }
+    },
+    "formBuilder": {
+      "loading": "Loading...",
+      "formPublished": "🎊🎊 Form Published 🎊🎊",
+      "shareThisForm": "Share this form",
+      "shareInstructions": "Anyone with the link can view and submit the form",
+      "copied": "Copied!",
+      "linkCopied": "Link copied to clipboard",
+      "copyLink": "Copy link",
+      "goBackHome": "Go back home",
+      "formDetails": "Form details",
+      "form": "Form",
+      "createNewForm": "Create new form",
+      "dialogTitle": "Create form",
+      "dialogDescription": "Create a new form to start collecting responses",
+      "formNameLabel": "Name",
+      "formDescriptionLabel": "Description",
+      "saveButton": "Save",
+      "successTitle": "Success",
+      "successDescription": "Form created successfully",
+      "errorTitle": "Error",
+      "errorDescription": "Something went wrong, please try again later",
+      "dropHere": "Drop here",
+      "errors": {
+        "elementNotFound": "Element not found"
+      },
+      "dragToMove": "Keep pressing here and drag to move",
+      "properties": "Properties",
+      "delete": "Delete",
+      "shareLink": "Share link",
+      "error": "Error",
+      "formError": "Please check the form for errors",
+      "submissionError": "Something went wrong",
+      "formSubmitted": "Form submitted",
+      "submissionMessage": "Thank you for submitting the form. You can close this page now.",
+      "submit": "Submit",
+      "preview": "Preview",
+      "formPreview": "Form preview",
+      "formPreviewDescription": "This is how your form will look like to your users.",
+      "elementProperties": "Element properties",
+      "publish": "Publish",
+      "success": "Success",
+      "publishSuccess": "Your form is now available to the public",
+      "publishError": "Something went wrong",
+      "confirmTitle": "Are you absolutely sure?",
+      "confirmDescription": "This action cannot be undone. After publishing, you will not be able to edit this form.",
+      "confirmDetails": "By publishing this form, you will make it available to the public and you will be able to collect submissions.",
+      "cancel": "Cancel",
+      "proceed": "Proceed",
+      "save": "Save",
+      "visit": "Visit",
+      "saveSuccess": "Your form has been saved",
+      "saveError": "Something went wrong",
+      "dragDropElements": "Drag and drop elements",
+      "formElements": "Form elements",
+      "layoutElements": "Layout elements"
+    },
+    "LocaleSwitcher": {
+      "label": "Select language",
+      "locale": {
+        "en": "English",
+        "es": "Spanish"
       }
     }
   }

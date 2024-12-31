@@ -1,30 +1,28 @@
-import { ReactNode, Suspense } from 'react';
-import Link from 'next/link';
+import React, { ReactNode, Suspense } from 'react';
 import { GetForms, GetFormStats } from '@/actions/form';
+import { Link } from '@/i18n/routing';
 import { Form } from '@prisma/client';
 import { formatDistance } from 'date-fns';
-import { BiRightArrowAlt } from 'react-icons/bi';
-import { FaEdit, FaWpforms } from 'react-icons/fa';
-import { HiCursorClick } from 'react-icons/hi';
-import { LuView } from 'react-icons/lu';
-import { TbArrowBounce } from 'react-icons/tb';
+import { ArrowRightIcon, BookOpenCheckIcon, FilePenLineIcon, MousePointerClickIcon, ViewIcon, WindArrowDownIcon } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import CreateFormBtn from '@/components/builder-form/create-form-btn';
 
-const Home = () => {
+const Home = async () => {
+  const t = await getTranslations('admin.formBuilder.main');
+
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex w-full flex-1 flex-col gap-4">
       <Suspense fallback={<StatsCards loading={true} />}>
         <CardStatsWrapper />
       </Suspense>
-      <Card className="bg-background">
+      <Card className="flex-1 bg-background">
         <CardHeader>
-          <CardTitle>Your forms</CardTitle>
+          <CardTitle>{t('yourForms')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -52,59 +50,47 @@ interface StatsCardProps {
   loading: boolean;
 }
 
-const StatsCards = (props: StatsCardProps) => {
+const StatsCards = async (props: StatsCardProps) => {
+  const t = await getTranslations('admin.formBuilder.main');
   const { data, loading } = props;
 
   return (
     <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <StatsCard title={t('totalVisits')} icon={<ViewIcon className="h-4 w-4 text-blue-600" />} helperText={t('visitsHelper')} value={data?.visits.toLocaleString() ?? ''} loading={loading} />
       <StatsCard
-        title="Total visits"
-        icon={<LuView className="text-blue-600" />}
-        helperText="All time form visits"
-        value={data?.visits.toLocaleString() ?? ''}
-        loading={loading}
-        className="border-blue-600 shadow-md"
-      />
-
-      <StatsCard
-        title="Total submissions"
-        icon={<FaWpforms className="text-yellow-600" />}
-        helperText="All time form submissions"
+        title={t('totalSubmissions')}
+        icon={<BookOpenCheckIcon className="h-4 w-4 text-yellow-600" />}
+        helperText={t('submissionsHelper')}
         value={data?.submissions.toLocaleString() ?? ''}
         loading={loading}
-        className="border-md border-yellow-600"
       />
-
       <StatsCard
-        title="Submission rate"
-        icon={<HiCursorClick className="text-green-600" />}
-        helperText="Visits that result in form submission"
+        title={t('submissionRate')}
+        icon={<MousePointerClickIcon className="h-4 w-4 text-green-600" />}
+        helperText={t('submissionRateHelper')}
         value={data?.submissionRate.toLocaleString() + '%'}
         loading={loading}
-        className="border-md border-green-600"
       />
-
       <StatsCard
-        title="Bounce rate"
-        icon={<TbArrowBounce className="text-red-600" />}
-        helperText="Visits that leaves without interacting"
-        value={data?.submissionRate.toLocaleString() + '%'}
+        title={t('bounceRate')}
+        icon={<WindArrowDownIcon className="h-4 w-4 text-red-600" />}
+        helperText={t('bounceRateHelper')}
+        value={data?.bounceRate.toLocaleString() + '%'}
         loading={loading}
-        className="border-md border-red-600"
       />
     </div>
   );
 };
 
-export const StatsCard = ({ title, value, icon, helperText, loading, className }: { title: string; value: string; helperText: string; className: string; loading: boolean; icon: ReactNode }) => {
+export const StatsCard = ({ title, value, icon, helperText, loading, className }: { title: string; value: string; helperText: string; className?: string; loading: boolean; icon: ReactNode }) => {
   return (
     <Card className={className}>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 pb-0">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
         {icon}
       </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">
+      <CardContent className="p-4">
+        <div className="text-xl font-bold">
           {loading && (
             <Skeleton>
               <span className="opacity-0">0</span>
@@ -133,14 +119,16 @@ const FormCards = async () => {
   );
 };
 
-const FormCard = ({ form }: { form: Form }) => {
+const FormCard = async ({ form }: { form: Form }) => {
+  const t = await getTranslations('admin.formBuilder.main');
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center justify-between gap-2">
           <span className="truncate font-bold">{form.name}</span>
-          {form.published && <Badge>Published</Badge>}
-          {!form.published && <Badge variant={'destructive'}>Draft</Badge>}
+          {form.published && <Badge>{t('published')}</Badge>}
+          {!form.published && <Badge variant="destructive">{t('draft')}</Badge>}
         </CardTitle>
         <CardDescription className="flex items-center justify-between text-sm text-muted-foreground">
           {formatDistance(form.createdAt, new Date(), {
@@ -148,27 +136,27 @@ const FormCard = ({ form }: { form: Form }) => {
           })}
           {form.published && (
             <span className="flex items-center gap-2">
-              <LuView className="text-muted-foreground" />
+              <ViewIcon className="text-muted-foreground" />
               <span>{form.visits.toLocaleString()}</span>
-              <FaWpforms className="text-muted-foreground" />
+              <BookOpenCheckIcon className="text-muted-foreground" />
               <span>{form.submissions.toLocaleString()}</span>
             </span>
           )}
         </CardDescription>
       </CardHeader>
-      <CardContent className="h-[20px] truncate text-sm text-muted-foreground">{form.description ?? 'No description'}</CardContent>
+      <CardContent className="h-[20px] truncate text-sm text-muted-foreground">{form.description ?? t('noDescription')}</CardContent>
       <CardFooter>
         {form.published && (
           <Button asChild className="text-md mt-2 w-full gap-4">
-            <Link href={`/admin/form-designer/forms/${form.id}`}>
-              View submissions <BiRightArrowAlt />
+            <Link href={{ pathname: '/admin/[tenantId]/form-designer/[slug]', params: { tenantId: form.tenantId, slug: form.id } }}>
+              {t('viewSubmissions')} <ArrowRightIcon />
             </Link>
           </Button>
         )}
         {!form.published && (
-          <Button asChild variant={'secondary'} className="text-md mt-2 w-full gap-4">
-            <Link href={`/admin/form-designer/builder/${form.id}`}>
-              Edit form <FaEdit />
+          <Button asChild variant="secondary" className="text-md mt-2 w-full gap-4">
+            <Link href={{ pathname: '/admin/[tenantId]/form-designer/[slug]/edit', params: { tenantId: form.tenantId, slug: form.id } }}>
+              {t('editForm')} <FilePenLineIcon />
             </Link>
           </Button>
         )}

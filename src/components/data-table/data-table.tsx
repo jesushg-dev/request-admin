@@ -20,7 +20,7 @@ interface DataTableShellProps<TData> extends CommonDataTableProps<TData>, React.
 
 export function DataTableShell<TData>({ table, floatingBar = null, isLoading, children, className, ...props }: DataTableShellProps<TData>) {
   return (
-    <div className={cn('w-full space-y-2.5 overflow-auto', className)} {...props}>
+    <div className={cn('flex w-full flex-col gap-1 overflow-auto', className)} {...props}>
       {children}
 
       <div className="flex flex-col gap-2.5">
@@ -47,7 +47,7 @@ export function DataTable<TData, TSubData>({ table, subComponent, isLoading, chi
   return (
     <>
       {children}
-      <div className="overflow-auto rounded-md border">
+      <div className="flex flex-1 overflow-auto rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

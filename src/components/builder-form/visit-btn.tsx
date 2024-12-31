@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 
 function VisitBtn({ shareUrl }: { shareUrl: string }) {
+  const t = useTranslations('component.formBuilder');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -22,7 +24,7 @@ function VisitBtn({ shareUrl }: { shareUrl: string }) {
       onClick={() => {
         window.open(shareLink, '_blank');
       }}>
-      Visit
+      {t('visit')}
     </Button>
   );
 }

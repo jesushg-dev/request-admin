@@ -2,8 +2,8 @@
 
 import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { SquarePilcrowIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { BsTextParagraph } from 'react-icons/bs';
 import { z } from 'zod';
 
 import useDesigner from '@/hooks/use-designer';
@@ -22,7 +22,7 @@ const propertiesSchema = z.object({
   text: z.string().min(2).max(500),
 });
 
-export const ParagprahFieldFormElement: FormElement = {
+export const ParagraphFieldFormElement: FormElement = {
   type,
   construct: (id: string) => ({
     id,
@@ -30,7 +30,7 @@ export const ParagprahFieldFormElement: FormElement = {
     extraAttributes,
   }),
   designerBtnElement: {
-    icon: BsTextParagraph,
+    icon: SquarePilcrowIcon,
     label: 'Paragraph field',
   },
   designerComponent: DesignerComponent,

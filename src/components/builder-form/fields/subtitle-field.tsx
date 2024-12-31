@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Heading2Icon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { LuHeading2 } from 'react-icons/lu';
 import { z } from 'zod';
@@ -30,7 +31,7 @@ export const SubTitleFieldFormElement: FormElement = {
     extraAttributes,
   }),
   designerBtnElement: {
-    icon: LuHeading2,
+    icon: Heading2Icon,
     label: 'SubTitle field',
   },
   designerComponent: DesignerComponent,

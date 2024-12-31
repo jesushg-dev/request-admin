@@ -39,7 +39,7 @@ model Tenant {
   requests                       Request[]
   requirementComplianceTrackings RequirementComplianceTracking[]
   requestAssignments             RequestAssignment[]
-  StatusType                     StatusType[]
+  RequestStatusType              RequestStatusType[]
   documents                      Document[]
   areas                          Area[]
   categories                     Category[]
@@ -380,6 +380,7 @@ model HierarchyLevel {
   hierarchy   Hierarchy  @relation(fields: [hierarchyId], references: [id])
   categories  Category[]
 
+  @@unique([position, hierarchyId])
   @@index([hierarchyId], name: "idx_hierarchy_id")
   @@index([name], name: "idx_hierarchy_level_name")
 }
@@ -437,7 +438,7 @@ model Request {
   comment              String?                         @db.VarChar(255)
   /// Status categorization (e.g., "Open", "Closed", "In Progress").
   statusId             String                          @db.UniqueIdentifier()
-  status               StatusType                      @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  status               RequestStatusType               @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   /// Service categorization (e.g., "Sales Channel > Service Type").
   serviceCategoryId    String                          @db.UniqueIdentifier()
   serviceCategory      Category                        @relation("ServiceCategory", fields: [serviceCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -479,12 +480,12 @@ model RequestAssignment {
   area               Area?                @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   /// Status categorization (e.g., "Open", "Closed", "In Progress").
   statusId           String               @db.UniqueIdentifier()
-  status             StatusType           @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  status             RequestStatusType    @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   documentAssignment DocumentAssignment[]
 }
 
 /// Represents a catalog of possible statuses for requests or assignments.
-model StatusType {
+model RequestStatusType {
   createdAt   DateTime            @default(now())
   updatedAt   DateTime?           @updatedAt()
   deletedAt   DateTime?
@@ -674,7 +675,7 @@ model Form {
   userId         String           @db.UniqueIdentifier()
   name           String
   description    String           @default("")
-  content        String           @default("[]")
+  content        String           @default("[]") @db.NVarChar(Max)
   published      Boolean          @default(false)
   visits         Int              @default(0)
   submissions    Int              @default(0)

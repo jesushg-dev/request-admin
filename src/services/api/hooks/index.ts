@@ -30,7 +30,7 @@ export * from './hierarchy-level';
 export * from './category';
 export * from './request';
 export * from './request-assignment';
-export * from './status-type';
+export * from './request-status-type';
 export * from './area';
 export * from './user-area';
 export * from './area-role';

@@ -1,34 +1,41 @@
+'use client';
+
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { AiOutlineClose } from 'react-icons/ai';
 
 import useDesigner from '@/hooks/use-designer';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
+import { ScrollArea } from '../ui/scroll-area';
 import { FormElements } from './form-elements';
 
 function PropertiesFormSidebar() {
+  const t = useTranslations('component.formBuilder');
   const { selectedElement, setSelectedElement } = useDesigner();
   if (!selectedElement) return null;
 
   const PropertiesForm = FormElements[selectedElement?.type].propertiesComponent;
 
   return (
-    <div className="flex flex-col p-2">
-      <div className="flex items-center justify-between">
-        <p className="text-textPrimary text-sm">Element properties</p>
-        <Button
-          size={'icon'}
-          variant={'ghost'}
-          onClick={() => {
-            setSelectedElement(null);
-          }}>
-          <AiOutlineClose />
-        </Button>
+    <ScrollArea className="p-4">
+      <div className="flex flex-col p-2">
+        <div className="flex items-center justify-between">
+          <p className="text-textPrimary text-sm">{t('elementProperties')}</p>
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => {
+              setSelectedElement(null);
+            }}>
+            <AiOutlineClose />
+          </Button>
+        </div>
+        <Separator className="mb-4" />
+        <PropertiesForm elementInstance={selectedElement} />
       </div>
-      <Separator className="mb-4" />
-      <PropertiesForm elementInstance={selectedElement} />
-    </div>
+    </ScrollArea>
   );
 }
 

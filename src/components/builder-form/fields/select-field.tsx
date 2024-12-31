@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { MousePointerClickIcon, PlusIcon, XIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { AiOutlineClose, AiOutlinePlus } from 'react-icons/ai';
-import { RxDropdownMenu } from 'react-icons/rx';
 import { z } from 'zod';
 
 import { cn } from '@/lib/utils';
@@ -45,7 +44,7 @@ export const SelectFieldFormElement: FormElement = {
     extraAttributes,
   }),
   designerBtnElement: {
-    icon: RxDropdownMenu,
+    icon: MousePointerClickIcon,
     label: 'Select Field',
   },
   designerComponent: DesignerComponent,
@@ -248,7 +247,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                     e.preventDefault(); // avoid submit
                     form.setValue('options', field.value.concat('New option'));
                   }}>
-                  <AiOutlinePlus />
+                  <PlusIcon />
                   Add
                 </Button>
               </div>
@@ -272,7 +271,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                         newOptions.splice(index, 1);
                         field.onChange(newOptions);
                       }}>
-                      <AiOutlineClose />
+                      <XIcon />
                     </Button>
                   </div>
                 ))}

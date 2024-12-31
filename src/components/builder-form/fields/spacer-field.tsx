@@ -2,8 +2,8 @@
 
 import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { SeparatorHorizontalIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { LuSeparatorHorizontal } from 'react-icons/lu';
 import { z } from 'zod';
 
 import useDesigner from '@/hooks/use-designer';
@@ -30,7 +30,7 @@ export const SpacerFieldFormElement: FormElement = {
     extraAttributes,
   }),
   designerBtnElement: {
-    icon: LuSeparatorHorizontal,
+    icon: SeparatorHorizontalIcon,
     label: 'Spacer field',
   },
   designerComponent: DesignerComponent,
@@ -50,7 +50,7 @@ function DesignerComponent({ elementInstance }: { elementInstance: FormElementIn
   return (
     <div className="flex w-full flex-col items-center gap-2">
       <Label className="text-muted-foreground">Spacer field: {height}px</Label>
-      <LuSeparatorHorizontal className="h-8 w-8" />
+      <SeparatorHorizontalIcon className="h-8 w-8" />
     </div>
   );
 }

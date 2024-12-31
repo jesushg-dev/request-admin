@@ -24,7 +24,7 @@ const RequirementFormModal: FC<IRequirementFormModalProps> = ({ onClose, default
     <Modal>
       <CloseModal onClick={onClose} />
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col gap-6">
+        <div className="flex w-full flex-1 flex-col gap-4">
           <div className="border-stroke shadow-default dark:border-strokedark dark:bg-boxdark rounded-sm border bg-white">
             <div className="border-stroke dark:border-strokedark border-b px-6 py-4">
               <h3 className="font-medium text-black dark:text-white">{defaultValues ? 'Edit' : 'Create'} Requirement</h3>

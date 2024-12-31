@@ -38,13 +38,13 @@ import createPlanFeatureRouter from './PlanFeature.router';
 import createReactionRouter from './Reaction.router';
 import createRequestRouter from './Request.router';
 import createRequestAssignmentRouter from './RequestAssignment.router';
+import createRequestStatusTypeRouter from './RequestStatusType.router';
 import createRequirementRouter from './Requirement.router';
 import createRequirementComplianceTrackingRouter from './RequirementComplianceTracking.router';
 import createRequirementTypeRouter from './RequirementType.router';
 import createRoleRouter from './Role.router';
 import createRoleFeatureRouter from './RoleFeature.router';
 import createSessionRouter from './Session.router';
-import createStatusTypeRouter from './StatusType.router';
 import createSubscriptionRouter from './Subscription.router';
 import createTenantRouter from './Tenant.router';
 import createTwoFactorConfirmationRouter from './TwoFactorConfirmation.router';
@@ -91,7 +91,7 @@ export function createRouter() {
     category: createCategoryRouter(),
     request: createRequestRouter(),
     requestAssignment: createRequestAssignmentRouter(),
-    statusType: createStatusTypeRouter(),
+    requestStatusType: createRequestStatusTypeRouter(),
     area: createAreaRouter(),
     userArea: createUserAreaRouter(),
     areaRole: createAreaRoleRouter(),
