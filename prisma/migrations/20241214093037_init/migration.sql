@@ -287,7 +287,7 @@ CREATE TABLE [dbo].[Request] (
     [closedComment] VARCHAR(500),
     [comment] VARCHAR(255),
     [statusId] UNIQUEIDENTIFIER NOT NULL,
-    [serviceCategoryId] UNIQUEIDENTIFIER NOT NULL,
+    [requestCategoryId] UNIQUEIDENTIFIER NOT NULL,
     [assignmentCategoryId] UNIQUEIDENTIFIER NOT NULL,
     [formSubmissionId] UNIQUEIDENTIFIER,
     CONSTRAINT [Request_pkey] PRIMARY KEY CLUSTERED ([id])
@@ -632,7 +632,7 @@ CREATE NONCLUSTERED INDEX [idx_category_hierarchy_level_id] ON [dbo].[Category](
 CREATE NONCLUSTERED INDEX [idx_category_name] ON [dbo].[Category]([name]);
 
 -- CreateIndex
-CREATE NONCLUSTERED INDEX [idx_request_service_category_id] ON [dbo].[Request]([serviceCategoryId]);
+CREATE NONCLUSTERED INDEX [idx_request_service_category_id] ON [dbo].[Request]([requestCategoryId]);
 
 -- CreateIndex
 CREATE NONCLUSTERED INDEX [idx_request_assignment_category_id] ON [dbo].[Request]([assignmentCategoryId]);
@@ -791,7 +791,7 @@ ALTER TABLE [dbo].[Request] ADD CONSTRAINT [Request_tenantId_fkey] FOREIGN KEY (
 ALTER TABLE [dbo].[Request] ADD CONSTRAINT [Request_statusId_fkey] FOREIGN KEY ([statusId]) REFERENCES [dbo].[StatusType]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE [dbo].[Request] ADD CONSTRAINT [Request_serviceCategoryId_fkey] FOREIGN KEY ([serviceCategoryId]) REFERENCES [dbo].[Category]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE [dbo].[Request] ADD CONSTRAINT [Request_requestCategoryId_fkey] FOREIGN KEY ([requestCategoryId]) REFERENCES [dbo].[Category]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE [dbo].[Request] ADD CONSTRAINT [Request_assignmentCategoryId_fkey] FOREIGN KEY ([assignmentCategoryId]) REFERENCES [dbo].[Category]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;

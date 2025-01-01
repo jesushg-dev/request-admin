@@ -1,37 +1,33 @@
 import React from 'react';
 import { QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
+import { CircleAlertIcon, RotateCcwIcon } from 'lucide-react';
+
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader } from '../ui/card';
 
 interface ErrorRetryFallbackProps {
-  error: QueryError;
+  error?: QueryError;
   onRetry: () => void;
-  buttonText?: string;
-  containerStyles?: string;
-  messageStyles?: string;
-  buttonStyles?: string;
-  buttonHoverStyles?: string;
 }
 
-const ErrorRetryFallback: React.FC<ErrorRetryFallbackProps> = ({
-  error,
-  onRetry,
-  buttonText = 'Retry',
-  containerStyles = '',
-  messageStyles = 'text-red-600 dark:text-red-400',
-  buttonStyles = 'bg-primary text-white',
-  buttonHoverStyles = 'bg-opacity-90',
-}) => {
+const ErrorRetryFallback: React.FC<ErrorRetryFallbackProps> = ({ error, onRetry }) => {
   return (
-    <div className={`p-6 text-center ${containerStyles}`}>
-      <p className={`text-lg font-medium ${messageStyles}`}>{error.message ? error.message : 'An error occurred while fetching data.'}</p>
-      <button
-        onClick={onRetry}
-        className={`mt-4 rounded px-4 py-2 transition ease-in-out ${buttonStyles}`}
-        style={{ transition: 'background-color 0.3s' }}
-        onMouseEnter={(e) => e.currentTarget.classList.add(buttonHoverStyles)}
-        onMouseLeave={(e) => e.currentTarget.classList.remove(buttonHoverStyles)}>
-        {buttonText}
-      </button>
-    </div>
+    <Card className="flex w-full flex-col items-center justify-center rounded-lg px-8 py-4 shadow-md">
+      <CardHeader>
+        <CircleAlertIcon className="mx-auto mb-4 h-8 w-8 text-red-500" />
+        <h1 className="text-center text-xl font-bold">Oops! Something went wrong.</h1>
+      </CardHeader>
+      <CardContent>
+        <p className="text-center text-muted-foreground">We encountered an unexpected error. Please try again.</p>
+        {error?.message && <span className="text-center text-muted-foreground">{error?.message}</span>}
+        <div className="mt-4 flex justify-center">
+          <Button type="button" variant="destructive" onClick={onRetry}>
+            Retry
+            <RotateCcwIcon className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

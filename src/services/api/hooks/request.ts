@@ -384,7 +384,7 @@ export function useCheckRequest<TError = DefaultError>(
       closedComment?: string;
       comment?: string;
       statusId?: string;
-      serviceCategoryId?: string;
+      requestCategoryId?: string;
       assignmentCategoryId?: string;
       formSubmissionId?: string;
     };

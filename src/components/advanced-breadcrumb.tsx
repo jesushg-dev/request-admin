@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { defaultLocale, getSiblingRoutes, IsExistingRoute, Locale, locales, pathnames, usePathname as useLocalePathname } from '@/i18n/routing';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { defaultLocale, getSiblingRoutes, IsExistingRoute, Locale } from '@/i18n/routing';
+import { ChevronDown, ChevronsRight } from 'lucide-react';
 import { useLocale } from 'next-intl';
 
 import { useResolvedUrl } from '@/hooks/use-resolved-url';
@@ -32,7 +32,6 @@ export function AdvancedBreadcrumb({ tenants = [] }: AdvancedBreadcrumbProps) {
 
   const { bracketedPath, resolvedUrl, getParam } = useResolvedUrl();
   const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>([]);
-  console.log('🚀 ~ AdvancedBreadcrumb ~ breadcrumbs:', breadcrumbs);
 
   function resolveDynamicSegmentLabel(resolvedSegment: string, bracketedSegment: string, tenants: Tenant[]): string {
     let label: string;
@@ -125,7 +124,7 @@ export function AdvancedBreadcrumb({ tenants = [] }: AdvancedBreadcrumbProps) {
         if (!crumb.IsExistingRoute) {
           return (
             <React.Fragment key={index}>
-              {index > 0 && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+              {index > 0 && <ChevronsRight className="h-4 w-4 text-muted-foreground" />}
               <span className="text-muted-foreground">{crumb.label}</span>
             </React.Fragment>
           );
@@ -135,7 +134,7 @@ export function AdvancedBreadcrumb({ tenants = [] }: AdvancedBreadcrumbProps) {
         if (crumb.href.includes('[') && crumb.href.includes(']')) {
           return (
             <React.Fragment key={index}>
-              {index > 0 && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+              {index > 0 && <ChevronsRight className="h-4 w-4" />}
               <span className="text-muted-foreground">{crumb.label}</span>
             </React.Fragment>
           );
@@ -145,7 +144,7 @@ export function AdvancedBreadcrumb({ tenants = [] }: AdvancedBreadcrumbProps) {
         if (crumb.siblings && crumb.siblings.length > 0) {
           return (
             <React.Fragment key={index}>
-              {index > 0 && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+              {index > 0 && <ChevronsRight className="h-4 w-4" />}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="link" className="gap-1 p-0 font-normal">
@@ -168,7 +167,7 @@ export function AdvancedBreadcrumb({ tenants = [] }: AdvancedBreadcrumbProps) {
         // If no siblings, it's just a normal link or the final crumb
         return (
           <React.Fragment key={index}>
-            {index > 0 && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+            {index > 0 && <ChevronsRight className="h-4 w-4" />}
             {isLast ? (
               <span className="text-muted-foreground">{crumb.label}</span>
             ) : (

@@ -10,7 +10,8 @@
     "columns": {
       "actions": "Acciones",
       "edit": "Editar",
-      "delete": "Eliminar"
+      "delete": "Eliminar",
+      "new": "Nuevo"
     },
     "actions": {
       "export": "Exportar"
@@ -307,7 +308,7 @@
           "issueSubject": "Asunto",
           "priority": "Prioridad",
           "status": "Estado",
-          "serviceCategory": "Categoría de Servicio",
+          "requestCategory": "Categoría de Solicitud",
           "assignmentCategory": "Categoría de Asignación",
           "client": "Cliente",
           "documents": "Documentos",
@@ -320,7 +321,7 @@
           "priority": "Prioridad",
           "priorityPlaceholder": "Buscar por prioridad",
           "status": "Estado",
-          "serviceCategory": "Categoría de Servicio",
+          "requestCategory": "Categoría de Solicitud",
           "assignmentCategory": "Categoría de Asignación"
         }
       }

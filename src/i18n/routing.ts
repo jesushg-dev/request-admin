@@ -311,6 +311,7 @@ export const getSiblingRoutes = (currentRoute: string, locale: Locale, ignoreCur
     const isSibling =
       path.startsWith(basePath + '/') && // Same base path
       path.split('/').length === segmentCount && // Same number of segments
+      path !== '/' && // Exclude root path explicitly
       (ignoreCurrent ? path !== currentRoute : true); // Ignore the current route
     return isSibling;
   });

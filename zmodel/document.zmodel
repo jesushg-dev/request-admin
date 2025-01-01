@@ -4,15 +4,20 @@ import './tenant.zmodel'
 
 model Document extends TenantScoped, Auditable {
   // Primary identifier
-  id              String   @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for the document
+  id                            String   @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for the document
 
   // Document details
-  name            String   @db.VarChar(155) // Name of the document
-  status          Int // Status code representing the state of the document
+  name                          String   @db.VarChar(155) // Name of the document
+  url                           String?  @db.VarChar(500) // Optional URL where the document is located
+  status                        Int      // Status code representing the state of the document
+
+  // Optional linkage to compliance tracking
+  requirementComplianceTrackingId String? @db.UniqueIdentifier // ID of the associated compliance tracking (optional)
+  requirementComplianceTracking   RequirementComplianceTracking? @relation(fields: [requirementComplianceTrackingId], references: [id], onDelete: SetNull, onUpdate: Cascade) // Link to the associated compliance tracking
 
   // Relationships
-  requestId       String   @db.UniqueIdentifier // ID of the associated request
-  request         Request  @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Link to the associated Request entity
+  requestId                     String   @db.UniqueIdentifier // ID of the associated request
+  request                       Request  @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Link to the associated Request entity
 }
 
 model DocumentAssignment extends TenantScoped, Auditable {

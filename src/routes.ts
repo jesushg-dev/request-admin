@@ -1,9 +1,11 @@
+export type LoginError = 'unauthenticated' | 'tenant';
+
 /**
  * An array of routes that are accessible to the public
  * These routes do not require authentication
  * @type {string[]}
  */
-export const publicRoutes: string[] = ['/', '/auth/*', '/about/*'];
+export const publicRoutes: string[] = ['/', '/auth/*', '/about/*', '*/api/auth/*'];
 
 /**
  * An array of routes that are used for authentication
@@ -24,3 +26,14 @@ export const apiAuthPrefix: string = '/api/auth';
  * @type {string}
  */
 export const DEFAULT_LOGIN_REDIRECT: '/admin' = '/admin' as const;
+
+export const isPublicPage = (pathname: string, locales: readonly string[]): boolean => {
+  const publicRoutesWithLocaleRegex = RegExp(`^/(${locales.join('|')})(${publicRoutes.flatMap((p) => (p === '/' ? ['', '/'] : p.replace('*', '.*'))).join('|')})/?$`, 'i');
+  const publicRoutesWithoutLocaleRegex = RegExp(`^(${publicRoutes.flatMap((p) => (p === '/' ? ['', '/'] : p.replace('*', '.*'))).join('|')})/?$`, 'i');
+  const result1 = publicRoutesWithLocaleRegex.test(pathname);
+  const result2 = publicRoutesWithoutLocaleRegex.test(pathname);
+  if (pathname === '/es/api/auth/session' || pathname === '/api/auth/session') {
+    return true;
+  }
+  return result1 || result2;
+};

@@ -30,7 +30,7 @@ const RequestDefaultArgs = Prisma.validator<Prisma.RequestDefaultArgs>()({
         name: true,
       },
     },
-    serviceCategory: {
+    requestCategory: {
       select: {
         name: true,
       },
@@ -139,8 +139,8 @@ export function getTableConfiguration({ setRowAction, t }: GetTableConfiguration
       cell: ({ cell }) => cell.getValue(),
     },
     {
-      accessorKey: 'serviceCategory.name',
-      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.serviceCategory')} />,
+      accessorKey: 'requestCategory.name',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.requestCategory')} />,
       cell: ({ cell }) => cell.getValue(),
     },
     {
@@ -187,7 +187,7 @@ export function getTableConfiguration({ setRowAction, t }: GetTableConfiguration
     { id: 'issueSubject', label: t('filters.issueSubject'), type: 'text' },
     { id: 'priority', label: t('filters.priority'), type: 'text' },
     { id: 'status', label: t('filters.status'), type: 'text' },
-    { id: 'serviceCategory', label: t('filters.serviceCategory'), type: 'text' },
+    { id: 'requestCategory', label: t('filters.requestCategory'), type: 'text' },
     { id: 'assignmentCategory', label: t('filters.assignmentCategory'), type: 'text' },
   ];
 

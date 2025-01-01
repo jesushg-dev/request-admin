@@ -371,7 +371,10 @@ export function useSuspenseCountDocument<
 }
 
 export function useCheckDocument<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; name?: string; status?: number; requestId?: string } },
+  args: {
+    operation: PolicyCrudKind;
+    where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; name?: string; url?: string; status?: number; requirementComplianceTrackingId?: string; requestId?: string };
+  },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

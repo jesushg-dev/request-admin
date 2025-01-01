@@ -11,6 +11,7 @@ import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
+import useTenantId from '@/hooks/use-tenant-id';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
@@ -30,7 +31,7 @@ const RequestDefaultArgs = Prisma.validator<Prisma.RequestDefaultArgs>()({
         name: true,
       },
     },
-    serviceCategory: {
+    requestCategory: {
       select: {
         name: true,
       },
@@ -73,6 +74,7 @@ const searchParamsParsers = {
 interface IRequestMainPageProps {}
 
 const RequestMainPage: React.FC<IRequestMainPageProps> = () => {
+  const tenantId = useTenantId();
   const t = useTranslations('admin.request.main');
   const [search] = useQueryStates(searchParamsParsers);
 
@@ -109,7 +111,15 @@ const RequestMainPage: React.FC<IRequestMainPageProps> = () => {
     <DataTableShell table={table} isLoading={isLoading} floatingBar={<DataTableFloatingBar table={table} />}>
       <DataTable table={table}>
         <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
-          <DataTableToolbarActions table={table} exportFilename="requests" entityLabel={t('entityLabel')} />
+          <DataTableToolbarActions
+            table={table}
+            exportFilename="requests"
+            entityLabel={t('entityLabel')}
+            addLink={{
+              pathname: '/admin/[tenantId]/requests-portal/requests/new',
+              params: { tenantId },
+            }}
+          />
         </DataTableAdvancedToolbar>
       </DataTable>
     </DataTableShell>
@@ -139,8 +149,8 @@ export function getTableConfiguration({ setRowAction, t }: GetTableConfiguration
       cell: ({ cell }) => cell.getValue(),
     },
     {
-      accessorKey: 'serviceCategory.name',
-      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.serviceCategory')} />,
+      accessorKey: 'requestCategory.name',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.requestCategory')} />,
       cell: ({ cell }) => cell.getValue(),
     },
     {
@@ -187,7 +197,7 @@ export function getTableConfiguration({ setRowAction, t }: GetTableConfiguration
     { id: 'issueSubject', label: t('filters.issueSubject'), type: 'text' },
     { id: 'priority', label: t('filters.priority'), type: 'text' },
     { id: 'status', label: t('filters.status'), type: 'text' },
-    { id: 'serviceCategory', label: t('filters.serviceCategory'), type: 'text' },
+    { id: 'requestCategory', label: t('filters.requestCategory'), type: 'text' },
     { id: 'assignmentCategory', label: t('filters.assignmentCategory'), type: 'text' },
   ];
 

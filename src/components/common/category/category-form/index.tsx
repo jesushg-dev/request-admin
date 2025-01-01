@@ -59,11 +59,12 @@ export const categoryFormSchema = z.object({
 interface CategoryFormProps {
   parentPath?: string;
   currentDepth?: number;
-  requirements: RequirementOptionType[];
   levels: LevelType[];
+  requirements: RequirementOptionType[];
+  mode?: 'single' | 'multiple';
 }
 
-const CategoryForm: React.FC<CategoryFormProps> = memo(({ parentPath = 'categories', currentDepth = 0, levels, requirements }) => {
+const CategoryForm: React.FC<CategoryFormProps> = memo(({ parentPath = 'categories', currentDepth = 0, levels, requirements, mode = 'multiple' }) => {
   const t = useTranslations('component.categoryForm');
   const { control, setValue, watch, formState } = useFormContext<CategoryFormValues>();
   const { fields, append, remove } = useFieldArray({ control, name: parentPath as 'categories' });
@@ -79,21 +80,21 @@ const CategoryForm: React.FC<CategoryFormProps> = memo(({ parentPath = 'categori
         const isExpanded = watch(`${currentPath}.isSubCategoryVisible` as `categories.${number}.isSubCategoryVisible`) ?? true;
         const currentFormState = getNestedValue<FieldErrors<CategoryFormValues>['categories']>(formState.errors, parentPath as `categories`)?.[index];
         return (
-          <div key={field.id || currentPath} className="flex flex-col gap-4 border-l-2 border-dashed pb-2 pl-2">
+          <div key={field.id || currentPath} className={`flex flex-col gap-2 ${currentDepth > 0 ? 'border-l-2 border-dashed pl-2' : ''}`}>
             <div className="flex items-end gap-2">
               <FormField
                 control={control}
                 name={`${currentPath}.name` as `categories.${number}.name`}
                 render={({ field }) => (
                   <FormItem className="ml-1 w-full">
-                    <FormLabel>{t('categoryNameLabel', { categoryName, index: index + 1 })}</FormLabel>
+                    <FormLabel className="text-xs">{t('categoryNameLabel', { categoryName, index: index + 1 })}</FormLabel>
                     <FormControl>
-                      <Input className="h-8 w-full rounded" placeholder={t('categoryNamePlaceholder', { categoryName })} {...field} value={String(field.value)} />
+                      <Input className="h-8 w-full rounded text-xs" placeholder={t('categoryNamePlaceholder', { categoryName })} {...field} value={String(field.value)} />
                     </FormControl>
                     {currentFormState?.name?.message || currentFormState?.requirements?.message ? (
-                      <FormMessage>{t(currentFormState?.name?.message as 'requiredName') || t(currentFormState?.requirements?.message as 'requiredRequirements')}</FormMessage>
+                      <FormMessage className="text-xs">{t(currentFormState?.name?.message as 'requiredName') || t(currentFormState?.requirements?.message as 'requiredRequirements')}</FormMessage>
                     ) : (
-                      <FormDescription className="hidden">{t('nameDescription', { categoryName })}</FormDescription>
+                      <FormDescription className="hidden text-xs">{t('nameDescription', { categoryName })}</FormDescription>
                     )}
                   </FormItem>
                 )}
@@ -122,10 +123,12 @@ const CategoryForm: React.FC<CategoryFormProps> = memo(({ parentPath = 'categori
           </div>
         );
       })}
-      <Button type="button" variant="outline" role="combobox" size="sm" className="border-2 border-dashed" onClick={addCategory}>
-        <FilePlus2 className="size-4" />
-        {t('addCategoryButton', { categoryName })}
-      </Button>
+      {(mode === 'multiple' || (fields.length === 0 && mode === 'single')) && (
+        <Button type="button" variant="outline" role="combobox" size="sm" className="border-2 border-dashed" onClick={addCategory}>
+          <FilePlus2 className="size-4" />
+          {t('addCategoryButton', { categoryName })}
+        </Button>
+      )}
     </div>
   );
 });

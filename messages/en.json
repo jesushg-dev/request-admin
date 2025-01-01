@@ -10,7 +10,8 @@
     "columns": {
       "actions": "Actions",
       "edit": "Edit",
-      "delete": "Delete"
+      "delete": "Delete",
+      "new": "New"
     },
     "actions": {
       "export": "Export"
@@ -307,7 +308,7 @@
           "issueSubject": "Issue Subject",
           "priority": "Priority",
           "status": "Status",
-          "serviceCategory": "Service Category",
+          "requestCategory": "Request Category",
           "assignmentCategory": "Assignment Category",
           "client": "Client",
           "documents": "Documents",
@@ -320,7 +321,7 @@
           "priority": "Priority",
           "priorityPlaceholder": "Search by priority",
           "status": "Status",
-          "serviceCategory": "Service Category",
+          "requestCategory": "Request Category",
           "assignmentCategory": "Assignment Category"
         }
       }

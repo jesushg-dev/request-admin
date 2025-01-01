@@ -4,23 +4,27 @@ import { useState, useTransition } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { login } from '@/actions/login';
+import { LoginError } from '@/routes';
 import { LoginSchema } from '@/services/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { CardWrapper } from '@/components/auth/card-wrapper';
+import { PasswordInput } from '@/components/password-input';
 import { FormError } from '@/components/prullenbak/form-error';
 import { FormSuccess } from '@/components/prullenbak/form-success';
 
 export const LoginForm = () => {
-  const t = useTranslations('auth.loginForm'); // Namespace for translations
+  const t = useTranslations('auth.loginForm');
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl');
+  const errorQuery = searchParams.get('error');
   const urlError = searchParams.get('error') === 'OAuthAccountNotLinked' ? t('errors.emailInUse') : '';
 
   const [showTwoFactor, setShowTwoFactor] = useState(false);
@@ -66,6 +70,18 @@ export const LoginForm = () => {
     <CardWrapper headerLabel={t('welcome')} backButtonLabel={t('noAccount')} backButtonHref="/auth/register" showSocial>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          {errorQuery === 'unauthenticated' && (
+            <Alert variant="destructive">
+              <AlertTitle>{t('errors.unauthenticated')}</AlertTitle>
+              <AlertDescription>{t('errors.unauthenticatedDescription')}</AlertDescription>
+            </Alert>
+          )}
+          {errorQuery === 'tenant' && (
+            <Alert variant="destructive">
+              <AlertTitle>{t('errors.tenant')}</AlertTitle>
+              <AlertDescription>{t('errors.tenantDescription')}</AlertDescription>
+            </Alert>
+          )}
           <div className="space-y-4">
             {showTwoFactor && (
               <FormField
@@ -104,7 +120,7 @@ export const LoginForm = () => {
                     <FormItem>
                       <FormLabel>{t('fields.password')}</FormLabel>
                       <FormControl>
-                        <Input {...field} disabled={isPending} placeholder={t('placeholders.password')} type="password" />
+                        <PasswordInput {...field} disabled={isPending} placeholder={t('placeholders.password')} type="password" />
                       </FormControl>
                       <Button size="sm" variant="link" asChild className="px-0 font-normal">
                         <Link href="/auth/reset">{t('forgotPassword')}</Link>

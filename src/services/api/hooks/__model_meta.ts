@@ -2054,12 +2054,12 @@ const metadata = {
           backLink: 'categories',
           isRelationOwner: true,
         },
-        serviceRequests: {
-          name: 'serviceRequests',
+        requestRequests: {
+          name: 'requestRequests',
           type: 'Request',
           isDataModel: true,
           isArray: true,
-          backLink: 'serviceCategory',
+          backLink: 'requestCategory',
         },
         assignmentRequests: {
           name: 'assignmentRequests',
@@ -2142,6 +2142,14 @@ const metadata = {
           isForeignKey: true,
           relationField: 'client',
         },
+        client: {
+          name: 'client',
+          type: 'Client',
+          isDataModel: true,
+          backLink: 'request',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'clientId' },
+        },
         issueSubject: {
           name: 'issueSubject',
           type: 'String',
@@ -2191,19 +2199,19 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'statusId' },
         },
-        serviceCategoryId: {
-          name: 'serviceCategoryId',
+        requestCategoryId: {
+          name: 'requestCategoryId',
           type: 'String',
           isForeignKey: true,
-          relationField: 'serviceCategory',
+          relationField: 'requestCategory',
         },
-        serviceCategory: {
-          name: 'serviceCategory',
+        requestCategory: {
+          name: 'requestCategory',
           type: 'Category',
           isDataModel: true,
-          backLink: 'serviceRequests',
+          backLink: 'requestRequests',
           isRelationOwner: true,
-          foreignKeyMapping: { id: 'serviceCategoryId' },
+          foreignKeyMapping: { id: 'requestCategoryId' },
         },
         assignmentCategoryId: {
           name: 'assignmentCategoryId',
@@ -2219,13 +2227,12 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'assignmentCategoryId' },
         },
-        client: {
-          name: 'client',
-          type: 'Client',
+        documents: {
+          name: 'documents',
+          type: 'Document',
           isDataModel: true,
+          isArray: true,
           backLink: 'request',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'clientId' },
         },
         formSubmissionId: {
           name: 'formSubmissionId',
@@ -2243,9 +2250,9 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'formSubmissionId' },
         },
-        documents: {
-          name: 'documents',
-          type: 'Document',
+        complianceTrackings: {
+          name: 'complianceTrackings',
+          type: 'RequirementComplianceTracking',
           isDataModel: true,
           isArray: true,
           backLink: 'request',
@@ -2253,13 +2260,6 @@ const metadata = {
         requestAssignments: {
           name: 'requestAssignments',
           type: 'RequestAssignment',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'request',
-        },
-        complianceTrackings: {
-          name: 'complianceTrackings',
-          type: 'RequirementComplianceTracking',
           isDataModel: true,
           isArray: true,
           backLink: 'request',
@@ -3301,6 +3301,13 @@ const metadata = {
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: false }] }],
         },
+        document: {
+          name: 'document',
+          type: 'Document',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'requirementComplianceTracking',
+        },
       },
       uniqueConstraints: {
         id: {
@@ -3574,9 +3581,30 @@ const metadata = {
           name: 'name',
           type: 'String',
         },
+        url: {
+          name: 'url',
+          type: 'String',
+          isOptional: true,
+        },
         status: {
           name: 'status',
           type: 'Int',
+        },
+        requirementComplianceTrackingId: {
+          name: 'requirementComplianceTrackingId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'requirementComplianceTracking',
+        },
+        requirementComplianceTracking: {
+          name: 'requirementComplianceTracking',
+          type: 'RequirementComplianceTracking',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'document',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'requirementComplianceTrackingId' },
         },
         requestId: {
           name: 'requestId',

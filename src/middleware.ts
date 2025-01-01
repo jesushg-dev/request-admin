@@ -4,7 +4,7 @@ import createIntlMiddleware from 'next-intl/middleware';
 import { locales, routing } from './i18n/routing';
 import { getTenantsForUser, validateTenantId } from './lib/tenant';
 import { extractTenantId } from './lib/utils';
-import { authRoutes, DEFAULT_LOGIN_REDIRECT, publicRoutes } from './routes';
+import { authRoutes, DEFAULT_LOGIN_REDIRECT, isPublicPage, publicRoutes } from './routes';
 import { auth } from './server/auth';
 
 const intlMiddleware = createIntlMiddleware(routing);
@@ -21,7 +21,7 @@ const authMiddleware = auth(async (req) => {
 
     const encodedCallbackUrl = encodeURIComponent(callbackUrl);
 
-    return Response.redirect(new URL(`/auth/login?callbackUrl=${encodedCallbackUrl}`, nextUrl));
+    return Response.redirect(new URL(`/auth/login?callbackUrl=${encodedCallbackUrl}&error=unauthenticated`, nextUrl));
   }
 
   // Redirect to default login redirect if the user is trying to access an auth route while logged in
@@ -38,28 +38,32 @@ const authMiddleware = auth(async (req) => {
     }
   }
 
-  // Redirect to 404 if the tenant ID is invalid in the URL path (non located)
+  // Redirect to login if the user is trying to access a tenant page without being a member of that tenant
   const tenantId = extractTenantId(nextUrl.pathname, locales);
   if (tenantId) {
     const isValid = await validateTenantId(tenantId);
     if (!isValid) {
-      return new Response(null, { status: 403 });
+      const encodedCallbackUrl = encodeURIComponent(nextUrl.pathname);
+      return Response.redirect(new URL(`/auth/login?callbackUrl=${encodedCallbackUrl}&error=tenant`, nextUrl));
     }
   }
 
   return intlMiddleware(req);
 });
 
-// Optionally, don't invoke Middleware on some paths
+// comment: locate this code in your middleware config file (e.g., middleware.ts or middleware.js)
 export const config = {
-  matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
+  // Only run the middleware on pages that shouldn't include /api/auth
+  // for example, everything except /api/auth or _next
+  matcher: ['/((?!.+\\.[\\w]+$|_next|api/auth).*)', '/', '/(api|trpc)(.*)'],
 };
 
 export default function middleware(req: NextRequest) {
-  const publicPathnameRegex = RegExp(`^(/(${locales.join('|')}))?((${publicRoutes.flatMap((p) => (p === '/' ? ['', '/'] : p.replace('*', '.*'))).join('|')}))/?$`, 'i');
-  const isPublicPage = publicPathnameRegex.test(req.nextUrl.pathname);
+  if (req.nextUrl.pathname === '/es/api/auth/session') {
+    return Response.redirect(new URL('/api/auth/session', req.nextUrl));
+  }
 
-  if (isPublicPage) {
+  if (isPublicPage(req.nextUrl.pathname, locales)) {
     return intlMiddleware(req);
   } else {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any

@@ -1,7 +1,7 @@
 import { db } from '@/server/db-server';
 
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import CategoryForm from '@/components/common/category/category-form';
+import RequestTypeForm from '@/components/common/request-type/request-type-form';
 
 export default async function NewRequestTypeNew() {
   const hierarchy = await db.hierarchy.findFirst({
@@ -32,7 +32,7 @@ export default async function NewRequestTypeNew() {
         <CardTitle>Request Category</CardTitle>
         <CardDescription>Create a new request category. A category can have multiple and recursive subcategories according to your business needs.</CardDescription>
       </CardHeader>
-      <CategoryForm levels={levels} requirements={preparedRequirements} />
+      <RequestTypeForm requirements={preparedRequirements} levels={levels} />
     </Card>
   );
 }

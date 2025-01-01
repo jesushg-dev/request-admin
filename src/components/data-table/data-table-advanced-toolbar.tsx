@@ -59,18 +59,16 @@ interface DataTableAdvancedToolbarProps<TData> extends React.HTMLAttributes<HTML
 
 export function DataTableAdvancedToolbar<TData>({ table, filterFields = [], debounceMs = 300, shallow = true, children, className, ...props }: DataTableAdvancedToolbarProps<TData>) {
   return (
-    <div className={cn('flex w-full items-center justify-between gap-2 overflow-auto p-1', className)} {...props}>
+    <div className={cn('flex w-full items-center justify-between gap-2 overflow-auto pb-1', className)} {...props}>
       <div className="flex items-center gap-2">
+        <DataTableViewOptions table={table} />
         <DataTableFilterList table={table} filterFields={filterFields} debounceMs={debounceMs} shallow={shallow} />
         <DataTableSortList table={table} debounceMs={debounceMs} shallow={shallow} />
         <React.Suspense fallback={<Skeleton className="h-7 w-52" />}>
           <DateRangePicker triggerSize="sm" triggerClassName="ml-auto w-56 sm:w-60" align="end" shallow={false} />
         </React.Suspense>
       </div>
-      <div className="flex items-center gap-2">
-        {children}
-        <DataTableViewOptions table={table} />
-      </div>
+      <div className="flex items-center gap-2">{children}</div>
     </div>
   );
 }
