@@ -5,6 +5,9 @@ import './document.zmodel'
 import './form.zmodel'
 import './messenger.zmodel'
 import './request.zmodel'
+import './area.zmodel'
+import './request-category.zmodel'
+import './assignation-category.zmodel'
 
 model Tenant extends Auditable {
   id                 String   @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for the tenant
@@ -19,49 +22,77 @@ model Tenant extends Auditable {
   contactPhone       String?  // Tenant's contact phone number
   address            String?  // Address for the tenant
 
-  // Related entities
-  hierarchies        Hierarchy[]                     // Linked hierarchies
-  hierarchyLevels    HierarchyLevel[]               // Linked hierarchy levels
-  persons            Person[]                       // Linked persons
-  clients            Client[]                       // Linked clients
-  requirements       Requirement[]                  // Linked requirements
-  requirementTypes  RequirementType[]              // Linked requirement types
-  categoryRequirements CategoryRequirement[]        // Linked category-requirement associations
-  requests           Request[]                      // Linked service requests
-  requirementComplianceTrackings RequirementComplianceTracking[] // Linked compliance tracking
-  requestAssignments RequestAssignment[]            // Linked request assignments
-  RequestStatusType         RequestStatusType[]                   // Linked status types
-  documents          Document[]                     // Linked documents
-  areas              Area[]                         // Linked areas
-  categories         Category[]                     // Linked categories
-  userRoles          UserRole[]                     // Linked user roles
-  roles              Role[]                         // Linked roles
-  modules            Module[]                       // Linked modules
-  features        Feature[]                   // Linked features
-  roleFeatures    RoleFeature[]               // Linked role-feature associations
-  identificationTypes IdentificationType[]          // Linked identification types
-  documentAssignments DocumentAssignment[]          // Linked document assignments
-  forms              Form[]                         // Linked forms
-  formSubmissions    FormSubmission[]               // Linked form submissions
-  workspaces         Workspace[]                    // Linked workspaces
-  members            Member[]                       // Linked workspace members
-  channels           Channel[]                      // Linked communication channels
-  conversations      Conversation[]                 // Linked conversations
-  messages           Message[]                      // Linked messages
-  reactions          Reaction[]                     // Linked reactions
+  // --- Hierarchy Management ---
+  assignationHierarchies      AssignationHierarchy[] 
+  assignationHierarchyLevels  AssignationHierarchyLevel[] 
+  assignationCategories       AssignationCategory[] 
+  requestHierarchies          RequestHierarchy[] 
+  requestHierarchyLevels      RequestHierarchyLevel[] 
+  requestCategories           RequestCategory[] 
 
-  userTenants        UserTenant[]                   // Linked user-tenant relationships
+  // --- Requirements and Compliance ---
+  requirements                Requirement[] 
+  requirementTypes            RequirementType[] 
+  categoryRequirements        RequestCategoryRequirement[] // Updated to match naming convention
 
-  userAreas         UserArea[]                     // Linked user-areas
-  areaRoles         AreaRole[]                     // Linked area roles
-  areaRoleFeatures AreaRoleFeature[]         // Linked area role features
+  // --- SLA and Guide Documents ---
+  slas                        SLA[] 
+  guideDocuments              GuideDocument[] 
 
-  // Subscription and payment
-  subscriptions Subscription[]
-  usageTracking UsageTracking[]
+  // --- Documents ---
+  documents                   Document[]
+  documentAssignments         DocumentAssignment[]
+
+  // --- Requests and Statuses ---
+  requests                    Request[]
+  requestAssignments          RequestAssignment[]
+  requestStatusTypes          RequestStatusType[]
+  requestStatusTransitions    RequestStatusTransition[]
+  requirementComplianceTrackings RequirementComplianceTracking[]
+
+
+  // --- Forms ---
+  forms                       Form[]
+  formSubmissions             FormSubmission[]
+  formSubmissionKeys          FormSubmissionKey[]
+  categoryForms               CategoryForm[]
+
+  // --- Areas and Categories ---
+  areas                       Area[]
+  userAreas                   UserArea[]
+  areaRoles                   AreaRole[]
+  areaRoleFeatures            AreaRoleFeature[]
+
+  // --- Roles and Permissions ---
+  persons            Person[]
+  userRoles                   UserRole[]
+  roles                       Role[]
+  roleFeatures                RoleFeature[]
+
+  // --- Modules and Features ---
+  modules                     Module[]
+  features                    Feature[]
+
+  // --- Identification ---
+  identificationTypes         IdentificationType[]
+
+  // --- Communication ---
+  workspaces                  Workspace[]
+  members                     Member[]
+  channels                    Channel[]
+  conversations               Conversation[]
+  messages                    Message[]
+  reactions                   Reaction[]
+
+  // --- User and Tenant Relationships ---
+  userTenants                 UserTenant[]
+
+  // --- Subscriptions and Usage ---
+  subscriptions               Subscription[]
+  usageTracking               UsageTracking[]
 
   // Access control
-  @@allow('read', userTenants?[user.id == auth().id && isActive == true])
+  @@allow("read", userTenants?[user.id == auth().id && isActive == true])
 }
 
 model Subscription {

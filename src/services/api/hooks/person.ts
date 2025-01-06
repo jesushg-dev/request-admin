@@ -381,7 +381,6 @@ export function useCheckPerson<TError = DefaultError>(
       identificationNumber?: string;
       image?: string;
       userId?: string;
-      clientId?: string;
       identificationTypeId?: string;
     };
   },

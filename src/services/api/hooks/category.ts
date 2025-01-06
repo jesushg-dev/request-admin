@@ -384,6 +384,7 @@ export function useCheckCategory<TError = DefaultError>(
       parentCategoryId?: string;
       hierarchyLevelId?: string;
       hierarchyId?: string;
+      areaId?: string;
     };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions

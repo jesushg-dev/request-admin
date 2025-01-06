@@ -1,16 +1,27 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { Check, ClipboardPasteIcon, Copy } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { ImShare } from 'react-icons/im';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
 
-function FormLinkShare({ shareUrl }: { shareUrl: string }) {
+function FormLinkShare({ shareUrl, tenantId }: { shareUrl: string; tenantId: string }) {
   const t = useTranslations('component.formBuilder');
   const [mounted, setMounted] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyLink = async () => {
+    const shareLink = `${window.location.origin}/public/${tenantId}/form/submit/${shareUrl}`;
+    await navigator.clipboard.writeText(shareLink);
+    setCopied(true);
+    toast({
+      title: t('copied'),
+      description: t('linkCopied'),
+    });
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -20,23 +31,11 @@ function FormLinkShare({ shareUrl }: { shareUrl: string }) {
     return null; // avoiding window not defined error
   }
 
-  const shareLink = `${window.location.origin}/admin/submit/${shareUrl}`;
   return (
-    <div className="flex flex-grow items-center gap-4">
-      <Input value={shareLink} readOnly />
-      <Button
-        className="w-[250px]"
-        onClick={async () => {
-          await navigator.clipboard.writeText(shareLink);
-          toast({
-            title: t('copied'),
-            description: t('linkCopied'),
-          });
-        }}>
-        <ImShare className="mr-2 h-4 w-4" />
-        {t('shareLink')}
-      </Button>
-    </div>
+    <Button onClick={handleCopyLink}>
+      {copied ? t('copied') : t('copyLink')}
+      {copied ? <Check className="ml-2 h-4 w-4" /> : <ClipboardPasteIcon className="ml-2 h-4 w-4" />}
+    </Button>
   );
 }
 

@@ -12,6 +12,7 @@ import NextTopLoader from 'nextjs-toploader';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 import { Toaster } from '@/components/ui/sonner';
+import { ConfirmDialogProvider } from '@/components/confirm-dialog';
 import TanstackQueryProvider from '@/components/hoc/tanstack-query-provider';
 
 // Font configuration
@@ -84,7 +85,9 @@ export default async function RootLayout({ children, params }: Props) {
               <NextTopLoader />
               <TanstackQueryProvider>
                 <TRPCReactProvider>
-                  <NuqsAdapter>{children}</NuqsAdapter>
+                  <NuqsAdapter>
+                    <ConfirmDialogProvider>{children}</ConfirmDialogProvider>
+                  </NuqsAdapter>
                   <Toaster />
                 </TRPCReactProvider>
               </TanstackQueryProvider>

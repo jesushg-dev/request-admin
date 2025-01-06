@@ -20,17 +20,6 @@
   content: '\e704';
 }
 
-/* Custom styles for SweetAlert icons */
-div:where(.swal2-icon).swal2-warning {
-  border-color: #4f46e5 !important;
-  color: #4f46e5 !important;
-}
-
-/* High z-index for specific components */
-.z-swalert {
-  z-index: 100000 !important;
-}
-
 /* Base font styles */
 body {
   font-family: Arial, Helvetica, sans-serif;

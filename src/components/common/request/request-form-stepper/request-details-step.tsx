@@ -25,7 +25,7 @@ export default function RequestDetailsStep() {
   } = useFormContext();
 
   return (
-    <div className="m-1 flex flex-col gap-2">
+    <div className="mx-1 mr-4 flex flex-col gap-2">
       <h2 className="text-lg font-semibold">Request Details</h2>
 
       <div className="space-y-2">

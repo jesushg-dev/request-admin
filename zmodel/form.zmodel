@@ -1,6 +1,7 @@
 import './abstract.zmodel'
 import './request.zmodel'
 import './tenant.zmodel'
+import './request-category.zmodel'
 
 model Form extends TenantScoped, Auditable {
   // Primary identifier
@@ -10,7 +11,7 @@ model Form extends TenantScoped, Auditable {
   userId          String     @db.UniqueIdentifier // ID of the user who owns the form
   name            String     // Name of the form
   description     String     @default("") // Description of the form
-  content         String     @default("[]") @db.NVarChar(Max)
+  content         String     @default("[]") @db.NVarChar(Max) // Structure of the form in JSON format
   published       Boolean    @default(false) // Publication status of the form
 
   // Form statistics
@@ -19,11 +20,26 @@ model Form extends TenantScoped, Auditable {
   shareURL        String     @unique @default(uuid()) // Unique shareable URL
 
   // Relationships
-  Category     Category[] // Associated subcategories for categorization
-  FormSubmission  FormSubmission[] // Submissions made to this form
+  categoryForms   CategoryForm[] // Links the form to multiple categories
+  formSubmissions     FormSubmission[] // Submissions made to this form
 
   // Constraints
   @@unique([name, userId]) // Ensures each user has unique form names
+}
+
+model CategoryForm extends TenantScoped, Auditable {
+  // Primary identifier
+  id              String     @id @default(uuid()) @db.UniqueIdentifier
+
+  // Relationships
+  categoryId      String     @db.UniqueIdentifier // ID of the associated category
+  formId          String     @db.UniqueIdentifier // ID of the associated form
+
+  requestCategories  RequestCategory   @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  form            Form       @relation(fields: [formId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  // Constraints
+  @@unique([categoryId, formId]) // Ensures no duplicate links between the same category and form
 }
 
 model FormSubmission extends TenantScoped, Auditable {
@@ -34,7 +50,32 @@ model FormSubmission extends TenantScoped, Auditable {
   formId          String     @db.UniqueIdentifier // ID of the associated form
   content         String     // Submitted content in JSON format
 
+  // Key-Value desnormalized data for quick access
+  keys            FormSubmissionKey[] // Key-value pairs for reusable fields
+
   // Relationships
   form            Form       @relation(fields: [formId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Link to the associated form
-  request         Request[]  // Requests generated from this submission
+  
+  requestId      String?     @db.UniqueIdentifier // ID of the associated request
+  request        Request?    @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Link to the associated request
+
+  // Index for faster queries
+  @@index([formId])
+
+}
+
+model FormSubmissionKey extends TenantScoped, Auditable {
+  // Primary identifier
+  id              String     @id @default(uuid()) @db.UniqueIdentifier
+
+  // Key-value pair details
+  submissionId    String     @db.UniqueIdentifier // ID of the associated submission
+  key             String     @db.VarChar(255)     // Name of the key
+  value           String     @db.VarChar(255)     // Value of the key
+
+  // Relationships
+  submission      FormSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade, onUpdate: Cascade) // Link to the associated submission
+
+  // Index for faster queries
+  @@index([key, value])
 }

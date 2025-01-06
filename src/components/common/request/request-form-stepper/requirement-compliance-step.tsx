@@ -52,8 +52,8 @@ const mockRequirements = [
 
 export default function RequirementComplianceStep() {
   const { watch, setValue } = useFormContext();
-  const requirementCompliance = watch('requirementCompliance');
   const documents = watch('documents') || {};
+  const requirementCompliance = watch('requirementCompliance') || {};
 
   const handleCheckboxChange = (requirementId: string, checked: boolean) => {
     setValue(`requirementCompliance.${requirementId}`, checked);
@@ -78,63 +78,61 @@ export default function RequirementComplianceStep() {
   };
 
   return (
-    <div className="m-1 flex flex-col gap-2">
+    <div className="mx-1 mr-4 flex flex-col gap-2">
       <div className="flex flex-row items-center justify-between">
-        <h4 className="text-lg font-semibold">Requirements ({mockRequirements.length})</h4>
+        <h3 className="text-lg font-semibold">Requirements ({mockRequirements.length})</h3>
         <Button variant="outline" size="sm" onClick={handleSelectAll}>
           Select All
         </Button>
       </div>
-      <ScrollArea>
-        <div className="flex flex-1 flex-col gap-2">
-          {mockRequirements.map((requirement) => (
-            <div key={requirement.id} className={`flex space-x-4 rounded-lg border p-4 ${requirement.completed ? 'bg-muted' : ''}`}>
-              <Checkbox
-                id={requirement.id}
-                checked={requirementCompliance[requirement.id] || requirement.completed}
-                onCheckedChange={(checked) => handleCheckboxChange(requirement.id, checked as boolean)}
-                disabled={requirement.completed}
-                className="mt-1"
-              />
-              <div className="flex-1 space-y-1">
-                <Label htmlFor={requirement.id} className={`font-medium ${requirement.completed ? 'text-muted-foreground' : ''}`}>
-                  {requirement.title}
-                </Label>
-                <p className="text-sm text-muted-foreground">{requirement.description}</p>
-                {!requirement.completed && (
-                  <div className="mt-2">
-                    <Label htmlFor={`file-${requirement.id}`} className="text-sm">
-                      Upload Document
-                    </Label>
-                    <div className="mt-1 flex items-center gap-2">
-                      <Input
-                        id={`file-${requirement.id}`}
-                        type="file"
-                        className="max-w-xs"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) handleFileUpload(requirement.id, file);
-                        }}
-                      />
-                      {documents[requirement.id] && (
-                        <Button variant="outline" size="icon" onClick={() => handleRemoveFile(requirement.id)}>
-                          <X className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                    {documents[requirement.id] && <p className="mt-1 text-sm text-muted-foreground">File uploaded: {documents[requirement.id].name}</p>}
+      <div className="flex flex-col gap-2">
+        {mockRequirements.map((requirement) => (
+          <div key={requirement.id} className={`flex space-x-4 rounded-lg border p-4 ${requirement.completed ? 'bg-muted' : ''}`}>
+            <Checkbox
+              id={requirement.id}
+              checked={requirementCompliance[requirement.id] || requirement.completed}
+              onCheckedChange={(checked) => handleCheckboxChange(requirement.id, checked as boolean)}
+              disabled={requirement.completed}
+              className="mt-1"
+            />
+            <div className="flex-1 space-y-1">
+              <Label htmlFor={requirement.id} className={`font-medium ${requirement.completed ? 'text-muted-foreground' : ''}`}>
+                {requirement.title}
+              </Label>
+              <p className="text-sm text-muted-foreground">{requirement.description}</p>
+              {!requirement.completed && (
+                <div className="mt-2">
+                  <Label htmlFor={`file-${requirement.id}`} className="text-sm">
+                    Upload Document
+                  </Label>
+                  <div className="mt-1 flex items-center gap-2">
+                    <Input
+                      id={`file-${requirement.id}`}
+                      type="file"
+                      className="max-w-xs"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleFileUpload(requirement.id, file);
+                      }}
+                    />
+                    {documents[requirement.id] && (
+                      <Button variant="outline" size="icon" onClick={() => handleRemoveFile(requirement.id)}>
+                        <X className="h-4 w-4" />
+                      </Button>
+                    )}
                   </div>
-                )}
-              </div>
-              {requirement.completed && (
-                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary">
-                  <Check className="h-3 w-3 text-primary-foreground" />
+                  {documents[requirement.id] && <p className="mt-1 text-sm text-muted-foreground">File uploaded: {documents[requirement.id].name}</p>}
                 </div>
               )}
             </div>
-          ))}
-        </div>
-      </ScrollArea>
+            {requirement.completed && (
+              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+                <Check className="h-3 w-3 text-primary-foreground" />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

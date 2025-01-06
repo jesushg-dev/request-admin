@@ -1,0 +1,106 @@
+import './abstract.zmodel'
+import './form.zmodel'
+import './request.zmodel'
+
+/// Represents a hierarchy for requests.
+model RequestHierarchy extends TenantScoped, Auditable, CatalogBase {
+  levels     RequestHierarchyLevel[] // Levels within this hierarchy
+  categories RequestCategory[]       // Categories directly associated with this hierarchy
+
+  @@index([name], name: "idx_request_hierarchy_name")
+}
+
+/// Represents a level within a request hierarchy.
+model RequestHierarchyLevel extends TenantScoped, Auditable, CatalogBase {
+  hierarchyId String              @db.UniqueIdentifier
+  hierarchy   RequestHierarchy    @relation(fields: [hierarchyId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cyclic referential actions
+  categories  RequestCategory[]   // Categories associated with this level
+  position    Int
+
+  @@unique([position, hierarchyId])
+  @@index([hierarchyId], name: "idx_request_hierarchy_level_hierarchy_id")
+
+  @@validate(position > 0)
+}
+
+/// Represents a request category, with SLA and required documents.
+model RequestCategory extends TenantScoped, Auditable, CatalogBase {
+  parentCategoryId String?               @db.UniqueIdentifier // ID of the parent category
+  parentCategory   RequestCategory?      @relation("ParentRequestCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Handle self-relation correctly
+  subcategories    RequestCategory[]     @relation("ParentRequestCategory") // Subcategories under this category
+  hierarchyLevelId String                @db.UniqueIdentifier
+  hierarchyLevel   RequestHierarchyLevel @relation(fields: [hierarchyLevelId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
+  hierarchyId      String                @db.UniqueIdentifier
+  hierarchy        RequestHierarchy      @relation(fields: [hierarchyId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
+  sla              SLA?                  // SLA specific to this category
+  guideDocuments   GuideDocument[]       // Documents guiding the resolution of requests
+  isEligibleForNewClients Boolean @default(true) // Indicates if the category accepts new clients
+  categoryForms    CategoryForm[]        // Links the category to multiple forms
+  requestCategoryRequirement RequestCategoryRequirement[] // Requirement mappings
+
+  requests       Request[] @relation("RequestCategory") // Requests where this category is the request category
+
+  @@index([name], name: "idx_request_category_name")
+  @@index([hierarchyId], name: "idx_request_category_hierarchy_id")
+}
+
+/// SLA (Service Level Agreement) model.
+model SLA extends TenantScoped, Auditable {
+  id               String       @id @default(uuid()) @db.UniqueIdentifier
+  resolutionTime   Int          // Time in hours to resolve the request
+  escalationTime   Int?         // Time in hours before escalation
+  requestCategoryId String?     @db.UniqueIdentifier @unique
+  requestCategory  RequestCategory? @relation(fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
+
+  @@index([requestCategoryId], name: "idx_sla_request_category_id")
+}
+
+/// Represents a guide document used to resolve a request.
+model GuideDocument extends TenantScoped, Auditable {
+  id               String       @id @default(uuid()) @db.UniqueIdentifier
+  name             String       @db.VarChar(100) // Name of the document
+  description      String?      @db.VarChar(255) // Optional description
+  url              String?      @db.VarChar(500) // Optional URL for the document
+  status           Int          // Status code representing the state of the document
+  expirationDate   DateTime?    // Optional expiration date for the document
+  requestCategoryId String      @db.UniqueIdentifier // ID of the associated request category
+  requestCategory  RequestCategory @relation(fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
+
+  @@index([requestCategoryId], name: "idx_guide_document_request_category_id")
+}
+
+/// Links a requirement to a specific category.
+model RequestCategoryRequirement extends TenantScoped, Auditable {
+  id            String       @id @default(uuid()) @db.UniqueIdentifier
+  requirementId String       @db.UniqueIdentifier
+  requirement   Requirement  @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Maintain referential integrity
+  categoryId    String       @db.UniqueIdentifier
+  requestCategory RequestCategory @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Maintain referential integrity
+
+  @@index([requirementId], name: "idx_category_requirement_id")
+  @@index([categoryId], name: "idx_category_category_id")
+}
+
+/// Represents a specific requirement for a request/assignment category.
+model Requirement extends TenantScoped, Auditable {
+  id                           String       @id @default(uuid()) @db.UniqueIdentifier
+  name                         String       @db.VarChar(200) @unique
+  description                  String       @db.VarChar(500)
+  isRequiredOnlyForNewClients  Boolean      @default(false)
+  requirementComplianceTracking RequirementComplianceTracking[]
+  requestCategoryRequirement   RequestCategoryRequirement[]
+  requirementTypeId            String       @db.UniqueIdentifier
+  requirementType              RequirementType @relation(fields: [requirementTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
+
+  @@index([name], name: "idx_requirement_name")
+}
+
+/// Represents a type of a requirement.
+model RequirementType extends TenantScoped, Auditable {
+  id          String         @id @default(uuid()) @db.UniqueIdentifier
+  name        String         @db.VarChar(100) @unique
+  description String         @db.VarChar(255)
+  requirements Requirement[]
+
+  @@index([name], name: "idx_requirement_type_name")
+}

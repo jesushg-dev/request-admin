@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 import { useFindManyCategory } from '@/services/api/hooks';
 import { Prisma } from '@prisma/client';
-import { Controller, useFormContext } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
-import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import Select from '@/components/select/select';
 
 export const HierarchyDefaultArgs = Prisma.validator<Prisma.HierarchyDefaultArgs>()({
   select: {
@@ -25,45 +25,41 @@ type CategoriesSelectProps = {
 };
 
 export const categorySchema = z.object({
-  id: z.string(),
+  label: z.string(),
   value: z.string().nonempty('This field is required.'),
   position: z.number(),
 });
 
+export type CategoryFormValues = z.infer<typeof categorySchema>;
+
 export const CategoriesSelect: React.FC<CategoriesSelectProps> = ({ hierarchyLevels, fieldPrefix }) => {
-  const { control, setValue, watch } = useFormContext<{
-    [key: string]: { id: string; value: string; position: number }[];
-  }>();
-  const watchedFields = watch(fieldPrefix) || []; // Watch the specific field prefix
-  const [activeLevel, setActiveLevel] = useState(0);
+  const { watch, setValue, formState } = useFormContext<Record<string, CategoryFormValues[]>>();
+  console.log('🚀 ~ formState:', formState.errors);
+  const watchedAllFields = watch() || [];
+  console.log('🚀 ~ watchedAllFields:', watchedAllFields);
+  const watchedFields = watch(fieldPrefix) || [];
+  console.log('🚀 ~ watchedFields:', watchedFields);
+  const activeLevel = useMemo(() => watchedFields.filter((field) => !!field?.value).length, [watchedFields]);
+  console.log('🚀 ~ activeLevel:', activeLevel);
 
-  const handleCategorySelect = (levelId: string, categoryId: string) => {
-    const index = hierarchyLevels.findIndex((level) => level.id === levelId);
-    setValue(`${fieldPrefix}.${index}.value`, categoryId); // Dynamically resolve the field path
-    const selectedCount = watchedFields.filter((field) => !!field?.value).length;
-
-    if (selectedCount < hierarchyLevels.length) {
-      setActiveLevel(selectedCount);
+  const handleClearLevels = (startIndex: number) => {
+    for (let i = startIndex; i < hierarchyLevels.length; i++) {
+      setValue(`${fieldPrefix}.${i}.value`, ''); // Deselecciona el nivel
     }
   };
 
   return (
     <div className="flex flex-col gap-4">
       {hierarchyLevels.map((level, index) => (
-        <Controller
+        <CategorySelect
           key={level.id}
-          name={`${fieldPrefix}.${index}.value`} // Use the fieldPrefix here
-          control={control}
-          render={({ field }) => (
-            <CategorySelect
-              hierarchyLevelId={level.id}
-              hierarchyLevelName={level.name}
-              enabled={index <= activeLevel}
-              selectedCategoryId={field.value}
-              parentCategoryId={index > 0 ? (watchedFields[index - 1]?.value ?? '') : ''}
-              onCategorySelect={(categoryId) => handleCategorySelect(level.id, categoryId)}
-            />
-          )}
+          position={level.position}
+          hierarchyLevelId={level.id}
+          hierarchyLevelName={level.name}
+          enabled={index <= activeLevel}
+          parentCategoryId={index > 0 ? (watchedFields[index - 1]?.value ?? '') : ''}
+          name={`${fieldPrefix}.${index}`}
+          onClearNextLevels={() => handleClearLevels(index + 1)} // Limpiar niveles posteriores
         />
       ))}
     </div>
@@ -71,39 +67,49 @@ export const CategoriesSelect: React.FC<CategoriesSelectProps> = ({ hierarchyLev
 };
 
 type CategorySelectProps = {
+  name: string;
   hierarchyLevelId: string;
   hierarchyLevelName: string;
   parentCategoryId?: string;
-  selectedCategoryId?: string;
-  onCategorySelect: (categoryId: string) => void;
   enabled: boolean;
+  position: number;
+  onClearNextLevels: () => void; // Prop para limpiar niveles posteriores
 };
 
-const CategorySelect: React.FC<CategorySelectProps> = ({ hierarchyLevelId, hierarchyLevelName, parentCategoryId, selectedCategoryId, onCategorySelect, enabled }) => {
+const CategorySelect: React.FC<CategorySelectProps> = ({ position, name, hierarchyLevelId, hierarchyLevelName, parentCategoryId, enabled, onClearNextLevels }) => {
+  const { control, register } = useFormContext<Record<string, CategoryFormValues[]>>();
+
   const where = parentCategoryId ? { parentCategoryId } : { hierarchyLevelId };
   const { data: categories = [], isLoading } = useFindManyCategory({ where }, { enabled });
+  const options = useMemo(() => categories.map((category) => ({ label: category.name, value: category.id })), [categories]);
 
   return (
-    <FormItem>
-      <FormLabel>{hierarchyLevelName}</FormLabel>
-      <FormControl>
-        <Select onValueChange={onCategorySelect} defaultValue={selectedCategoryId} disabled={!enabled || isLoading}>
-          <SelectTrigger>
-            <SelectValue placeholder={`Select ${hierarchyLevelName}`} />
-          </SelectTrigger>
-          <SelectContent>
-            {categories.map((category) => (
-              <SelectItem key={category.id} value={category.id}>
-                <div className="flex flex-col items-start justify-between">
-                  <span className="text-sm">{category.name}</span>
-                  {category.description && <span className="block text-xs text-muted-foreground">{category.description}</span>}
-                </div>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </FormControl>
-      <FormMessage />
-    </FormItem>
+    <FormField
+      control={control}
+      name={name as `requestCategory.${number}`}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>{hierarchyLevelName}</FormLabel>
+          <FormControl>
+            <Select
+              isDisabled={!enabled}
+              isLoading={isLoading}
+              isSearchable
+              isClearable
+              options={options}
+              onChange={(option) => {
+                console.log('🚀 ~ option:', option, field.value);
+                if (option?.value !== field.value?.value) {
+                  field.onChange({ ...option, position });
+                  onClearNextLevels();
+                }
+              }}
+              value={field.value}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 };

@@ -10,6 +10,7 @@ model Document extends TenantScoped, Auditable {
   name                          String   @db.VarChar(155) // Name of the document
   url                           String?  @db.VarChar(500) // Optional URL where the document is located
   status                        Int      // Status code representing the state of the document
+  expirationDate                DateTime?        // Expiration date of the document
 
   // Optional linkage to compliance tracking
   requirementComplianceTrackingId String? @db.UniqueIdentifier // ID of the associated compliance tracking (optional)

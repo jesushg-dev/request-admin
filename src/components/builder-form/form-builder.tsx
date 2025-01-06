@@ -4,21 +4,24 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { DndContext, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { Form } from '@prisma/client';
+import { Separator } from '@radix-ui/react-select';
+import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Confetti from 'react-confetti';
-import { BsArrowLeft, BsArrowRight } from 'react-icons/bs';
 import { ImSpinner2 } from 'react-icons/im';
 
 import useDesigner from '@/hooks/use-designer';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { toast } from '@/components/ui/use-toast';
 
+import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card';
 import Designer from './designer';
 import DragOverlayWrapper from './drag-overlay-wrapper';
+import FormLinkShare from './form-link-share';
 import PreviewDialogBtn from './preview-dialog-btn';
 import PublishFormBtn from './publish-form-btn';
 import SaveFormBtn from './save-form-btn';
+import VisitBtn from './visit-btn';
 
 function FormBuilder({ form }: { form: Form }) {
   const t = useTranslations('component.formBuilder');
@@ -64,41 +67,38 @@ function FormBuilder({ form }: { form: Form }) {
     return (
       <>
         <Confetti width={window.innerWidth} height={window.innerHeight} recycle={false} numberOfPieces={1000} />
-        <div className="flex h-full w-full flex-col items-center justify-center">
-          <div className="max-w-md">
-            <h1 className="mb-10 border-b pb-2 text-center text-4xl font-bold text-primary">{t('formPublished')}</h1>
-            <h2 className="text-2xl">{t('shareThisForm')}</h2>
-            <h3 className="border-b pb-10 text-xl text-muted-foreground">{t('shareInstructions')}</h3>
-            <div className="my-4 flex w-full flex-col items-center gap-2 border-b pb-4">
-              <Input className="w-full" readOnly value={shareUrl} />
-              <Button
-                className="mt-2 w-full"
-                onClick={async () => {
-                  await navigator.clipboard.writeText(shareUrl);
-                  toast({
-                    title: t('copied'),
-                    description: t('linkCopied'),
-                  });
-                }}>
-                {t('copyLink')}
-              </Button>
+        <Card className="flex h-full w-full flex-col justify-between shadow-lg">
+          <CardHeader>
+            <Alert className="mb-6">
+              <Check className="h-4 w-4" />
+              <AlertTitle>{t('formPublished')}</AlertTitle>
+              <AlertDescription>{t('shareThisForm')}</AlertDescription>
+            </Alert>
+            <CardTitle className="text-center text-3xl font-bold text-primary sm:text-4xl">{t('formPublished')}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <p className="text-center text-lg text-muted-foreground">{t('shareInstructions')}</p>
+            <Separator />
+            <div className="flex justify-center space-x-4">
+              <VisitBtn shareUrl={form.shareURL} tenantId={form.tenantId} />
+              <FormLinkShare shareUrl={form.shareURL} tenantId={form.tenantId} />
             </div>
-            <div className="flex justify-between">
-              <Button variant={'link'} asChild>
-                <Link href={'/'} className="gap-2">
-                  <BsArrowLeft />
-                  {t('goBackHome')}
-                </Link>
-              </Button>
-              <Button variant={'link'} asChild>
-                <Link href={`/admin/form-designer/forms/${form.id}`} className="gap-2">
-                  {t('formDetails')}
-                  <BsArrowRight />
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
+          </CardContent>
+          <CardFooter className="flex justify-between">
+            <Button variant="outline" asChild className="w-full transition-colors hover:bg-primary hover:text-primary-foreground sm:w-auto">
+              <Link href="/" className="flex items-center gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                {t('goBackHome')}
+              </Link>
+            </Button>
+            <Button variant="outline" asChild className="transition-colors hover:bg-primary hover:text-primary-foreground">
+              <Link href={`/admin/form-designer/forms/${form.id}`} className="flex items-center gap-2">
+                {t('formDetails')}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </CardFooter>
+        </Card>
       </>
     );
   }

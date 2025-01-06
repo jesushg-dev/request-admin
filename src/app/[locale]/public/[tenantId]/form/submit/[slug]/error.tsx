@@ -12,14 +12,7 @@ function ErrorPage({ error }: { error: Error }) {
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-4">
-      {process.env.NODE_ENV === 'development' ? (
-        <p className="text-lg">
-          Error message: <pre>{error.message}</pre>
-        </p>
-      ) : (
-        <p className="text-lg">We are sorry, but an unexpected error occurred.</p>
-      )}
-      <p className="text-lg">Please try again later.</p>
+      <h2 className="text-4xl text-destructive">Something went wrong!</h2>
       <Button asChild>
         <Link href={'/'}>Go back to home</Link>
       </Button>

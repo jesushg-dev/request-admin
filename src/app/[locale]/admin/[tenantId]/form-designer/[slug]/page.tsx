@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import { GetFormById, GetFormWithSubmissions } from '@/actions/form';
+import { redirect } from '@/i18n/routing';
 import { format, formatDistance } from 'date-fns';
 import { getTranslations } from 'next-intl/server';
 import { FaWpforms } from 'react-icons/fa';
@@ -8,7 +9,6 @@ import { LuView } from 'react-icons/lu';
 import { TbArrowBounce } from 'react-icons/tb';
 
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -22,14 +22,22 @@ async function FormDetailPage({
   params,
 }: {
   params: {
+    locale: string;
     slug: string;
   };
 }) {
+  const { slug, locale } = await params;
   const t = await getTranslations('admin.formBuilder.view');
-  const { slug } = await params;
   const form = await GetFormById(slug);
   if (!form) {
     throw new Error(t('formNotFound'));
+  }
+
+  if (!form.published) {
+    redirect({
+      locale,
+      href: { pathname: '/admin/[tenantId]/form-designer/[slug]/edit', params: { tenantId: form.tenantId, slug } },
+    });
   }
 
   const { visits, submissions } = form;
@@ -43,64 +51,47 @@ async function FormDetailPage({
   const bounceRate = 100 - submissionRate;
 
   return (
-    <Card>
+    <Card className="flex-1">
       <CardHeader>
-        <div className="container flex justify-between">
-          <CardTitle className="truncate text-3xl font-bold">{form.name}</CardTitle>
-          <Button variant="ghost">
-            <VisitBtn shareUrl={form.shareURL} />
-          </Button>
-        </div>
+        <CardTitle className="flex justify-between truncate text-3xl font-bold">
+          {form.name}
+          <div className="flex gap-2">
+            <VisitBtn shareUrl={form.shareURL} tenantId={form.tenantId} />
+            <FormLinkShare shareUrl={form.shareURL} tenantId={form.tenantId} />
+          </div>
+        </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="flex flex-1 flex-col gap-4 p-6">
-          <div className="border-b border-muted py-4">
-            <div className="container flex items-center justify-between gap-2">
-              <FormLinkShare shareUrl={form.shareURL} />
-            </div>
-          </div>
-          <div className="container grid w-full grid-cols-1 gap-4 pt-8 md:grid-cols-2 lg:grid-cols-4">
-            <StatsCard
-              title={t('totalVisits')}
-              icon={<LuView className="text-blue-600" />}
-              helperText={t('visitsHelper')}
-              value={visits.toLocaleString() ?? ''}
-              loading={false}
-              className="shadow-md shadow-blue-600"
-            />
+      <CardContent className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <StatsCard title={t('totalVisits')} icon={<LuView className="text-blue-600" />} helperText={t('visitsHelper')} value={visits.toLocaleString() ?? ''} loading={false} className="shadow-md" />
 
-            <StatsCard
-              title={t('totalSubmissions')}
-              icon={<FaWpforms className="text-yellow-600" />}
-              helperText={t('submissionsHelper')}
-              value={submissions.toLocaleString() ?? ''}
-              loading={false}
-              className="shadow-md shadow-yellow-600"
-            />
-            <StatsCard
-              title={t('submissionRate')}
-              icon={<HiCursorClick className="text-green-600" />}
-              helperText={t('submissionRateHelper')}
-              value={submissionRate.toLocaleString() + '%'}
-              loading={false}
-              className="shadow-md shadow-green-600"
-            />
+        <StatsCard
+          title={t('totalSubmissions')}
+          icon={<FaWpforms className="text-yellow-600" />}
+          helperText={t('submissionsHelper')}
+          value={submissions.toLocaleString() ?? ''}
+          loading={false}
+          className="shadow-md"
+        />
+        <StatsCard
+          title={t('submissionRate')}
+          icon={<HiCursorClick className="text-green-600" />}
+          helperText={t('submissionRateHelper')}
+          value={submissionRate.toLocaleString() + '%'}
+          loading={false}
+          className="shadow-md"
+        />
 
-            <StatsCard
-              title={t('bounceRate')}
-              icon={<TbArrowBounce className="text-red-600" />}
-              helperText={t('bounceRateHelper')}
-              value={bounceRate.toLocaleString() + '%'}
-              loading={false}
-              className="shadow-md shadow-red-600"
-            />
-          </div>
-        </div>
+        <StatsCard
+          title={t('bounceRate')}
+          icon={<TbArrowBounce className="text-red-600" />}
+          helperText={t('bounceRateHelper')}
+          value={bounceRate.toLocaleString() + '%'}
+          loading={false}
+          className="shadow-md"
+        />
       </CardContent>
-      <CardFooter>
-        <div className="container pt-10">
-          <SubmissionsTable id={form.id} />
-        </div>
+      <CardFooter className="flex flex-col items-start gap-2">
+        <SubmissionsTable id={form.id} />
       </CardFooter>
     </Card>
   );

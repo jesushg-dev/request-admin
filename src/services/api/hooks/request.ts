@@ -376,7 +376,6 @@ export function useCheckRequest<TError = DefaultError>(
       modifiedBy?: string;
       tenantId?: string;
       id?: string;
-      clientId?: string;
       issueSubject?: string;
       description?: string;
       priority?: string;
@@ -386,7 +385,6 @@ export function useCheckRequest<TError = DefaultError>(
       statusId?: string;
       requestCategoryId?: string;
       assignmentCategoryId?: string;
-      formSubmissionId?: string;
     };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions

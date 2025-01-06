@@ -15,15 +15,16 @@ import createAreaRoleRouter from './AreaRole.router';
 import createAreaRoleFeatureRouter from './AreaRoleFeature.router';
 import createAuthenticatorRouter from './Authenticator.router';
 import createCategoryRouter from './Category.router';
+import createCategoryFormRouter from './CategoryForm.router';
 import createCategoryRequirementRouter from './CategoryRequirement.router';
 import createChannelRouter from './Channel.router';
-import createClientRouter from './Client.router';
 import createConversationRouter from './Conversation.router';
 import createDocumentRouter from './Document.router';
 import createDocumentAssignmentRouter from './DocumentAssignment.router';
 import createFeatureRouter from './Feature.router';
 import createFormRouter from './Form.router';
 import createFormSubmissionRouter from './FormSubmission.router';
+import createFormSubmissionKeyRouter from './FormSubmissionKey.router';
 import createHierarchyRouter from './Hierarchy.router';
 import createHierarchyLevelRouter from './HierarchyLevel.router';
 import createIdentificationTypeRouter from './IdentificationType.router';
@@ -86,27 +87,28 @@ export function createRouter() {
     twoFactorToken: createTwoFactorTokenRouter(),
     twoFactorConfirmation: createTwoFactorConfirmationRouter(),
     authenticator: createAuthenticatorRouter(),
-    hierarchy: createHierarchyRouter(),
-    hierarchyLevel: createHierarchyLevelRouter(),
-    category: createCategoryRouter(),
     request: createRequestRouter(),
     requestAssignment: createRequestAssignmentRouter(),
     requestStatusType: createRequestStatusTypeRouter(),
-    area: createAreaRouter(),
-    userArea: createUserAreaRouter(),
-    areaRole: createAreaRoleRouter(),
-    areaRoleFeature: createAreaRoleFeatureRouter(),
     requirement: createRequirementRouter(),
     requirementType: createRequirementTypeRouter(),
     categoryRequirement: createCategoryRequirementRouter(),
     requirementComplianceTracking: createRequirementComplianceTrackingRouter(),
-    form: createFormRouter(),
-    formSubmission: createFormSubmissionRouter(),
     document: createDocumentRouter(),
     documentAssignment: createDocumentAssignmentRouter(),
     person: createPersonRouter(),
-    client: createClientRouter(),
     identificationType: createIdentificationTypeRouter(),
+    hierarchy: createHierarchyRouter(),
+    hierarchyLevel: createHierarchyLevelRouter(),
+    category: createCategoryRouter(),
+    area: createAreaRouter(),
+    userArea: createUserAreaRouter(),
+    areaRole: createAreaRoleRouter(),
+    areaRoleFeature: createAreaRoleFeatureRouter(),
+    form: createFormRouter(),
+    categoryForm: createCategoryFormRouter(),
+    formSubmission: createFormSubmissionRouter(),
+    formSubmissionKey: createFormSubmissionKeyRouter(),
     workspace: createWorkspaceRouter(),
     member: createMemberRouter(),
     channel: createChannelRouter(),

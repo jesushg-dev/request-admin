@@ -3,6 +3,7 @@ import './abstract.zmodel'
 import './request.zmodel'
 import './messenger.zmodel'
 import './person.zmodel'
+import './area.zmodel'
 
 model User extends Auditable {
   id                   String    @id @default(uuid()) @db.UniqueIdentifier

@@ -134,7 +134,7 @@ export async function PublishForm(id: string) {
   });
 }
 
-export async function GetFormContentByUrl(formUrl: string) {
+export async function GetFormContentByUrl(formUrl: string, tenantId: string) {
   return await db.form.update({
     select: {
       content: true,
@@ -145,7 +145,9 @@ export async function GetFormContentByUrl(formUrl: string) {
       },
     },
     where: {
+      tenantId,
       shareURL: formUrl,
+      published: true,
     },
   });
 }

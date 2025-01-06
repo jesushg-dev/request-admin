@@ -504,6 +504,7 @@
       },
       "view": {
         "formNotFound": "Form not found",
+        "formNotPublished": "Form not published",
         "totalVisits": "Total visits",
         "visitsHelper": "All time form visits",
         "totalSubmissions": "Total submissions",

@@ -72,4 +72,16 @@ const AlertDialogCancel = React.forwardRef<React.ElementRef<typeof AlertDialogPr
 ));
 AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName;
 
-export { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel };
+export {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogOverlay,
+  AlertDialogPortal,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel,
+};
