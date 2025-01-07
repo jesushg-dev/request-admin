@@ -1,19 +1,4 @@
-import './zmodel/abstract.zmodel'
-import './zmodel/auth.zmodel'
-import './zmodel/person.zmodel'
-import './zmodel/document.zmodel'
-import './zmodel/form.zmodel'
-import './zmodel/messenger.zmodel'
-import './zmodel/request.zmodel'
 import './zmodel/tenant.zmodel'
-
-plugin trpc {
-  provider = '@zenstackhq/trpc'
-  output = './src/server/api'
-  version = 'v11'
-  importCreateRouter = "../../trpc"
-  importProcedure = "../../trpc"
-}
 
 plugin hooks {
   provider = '@zenstackhq/tanstack-query'

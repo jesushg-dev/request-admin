@@ -6,8 +6,7 @@ import './form.zmodel'
 import './messenger.zmodel'
 import './request.zmodel'
 import './area.zmodel'
-import './request-category.zmodel'
-import './assignation-category.zmodel'
+import './category.zmodel'
 
 model Tenant extends Auditable {
   id                 String   @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for the tenant

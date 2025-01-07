@@ -5,8 +5,7 @@ import './person.zmodel'
 import './tenant.zmodel'
 import './area.zmodel'
 import './form.zmodel'
-import './request-category.zmodel'
-import './assignation-category.zmodel'
+import './category.zmodel'
 
 /// Represents a request that includes categorization for both request and assignment.
 model Request extends TenantScoped, Auditable {

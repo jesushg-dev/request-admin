@@ -628,149 +628,6 @@ model AreaRoleFeature {
   @@unique([areaRoleId, featureId])
 }
 
-/// Represents a hierarchy for assignations.
-model AssignationHierarchy {
-  id          String                      @id() @default(uuid()) @db.UniqueIdentifier()
-  name        String                      @db.VarChar(100)
-  description String?                     @db.VarChar(255)
-  createdAt   DateTime                    @default(now())
-  updatedAt   DateTime?                   @updatedAt()
-  deletedAt   DateTime?
-  createdBy   String?                     @db.VarChar(50)
-  modifiedBy  String?                     @db.VarChar(50)
-  tenantId    String                      @db.UniqueIdentifier()
-  tenant      Tenant                      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  levels      AssignationHierarchyLevel[]
-  categories  AssignationCategory[]
-
-  @@index([name], name: "idx_assignation_hierarchy_name")
-}
-
-/// Represents a level within an assignation hierarchy.
-model AssignationHierarchyLevel {
-  id          String                @id() @default(uuid()) @db.UniqueIdentifier()
-  name        String                @db.VarChar(100)
-  description String?               @db.VarChar(255)
-  createdAt   DateTime              @default(now())
-  updatedAt   DateTime?             @updatedAt()
-  deletedAt   DateTime?
-  createdBy   String?               @db.VarChar(50)
-  modifiedBy  String?               @db.VarChar(50)
-  tenantId    String                @db.UniqueIdentifier()
-  tenant      Tenant                @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  hierarchyId String                @db.UniqueIdentifier()
-  hierarchy   AssignationHierarchy  @relation(fields: [hierarchyId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  categories  AssignationCategory[]
-  position    Int
-
-  @@unique([position, hierarchyId])
-  @@index([hierarchyId], name: "idx_assignation_hierarchy_level_hierarchy_id")
-}
-
-/// Represents an assignation category, linked to specific rules and an area.
-model AssignationCategory {
-  id                 String                    @id() @default(uuid()) @db.UniqueIdentifier()
-  name               String                    @db.VarChar(100)
-  description        String?                   @db.VarChar(255)
-  createdAt          DateTime                  @default(now())
-  updatedAt          DateTime?                 @updatedAt()
-  deletedAt          DateTime?
-  createdBy          String?                   @db.VarChar(50)
-  modifiedBy         String?                   @db.VarChar(50)
-  tenantId           String                    @db.UniqueIdentifier()
-  tenant             Tenant                    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  parentCategoryId   String?                   @db.UniqueIdentifier()
-  parentCategory     AssignationCategory?      @relation("ParentAssignationCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  subcategories      AssignationCategory[]     @relation("ParentAssignationCategory")
-  hierarchyLevelId   String                    @db.UniqueIdentifier()
-  hierarchyLevel     AssignationHierarchyLevel @relation(fields: [hierarchyLevelId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  hierarchyId        String                    @db.UniqueIdentifier()
-  hierarchy          AssignationHierarchy      @relation(fields: [hierarchyId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  areaId             String                    @db.UniqueIdentifier()
-  area               Area                      @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  assignmentRequests Request[]                 @relation("AssignmentCategory")
-
-  @@index([name], name: "idx_assignation_category_name")
-  @@index([hierarchyId], name: "idx_assignation_category_hierarchy_id")
-  @@index([areaId], name: "idx_assignation_category_area_id")
-}
-
-model Form {
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime?        @updatedAt()
-  deletedAt       DateTime?
-  createdBy       String?          @db.VarChar(50)
-  modifiedBy      String?          @db.VarChar(50)
-  tenantId        String           @db.UniqueIdentifier()
-  tenant          Tenant           @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id              String           @id() @default(uuid()) @db.UniqueIdentifier()
-  userId          String           @db.UniqueIdentifier()
-  name            String
-  description     String           @default("")
-  content         String           @default("[]") @db.NVarChar(Max)
-  published       Boolean          @default(false)
-  visits          Int              @default(0)
-  submissions     Int              @default(0)
-  shareURL        String           @unique() @default(uuid())
-  categoryForms   CategoryForm[]
-  formSubmissions FormSubmission[]
-
-  @@unique([name, userId])
-}
-
-model CategoryForm {
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime?       @updatedAt()
-  deletedAt         DateTime?
-  createdBy         String?         @db.VarChar(50)
-  modifiedBy        String?         @db.VarChar(50)
-  tenantId          String          @db.UniqueIdentifier()
-  tenant            Tenant          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                String          @id() @default(uuid()) @db.UniqueIdentifier()
-  categoryId        String          @db.UniqueIdentifier()
-  formId            String          @db.UniqueIdentifier()
-  requestCategories RequestCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  form              Form            @relation(fields: [formId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  @@unique([categoryId, formId])
-}
-
-model FormSubmission {
-  createdAt  DateTime            @default(now())
-  updatedAt  DateTime?           @updatedAt()
-  deletedAt  DateTime?
-  createdBy  String?             @db.VarChar(50)
-  modifiedBy String?             @db.VarChar(50)
-  tenantId   String              @db.UniqueIdentifier()
-  tenant     Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id         String              @id() @default(uuid()) @db.UniqueIdentifier()
-  formId     String              @db.UniqueIdentifier()
-  content    String
-  keys       FormSubmissionKey[]
-  form       Form                @relation(fields: [formId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  requestId  String?             @db.UniqueIdentifier()
-  request    Request?            @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@index([formId])
-}
-
-model FormSubmissionKey {
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime?      @updatedAt()
-  deletedAt    DateTime?
-  createdBy    String?        @db.VarChar(50)
-  modifiedBy   String?        @db.VarChar(50)
-  tenantId     String         @db.UniqueIdentifier()
-  tenant       Tenant         @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id           String         @id() @default(uuid()) @db.UniqueIdentifier()
-  submissionId String         @db.UniqueIdentifier()
-  key          String         @db.VarChar(255)
-  value        String         @db.VarChar(255)
-  submission   FormSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  @@index([key, value])
-}
-
 /// Represents a hierarchy for requests.
 model RequestHierarchy {
   id          String                  @id() @default(uuid()) @db.UniqueIdentifier()
@@ -934,6 +791,149 @@ model RequirementType {
   requirements Requirement[]
 
   @@index([name], name: "idx_requirement_type_name")
+}
+
+/// Represents a hierarchy for assignations.
+model AssignationHierarchy {
+  id          String                      @id() @default(uuid()) @db.UniqueIdentifier()
+  name        String                      @db.VarChar(100)
+  description String?                     @db.VarChar(255)
+  createdAt   DateTime                    @default(now())
+  updatedAt   DateTime?                   @updatedAt()
+  deletedAt   DateTime?
+  createdBy   String?                     @db.VarChar(50)
+  modifiedBy  String?                     @db.VarChar(50)
+  tenantId    String                      @db.UniqueIdentifier()
+  tenant      Tenant                      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  levels      AssignationHierarchyLevel[]
+  categories  AssignationCategory[]
+
+  @@index([name], name: "idx_assignation_hierarchy_name")
+}
+
+/// Represents a level within an assignation hierarchy.
+model AssignationHierarchyLevel {
+  id          String                @id() @default(uuid()) @db.UniqueIdentifier()
+  name        String                @db.VarChar(100)
+  description String?               @db.VarChar(255)
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime?             @updatedAt()
+  deletedAt   DateTime?
+  createdBy   String?               @db.VarChar(50)
+  modifiedBy  String?               @db.VarChar(50)
+  tenantId    String                @db.UniqueIdentifier()
+  tenant      Tenant                @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  hierarchyId String                @db.UniqueIdentifier()
+  hierarchy   AssignationHierarchy  @relation(fields: [hierarchyId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  categories  AssignationCategory[]
+  position    Int
+
+  @@unique([position, hierarchyId])
+  @@index([hierarchyId], name: "idx_assignation_hierarchy_level_hierarchy_id")
+}
+
+/// Represents an assignation category, linked to specific rules and an area.
+model AssignationCategory {
+  id                 String                    @id() @default(uuid()) @db.UniqueIdentifier()
+  name               String                    @db.VarChar(100)
+  description        String?                   @db.VarChar(255)
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime?                 @updatedAt()
+  deletedAt          DateTime?
+  createdBy          String?                   @db.VarChar(50)
+  modifiedBy         String?                   @db.VarChar(50)
+  tenantId           String                    @db.UniqueIdentifier()
+  tenant             Tenant                    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parentCategoryId   String?                   @db.UniqueIdentifier()
+  parentCategory     AssignationCategory?      @relation("ParentAssignationCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subcategories      AssignationCategory[]     @relation("ParentAssignationCategory")
+  hierarchyLevelId   String                    @db.UniqueIdentifier()
+  hierarchyLevel     AssignationHierarchyLevel @relation(fields: [hierarchyLevelId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  hierarchyId        String                    @db.UniqueIdentifier()
+  hierarchy          AssignationHierarchy      @relation(fields: [hierarchyId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  areaId             String                    @db.UniqueIdentifier()
+  area               Area                      @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  assignmentRequests Request[]                 @relation("AssignmentCategory")
+
+  @@index([name], name: "idx_assignation_category_name")
+  @@index([hierarchyId], name: "idx_assignation_category_hierarchy_id")
+  @@index([areaId], name: "idx_assignation_category_area_id")
+}
+
+model Form {
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime?        @updatedAt()
+  deletedAt       DateTime?
+  createdBy       String?          @db.VarChar(50)
+  modifiedBy      String?          @db.VarChar(50)
+  tenantId        String           @db.UniqueIdentifier()
+  tenant          Tenant           @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id              String           @id() @default(uuid()) @db.UniqueIdentifier()
+  userId          String           @db.UniqueIdentifier()
+  name            String
+  description     String           @default("")
+  content         String           @default("[]") @db.NVarChar(Max)
+  published       Boolean          @default(false)
+  visits          Int              @default(0)
+  submissions     Int              @default(0)
+  shareURL        String           @unique() @default(uuid())
+  categoryForms   CategoryForm[]
+  formSubmissions FormSubmission[]
+
+  @@unique([name, userId])
+}
+
+model CategoryForm {
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime?       @updatedAt()
+  deletedAt         DateTime?
+  createdBy         String?         @db.VarChar(50)
+  modifiedBy        String?         @db.VarChar(50)
+  tenantId          String          @db.UniqueIdentifier()
+  tenant            Tenant          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                String          @id() @default(uuid()) @db.UniqueIdentifier()
+  categoryId        String          @db.UniqueIdentifier()
+  formId            String          @db.UniqueIdentifier()
+  requestCategories RequestCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  form              Form            @relation(fields: [formId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([categoryId, formId])
+}
+
+model FormSubmission {
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime?           @updatedAt()
+  deletedAt  DateTime?
+  createdBy  String?             @db.VarChar(50)
+  modifiedBy String?             @db.VarChar(50)
+  tenantId   String              @db.UniqueIdentifier()
+  tenant     Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id         String              @id() @default(uuid()) @db.UniqueIdentifier()
+  formId     String              @db.UniqueIdentifier()
+  content    String
+  keys       FormSubmissionKey[]
+  form       Form                @relation(fields: [formId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  requestId  String?             @db.UniqueIdentifier()
+  request    Request?            @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([formId])
+}
+
+model FormSubmissionKey {
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime?      @updatedAt()
+  deletedAt    DateTime?
+  createdBy    String?        @db.VarChar(50)
+  modifiedBy   String?        @db.VarChar(50)
+  tenantId     String         @db.UniqueIdentifier()
+  tenant       Tenant         @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id           String         @id() @default(uuid()) @db.UniqueIdentifier()
+  submissionId String         @db.UniqueIdentifier()
+  key          String         @db.VarChar(255)
+  value        String         @db.VarChar(255)
+  submission   FormSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([key, value])
 }
 
 model Workspace {
