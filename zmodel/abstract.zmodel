@@ -34,4 +34,5 @@ abstract model CatalogBase  {
   id          String  @id @default(uuid()) @db.UniqueIdentifier
   name        String  @db.VarChar(100) // Name of the catalog item
   description String? @db.VarChar(255) // Optional description
+  isActive              Boolean   @default(true) 
 }

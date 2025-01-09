@@ -21,14 +21,7 @@ model Document extends TenantScoped, Auditable {
   request                       Request  @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Link to the associated Request entity
 }
 
-model DocumentAssignment extends TenantScoped, Auditable {
-  // Primary identifier
-  id                    String     @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for the document assignment
-
-  // Document assignment details
-  name                  String?    @db.VarChar(50) // Optional name for the document assignment
-  status                String?    @db.VarChar(50) // Optional status of the document assignment
-
+model DocumentAssignment extends TenantScoped, Auditable, CatalogBase {
   // Relationships
   requestAssignmentId   String     @db.UniqueIdentifier // ID of the associated request assignment
   requestAssignment     RequestAssignment @relation(fields: [requestAssignmentId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Link to the associated RequestAssignment entity

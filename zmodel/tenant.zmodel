@@ -36,6 +36,7 @@ model Tenant extends Auditable {
 
   // --- SLA and Guide Documents ---
   slas                        SLA[] 
+  sLAChangeLogs               SLAChangeLog[]
   guideDocuments              GuideDocument[] 
 
   // --- Documents ---
@@ -48,6 +49,10 @@ model Tenant extends Auditable {
   requestStatusTypes          RequestStatusType[]
   requestStatusTransitions    RequestStatusTransition[]
   requirementComplianceTrackings RequirementComplianceTracking[]
+  relatedIncidents            RelatedIncident[]
+  requestChangeLogs           RequestChangeLog[]
+  customerSatisfactionSurveys CustomerSatisfactionSurvey[]
+  assignmentTypes             AssignmentType[]
 
 
   // --- Forms ---

@@ -7,8 +7,8 @@ import './area.zmodel'
 
 model User extends Auditable {
   id                   String    @id @default(uuid()) @db.UniqueIdentifier
-  username             String?   @unique // Unique username for login
-  email                String?   @unique // Unique email address
+  username             String   @unique // Unique username for login
+  email                String   @unique // Unique email address
   emailVerified        DateTime? // Timestamp for email verification
   password             String    @password @omit // Hashed password, excluded from client queries
   isTwoFactorEnabled   Boolean   @default(false) // Flag for two-factor authentication
@@ -63,41 +63,33 @@ model UserRole extends TenantScoped, Auditable {
 
 /// Represents a system role within a tenant.
 /// Roles define sets of features that can be assigned to users.
-model Role extends TenantScoped, Auditable {
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
-  name            String     @db.VarChar(100) @unique 
-  description     String?    @db.VarChar(255) 
-
+model Role extends TenantScoped, Auditable, CatalogBase {
   // Relationships
   userRole        UserRole[] // Links this role to users via the UserRole model
   roleFeature  RoleFeature[] // Links this role to features via RoleFeature
+
+  // Index for efficient lookups by role name
+  @@index([name], name: "idx_role_name")
+  @@unique([name, tenantId])
 }
 
 /// Module also known as a feature or section of the application that can be enabled or disabled
 /// in other terms, it also works as feature flags for the application to enable or disable features
 /// based on if the module is enabled or disabled for the tenant or user
-model Module extends TenantScoped, Auditable {
-  // Primary identifier
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
-
-  // Module details
-  name            String     @db.VarChar(100) @unique // Module name (e.g., "Orders", "Settings")
-  description     String?    @db.VarChar(255) // Optional module description
-  isActive      Boolean    @default(true) // Flag for active module
-
+model Module extends TenantScoped, Auditable, CatalogBase {
   // Relationships
   feature      Feature[] // Features associated with this module
+
+  // Index for efficient lookups by module name
+  @@index([name], name: "idx_module_name")
+  @@unique([name, tenantId])
 }
 
 /// Represents features in the system. 
 /// A single table handles both global features and area-specific features using the `scope` field.
 /// Features are linked to modules for better organization and can be assigned to global roles or area roles.
-model Feature extends TenantScoped, Auditable {
-  // Unique identifier for the feature
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
-  name            String     @db.VarChar(50)
-  key             String     @db.VarChar(100) @unique // Unique key for the feature
-  description     String?    @db.VarChar(255) 
+model Feature extends TenantScoped, Auditable, CatalogBase {
+  key             String     @db.VarChar(100) @unique // Unique key for the feature (for system use)
 
   // Scope of the feature: "global" for system-wide features or "area" for area-specific features
   scope           String     @default("global") // Example: "global", "area"
@@ -116,6 +108,7 @@ model Feature extends TenantScoped, Auditable {
   planFeatures PlanFeature[]
   
   @@validate(scope in ["global", "area"])
+  @@unique([key, tenantId])
 }
 
 model RoleFeature extends TenantScoped, Auditable {

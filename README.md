@@ -94,3 +94,4 @@ Develop a web system for managing service requests efficiently while adhering to
 - [WAAPI App](https://waapi.app/)
 - [Chromatic Sortable Tree Example](https://master--5fc05e08a4a65d0021ae0bf2.chromatic.com/?path=/story/examples-tree-sortable--all-features)
 - [ShadCN Form Playground](https://www.shadcn-form.com/playground)
+- [Zenstack Encryption](https://zenstack.dev/docs/guides/field-encryption)

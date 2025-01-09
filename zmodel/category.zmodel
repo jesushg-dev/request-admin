@@ -9,6 +9,7 @@ model RequestHierarchy extends TenantScoped, Auditable, CatalogBase {
   categories RequestCategory[]       // Categories directly associated with this hierarchy
 
   @@index([name], name: "idx_request_hierarchy_name")
+  @@unique([name, tenantId])
 }
 
 /// Represents a level within a request hierarchy.
@@ -20,8 +21,9 @@ model RequestHierarchyLevel extends TenantScoped, Auditable, CatalogBase {
 
   @@unique([position, hierarchyId])
   @@index([hierarchyId], name: "idx_request_hierarchy_level_hierarchy_id")
-
+  @@unique([hierarchyId, position], name: "unique_hierarchy_position")
   @@validate(position > 0)
+  @@unique([name, tenantId])
 }
 
 /// Represents a request category, with SLA and required documents.
@@ -43,6 +45,8 @@ model RequestCategory extends TenantScoped, Auditable, CatalogBase {
 
   @@index([name], name: "idx_request_category_name")
   @@index([hierarchyId], name: "idx_request_category_hierarchy_id")
+
+  @@unique([name, hierarchyLevelId, parentCategoryId])
 }
 
 /// SLA (Service Level Agreement) model.
@@ -53,21 +57,33 @@ model SLA extends TenantScoped, Auditable {
   requestCategoryId String?     @db.UniqueIdentifier @unique
   requestCategory  RequestCategory? @relation(fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
 
+  changeLogs       SLAChangeLog[]
+
   @@index([requestCategoryId], name: "idx_sla_request_category_id")
 }
 
+model SLAChangeLog extends TenantScoped, Auditable {
+  id              String       @id @default(uuid()) @db.UniqueIdentifier
+  slaId           String       @db.UniqueIdentifier
+  sla             SLA          @relation(fields: [slaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  oldResolutionTime Int?       // Old resolution time
+  newResolutionTime Int        // New resolution time
+
+  @@index([slaId], name: "idx_sla_change_log_sla_id")
+}
+
+
 /// Represents a guide document used to resolve a request.
-model GuideDocument extends TenantScoped, Auditable {
-  id               String       @id @default(uuid()) @db.UniqueIdentifier
-  name             String       @db.VarChar(100) // Name of the document
-  description      String?      @db.VarChar(255) // Optional description
+model GuideDocument extends TenantScoped, Auditable, CatalogBase {
   url              String?      @db.VarChar(500) // Optional URL for the document
   status           Int          // Status code representing the state of the document
   expirationDate   DateTime?    // Optional expiration date for the document
+  version          Int          @default(1) //  Version number of the document
   requestCategoryId String      @db.UniqueIdentifier // ID of the associated request category
   requestCategory  RequestCategory @relation(fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
 
   @@index([requestCategoryId], name: "idx_guide_document_request_category_id")
+  @@unique([name, tenantId])
 }
 
 /// Links a requirement to a specific category.
@@ -83,10 +99,7 @@ model RequestCategoryRequirement extends TenantScoped, Auditable {
 }
 
 /// Represents a specific requirement for a request/assignment category.
-model Requirement extends TenantScoped, Auditable {
-  id                           String       @id @default(uuid()) @db.UniqueIdentifier
-  name                         String       @db.VarChar(200) @unique
-  description                  String       @db.VarChar(500)
+model Requirement extends TenantScoped, Auditable, CatalogBase {
   isRequiredOnlyForNewClients  Boolean      @default(false)
   requirementComplianceTracking RequirementComplianceTracking[]
   requestCategoryRequirement   RequestCategoryRequirement[]
@@ -94,16 +107,15 @@ model Requirement extends TenantScoped, Auditable {
   requirementType              RequirementType @relation(fields: [requirementTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
 
   @@index([name], name: "idx_requirement_name")
+  @@unique([name, tenantId])
 }
 
 /// Represents a type of a requirement.
-model RequirementType extends TenantScoped, Auditable {
-  id          String         @id @default(uuid()) @db.UniqueIdentifier
-  name        String         @db.VarChar(100) @unique
-  description String         @db.VarChar(255)
+model RequirementType extends TenantScoped, Auditable, CatalogBase {
   requirements Requirement[]
 
   @@index([name], name: "idx_requirement_type_name")
+  @@unique([name, tenantId])
 }
 
 /// Represents a hierarchy for assignations.
@@ -112,6 +124,7 @@ model AssignationHierarchy extends TenantScoped, Auditable, CatalogBase {
   categories AssignationCategory[]       // Categories directly associated with this hierarchy
 
   @@index([name], name: "idx_assignation_hierarchy_name")
+  @@unique([name, tenantId])
 }
 
 /// Represents a level within an assignation hierarchy.
@@ -123,8 +136,9 @@ model AssignationHierarchyLevel extends TenantScoped, Auditable, CatalogBase {
 
   @@unique([position, hierarchyId])
   @@index([hierarchyId], name: "idx_assignation_hierarchy_level_hierarchy_id")
-
   @@validate(position > 0)
+  @@unique([hierarchyId, position], name: "unique_hierarchy_position")
+  @@unique([name, tenantId])
 }
 
 /// Represents an assignation category, linked to specific rules and an area.
@@ -144,4 +158,6 @@ model AssignationCategory extends TenantScoped, Auditable, CatalogBase {
   @@index([name], name: "idx_assignation_category_name")
   @@index([hierarchyId], name: "idx_assignation_category_hierarchy_id")
   @@index([areaId], name: "idx_assignation_category_area_id")
+
+  @@unique([name, hierarchyLevelId, areaId, parentCategoryId])
 }

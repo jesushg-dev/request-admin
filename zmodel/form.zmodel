@@ -3,14 +3,9 @@ import './request.zmodel'
 import './tenant.zmodel'
 import './category.zmodel'
 
-model Form extends TenantScoped, Auditable {
-  // Primary identifier
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
-
+model Form extends TenantScoped, Auditable, CatalogBase {
   // Form details
   userId          String     @db.UniqueIdentifier // ID of the user who owns the form
-  name            String     // Name of the form
-  description     String     @default("") // Description of the form
   content         String     @default("[]") @db.NVarChar(Max) // Structure of the form in JSON format
   published       Boolean    @default(false) // Publication status of the form
 
@@ -24,7 +19,7 @@ model Form extends TenantScoped, Auditable {
   formSubmissions     FormSubmission[] // Submissions made to this form
 
   // Constraints
-  @@unique([name, userId]) // Ensures each user has unique form names
+  @@unique([name, tenantId])
 }
 
 model CategoryForm extends TenantScoped, Auditable {

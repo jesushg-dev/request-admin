@@ -1,11 +1,9 @@
 import './abstract.zmodel'
-import './auth.zmodel'
-import './document.zmodel'
-import './person.zmodel'
-import './tenant.zmodel'
-import './area.zmodel'
-import './form.zmodel'
-import './category.zmodel'
+import './auth.zmodel'  // user and role management
+import './document.zmodel' // files and attachments for requests
+import './area.zmodel' // areas for request assignment
+import './form.zmodel' // form submissions for requests
+import './category.zmodel' // categorization for requests
 
 /// Represents a request that includes categorization for both request and assignment.
 model Request extends TenantScoped, Auditable {
@@ -45,42 +43,78 @@ model Request extends TenantScoped, Auditable {
   // Assignments
   requestAssignments    RequestAssignment[]
 
+  // Related incidents
+  relatedIncidents      RelatedIncident[]   @relation("RequestIncident")
+  relatedTo             RelatedIncident[]   @relation("RequestRelated")
+
+  // Change log
+  changeLog             RequestChangeLog[]
+
+  // Satisfaction survey
+  satisfactionSurveyId  String? @db.UniqueIdentifier
+  satisfactionSurvey    CustomerSatisfactionSurvey? @relation("RequestSurvey")
+
   @@index([requestCategoryId], name: "idx_request_request_category_id")
   @@index([assignmentCategoryId], name: "idx_request_assignment_category_id")
+  @@index([statusId, requestCategoryId], name: "idx_request_status_category")
+  @@index([statusId, assignmentCategoryId], name: "idx_request_status_assignment")
+  @@index([statusId], name: "idx_request_status_id")
+  @@index([closedAt], name: "idx_request_closed_at")
+  @@index([closedBy], name: "idx_request_closed_by")
+  @@index([closedComment], name: "idx_request_closed_comment")
+  @@index([priority], name: "idx_request_priority")
+  @@index([issueSubject], name: "idx_request_issue_subject")
+}
+
+/// Represents related incidents or problems for a request.
+model RelatedIncident extends TenantScoped, Auditable {
+  id          String   @id @default(uuid()) @db.UniqueIdentifier
+  requestId   String   @db.UniqueIdentifier
+  relatedId   String   @db.UniqueIdentifier
+
+  request     Request  @relation("RequestIncident", fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  related     Request  @relation("RequestRelated", fields: [relatedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([requestId], name: "idx_related_incident_request_id")
+  @@index([relatedId], name: "idx_related_incident_related_id")
 }
 
 /// Represents an assignment of a request to a user or area.
 model RequestAssignment extends TenantScoped, Auditable {
-  id                String   @id @default(uuid()) @db.UniqueIdentifier // Unique assignment ID
-  priority          String?  @db.VarChar(50)      // Optional priority
-  comment           String?  @db.VarChar(255)     // Optional comment
-  assignmentDate    DateTime                     // Date of the assignment
-  unAssignmentDate  DateTime?                    // Date the assignment was unassigned
-  type              String   @db.VarChar(50)      // Type of assignment (e.g., "Owner", "Support", etc.)
+  id                String   @id @default(uuid()) @db.UniqueIdentifier
+  priority          String?  @db.VarChar(50)
+  comment           String?  @db.VarChar(255)
+  assignmentDate    DateTime
+  unAssignmentDate  DateTime?
 
-  // Linked request
+  typeId           String   @db.UniqueIdentifier
+  type             AssignmentType @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
   requestId         String   @db.UniqueIdentifier
   request           Request  @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  // Linked user
   userId            String?  @db.UniqueIdentifier
   user              User?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  // Linked area
   areaId            String?  @db.UniqueIdentifier
   area              Area?    @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  // Status categorization
   statusId          String              @db.UniqueIdentifier
   status            RequestStatusType   @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  // Document assignments
   documentAssignment DocumentAssignment[]
 
-  slaStart         DateTime?            // When the SLA countdown starts for this assignment
-  slaDeadline      DateTime?            // The deadline to finish or hand off the assignment
-  slaEnd           DateTime?            // When this assignment was effectively completed or handed off
+  slaStart          DateTime?
+  slaDeadline       DateTime?
+  slaEnd            DateTime?
 }
+
+// Represents a type of assignment for requests.
+model AssignmentType extends  TenantScoped, Auditable, CatalogBase {
+  assignments RequestAssignment[]
+  @@unique([name, tenantId])
+}
+
 
 /// Represents a catalog of possible statuses for requests or assignments.
 model RequestStatusType extends TenantScoped, Auditable {
@@ -99,20 +133,18 @@ model RequestStatusType extends TenantScoped, Auditable {
 /// Manages valid transitions between statuses and can track SLA details.
 model RequestStatusTransition extends TenantScoped, Auditable {
   id             String             @id @default(uuid()) @db.UniqueIdentifier
+  reason         String?
+  startedAt      DateTime?
+  finishedAt     DateTime?
+  deadline       DateTime?
 
-  // Indicates which status is transitioning from / to
   fromStatusId   String             @db.UniqueIdentifier
   toStatusId     String             @db.UniqueIdentifier
 
   fromStatus     RequestStatusType  @relation("FromStatus", fields: [fromStatusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   toStatus       RequestStatusType  @relation("ToStatus", fields: [toStatusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+ 
 
-  // Fields for SLA tracking at the transition level
-  startedAt      DateTime?          // When the transition started
-  finishedAt     DateTime?          // When the transition ended
-  deadline       DateTime?          // SLA deadline or target finish time
-
-  // Marks if this is the default transition
   isDefault      Boolean            @default(false)
 
   @@index([fromStatusId], name: "idx_transition_from_status_id")
@@ -128,9 +160,37 @@ model RequirementComplianceTracking extends TenantScoped, Auditable {
   requirement   Requirement   @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   isFulfilled   Boolean       @default(false)
 
-  // Related documents
   document      Document[]
 
   @@index([requestId], name: "idx_compliance_request_id")
   @@index([requirementId], name: "idx_compliance_requirement_id")
+}
+
+/// Tracks customer satisfaction surveys for closed requests.
+model CustomerSatisfactionSurvey extends TenantScoped, Auditable {
+  id          String    @id @default(uuid()) @db.UniqueIdentifier
+  rating      Int
+  feedback    String?   @db.VarChar(1000)
+  submittedAt DateTime
+
+  requestId   String    @db.UniqueIdentifier @unique
+  request     Request   @relation("RequestSurvey", fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([requestId], name: "idx_survey_request_id")
+}
+
+/// Logs changes to requests for auditing purposes.
+model RequestChangeLog extends TenantScoped, Auditable {
+  id          String    @id @default(uuid()) @db.UniqueIdentifier
+  requestId   String    @db.UniqueIdentifier
+  request     Request   @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  changedBy   String    @db.UniqueIdentifier
+  fieldName   String    @db.VarChar(100)
+  oldValue    String?   @db.VarChar(500)
+  newValue    String?   @db.VarChar(500)
+  changedAt   DateTime
+
+  @@index([requestId], name: "idx_change_log_request_id")
+  @@index([changedBy], name: "idx_change_log_changed_by")
 }

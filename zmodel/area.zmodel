@@ -5,12 +5,7 @@ import './category.zmodel'
 
 /// Represents an organizational area within a tenant.
 /// Areas allow grouping of users, categories, and request assignments in a specific organizational scope.
-model Area extends TenantScoped, Auditable {
-  id                    String   @id @default(uuid()) @db.UniqueIdentifier 
-  name                  String   @db.VarChar(100) @unique 
-  description           String?  @db.VarChar(255)
-  isActive              Boolean   @default(true) 
-
+model Area extends TenantScoped, Auditable, CatalogBase {
   // Relationships
   requestAssignments    RequestAssignment[] // Links request assignments to this area
   assignationCategories AssignationCategory[]          // Links categories to this area
@@ -19,6 +14,7 @@ model Area extends TenantScoped, Auditable {
 
   // Index for efficient lookups by area name
   @@index([name], name: "idx_area_name")
+  @@unique([name, tenantId])
 }
 
 
@@ -41,11 +37,7 @@ model UserArea extends TenantScoped, Auditable {
 
 /// Represents roles that are specific to an area.
 /// Area roles define features and responsibilities of users within a specific organizational area.
-model AreaRole extends TenantScoped, Auditable {
-  id                   String    @id @default(uuid()) @db.UniqueIdentifier
-  name                 String    @db.VarChar(100)
-  description          String?   @db.VarChar(255)
-
+model AreaRole extends TenantScoped, Auditable, CatalogBase {
   // Relationships
   areaId               String?   @db.UniqueIdentifier 
   area                 Area?     @relation(fields: [areaId], references: [id]) // Links to the Area model
@@ -53,7 +45,7 @@ model AreaRole extends TenantScoped, Auditable {
   areaRoleFeatures  AreaRoleFeature[] // Links this role to features specific to the area
 
   // Ensures role names are unique within the same area
-  @@unique([name, areaId])
+  @@unique([name, areaId, tenantId])
 }
 
 /// Links area-specific roles to features.
