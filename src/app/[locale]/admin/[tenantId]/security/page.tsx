@@ -1,5 +1,4 @@
 import { ComponentProps } from 'react';
-import { getTenantIdFromUrl } from '@/actions/tenant';
 import { Link } from '@/i18n/routing';
 import { db } from '@/server/db-server';
 import { DeleteIcon, PlusIcon, TrashIcon } from 'lucide-react';

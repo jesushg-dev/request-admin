@@ -129,8 +129,8 @@ async function SubmissionsTable({ id }: { id: string }) {
       case 'CheckboxField':
         columns.push({
           id: element.id,
-          label: element.extraAttributes?.label,
-          required: element.extraAttributes?.required,
+          label: String(element.extraAttributes?.label),
+          required: Boolean(element.extraAttributes?.required),
           type: element.type,
         });
         break;
@@ -140,7 +140,7 @@ async function SubmissionsTable({ id }: { id: string }) {
   });
 
   const rows: Row[] = [];
-  form.FormSubmission.forEach((submission) => {
+  form.formSubmissions.forEach((submission) => {
     const content = JSON.parse(submission.content);
     rows.push({
       ...content,
@@ -184,19 +184,20 @@ async function SubmissionsTable({ id }: { id: string }) {
 }
 
 async function RowCell({ type, value }: { type: ElementsType; value: string }) {
-  const t = await getTranslations('admin.formBuilder.view');
   let node: ReactNode = value;
 
   switch (type) {
-    case 'DateField':
+    case 'DateField': {
       if (!value) break;
       const date = new Date(value);
       node = <Badge variant="outline">{format(date, 'dd/MM/yyyy')}</Badge>;
       break;
-    case 'CheckboxField':
+    }
+    case 'CheckboxField': {
       const checked = value === 'true';
       node = <Checkbox checked={checked} disabled />;
       break;
+    }
   }
 
   return <TableCell>{node}</TableCell>;

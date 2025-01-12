@@ -4,8 +4,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/ca
 import RequestTypeForm from '@/components/common/request-type/request-type-form';
 
 export default async function NewRequestTypeNew() {
-  const hierarchy = await db.hierarchy.findFirst({
-    where: { type: 'Request' },
+  const hierarchy = await db.requestHierarchy.findFirst({
     select: {
       id: true,
       name: true,

@@ -1,8 +1,6 @@
 import React, { type FC } from 'react';
 
-interface IPrivacyPolicyPageProps {}
-
-const PrivacyPolicyPage: FC<IPrivacyPolicyPageProps> = ({}) => {
+const PrivacyPolicyPage: FC = () => {
   return <div></div>;
 };
 

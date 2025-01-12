@@ -50,7 +50,7 @@ export function TenantStep() {
               <FormControl>
                 <Input {...field} className="h-8 w-full rounded" />
               </FormControl>
-              <FormDescription>Enter the tenant's official website URL.</FormDescription>
+              <FormDescription>Enter the tenant&apos;s official website URL.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -65,7 +65,7 @@ export function TenantStep() {
               <FormControl>
                 <Input {...field} className="h-8 w-full rounded" />
               </FormControl>
-              <FormDescription>Provide a URL to the tenant's logo image.</FormDescription>
+              <FormDescription>Provide a URL to the tenant&apos;s logo image.</FormDescription>
               <FormMessage />
             </FormItem>
           )}

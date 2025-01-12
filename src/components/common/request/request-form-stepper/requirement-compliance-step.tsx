@@ -1,14 +1,12 @@
 'use client';
 
-import { Check, Upload, X } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 // Datos simulados para los requisitos
 const mockRequirements = [

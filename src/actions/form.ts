@@ -158,7 +158,7 @@ export async function SubmitForm(tenantId: string, formUrl: string, content: str
       submissions: {
         increment: 1,
       },
-      FormSubmission: {
+      formSubmissions: {
         create: [
           {
             content,
@@ -186,7 +186,7 @@ export async function GetFormWithSubmissions(id: string) {
       id,
     },
     include: {
-      FormSubmission: true,
+      formSubmissions: true,
     },
   });
 }

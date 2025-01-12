@@ -49,10 +49,6 @@ const FormElementComponent: React.FC<{ element: FormElement }> = ({ element }) =
 };
 
 export default function DynamicFormStep({ formElements }: DynamicFormStepProps) {
-  const {
-    formState: { errors },
-  } = useFormContext();
-
   return (
     <div className="m-1 flex flex-col gap-2">
       {formElements.map((element) => (

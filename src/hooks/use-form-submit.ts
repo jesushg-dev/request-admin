@@ -1,15 +1,14 @@
 import { useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, ValidLinkProps } from '@/i18n/routing';
 import { type DefaultError, type UseMutateAsyncFunction } from '@tanstack/react-query';
 
-import MySwal, { triggerError } from '@/lib/message';
+import useMessage from '@/lib/message';
 
-// Update the interface to allow messages to be a string or a function that returns a string
 interface FormSubmitProps<TData = unknown> {
   errorMessage?: string | ((error: unknown) => string);
   loadingMessage?: string | (() => string);
   successMessage?: string | ((data?: TData) => string);
-  redirectUrl?: string | { pathname: string; query: Record<string, string> } | ((data: TData) => string);
+  redirectUrl?: ValidLinkProps | ((data: TData) => ValidLinkProps);
   confirmTitle?: string;
   confirmMessage?: string;
   confirmButtonText?: string;
@@ -18,79 +17,75 @@ interface FormSubmitProps<TData = unknown> {
 
 const useFormSubmit = <TData = unknown, TError = DefaultError, TVariables = unknown, TContext = unknown>(
   mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TContext>,
-  opts?: FormSubmitProps<TData>
+  {
+    redirectUrl,
+    confirmButtonText = 'Yes, submit it!',
+    cancelButtonText = 'No, cancel!',
+    confirmTitle = 'Submit your information',
+    confirmMessage = 'Please confirm to proceed.',
+    successMessage = 'Request successful.',
+    errorMessage = 'Request failed.',
+  }: FormSubmitProps<TData>
 ) => {
   const router = useRouter();
+  const message = useMessage();
 
-  // Dedicated function for determining the redirect URL
-  const getRedirectUrl = (data: TData): string | undefined => {
-    const { redirectUrl } = opts || {};
-    if (!redirectUrl) return;
+  const getRedirectUrl = useCallback(
+    (data: TData): ValidLinkProps | undefined => {
+      if (!redirectUrl) return;
 
-    switch (typeof redirectUrl) {
-      case 'string':
-        return redirectUrl;
-      case 'function':
-        return redirectUrl(data);
-      case 'object':
-        const queryString = new URLSearchParams(redirectUrl.query).toString();
-        return `${redirectUrl.pathname}?${queryString}`;
-      default:
-        throw new Error('Invalid redirectUrl type');
-    }
-  };
+      switch (typeof redirectUrl) {
+        case 'string':
+          return redirectUrl;
+        case 'function':
+          return redirectUrl(data);
+        case 'object':
+          return redirectUrl;
+        default:
+          throw new Error('Invalid redirectUrl type');
+      }
+    },
+    [redirectUrl]
+  );
 
-  // Function to process message options
-  const processMessage = (messageOption: string | ((data?: TData) => string) | undefined, data?: TData) => {
+  const processMessage = useCallback((messageOption: string | ((data?: TData) => string) | undefined, data?: TData) => {
     if (typeof messageOption === 'function') {
       return messageOption(data);
     }
     return messageOption;
-  };
+  }, []);
 
   const submitForm = useCallback(
     async (data: TVariables) => {
       try {
-        await MySwal.fire({
-          title: opts?.confirmTitle || 'Submit your information',
-          text: opts?.confirmMessage || 'Please confirm to proceed.',
-          icon: 'warning',
-          showCancelButton: true,
-          cancelButtonText: opts?.cancelButtonText || 'No, cancel!',
-          confirmButtonText: opts?.confirmButtonText || 'Yes, submit it!',
-          showLoaderOnConfirm: true,
-          preConfirm: async () => {
-            try {
-              const result = await mutateAsync(data); // Execute your async operation here
-              return result; // This result will be passed to the then() block
-            } catch (error) {
-              MySwal.showValidationMessage(`Request failed: ${JSON.stringify(error)}`);
-              return false;
-            }
-          },
-          allowOutsideClick: () => !MySwal.isLoading(),
-        }).then(async (result) => {
-          if (result.value) {
-            // Success! Do something with the result
-            await MySwal.fire({
-              title: 'Success!',
-              text: 'Your information has been submitted.',
-              icon: 'success',
-            });
-
-            // Redirect if needed, using the result from mutateAsync
-            const url = getRedirectUrl(result.value as TData);
-            if (url) {
-              router.push(url);
-            }
-          }
+        const isConfirmed = await message.showConfirm(confirmMessage, confirmTitle, {
+          confirmText: confirmButtonText,
+          cancelText: cancelButtonText,
         });
-      } catch (error: any) {
-        const message = opts?.errorMessage ? processMessage(opts.errorMessage, error) : JSON.stringify(error);
-        await triggerError(message || 'Request Failed');
+
+        if (!isConfirmed) return;
+
+        const result = await mutateAsync(data);
+
+        const resultMessage = processMessage(successMessage, result);
+        if (resultMessage) {
+          await message.showSuccess(resultMessage);
+        }
+
+        const url = getRedirectUrl(result);
+        if (url) {
+          if (typeof url === 'object') {
+            router.push({ ...url, query: {} });
+          } else {
+            router.push(url);
+          }
+        }
+      } catch {
+        const resultMessage = processMessage(errorMessage) || 'Request failed.';
+        await message.showError(resultMessage);
       }
     },
-    [mutateAsync, router, opts]
+    [message, confirmMessage, confirmTitle, confirmButtonText, cancelButtonText, mutateAsync, processMessage, successMessage, getRedirectUrl, router, errorMessage]
   );
 
   return submitForm;

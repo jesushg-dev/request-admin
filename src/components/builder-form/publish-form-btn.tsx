@@ -34,7 +34,7 @@ function PublishFormBtn({ id }: { id: string }) {
         description: t('publishSuccess'),
       });
       router.refresh();
-    } catch (error) {
+    } catch {
       toast({
         title: t('error'),
         description: t('publishError'),

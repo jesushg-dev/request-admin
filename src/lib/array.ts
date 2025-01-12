@@ -1,12 +1,12 @@
 type NestedKey = string;
 
-export function getNestedValue<T>(obj: any, path: NestedKey): T | undefined {
+export function getNestedValue<T>(obj: unknown, path: NestedKey): T | undefined {
   const keys = path.split('.');
-  let result: any = obj;
+  let result: unknown = obj;
 
   for (const key of keys) {
     if (result && typeof result === 'object' && key in result) {
-      result = result[key];
+      result = (result as { [key: string]: unknown })[key];
     } else {
       return undefined;
     }

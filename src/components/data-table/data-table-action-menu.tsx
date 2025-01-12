@@ -7,14 +7,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 
 import { Button } from '../ui/button';
 
-type ActionCellProps<TData = any, TValue = any> = {
+type ActionCellProps<TData, TValue> = {
   cell: CellContext<TData, TValue>; // The cell context
   onUpdate?: (row: Row<TData>) => void; // Optional handler for update action
   onDelete?: (row: Row<TData>) => void; // Optional handler for delete action
   children?: React.ReactNode; // Additional extendible actions
 };
 
-export const ActionCell: React.FC<ActionCellProps> = ({ cell, onUpdate, onDelete, children }) => {
+function ActionCell<TData, TValue>({ cell, onUpdate, onDelete, children }: ActionCellProps<TData, TValue>) {
   const t = useTranslations('table');
 
   return (
@@ -45,3 +45,5 @@ export const ActionCell: React.FC<ActionCellProps> = ({ cell, onUpdate, onDelete
     </DropdownMenu>
   );
 };
+
+export { ActionCell };

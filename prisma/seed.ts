@@ -148,7 +148,7 @@ async function main() {
   //////////////////////////
   // Create requirements categories
   //////////////////////////
-  let requirementsCategories = await prisma.requirementType.createMany({
+  await prisma.requirementType.createMany({
     data: [
       {
         id: 'C449C1E6-C022-4BCA-A533-5C0BC85DA6E4',

@@ -1,8 +1,8 @@
 'use client';
 
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, useMemo } from 'react';
 import { useCountUser, useFindManyUser } from '@/services/api/hooks';
-import { DataTableAdvancedFilterField, DataTableFilterField, DataTableRowAction } from '@/types';
+import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
 import { Prisma } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
@@ -18,7 +18,6 @@ import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-adv
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
-import { Shell } from '@/components/shell';
 
 const UserDefaultArgs = Prisma.validator<Prisma.UserDefaultArgs>()({
   select: {
@@ -43,9 +42,7 @@ const searchParamsParsers = {
   joinOperator: parseAsStringEnum(['and', 'or']).withDefault('and'),
 };
 
-interface IUserMainPageProps {}
-
-const UserMainPage: React.FC<IUserMainPageProps> = () => {
+const UserMainPage: React.FC = () => {
   const t = useTranslations('admin.user.main');
   const [search] = useQueryStates(searchParamsParsers);
 
@@ -56,8 +53,7 @@ const UserMainPage: React.FC<IUserMainPageProps> = () => {
     defaultArgs: UserDefaultArgs,
   });
 
-  const [rowAction, setRowAction] = useState<DataTableRowAction<UserWithRelations> | null>(null);
-  const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ setRowAction, t }), [setRowAction, t]);
+  const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t }), [t]);
 
   const { table } = useDataTable({
     data: data ?? [],
@@ -79,8 +75,8 @@ const UserMainPage: React.FC<IUserMainPageProps> = () => {
   }
 
   return (
-    <DataTableShell table={table} isLoading={isLoading} floatingBar={<DataTableFloatingBar table={table} />}>
-      <DataTable table={table}>
+    <DataTableShell table={table} floatingBar={<DataTableFloatingBar table={table} />}>
+      <DataTable table={table} isLoading={isLoading}>
         <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
           <DataTableToolbarActions table={table} exportFilename="users" entityLabel={t('entityLabel')} />
         </DataTableAdvancedToolbar>
@@ -90,11 +86,10 @@ const UserMainPage: React.FC<IUserMainPageProps> = () => {
 };
 
 interface GetTableConfigurationProps {
-  setRowAction: React.Dispatch<React.SetStateAction<DataTableRowAction<UserWithRelations> | null>>;
   t: ReturnType<typeof useTranslations>;
 }
 
-export function getTableConfiguration({ setRowAction, t }: GetTableConfigurationProps) {
+export function getTableConfiguration({ t }: GetTableConfigurationProps) {
   const columns: ColumnDef<UserWithRelations>[] = [
     {
       accessorKey: 'username',

@@ -10,9 +10,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { Button } from './ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 
-type Props = {};
-
-export default function LocaleSwitcherSelect({}: Props) {
+export default function LocaleSwitcherSelect() {
   const t = useTranslations('component.LocaleSwitcher');
   const router = useRouter();
   const params = useParams();

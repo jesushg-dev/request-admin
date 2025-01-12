@@ -1,8 +1,8 @@
 'use client';
 
-import React, { memo, useMemo, useState } from 'react';
-import { useCountCategory, useFindManyCategory } from '@/services/api/hooks';
-import { DataTableAdvancedFilterField, DataTableFilterField, DataTableRowAction } from '@/types';
+import React, { memo, useMemo } from 'react';
+import { useCountRequestCategory, useFindManyRequestCategory } from '@/services/api/hooks';
+import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
 import { Prisma } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
 import { ChevronDown, ChevronUp } from 'lucide-react';
@@ -15,7 +15,7 @@ import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
 import useTenantId from '@/hooks/use-tenant-id';
 import { Checkbox } from '@/components/ui/checkbox';
-import { CategoryTable, useCategoryTableConfiguration } from '@/components/common/category/category-table';
+import { RequestCategoryTable, useRequestCategoryTableConfiguration } from '@/components/common/category/request-category-table';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import RequirementDialogCell from '@/components/common/requirement/requirement-dialog-cell';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
@@ -24,9 +24,8 @@ import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-adv
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
-import { Shell } from '@/components/shell';
 
-const CategoryDefaultArgs = Prisma.validator<Prisma.CategoryDefaultArgs>()({
+const RequestCategoryDefaultArgs = Prisma.validator<Prisma.RequestCategoryDefaultArgs>()({
   select: {
     id: true,
     name: true,
@@ -36,13 +35,13 @@ const CategoryDefaultArgs = Prisma.validator<Prisma.CategoryDefaultArgs>()({
     },
     _count: {
       select: {
-        categoryRequirement: true,
+        requestCategoryRequirement: true,
       },
     },
   },
 });
 
-type CategoryWithRelations = Prisma.CategoryGetPayload<typeof CategoryDefaultArgs>;
+type CategoryWithRelations = Prisma.RequestCategoryGetPayload<typeof RequestCategoryDefaultArgs>;
 
 const searchParamsParsers = {
   page: parseAsInteger.withDefault(1),
@@ -54,31 +53,27 @@ const searchParamsParsers = {
   to: parseAsString.withDefault(''),
 };
 
-interface ICategoryMainPageProps {}
-
-const CategoryMainPage: React.FC<ICategoryMainPageProps> = () => {
+const CategoryMainPage: React.FC = () => {
   const tenantId = useTenantId();
   const t = useTranslations('admin.requestType.main');
   const [search] = useQueryStates(searchParamsParsers);
 
-  const { data, isLoading, isError, error, refetch, pageCount } = useFetchTableData<CategoryWithRelations, Prisma.CategoryFindManyArgs, Prisma.CategoryCountArgs>({
+  const { data, isLoading, isError, error, refetch, pageCount } = useFetchTableData<CategoryWithRelations, Prisma.RequestCategoryFindManyArgs, Prisma.RequestCategoryCountArgs>({
     search,
-    useCountHook: useCountCategory,
-    useFindManyHook: useFindManyCategory,
+    useCountHook: useCountRequestCategory,
+    useFindManyHook: useFindManyRequestCategory,
     defaultArgs: {
-      ...CategoryDefaultArgs,
+      ...RequestCategoryDefaultArgs,
       where: {
-        hierarchy: { is: { type: 'Request' } },
         hierarchyLevel: { is: { position: 1 } },
       },
     },
   });
 
-  const [rowAction, setRowAction] = useState<DataTableRowAction<CategoryWithRelations> | null>(null);
-  const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ setRowAction, t }), [setRowAction, t]);
+  const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t }), [t]);
 
   // Grab the category columns from our new, fixed hook so we can pass them to the subcomponent.
-  const { columns: categoryColumns } = useCategoryTableConfiguration({
+  const { columns: categoryColumns } = useRequestCategoryTableConfiguration({
     entity: 'requestType',
   });
 
@@ -103,8 +98,14 @@ const CategoryMainPage: React.FC<ICategoryMainPageProps> = () => {
   }
 
   return (
-    <DataTableShell table={table} isLoading={isLoading} floatingBar={<DataTableFloatingBar table={table} />}>
-      <DataTable table={table} subComponent={{ columns: categoryColumns, render: CategoryTable }}>
+    <DataTableShell table={table} floatingBar={<DataTableFloatingBar table={table} />}>
+      <DataTable
+        table={table}
+        isLoading={isLoading}
+        subComponent={{
+          columns: categoryColumns,
+          render: (props) => RequestCategoryTable(props),
+        }}>
         <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
           <DataTableToolbarActions
             table={table}
@@ -122,11 +123,10 @@ const CategoryMainPage: React.FC<ICategoryMainPageProps> = () => {
 };
 
 interface GetTableConfigurationProps {
-  setRowAction: React.Dispatch<React.SetStateAction<DataTableRowAction<CategoryWithRelations> | null>>;
   t: ReturnType<typeof useTranslations>;
 }
 
-export function getTableConfiguration({ setRowAction, t }: GetTableConfigurationProps) {
+export function getTableConfiguration({ t }: GetTableConfigurationProps) {
   const columns: ColumnDef<CategoryWithRelations>[] = [
     {
       id: 'name',
@@ -172,7 +172,7 @@ export function getTableConfiguration({ setRowAction, t }: GetTableConfiguration
       size: 30,
     },
     {
-      accessorKey: '_count.categoryRequirement',
+      accessorKey: '_count.requestCategoryRequirement',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.requirements')} />,
       cell: ({ cell }) => <RequirementDialogCell count={cell.getValue() as number} entity={t('entityLabel')} categoryId={cell.row.original.id} />,
       size: 20,

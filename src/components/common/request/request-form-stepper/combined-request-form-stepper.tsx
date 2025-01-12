@@ -6,11 +6,10 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { Form } from '@/components/ui/form';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { StepNavigation } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 
-import { categorySchema, HierarchyWithRelations } from '../../category/categories-select';
+import { categorySchema, HierarchyWithRelations } from '../../category/request-categories-select';
 import AssignationCategoryStep from './assignation-category-step';
 import DynamicFormStep from './dynamic-form-step';
 import RequestCategoryStep from './request-category-step';
@@ -40,7 +39,7 @@ const combinedFormSchema = z.object({
   dynamicForm: z.record(z.string(), z.any()).optional(),
 });
 
-const { useStepper } = defineStepper(
+const { useStepper, utils } = defineStepper(
   { id: 'categories', label: 'Categories', schema: combinedCategoriesSchema },
   { id: 'requirementCompliance', label: 'Requirement Compliance', schema: combinedFormSchema.shape.requirementCompliance },
   { id: 'requestDetails', label: 'Request Details', schema: combinedFormSchema.shape.requestDetails },
@@ -61,7 +60,7 @@ const CombinedRequestFormStepper: React.FC<CombinedFormProps> = ({ requestCatego
     resolver: zodResolver(stepper.current.schema),
   });
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: z.infer<typeof stepper.current.schema>) => {
     if (stepper.isLast) {
       console.log('Final Form Values:', values);
       stepper.reset();
@@ -73,7 +72,7 @@ const CombinedRequestFormStepper: React.FC<CombinedFormProps> = ({ requestCatego
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between space-y-6 overflow-hidden rounded-lg border p-6">
-        <StepNavigation steps={stepper.all} currentStepIndex={stepper.current.index} onStepClick={stepper.goTo} />
+        <StepNavigation steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
         {stepper.switch({
           categories: () => (
             <>
@@ -86,7 +85,7 @@ const CombinedRequestFormStepper: React.FC<CombinedFormProps> = ({ requestCatego
           dynamicForm: () => <DynamicFormStep formElements={[]} />,
           summary: () => <SummaryStep />,
         })}
-        <StepperNavigationButtons isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onNext={stepper.next} nextText="Next" submitText="Finish" />
+        <StepperNavigationButtons isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onReset={stepper.reset} nextText="Next" submitText="Finish" />
       </form>
     </Form>
   );

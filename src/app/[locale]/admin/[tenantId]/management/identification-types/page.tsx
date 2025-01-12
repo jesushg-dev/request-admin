@@ -1,8 +1,8 @@
 'use client';
 
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, useMemo } from 'react';
 import { useCountIdentificationType, useFindManyIdentificationType } from '@/services/api/hooks';
-import { DataTableAdvancedFilterField, DataTableFilterField, DataTableRowAction } from '@/types';
+import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
 import { Prisma } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
@@ -28,7 +28,7 @@ const IdentificationTypeDefaultArgs = Prisma.validator<Prisma.IdentificationType
     createdAt: true,
     _count: {
       select: {
-        client: true,
+        person: true,
       },
     },
   },
@@ -44,9 +44,7 @@ const searchParamsParsers = {
   joinOperator: parseAsStringEnum(['and', 'or']).withDefault('and'),
 };
 
-interface IIdentificationTypeMainPageProps {}
-
-const IdentificationTypeMainPage: React.FC<IIdentificationTypeMainPageProps> = () => {
+const IdentificationTypeMainPage: React.FC = () => {
   const t = useTranslations('admin.identificationType.main');
   const [search] = useQueryStates(searchParamsParsers);
 
@@ -57,8 +55,7 @@ const IdentificationTypeMainPage: React.FC<IIdentificationTypeMainPageProps> = (
     defaultArgs: IdentificationTypeDefaultArgs,
   });
 
-  const [rowAction, setRowAction] = useState<DataTableRowAction<IdentificationTypeWithRelations> | null>(null);
-  const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ setRowAction, t }), [setRowAction, t]);
+  const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t }), [t]);
 
   const { table } = useDataTable({
     data: data ?? [],
@@ -81,8 +78,8 @@ const IdentificationTypeMainPage: React.FC<IIdentificationTypeMainPageProps> = (
   }
 
   return (
-    <DataTableShell table={table} isLoading={isLoading} floatingBar={<DataTableFloatingBar table={table} />}>
-      <DataTable table={table}>
+    <DataTableShell table={table} floatingBar={<DataTableFloatingBar table={table} />}>
+      <DataTable table={table} isLoading={isLoading}>
         <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
           <DataTableToolbarActions table={table} exportFilename="identification-types" entityLabel={t('entityLabel')} />
         </DataTableAdvancedToolbar>
@@ -92,11 +89,10 @@ const IdentificationTypeMainPage: React.FC<IIdentificationTypeMainPageProps> = (
 };
 
 interface GetTableConfigurationProps {
-  setRowAction: React.Dispatch<React.SetStateAction<DataTableRowAction<IdentificationTypeWithRelations> | null>>;
   t: ReturnType<typeof useTranslations>;
 }
 
-export function getTableConfiguration({ setRowAction, t }: GetTableConfigurationProps) {
+export function getTableConfiguration({ t }: GetTableConfigurationProps) {
   const columns: ColumnDef<IdentificationTypeWithRelations>[] = [
     {
       accessorKey: 'name',

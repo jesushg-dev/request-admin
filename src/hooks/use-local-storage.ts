@@ -14,7 +14,6 @@ function useLocalStorage<T>(key: string, initialValue: T): [T, (value: SetValue<
         // browser code
         const item = window.localStorage.getItem(key);
         // Parse stored json or if none return initialValue
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return item ? JSON.parse(item) : initialValue;
       }
     } catch (error) {
@@ -28,7 +27,6 @@ function useLocalStorage<T>(key: string, initialValue: T): [T, (value: SetValue<
   useEffect(() => {
     try {
       // Allow value to be a function so we have same API as useState
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
       const valueToStore = typeof storedValue === 'function' ? storedValue(storedValue) : storedValue;
       // Save state
       if (typeof window !== 'undefined') {
@@ -41,7 +39,6 @@ function useLocalStorage<T>(key: string, initialValue: T): [T, (value: SetValue<
     }
   }, [key, storedValue]);
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return [storedValue, setStoredValue];
 }
 

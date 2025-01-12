@@ -1,4 +1,4 @@
-import { Download, PlusCircle, Upload } from 'lucide-react';
+import { Download, PlusCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';

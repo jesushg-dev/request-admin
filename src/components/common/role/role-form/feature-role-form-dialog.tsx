@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Badge, CircleEllipsis, HelpCircle, Settings } from 'lucide-react';
+import { HelpCircle, Settings } from 'lucide-react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 import { ModuleWithFeaturesType } from '@/types/prisma/module';
@@ -21,17 +21,17 @@ interface FeatureRoleFormDialogProps {
 
 export function FeatureRoleFormDialog({ roleIndex, modules }: FeatureRoleFormDialogProps) {
   const { control, setValue } = useFormContext();
-  const features = useWatch({ control, name: `roles.${roleIndex}.features` });
+  const features = useWatch({ control, name: `roles.${roleIndex}.features`, defaultValue: [] });
 
   const toggleFeature = (moduleId: string, featureId: string, featureName: string, isChecked: boolean) => {
     if (isChecked) {
       // Add feature
-      setValue(`roles.${roleIndex}.features`, [...(features || []), { id: featureId, moduleId, name: featureName }]);
+      setValue(`roles.${roleIndex}.features`, [...features, { id: featureId, moduleId, name: featureName }]);
     } else {
       // Remove feature
       setValue(
         `roles.${roleIndex}.features`,
-        (features || []).filter((perm: any) => perm.id !== featureId)
+        features.filter((perm: { id: string; moduleId: string; name: string }) => perm.id !== featureId)
       );
     }
   };
@@ -103,7 +103,7 @@ export function FeatureRoleFormDialog({ roleIndex, modules }: FeatureRoleFormDia
                           <div key={feature.id} className="flex items-center space-x-2">
                             <Checkbox
                               id={`${module.id}-${feature.id}`}
-                              checked={(features || []).some((perm: any) => perm.id === feature.id)}
+                              checked={features.some((perm: { id: string; moduleId: string; name: string }) => perm.id === feature.id)}
                               onCheckedChange={(checked) => toggleFeature(module.id, feature.id, feature.name, checked as boolean)}
                             />
                             <label htmlFor={`${module.id}-${feature.id}`} className="cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">

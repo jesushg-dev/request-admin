@@ -50,26 +50,6 @@ export function AdvancedBreadcrumb({ tenants = [] }: AdvancedBreadcrumbProps) {
     return label.charAt(0).toUpperCase() + label.slice(1).replace(/-/g, ' ');
   }
 
-  function buildResolvedPath(routeKey: string): string {
-    const parts = routeKey.split('/').filter(Boolean); // Split path into non-empty segments
-
-    const replaced = parts
-      .map((part) => {
-        if (part.startsWith('[') && part.endsWith(']')) {
-          const key = part.slice(1, -1); // Remove brackets to get the key
-          return getParam(key) || part; // Replace dynamic segment or keep original
-        }
-        return part; // Keep static segment
-      })
-      .join('/');
-
-    if (replaced.includes('[') || replaced.includes(']')) return ''; // Unresolved dynamic segments
-
-    // Add locale prefix unless it's the default locale
-    const localePrefix = locale !== defaultLocale ? `/${locale}` : '';
-    return `${localePrefix}/${replaced}`;
-  }
-
   useEffect(() => {
     const resolvedPathSegments = resolvedUrl.split('/').filter(Boolean);
     const bracketedPathSegments = bracketedPath.split('/').filter(Boolean);
@@ -77,6 +57,26 @@ export function AdvancedBreadcrumb({ tenants = [] }: AdvancedBreadcrumbProps) {
     let currentResolvedPath = '';
     let currentBracketedPath = '';
     const builtCrumbs: BreadcrumbItem[] = [];
+
+    function buildResolvedPath(routeKey: string): string {
+      const parts = routeKey.split('/').filter(Boolean); // Split path into non-empty segments
+
+      const replaced = parts
+        .map((part) => {
+          if (part.startsWith('[') && part.endsWith(']')) {
+            const key = part.slice(1, -1); // Remove brackets to get the key
+            return getParam(key) || part; // Replace dynamic segment or keep original
+          }
+          return part; // Keep static segment
+        })
+        .join('/');
+
+      if (replaced.includes('[') || replaced.includes(']')) return ''; // Unresolved dynamic segments
+
+      // Add locale prefix unless it's the default locale
+      const localePrefix = locale !== defaultLocale ? `/${locale}` : '';
+      return `${localePrefix}/${replaced}`;
+    }
 
     const buildSiblingCrumbs = (siblingRoutes: string[]): BreadcrumbItem[] => {
       return siblingRoutes.map((sibling) => {
@@ -114,6 +114,7 @@ export function AdvancedBreadcrumb({ tenants = [] }: AdvancedBreadcrumbProps) {
     }
 
     setBreadcrumbs(builtCrumbs);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resolvedUrl, bracketedPath, tenants, locale]);
 
   return (

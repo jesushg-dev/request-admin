@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
+import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
 
 interface DataTableDeleteDialogProps<T> extends React.ComponentPropsWithoutRef<typeof Dialog> {
   items: Row<T>['original'][]; // Items to be deleted
@@ -29,7 +29,7 @@ export function DataTableDeleteDialog<T>({ items, entityLabel, showTrigger = tru
         await onDelete();
         props.onOpenChange?.(false);
         toast.success(t('delete.success', { count: items.length, entity: entityLabel }));
-      } catch (error) {
+      } catch {
         toast.error(t('delete.error', { entity: entityLabel }));
       }
     });

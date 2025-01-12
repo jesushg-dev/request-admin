@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Check, ClipboardPasteIcon, Copy } from 'lucide-react';
+import { Check, ClipboardPasteIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';

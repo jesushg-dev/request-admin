@@ -19,9 +19,8 @@ export const areaFormSchema = z.object({
 export type AreaFormValues = z.infer<typeof areaFormSchema>;
 
 // Props to decouple AreaForm entirely
-interface AreaFormProps {}
 
-export default function AreaForm({}: AreaFormProps) {
+export default function AreaForm() {
   const t = useTranslations('component.areaForm');
   const { control, formState } = useFormContext<AreaFormValues>();
 

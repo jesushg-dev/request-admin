@@ -1,4 +1,4 @@
-import type { ColumnSort, Row } from '@tanstack/react-table';
+import type { ColumnSort } from '@tanstack/react-table';
 import { type z } from 'zod';
 
 import { type DataTableConfig } from '@/config/data-table';
@@ -82,16 +82,6 @@ export type Filter<TData> = Prettify<
     id: StringKeyOf<TData>;
   }
 >;
-
-/**
- * Represents an action applied to a row in a DataTable.
- * @prop {Row<TData>} row - The row data associated with the action.
- * @prop {'update' | 'delete'} type - The type of action to perform on the row.
- */
-export interface DataTableRowAction<TData> {
-  row: Row<TData>;
-  type: 'update' | 'delete';
-}
 
 /**
  * Options for building a query.

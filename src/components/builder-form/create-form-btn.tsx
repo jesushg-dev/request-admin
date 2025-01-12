@@ -18,9 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
 
-interface IFormProps {}
-
-const CreateFormBtn: FC<IFormProps> = () => {
+const CreateFormBtn: FC = () => {
   const t = useTranslations('component.formBuilder');
   const router = useRouter();
   const tenantId = useTenantId();

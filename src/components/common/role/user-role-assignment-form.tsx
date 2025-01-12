@@ -2,13 +2,13 @@
 
 import React, { FC, useMemo } from 'react';
 import { Plus, Trash } from 'lucide-react';
-import { useFieldArray, useFormContext } from 'react-hook-form';
+import { Control, FieldErrors, useFieldArray, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { UserType } from '@/types/prisma/user';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 // Default User Object
@@ -41,6 +41,46 @@ interface UserRoleAssignmentFormProps {
   roleArray: { id: string; name: string }[];
 }
 
+// User Select Field (Internal Function Component)
+const UserSelectField: FC<{
+  index: number;
+  userArray: UserType[];
+  selectedUsers: string[];
+  control: Control<UserRoleFormValues>;
+  errors: FieldErrors<UserRoleFormValues>;
+}> = ({ index, userArray, selectedUsers, control, errors }) => {
+  const availableUsers = useMemo(() => {
+    return userArray.filter((user) => !selectedUsers.includes(user.id));
+  }, [userArray, selectedUsers]);
+
+  return (
+    <FormField
+      control={control}
+      name={`userRoles.${index}.userId`}
+      render={({ field }) => (
+        <FormItem className="flex-1">
+          <FormLabel>User</FormLabel>
+          <FormControl>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a user" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableUsers.map((user) => (
+                  <SelectItem key={user.id} value={user.id}>
+                    {user.email}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FormControl>
+          <FormMessage>{errors.userRoles?.[index]?.userId?.message}</FormMessage>
+        </FormItem>
+      )}
+    />
+  );
+};
+
 // Main Component
 const UserRoleAssignmentForm: FC<UserRoleAssignmentFormProps> = ({ userArray, roleArray }) => {
   const { control, formState } = useFormContext<UserRoleFormValues>();
@@ -51,37 +91,7 @@ const UserRoleAssignmentForm: FC<UserRoleAssignmentFormProps> = ({ userArray, ro
       {users.map((user, index) => (
         <div key={user.id || index} className="relative flex items-end gap-2 rounded border p-4">
           {/* User Select Field */}
-          <FormField
-            control={control}
-            name={`userRoles.${index}.userId`}
-            render={({ field }) => {
-              const availableUsers = useMemo(() => {
-                const selectedUserIds = users.map((user) => user.userId);
-                return userArray.filter((user) => user.id === field.value || !selectedUserIds.includes(user.id));
-              }, [users, userArray, field.value]);
-
-              return (
-                <FormItem className="flex-1">
-                  <FormLabel>User</FormLabel>
-                  <FormControl>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a user" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableUsers.map((user) => (
-                          <SelectItem key={user.id} value={user.id}>
-                            {user.email}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage>{formState.errors.userRoles?.[index]?.userId?.message}</FormMessage>
-                </FormItem>
-              );
-            }}
-          />
+          <UserSelectField index={index} userArray={userArray} selectedUsers={users.map((u) => u.userId)} control={control} errors={formState.errors} />
 
           {/* Role Select Field */}
           <FormField
@@ -120,9 +130,8 @@ const UserRoleAssignmentForm: FC<UserRoleAssignmentFormProps> = ({ userArray, ro
                 </FormControl>
                 <div>
                   <FormLabel htmlFor={`userRoles.${index}.isActive`}>Active</FormLabel>
-                  <FormDescription>Allow the user to have access to this area.</FormDescription>
+                  <FormMessage />
                 </div>
-                <FormMessage />
               </FormItem>
             )}
           />

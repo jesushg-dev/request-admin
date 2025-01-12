@@ -16,12 +16,12 @@ export function NavProjects({ projects }: { projects: MenuProject[] }) {
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Projects</SidebarGroupLabel>
+      <SidebarGroupLabel>Form Submissions</SidebarGroupLabel>
       <SidebarMenu>
         {projects.map((item) => (
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild>
-              <a href={item.url}>
+              <a href={item.url} className="text-xs">
                 <item.icon />
                 <span>{item.name}</span>
               </a>
@@ -54,7 +54,7 @@ export function NavProjects({ projects }: { projects: MenuProject[] }) {
         <SidebarMenuItem>
           <SidebarMenuButton className="text-sidebar-foreground/70">
             <MoreHorizontal className="text-sidebar-foreground/70" />
-            <span>More</span>
+            <span className="text-xs">More</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>

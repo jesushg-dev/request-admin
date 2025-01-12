@@ -60,7 +60,7 @@ function FormSubmitComponent({ formUrl, content }: { content: FormElementInstanc
       const jsonContent = JSON.stringify(formValues.current);
       await SubmitForm(tenantId, formUrl, jsonContent);
       setSubmitted(true);
-    } catch (error) {
+    } catch {
       toast({
         title: t('error'),
         description: t('submissionError'),

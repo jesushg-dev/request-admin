@@ -4,25 +4,26 @@ import { FC } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
-import { LevelType } from '@/types/prisma/hierarchy';
+import { RequestLevelType } from '@/types/prisma/hierarchy';
 import { RequirementOptionType } from '@/types/prisma/requirement';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import CategoryForm, { categoryFormSchema } from '@/components/common/category/category-form';
+
+import RequestCategoryForm, { requestCategoryFormSchema } from '../category/request-category-form';
 
 interface RequestTypeFormProps {
   requirements: RequirementOptionType[];
-  levels: LevelType[];
+  levels: RequestLevelType[];
 }
 
 const RequestTypeForm: FC<RequestTypeFormProps> = ({ requirements, levels }) => {
   // Initialize React Hook Form with current step schema
   const form = useForm({
     mode: 'onTouched',
-    resolver: zodResolver(categoryFormSchema),
+    resolver: zodResolver(requestCategoryFormSchema),
   });
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: { [key: string]: string }) => {
     console.log('Values:', values);
   };
 
@@ -32,7 +33,7 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ requirements, levels }) => 
         <div className="flex flex-1 overflow-y-hidden">
           <ScrollArea className="flex w-full flex-1 overflow-y-hidden">
             <div className="m-1 mr-4 flex flex-1 flex-col gap-2">
-              <CategoryForm levels={levels} requirements={requirements} mode="single" />
+              <RequestCategoryForm levels={levels} requirements={requirements} mode="single" />
             </div>
           </ScrollArea>
         </div>

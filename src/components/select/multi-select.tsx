@@ -94,7 +94,7 @@ interface MultiSelectProps extends React.ButtonHTMLAttributes<HTMLButtonElement>
 }
 
 export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
-  ({ options, onValueChange, variant, defaultValue = [], placeholder = 'Select options', animation = 0, maxCount = 3, modalPopover = false, asChild = false, className, ...props }, ref) => {
+  ({ options, onValueChange, variant, defaultValue = [], placeholder = 'Select options', animation = 0, maxCount = 3, modalPopover = false, className, ...props }, ref) => {
     const [selectedValues, setSelectedValues] = React.useState<string[]>(defaultValue);
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
     const [isAnimating, setIsAnimating] = React.useState(false);

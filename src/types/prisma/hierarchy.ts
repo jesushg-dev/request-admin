@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
 
-// Default select for Hierarchy
-export const HierarchyDefaultArgs = Prisma.validator<Prisma.HierarchyDefaultArgs>()({
+// Default select for Request Hierarchy
+export const RequestHierarchyDefaultArgs = Prisma.validator<Prisma.RequestHierarchyDefaultArgs>()({
   select: {
     id: true,
     name: true,
@@ -11,5 +11,18 @@ export const HierarchyDefaultArgs = Prisma.validator<Prisma.HierarchyDefaultArgs
 });
 
 // Type for Hierarchy with selected fields
-export type HierarchyWithLevelsType = Prisma.HierarchyGetPayload<typeof HierarchyDefaultArgs>;
-export type LevelType = HierarchyWithLevelsType['levels'][0];
+export type RequestHierarchyWithLevelsType = Prisma.RequestHierarchyGetPayload<typeof RequestHierarchyDefaultArgs>;
+export type RequestLevelType = RequestHierarchyWithLevelsType['levels'][0];
+
+// Default select for Assignation Hierarchy
+export const AssignmentHierarchyDefaultArgs = Prisma.validator<Prisma.AssignationHierarchyDefaultArgs>()({
+  select: {
+    id: true,
+    name: true,
+    description: true,
+    levels: { select: { id: true, name: true, position: true } },
+  },
+});
+
+export type AssignmentHierarchyWithLevelsType = Prisma.AssignationHierarchyGetPayload<typeof AssignmentHierarchyDefaultArgs>;
+export type AssignmentLevelType = AssignmentHierarchyWithLevelsType['levels'][0];

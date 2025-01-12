@@ -1,19 +1,20 @@
 'use client';
 
+import { RequestLevelType } from '@/types/prisma/hierarchy';
 import { StepScrollArea } from '@/components/stepper/step-scrollarea';
 
-import { CategoriesSelect, HierarchyWithRelations } from '../../category/categories-select';
+import { RequestCategoriesSelect } from '../../category/request-categories-select';
 
 type RequestCategoryStepProps = {
-  requestCategoryLevels: HierarchyWithRelations['levels'];
+  levels: RequestLevelType[];
 };
 
-const RequestCategoryStep: React.FC<RequestCategoryStepProps> = ({ requestCategoryLevels }) => {
+const RequestCategoryStep: React.FC<RequestCategoryStepProps> = ({ levels }) => {
   return (
     <StepScrollArea>
       <div className="m-1 flex flex-col gap-2">
         <h2 className="text-lg font-semibold">Request Category</h2>
-        <CategoriesSelect hierarchyLevels={requestCategoryLevels} fieldPrefix="requestCategory" />
+        <RequestCategoriesSelect levels={levels} fieldPrefix="requestCategory" />
       </div>
     </StepScrollArea>
   );

@@ -6,23 +6,23 @@ import { defineStepper } from '@stepperize/react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { LevelType } from '@/types/prisma/hierarchy';
+import { RequestLevelType } from '@/types/prisma/hierarchy';
 import { ModuleWithFeaturesType } from '@/types/prisma/module';
 import { RequirementOptionType } from '@/types/prisma/requirement';
 import { UserType } from '@/types/prisma/user';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import AreaForm, { areaFormSchema } from '@/components/common/area/area-form';
-import CategoryForm, { categoryFormSchema } from '@/components/common/category/category-form';
+import AssignationCategoryForm, { assignationCategoryFormSchema } from '@/components/common/category/assignation-category-form';
 import AreaRolesForm, { areaRolesFormSchema } from '@/components/common/role/role-form';
 import UserRoleAssignmentForm, { userRoleFormSchema } from '@/components/common/role/user-role-assignment-form';
 import { StepNavigation } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 
 // Stepper definition
-const { useStepper, steps } = defineStepper(
+const { useStepper, utils } = defineStepper(
   { id: 'description', label: 'Description', schema: areaFormSchema },
-  { id: 'assignationCategory', label: 'Assignation Category', schema: categoryFormSchema },
+  { id: 'assignationCategory', label: 'Assignation Category', schema: assignationCategoryFormSchema },
   { id: 'role', label: 'Role', schema: areaRolesFormSchema },
   { id: 'user', label: 'User', schema: userRoleFormSchema },
   { id: 'finish', label: 'Finish', schema: z.object({}) }
@@ -30,13 +30,13 @@ const { useStepper, steps } = defineStepper(
 
 interface StepsComponentProps {
   users: UserType[];
-  levels: LevelType[];
+  assignationLevels: RequestLevelType[];
   requirements: RequirementOptionType[];
   moduleWithFeatures: ModuleWithFeaturesType[];
 }
 
 // StepsComponent: Renders stepper and step content
-const StepsComponent: FC<StepsComponentProps> = ({ levels, requirements, users, moduleWithFeatures }) => {
+const StepsComponent: FC<StepsComponentProps> = ({ assignationLevels, users, moduleWithFeatures }) => {
   const stepper = useStepper();
 
   // Initialize React Hook Form with current step schema
@@ -46,7 +46,7 @@ const StepsComponent: FC<StepsComponentProps> = ({ levels, requirements, users, 
   });
 
   // Handle form submission
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: z.infer<typeof stepper.current.schema>) => {
     console.log(`Step: ${stepper.current.id}, Values:`, values);
     if (stepper.isLast) {
       stepper.reset();
@@ -58,7 +58,7 @@ const StepsComponent: FC<StepsComponentProps> = ({ levels, requirements, users, 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between space-y-6 overflow-hidden rounded-lg border p-6">
-        <StepNavigation steps={stepper.all} currentStepIndex={stepper.current.index} onStepClick={stepper.goTo} />
+        <StepNavigation steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
 
         {/* Step Content */}
         <div className="flex flex-1 overflow-y-hidden">
@@ -67,7 +67,7 @@ const StepsComponent: FC<StepsComponentProps> = ({ levels, requirements, users, 
               description: () => <AreaForm />,
               assignationCategory: () => (
                 <div className="m-1 mr-4 flex flex-1 flex-col gap-2">
-                  <CategoryForm levels={levels} requirements={requirements} />
+                  <AssignationCategoryForm levels={assignationLevels} />
                 </div>
               ),
               role: () => <AreaRolesForm moduleWithFeatures={moduleWithFeatures} />,
@@ -77,7 +77,7 @@ const StepsComponent: FC<StepsComponentProps> = ({ levels, requirements, users, 
           </ScrollArea>
         </div>
 
-        <StepperNavigationButtons isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onNext={stepper.next} nextText="Next" submitText="Finish" />
+        <StepperNavigationButtons isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onReset={stepper.reset} nextText="Next" submitText="Finish" />
       </form>
     </Form>
   );

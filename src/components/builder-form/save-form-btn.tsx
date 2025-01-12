@@ -23,7 +23,7 @@ function SaveFormBtn({ id }: { id: string }) {
         title: t('success'),
         description: t('saveSuccess'),
       });
-    } catch (error) {
+    } catch {
       toast({
         title: t('error'),
         description: t('saveError'),

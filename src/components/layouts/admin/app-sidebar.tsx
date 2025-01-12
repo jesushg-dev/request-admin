@@ -86,6 +86,11 @@ export function AppSidebar({ tenants, user, ...props }: AppSidebarProps) {
             icon: LayersIcon,
           },
           {
+            title: t('requestTypesHierarchies'),
+            url: { pathname: '/admin/[tenantId]/requests-portal/request-types/hierarchies', params: { tenantId } },
+            icon: ListTreeIcon,
+          },
+          {
             title: t('requirements'),
             url: { pathname: '/admin/[tenantId]/requests-portal/requirements', params: { tenantId } },
             icon: ListIcon,
@@ -114,13 +119,8 @@ export function AppSidebar({ tenants, user, ...props }: AppSidebarProps) {
             icon: LandPlotIcon,
           },
           {
-            title: t('clients'),
-            url: { pathname: '/admin/[tenantId]/management/clients', params: { tenantId } },
-            icon: UsersIcon,
-          },
-          {
-            title: t('hierarchies'),
-            url: { pathname: '/admin/[tenantId]/management/hierarchies', params: { tenantId } },
+            title: t('areasHierarchies'),
+            url: { pathname: '/admin/[tenantId]/management/areas/hierarchies', params: { tenantId } },
             icon: ListTreeIcon,
           },
           {

@@ -1,8 +1,8 @@
 'use client';
 
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, useMemo } from 'react';
 import { useCountRole, useFindManyRole } from '@/services/api/hooks';
-import { DataTableAdvancedFilterField, DataTableFilterField, DataTableRowAction } from '@/types';
+import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
 import { Prisma } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
@@ -68,9 +68,7 @@ const searchParamsParsers = {
   joinOperator: parseAsStringEnum(['and', 'or']).withDefault('and'),
 };
 
-interface IRoleMainPageProps {}
-
-const RoleMainPage: React.FC<IRoleMainPageProps> = () => {
+const RoleMainPage: React.FC = () => {
   const t = useTranslations('admin.role.main');
   const [search] = useQueryStates(searchParamsParsers);
 
@@ -81,8 +79,7 @@ const RoleMainPage: React.FC<IRoleMainPageProps> = () => {
     defaultArgs: RoleDefaultArgs,
   });
 
-  const [rowAction, setRowAction] = useState<DataTableRowAction<RoleWithRelations> | null>(null);
-  const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ setRowAction, t }), [setRowAction, t]);
+  const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t }), [t]);
 
   const { table } = useDataTable({
     data: data ?? [],
@@ -105,8 +102,8 @@ const RoleMainPage: React.FC<IRoleMainPageProps> = () => {
   }
 
   return (
-    <DataTableShell table={table} isLoading={isLoading} floatingBar={<DataTableFloatingBar table={table} />}>
-      <DataTable table={table}>
+    <DataTableShell table={table} floatingBar={<DataTableFloatingBar table={table} />}>
+      <DataTable table={table} isLoading={isLoading}>
         <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
           <DataTableToolbarActions table={table} exportFilename="roles" entityLabel={t('entityLabel')} />
         </DataTableAdvancedToolbar>
@@ -116,11 +113,10 @@ const RoleMainPage: React.FC<IRoleMainPageProps> = () => {
 };
 
 interface GetTableConfigurationProps {
-  setRowAction: React.Dispatch<React.SetStateAction<DataTableRowAction<RoleWithRelations> | null>>;
   t: ReturnType<typeof useTranslations>;
 }
 
-export function getTableConfiguration({ setRowAction, t }: GetTableConfigurationProps) {
+export function getTableConfiguration({ t }: GetTableConfigurationProps) {
   const columns: ColumnDef<RoleWithRelations>[] = [
     {
       accessorKey: 'name',

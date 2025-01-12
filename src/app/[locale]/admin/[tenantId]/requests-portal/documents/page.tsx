@@ -1,8 +1,8 @@
 'use client';
 
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, useMemo } from 'react';
 import { useCountDocument, useFindManyDocument } from '@/services/api/hooks';
-import { DataTableAdvancedFilterField, DataTableFilterField, DataTableRowAction } from '@/types';
+import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
 import { Prisma } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
@@ -12,6 +12,7 @@ import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { formatDate } from '@/lib/utils';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
+import useTenantId from '@/hooks/use-tenant-id';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
@@ -47,9 +48,8 @@ const searchParamsParsers = {
   to: parseAsString.withDefault(''),
 };
 
-interface IDocumentMainPageProps {}
-
-const DocumentMainPage: React.FC<IDocumentMainPageProps> = () => {
+const DocumentMainPage: React.FC = () => {
+  const tenantId = useTenantId();
   const t = useTranslations('admin.document.main');
   const [search] = useQueryStates(searchParamsParsers);
 
@@ -62,8 +62,7 @@ const DocumentMainPage: React.FC<IDocumentMainPageProps> = () => {
     },
   });
 
-  const [rowAction, setRowAction] = useState<DataTableRowAction<DocumentWithRelations> | null>(null);
-  const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ setRowAction, t }), [setRowAction, t]);
+  const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t }), [t]);
 
   const { table } = useDataTable({
     data: data ?? [],
@@ -86,10 +85,18 @@ const DocumentMainPage: React.FC<IDocumentMainPageProps> = () => {
   }
 
   return (
-    <DataTableShell table={table} isLoading={isLoading} floatingBar={<DataTableFloatingBar table={table} />}>
-      <DataTable table={table}>
+    <DataTableShell table={table} floatingBar={<DataTableFloatingBar table={table} />}>
+      <DataTable table={table} isLoading={isLoading}>
         <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
-          <DataTableToolbarActions table={table} exportFilename="documents" entityLabel={t('entityLabel')} />
+          <DataTableToolbarActions
+            table={table}
+            exportFilename="documents"
+            entityLabel={t('entityLabel')}
+            addLink={{
+              pathname: '/admin/[tenantId]/requests-portal/documents/new',
+              params: { tenantId },
+            }}
+          />
         </DataTableAdvancedToolbar>
       </DataTable>
     </DataTableShell>
@@ -97,11 +104,10 @@ const DocumentMainPage: React.FC<IDocumentMainPageProps> = () => {
 };
 
 interface GetTableConfigurationProps {
-  setRowAction: React.Dispatch<React.SetStateAction<DataTableRowAction<DocumentWithRelations> | null>>;
   t: ReturnType<typeof useTranslations>;
 }
 
-export function getTableConfiguration({ setRowAction, t }: GetTableConfigurationProps) {
+export function getTableConfiguration({ t }: GetTableConfigurationProps) {
   const columns: ColumnDef<DocumentWithRelations>[] = [
     {
       accessorKey: 'name',

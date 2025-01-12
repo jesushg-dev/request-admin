@@ -6,7 +6,7 @@ import { getValidFilters } from '@/lib/data-table';
 import useTenantId from './use-tenant-id';
 
 //ensure FindManyArgs has select and include has keys
-type FindManyArgs<SelectArgs = any, IncludeArgs = any, WhereArgs = any, OrderByArgS = any, CursorArgs = any, DistinctArgs = any> = {
+type FindManyArgs<SelectArgs = unknown, IncludeArgs = unknown, WhereArgs = unknown, OrderByArgS = unknown, CursorArgs = unknown, DistinctArgs = unknown> = {
   select?: SelectArgs | null;
   include?: IncludeArgs | null;
   where?: WhereArgs | null;
@@ -104,7 +104,7 @@ export function prismaToExtendedSortingState<TData>(sorting: Partial<Record<keyo
 }
 
 // Transform Extended Filters to Prisma Filters
-export function extendedToPrismaFilters<TData>(filters: Filter<TData>[]): Record<string, any>[] {
+export function extendedToPrismaFilters<TData>(filters: Filter<TData>[]): Record<string, unknown>[] {
   return filters.map((filter) => {
     const { id, value, operator } = filter;
     return {
@@ -116,7 +116,7 @@ export function extendedToPrismaFilters<TData>(filters: Filter<TData>[]): Record
 }
 
 // Transform Prisma Filters to Extended Filters
-export function prismaToExtendedFilters<TData>(filters: Record<string, any>[]): Filter<TData>[] {
+export function prismaToExtendedFilters<TData>(filters: Record<string, unknown>[]): Filter<TData>[] {
   return filters.map((filter) => {
     // Get the first entry of the filter, or fallback to an empty object
     const [id, conditions] = Object.entries(filter)[0] || [null, null];
@@ -134,7 +134,7 @@ export function prismaToExtendedFilters<TData>(filters: Record<string, any>[]): 
 
     return {
       id: id as StringKeyOf<TData>,
-      operator: operator as any,
+      operator: operator as unknown,
       value: value,
     } as Filter<TData>;
   });

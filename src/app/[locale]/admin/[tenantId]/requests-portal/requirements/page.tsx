@@ -1,8 +1,8 @@
 'use client';
 
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, useMemo } from 'react';
 import { useCountRequirement, useFindManyRequirement } from '@/services/api/hooks';
-import { DataTableAdvancedFilterField, DataTableFilterField, DataTableRowAction } from '@/types';
+import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
 import { Prisma } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
 import { ChevronDown, ChevronUp } from 'lucide-react';
@@ -13,6 +13,7 @@ import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { formatDate } from '@/lib/utils';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
+import useTenantId from '@/hooks/use-tenant-id';
 import { Checkbox } from '@/components/ui/checkbox';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
@@ -44,9 +45,9 @@ const searchParamsParsers = {
   to: parseAsString.withDefault(''),
 };
 
-interface IRequirementMainPageProps {}
+const RequirementMainPage: React.FC = () => {
+  const tenantId = useTenantId();
 
-const RequirementMainPage: React.FC<IRequirementMainPageProps> = () => {
   const t = useTranslations('admin.requirement.main');
   const [search] = useQueryStates(searchParamsParsers);
 
@@ -59,8 +60,7 @@ const RequirementMainPage: React.FC<IRequirementMainPageProps> = () => {
     },
   });
 
-  const [rowAction, setRowAction] = useState<DataTableRowAction<RequirementWithRelations> | null>(null);
-  const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ setRowAction, t }), [setRowAction, t]);
+  const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t }), [t]);
 
   const { table } = useDataTable({
     data: data ?? [],
@@ -74,17 +74,25 @@ const RequirementMainPage: React.FC<IRequirementMainPageProps> = () => {
     },
     shallow: false,
     clearOnDefault: true,
-    getRowCanExpand: (row) => false,
+    getRowCanExpand: () => false,
     getRowId: (originalRow) => originalRow.id,
   });
 
   if (isError && error) return <ErrorRetryFallback error={error} onRetry={refetch} />;
 
   return (
-    <DataTableShell table={table} isLoading={isLoading} floatingBar={<DataTableFloatingBar table={table} />}>
-      <DataTable table={table}>
+    <DataTableShell table={table} floatingBar={<DataTableFloatingBar table={table} />}>
+      <DataTable table={table} isLoading={isLoading}>
         <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
-          <DataTableToolbarActions table={table} exportFilename="categories" entityLabel={t('entityLabel')} />
+          <DataTableToolbarActions
+            table={table}
+            exportFilename="categories"
+            entityLabel={t('entityLabel')}
+            addLink={{
+              pathname: '/admin/[tenantId]/requests-portal/requirements/new',
+              params: { tenantId },
+            }}
+          />
         </DataTableAdvancedToolbar>
       </DataTable>
     </DataTableShell>
@@ -92,11 +100,10 @@ const RequirementMainPage: React.FC<IRequirementMainPageProps> = () => {
 };
 
 interface GetTableConfigurationProps {
-  setRowAction: React.Dispatch<React.SetStateAction<DataTableRowAction<RequirementWithRelations> | null>>;
   t: ReturnType<typeof useTranslations>;
 }
 
-export function getTableConfiguration({ setRowAction, t }: GetTableConfigurationProps) {
+export function getTableConfiguration({ t }: GetTableConfigurationProps) {
   const columns: ColumnDef<RequirementWithRelations>[] = [
     {
       id: 'name',

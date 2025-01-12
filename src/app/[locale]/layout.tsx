@@ -3,7 +3,6 @@ import localFont from 'next/font/local';
 import { notFound } from 'next/navigation';
 import { Locale, routing } from '@/i18n/routing';
 import { auth } from '@/server/auth';
-import { TRPCReactProvider } from '@/trpc/react';
 import { SessionProvider } from 'next-auth/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
@@ -84,12 +83,10 @@ export default async function RootLayout({ children, params }: Props) {
             <NextIntlClientProvider locale={locale} messages={messages}>
               <NextTopLoader />
               <TanstackQueryProvider>
-                <TRPCReactProvider>
-                  <NuqsAdapter>
-                    <ConfirmDialogProvider>{children}</ConfirmDialogProvider>
-                  </NuqsAdapter>
-                  <Toaster />
-                </TRPCReactProvider>
+                <NuqsAdapter>
+                  <ConfirmDialogProvider>{children}</ConfirmDialogProvider>
+                </NuqsAdapter>
+                <Toaster />
               </TanstackQueryProvider>
             </NextIntlClientProvider>
           </ThemeProvider>

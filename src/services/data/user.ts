@@ -65,7 +65,7 @@ export const getUserByIdWithFeatures = async (id: string) => {
     const features = user.userRoles?.flatMap((ur) => ur.role.roleFeature.map((rp) => rp.feature.name)) || [];
 
     return { ...user, roles, features };
-  } catch (error) {
+  } catch {
     return null;
   }
 };

@@ -21,7 +21,7 @@ const summarySchema = z.object({});
 type PlanInfoFormValues = z.infer<typeof planInfoSchema>;
 type PlanFeatureFormValues = z.infer<typeof planFeatureSchema>;
 
-const { useStepper, steps } = defineStepper(
+const { useStepper, utils } = defineStepper(
   { id: 'planInfo', label: 'Plan Information', schema: planInfoSchema },
   { id: 'planFeatures', label: 'Plan Features', schema: planFeatureSchema },
   { id: 'summary', label: 'Summary', schema: summarySchema }
@@ -56,7 +56,7 @@ export default function PlanCreationForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between space-y-6 overflow-hidden rounded-lg border p-6">
-        <StepNavigation steps={stepper.all} currentStepIndex={stepper.current.index} onStepClick={stepper.goTo} />
+        <StepNavigation steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
         <div className="flex flex-1 overflow-y-hidden">
           <ScrollArea className="w-full flex-1 overflow-y-hidden">
             {stepper.switch({
@@ -66,7 +66,7 @@ export default function PlanCreationForm() {
             })}
           </ScrollArea>
         </div>
-        <StepperNavigationButtons isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onNext={stepper.next} nextText="Next" submitText="Finish" />
+        <StepperNavigationButtons isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onReset={stepper.reset} nextText="Next" submitText="Finish" />
       </form>
     </Form>
   );

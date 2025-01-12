@@ -2,14 +2,11 @@
 
 import { useFormContext } from 'react-hook-form';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
-
 export default function SummaryStep() {
   const { watch } = useFormContext();
   const formData = watch();
 
-  const renderCategorySection = (title: string, data: any[]) => (
+  const renderCategorySection = (title: string, data: { value: string }[]) => (
     <div className="mb-4">
       <h3 className="mb-2 text-lg font-semibold">{title}</h3>
       {data.map((category, index) => (

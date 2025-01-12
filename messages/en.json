@@ -2,6 +2,7 @@
   "system": {
     "roleGate": {
       "errors": {
+        "noFeature": "You do not have permission to view this content!",
         "noPermission": "You do not have permission to view this content!"
       }
     }
@@ -72,12 +73,12 @@
       "header": "Create an account",
       "alreadyHaveAccount": "Already have an account?",
       "fields": {
-        "name": "Name",
+        "username": "Username",
         "email": "Email",
         "password": "Password"
       },
       "placeholders": {
-        "name": "John Doe",
+        "username": "john.doe",
         "email": "john.doe@example.com",
         "password": "******"
       },
@@ -189,14 +190,14 @@
       "request": "Request",
       "documents": "Documents",
       "requestsPortal": "Requests Portal",
-      "hierarchies": "Hierarchies",
       "requestTypes": "Request Types",
+      "requestTypesHierarchies": "Request Types Hierarchies",
       "requirements": "Requirements",
       "formDesigner": "Form Designer",
       "management": "Management",
       "identificationTypes": "Identification Types",
       "areas": "Areas",
-      "clients": "Clients",
+      "areasHierarchies": "Areas Hierarchies",
       "security": "Security",
       "roles": "Roles",
       "users": "Users",
@@ -529,6 +530,9 @@
         "subcategoriesCount": "Subcategories Count",
         "isActive": "Is Active",
         "categories": "Categories",
+        "subcategories": "Subcategories",
+        "area": "Area",
+        "requests": "Requests",
         "requirements": "Requirements",
         "users": "Users",
         "createdAt": "Created At"
@@ -556,7 +560,10 @@
       "requiredCategories": "At least one category is required",
       "minName": "Name must be at least 3 characters",
       "nameDescription": "This is the name of the {categoryName}.",
-      "descriptionDescription": "This is an optional field to provide a brief description of the {categoryName}."
+      "descriptionDescription": "This is an optional field to provide a brief description of the {categoryName}.",
+      "requirementsDescription": "Select the requirements associated with this {categoryName}.",
+      "eligibleForNewClientsDescription": "Mark this {categoryName} as available to new clients.",
+      "exitButton": "Exit"
     },
     "areaForm": {
       "nameLabel": "Name",

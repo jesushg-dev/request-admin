@@ -61,8 +61,6 @@ function FormBuilder({ form }: { form: Form }) {
     );
   }
 
-  const shareUrl = `${window.location.origin}/admin/submit/${form.shareURL}`;
-
   if (form.published) {
     return (
       <>

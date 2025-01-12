@@ -2,6 +2,7 @@
   "system": {
     "roleGate": {
       "errors": {
+        "noFeature": "¡No tienes permiso para acceder a esta página!",
         "noPermission": "¡No tienes permiso para ver este contenido!"
       }
     }
@@ -72,12 +73,12 @@
       "header": "Crear una cuenta",
       "alreadyHaveAccount": "¿Ya tienes una cuenta?",
       "fields": {
-        "name": "Nombre",
+        "username": "Nombre de usuario",
         "email": "Correo electrónico",
         "password": "Contraseña"
       },
       "placeholders": {
-        "name": "Juan Pérez",
+        "username": "juan.perez",
         "email": "juan.perez@ejemplo.com",
         "password": "******"
       },
@@ -189,14 +190,14 @@
       "request": "Solicitud",
       "documents": "Documentos",
       "requestsPortal": "Portal de Solicitudes",
-      "hierarchies": "Jerarquías",
       "requestTypes": "Tipos de Solicitud",
+      "requestTypesHierarchies": "Jerarquías de Tipos de Solicitud",
       "requirements": "Requisitos",
       "formDesigner": "Diseñador de Formularios",
       "management": "Gestión y Organización",
       "identificationTypes": "Tipos de Identificación",
       "areas": "Áreas",
-      "clients": "Clientes",
+      "areasHierarchies": "Jerarquías de Áreas",
       "security": "Seguridad y Acceso",
       "roles": "Roles",
       "users": "Usuarios",
@@ -529,6 +530,9 @@
         "subcategoriesCount": "Cantidad de Subcategorías",
         "isActive": "Está Activo",
         "categories": "Categorías",
+        "subcategories": "Subcategorías",
+        "area": "Área",
+        "requests": "Solicitudes",
         "requirements": "Requisitos",
         "users": "Usuarios",
         "createdAt": "Creado En"
@@ -556,7 +560,10 @@
       "requiredCategories": "Se requiere al menos una categoría",
       "minName": "El nombre debe tener al menos 3 caracteres",
       "nameDescription": "Este es el nombre público de la {categoryName}.",
-      "descriptionDescription": "Este es un campo opcional para proporcionar una breve descripción de la {categoryName}."
+      "descriptionDescription": "Este es un campo opcional para proporcionar una breve descripción de la {categoryName}.",
+      "requirementsDescription": "Seleccione los requisitos aplicables para la {categoryName}.",
+      "eligibleForNewClientsDescription": "Marque si esta {categoryName} está disponible para nuevos clientes.",
+      "exitButton": "Salir"
     },
     "areaForm": {
       "nameLabel": "Nombre",

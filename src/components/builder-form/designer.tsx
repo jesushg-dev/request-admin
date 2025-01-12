@@ -145,7 +145,7 @@ function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
   const t = useTranslations('component.formBuilder');
   const styles = styleElements[element.type];
 
-  const { removeElement, selectedElement, setSelectedElement } = useDesigner();
+  const { removeElement, setSelectedElement } = useDesigner();
 
   const [mouseIsOver, setMouseIsOver] = useState<boolean>(false);
   const topHalf = useDroppable({

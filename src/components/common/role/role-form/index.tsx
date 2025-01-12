@@ -1,7 +1,7 @@
 'use client';
 
-import React, { FC, useState } from 'react';
-import { Plus, Settings, Trash } from 'lucide-react';
+import React, { FC } from 'react';
+import { Plus, Trash } from 'lucide-react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -9,7 +9,6 @@ import { ModuleWithFeaturesType } from '@/types/prisma/module';
 import { Button } from '@/components/ui/button';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 
 import { FeatureRoleFormDialog } from './feature-role-form-dialog';
 

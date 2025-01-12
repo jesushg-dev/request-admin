@@ -21,7 +21,7 @@ export function HierarchyStep() {
             <FormControl>
               <Input placeholder="Enter hierarchy name" {...field} />
             </FormControl>
-            <FormDescription>The name of your hierarchy (e.g., "Sales Channel Hierarchy")</FormDescription>
+            <FormDescription>The name of your hierarchy (e.g., &quot;Sales Channel Hierarchy&quot;)</FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -59,7 +59,7 @@ export function HierarchyStep() {
                 <SelectItem value="Assignation">Assignation</SelectItem>
               </SelectContent>
             </Select>
-            <FormDescription>Choose the type of hierarchy you're creating</FormDescription>
+            <FormDescription>Choose the type of hierarchy you&apos;re creating</FormDescription>
             <FormMessage />
           </FormItem>
         )}

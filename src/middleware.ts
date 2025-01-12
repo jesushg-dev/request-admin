@@ -4,7 +4,7 @@ import createIntlMiddleware from 'next-intl/middleware';
 import { locales, routing } from './i18n/routing';
 import { getTenantsForUser, validateTenantId } from './lib/tenant';
 import { extractTenantId } from './lib/utils';
-import { authRoutes, DEFAULT_LOGIN_REDIRECT, isPublicPage, publicRoutes } from './routes';
+import { authRoutes, DEFAULT_LOGIN_REDIRECT, isPublicPage } from './routes';
 import { auth } from './server/auth';
 
 const intlMiddleware = createIntlMiddleware(routing);
@@ -55,7 +55,7 @@ const authMiddleware = auth(async (req) => {
 export const config = {
   // Only run the middleware on pages that shouldn't include /api/auth
   // for example, everything except /api/auth or _next
-  matcher: ['/((?!.+\\.[\\w]+$|_next|api/auth).*)', '/', '/(api|trpc)(.*)'],
+  matcher: ['/((?!.+\\.[\\w]+$|_next|api/auth).*)', '/', '/(api)(.*)'],
 };
 
 export default function middleware(req: NextRequest) {
@@ -66,7 +66,6 @@ export default function middleware(req: NextRequest) {
   if (isPublicPage(req.nextUrl.pathname, locales)) {
     return intlMiddleware(req);
   } else {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
-    return (authMiddleware as any)(req);
+    return (authMiddleware as (req: NextRequest) => Promise<Response>)(req);
   }
 }

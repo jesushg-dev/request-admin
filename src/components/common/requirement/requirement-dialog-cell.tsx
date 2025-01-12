@@ -34,8 +34,8 @@ const RequirementDialogCell: React.FC<RequirementDialogCellProps> = ({ count, en
 
   const { data, isError, isLoading, error, refetch } = useFindManyRequirement(
     {
-      where: { categoryRequirement: { some: { categoryId } } },
       select: RequirementDefaultArgs.select,
+      where: { requestCategoryRequirement: { some: { categoryId } } },
     },
     { enabled: open }
   );

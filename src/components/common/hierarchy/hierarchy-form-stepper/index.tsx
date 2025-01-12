@@ -16,7 +16,7 @@ import { LevelsStep } from './levels-step';
 import { HierarchyFormValues, hierarchySchema, levelsSchema, summarySchema } from './schemas';
 import { SummaryStep } from './summary-step';
 
-const { useStepper, steps } = defineStepper(
+const { useStepper, utils } = defineStepper(
   { id: 'hierarchy', label: 'Hierarchy', schema: hierarchySchema },
   { id: 'levels', label: 'Levels', schema: levelsSchema },
   { id: 'summary', label: 'Summary', schema: summarySchema }
@@ -49,7 +49,7 @@ export function HierarchyFormStepper() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between space-y-6 overflow-hidden rounded-lg border p-6">
-        <StepNavigation steps={stepper.all} currentStepIndex={stepper.current.index} onStepClick={stepper.goTo} />
+        <StepNavigation steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
         <div className="flex flex-1 overflow-y-hidden">
           <ScrollArea className="w-full flex-1 overflow-y-hidden">
             {stepper.switch({
@@ -59,7 +59,7 @@ export function HierarchyFormStepper() {
             })}
           </ScrollArea>
         </div>
-        <StepperNavigationButtons isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onNext={stepper.next} nextText="Next" submitText="Finish" />
+        <StepperNavigationButtons isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onReset={stepper.reset} nextText="Next" submitText="Finish" />
       </form>
     </Form>
   );

@@ -86,7 +86,7 @@ function FormComponent({ elementInstance, submitValue, isInvalid, defaultValue }
     setError(isInvalid === true);
   }, [isInvalid]);
 
-  const { label, required, placeHolder, helperText } = element.extraAttributes;
+  const { label, required, helperText } = element.extraAttributes;
   const id = `checkbox-${element.id}`;
   return (
     <div className="items-top flex space-x-2">

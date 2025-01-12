@@ -1,12 +1,12 @@
 'use client';
 
 import * as React from 'react';
-import { Bell, Globe, Menu, Moon, Sun } from 'lucide-react';
+import { Bell, Menu, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { SidebarTrigger, useSidebar } from '@/components/ui/sidebar';
+import { useSidebar } from '@/components/ui/sidebar';
 import { AdvancedBreadcrumb } from '@/components/advanced-breadcrumb';
 import LocaleSwitcherSelect from '@/components/locale-switcher-select';
 
@@ -48,7 +48,7 @@ const Navbar = ({ tenants = [] }: NavbarProps) => {
             <Menu className="h-5 w-5" />
             <span className="sr-only">Toggle sidebar</span>
           </Button>
-          <AdvancedBreadcrumb maxItems={3} tenants={tenants} />
+          <AdvancedBreadcrumb tenants={tenants} />
         </div>
 
         <div className="flex items-center gap-2">

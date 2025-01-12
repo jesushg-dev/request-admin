@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { categorySchema, HierarchyDefaultArgs } from '@/components/common/category/categories-select';
+import { categorySchema, HierarchyDefaultArgs } from '@/components/common/category/request-categories-select';
 import RequestFormStepper from '@/components/common/request/request-form-stepper';
 
 const requestCategorySchema = z.object({

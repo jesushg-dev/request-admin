@@ -13,7 +13,7 @@ export interface MessageOptions {
   color?: string;
 }
 
-export const useMessage = () => {
+const useMessage = () => {
   const confirm = useConfirm();
 
   const showError = async (error: string, title = 'Error!') => {
@@ -23,9 +23,6 @@ export const useMessage = () => {
       confirmText: 'OK',
       cancelButton: null,
       icon: <XCircle className="size-4 text-red-600" />,
-      alertDialogTitle: {
-        className: 'flex items-center gap-2',
-      },
     });
   };
 
@@ -36,9 +33,6 @@ export const useMessage = () => {
       confirmText: 'OK',
       cancelButton: null,
       icon: <Info className="size-4 text-blue-500" />,
-      alertDialogTitle: {
-        className: 'flex items-center gap-2',
-      },
     });
   };
 
@@ -49,9 +43,6 @@ export const useMessage = () => {
       confirmText: 'OK',
       cancelButton: null,
       icon: <CheckCircle className="size-4 text-green-600" />,
-      alertDialogTitle: {
-        className: 'flex items-center gap-2',
-      },
     });
   };
 
@@ -62,9 +53,6 @@ export const useMessage = () => {
       confirmText: 'OK',
       cancelButton: null,
       icon: <AlertTriangle className="size-4 text-yellow-500" />,
-      alertDialogTitle: {
-        className: 'flex items-center gap-2',
-      },
     });
   };
 
@@ -75,9 +63,7 @@ export const useMessage = () => {
       confirmText: options?.confirmText || 'Yes',
       cancelText: options?.cancelText || 'No',
       icon: options?.icon || <AlertTriangle className="size-4 text-blue-500" />,
-      alertDialogTitle: {
-        className: 'flex items-center gap-2',
-      },
+      //customActions: options?.customActions,
     });
     return result;
   };

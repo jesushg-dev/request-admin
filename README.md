@@ -32,7 +32,7 @@ The development follows the **Waterfall Methodology**, a structured and sequenti
 ### Technologies
 
 - **Frontend**: React, Next.js, TypeScript.
-- **Backend**: TRPC, NextAuth.
+- **Backend**: Zenstack, NextAuth.
 - **Database**: SQL Server with Prisma ORM.
 - **Development Tools**: Visual Studio Code, Visual Paradigm, Git.
 - **Testing Tools**: Cypress, Jest.

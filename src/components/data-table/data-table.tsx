@@ -10,7 +10,6 @@ import { DataTableSkeleton } from './data-table-skeleton';
 
 interface CommonDataTableProps<TData> {
   table: TanstackTable<TData>;
-  isLoading?: boolean;
 }
 
 interface DataTableShellProps<TData> extends CommonDataTableProps<TData>, React.HTMLAttributes<HTMLDivElement> {
@@ -18,7 +17,7 @@ interface DataTableShellProps<TData> extends CommonDataTableProps<TData>, React.
   children?: React.ReactNode;
 }
 
-export function DataTableShell<TData>({ table, floatingBar = null, isLoading, children, className, ...props }: DataTableShellProps<TData>) {
+export function DataTableShell<TData>({ table, floatingBar = null, children, className, ...props }: DataTableShellProps<TData>) {
   return (
     <div className={cn('flex w-full flex-col gap-1 overflow-auto', className)} {...props}>
       {children}
@@ -37,6 +36,7 @@ interface DataTableProps<TData, TSubData> extends CommonDataTableProps<TData> {
     columns: ColumnDef<TSubData>[];
     render: (props: { row: Row<TData>; isExpanded: boolean; columns: ColumnDef<TSubData>[] }) => React.ReactNode;
   };
+  isLoading?: boolean;
 }
 
 export function DataTable<TData, TSubData>({ table, subComponent, isLoading, children }: DataTableProps<TData, TSubData>) {

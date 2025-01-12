@@ -4,6 +4,7 @@ import React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { defineStepper } from '@stepperize/react';
 import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -20,7 +21,7 @@ interface TenantCreationFormProps {
   plans: Plan[];
 }
 
-const { useStepper, steps } = defineStepper(
+const { useStepper, utils } = defineStepper(
   { id: 'tenant', label: 'Tenant Details', schema: tenantDetailsSchema },
   { id: 'modules', label: 'Modules', schema: modulesSchema },
   { id: 'plan', label: 'Plan Selection', schema: planSelectionSchema }
@@ -38,7 +39,7 @@ export function TenantCreationForm({ modules, plans }: TenantCreationFormProps) 
   });
 
   // Handle form submission
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: z.infer<typeof stepper.current.schema>) => {
     console.log(`Step: ${stepper.current.id}, Values:`, values);
     if (stepper.isLast) {
       stepper.reset();
@@ -50,7 +51,7 @@ export function TenantCreationForm({ modules, plans }: TenantCreationFormProps) 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between space-y-6 overflow-hidden rounded-lg border p-6">
-        <StepNavigation steps={stepper.all} currentStepIndex={stepper.current.index} onStepClick={stepper.goTo} />
+        <StepNavigation steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
         <div className="flex flex-1 overflow-y-hidden">
           <ScrollArea className="w-full flex-1 overflow-y-hidden">
             {stepper.switch({
@@ -60,7 +61,7 @@ export function TenantCreationForm({ modules, plans }: TenantCreationFormProps) 
             })}
           </ScrollArea>
         </div>
-        <StepperNavigationButtons isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onNext={stepper.next} nextText="Next" submitText="Finish" />
+        <StepperNavigationButtons isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onReset={stepper.reset} nextText="Next" submitText="Finish" />
       </form>
     </Form>
   );

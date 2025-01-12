@@ -1,3 +1,4 @@
+import { ComponentProps } from 'react';
 import { createNavigation } from 'next-intl/navigation';
 import { defineRouting, Pathnames } from 'next-intl/routing';
 
@@ -81,39 +82,22 @@ const managementPathnames = {
     en: '/admin/[tenantId]/management/areas/[slug]/edit',
     es: '/admin/[tenantId]/gestion/areas/[slug]/editar',
   },
-  // clients
-  '/admin/[tenantId]/management/clients': {
-    en: '/admin/[tenantId]/management/clients',
-    es: '/admin/[tenantId]/gestion/clientes',
+  // area hierarchies
+  '/admin/[tenantId]/management/areas/hierarchies': {
+    en: '/admin/[tenantId]/management/areas/hierarchies',
+    es: '/admin/[tenantId]/gestion/areas/jerarquias',
   },
-  '/admin/[tenantId]/management/clients/new': {
-    en: '/admin/[tenantId]/management/clients/new',
-    es: '/admin/[tenantId]/gestion/clientes/nuevo',
+  '/admin/[tenantId]/management/areas/hierarchies/new': {
+    en: '/admin/[tenantId]/management/areas/hierarchies/new',
+    es: '/admin/[tenantId]/gestion/areas/jerarquias/nuevo',
   },
-  '/admin/[tenantId]/management/clients/[slug]': {
-    en: '/admin/[tenantId]/management/clients/[slug]',
-    es: '/admin/[tenantId]/gestion/clientes/[slug]',
+  '/admin/[tenantId]/management/areas/hierarchies/[slug]': {
+    en: '/admin/[tenantId]/management/areas/hierarchies/[slug]',
+    es: '/admin/[tenantId]/gestion/areas/jerarquias/[slug]',
   },
-  '/admin/[tenantId]/management/clients/[slug]/edit': {
-    en: '/admin/[tenantId]/management/clients/[slug]/edit',
-    es: '/admin/[tenantId]/gestion/clientes/[slug]/editar',
-  },
-  // hierarchies
-  '/admin/[tenantId]/management/hierarchies': {
-    en: '/admin/[tenantId]/management/hierarchies',
-    es: '/admin/[tenantId]/gestion/jerarquias',
-  },
-  '/admin/[tenantId]/management/hierarchies/new': {
-    en: '/admin/[tenantId]/management/hierarchies/new',
-    es: '/admin/[tenantId]/gestion/jerarquias/nuevo',
-  },
-  '/admin/[tenantId]/management/hierarchies/[slug]': {
-    en: '/admin/[tenantId]/management/hierarchies/[slug]',
-    es: '/admin/[tenantId]/gestion/jerarquias/[slug]',
-  },
-  '/admin/[tenantId]/management/hierarchies/[slug]/edit': {
-    en: '/admin/[tenantId]/management/hierarchies/[slug]/edit',
-    es: '/admin/[tenantId]/gestion/jerarquias/[slug]/editar',
+  '/admin/[tenantId]/management/areas/hierarchies/[slug]/edit': {
+    en: '/admin/[tenantId]/management/areas/hierarchies/[slug]/edit',
+    es: '/admin/[tenantId]/gestion/areas/jerarquias/[slug]/editar',
   },
   // identification types
   '/admin/[tenantId]/management/identification-types': {
@@ -155,6 +139,23 @@ const requestsPathnames = {
   '/admin/[tenantId]/requests-portal/request-types/[slug]/edit': {
     en: '/admin/[tenantId]/requests-portal/request-types/[slug]/edit',
     es: '/admin/[tenantId]/solicitudes-portal/tipo-de-solicitudes/[slug]/editar',
+  },
+  // Request hierarchies
+  '/admin/[tenantId]/requests-portal/request-types/hierarchies': {
+    en: '/admin/[tenantId]/requests-portal/request-types/hierarchies',
+    es: '/admin/[tenantId]/solicitudes-portal/tipo-de-solicitudes/jerarquias',
+  },
+  '/admin/[tenantId]/requests-portal/request-types/hierarchies/new': {
+    en: '/admin/[tenantId]/requests-portal/request-types/hierarchies/new',
+    es: '/admin/[tenantId]/solicitudes-portal/tipo-de-solicitudes/jerarquias/nuevo',
+  },
+  '/admin/[tenantId]/requests-portal/request-types/hierarchies/[slug]': {
+    en: '/admin/[tenantId]/requests-portal/request-types/hierarchies/[slug]',
+    es: '/admin/[tenantId]/solicitudes-portal/tipo-de-solicitudes/jerarquias/[slug]',
+  },
+  '/admin/[tenantId]/requests-portal/request-types/hierarchies/[slug]/edit': {
+    en: '/admin/[tenantId]/requests-portal/request-types/hierarchies/[slug]/edit',
+    es: '/admin/[tenantId]/solicitudes-portal/tipo-de-solicitudes/jerarquias/[slug]/editar',
   },
   // Requirements
   '/admin/[tenantId]/requests-portal/requirements': {
@@ -332,4 +333,5 @@ export const IsExistingRoute = (currentRoute: string): boolean => {
 
 // Lightweight wrappers around Next.js' navigation APIs
 // that will consider the routing configuration
+export type ValidLinkProps = ComponentProps<typeof Link>['href'];
 export const { Link, redirect, usePathname, useRouter } = createNavigation(routing);

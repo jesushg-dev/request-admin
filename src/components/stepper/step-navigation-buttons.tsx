@@ -8,18 +8,24 @@ interface StepperNavigationButtonsProps {
   isFirstStep: boolean;
   isLastStep: boolean;
   onPrev: () => void;
-  onNext: () => void;
+  onReset: () => void;
   submitText?: string; // Optional custom text for the submit button
   nextText?: string; // Optional custom text for the next button
 }
 
-export const StepperNavigationButtons: React.FC<StepperNavigationButtonsProps> = ({ isFirstStep, isLastStep, onPrev, onNext, submitText = 'Finish', nextText = 'Next' }) => {
+export const StepperNavigationButtons: React.FC<StepperNavigationButtonsProps> = ({ isFirstStep, isLastStep, onPrev, onReset, submitText = 'Finish', nextText = 'Next' }) => {
   return (
     <div className="flex justify-end gap-4">
-      <Button type="button" variant="outline" onClick={onPrev} disabled={isFirstStep}>
-        Back
-      </Button>
-      <Button type="submit">{isLastStep ? submitText : nextText}</Button>
+      {!isLastStep ? (
+        <>
+          <Button variant="secondary" onClick={onPrev} disabled={isFirstStep}>
+            Back
+          </Button>
+          <Button type="submit">{isLastStep ? submitText : nextText}</Button>
+        </>
+      ) : (
+        <Button onClick={onReset}>Reset</Button>
+      )}
     </div>
   );
 };

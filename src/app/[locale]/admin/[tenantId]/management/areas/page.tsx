@@ -1,8 +1,8 @@
 'use client';
 
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, useMemo } from 'react';
 import { useCountArea, useFindManyArea } from '@/services/api/hooks';
-import { DataTableAdvancedFilterField, DataTableFilterField, DataTableRowAction } from '@/types';
+import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
 import { Prisma } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
 import { ChevronDown, ChevronUp } from 'lucide-react';
@@ -15,7 +15,7 @@ import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
 import useTenantId from '@/hooks/use-tenant-id';
 import { Checkbox } from '@/components/ui/checkbox';
-import { CategoryTable, useCategoryTableConfiguration } from '@/components/common/category/category-table';
+import { AssignationCategoryTable, useAssignationCategoryTableConfiguration } from '@/components/common/category/assignation-category-table';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
@@ -30,7 +30,7 @@ const AreaDefaultArgs = Prisma.validator<Prisma.AreaDefaultArgs>()({
     name: true,
     isActive: true,
     createdAt: true,
-    categories: { select: { id: true } },
+    assignationCategories: { select: { id: true } },
     _count: { select: { userAreas: true } },
   },
 });
@@ -47,25 +47,22 @@ const searchParamsParsers = {
   to: parseAsString.withDefault(''),
 };
 
-interface IAreaMainPageProps {}
-
-const AreaMainPage: React.FC<IAreaMainPageProps> = () => {
+const AreaMainPage: React.FC = () => {
   const tenantId = useTenantId();
   const t = useTranslations('admin.area.main');
   const [search] = useQueryStates(searchParamsParsers);
 
-  const { data, isLoading, isError, error, refetch, pageCount } = useFetchTableData<AreaWithRelations, Prisma.AreaFindManyArgs, Prisma.AreaCountArgs>({
+  const { data, isError, error, refetch, isLoading, pageCount } = useFetchTableData<AreaWithRelations, Prisma.AreaFindManyArgs, Prisma.AreaCountArgs>({
     search,
     useCountHook: useCountArea,
     useFindManyHook: useFindManyArea,
     defaultArgs: AreaDefaultArgs,
   });
 
-  const [rowAction, setRowAction] = useState<DataTableRowAction<AreaWithRelations> | null>(null);
-  const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ setRowAction, t }), [setRowAction, t]);
+  const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t }), [t]);
 
   // Grab the category columns from our new, fixed hook so we can pass them to the subcomponent.
-  const { columns: categoryColumns } = useCategoryTableConfiguration({
+  const { columns: categoryColumns } = useAssignationCategoryTableConfiguration({
     entity: 'area',
   });
 
@@ -81,7 +78,7 @@ const AreaMainPage: React.FC<IAreaMainPageProps> = () => {
     },
     shallow: false,
     clearOnDefault: true,
-    getRowCanExpand: (row) => (row.original.categories?.length ?? 0) > 0,
+    getRowCanExpand: (row) => (row.original.assignationCategories?.length ?? 0) > 0,
     getRowId: (originalRow) => originalRow.id,
   });
 
@@ -90,8 +87,14 @@ const AreaMainPage: React.FC<IAreaMainPageProps> = () => {
   }
 
   return (
-    <DataTableShell table={table} isLoading={isLoading} floatingBar={<DataTableFloatingBar table={table} />}>
-      <DataTable table={table} subComponent={{ columns: categoryColumns, render: CategoryTable }}>
+    <DataTableShell table={table} floatingBar={<DataTableFloatingBar table={table} />}>
+      <DataTable
+        table={table}
+        isLoading={isLoading}
+        subComponent={{
+          columns: categoryColumns,
+          render: (props) => <AssignationCategoryTable {...props} />,
+        }}>
         <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
           <DataTableToolbarActions
             table={table}
@@ -109,11 +112,10 @@ const AreaMainPage: React.FC<IAreaMainPageProps> = () => {
 };
 
 interface GetTableConfigurationProps {
-  setRowAction: React.Dispatch<React.SetStateAction<DataTableRowAction<AreaWithRelations> | null>>;
   t: ReturnType<typeof useTranslations>;
 }
 
-export function getTableConfiguration({ setRowAction, t }: GetTableConfigurationProps) {
+export function getTableConfiguration({ t }: GetTableConfigurationProps) {
   const columns: ColumnDef<AreaWithRelations>[] = [
     {
       id: 'name',
@@ -154,7 +156,7 @@ export function getTableConfiguration({ setRowAction, t }: GetTableConfiguration
       size: 20,
     },
     {
-      accessorKey: 'categories',
+      accessorKey: 'assignationCategories',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.categories')} />,
       cell: ({ cell }) => (cell.getValue() as { length: number }).length,
       size: 30,

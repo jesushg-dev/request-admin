@@ -65,7 +65,7 @@ type CustomInstance = FormElementInstance & {
 
 function DesignerComponent({ elementInstance }: { elementInstance: FormElementInstance }) {
   const element = elementInstance as CustomInstance;
-  const { label, required, placeHolder, helperText, rows } = element.extraAttributes;
+  const { label, required, placeHolder, helperText } = element.extraAttributes;
   return (
     <div className="flex w-full flex-col gap-2">
       <Label>

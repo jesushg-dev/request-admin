@@ -1,6 +1,6 @@
 'use client';
 
-import { HierarchyWithRelations } from '../../category/categories-select';
+import { HierarchyWithRelations } from '../../category/request-categories-select';
 import CombinedRequestFormStepper from './combined-request-form-stepper';
 import SeparateRequestFormStepper from './separate-request-form-stepper';
 

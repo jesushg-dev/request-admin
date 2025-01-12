@@ -4,15 +4,17 @@ import { useMemo } from 'react';
 import { useFindManyArea } from '@/services/api/hooks';
 import { useFormContext } from 'react-hook-form';
 
+import { AssignmentLevelType } from '@/types/prisma/hierarchy';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import Select from '@/components/select/select';
 
-import { CategoriesSelect, HierarchyWithRelations } from '../../category/categories-select';
+import { AssignationCategoriesSelect } from '../../category/assignation-categories-select';
 
 type AssignationCategoryStepProps = {
-  assignationCategoryLevels: HierarchyWithRelations['levels'];
+  levels: AssignmentLevelType[];
 };
-const AssignationCategoryStep: React.FC<AssignationCategoryStepProps> = ({ assignationCategoryLevels }) => {
+
+const AssignationCategoryStep: React.FC<AssignationCategoryStepProps> = ({ levels }) => {
   const { control } = useFormContext();
 
   const { data: categories = [], isLoading } = useFindManyArea({
@@ -38,7 +40,7 @@ const AssignationCategoryStep: React.FC<AssignationCategoryStepProps> = ({ assig
         )}
       />
 
-      <CategoriesSelect hierarchyLevels={assignationCategoryLevels} fieldPrefix="assignationCategory" />
+      <AssignationCategoriesSelect levels={levels} fieldPrefix="assignationCategory" />
     </div>
   );
 };
