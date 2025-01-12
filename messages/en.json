@@ -246,11 +246,11 @@
         "steps": {
           "navigationLabel": "Progress Steps",
           "area": "Area",
-          "assignationCategory": "Assignation Category",
+          "assignmentCategory": "Assignment Category",
           "user": "User",
           "finish": "Finish",
           "areaStep": "Go to Area Step",
-          "assignationCategoryStep": "Go to Assignation Category Step",
+          "assignmentCategoryStep": "Go to Assignment Category Step",
           "userStep": "Go to User Step",
           "finishStep": "Go to Finish Step",
           "backButton": "Back",
@@ -353,8 +353,8 @@
         }
       },
       "create": {
-        "title": "Assignation Category",
-        "subtitle": "Create a new assignation category. A category can have multiple and recursive subcategories according to your business needs."
+        "title": "Assignment Category",
+        "subtitle": "Create a new assignment category. A category can have multiple and recursive subcategories according to your business needs."
       }
     },
     "requirement": {

@@ -2935,7 +2935,7 @@ async function createAreas(hierarchyId: string, hierarchyLevelRequestTypeId: str
 }
 
 async function createAreaHierarchy() {
-  const hierarchy = await prisma.assignationHierarchy.create({
+  const hierarchy = await prisma.assignmentHierarchy.create({
     data: {
       name: 'Gestión de solicitudes',
       description: 'Jerarquía de gestión de los tipos, categorías y subcategorías de solicitudes',
@@ -2943,7 +2943,7 @@ async function createAreaHierarchy() {
     },
   });
 
-  const hierarchyLevelRequestType = await prisma.assignationHierarchyLevel.create({
+  const hierarchyLevelRequestType = await prisma.assignmentHierarchyLevel.create({
     data: {
       name: 'Tipo de Solicitud',
       position: 1,
@@ -2952,7 +2952,7 @@ async function createAreaHierarchy() {
     },
   });
 
-  const hierarchyLevelCategory = await prisma.assignationHierarchyLevel.create({
+  const hierarchyLevelCategory = await prisma.assignmentHierarchyLevel.create({
     data: {
       name: 'Categoria',
       position: 2,
@@ -2961,7 +2961,7 @@ async function createAreaHierarchy() {
     },
   });
 
-  const hierarchyLevelSubcategory = await prisma.assignationHierarchyLevel.create({
+  const hierarchyLevelSubcategory = await prisma.assignmentHierarchyLevel.create({
     data: {
       name: 'Subcategoria',
       position: 3,

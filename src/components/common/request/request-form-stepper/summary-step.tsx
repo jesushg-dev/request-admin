@@ -63,7 +63,7 @@ export default function SummaryStep() {
   return (
     <div className="m-1 flex flex-col gap-2">
       {renderCategorySection('Service Category', formData.categories.requestCategory)}
-      {renderCategorySection('Assignation Category', formData.categories.assignationCategory)}
+      {renderCategorySection('Assignment Category', formData.categories.assignmentCategory)}
       {renderRequirementsSection()}
       {renderRequestDetailsSection()}
       {renderDynamicFormSection()}

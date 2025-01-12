@@ -44,6 +44,6 @@ function ActionCell<TData, TValue>({ cell, onUpdate, onDelete, children }: Actio
       </DropdownMenuContent>
     </DropdownMenu>
   );
-};
+}
 
 export { ActionCell };

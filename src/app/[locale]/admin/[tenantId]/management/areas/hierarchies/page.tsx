@@ -1,7 +1,7 @@
 'use client';
 
 import React, { memo, useMemo } from 'react';
-import { useCountAssignationHierarchy, useFindManyAssignationHierarchy } from '@/services/api/hooks';
+import { useCountAssignmentHierarchy, useFindManyAssignmentHierarchy } from '@/services/api/hooks';
 import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
 import { Prisma } from '@prisma/client';
 import { Checkbox } from '@radix-ui/react-checkbox';
@@ -14,7 +14,7 @@ import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
-import { AssignationHierarchyLevelTable, useAssignationLevelTableColumns } from '@/components/common/hierarchy/assignation-hierarchy-level-table';
+import { AssignmentHierarchyLevelTable, useAssignmentLevelTableColumns } from '@/components/common/hierarchy/assignment-hierarchy-level-table';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
 import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-advanced-toolbar';
@@ -22,7 +22,7 @@ import { DataTableColumnHeader } from '@/components/data-table/data-table-column
 import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
 
-const HierarchyDefaultArgs = Prisma.validator<Prisma.AssignationHierarchyDefaultArgs>()({
+const HierarchyDefaultArgs = Prisma.validator<Prisma.AssignmentHierarchyDefaultArgs>()({
   select: {
     id: true,
     name: true,
@@ -33,31 +33,31 @@ const HierarchyDefaultArgs = Prisma.validator<Prisma.AssignationHierarchyDefault
   },
 });
 
-type AssignationHierarchyWithRelations = Prisma.AssignationHierarchyGetPayload<typeof HierarchyDefaultArgs>;
+type AssignmentHierarchyWithRelations = Prisma.AssignmentHierarchyGetPayload<typeof HierarchyDefaultArgs>;
 
 const searchParamsParsers = {
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(10),
-  sort: getSortingStateParser<AssignationHierarchyWithRelations>().withDefault([{ id: 'createdAt', desc: true }]),
-  filters: getFiltersStateParser<AssignationHierarchyWithRelations>().withDefault([]),
+  sort: getSortingStateParser<AssignmentHierarchyWithRelations>().withDefault([{ id: 'createdAt', desc: true }]),
+  filters: getFiltersStateParser<AssignmentHierarchyWithRelations>().withDefault([]),
   joinOperator: parseAsStringEnum(['and', 'or']).withDefault('and'),
   from: parseAsString.withDefault(''),
   to: parseAsString.withDefault(''),
 };
 
-const AssignationHierarchyMainPage: React.FC = () => {
+const AssignmentHierarchyMainPage: React.FC = () => {
   const t = useTranslations('admin.hierarchy.main');
   const [search] = useQueryStates(searchParamsParsers);
 
-  const { data, isLoading, isError, error, refetch, pageCount } = useFetchTableData<AssignationHierarchyWithRelations, Prisma.AssignationHierarchyFindManyArgs, Prisma.AssignationHierarchyCountArgs>({
+  const { data, isLoading, isError, error, refetch, pageCount } = useFetchTableData<AssignmentHierarchyWithRelations, Prisma.AssignmentHierarchyFindManyArgs, Prisma.AssignmentHierarchyCountArgs>({
     search,
-    useCountHook: useCountAssignationHierarchy,
-    useFindManyHook: useFindManyAssignationHierarchy,
+    useCountHook: useCountAssignmentHierarchy,
+    useFindManyHook: useFindManyAssignmentHierarchy,
     defaultArgs: HierarchyDefaultArgs,
   });
 
   const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t }), [t]);
-  const { columns: levelColumns } = useAssignationLevelTableColumns();
+  const { columns: levelColumns } = useAssignmentLevelTableColumns();
 
   const { table } = useDataTable({
     data: data ?? [],
@@ -81,9 +81,9 @@ const AssignationHierarchyMainPage: React.FC = () => {
 
   return (
     <DataTableShell table={table} floatingBar={<DataTableFloatingBar table={table} />}>
-      <DataTable table={table} isLoading={isLoading} subComponent={{ columns: levelColumns, render: AssignationHierarchyLevelTable }}>
+      <DataTable table={table} isLoading={isLoading} subComponent={{ columns: levelColumns, render: AssignmentHierarchyLevelTable }}>
         <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
-          <DataTableToolbarActions table={table} exportFilename="assignation_hierarchies" entityLabel={t('entityLabel')} />
+          <DataTableToolbarActions table={table} exportFilename="assignment_hierarchies" entityLabel={t('entityLabel')} />
         </DataTableAdvancedToolbar>
       </DataTable>
     </DataTableShell>
@@ -95,7 +95,7 @@ interface GetTableConfigurationProps {
 }
 
 export function getTableConfiguration({ t }: GetTableConfigurationProps) {
-  const columns: ColumnDef<AssignationHierarchyWithRelations>[] = [
+  const columns: ColumnDef<AssignmentHierarchyWithRelations>[] = [
     {
       id: 'name',
       header: ({ table }) => (
@@ -150,9 +150,9 @@ export function getTableConfiguration({ t }: GetTableConfigurationProps) {
     },
   ];
 
-  const filterFields: DataTableFilterField<AssignationHierarchyWithRelations>[] = [{ id: 'name', label: t('filters.name'), placeholder: t('filters.namePlaceholder') }];
+  const filterFields: DataTableFilterField<AssignmentHierarchyWithRelations>[] = [{ id: 'name', label: t('filters.name'), placeholder: t('filters.namePlaceholder') }];
 
-  const advancedFilterFields: DataTableAdvancedFilterField<AssignationHierarchyWithRelations>[] = [
+  const advancedFilterFields: DataTableAdvancedFilterField<AssignmentHierarchyWithRelations>[] = [
     { id: 'name', label: t('filters.name'), type: 'text' },
     { id: 'description', label: t('filters.description'), type: 'text' },
   ];
@@ -160,4 +160,4 @@ export function getTableConfiguration({ t }: GetTableConfigurationProps) {
   return { columns, filterFields, advancedFilterFields };
 }
 
-export default memo(AssignationHierarchyMainPage);
+export default memo(AssignmentHierarchyMainPage);

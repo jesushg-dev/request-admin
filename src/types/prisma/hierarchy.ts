@@ -14,8 +14,8 @@ export const RequestHierarchyDefaultArgs = Prisma.validator<Prisma.RequestHierar
 export type RequestHierarchyWithLevelsType = Prisma.RequestHierarchyGetPayload<typeof RequestHierarchyDefaultArgs>;
 export type RequestLevelType = RequestHierarchyWithLevelsType['levels'][0];
 
-// Default select for Assignation Hierarchy
-export const AssignmentHierarchyDefaultArgs = Prisma.validator<Prisma.AssignationHierarchyDefaultArgs>()({
+// Default select for Assignment Hierarchy
+export const AssignmentHierarchyDefaultArgs = Prisma.validator<Prisma.AssignmentHierarchyDefaultArgs>()({
   select: {
     id: true,
     name: true,
@@ -24,5 +24,5 @@ export const AssignmentHierarchyDefaultArgs = Prisma.validator<Prisma.Assignatio
   },
 });
 
-export type AssignmentHierarchyWithLevelsType = Prisma.AssignationHierarchyGetPayload<typeof AssignmentHierarchyDefaultArgs>;
+export type AssignmentHierarchyWithLevelsType = Prisma.AssignmentHierarchyGetPayload<typeof AssignmentHierarchyDefaultArgs>;
 export type AssignmentLevelType = AssignmentHierarchyWithLevelsType['levels'][0];

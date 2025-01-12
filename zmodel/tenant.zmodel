@@ -22,9 +22,9 @@ model Tenant extends Auditable {
   address            String?  // Address for the tenant
 
   // --- Hierarchy Management ---
-  assignationHierarchies      AssignationHierarchy[] 
-  assignationHierarchyLevels  AssignationHierarchyLevel[] 
-  assignationCategories       AssignationCategory[] 
+  assignmentHierarchies      AssignmentHierarchy[] 
+  assignmentHierarchyLevels  AssignmentHierarchyLevel[] 
+  assignmentCategories       AssignmentCategory[] 
   requestHierarchies          RequestHierarchy[] 
   requestHierarchyLevels      RequestHierarchyLevel[] 
   requestCategories           RequestCategory[] 

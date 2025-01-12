@@ -20,38 +20,38 @@ const DEFAULT_SUBCATEGORY = {
   subcategories: [],
 };
 
-type AssignationCategory = {
+type AssignmentCategory = {
   id?: string;
   name: string;
   description?: string;
-  subcategories: AssignationCategory[];
+  subcategories: AssignmentCategory[];
   isEligibleForNewClients?: boolean;
   isSubCategoryVisible?: boolean;
 };
 
-export type AssignationCategoryFormValues = {
-  categories: AssignationCategory[];
+export type AssignmentCategoryFormValues = {
+  categories: AssignmentCategory[];
 };
 
-export const assignationCategoryFormSchema: z.ZodType<AssignationCategory> = z.object({
+export const assignmentCategoryFormSchema: z.ZodType<AssignmentCategory> = z.object({
   id: z.string().optional(),
   name: z.string({ required_error: 'requiredName' }).min(3, 'minName'),
   description: z.string().optional(),
-  subcategories: z.lazy(() => z.array(assignationCategoryFormSchema)),
+  subcategories: z.lazy(() => z.array(assignmentCategoryFormSchema)),
   isEligibleForNewClients: z.boolean().optional(),
   isSubCategoryVisible: z.boolean().optional(),
 });
 
-interface AssignationCategoryFormProps {
+interface AssignmentCategoryFormProps {
   parentPath?: string;
   currentDepth?: number;
   levels: { name: string }[];
   mode?: 'single' | 'multiple';
 }
 
-const AssignationCategoryForm: React.FC<AssignationCategoryFormProps> = ({ parentPath = 'categories', currentDepth = 0, levels, mode = 'multiple' }) => {
+const AssignmentCategoryForm: React.FC<AssignmentCategoryFormProps> = ({ parentPath = 'categories', currentDepth = 0, levels, mode = 'multiple' }) => {
   const t = useTranslations('component.categoryForm');
-  const { control, setValue, watch, formState } = useFormContext<AssignationCategoryFormValues>();
+  const { control, setValue, watch, formState } = useFormContext<AssignmentCategoryFormValues>();
   const { fields, append, remove } = useFieldArray({ control, name: parentPath as 'categories' });
   const categoryName = levels[currentDepth]?.name;
 
@@ -122,7 +122,7 @@ const AssignationCategoryForm: React.FC<AssignationCategoryFormProps> = ({ paren
             </div>
             {currentDepth < levels.length - 1 && isExpanded && (
               <div className="block transition-all duration-300">
-                <AssignationCategoryForm parentPath={`${currentPath}.subcategories`} currentDepth={currentDepth + 1} levels={levels} />
+                <AssignmentCategoryForm parentPath={`${currentPath}.subcategories`} currentDepth={currentDepth + 1} levels={levels} />
               </div>
             )}
           </div>
@@ -138,4 +138,4 @@ const AssignationCategoryForm: React.FC<AssignationCategoryFormProps> = ({ paren
   );
 };
 
-export default memo(AssignationCategoryForm);
+export default memo(AssignmentCategoryForm);

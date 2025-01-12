@@ -5,7 +5,7 @@ import { ColumnDef, getCoreRowModel, Row, useReactTable } from '@tanstack/react-
 import { TableCell, TableRow } from '@/components/ui/table';
 import { DataTable } from '@/components/data-table/data-table';
 
-export const AssignationLevelDefaultArgs = Prisma.validator<Prisma.AssignationHierarchyLevelDefaultArgs>()({
+export const AssignmentLevelDefaultArgs = Prisma.validator<Prisma.AssignmentHierarchyLevelDefaultArgs>()({
   select: {
     id: true,
     name: true,
@@ -13,15 +13,15 @@ export const AssignationLevelDefaultArgs = Prisma.validator<Prisma.AssignationHi
   },
 });
 
-type AssignationLevel = Prisma.AssignationHierarchyLevelGetPayload<typeof AssignationLevelDefaultArgs>;
+type AssignmentLevel = Prisma.AssignmentHierarchyLevelGetPayload<typeof AssignmentLevelDefaultArgs>;
 
-interface AssignationLevelTableProps {
-  row: Row<{ levels: Array<AssignationLevel> }>;
-  columns: ColumnDef<AssignationLevel>[];
+interface AssignmentLevelTableProps {
+  row: Row<{ levels: Array<AssignmentLevel> }>;
+  columns: ColumnDef<AssignmentLevel>[];
   isExpanded: boolean;
 }
 
-export function AssignationHierarchyLevelTable({ row, columns, isExpanded }: AssignationLevelTableProps) {
+export function AssignmentHierarchyLevelTable({ row, columns, isExpanded }: AssignmentLevelTableProps) {
   const table = useReactTable({
     columns,
     data: row.original.levels,
@@ -42,8 +42,8 @@ export function AssignationHierarchyLevelTable({ row, columns, isExpanded }: Ass
   );
 }
 
-export const useAssignationLevelTableColumns = () => {
-  const columns: ColumnDef<AssignationLevel>[] = [
+export const useAssignmentLevelTableColumns = () => {
+  const columns: ColumnDef<AssignmentLevel>[] = [
     {
       accessorKey: 'name',
       header: () => 'Name',

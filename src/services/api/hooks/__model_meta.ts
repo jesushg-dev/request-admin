@@ -95,23 +95,23 @@ const metadata = {
           type: 'String',
           isOptional: true,
         },
-        assignationHierarchies: {
-          name: 'assignationHierarchies',
-          type: 'AssignationHierarchy',
+        assignmentHierarchies: {
+          name: 'assignmentHierarchies',
+          type: 'AssignmentHierarchy',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
         },
-        assignationHierarchyLevels: {
-          name: 'assignationHierarchyLevels',
-          type: 'AssignationHierarchyLevel',
+        assignmentHierarchyLevels: {
+          name: 'assignmentHierarchyLevels',
+          type: 'AssignmentHierarchyLevel',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
         },
-        assignationCategories: {
-          name: 'assignationCategories',
-          type: 'AssignationCategory',
+        assignmentCategories: {
+          name: 'assignmentCategories',
+          type: 'AssignmentCategory',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
@@ -1954,7 +1954,7 @@ const metadata = {
         },
         assignmentCategory: {
           name: 'assignmentCategory',
-          type: 'AssignationCategory',
+          type: 'AssignmentCategory',
           isDataModel: true,
           backLink: 'assignmentRequests',
           isRelationOwner: true,
@@ -3163,9 +3163,9 @@ const metadata = {
           isArray: true,
           backLink: 'area',
         },
-        assignationCategories: {
-          name: 'assignationCategories',
-          type: 'AssignationCategory',
+        assignmentCategories: {
+          name: 'assignmentCategories',
+          type: 'AssignmentCategory',
           isDataModel: true,
           isArray: true,
           backLink: 'area',
@@ -3180,6 +3180,13 @@ const metadata = {
         areaRole: {
           name: 'areaRole',
           type: 'AreaRole',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'area',
+        },
+        assignmentHierarchies: {
+          name: 'assignmentHierarchies',
+          type: 'AssignmentHierarchy',
           isDataModel: true,
           isArray: true,
           backLink: 'area',
@@ -3886,6 +3893,10 @@ const metadata = {
           name: 'id',
           fields: ['id'],
         },
+        name_hierarchyLevelId_parentCategoryId: {
+          name: 'name_hierarchyLevelId_parentCategoryId',
+          fields: ['name', 'hierarchyLevelId', 'parentCategoryId'],
+        },
       },
     },
     sLA: {
@@ -4468,8 +4479,8 @@ const metadata = {
         },
       },
     },
-    assignationHierarchy: {
-      name: 'AssignationHierarchy',
+    assignmentHierarchy: {
+      name: 'AssignmentHierarchy',
       fields: {
         id: {
           name: 'id',
@@ -4512,14 +4523,14 @@ const metadata = {
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$AssignationHierarchy$createdBy,
+          defaultValueProvider: $default$AssignmentHierarchy$createdBy,
         },
         modifiedBy: {
           name: 'modifiedBy',
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$AssignationHierarchy$modifiedBy,
+          defaultValueProvider: $default$AssignmentHierarchy$modifiedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -4531,23 +4542,39 @@ const metadata = {
           name: 'tenant',
           type: 'Tenant',
           isDataModel: true,
-          backLink: 'assignationHierarchies',
+          backLink: 'assignmentHierarchies',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
         levels: {
           name: 'levels',
-          type: 'AssignationHierarchyLevel',
+          type: 'AssignmentHierarchyLevel',
           isDataModel: true,
           isArray: true,
           backLink: 'hierarchy',
         },
         categories: {
           name: 'categories',
-          type: 'AssignationCategory',
+          type: 'AssignmentCategory',
           isDataModel: true,
           isArray: true,
           backLink: 'hierarchy',
+        },
+        areaId: {
+          name: 'areaId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'area',
+        },
+        area: {
+          name: 'area',
+          type: 'Area',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'assignmentHierarchies',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'areaId' },
         },
       },
       uniqueConstraints: {
@@ -4555,14 +4582,14 @@ const metadata = {
           name: 'id',
           fields: ['id'],
         },
-        name_tenantId: {
-          name: 'name_tenantId',
-          fields: ['name', 'tenantId'],
+        name: {
+          name: 'name',
+          fields: ['name'],
         },
       },
     },
-    assignationHierarchyLevel: {
-      name: 'AssignationHierarchyLevel',
+    assignmentHierarchyLevel: {
+      name: 'AssignmentHierarchyLevel',
       fields: {
         id: {
           name: 'id',
@@ -4605,14 +4632,14 @@ const metadata = {
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$AssignationHierarchyLevel$createdBy,
+          defaultValueProvider: $default$AssignmentHierarchyLevel$createdBy,
         },
         modifiedBy: {
           name: 'modifiedBy',
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$AssignationHierarchyLevel$modifiedBy,
+          defaultValueProvider: $default$AssignmentHierarchyLevel$modifiedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -4624,7 +4651,7 @@ const metadata = {
           name: 'tenant',
           type: 'Tenant',
           isDataModel: true,
-          backLink: 'assignationHierarchyLevels',
+          backLink: 'assignmentHierarchyLevels',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
@@ -4636,7 +4663,7 @@ const metadata = {
         },
         hierarchy: {
           name: 'hierarchy',
-          type: 'AssignationHierarchy',
+          type: 'AssignmentHierarchy',
           isDataModel: true,
           backLink: 'levels',
           isRelationOwner: true,
@@ -4644,7 +4671,7 @@ const metadata = {
         },
         categories: {
           name: 'categories',
-          type: 'AssignationCategory',
+          type: 'AssignmentCategory',
           isDataModel: true,
           isArray: true,
           backLink: 'hierarchyLevel',
@@ -4673,8 +4700,8 @@ const metadata = {
         },
       },
     },
-    assignationCategory: {
-      name: 'AssignationCategory',
+    assignmentCategory: {
+      name: 'AssignmentCategory',
       fields: {
         id: {
           name: 'id',
@@ -4717,14 +4744,14 @@ const metadata = {
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$AssignationCategory$createdBy,
+          defaultValueProvider: $default$AssignmentCategory$createdBy,
         },
         modifiedBy: {
           name: 'modifiedBy',
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$AssignationCategory$modifiedBy,
+          defaultValueProvider: $default$AssignmentCategory$modifiedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -4736,7 +4763,7 @@ const metadata = {
           name: 'tenant',
           type: 'Tenant',
           isDataModel: true,
-          backLink: 'assignationCategories',
+          backLink: 'assignmentCategories',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
@@ -4749,7 +4776,7 @@ const metadata = {
         },
         parentCategory: {
           name: 'parentCategory',
-          type: 'AssignationCategory',
+          type: 'AssignmentCategory',
           isDataModel: true,
           isOptional: true,
           backLink: 'subcategories',
@@ -4758,7 +4785,7 @@ const metadata = {
         },
         subcategories: {
           name: 'subcategories',
-          type: 'AssignationCategory',
+          type: 'AssignmentCategory',
           isDataModel: true,
           isArray: true,
           backLink: 'parentCategory',
@@ -4771,7 +4798,7 @@ const metadata = {
         },
         hierarchyLevel: {
           name: 'hierarchyLevel',
-          type: 'AssignationHierarchyLevel',
+          type: 'AssignmentHierarchyLevel',
           isDataModel: true,
           backLink: 'categories',
           isRelationOwner: true,
@@ -4785,7 +4812,7 @@ const metadata = {
         },
         hierarchy: {
           name: 'hierarchy',
-          type: 'AssignationHierarchy',
+          type: 'AssignmentHierarchy',
           isDataModel: true,
           backLink: 'categories',
           isRelationOwner: true,
@@ -4801,7 +4828,7 @@ const metadata = {
           name: 'area',
           type: 'Area',
           isDataModel: true,
-          backLink: 'assignationCategories',
+          backLink: 'assignmentCategories',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'areaId' },
         },
@@ -4817,6 +4844,10 @@ const metadata = {
         id: {
           name: 'id',
           fields: ['id'],
+        },
+        name_hierarchyLevelId_areaId_parentCategoryId_tenantId: {
+          name: 'name_hierarchyLevelId_areaId_parentCategoryId_tenantId',
+          fields: ['name', 'hierarchyLevelId', 'areaId', 'parentCategoryId', 'tenantId'],
         },
       },
     },
@@ -5982,7 +6013,10 @@ const metadata = {
   deleteCascade: {
     tenant: ['UserTenant'],
     user: ['UserTenant', 'Session', 'Account', 'TwoFactorConfirmation', 'Authenticator'],
+    area: ['AssignmentCategory'],
     requestCategory: ['CategoryForm'],
+    assignmentHierarchy: ['AssignmentCategory'],
+    assignmentHierarchyLevel: ['AssignmentCategory'],
     form: ['CategoryForm'],
     formSubmission: ['FormSubmissionKey'],
   },
@@ -6236,27 +6270,27 @@ function $default$RequirementType$modifiedBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$AssignationHierarchy$createdBy(user: any): unknown {
+function $default$AssignmentHierarchy$createdBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$AssignationHierarchy$modifiedBy(user: any): unknown {
+function $default$AssignmentHierarchy$modifiedBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$AssignationHierarchyLevel$createdBy(user: any): unknown {
+function $default$AssignmentHierarchyLevel$createdBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$AssignationHierarchyLevel$modifiedBy(user: any): unknown {
+function $default$AssignmentHierarchyLevel$modifiedBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$AssignationCategory$createdBy(user: any): unknown {
+function $default$AssignmentCategory$createdBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$AssignationCategory$modifiedBy(user: any): unknown {
+function $default$AssignmentCategory$modifiedBy(user: any): unknown {
   return user?.id;
 }
 

@@ -5,12 +5,14 @@ import { defineStepper } from '@stepperize/react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { AssignmentLevelType, RequestLevelType } from '@/types/prisma/hierarchy';
 import { Form } from '@/components/ui/form';
 import { StepNavigation } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 
-import { categorySchema, HierarchyWithRelations } from '../../category/request-categories-select';
-import AssignationCategoryStep from './assignation-category-step';
+import { assignmentCategorySelectSchema } from '../../category/assignment-categories-select';
+import { requestCategorySelectSchema } from '../../category/request-categories-select';
+import AssignmentCategoryStep from './assignment-category-step';
 import DynamicFormStep from './dynamic-form-step';
 import RequestCategoryStep from './request-category-step';
 import RequestDetailsStep from './request-details-step';
@@ -19,8 +21,8 @@ import SummaryStep from './summary-step';
 
 const combinedCategoriesSchema = z.object({
   categories: z.object({
-    requestCategory: z.array(categorySchema),
-    assignationCategory: z.array(categorySchema),
+    requestCategory: z.array(requestCategorySelectSchema),
+    assignmentCategory: z.array(assignmentCategorySelectSchema),
   }),
 });
 
@@ -48,11 +50,11 @@ const { useStepper, utils } = defineStepper(
 );
 
 type CombinedFormProps = {
-  requestCategoryLevels: HierarchyWithRelations['levels'];
-  assignationCategoryLevels: HierarchyWithRelations['levels'];
+  requestLevelTypes: RequestLevelType[];
+  assignmentLevelTypes: AssignmentLevelType[];
 };
 
-const CombinedRequestFormStepper: React.FC<CombinedFormProps> = ({ requestCategoryLevels, assignationCategoryLevels }) => {
+const CombinedRequestFormStepper: React.FC<CombinedFormProps> = ({ requestLevelTypes, assignmentLevelTypes }) => {
   const stepper = useStepper();
 
   const form = useForm({
@@ -76,8 +78,8 @@ const CombinedRequestFormStepper: React.FC<CombinedFormProps> = ({ requestCatego
         {stepper.switch({
           categories: () => (
             <>
-              <RequestCategoryStep requestCategoryLevels={requestCategoryLevels} />
-              <AssignationCategoryStep assignationCategoryLevels={assignationCategoryLevels} />
+              <RequestCategoryStep levels={requestLevelTypes} prefix="categories.requestCategory" />
+              <AssignmentCategoryStep levels={assignmentLevelTypes} prefix="categories.assignmentCategory" />
             </>
           ),
           requirementCompliance: () => <RequirementComplianceStep />,

@@ -15,7 +15,7 @@ import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
 import useTenantId from '@/hooks/use-tenant-id';
 import { Checkbox } from '@/components/ui/checkbox';
-import { AssignationCategoryTable, useAssignationCategoryTableConfiguration } from '@/components/common/category/assignation-category-table';
+import { AssignmentCategoryTable, useAssignmentCategoryTableConfiguration } from '@/components/common/category/assignment-category-table';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
@@ -30,7 +30,7 @@ const AreaDefaultArgs = Prisma.validator<Prisma.AreaDefaultArgs>()({
     name: true,
     isActive: true,
     createdAt: true,
-    assignationCategories: { select: { id: true } },
+    assignmentCategories: { select: { id: true } },
     _count: { select: { userAreas: true } },
   },
 });
@@ -62,7 +62,7 @@ const AreaMainPage: React.FC = () => {
   const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t }), [t]);
 
   // Grab the category columns from our new, fixed hook so we can pass them to the subcomponent.
-  const { columns: categoryColumns } = useAssignationCategoryTableConfiguration({
+  const { columns: categoryColumns } = useAssignmentCategoryTableConfiguration({
     entity: 'area',
   });
 
@@ -78,7 +78,7 @@ const AreaMainPage: React.FC = () => {
     },
     shallow: false,
     clearOnDefault: true,
-    getRowCanExpand: (row) => (row.original.assignationCategories?.length ?? 0) > 0,
+    getRowCanExpand: (row) => (row.original.assignmentCategories?.length ?? 0) > 0,
     getRowId: (originalRow) => originalRow.id,
   });
 
@@ -93,7 +93,7 @@ const AreaMainPage: React.FC = () => {
         isLoading={isLoading}
         subComponent={{
           columns: categoryColumns,
-          render: (props) => <AssignationCategoryTable {...props} />,
+          render: (props) => <AssignmentCategoryTable {...props} />,
         }}>
         <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
           <DataTableToolbarActions
@@ -156,7 +156,7 @@ export function getTableConfiguration({ t }: GetTableConfigurationProps) {
       size: 20,
     },
     {
-      accessorKey: 'assignationCategories',
+      accessorKey: 'assignmentCategories',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.categories')} />,
       cell: ({ cell }) => (cell.getValue() as { length: number }).length,
       size: 30,

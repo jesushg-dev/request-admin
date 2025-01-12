@@ -118,52 +118,52 @@ model RequirementType extends TenantScoped, Auditable, CatalogBase {
   @@unique([name, tenantId])
 }
 
-/// Represents a hierarchy for assignations.
-model AssignationHierarchy extends TenantScoped, Auditable, CatalogBase {
-  levels     AssignationHierarchyLevel[] // Levels within this hierarchy
-  categories AssignationCategory[]       // Categories directly associated with this hierarchy
+/// Represents a hierarchy for assignments.
+model AssignmentHierarchy extends TenantScoped, Auditable, CatalogBase {
+  levels     AssignmentHierarchyLevel[] // Levels within this hierarchy
+  categories AssignmentCategory[]       // Categories directly associated with this hierarchy
   areaId     String?                     @db.UniqueIdentifier // Optional: can be null for global hierarchies
-  area       Area?                       @relation(fields: [areaId], references: [id], onDelete: SetNull, onUpdate: NoAction) // Optional association with Area
+  area       Area?                       @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Optional association with Area
 
-  @@index([name], name: "idx_assignation_hierarchy_name")
+  @@index([name], name: "idx_assignment_hierarchy_name")
   @@unique([name]) // Name uniqueness is already scoped by tenant via TenantScoped
 }
 
 
-/// Represents a level within an assignation hierarchy.
-model AssignationHierarchyLevel extends TenantScoped, Auditable, CatalogBase {
+/// Represents a level within an assignment hierarchy.
+model AssignmentHierarchyLevel extends TenantScoped, Auditable, CatalogBase {
   hierarchyId String                  @db.UniqueIdentifier
-  hierarchy   AssignationHierarchy    @relation(fields: [hierarchyId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cyclic referential actions
-  categories  AssignationCategory[]   // Categories associated with this level
+  hierarchy   AssignmentHierarchy    @relation(fields: [hierarchyId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cyclic referential actions
+  categories  AssignmentCategory[]   // Categories associated with this level
   position    Int
 
   @@unique([position, hierarchyId])
-  @@index([hierarchyId], name: "idx_assignation_hierarchy_level_hierarchy_id")
+  @@index([hierarchyId], name: "idx_assignment_hierarchy_level_hierarchy_id")
   @@validate(position > 0)
   @@unique([hierarchyId, position], name: "unique_hierarchy_position")
   @@unique([name, tenantId])
 }
 
-/// Represents an assignation category, linked to specific rules and an area.
-/// Represents an assignation category, linked to specific rules and an area.
-model AssignationCategory extends TenantScoped, Auditable, CatalogBase {
+/// Represents an assignment category, linked to specific rules and an area.
+/// Represents an assignment category, linked to specific rules and an area.
+model AssignmentCategory extends TenantScoped, Auditable, CatalogBase {
   parentCategoryId String?                    @db.UniqueIdentifier // ID of the parent category
-  parentCategory   AssignationCategory?       @relation("ParentAssignationCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Handle self-relation correctly
-  subcategories    AssignationCategory[]      @relation("ParentAssignationCategory") // Subcategories under this category
+  parentCategory   AssignmentCategory?       @relation("ParentAssignmentCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Handle self-relation correctly
+  subcategories    AssignmentCategory[]      @relation("ParentAssignmentCategory") // Subcategories under this category
 
   hierarchyLevelId String                     @db.UniqueIdentifier
-  hierarchyLevel   AssignationHierarchyLevel  @relation(fields: [hierarchyLevelId], references: [id], onDelete: Cascade, onUpdate: NoAction) // Ensure integrity
+  hierarchyLevel   AssignmentHierarchyLevel  @relation(fields: [hierarchyLevelId], references: [id], onDelete: Cascade, onUpdate: NoAction) // Ensure integrity
   hierarchyId      String                     @db.UniqueIdentifier
-  hierarchy        AssignationHierarchy       @relation(fields: [hierarchyId], references: [id], onDelete: Cascade, onUpdate: NoAction) // Ensure integrity
+  hierarchy        AssignmentHierarchy       @relation(fields: [hierarchyId], references: [id], onDelete: Cascade, onUpdate: NoAction) // Ensure integrity
 
   areaId           String                     @db.UniqueIdentifier
   area             Area                       @relation(fields: [areaId], references: [id], onDelete: Cascade, onUpdate: NoAction) // Maintain referential integrity
 
   assignmentRequests    Request[] @relation("AssignmentCategory") // Requests where this category is the assignment category
 
-  @@index([name, tenantId], name: "idx_assignation_category_name_tenant") 
-  @@index([hierarchyId, tenantId], name: "idx_assignation_category_hierarchy_tenant")
-  @@index([areaId, tenantId], name: "idx_assignation_category_area_tenant")
+  @@index([name, tenantId], name: "idx_assignment_category_name_tenant") 
+  @@index([hierarchyId, tenantId], name: "idx_assignment_category_hierarchy_tenant")
+  @@index([areaId, tenantId], name: "idx_assignment_category_area_tenant")
 
   @@unique([name, hierarchyLevelId, areaId, parentCategoryId, tenantId]) 
 }

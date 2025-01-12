@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useFindManyAssignationCategory } from '@/services/api/hooks';
+import { useFindManyAssignmentCategory } from '@/services/api/hooks';
 import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -7,37 +7,37 @@ import { AssignmentLevelType } from '@/types/prisma/hierarchy';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import Select from '@/components/select/select';
 
-// Schema for assignation categories
-export const assignationCategorySelectSchema = z.object({
+// Schema for assignment categories
+export const assignmentCategorySelectSchema = z.object({
   label: z.string(),
   value: z.string().nonempty('This field is required.'),
   position: z.number(),
 });
 
-export type AssignationCategoryFormValues = z.infer<typeof assignationCategorySelectSchema>;
+export type AssignmentCategoryFormValues = z.infer<typeof assignmentCategorySelectSchema>;
 
-type AssignationCategoriesSelectProps = {
-  fieldPrefix: string;
+type AssignmentCategoriesSelectProps = {
   levels: AssignmentLevelType[];
+  prefix: 'categories.assignmentCategory' | 'assignmentCategory';
 };
 
-export const AssignationCategoriesSelect: React.FC<AssignationCategoriesSelectProps> = ({ levels, fieldPrefix }) => {
-  const { watch, setValue } = useFormContext<Record<string, AssignationCategoryFormValues[]>>();
-  const watchedFields = watch(fieldPrefix, []);
+export const AssignmentCategoriesSelect: React.FC<AssignmentCategoriesSelectProps> = ({ levels, prefix }) => {
+  const { watch, setValue } = useFormContext<Record<string, AssignmentCategoryFormValues[]>>();
+  const watchedFields = watch(prefix, []);
   const activeLevel = useMemo(() => watchedFields.filter((field) => !!field?.value).length, [watchedFields]);
 
   const handleClearLevels = (startIndex: number) => {
     for (let i = startIndex; i < levels.length; i++) {
-      setValue(`${fieldPrefix}.${i}.value`, '');
+      setValue(`${prefix}.${i}.value`, '');
     }
   };
 
   return (
     <div className="flex flex-col gap-4">
       {levels.map((level, index) => (
-        <AssignationCategorySelect
+        <AssignmentCategorySelect
           key={level.id}
-          name={`${fieldPrefix}.${index}`}
+          name={`${prefix}.${index}`}
           hierarchyLevelId={level.id}
           hierarchyLevelName={level.name}
           parentCategoryId={index > 0 ? (watchedFields[index - 1]?.value ?? '') : ''}
@@ -50,7 +50,7 @@ export const AssignationCategoriesSelect: React.FC<AssignationCategoriesSelectPr
   );
 };
 
-type AssignationCategorySelectProps = {
+type AssignmentCategorySelectProps = {
   name: string;
   hierarchyLevelId: string;
   hierarchyLevelName: string;
@@ -60,17 +60,17 @@ type AssignationCategorySelectProps = {
   onClearNextLevels: () => void;
 };
 
-const AssignationCategorySelect: React.FC<AssignationCategorySelectProps> = ({ name, hierarchyLevelId, hierarchyLevelName, parentCategoryId, enabled, position, onClearNextLevels }) => {
-  const { control } = useFormContext<Record<string, AssignationCategoryFormValues[]>>();
+const AssignmentCategorySelect: React.FC<AssignmentCategorySelectProps> = ({ name, hierarchyLevelId, hierarchyLevelName, parentCategoryId, enabled, position, onClearNextLevels }) => {
+  const { control } = useFormContext<Record<string, AssignmentCategoryFormValues[]>>();
 
   const where = parentCategoryId ? { parentCategoryId } : { hierarchyLevelId };
-  const { data: categories = [], isLoading } = useFindManyAssignationCategory({ where }, { enabled });
+  const { data: categories = [], isLoading } = useFindManyAssignmentCategory({ where }, { enabled });
   const options = useMemo(() => categories.map((category) => ({ label: category.name, value: category.id })), [categories]);
 
   return (
     <FormField
       control={control}
-      name={name as `assignationCategory.${number}`}
+      name={name as `assignmentCategory.${number}`}
       render={({ field }) => (
         <FormItem>
           <FormLabel>{hierarchyLevelName}</FormLabel>

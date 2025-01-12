@@ -246,11 +246,11 @@
         "steps": {
           "navigationLabel": "Pasos de Progreso",
           "area": "Área",
-          "assignationCategory": "Categoría de Asignación",
+          "assignmentCategory": "Categoría de Asignación",
           "user": "Usuario",
           "finish": "Finalizar",
           "areaStep": "Ir al paso de Área",
-          "assignationCategoryStep": "Ir al paso de Categoría de Asignación",
+          "assignmentCategoryStep": "Ir al paso de Categoría de Asignación",
           "userStep": "Ir al paso de Usuario",
           "finishStep": "Ir al paso Finalizar",
           "backButton": "Atrás",

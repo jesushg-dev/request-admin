@@ -10,9 +10,9 @@ import { Form } from '@/components/ui/form';
 import { StepNavigation } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 
-import { assignationCategorySelectSchema } from '../../category/assignation-categories-select';
+import { assignmentCategorySelectSchema } from '../../category/assignment-categories-select';
 import { requestCategorySelectSchema } from '../../category/request-categories-select';
-import AssignationCategoryStep from './assignation-category-step';
+import AssignmentCategoryStep from './assignment-category-step';
 import DynamicFormStep from './dynamic-form-step';
 import RequestCategoryStep from './request-category-step';
 import RequestDetailsStep from './request-details-step';
@@ -23,8 +23,8 @@ const requestCategorySchema = z.object({
   requestCategory: z.array(requestCategorySelectSchema),
 });
 
-const assignationCategorySchema = z.object({
-  assignationCategory: z.array(assignationCategorySelectSchema),
+const assignmentCategorySchema = z.object({
+  assignmentCategory: z.array(assignmentCategorySelectSchema),
 });
 
 const separateFormSchema = z.object({
@@ -43,7 +43,7 @@ const separateFormSchema = z.object({
 
 const { useStepper, utils } = defineStepper(
   { id: 'requestCategory', label: 'Request Category', schema: requestCategorySchema },
-  { id: 'assignationCategory', label: 'Assignation Category', schema: assignationCategorySchema },
+  { id: 'assignmentCategory', label: 'Assignment Category', schema: assignmentCategorySchema },
   { id: 'requirementCompliance', label: 'Requirement Compliance', schema: separateFormSchema.shape.requirementCompliance },
   { id: 'requestDetails', label: 'Request Details', schema: separateFormSchema.shape.requestDetails },
   { id: 'dynamicForm', label: 'Dynamic Form', schema: separateFormSchema.shape.dynamicForm },
@@ -51,11 +51,11 @@ const { useStepper, utils } = defineStepper(
 );
 
 type SeparateFormProps = {
-  requestLevels: RequestLevelType[];
-  assignmentLevels: AssignmentLevelType[];
+  requestLevelTypes: RequestLevelType[];
+  assignmentLevelTypes: AssignmentLevelType[];
 };
 
-const SeparateRequestFormStepper: React.FC<SeparateFormProps> = ({ requestLevels, assignmentLevels }) => {
+const SeparateRequestFormStepper: React.FC<SeparateFormProps> = ({ requestLevelTypes, assignmentLevelTypes }) => {
   const stepper = useStepper();
 
   const form = useForm({
@@ -77,8 +77,8 @@ const SeparateRequestFormStepper: React.FC<SeparateFormProps> = ({ requestLevels
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between space-y-6 overflow-hidden rounded-lg border p-6">
         <StepNavigation steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
         {stepper.switch({
-          requestCategory: () => <RequestCategoryStep levels={requestLevels} />,
-          assignationCategory: () => <AssignationCategoryStep levels={assignmentLevels} />,
+          requestCategory: () => <RequestCategoryStep levels={requestLevelTypes} prefix="requestCategory" />,
+          assignmentCategory: () => <AssignmentCategoryStep levels={assignmentLevelTypes} prefix="assignmentCategory" />,
           requirementCompliance: () => <RequirementComplianceStep />,
           requestDetails: () => <RequestDetailsStep />,
           dynamicForm: () => <DynamicFormStep formElements={[]} />,

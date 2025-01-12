@@ -56,7 +56,7 @@ export function HierarchyStep() {
               </FormControl>
               <SelectContent>
                 <SelectItem value="Request">Request</SelectItem>
-                <SelectItem value="Assignation">Assignation</SelectItem>
+                <SelectItem value="Assignment">Assignment</SelectItem>
               </SelectContent>
             </Select>
             <FormDescription>Choose the type of hierarchy you&apos;re creating</FormDescription>

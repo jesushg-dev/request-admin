@@ -1,6 +1,6 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 import { DefaultArgs } from '@prisma/client/runtime/library';
-import { generateUuid, UNSTABLE_TENANT_ID, type AssignationCategoryInput } from 'prisma/util';
+import { generateUuid, UNSTABLE_TENANT_ID, type AssignmentCategoryInput } from 'prisma/util';
 
 export async function createReactivacionArea(
   prisma: PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
@@ -12,7 +12,7 @@ export async function createReactivacionArea(
   const areaId = generateUuid();
   const tenantId = UNSTABLE_TENANT_ID;
 
-  const assignationCategories: AssignationCategoryInput[] = [
+  const assignmentCategories: AssignmentCategoryInput[] = [
     {
       name: 'Solicitud',
       description: '',
@@ -29,7 +29,7 @@ export async function createReactivacionArea(
     },
   ];
 
-  const assignationCategoryData = assignationCategories.map((category) => ({
+  const assignmentCategoryData = assignmentCategories.map((category) => ({
     name: category.name,
     description: category.description,
     tenantId,
@@ -63,8 +63,8 @@ export async function createReactivacionArea(
       name: 'Reactivacion',
       description: '',
       tenantId,
-      assignationCategories: {
-        create: assignationCategoryData,
+      assignmentCategories: {
+        create: assignmentCategoryData,
       },
     },
   });

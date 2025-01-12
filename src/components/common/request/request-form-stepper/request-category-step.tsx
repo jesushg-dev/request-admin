@@ -7,14 +7,15 @@ import { RequestCategoriesSelect } from '../../category/request-categories-selec
 
 type RequestCategoryStepProps = {
   levels: RequestLevelType[];
+  prefix: 'categories.requestCategory' | 'requestCategory';
 };
 
-const RequestCategoryStep: React.FC<RequestCategoryStepProps> = ({ levels }) => {
+const RequestCategoryStep: React.FC<RequestCategoryStepProps> = ({ levels, prefix }) => {
   return (
     <StepScrollArea>
       <div className="m-1 flex flex-col gap-2">
         <h2 className="text-lg font-semibold">Request Category</h2>
-        <RequestCategoriesSelect levels={levels} fieldPrefix="requestCategory" />
+        <RequestCategoriesSelect levels={levels} prefix={prefix} />
       </div>
     </StepScrollArea>
   );

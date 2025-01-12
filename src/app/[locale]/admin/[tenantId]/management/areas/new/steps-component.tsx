@@ -13,7 +13,7 @@ import { UserType } from '@/types/prisma/user';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import AreaForm, { areaFormSchema } from '@/components/common/area/area-form';
-import AssignationCategoryForm, { assignationCategoryFormSchema } from '@/components/common/category/assignation-category-form';
+import AssignmentCategoryForm, { assignmentCategoryFormSchema } from '@/components/common/category/assignment-category-form';
 import AreaRolesForm, { areaRolesFormSchema } from '@/components/common/role/role-form';
 import UserRoleAssignmentForm, { userRoleFormSchema } from '@/components/common/role/user-role-assignment-form';
 import { StepNavigation } from '@/components/stepper/step-navigation';
@@ -22,7 +22,7 @@ import { StepperNavigationButtons } from '@/components/stepper/step-navigation-b
 // Stepper definition
 const { useStepper, utils } = defineStepper(
   { id: 'description', label: 'Description', schema: areaFormSchema },
-  { id: 'assignationCategory', label: 'Assignation Category', schema: assignationCategoryFormSchema },
+  { id: 'assignmentCategory', label: 'Assignment Category', schema: assignmentCategoryFormSchema },
   { id: 'role', label: 'Role', schema: areaRolesFormSchema },
   { id: 'user', label: 'User', schema: userRoleFormSchema },
   { id: 'finish', label: 'Finish', schema: z.object({}) }
@@ -30,13 +30,13 @@ const { useStepper, utils } = defineStepper(
 
 interface StepsComponentProps {
   users: UserType[];
-  assignationLevels: RequestLevelType[];
+  assignmentLevels: RequestLevelType[];
   requirements: RequirementOptionType[];
   moduleWithFeatures: ModuleWithFeaturesType[];
 }
 
 // StepsComponent: Renders stepper and step content
-const StepsComponent: FC<StepsComponentProps> = ({ assignationLevels, users, moduleWithFeatures }) => {
+const StepsComponent: FC<StepsComponentProps> = ({ assignmentLevels, users, moduleWithFeatures }) => {
   const stepper = useStepper();
 
   // Initialize React Hook Form with current step schema
@@ -65,9 +65,9 @@ const StepsComponent: FC<StepsComponentProps> = ({ assignationLevels, users, mod
           <ScrollArea className="w-full flex-1 overflow-y-hidden">
             {stepper.switch({
               description: () => <AreaForm />,
-              assignationCategory: () => (
+              assignmentCategory: () => (
                 <div className="m-1 mr-4 flex flex-1 flex-col gap-2">
-                  <AssignationCategoryForm levels={assignationLevels} />
+                  <AssignmentCategoryForm levels={assignmentLevels} />
                 </div>
               ),
               role: () => <AreaRolesForm moduleWithFeatures={moduleWithFeatures} />,

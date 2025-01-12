@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { useFindFirstAssignationHierarchyLevel, useFindManyAssignationCategory } from '@/services/api/hooks';
+import { useFindFirstAssignmentHierarchyLevel, useFindManyAssignmentCategory } from '@/services/api/hooks';
 import { Prisma } from '@prisma/client';
 import { ColumnDef, getCoreRowModel, Row, useReactTable } from '@tanstack/react-table';
 import { ChevronDown, ChevronUp } from 'lucide-react';
@@ -12,7 +12,7 @@ import { TableCell, TableRow } from '@/components/ui/table';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable } from '@/components/data-table/data-table';
 
-const AssignationCategoryDefaultArgs = Prisma.validator<Prisma.AssignationCategoryDefaultArgs>()({
+const AssignmentCategoryDefaultArgs = Prisma.validator<Prisma.AssignmentCategoryDefaultArgs>()({
   select: {
     id: true,
     name: true,
@@ -23,31 +23,31 @@ const AssignationCategoryDefaultArgs = Prisma.validator<Prisma.AssignationCatego
   },
 });
 
-type AssignationCategory = Prisma.AssignationCategoryGetPayload<typeof AssignationCategoryDefaultArgs>;
+type AssignmentCategory = Prisma.AssignmentCategoryGetPayload<typeof AssignmentCategoryDefaultArgs>;
 
-interface IAssignationCategoryBaseProps {
+interface IAssignmentCategoryBaseProps {
   row: Row<{
-    assignationCategories?: Array<{ id: string }> | null;
+    assignmentCategories?: Array<{ id: string }> | null;
     subcategories?: Array<{ id: string }> | null;
   }>;
-  columns: ColumnDef<AssignationCategory>[];
+  columns: ColumnDef<AssignmentCategory>[];
   isExpanded: boolean;
 }
 
-function AssignationCategorySubTable({ row, columns, isExpanded }: IAssignationCategoryBaseProps) {
+function AssignmentCategorySubTable({ row, columns, isExpanded }: IAssignmentCategoryBaseProps) {
   const ids = useMemo(() => {
-    return [...(row.original.assignationCategories?.map((cat) => cat.id) || []), ...(row.original.subcategories?.map((subcat) => subcat.id) || [])];
-  }, [row.original.assignationCategories, row.original.subcategories]);
+    return [...(row.original.assignmentCategories?.map((cat) => cat.id) || []), ...(row.original.subcategories?.map((subcat) => subcat.id) || [])];
+  }, [row.original.assignmentCategories, row.original.subcategories]);
 
-  const { data, isError, error, refetch } = useFindManyAssignationCategory(
+  const { data, isError, error, refetch } = useFindManyAssignmentCategory(
     {
       where: { id: { in: ids } },
-      select: AssignationCategoryDefaultArgs.select,
+      select: AssignmentCategoryDefaultArgs.select,
     },
     { enabled: isExpanded }
   );
 
-  const { data: hierarchy, isLoading: hierarchyIsLoading } = useFindFirstAssignationHierarchyLevel(
+  const { data: hierarchy, isLoading: hierarchyIsLoading } = useFindFirstAssignmentHierarchyLevel(
     {
       where: { categories: { some: { id: { in: ids } } } },
       select: { name: true },
@@ -80,7 +80,7 @@ function AssignationCategorySubTable({ row, columns, isExpanded }: IAssignationC
             table={nestedTable}
             subComponent={{
               columns,
-              render: (props) => <AssignationCategorySubTable {...props} />,
+              render: (props) => <AssignmentCategorySubTable {...props} />,
             }}
           />
         </div>
@@ -89,14 +89,14 @@ function AssignationCategorySubTable({ row, columns, isExpanded }: IAssignationC
   );
 }
 
-export function AssignationCategoryTable({ row, columns, isExpanded }: IAssignationCategoryBaseProps) {
-  return <AssignationCategorySubTable row={row} columns={columns} isExpanded={isExpanded} />;
+export function AssignmentCategoryTable({ row, columns, isExpanded }: IAssignmentCategoryBaseProps) {
+  return <AssignmentCategorySubTable row={row} columns={columns} isExpanded={isExpanded} />;
 }
 
-export function useAssignationCategoryTableConfiguration({}: { entity?: string }) {
+export function useAssignmentCategoryTableConfiguration({}: { entity?: string }) {
   const t = useTranslations('component.categoryTable');
 
-  const columns: ColumnDef<AssignationCategory>[] = [
+  const columns: ColumnDef<AssignmentCategory>[] = [
     {
       id: 'name',
       accessorKey: 'name',

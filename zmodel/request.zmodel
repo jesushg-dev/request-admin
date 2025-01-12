@@ -29,7 +29,7 @@ model Request extends TenantScoped, Auditable {
 
   // Assignment categorization
   assignmentCategoryId  String              @db.UniqueIdentifier
-  assignmentCategory    AssignationCategory @relation("AssignmentCategory", fields: [assignmentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  assignmentCategory    AssignmentCategory @relation("AssignmentCategory", fields: [assignmentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   // Related documents
   documents             Document[]

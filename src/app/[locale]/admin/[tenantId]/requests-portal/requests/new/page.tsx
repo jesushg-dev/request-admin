@@ -1,68 +1,36 @@
-'use client';
+import React from 'react';
+import { db } from '@/server/db-server';
 
-import React, { useEffect } from 'react';
-import { useFindFirstHierarchy } from '@/services/api/hooks';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
-import { categorySchema, HierarchyDefaultArgs } from '@/components/common/category/request-categories-select';
-import RequestFormStepper from '@/components/common/request/request-form-stepper';
 
-const requestCategorySchema = z.object({
-  requestCategory: z.array(categorySchema),
-  assignationCategory: z.array(categorySchema),
-});
+import { AssignmentHierarchyDefaultArgs, RequestHierarchyDefaultArgs } from '@/types/prisma/hierarchy';
+import CombinedRequestFormStepper from '@/components/common/request/request-form-stepper/combined-request-form-stepper';
+import SeparateRequestFormStepper from '@/components/common/request/request-form-stepper/separate-request-form-stepper';
 
-export type ServiceCategoryForm = z.infer<typeof requestCategorySchema>;
 
-const NewRequestPage: React.FC = () => {
-  const { data: requestHierarchy, isLoading: requestLoading } = useFindFirstHierarchy({
-    select: HierarchyDefaultArgs.select,
-    where: { type: 'Request' },
+
+
+
+const NewRequestPage: React.FC = async () => {
+  const requestHierarchy = await db.requestHierarchy.findFirst({
+    select: RequestHierarchyDefaultArgs.select,
   });
 
-  const { data: assignationHierarchy, isLoading: assignationLoading } = useFindFirstHierarchy({
-    select: HierarchyDefaultArgs.select,
-    where: { type: 'Assignation' },
+  const assignmentHierarchy = await db.assignmentHierarchy.findFirst({
+    select: AssignmentHierarchyDefaultArgs.select,
   });
 
-  const methods = useForm<ServiceCategoryForm>({
-    resolver: zodResolver(requestCategorySchema),
-    defaultValues: {
-      requestCategory: [],
-      assignationCategory: [],
-    },
-  });
-
-  useEffect(() => {
-    if (requestHierarchy) {
-      const defaultRequestValues = requestHierarchy.levels.map((level) => ({
-        id: level.id,
-        value: '',
-        position: level.position,
-      }));
-      methods.setValue('requestCategory', defaultRequestValues);
-    }
-    if (assignationHierarchy) {
-      const defaultAssignationValues = assignationHierarchy.levels.map((level) => ({
-        id: level.id,
-        value: '',
-        position: level.position,
-      }));
-      methods.setValue('assignationCategory', defaultAssignationValues);
-    }
-  }, [requestHierarchy, assignationHierarchy, methods]);
-
-  if (requestLoading || assignationLoading) {
-    return <div>Loading...</div>;
+  if (!requestHierarchy || !assignmentHierarchy) {
+    return null;
   }
 
-  if (!requestHierarchy || !assignationHierarchy) {
-    return <div>No data found</div>;
-  }
+  const shouldSeparateSteps = requestHierarchy.levels.length + assignmentHierarchy.levels.length > 4;
 
-  return <RequestFormStepper requestCategoryLevels={requestHierarchy.levels} assignationCategoryLevels={assignationHierarchy.levels} />;
+  return shouldSeparateSteps ? (
+    <SeparateRequestFormStepper requestLevelTypes={requestHierarchy.levels} assignmentLevelTypes={assignmentHierarchy.levels} />
+  ) : (
+    <CombinedRequestFormStepper requestLevelTypes={requestHierarchy.levels} assignmentLevelTypes={assignmentHierarchy.levels} />
+  );
 };
 
 export default NewRequestPage;

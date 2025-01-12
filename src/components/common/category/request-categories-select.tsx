@@ -17,18 +17,18 @@ export const requestCategorySelectSchema = z.object({
 export type RequestCategorySelectFormValues = z.infer<typeof requestCategorySelectSchema>;
 
 type RequestCategoriesSelectProps = {
-  fieldPrefix: string;
+  prefix: 'categories.requestCategory' | 'requestCategory';
   levels: RequestLevelType[];
 };
 
-export const RequestCategoriesSelect: React.FC<RequestCategoriesSelectProps> = ({ levels, fieldPrefix }) => {
+export const RequestCategoriesSelect: React.FC<RequestCategoriesSelectProps> = ({ levels, prefix }) => {
   const { watch, setValue } = useFormContext<Record<string, RequestCategorySelectFormValues[]>>();
-  const watchedFields = watch(fieldPrefix, []);
+  const watchedFields = watch(prefix, []);
   const activeLevel = useMemo(() => watchedFields.filter((field) => !!field?.value).length, [watchedFields]);
 
   const handleClearLevels = (startIndex: number) => {
     for (let i = startIndex; i < levels.length; i++) {
-      setValue(`${fieldPrefix}.${i}.value`, '');
+      setValue(`${prefix}.${i}.value`, '');
     }
   };
 
@@ -37,7 +37,7 @@ export const RequestCategoriesSelect: React.FC<RequestCategoriesSelectProps> = (
       {levels.map((level, index) => (
         <RequestCategorySelect
           key={level.id}
-          name={`${fieldPrefix}.${index}`}
+          name={`${prefix}.${index}`}
           hierarchyLevelId={level.id}
           hierarchyLevelName={level.name}
           parentCategoryId={index > 0 ? (watchedFields[index - 1]?.value ?? '') : ''}
