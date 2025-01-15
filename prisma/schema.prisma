@@ -153,6 +153,7 @@ model User {
   emailVerified           DateTime?
   password                String
   isTwoFactorEnabled      Boolean                @default(false)
+  isTemporalPassword      Boolean                @default(false)
   twoFactorConfirmationId String?                @db.UniqueIdentifier()
   twoFactorConfirmation   TwoFactorConfirmation?
   Authenticators          Authenticator[]
@@ -163,123 +164,24 @@ model User {
   requestAssignments      RequestAssignment[]
   userRoles               UserRole[]
   members                 Member[]
-  personId                String?                @db.UniqueIdentifier()
-  person                  Person?
   userTenants             UserTenant[]
   userAreas               UserArea[]
 }
 
 model UserTenant {
-  id           String   @id() @default(uuid()) @db.UniqueIdentifier()
-  userId       String   @db.UniqueIdentifier()
-  tenantId     String   @db.UniqueIdentifier()
-  isActive     Boolean  @default(true)
-  joinedAt     DateTime @default(now())
-  isSuperAdmin Boolean  @default(false)
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  id             String   @id() @default(uuid()) @db.UniqueIdentifier()
+  isActive       Boolean  @default(true)
+  isTermAccepted Boolean  @default(false)
+  joinedAt       DateTime @default(now())
+  isSuperAdmin   Boolean  @default(false)
+  userId         String   @db.UniqueIdentifier()
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  personId       String?  @db.UniqueIdentifier()
+  person         Person?
+  tenantId       String   @db.UniqueIdentifier()
+  tenant         Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([userId, tenantId])
-}
-
-model UserRole {
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime? @updatedAt()
-  deletedAt  DateTime?
-  createdBy  String?   @db.VarChar(50)
-  modifiedBy String?   @db.VarChar(50)
-  tenantId   String    @db.UniqueIdentifier()
-  tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id         String    @id() @default(uuid()) @db.UniqueIdentifier()
-  isActive   Boolean   @default(true)
-  userId     String    @db.UniqueIdentifier()
-  roleId     String    @db.UniqueIdentifier()
-  user       User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  role       Role      @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-/// Represents a system role within a tenant.
-/// Roles define sets of features that can be assigned to users.
-model Role {
-  id          String        @id() @default(uuid()) @db.UniqueIdentifier()
-  name        String        @db.VarChar(100)
-  description String?       @db.VarChar(255)
-  isActive    Boolean       @default(true)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime?     @updatedAt()
-  deletedAt   DateTime?
-  createdBy   String?       @db.VarChar(50)
-  modifiedBy  String?       @db.VarChar(50)
-  tenantId    String        @db.UniqueIdentifier()
-  tenant      Tenant        @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  userRole    UserRole[]
-  roleFeature RoleFeature[]
-
-  @@unique([name, tenantId])
-  @@index([name], name: "idx_role_name")
-}
-
-/// Module also known as a feature or section of the application that can be enabled or disabled
-/// in other terms, it also works as feature flags for the application to enable or disable features
-/// based on if the module is enabled or disabled for the tenant or user
-model Module {
-  id          String    @id() @default(uuid()) @db.UniqueIdentifier()
-  name        String    @db.VarChar(100)
-  description String?   @db.VarChar(255)
-  isActive    Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime? @updatedAt()
-  deletedAt   DateTime?
-  createdBy   String?   @db.VarChar(50)
-  modifiedBy  String?   @db.VarChar(50)
-  tenantId    String    @db.UniqueIdentifier()
-  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  feature     Feature[]
-
-  @@unique([name, tenantId])
-  @@index([name], name: "idx_module_name")
-}
-
-/// Represents features in the system. 
-/// A single table handles both global features and area-specific features using the `scope` field.
-/// Features are linked to modules for better organization and can be assigned to global roles or area roles.
-model Feature {
-  id              String            @id() @default(uuid()) @db.UniqueIdentifier()
-  name            String            @db.VarChar(100)
-  description     String?           @db.VarChar(255)
-  isActive        Boolean           @default(true)
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime?         @updatedAt()
-  deletedAt       DateTime?
-  createdBy       String?           @db.VarChar(50)
-  modifiedBy      String?           @db.VarChar(50)
-  tenantId        String            @db.UniqueIdentifier()
-  tenant          Tenant            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  key             String            @unique() @db.VarChar(100)
-  scope           String            @default("global")
-  moduleId        String            @db.UniqueIdentifier()
-  module          Module            @relation(fields: [moduleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  roleFeature     RoleFeature[]
-  areaRoleFeature AreaRoleFeature[]
-  planFeatures    PlanFeature[]
-
-  @@unique([key, tenantId])
-}
-
-model RoleFeature {
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime? @updatedAt()
-  deletedAt  DateTime?
-  createdBy  String?   @db.VarChar(50)
-  modifiedBy String?   @db.VarChar(50)
-  tenantId   String    @db.UniqueIdentifier()
-  tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id         String    @id() @default(uuid()) @db.UniqueIdentifier()
-  isActive   Boolean   @default(true)
-  roleId     String    @db.UniqueIdentifier()
-  featureId  String    @db.UniqueIdentifier()
-  role       Role      @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  feature    Feature   @relation(fields: [featureId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model Session {
@@ -1054,6 +956,106 @@ model FormSubmissionKey {
   @@index([key, value])
 }
 
+model UserRole {
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @updatedAt()
+  deletedAt  DateTime?
+  createdBy  String?   @db.VarChar(50)
+  modifiedBy String?   @db.VarChar(50)
+  tenantId   String    @db.UniqueIdentifier()
+  tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id         String    @id() @default(uuid()) @db.UniqueIdentifier()
+  isActive   Boolean   @default(true)
+  userId     String    @db.UniqueIdentifier()
+  roleId     String    @db.UniqueIdentifier()
+  user       User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  role       Role      @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// Represents a system role within a tenant.
+/// Roles define sets of features that can be assigned to users.
+model Role {
+  id          String        @id() @default(uuid()) @db.UniqueIdentifier()
+  name        String        @db.VarChar(100)
+  description String?       @db.VarChar(255)
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime?     @updatedAt()
+  deletedAt   DateTime?
+  createdBy   String?       @db.VarChar(50)
+  modifiedBy  String?       @db.VarChar(50)
+  tenantId    String        @db.UniqueIdentifier()
+  tenant      Tenant        @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  userRole    UserRole[]
+  roleFeature RoleFeature[]
+
+  @@unique([name, tenantId])
+  @@index([name], name: "idx_role_name")
+}
+
+/// Module also known as a feature or section of the application that can be enabled or disabled
+/// in other terms, it also works as feature flags for the application to enable or disable features
+/// based on if the module is enabled or disabled for the tenant or user
+model Module {
+  id          String    @id() @default(uuid()) @db.UniqueIdentifier()
+  name        String    @db.VarChar(100)
+  description String?   @db.VarChar(255)
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt()
+  deletedAt   DateTime?
+  createdBy   String?   @db.VarChar(50)
+  modifiedBy  String?   @db.VarChar(50)
+  tenantId    String    @db.UniqueIdentifier()
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  feature     Feature[]
+
+  @@unique([name, tenantId])
+  @@index([name], name: "idx_module_name")
+}
+
+/// Represents features in the system. 
+/// A single table handles both global features and area-specific features using the `scope` field.
+/// Features are linked to modules for better organization and can be assigned to global roles or area roles.
+model Feature {
+  id              String            @id() @default(uuid()) @db.UniqueIdentifier()
+  name            String            @db.VarChar(100)
+  description     String?           @db.VarChar(255)
+  isActive        Boolean           @default(true)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime?         @updatedAt()
+  deletedAt       DateTime?
+  createdBy       String?           @db.VarChar(50)
+  modifiedBy      String?           @db.VarChar(50)
+  tenantId        String            @db.UniqueIdentifier()
+  tenant          Tenant            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  key             String            @unique() @db.VarChar(100)
+  scope           String            @default("global")
+  moduleId        String            @db.UniqueIdentifier()
+  module          Module            @relation(fields: [moduleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  roleFeature     RoleFeature[]
+  areaRoleFeature AreaRoleFeature[]
+  planFeatures    PlanFeature[]
+
+  @@unique([key, tenantId])
+}
+
+model RoleFeature {
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @updatedAt()
+  deletedAt  DateTime?
+  createdBy  String?   @db.VarChar(50)
+  modifiedBy String?   @db.VarChar(50)
+  tenantId   String    @db.UniqueIdentifier()
+  tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id         String    @id() @default(uuid()) @db.UniqueIdentifier()
+  isActive   Boolean   @default(true)
+  roleId     String    @db.UniqueIdentifier()
+  featureId  String    @db.UniqueIdentifier()
+  role       Role      @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  feature    Feature   @relation(fields: [featureId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
 model Workspace {
   tenantId     String         @db.UniqueIdentifier()
   tenant       Tenant         @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -1176,14 +1178,14 @@ model Person {
   phone                String?            @db.VarChar(50)
   identificationNumber String             @default("") @db.VarChar(110)
   image                String?
-  userId               String?            @unique() @db.UniqueIdentifier()
-  user                 User?              @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  userTenantId         String?            @unique() @db.UniqueIdentifier()
+  userTenant           UserTenant?        @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   identificationTypeId String             @db.UniqueIdentifier()
   identificationType   IdentificationType @relation(fields: [identificationTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([phone, tenantId])
   @@unique([email, tenantId])
-  @@unique([userId, tenantId])
+  @@unique([userTenantId, tenantId])
   @@unique([identificationNumber, tenantId])
 }
 

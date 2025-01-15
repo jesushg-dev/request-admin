@@ -2,6 +2,7 @@ import './abstract.zmodel'
 import './auth.zmodel'
 import './request.zmodel'
 import './category.zmodel'
+import './permission.zmodel'
 
 /// Represents an organizational area within a tenant.
 /// Areas allow grouping of users, categories, and request assignments in a specific organizational scope.

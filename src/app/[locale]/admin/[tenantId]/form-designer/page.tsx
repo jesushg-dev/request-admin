@@ -3,7 +3,7 @@ import { GetForms, GetFormStats } from '@/actions/form';
 import { Link } from '@/i18n/routing';
 import { Form } from '@prisma/client';
 import { formatDistance } from 'date-fns';
-import { ArrowRightIcon, BookOpenCheckIcon, FilePenLineIcon, MousePointerClickIcon, ViewIcon, WindArrowDownIcon } from 'lucide-react';
+import { ArrowDownIcon, ArrowRightIcon, BookOpenCheckIcon, FilePenLineIcon, MousePointerClickIcon, ViewIcon } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
 import { Badge } from '@/components/ui/badge';
@@ -73,7 +73,7 @@ const StatsCards = async (props: StatsCardProps) => {
       />
       <StatsCard
         title={t('bounceRate')}
-        icon={<WindArrowDownIcon className="h-4 w-4 text-red-600" />}
+        icon={<ArrowDownIcon className="h-4 w-4 text-red-600" />}
         helperText={t('bounceRateHelper')}
         value={data?.bounceRate.toLocaleString() + '%'}
         loading={loading}

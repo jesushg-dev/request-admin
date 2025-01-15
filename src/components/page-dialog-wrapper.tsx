@@ -4,15 +4,16 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
-interface DialogWrapperProps {
+interface PageDialogWrapperProps {
   title: string;
+  description?: string;
   children: React.ReactNode;
   className?: string;
 }
 
-export default function DialogWrapper({ title, children, className }: DialogWrapperProps) {
+export default function PageDialogWrapper({ title, description, children, className }: PageDialogWrapperProps) {
   const [isOpen, setIsOpen] = useState(true);
   const router = useRouter();
 
@@ -28,6 +29,7 @@ export default function DialogWrapper({ title, children, className }: DialogWrap
       <DialogContent className={cn('sm:max-w-[425px]', className)}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
+          {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
         {children}
       </DialogContent>

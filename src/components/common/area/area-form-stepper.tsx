@@ -14,7 +14,7 @@ import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import AreaForm, { areaFormSchema } from '@/components/common/area/area-form';
 import AssignmentCategoryForm, { assignmentCategoryFormSchema } from '@/components/common/category/assignment-category-form';
-import AreaRolesForm, { areaRolesFormSchema } from '@/components/common/role/role-form';
+import RolesForm, { rolesFormSchema } from '@/components/common/role/role-form';
 import UserRoleAssignmentForm, { userRoleFormSchema } from '@/components/common/role/user-role-assignment-form';
 import { StepNavigation } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
@@ -23,20 +23,20 @@ import { StepperNavigationButtons } from '@/components/stepper/step-navigation-b
 const { useStepper, utils } = defineStepper(
   { id: 'description', label: 'Description', schema: areaFormSchema },
   { id: 'assignmentCategory', label: 'Assignment Category', schema: assignmentCategoryFormSchema },
-  { id: 'role', label: 'Role', schema: areaRolesFormSchema },
+  { id: 'role', label: 'Role', schema: rolesFormSchema },
   { id: 'user', label: 'User', schema: userRoleFormSchema },
   { id: 'finish', label: 'Finish', schema: z.object({}) }
 );
 
-interface StepsComponentProps {
+interface AreaFormStepperProps {
   users: UserType[];
   assignmentLevels: RequestLevelType[];
   requirements: RequirementOptionType[];
   moduleWithFeatures: ModuleWithFeaturesType[];
 }
 
-// StepsComponent: Renders stepper and step content
-const StepsComponent: FC<StepsComponentProps> = ({ assignmentLevels, users, moduleWithFeatures }) => {
+// AreaFormStepper: Renders stepper and step content
+const AreaFormStepper: FC<AreaFormStepperProps> = ({ assignmentLevels, users, moduleWithFeatures }) => {
   const stepper = useStepper();
 
   // Initialize React Hook Form with current step schema
@@ -70,7 +70,7 @@ const StepsComponent: FC<StepsComponentProps> = ({ assignmentLevels, users, modu
                   <AssignmentCategoryForm levels={assignmentLevels} />
                 </div>
               ),
-              role: () => <AreaRolesForm moduleWithFeatures={moduleWithFeatures} />,
+              role: () => <RolesForm moduleWithFeatures={moduleWithFeatures} isBatch={true} />,
               user: () => <UserRoleAssignmentForm userArray={users} roleArray={[]} />,
               finish: () => <div>Finish</div>,
             })}
@@ -83,4 +83,4 @@ const StepsComponent: FC<StepsComponentProps> = ({ assignmentLevels, users, modu
   );
 };
 
-export default StepsComponent;
+export default AreaFormStepper;

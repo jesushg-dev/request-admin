@@ -36,11 +36,15 @@ export const getUserByIdWithFeatures = async (id: string) => {
         email: true,
         isTwoFactorEnabled: true,
         isGlobalAdmin: true,
-        person: {
+        userTenants: {
           select: {
-            firstName: true,
-            lastName: true,
-            image: true,
+            person: {
+              select: {
+                firstName: true,
+                lastName: true,
+                image: true,
+              },
+            },
           },
         },
         userRoles: {

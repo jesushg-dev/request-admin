@@ -361,9 +361,9 @@ export function useCheckUser<TError = DefaultError>(
       email?: string;
       password?: string;
       isTwoFactorEnabled?: boolean;
+      isTemporalPassword?: boolean;
       twoFactorConfirmationId?: string;
       isGlobalAdmin?: boolean;
-      personId?: string;
     };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions

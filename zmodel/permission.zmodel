@@ -1,0 +1,79 @@
+
+import './abstract.zmodel'
+import './auth.zmodel'
+import './tenant.zmodel'
+import './area.zmodel'
+
+model UserRole extends TenantScoped, Auditable {
+  // Primary identifier
+  id              String    @id @default(uuid()) @db.UniqueIdentifier
+  isActive       Boolean   @default(true) // Flag for active user role
+
+  // Relationships
+  userId          String    @db.UniqueIdentifier // Reference to the linked User
+  roleId          String    @db.UniqueIdentifier // Reference to the linked Role
+  user            User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  role            Role      @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// Represents a system role within a tenant.
+/// Roles define sets of features that can be assigned to users.
+model Role extends TenantScoped, Auditable, CatalogBase {
+  // Relationships
+  userRole        UserRole[] // Links this role to users via the UserRole model
+  roleFeature  RoleFeature[] // Links this role to features via RoleFeature
+
+  // Index for efficient lookups by role name
+  @@index([name], name: "idx_role_name")
+  @@unique([name, tenantId])
+}
+
+/// Module also known as a feature or section of the application that can be enabled or disabled
+/// in other terms, it also works as feature flags for the application to enable or disable features
+/// based on if the module is enabled or disabled for the tenant or user
+model Module extends TenantScoped, Auditable, CatalogBase {
+  // Relationships
+  feature      Feature[] // Features associated with this module
+
+  // Index for efficient lookups by module name
+  @@index([name], name: "idx_module_name")
+  @@unique([name, tenantId])
+}
+
+/// Represents features in the system. 
+/// A single table handles both global features and area-specific features using the `scope` field.
+/// Features are linked to modules for better organization and can be assigned to global roles or area roles.
+model Feature extends TenantScoped, Auditable, CatalogBase {
+  key             String     @db.VarChar(100) @unique // Unique key for the feature (for system use)
+
+  // Scope of the feature: "global" for system-wide features or "area" for area-specific features
+  scope           String     @default("global") // Example: "global", "area"
+
+  // Reference to the module this feature belongs to, used for logical grouping of features
+  moduleId        String     @db.UniqueIdentifier 
+  module          Module     @relation(fields: [moduleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  // Links this feature to global roles
+  roleFeature  RoleFeature[] 
+
+  // Links this feature to area-specific roles
+  areaRoleFeature AreaRoleFeature[] 
+
+  // Links this feature to permissions
+  planFeatures PlanFeature[]
+  
+  @@validate(scope in ["global", "area"])
+  @@unique([key, tenantId])
+}
+
+model RoleFeature extends TenantScoped, Auditable {
+  // Primary identifier
+  id              String     @id @default(uuid()) @db.UniqueIdentifier
+  isActive       Boolean    @default(true) // Flag for active role feature
+
+  // Relationships
+  roleId          String     @db.UniqueIdentifier // Reference to the linked Role
+  featureId    String     @db.UniqueIdentifier // Reference to the linked Feature
+  role            Role       @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  feature      Feature @relation(fields: [featureId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}

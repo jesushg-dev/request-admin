@@ -97,14 +97,15 @@ export const authConfig: NextAuthConfig = {
 
       token.isOAuth = !!existingAccount;
       token.email = existingUser.email;
-      token.picture = existingUser.person?.image;
+      // todo: we should find a way to get the current tenant id here so we can get the correct person info for the user in the current tenant
+      token.picture = existingUser.userTenants[0]?.person?.image;
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
       token.features = existingUser.features || [];
       token.roles = existingUser.roles || [];
-      token.name = existingUser.person?.firstName && existingUser.person?.lastName ? `${existingUser.person.firstName} ${existingUser.person.lastName}` : 'No Name';
-      token.image = existingUser.person?.image || '';
-      token.firstName = existingUser.person?.firstName || '';
-      token.lastName = existingUser.person?.lastName || '';
+      token.name = existingUser.userTenants[0]?.person?.firstName && existingUser.userTenants[0]?.person?.lastName ? `${existingUser.userTenants[0]?.person.firstName} ${existingUser.userTenants[0]?.person.lastName}` : 'No Name';
+      token.image = existingUser.userTenants[0]?.person?.image || '';
+      token.firstName = existingUser.userTenants[0]?.person?.firstName || '';
+      token.lastName = existingUser.userTenants[0]?.person?.lastName || '';
       token.isGlobalAdmin = existingUser.isGlobalAdmin;
 
       return token;

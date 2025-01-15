@@ -380,7 +380,7 @@ export function useCheckPerson<TError = DefaultError>(
       phone?: string;
       identificationNumber?: string;
       image?: string;
-      userId?: string;
+      userTenantId?: string;
       identificationTypeId?: string;
     };
   },

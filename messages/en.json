@@ -501,7 +501,8 @@
         "draft": "Draft",
         "noDescription": "No description",
         "viewSubmissions": "View submissions",
-        "editForm": "Edit form"
+        "editForm": "Edit form",
+        "createNewForm": "Create new form"
       },
       "view": {
         "formNotFound": "Form not found",

@@ -24,6 +24,7 @@ import { createResuelvaReactivacionArea } from './area-seed/resuelva-reactivacio
 import { createSerdicoReactivacionArea } from './area-seed/serdico-reactivacion.area';
 import { createTrasladosDeEquiposArea } from './area-seed/traslados-equipos.area';
 import { UNSTABLE_TENANT_ID } from './util';
+import { connect } from 'http2';
 
 const prisma = new PrismaClient();
 
@@ -80,26 +81,25 @@ async function main() {
       isGlobalAdmin: true,
       userTenants: {
         create: {
+          id: '98c74680-9b23-473d-a105-b2591e2cd187',
           tenantId: UNSTABLE_TENANT_ID,
           isActive: true,
           joinedAt: new Date(),
           isSuperAdmin: true,
+          person: {
+            create: {
+              id: '7B159275-47A7-4957-9419-4ABBAED5B8AD',
+              firstName: 'Jesus',
+              lastName: 'Hernandez',
+              email: 'jesus.hernandez@gmail.com',
+              phone: '89898989',
+              identificationNumber: '134-123456-0000A',
+              identificationTypeId: dnIdentificationType.id,
+              tenantId: UNSTABLE_TENANT_ID
+            }
+          }
         },
       },
-    },
-  });
-
-  await prisma.person.create({
-    data: {
-      id: '7B159275-47A7-4957-9419-4ABBAED5B8AD',
-      firstName: 'Jesus',
-      lastName: 'Hernandez',
-      email: 'jesus.hernandez@gmail.com',
-      phone: '89898989',
-      identificationNumber: '134-123456-0000A',
-      identificationTypeId: dnIdentificationType.id,
-      tenantId: UNSTABLE_TENANT_ID,
-      userId: user.id,
     },
   });
 
@@ -116,22 +116,20 @@ async function main() {
           isActive: true,
           joinedAt: new Date(),
           isSuperAdmin: true,
+          person: {
+            create: {
+              id: 'FB420CF8-8820-4FB7-9FE5-BFE7B2F83894',
+              firstName: 'Danilo',
+              lastName: 'Acevedo',
+              email: 'Danico.Acevedo@gmail.com',
+              phone: '12345678',
+              identificationNumber: '254-555456-0000A',
+              identificationTypeId: dnIdentificationType.id,
+              tenantId: UNSTABLE_TENANT_ID,
+            }
+          }
         },
       },
-    },
-  });
-
-  await prisma.person.create({
-    data: {
-      id: 'FB420CF8-8820-4FB7-9FE5-BFE7B2F83894',
-      firstName: 'Danilo',
-      lastName: 'Acevedo',
-      email: 'Danico.Acevedo@gmail.com',
-      phone: '12345678',
-      identificationNumber: '254-555456-0000A',
-      identificationTypeId: dnIdentificationType.id,
-      tenantId: UNSTABLE_TENANT_ID,
-      userId: secondUser.id,
     },
   });
 

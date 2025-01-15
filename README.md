@@ -1,5 +1,5 @@
 # Web System for Service Request Management
-
+https://ui.shadcn.com/examples/mail
 ## Overview
 
 This web system has been designed to optimize the management of service requests in the telecommunications industry. The system implements modern web technologies such as React, Next.js, Prisma, and TypeScript to deliver a scalable, user-friendly, and efficient platform for managing service requests.

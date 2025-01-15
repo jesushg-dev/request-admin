@@ -1,6 +1,6 @@
 'use client';
 
-import { ComponentProps } from 'react';
+import { ComponentProps, useMemo } from 'react';
 import { Link } from '@/i18n/routing';
 import { ChevronRight, type LucideIcon } from 'lucide-react';
 
@@ -15,21 +15,22 @@ export type MenuItem = {
   items?: {
     title: string;
     icon?: LucideIcon;
-    url: ComponentProps<typeof Link>['href'];
+    url: ComponentProps<typeof Link>['href']
   }[];
 };
 
-export function NavMain({ items }: { items: MenuItem[] }) {
+export function NavMain({ items, currentPath }: { items: MenuItem[], currentPath: string }) {
+  const activeKey = useMemo(() => items.find((item) => item.items?.some((subItem) => currentPath === (subItem.url as { pathname: string }).pathname))?.title, [items, currentPath]);
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
-          <Collapsible key={item.title} asChild defaultOpen={item.isActive} className="group/collapsible">
+          <Collapsible key={item.title} asChild defaultOpen={item.isActive || item.title === activeKey}>
             {item.url && item.items?.length === 0 ? (
               <SidebarMenuItem>
                 <SidebarMenuButton tooltip={item.title} asChild>
-                  <Link href={item.url} className="text-xs">
+                  <Link href={item.url} className={`text-xs ${currentPath === (item.url as { pathname: string }).pathname ? 'font-semibold' : ''}`}>
                     {item.icon && <item.icon />}
                     {item.title}
                   </Link>
@@ -49,7 +50,7 @@ export function NavMain({ items }: { items: MenuItem[] }) {
                     {item.items?.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild className="py-1">
-                          <Link href={subItem.url} className="text-xs">
+                          <Link href={subItem.url} className={`text-xs  ${currentPath === (subItem.url as { pathname: string }).pathname ? 'font-semibold' : ''}`}>
                             {subItem.icon && <subItem.icon />}
                             {subItem.title}
                           </Link>

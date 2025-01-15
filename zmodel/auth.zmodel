@@ -4,43 +4,47 @@ import './request.zmodel'
 import './messenger.zmodel'
 import './person.zmodel'
 import './area.zmodel'
+import './permission.zmodel'
 
 model User extends Auditable {
   id                   String    @id @default(uuid()) @db.UniqueIdentifier
-  username             String   @unique // Unique username for login
-  email                String   @unique // Unique email address
-  emailVerified        DateTime? // Timestamp for email verification
-  password             String    @password @omit // Hashed password, excluded from client queries
-  isTwoFactorEnabled   Boolean   @default(false) // Flag for two-factor authentication
-  twoFactorConfirmationId String? @db.UniqueIdentifier // ID for two-factor confirmation
-  twoFactorConfirmation TwoFactorConfirmation? // Related two-factor confirmation record
-  Authenticators       Authenticator[] // WebAuthn authenticators (optional)
-  isGlobalAdmin        Boolean   @default(false) // Flag for super admin status
+  username             String   @unique 
+  email                String   @unique 
+  emailVerified        DateTime? 
+  password             String    @password @omit 
+  isTwoFactorEnabled   Boolean   @default(false)
+  isTemporalPassword   Boolean   @default(false)
+  twoFactorConfirmationId String? @db.UniqueIdentifier
+  twoFactorConfirmation TwoFactorConfirmation?
+  Authenticators       Authenticator[]
+  isGlobalAdmin        Boolean   @default(false)
 
-  workspaces           Workspace[] // Workspaces linked to the user
-  accounts             Account[] // Linked authentication accounts (e.g., OAuth)
-  sessions             Session[] // Active sessions of the user
-  requestAssignments   RequestAssignment[] // Requests assigned to the user
-  userRoles            UserRole[] // User's roles in the system
-  members              Member[] // Memberships in groups or projects
+  workspaces           Workspace[] 
+  accounts             Account[] 
+  sessions             Session[] 
+  requestAssignments   RequestAssignment[] 
+  userRoles            UserRole[] 
+  members              Member[] 
 
-  personId             String?    @db.UniqueIdentifier // Reference to the linked Person entity
-  person               Person? // Optional link to Person entity
-  userTenants          UserTenant[] // Relation to UserTenant
+  userTenants          UserTenant[] 
 
-  // New relationship with UserArea
-  userAreas            UserArea[] // Intermediate relationship between User and Area
+  userAreas            UserArea[] 
 }
 
 model UserTenant {
   id               String    @id @default(uuid()) @db.UniqueIdentifier
-  userId           String    @db.UniqueIdentifier
-  tenantId         String    @db.UniqueIdentifier
   isActive         Boolean   @default(true) // Indicates if the user is active in the tenant
+  isTermAccepted   Boolean   @default(false) // Indicates if the user has accepted the terms of the tenant
   joinedAt         DateTime  @default(now()) // Timestamp of when the user joined the tenant
   isSuperAdmin       Boolean   @default(false) // Flag for super admin status
 
+  userId           String    @db.UniqueIdentifier
   user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  personId             String?    @db.UniqueIdentifier 
+  person               Person? 
+
+  tenantId         String    @db.UniqueIdentifier
   tenant           Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([userId, tenantId]) // Ensure unique user-tenant relationships
@@ -49,79 +53,6 @@ model UserTenant {
   @@allow('update', isActive == true && (user.id == auth().id)) 
 }
 
-model UserRole extends TenantScoped, Auditable {
-  // Primary identifier
-  id              String    @id @default(uuid()) @db.UniqueIdentifier
-  isActive       Boolean   @default(true) // Flag for active user role
-
-  // Relationships
-  userId          String    @db.UniqueIdentifier // Reference to the linked User
-  roleId          String    @db.UniqueIdentifier // Reference to the linked Role
-  user            User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  role            Role      @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-/// Represents a system role within a tenant.
-/// Roles define sets of features that can be assigned to users.
-model Role extends TenantScoped, Auditable, CatalogBase {
-  // Relationships
-  userRole        UserRole[] // Links this role to users via the UserRole model
-  roleFeature  RoleFeature[] // Links this role to features via RoleFeature
-
-  // Index for efficient lookups by role name
-  @@index([name], name: "idx_role_name")
-  @@unique([name, tenantId])
-}
-
-/// Module also known as a feature or section of the application that can be enabled or disabled
-/// in other terms, it also works as feature flags for the application to enable or disable features
-/// based on if the module is enabled or disabled for the tenant or user
-model Module extends TenantScoped, Auditable, CatalogBase {
-  // Relationships
-  feature      Feature[] // Features associated with this module
-
-  // Index for efficient lookups by module name
-  @@index([name], name: "idx_module_name")
-  @@unique([name, tenantId])
-}
-
-/// Represents features in the system. 
-/// A single table handles both global features and area-specific features using the `scope` field.
-/// Features are linked to modules for better organization and can be assigned to global roles or area roles.
-model Feature extends TenantScoped, Auditable, CatalogBase {
-  key             String     @db.VarChar(100) @unique // Unique key for the feature (for system use)
-
-  // Scope of the feature: "global" for system-wide features or "area" for area-specific features
-  scope           String     @default("global") // Example: "global", "area"
-
-  // Reference to the module this feature belongs to, used for logical grouping of features
-  moduleId        String     @db.UniqueIdentifier 
-  module          Module     @relation(fields: [moduleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  // Links this feature to global roles
-  roleFeature  RoleFeature[] 
-
-  // Links this feature to area-specific roles
-  areaRoleFeature AreaRoleFeature[] 
-
-  // Links this feature to permissions
-  planFeatures PlanFeature[]
-  
-  @@validate(scope in ["global", "area"])
-  @@unique([key, tenantId])
-}
-
-model RoleFeature extends TenantScoped, Auditable {
-  // Primary identifier
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
-  isActive       Boolean    @default(true) // Flag for active role feature
-
-  // Relationships
-  roleId          String     @db.UniqueIdentifier // Reference to the linked Role
-  featureId    String     @db.UniqueIdentifier // Reference to the linked Feature
-  role            Role       @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  feature      Feature @relation(fields: [featureId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
 
 model Session {
   // Primary identifier

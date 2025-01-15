@@ -1,9 +1,21 @@
-'use client';
+import { db } from '@/server/db-server';
 
-import React from 'react';
+import { ModuleDefaultArgs } from '@/types/prisma/module';
+import { RequirementDefaultArgs } from '@/types/prisma/requirement';
+import { UserDefaultArgs } from '@/types/prisma/user';
+import RoleFormStepper from '@/components/common/role/role-form-stepper';
 
-const NewRolePage: React.FC = () => {
-  return <div className="flex w-full flex-1 flex-col gap-4"></div>;
-};
+export default async function NewRolePage() {
+  const requirements = await db.requirement.findMany({ ...RequirementDefaultArgs });
+  const modules = await db.module.findMany({
+    ...ModuleDefaultArgs,
+    where: {
+      feature: { some: { scope: 'global' } },
+    },
+  });
+  const users = await db.user.findMany({ ...UserDefaultArgs });
 
-export default NewRolePage;
+  const preparedRequirements = requirements.map((req) => ({ value: req.id, label: req.name }));
+
+  return <RoleFormStepper requirements={preparedRequirements} users={users} moduleWithFeatures={modules} />;
+}

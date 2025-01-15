@@ -4,8 +4,7 @@ import { AssignmentHierarchyDefaultArgs } from '@/types/prisma/hierarchy';
 import { ModuleDefaultArgs } from '@/types/prisma/module';
 import { RequirementDefaultArgs } from '@/types/prisma/requirement';
 import { UserDefaultArgs } from '@/types/prisma/user';
-
-import StepsComponent from './steps-component';
+import AreaFormStepper from '@/components/common/area/area-form-stepper';
 
 export default async function NewAreaPage() {
   // Fetch hierarchy data using Prisma
@@ -14,7 +13,9 @@ export default async function NewAreaPage() {
   const requirements = await db.requirement.findMany({ ...RequirementDefaultArgs });
   const modules = await db.module.findMany({
     ...ModuleDefaultArgs,
-    where: { feature: { some: { NOT: { scope: 'global' } } } },
+    where: {
+      feature: { some: { scope: 'area' } },
+    },
   });
   const users = await db.user.findMany({ ...UserDefaultArgs });
 
@@ -26,5 +27,5 @@ export default async function NewAreaPage() {
 
   const levels = hierarchy.levels.sort((a, b) => a.position - b.position);
 
-  return <StepsComponent assignmentLevels={levels} requirements={preparedRequirements} users={users} moduleWithFeatures={modules} />;
+  return <AreaFormStepper assignmentLevels={levels} requirements={preparedRequirements} users={users} moduleWithFeatures={modules} />;
 }

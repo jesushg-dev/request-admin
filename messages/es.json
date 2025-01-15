@@ -501,7 +501,8 @@
         "draft": "Borrador",
         "noDescription": "Sin descripción",
         "viewSubmissions": "Ver envíos",
-        "editForm": "Editar formulario"
+        "editForm": "Editar formulario",
+        "createNewForm": "Crear nuevo formulario"
       },
       "view": {
         "formNotFound": "Formulario no encontrado",

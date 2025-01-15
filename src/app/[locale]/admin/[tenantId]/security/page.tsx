@@ -1,161 +1,39 @@
-import { ComponentProps } from 'react';
-import { Link } from '@/i18n/routing';
-import { db } from '@/server/db-server';
-import { DeleteIcon, PlusIcon, TrashIcon } from 'lucide-react';
-import { getTranslations } from 'next-intl/server';
+import { Metadata } from 'next';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { RolesTable } from '@/components/common/security/roles-table';
+import { StatsCard } from '@/components/common/security/stats-card';
+import { UsersTable } from '@/components/common/security/users-table';
 
-export default async function SecurityDashboardPage() {
-  const tenantId = 'tenantId'; //getTenantIdFromUrl(pathname);
-  const t = await getTranslations('admin.security');
+export const metadata: Metadata = {
+  title: 'Security Dashboard',
+  description: "A comprehensive view of your system's security status",
+};
 
-  //get user count
-  const userCount = await db.user.count();
-  const roleCount = await db.role.count();
-
+export default function SecurityDashboard() {
   return (
     <div className="flex flex-1 flex-col gap-4">
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        <StatCard
-          count={userCount}
-          title={t('users.title')}
-          viewText={t('users.view')}
-          addText={t('users.add')}
-          viewLink={{ pathname: '/admin/[tenantId]/security/users', params: { tenantId } }}
-          addLink={{ pathname: '/admin/[tenantId]/security/users/new', params: { tenantId } }}
-        />
-        <StatCard
-          count={roleCount}
-          title={t('roles.title')}
-          viewText={t('roles.view')}
-          addText={t('roles.add')}
-          viewLink={{ pathname: '/admin/[tenantId]/security/roles', params: { tenantId } }}
-          addLink={{ pathname: '/admin/[tenantId]/security/roles/new', params: { tenantId } }}
-        />
-        {/* <StatCard
-          title={t('features.title')}
-          count={featureCount}
-          viewText={t('features.view')}
-          addText={t('features.add')}
-          viewLink={{ pathname: '/admin/[tenantId]/security/user', params: { tenantId } }}
-          addLink={{ pathname: '/admin/[tenantId]/security/user/new', params: { tenantId } }}
-        />*/}
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold tracking-tight">Security Dashboard</h2>
       </div>
-      <div className="flex flex-col gap-2">
-        <h2 className="text-2xl font-bold">{t('recentUsers')}</h2>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{t('table.name')}</TableHead>
-              <TableHead>{t('table.email')}</TableHead>
-              <TableHead>{t('table.role')}</TableHead>
-              <TableHead>{t('table.actions')}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell>
-                <div className="flex items-center gap-3">
-                  <Avatar>
-                    <AvatarImage src="/placeholder-user.jpg" alt="John Doe" style={{ objectFit: 'contain', objectPosition: 'center' }} />
-                    <AvatarFallback>JD</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <div className="font-medium">John Doe</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">{t('users.softwareEngineer')}</div>
-                  </div>
-                </div>
-              </TableCell>
-              <TableCell>john.doe@example.com</TableCell>
-              <TableCell>
-                <Badge variant="outline" className="rounded-full">
-                  {t('roles.admin')}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  <Link href="#" prefetch={false}>
-                    <DeleteIcon className="h-4 w-4" />
-                  </Link>
-                  <Button variant="ghost" size="icon">
-                    <TrashIcon className="h-4 w-4" />
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <div className="flex items-center gap-3">
-                  <Avatar>
-                    <AvatarImage src="/placeholder-user.jpg" alt="Jane Smith" style={{ objectFit: 'contain', objectPosition: 'center' }} />
-                    <AvatarFallback>JS</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <div className="font-medium">Jane Smith</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">{t('users.productManager')}</div>
-                  </div>
-                </div>
-              </TableCell>
-              <TableCell>jane.smith@example.com</TableCell>
-              <TableCell>
-                <Badge variant="outline" className="rounded-full">
-                  {t('roles.manager')}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  <Link href="#" prefetch={false}>
-                    <DeleteIcon className="h-4 w-4" />
-                  </Link>
-                  <Button variant="ghost" size="icon">
-                    <TrashIcon className="h-4 w-4" />
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <StatsCard title="Total Users" value="2,350" description="Active accounts in the system" trend="no-change" addLink="/users/add" viewLink="/users" />
+        <StatsCard title="Active Roles" value="15" description="Defined system roles" trend="no-change" addLink="/roles/add" viewLink="/roles" />
+        <StatsCard title="Failed Login Attempts" value="23" description="In the last 24 hours" trend="no-change" addLink="/security/login-attempts/add" viewLink="/security/login-attempts" />
+        <StatsCard title="Password Resets" value="8" description="Requests in the last 7 days" trend="no-change" addLink="/security/password-resets/add" viewLink="/security/password-resets" />
       </div>
+      <Tabs defaultValue="users" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="users">Users</TabsTrigger>
+          <TabsTrigger value="roles">Roles</TabsTrigger>
+        </TabsList>
+        <TabsContent value="users" className="space-y-4">
+          <UsersTable />
+        </TabsContent>
+        <TabsContent value="roles" className="space-y-4">
+          <RolesTable />
+        </TabsContent>
+      </Tabs>
     </div>
-  );
-}
-
-interface StatCardProps {
-  title: string;
-  count: number;
-  viewText: string;
-  addText: string;
-  viewLink: ComponentProps<typeof Link>['href'];
-  addLink: ComponentProps<typeof Link>['href'];
-}
-
-function StatCard({ title, count, viewText, addText, viewLink, addLink }: StatCardProps) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>
-          <span className="text-4xl font-bold">{count}</span>
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-center justify-between">
-          <Link href={viewLink} className="text-sm font-medium underline" prefetch={false}>
-            {viewText}
-          </Link>
-          <Button size="sm">
-            <Link href={addLink} className="flex gap-2" prefetch={false}>
-              <PlusIcon className="h-4 w-4" />
-              {addText}
-            </Link>
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
   );
 }

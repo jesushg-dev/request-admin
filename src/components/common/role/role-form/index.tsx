@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { Plus, Trash } from 'lucide-react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
@@ -21,7 +21,7 @@ const DEFAULT_ROLE = {
 };
 
 // Validation Schema
-export const areaRolesFormSchema = z.object({
+export const rolesFormSchema = z.object({
   roles: z
     .array(
       z.object({
@@ -42,23 +42,29 @@ export const areaRolesFormSchema = z.object({
 });
 
 // Types
-export type RoleFormValues = z.infer<typeof areaRolesFormSchema>;
+export type RoleFormBatchValues = z.infer<typeof rolesFormSchema>;
 
-interface AreaRolesFormProps {
+interface RolesFormProps {
+  isBatch?: boolean;
   moduleWithFeatures: ModuleWithFeaturesType[];
 }
 
-const AreaRolesForm: FC<AreaRolesFormProps> = ({ moduleWithFeatures }) => {
-  const { control, formState } = useFormContext<RoleFormValues>();
-  console.log('🚀 ~ formState:', formState.errors);
+const RolesForm: FC<RolesFormProps> = ({ moduleWithFeatures, isBatch }) => {
+  const { control, formState } = useFormContext<RoleFormBatchValues>();
   const { fields: roles, append: appendRole, remove: removeRole } = useFieldArray({ control, name: 'roles' });
 
   const addRole = () => appendRole({ ...DEFAULT_ROLE });
 
+  useEffect(() => {
+    if (!isBatch && roles.length === 0) {
+      addRole();
+    }
+  }, []);
+
   return (
-    <div className="flex flex-col gap-2">
+    <div className="mx-1 mr-4 flex flex-col gap-2">
       {roles.map((role, roleIndex) => (
-        <div key={role.id || roleIndex} className="relative flex items-end gap-2 rounded border p-4">
+        <div key={role.id || roleIndex} className={`relative flex ${isBatch ? 'items-end rounded border p-4' : 'flex-col'} gap-2`}>
           {/* Role Name */}
           <FormField
             control={control}
@@ -74,19 +80,23 @@ const AreaRolesForm: FC<AreaRolesFormProps> = ({ moduleWithFeatures }) => {
             )}
           />
 
-          <FeatureRoleFormDialog roleIndex={roleIndex} modules={moduleWithFeatures} />
+          <FeatureRoleFormDialog roleIndex={roleIndex} modules={moduleWithFeatures} isBatch={isBatch} />
 
-          <Button type="button" className="relative" variant="destructive" size="sm" onClick={() => removeRole(roleIndex)}>
-            <Trash className="size-4" />
-          </Button>
+          {isBatch && (
+            <Button type="button" className="relative" variant="destructive" size="sm" onClick={() => removeRole(roleIndex)}>
+              <Trash className="size-4" />
+            </Button>
+          )}
         </div>
       ))}
-      <Button type="button" variant="outline" role="combobox" size="sm" className="border-2 border-dashed" onClick={addRole}>
-        <Plus className="mr-2 size-4" />
-        Add Role
-      </Button>
+      {isBatch && (
+        <Button type="button" variant="outline" role="combobox" size="sm" className="border-2 border-dashed" onClick={addRole}>
+          <Plus className="mr-2 size-4" />
+          Add Role
+        </Button>
+      )}
     </div>
   );
 };
 
-export default AreaRolesForm;
+export default RolesForm;

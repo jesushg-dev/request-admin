@@ -30,6 +30,7 @@ import { MenuItem, NavMain } from './nav-main';
 import { MenuProject, NavProjects } from './nav-projects';
 import { NavUser } from './nav-user';
 import { TenantSwitcher } from './tenant-switcher';
+import { usePathname } from '@/i18n/routing';
 
 const projects: MenuProject[] = [
   {
@@ -61,6 +62,7 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 
 export function AppSidebar({ tenants, user, ...props }: AppSidebarProps) {
   const tenantId = useTenantId();
+  const pathname = usePathname();
   const t = useTranslations('admin.sidebar');
 
   const navMain: MenuItem[] = React.useMemo(() => {
@@ -123,11 +125,6 @@ export function AppSidebar({ tenants, user, ...props }: AppSidebarProps) {
             url: { pathname: '/admin/[tenantId]/management/areas/hierarchies', params: { tenantId } },
             icon: ListTreeIcon,
           },
-          {
-            title: t('identificationTypes'),
-            url: { pathname: '/admin/[tenantId]/management/identification-types', params: { tenantId } },
-            icon: IdCardIcon,
-          },
         ],
       },
       {
@@ -139,6 +136,11 @@ export function AppSidebar({ tenants, user, ...props }: AppSidebarProps) {
             title: t('dashboard'),
             url: { pathname: '/admin/[tenantId]/security', params: { tenantId } },
             icon: RadarIcon,
+          },
+          {
+            title: t('identificationTypes'),
+            url: { pathname: '/admin/[tenantId]/security/identification-types', params: { tenantId } },
+            icon: IdCardIcon,
           },
           {
             title: t('roles'),
@@ -161,7 +163,7 @@ export function AppSidebar({ tenants, user, ...props }: AppSidebarProps) {
         <TenantSwitcher isGlobalAdmin={user.isGlobalAdmin} tenants={tenants} tenantId={tenantId} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={navMain} />
+        <NavMain items={navMain} currentPath={pathname} />
         <NavProjects projects={projects} />
       </SidebarContent>
       <SidebarFooter>

@@ -62,6 +62,19 @@ const securityPathnames = {
     en: '/admin/[tenantId]/security/users/[slug]/edit',
     es: '/admin/[tenantId]/seguridad/usuarios/[slug]/editar',
   },
+  // identification types
+  '/admin/[tenantId]/security/identification-types': {
+    en: '/admin/[tenantId]/security/identification-types',
+    es: '/admin/[tenantId]/seguridad/tipos-de-identificacion',
+  },
+  '/admin/[tenantId]/security/identification-types/new': {
+    en: '/admin/[tenantId]/security/identification-types/new',
+    es: '/admin/[tenantId]/seguridad/tipos-de-identificacion/nuevo',
+  },
+  '/admin/[tenantId]/security/identification-types/[slug]': {
+    en: '/admin/[tenantId]/security/identification-types/[slug]',
+    es: '/admin/[tenantId]/seguridad/tipos-de-identificacion/[slug]',
+  },
 } satisfies Pathnames<Locale[]>;
 
 const managementPathnames = {
@@ -98,11 +111,6 @@ const managementPathnames = {
   '/admin/[tenantId]/management/areas/hierarchies/[slug]/edit': {
     en: '/admin/[tenantId]/management/areas/hierarchies/[slug]/edit',
     es: '/admin/[tenantId]/gestion/areas/jerarquias/[slug]/editar',
-  },
-  // identification types
-  '/admin/[tenantId]/management/identification-types': {
-    en: '/admin/[tenantId]/management/identification-types',
-    es: '/admin/[tenantId]/gestion/tipos-de-identificacion',
   },
 } satisfies Pathnames<Locale[]>;
 
@@ -198,6 +206,10 @@ const formsPathnames = {
   '/admin/[tenantId]/form-designer': {
     en: '/admin/[tenantId]/form-designer',
     es: '/admin/[tenantId]/disenador-de-formularios',
+  },
+  '/admin/[tenantId]/form-designer/new': {
+    en: '/admin/[tenantId]/form-designer/new',
+    es: '/admin/[tenantId]/disenador-de-formularios/nuevo',
   },
   '/admin/[tenantId]/form-designer/[slug]': {
     en: '/admin/[tenantId]/form-designer/[slug]',
