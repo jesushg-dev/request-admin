@@ -1,7 +1,9 @@
 'use client';
 
 import * as React from 'react';
+import { usePathname } from '@/i18n/routing';
 import { ExtendedUser } from '@/server/auth/config';
+import { DndContext, DragEndEvent, useDroppable } from '@dnd-kit/core';
 import {
   ClipboardIcon,
   FileTextIcon,
@@ -26,11 +28,11 @@ import { useTranslations } from 'next-intl';
 import useTenantId from '@/hooks/use-tenant-id';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '@/components/ui/sidebar';
 
+import { NavFormSubmissions } from './nav-form-submissions';
 import { MenuItem, NavMain } from './nav-main';
 import { MenuProject, NavProjects } from './nav-projects';
 import { NavUser } from './nav-user';
 import { TenantSwitcher } from './tenant-switcher';
-import { usePathname } from '@/i18n/routing';
 
 const projects: MenuProject[] = [
   {
@@ -58,12 +60,18 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     logoUrl: string | null;
     description: string | null;
   }[];
+  children: React.ReactNode;
 }
 
-export function AppSidebar({ tenants, user, ...props }: AppSidebarProps) {
+export function AppSidebar({ tenants, user, children, ...props }: AppSidebarProps) {
   const tenantId = useTenantId();
   const pathname = usePathname();
   const t = useTranslations('admin.sidebar');
+
+  const [navigation, setNavigation] = React.useState<MenuItem[]>([]);
+  const { setNodeRef, isOver } = useDroppable({
+    id: 'form-submissions',
+  });
 
   const navMain: MenuItem[] = React.useMemo(() => {
     return [
@@ -157,19 +165,53 @@ export function AppSidebar({ tenants, user, ...props }: AppSidebarProps) {
     ];
   }, [t, tenantId]);
 
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && over.id === 'form-submissions') {
+      const draggedForm = forms.find((form) => form.title === active.id);
+
+      if (draggedForm) {
+        setNavigation((prev) => {
+          if (forms.some((item) => item.title === draggedForm.title)) {
+            return prev;
+          }
+
+          return prev.map((section) => {
+            return {
+              ...section,
+              items: [
+                ...section.items,
+                {
+                  title: draggedForm.title,
+                  url: draggedForm.url,
+                },
+              ],
+            };
+            return section;
+          });
+        });
+      }
+    }
+  };
+
   return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <TenantSwitcher isGlobalAdmin={user.isGlobalAdmin} tenants={tenants} tenantId={tenantId} />
-      </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={navMain} currentPath={pathname} />
-        <NavProjects projects={projects} />
-      </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={user} />
-      </SidebarFooter>
-      <SidebarRail />
-    </Sidebar>
+    <DndContext onDragEnd={handleDragEnd}>
+      <Sidebar collapsible="icon" {...props}>
+        <SidebarHeader>
+          <TenantSwitcher isGlobalAdmin={user.isGlobalAdmin} tenants={tenants} tenantId={tenantId} />
+        </SidebarHeader>
+        <SidebarContent>
+          <NavMain items={navMain} currentPath={pathname} />
+          <NavFormSubmissions forms={[]} />
+          <NavProjects projects={projects} />
+        </SidebarContent>
+        <SidebarFooter>
+          <NavUser user={user} />
+        </SidebarFooter>
+        <SidebarRail />
+      </Sidebar>
+      {children}
+    </DndContext>
   );
 }
