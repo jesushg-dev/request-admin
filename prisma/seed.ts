@@ -1,3 +1,4 @@
+import { connect } from 'http2';
 import { PrismaClient } from '@prisma/client';
 
 import { hashPassword } from '@/lib/password';
@@ -24,7 +25,6 @@ import { createResuelvaReactivacionArea } from './area-seed/resuelva-reactivacio
 import { createSerdicoReactivacionArea } from './area-seed/serdico-reactivacion.area';
 import { createTrasladosDeEquiposArea } from './area-seed/traslados-equipos.area';
 import { UNSTABLE_TENANT_ID } from './util';
-import { connect } from 'http2';
 
 const prisma = new PrismaClient();
 
@@ -95,9 +95,9 @@ async function main() {
               phone: '89898989',
               identificationNumber: '134-123456-0000A',
               identificationTypeId: dnIdentificationType.id,
-              tenantId: UNSTABLE_TENANT_ID
-            }
-          }
+              tenantId: UNSTABLE_TENANT_ID,
+            },
+          },
         },
       },
     },
@@ -126,8 +126,8 @@ async function main() {
               identificationNumber: '254-555456-0000A',
               identificationTypeId: dnIdentificationType.id,
               tenantId: UNSTABLE_TENANT_ID,
-            }
-          }
+            },
+          },
         },
       },
     },

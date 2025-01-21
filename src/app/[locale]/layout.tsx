@@ -77,7 +77,7 @@ export default async function RootLayout({ children, params }: Props) {
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body id="body" className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col antialiased`}>
         <SessionProvider session={session}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <NextIntlClientProvider locale={locale} messages={messages}>

@@ -4,15 +4,11 @@ import { auth } from '@/server/auth';
 import { db } from '@/server/db-server';
 import { getTranslations } from 'next-intl/server';
 
-
-
 import { SidebarProvider } from '@/components/ui/sidebar';
+import { Toaster } from '@/components/ui/sonner';
 import { AppSidebar } from '@/components/layouts/admin/app-sidebar';
+import { DndSubmissionProvider } from '@/components/layouts/admin/dnd-submission-provider';
 import { Navbar } from '@/components/layouts/admin/nav-bar';
-
-
-
-
 
 export async function generateMetadata(props: { params: { locale: string } }): Promise<Metadata> {
   const params = await props.params;
@@ -53,12 +49,15 @@ export default async function RootLayout({
 
   return (
     <SidebarProvider>
-      <AppSidebar tenants={tenants} user={session.user}>
+      <DndSubmissionProvider>
+        <AppSidebar tenants={tenants} user={session.user} />
         <main className="flex h-screen w-full flex-1 flex-col overflow-hidden">
           <Navbar tenants={tenants} />
-          <div className="flex flex-1 overflow-hidden p-4">{children}</div>
+          <div className="flex flex-1 overflow-hidden">{children}</div>
+
+          <Toaster />
         </main>
-      </AppSidebar>
+      </DndSubmissionProvider>
     </SidebarProvider>
   );
 }

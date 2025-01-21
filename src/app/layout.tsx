@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 
 import './globals.css';
+import 'react-complex-tree/lib/style-modern.css';
 
 type Props = {
   children: ReactNode;

@@ -102,7 +102,10 @@ export const authConfig: NextAuthConfig = {
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
       token.features = existingUser.features || [];
       token.roles = existingUser.roles || [];
-      token.name = existingUser.userTenants[0]?.person?.firstName && existingUser.userTenants[0]?.person?.lastName ? `${existingUser.userTenants[0]?.person.firstName} ${existingUser.userTenants[0]?.person.lastName}` : 'No Name';
+      token.name =
+        existingUser.userTenants[0]?.person?.firstName && existingUser.userTenants[0]?.person?.lastName
+          ? `${existingUser.userTenants[0]?.person.firstName} ${existingUser.userTenants[0]?.person.lastName}`
+          : 'No Name';
       token.image = existingUser.userTenants[0]?.person?.image || '';
       token.firstName = existingUser.userTenants[0]?.person?.firstName || '';
       token.lastName = existingUser.userTenants[0]?.person?.lastName || '';

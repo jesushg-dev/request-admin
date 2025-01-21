@@ -11,15 +11,15 @@ export type MenuItem = {
   title: string;
   icon?: LucideIcon;
   isActive?: boolean;
-  url?: ComponentProps<typeof Link>['href'];
+  url: ComponentProps<typeof Link>['href'];
   items?: {
     title: string;
     icon?: LucideIcon;
-    url: ComponentProps<typeof Link>['href']
+    url: ComponentProps<typeof Link>['href'];
   }[];
 };
 
-export function NavMain({ items, currentPath }: { items: MenuItem[], currentPath: string }) {
+export function NavMain({ items, currentPath }: { items: MenuItem[]; currentPath: string }) {
   const activeKey = useMemo(() => items.find((item) => item.items?.some((subItem) => currentPath === (subItem.url as { pathname: string }).pathname))?.title, [items, currentPath]);
   return (
     <SidebarGroup>
@@ -50,7 +50,7 @@ export function NavMain({ items, currentPath }: { items: MenuItem[], currentPath
                     {item.items?.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild className="py-1">
-                          <Link href={subItem.url} className={`text-xs  ${currentPath === (subItem.url as { pathname: string }).pathname ? 'font-semibold' : ''}`}>
+                          <Link href={subItem.url} className={`text-xs ${currentPath === (subItem.url as { pathname: string }).pathname ? 'font-semibold' : ''}`}>
                             {subItem.icon && <subItem.icon />}
                             {subItem.title}
                           </Link>

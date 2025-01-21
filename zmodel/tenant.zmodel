@@ -10,155 +10,156 @@ import './category.zmodel'
 import './permission.zmodel'
 
 model Tenant extends Auditable {
-  id                 String   @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for the tenant
-  name               String   // Tenant name
-  logoUrl            String?  // URL for the tenant's logo
-  websiteUrl         String?  // URL for the tenant's website
-  title              String?  // Title or tagline for the tenant
-  description        String?  // Brief description of the tenant
-  primaryColor       String?  // Primary color for branding
-  secondaryColor     String?  // Secondary color for branding
-  contactEmail       String?  // Tenant's contact email
-  contactPhone       String?  // Tenant's contact phone number
-  address            String?  // Address for the tenant
+  id                             String                          @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for the tenant
+  name                           String   // Tenant name
+  logoUrl                        String?  // URL for the tenant's logo
+  websiteUrl                     String?  // URL for the tenant's website
+  title                          String?  // Title or tagline for the tenant
+  description                    String?  // Brief description of the tenant
+  primaryColor                   String?  // Primary color for branding
+  secondaryColor                 String?  // Secondary color for branding
+  contactEmail                   String?  // Tenant's contact email
+  contactPhone                   String?  // Tenant's contact phone number
+  address                        String?  // Address for the tenant
 
   // --- Hierarchy Management ---
-  assignmentHierarchies      AssignmentHierarchy[] 
-  assignmentHierarchyLevels  AssignmentHierarchyLevel[] 
-  assignmentCategories       AssignmentCategory[] 
-  requestHierarchies          RequestHierarchy[] 
-  requestHierarchyLevels      RequestHierarchyLevel[] 
-  requestCategories           RequestCategory[] 
+  assignmentHierarchies          AssignmentHierarchy[]
+  assignmentHierarchyLevels      AssignmentHierarchyLevel[]
+  assignmentCategories           AssignmentCategory[]
+  requestHierarchies             RequestHierarchy[]
+  requestHierarchyLevels         RequestHierarchyLevel[]
+  requestCategories              RequestCategory[] 
 
   // --- Requirements and Compliance ---
-  requirements                Requirement[] 
-  requirementTypes            RequirementType[] 
-  categoryRequirements        RequestCategoryRequirement[] // Updated to match naming convention
+  requirements                   Requirement[]
+  requirementTypes               RequirementType[]
+  categoryRequirements           RequestCategoryRequirement[] // Updated to match naming convention
 
   // --- SLA and Guide Documents ---
-  slas                        SLA[] 
-  sLAChangeLogs               SLAChangeLog[]
-  guideDocuments              GuideDocument[] 
+  slas                           SLA[]
+  sLAChangeLogs                  SLAChangeLog[]
+  guideDocuments                 GuideDocument[] 
 
   // --- Documents ---
-  documents                   Document[]
-  documentAssignments         DocumentAssignment[]
+  documents                      Document[]
+  documentAssignments            DocumentAssignment[]
 
   // --- Requests and Statuses ---
-  requests                    Request[]
-  requestAssignments          RequestAssignment[]
-  requestStatusTypes          RequestStatusType[]
-  requestStatusTransitions    RequestStatusTransition[]
+  requests                       Request[]
+  requestAssignments             RequestAssignment[]
+  requestStatusTypes             RequestStatusType[]
+  requestStatusTransitions       RequestStatusTransition[]
   requirementComplianceTrackings RequirementComplianceTracking[]
-  relatedIncidents            RelatedIncident[]
-  requestChangeLogs           RequestChangeLog[]
-  customerSatisfactionSurveys CustomerSatisfactionSurvey[]
-  assignmentTypes             AssignmentType[]
+  relatedIncidents               RelatedIncident[]
+  requestChangeLogs              RequestChangeLog[]
+  customerSatisfactionSurveys    CustomerSatisfactionSurvey[]
+  assignmentTypes                AssignmentType[]
 
 
   // --- Forms ---
-  forms                       Form[]
-  formSubmissions             FormSubmission[]
-  formSubmissionKeys          FormSubmissionKey[]
-  categoryForms               CategoryForm[]
+  forms                          Form[]
+  formSubmissions                FormSubmission[]
+  formSubmissionKeys             FormSubmissionKey[]
+  categoryForms                  CategoryForm[]
+  menuItems                      MenuItem[]
 
   // --- Areas and Categories ---
-  areas                       Area[]
-  userAreas                   UserArea[]
-  areaRoles                   AreaRole[]
-  areaRoleFeatures            AreaRoleFeature[]
+  areas                          Area[]
+  userAreas                      UserArea[]
+  areaRoles                      AreaRole[]
+  areaRoleFeatures               AreaRoleFeature[]
 
   // --- Roles and Permissions ---
-  persons            Person[]
-  userRoles                   UserRole[]
-  roles                       Role[]
-  roleFeatures                RoleFeature[]
+  persons                        Person[]
+  userRoles                      UserRole[]
+  roles                          Role[]
+  roleFeatures                   RoleFeature[]
 
   // --- Modules and Features ---
-  modules                     Module[]
-  features                    Feature[]
+  modules                        Module[]
+  features                       Feature[]
 
   // --- Identification ---
-  identificationTypes         IdentificationType[]
+  identificationTypes            IdentificationType[]
 
   // --- Communication ---
-  workspaces                  Workspace[]
-  members                     Member[]
-  channels                    Channel[]
-  conversations               Conversation[]
-  messages                    Message[]
-  reactions                   Reaction[]
+  workspaces                     Workspace[]
+  members                        Member[]
+  channels                       Channel[]
+  conversations                  Conversation[]
+  messages                       Message[]
+  reactions                      Reaction[]
 
   // --- User and Tenant Relationships ---
-  userTenants                 UserTenant[]
+  userTenants                    UserTenant[]
 
   // --- Subscriptions and Usage ---
-  subscriptions               Subscription[]
-  usageTracking               UsageTracking[]
+  subscriptions                  Subscription[]
+  usageTracking                  UsageTracking[]
 
   // Access control
   @@allow("read", userTenants?[user.id == auth().id && isActive == true])
 }
 
 model Subscription {
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
-  tenant      Tenant           @relation(fields: [tenantId], references: [id])
-  tenantId    String           @db.UniqueIdentifier 
-  plan        Plan             @relation(fields: [planId], references: [id])
-  planId      String           @db.UniqueIdentifier
-  startDate   DateTime
-  endDate     DateTime
-  status      String           // Replaces ENUM
-  isLifetime  Boolean          @default(false)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  payments    Payment[]
+  id         String    @id @default(uuid()) @db.UniqueIdentifier
+  tenant     Tenant    @relation(fields: [tenantId], references: [id])
+  tenantId   String    @db.UniqueIdentifier
+  plan       Plan      @relation(fields: [planId], references: [id])
+  planId     String    @db.UniqueIdentifier
+  startDate  DateTime
+  endDate    DateTime
+  status     String           // Replaces ENUM
+  isLifetime Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  payments   Payment[]
 }
 
 model Plan {
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
-  name         String
-  description  String
-  price        Float
+  id             String         @id @default(uuid()) @db.UniqueIdentifier
+  name           String
+  description    String
+  price          Float
   durationInDays Int?
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
-  features     PlanFeature[]
-  subscriptions Subscription[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  features       PlanFeature[]
+  subscriptions  Subscription[]
 }
 
 model PlanFeature {
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
-  plan         Plan            @relation(fields: [planId], references: [id])
-  planId       String       @db.UniqueIdentifier
-  feature      Feature         @relation(fields: [featureId], references: [id])
-  featureId    String         @db.UniqueIdentifier
-  dailyLimit   Int?
-  totalLimit   Int?
+  id            String   @id @default(uuid()) @db.UniqueIdentifier
+  plan          Plan     @relation(fields: [planId], references: [id])
+  planId        String   @db.UniqueIdentifier
+  feature       Feature  @relation(fields: [featureId], references: [id])
+  featureId     String   @db.UniqueIdentifier
+  dailyLimit    Int?
+  totalLimit    Int?
   resetInterval String         // Replaces ENUM
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model UsageTracking {
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
-  tenant       Tenant          @relation(fields: [tenantId], references: [id])
-  tenantId     String         @db.UniqueIdentifier
-  featureName  String
-  usageCount   Int
-  lastUsedAt   DateTime?
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
+  id          String    @id @default(uuid()) @db.UniqueIdentifier
+  tenant      Tenant    @relation(fields: [tenantId], references: [id])
+  tenantId    String    @db.UniqueIdentifier
+  featureName String
+  usageCount  Int
+  lastUsedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Payment {
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
-  subscription Subscription    @relation(fields: [subscriptionId], references: [id])
+  id             String       @id @default(uuid()) @db.UniqueIdentifier
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
   subscriptionId String       @db.UniqueIdentifier
-  amount       Float
-  paymentDate  DateTime
-  paymentMethod String
-  status       String           // Replaces ENUM
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
+  amount         Float
+  paymentDate    DateTime
+  paymentMethod  String
+  status         String           // Replaces ENUM
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }

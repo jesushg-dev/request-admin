@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     /* Base Options: */
+    "sourceMap": true,
+    "inlineSources": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "target": "es2022",
@@ -8,6 +10,8 @@
     "resolveJsonModule": true,
     "moduleDetection": "force",
     "isolatedModules": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
 
     /* Strictness */
     "strict": true,

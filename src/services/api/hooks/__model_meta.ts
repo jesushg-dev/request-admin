@@ -284,6 +284,13 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
+        menuItems: {
+          name: 'menuItems',
+          type: 'MenuItem',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
         areas: {
           name: 'areas',
           type: 'Area',
@@ -4771,6 +4778,117 @@ const metadata = {
         },
       },
     },
+    menuItem: {
+      name: 'MenuItem',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$MenuItem$createdBy,
+        },
+        modifiedBy: {
+          name: 'modifiedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$MenuItem$modifiedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'menuItems',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        title: {
+          name: 'title',
+          type: 'String',
+        },
+        icon: {
+          name: 'icon',
+          type: 'String',
+          isOptional: true,
+        },
+        position: {
+          name: 'position',
+          type: 'Int',
+          attributes: [{ name: '@default', args: [{ value: 0 }] }],
+        },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        pathname: {
+          name: 'pathname',
+          type: 'String',
+        },
+        slug: {
+          name: 'slug',
+          type: 'String',
+        },
+        parentId: {
+          name: 'parentId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'parent',
+        },
+        parent: {
+          name: 'parent',
+          type: 'MenuItem',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'children',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'parentId' },
+        },
+        children: {
+          name: 'children',
+          type: 'MenuItem',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'parent',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
     userRole: {
       name: 'UserRole',
       fields: {
@@ -6293,6 +6411,14 @@ function $default$FormSubmissionKey$createdBy(user: any): unknown {
 }
 
 function $default$FormSubmissionKey$modifiedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$MenuItem$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$MenuItem$modifiedBy(user: any): unknown {
   return user?.id;
 }
 

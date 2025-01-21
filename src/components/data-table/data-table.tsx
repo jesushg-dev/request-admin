@@ -19,9 +19,8 @@ interface DataTableShellProps<TData> extends CommonDataTableProps<TData>, React.
 
 export function DataTableShell<TData>({ table, floatingBar = null, children, className, ...props }: DataTableShellProps<TData>) {
   return (
-    <div className={cn('flex w-full flex-col gap-1 overflow-auto', className)} {...props}>
+    <div className={cn('flex w-full flex-col gap-1 overflow-auto p-2', className)} {...props}>
       {children}
-
       <div className="flex flex-col gap-2.5">
         <DataTablePagination table={table} />
         {table.getFilteredSelectedRowModel().rows.length > 0 && floatingBar}

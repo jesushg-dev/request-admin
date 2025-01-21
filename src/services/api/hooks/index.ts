@@ -51,6 +51,7 @@ export * from './form';
 export * from './category-form';
 export * from './form-submission';
 export * from './form-submission-key';
+export * from './menu-item';
 export * from './user-role';
 export * from './role';
 export * from './module';

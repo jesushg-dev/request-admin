@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { DndContext, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { Form } from '@prisma/client';
 import { Separator } from '@radix-ui/react-select';
@@ -84,13 +84,13 @@ function FormBuilder({ form }: { form: Form }) {
           </CardContent>
           <CardFooter className="flex justify-between">
             <Button variant="outline" asChild className="w-full transition-colors hover:bg-primary hover:text-primary-foreground sm:w-auto">
-              <Link href="/" className="flex items-center gap-2">
+              <Link href={{ pathname: '/admin/[tenantId]/form-designer', params: { tenantId: form.tenantId } }} className="flex items-center gap-2">
                 <ArrowLeft className="h-4 w-4" />
                 {t('goBackHome')}
               </Link>
             </Button>
             <Button variant="outline" asChild className="transition-colors hover:bg-primary hover:text-primary-foreground">
-              <Link href={`/admin/form-designer/forms/${form.id}`} className="flex items-center gap-2">
+              <Link href={{ pathname: '/admin/[tenantId]/form-designer/[slug]', params: { tenantId: form.tenantId, slug: form.id } }} className="flex items-center gap-2">
                 {t('formDetails')}
                 <ArrowRight className="h-4 w-4" />
               </Link>

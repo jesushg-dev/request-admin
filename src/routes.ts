@@ -32,8 +32,9 @@ export const isPublicPage = (pathname: string, locales: readonly string[]): bool
   const publicRoutesWithoutLocaleRegex = RegExp(`^(${publicRoutes.flatMap((p) => (p === '/' ? ['', '/'] : p.replace('*', '.*'))).join('|')})/?$`, 'i');
   const result1 = publicRoutesWithLocaleRegex.test(pathname);
   const result2 = publicRoutesWithoutLocaleRegex.test(pathname);
+  const result3 = pathname.includes('public');
   if (pathname === '/es/api/auth/session' || pathname === '/api/auth/session') {
     return true;
   }
-  return result1 || result2;
+  return result1 || result2 || result3;
 };

@@ -1,17 +1,12 @@
 import React, { ReactNode, Suspense } from 'react';
 import { GetForms, GetFormStats } from '@/actions/form';
-import { Link } from '@/i18n/routing';
-import { Form } from '@prisma/client';
-import { formatDistance } from 'date-fns';
-import { ArrowDownIcon, ArrowRightIcon, BookOpenCheckIcon, FilePenLineIcon, MousePointerClickIcon, ViewIcon } from 'lucide-react';
+import { ArrowDownIcon, BookOpenCheckIcon, MousePointerClickIcon, ViewIcon } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import CreateFormBtn from '@/components/builder-form/create-form-btn';
-import { FormCardDraggable } from '@/components/builder-form/form-card-draggable';
+import { Draggable, FormCard } from '@/components/builder-form/form-card';
 
 const Home = async () => {
   const t = await getTranslations('admin.formBuilder.main');
@@ -114,57 +109,11 @@ const FormCards = async () => {
   return (
     <>
       {forms.map((form) => (
-        <FormCard key={form.id} form={form} />
+        <Draggable key={form.id} data={form}>
+          <FormCard form={form} />
+        </Draggable>
       ))}
     </>
-  );
-};
-
-const FormCard = async ({ form }: { form: Form }) => {
-  const t = await getTranslations('admin.formBuilder.main');
-
-  return (
-    <FormCardDraggable form={form}>
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between gap-2">
-            <span className="truncate font-bold">{form.name}</span>
-            {form.published && <Badge>{t('published')}</Badge>}
-            {!form.published && <Badge variant="destructive">{t('draft')}</Badge>}
-          </CardTitle>
-          <CardDescription className="flex items-center justify-between text-sm text-muted-foreground">
-            {formatDistance(form.createdAt, new Date(), {
-              addSuffix: true,
-            })}
-            {form.published && (
-              <span className="flex items-center gap-2">
-                <ViewIcon className="text-muted-foreground" />
-                <span>{form.visits.toLocaleString()}</span>
-                <BookOpenCheckIcon className="text-muted-foreground" />
-                <span>{form.submissions.toLocaleString()}</span>
-              </span>
-            )}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="h-[20px] truncate text-sm text-muted-foreground">{form.description ?? t('noDescription')}</CardContent>
-        <CardFooter>
-          {form.published && (
-            <Button asChild className="text-md mt-2 w-full gap-4">
-              <Link href={{ pathname: '/admin/[tenantId]/form-designer/[slug]', params: { tenantId: form.tenantId, slug: form.id } }}>
-                {t('viewSubmissions')} <ArrowRightIcon />
-              </Link>
-            </Button>
-          )}
-          {!form.published && (
-            <Button asChild variant="secondary" className="text-md mt-2 w-full gap-4">
-              <Link href={{ pathname: '/admin/[tenantId]/form-designer/[slug]/edit', params: { tenantId: form.tenantId, slug: form.id } }}>
-                {t('editForm')} <FilePenLineIcon />
-              </Link>
-            </Button>
-          )}
-        </CardFooter>
-      </Card>
-    </FormCardDraggable>
   );
 };
 
