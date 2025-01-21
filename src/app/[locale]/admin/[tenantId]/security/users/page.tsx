@@ -11,6 +11,7 @@ import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
+import useTenantId from '@/hooks/use-tenant-id';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
@@ -26,7 +27,6 @@ const UserDefaultArgs = Prisma.validator<Prisma.UserDefaultArgs>()({
     email: true,
     emailVerified: true,
     isTwoFactorEnabled: true,
-    personId: true,
     userRoles: { select: { role: { select: { name: true } } } },
     _count: { select: { userAreas: true, userRoles: true, requestAssignments: true } },
   },
@@ -43,6 +43,7 @@ const searchParamsParsers = {
 };
 
 const UserMainPage: React.FC = () => {
+  const tenantId = useTenantId();
   const t = useTranslations('admin.user.main');
   const [search] = useQueryStates(searchParamsParsers);
 
@@ -78,7 +79,15 @@ const UserMainPage: React.FC = () => {
     <DataTableShell table={table} floatingBar={<DataTableFloatingBar table={table} />}>
       <DataTable table={table} isLoading={isLoading}>
         <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
-          <DataTableToolbarActions table={table} exportFilename="users" entityLabel={t('entityLabel')} />
+          <DataTableToolbarActions
+            table={table}
+            exportFilename="users"
+            entityLabel={t('entityLabel')}
+            addLink={{
+              pathname: '/admin/[tenantId]/security/users/new',
+              params: { tenantId },
+            }}
+          />
         </DataTableAdvancedToolbar>
       </DataTable>
     </DataTableShell>

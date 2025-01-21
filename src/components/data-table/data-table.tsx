@@ -40,7 +40,7 @@ interface DataTableProps<TData, TSubData> extends CommonDataTableProps<TData> {
 
 export function DataTable<TData, TSubData>({ table, subComponent, isLoading, children }: DataTableProps<TData, TSubData>) {
   if (isLoading) {
-    return <DataTableSkeleton columnCount={6} cellWidths={['10rem', '40rem', '12rem', '12rem', '8rem', '8rem']} shrinkZero />;
+    return <DataTableSkeleton columnCount={10} cellWidths={['10rem', '40rem', '12rem', '12rem', '8rem', '8rem']} shrinkZero />;
   }
 
   return (
