@@ -83,8 +83,6 @@ model Tenant extends Auditable {
   identificationTypes            IdentificationType[]
 
   // --- Communication ---
-  workspaces                     Workspace[]
-  members                        Member[]
   channels                       Channel[]
   conversations                  Conversation[]
   messages                       Message[]

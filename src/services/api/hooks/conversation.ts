@@ -399,7 +399,7 @@ export function useSuspenseCountConversation<
 }
 
 export function useCheckConversation<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { tenantId?: string; id?: string; workspaceId?: string; memberOneId?: string; memberTwoId?: string } },
+  args: { operation: PolicyCrudKind; where?: { tenantId?: string; id?: string; userTenantOneId?: string; userTenantTwoId?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

@@ -2,137 +2,55 @@ import "./abstract.zmodel"
 import "./auth.zmodel"
 import './tenant.zmodel'
 
-// Workspace model: Represents a workspace where users collaborate
-model Workspace extends TenantScoped {
-  // Primary identifier
-  id        String   @id @default(uuid()) @db.UniqueIdentifier // Unique workspace ID
-
-  // Workspace details
-  name      String   // Name of the workspace
-  joinCode  String   // Code used to join the workspace
-
-  // Relationships
-  userId    String   @db.UniqueIdentifier // ID of the user who owns the workspace
-  user      User     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Owner of the workspace
-  members   Member[] // Members associated with the workspace
-  channels  Channel[] // Channels within the workspace
-  messages  Message[] // Messages sent in the workspace
-  reactions Reaction[] // Reactions within the workspace
-  conversation Conversation[] // Conversations linked to the workspace
-
-  // Indexes
-  @@index([userId]) // Index for efficient queries by userId
-}
-
-// Member model: Represents a user as a member of a workspace
-model Member extends TenantScoped {
-  // Primary identifier
-  id           String    @id @default(uuid()) @db.UniqueIdentifier // Unique member ID
-
-  // Member details
-  userId       String    @db.UniqueIdentifier // ID of the user
-  workspaceId  String    @db.UniqueIdentifier // ID of the workspace
-
-  // Relationships
-  user         User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked user
-  workspace    Workspace @relation(fields: [workspaceId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked workspace
-  reactions    Reaction[] // Reactions made by the member
-  messages     Message[] // Messages sent by the member
-  conversationsAsMemberOne Conversation[] @relation("MemberOne") // Conversations where this member is MemberOne
-  conversationsAsMemberTwo Conversation[] @relation("MemberTwo") // Conversations where this member is MemberTwo
-
-  // Indexes
-  @@index([userId]) // Index for efficient queries by userId
-  @@index([workspaceId]) // Index for efficient queries by workspaceId
-  @@index([workspaceId, userId]) // Composite index for workspace and user
-}
-
-// Channel model: Represents a communication channel within a workspace
 model Channel extends TenantScoped {
-  // Primary identifier
-  id           String    @id @default(uuid()) @db.UniqueIdentifier // Unique channel ID
+  id       String    @id @default(uuid()) @db.UniqueIdentifier
+  name     String
+  messages Message[]
 
-  // Channel details
-  name         String   // Name of the channel
-
-  // Relationships
-  workspaceId  String    @db.UniqueIdentifier // ID of the associated workspace
-  workspace    Workspace @relation(fields: [workspaceId], references: [id], onDelete: NoAction) // Linked workspace
-  messages     Message[] // Messages sent in the channel
-
-  // Indexes
-  @@index([workspaceId]) // Index for efficient queries by workspaceId
+  @@index([tenantId])
 }
 
-// Conversation model: Represents a direct conversation between two members
 model Conversation extends TenantScoped {
-  // Primary identifier
-  id            String    @id @default(uuid()) @db.UniqueIdentifier // Unique conversation ID
+  id              String     @id @default(uuid()) @db.UniqueIdentifier
+  userTenantOneId String     @db.UniqueIdentifier
+  userTenantTwoId String     @db.UniqueIdentifier
+  userTenantOne   UserTenant @relation("UserTenantOne", fields: [userTenantOneId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  userTenantTwo   UserTenant @relation("UserTenantTwo", fields: [userTenantTwoId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  messages        Message[]
 
-  // Relationships
-  workspaceId   String    @db.UniqueIdentifier // ID of the associated workspace
-  memberOneId   String    @db.UniqueIdentifier // ID of the first member in the conversation
-  memberTwoId   String    @db.UniqueIdentifier // ID of the second member in the conversation
-  workspace     Workspace @relation(fields: [workspaceId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked workspace
-  memberOne     Member    @relation("MemberOne", fields: [memberOneId], references: [id], onDelete: NoAction, onUpdate: NoAction) // First member in the conversation
-  memberTwo     Member    @relation("MemberTwo", fields: [memberTwoId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Second member in the conversation
-  messages      Message[] // Messages sent in the conversation
-
-  // Indexes
-  @@index([workspaceId]) // Index for efficient queries by workspaceId
+  @@index([userTenantOneId, userTenantTwoId])
 }
 
-// Message model: Represents messages exchanged in a workspace, channel, or conversation
 model Message extends TenantScoped {
-  // Primary identifier
-  id               String       @id @default(uuid()) @db.UniqueIdentifier // Unique message ID
+  id              String        @id @default(uuid()) @db.UniqueIdentifier
+  body            String
+  imageId         String?
+  updatedAt       DateTime?     @updatedAt
+  userTenantId    String        @db.UniqueIdentifier
+  channelId       String?       @db.UniqueIdentifier
+  parentMessageId String?       @db.UniqueIdentifier
+  conversationId  String?       @db.UniqueIdentifier
+  userTenant      UserTenant    @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  channel         Channel?      @relation(fields: [channelId], references: [id], onDelete: NoAction)
+  parentMessage   Message?      @relation("ParentMessage", fields: [parentMessageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies         Message[]     @relation("ParentMessage")
+  conversation    Conversation? @relation(fields: [conversationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  reactions       Reaction[]
 
-  // Message details
-  body             String       // Message content
-  imageId          String?      @db.UniqueIdentifier // Optional image attachment
-  updatedAt        DateTime?    @updatedAt // Timestamp for the last update
-
-  // Relationships
-  memberId         String       @db.UniqueIdentifier // ID of the member who sent the message
-  workspaceId      String       @db.UniqueIdentifier // ID of the workspace where the message was sent
-  channelId        String?      @db.UniqueIdentifier // Optional ID of the channel where the message was sent
-  parentMessageId  String?      @db.UniqueIdentifier // Optional ID of the parent message (for threads)
-  conversationId   String?      @db.UniqueIdentifier // Optional ID of the conversation
-  member           Member       @relation(fields: [memberId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked member
-  workspace        Workspace    @relation(fields: [workspaceId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked workspace
-  channel          Channel?     @relation(fields: [channelId], references: [id], onDelete: NoAction) // Linked channel
-  parentMessage    Message?     @relation("ParentMessage", fields: [parentMessageId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Parent message in a thread
-  replies          Message[]    @relation("ParentMessage") // Replies to the message
-  conversation     Conversation? @relation(fields: [conversationId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked conversation
-  reactions        Reaction[]   // Reactions to the message
-
-  // Indexes
-  @@index([workspaceId]) // Index for efficient queries by workspaceId
-  @@index([memberId]) // Index for efficient queries by memberId
-  @@index([channelId]) // Index for efficient queries by channelId
-  @@index([parentMessageId]) // Index for thread queries
-  @@index([conversationId]) // Index for conversation queries
-  @@index([channelId, parentMessageId, conversationId]) // Composite index for multi-dimensional queries
+  @@index([userTenantId])
+  @@index([channelId])
+  @@index([parentMessageId])
+  @@index([conversationId])
 }
 
-// Reaction model: Represents reactions to messages in a workspace
 model Reaction extends TenantScoped {
-  // Primary identifier
-  id           String     @id @default(uuid()) @db.UniqueIdentifier // Unique reaction ID
+  id           String     @id @default(uuid()) @db.UniqueIdentifier
+  value        String
+  messageId    String     @db.UniqueIdentifier
+  userTenantId String     @db.UniqueIdentifier
+  message      Message    @relation(fields: [messageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  userTenant   UserTenant @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  // Reaction details
-  value        String     // The value of the reaction (e.g., emoji or text)
-
-  // Relationships
-  workspaceId  String     @db.UniqueIdentifier // ID of the associated workspace
-  messageId    String     @db.UniqueIdentifier // ID of the associated message
-  memberId     String     @db.UniqueIdentifier // ID of the member who reacted
-  workspace    Workspace  @relation(fields: [workspaceId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked workspace
-  message      Message    @relation(fields: [messageId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked message
-  member       Member     @relation(fields: [memberId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked member
-
-  // Indexes
-  @@index([workspaceId]) // Index for workspace queries
-  @@index([messageId]) // Index for message queries
-  @@index([memberId]) // Index for member queries
+  @@index([messageId])
+  @@index([userTenantId])
 }

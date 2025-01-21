@@ -369,7 +369,7 @@ export function useSuspenseCountChannel<
 }
 
 export function useCheckChannel<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { tenantId?: string; id?: string; name?: string; workspaceId?: string } },
+  args: { operation: PolicyCrudKind; where?: { tenantId?: string; id?: string; name?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

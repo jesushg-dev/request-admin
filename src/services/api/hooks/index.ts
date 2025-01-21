@@ -57,8 +57,6 @@ export * from './role';
 export * from './module';
 export * from './feature';
 export * from './role-feature';
-export * from './workspace';
-export * from './member';
 export * from './channel';
 export * from './conversation';
 export * from './message';
