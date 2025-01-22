@@ -1080,11 +1080,16 @@ model RoleFeature {
 }
 
 model Channel {
-  tenantId String    @db.UniqueIdentifier()
-  tenant   Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id       String    @id() @default(uuid()) @db.UniqueIdentifier()
-  name     String
-  messages Message[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @updatedAt()
+  deletedAt  DateTime?
+  createdBy  String?   @db.VarChar(50)
+  modifiedBy String?   @db.VarChar(50)
+  tenantId   String    @db.UniqueIdentifier()
+  tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id         String    @id() @default(uuid()) @db.UniqueIdentifier()
+  name       String
+  messages   Message[]
 
   @@index([tenantId])
 }
@@ -1103,12 +1108,16 @@ model Conversation {
 }
 
 model Message {
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime?     @updatedAt()
+  deletedAt       DateTime?
+  createdBy       String?       @db.VarChar(50)
+  modifiedBy      String?       @db.VarChar(50)
   tenantId        String        @db.UniqueIdentifier()
   tenant          Tenant        @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id              String        @id() @default(uuid()) @db.UniqueIdentifier()
   body            String
   imageId         String?
-  updatedAt       DateTime?     @updatedAt()
   userTenantId    String        @db.UniqueIdentifier()
   channelId       String?       @db.UniqueIdentifier()
   parentMessageId String?       @db.UniqueIdentifier()

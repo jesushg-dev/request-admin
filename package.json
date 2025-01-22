@@ -76,6 +76,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@emoji-mart/data": "^1.2.1",
+    "@emoji-mart/react": "^1.1.1",
     "@faker-js/faker": "^9.4.0",
     "@hookform/error-message": "^2.0.1",
     "@hookform/resolvers": "^3.10.0",

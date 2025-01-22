@@ -2,7 +2,7 @@ import "./abstract.zmodel"
 import "./auth.zmodel"
 import './tenant.zmodel'
 
-model Channel extends TenantScoped {
+model Channel extends TenantScoped, Auditable {
   id       String    @id @default(uuid()) @db.UniqueIdentifier
   name     String
   messages Message[]
@@ -21,11 +21,10 @@ model Conversation extends TenantScoped {
   @@index([userTenantOneId, userTenantTwoId])
 }
 
-model Message extends TenantScoped {
+model Message extends TenantScoped, Auditable {
   id              String        @id @default(uuid()) @db.UniqueIdentifier
   body            String
   imageId         String?
-  updatedAt       DateTime?     @updatedAt
   userTenantId    String        @db.UniqueIdentifier
   channelId       String?       @db.UniqueIdentifier
   parentMessageId String?       @db.UniqueIdentifier

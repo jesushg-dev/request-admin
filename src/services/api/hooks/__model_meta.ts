@@ -5386,6 +5386,36 @@ const metadata = {
     channel: {
       name: 'Channel',
       fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Channel$createdBy,
+        },
+        modifiedBy: {
+          name: 'modifiedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Channel$modifiedBy,
+        },
         tenantId: {
           name: 'tenantId',
           type: 'String',
@@ -5494,6 +5524,36 @@ const metadata = {
     message: {
       name: 'Message',
       fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Message$createdBy,
+        },
+        modifiedBy: {
+          name: 'modifiedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Message$modifiedBy,
+        },
         tenantId: {
           name: 'tenantId',
           type: 'String',
@@ -5522,12 +5582,6 @@ const metadata = {
           name: 'imageId',
           type: 'String',
           isOptional: true,
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
         },
         userTenantId: {
           name: 'userTenantId',
@@ -6228,6 +6282,22 @@ function $default$RoleFeature$createdBy(user: any): unknown {
 }
 
 function $default$RoleFeature$modifiedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Channel$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Channel$modifiedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Message$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Message$modifiedBy(user: any): unknown {
   return user?.id;
 }
 

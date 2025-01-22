@@ -371,7 +371,18 @@ export function useSuspenseCountMessage<
 export function useCheckMessage<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
-    where?: { tenantId?: string; id?: string; body?: string; imageId?: string; userTenantId?: string; channelId?: string; parentMessageId?: string; conversationId?: string };
+    where?: {
+      createdBy?: string;
+      modifiedBy?: string;
+      tenantId?: string;
+      id?: string;
+      body?: string;
+      imageId?: string;
+      userTenantId?: string;
+      channelId?: string;
+      parentMessageId?: string;
+      conversationId?: string;
+    };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
