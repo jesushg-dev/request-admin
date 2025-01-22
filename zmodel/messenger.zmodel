@@ -1,11 +1,15 @@
 import "./abstract.zmodel"
 import "./auth.zmodel"
 import './tenant.zmodel'
+import './request.zmodel'
 
 model Channel extends TenantScoped, Auditable {
-  id       String    @id @default(uuid()) @db.UniqueIdentifier
-  name     String
-  messages Message[]
+  id        String    @id @default(uuid()) @db.UniqueIdentifier
+  name      String
+  messages  Message[]
+
+  requestId String?   @unique @db.UniqueIdentifier
+  request   Request?  @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([tenantId])
 }

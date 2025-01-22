@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useParams } from 'next/navigation';
 import { useFindFirstMessage, useInfiniteFindManyMessage } from '@/services/api/hooks';
 import { AlertTriangle, XIcon } from 'lucide-react';
 
@@ -20,7 +19,6 @@ interface ThreadProps {
 
 export const Thread = ({ messageId, currentUserId, onClose }: ThreadProps) => {
   const tenantId = useTenantId();
-  const { channelId } = useParams<{ channelId: string }>();
 
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -31,7 +29,7 @@ export const Thread = ({ messageId, currentUserId, onClose }: ThreadProps) => {
 
   const { data, hasNextPage, hasPreviousPage, fetchNextPage, fetchPreviousPage, isFetchingNextPage, isFetchingPreviousPage, isFetching } = useInfiniteFindManyMessage({
     ...MessageDefaultArgs,
-    where: { channelId, parentMessageId: messageId },
+    where: { parentMessageId: messageId },
   });
 
   if (loadingThread) {
@@ -105,7 +103,7 @@ export const Thread = ({ messageId, currentUserId, onClose }: ThreadProps) => {
         variant="thread"
       />
       {/* Chat Input */}
-      <ChatInput tenantId={tenantId} relatedId={channelId} parentId={messageId} relatedType="channel" currentUserId={currentUserId} placeholder="Reply..." />
+      <ChatInput tenantId={tenantId} relatedId={messageId} relatedType="parentMessage" currentUserId={currentUserId} placeholder="Reply..." />
     </div>
   );
 };

@@ -1,5 +1,7 @@
 'use client';
 
+import { useSession } from 'next-auth/react';
+
 import { usePanel } from '@/hooks/use-panel';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Profile } from '@/components/chat/profile';
@@ -11,8 +13,11 @@ interface WorkspaceLayoutProps {
 }
 
 const WorkspaceLayout = ({ children }: WorkspaceLayoutProps) => {
+  const session = useSession();
   const { parentMessageId, onClose, profileUserId } = usePanel();
-
+  if (!session.data) {
+    return null;
+  }
   const showPanel = !!parentMessageId || !!profileUserId;
 
   return (
@@ -25,7 +30,13 @@ const WorkspaceLayout = ({ children }: WorkspaceLayoutProps) => {
           <>
             <ResizableHandle withHandle />
             <ResizablePanel minSize={20} defaultSize={29}>
-              {parentMessageId ? <Thread messageId={parentMessageId} onClose={onClose} /> : profileUserId ? <Profile userId={profileUserId} onClose={onClose} /> : <Spinner />}
+              {parentMessageId ? (
+                <Thread currentUserId={session.data.user.id} messageId={parentMessageId} onClose={onClose} />
+              ) : profileUserId ? (
+                <Profile userId={profileUserId} onClose={onClose} />
+              ) : (
+                <Spinner />
+              )}
             </ResizablePanel>
           </>
         )}

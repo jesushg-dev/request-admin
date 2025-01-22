@@ -1,22 +1,21 @@
-import { useMemberId } from '@/hooks/use-member-id';
 import { usePanel } from '@/hooks/use-panel';
 
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 interface ConversationHeroProps {
   name?: string;
   image?: string;
+  userId: string;
 }
 
-export const ConversationHero = ({ name = 'Member', image }: ConversationHeroProps) => {
+export const ConversationHero = ({ name = 'Member', image, userId }: ConversationHeroProps) => {
   const avatarImageFallback = name.charAt(0).toUpperCase();
-  const memberId = useMemberId();
   const { onOpenProfile } = usePanel();
 
   return (
     <div className="mx-5 mb-4 mt-[88px]">
       <div className="mb-2 flex items-center gap-x-1">
-        <Avatar onClick={() => onOpenProfile(memberId)} className="mr-2 size-14 hover:cursor-pointer">
+        <Avatar onClick={() => onOpenProfile(userId)} className="mr-2 size-14 hover:cursor-pointer">
           <AvatarImage src={image} />
           <AvatarFallback className="text-lg">{avatarImageFallback}</AvatarFallback>
         </Avatar>

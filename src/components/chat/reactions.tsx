@@ -4,8 +4,8 @@ import { MdOutlineAddReaction } from 'react-icons/md';
 import { MessageType } from '@/types/prisma/message';
 import { cn } from '@/lib/utils';
 
+import { Hint } from '../hint';
 import { EmojiPopover } from './emoji-popover';
-import { Hint } from './hint';
 
 interface ReactionsProps {
   currentUserId: string;

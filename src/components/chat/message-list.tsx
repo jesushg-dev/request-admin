@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useMemo, useState } from 'react';
 import { InfiniteData } from '@tanstack/react-query';
 import { differenceInMinutes, format } from 'date-fns';
@@ -6,10 +8,10 @@ import { useInView } from 'react-intersection-observer';
 import { MessageType } from '@/types/prisma/message';
 import { formatDateLabel, TIME_THRESHOLD } from '@/lib/utils';
 
-import { ChannelHero } from '../channel-hero';
-import { ConversationHero } from '../conversation-hero';
 import { Spinner } from '../spinner';
 import { Button } from '../ui/button';
+import { ChannelHero } from './channel-hero';
+import { ConversationHero } from './conversation-hero';
 import { Message } from './message';
 
 interface MessageListProps {
@@ -23,10 +25,11 @@ interface MessageListProps {
   isFetching: boolean;
   currentUserId: string;
   variant?: 'channel' | 'thread' | 'conversation';
-  channelCreationTime?: number;
+  channelCreatedAt?: Date;
   channelName?: string;
   userImage?: string;
   userName?: string;
+  userId?: string;
 }
 
 export const MessageList = ({
@@ -40,10 +43,11 @@ export const MessageList = ({
   isFetching,
   currentUserId,
   variant = 'channel',
-  channelCreationTime,
+  channelCreatedAt,
   channelName,
   userImage,
   userName,
+  userId,
 }: MessageListProps) => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const { ref, inView } = useInView();
@@ -83,7 +87,7 @@ export const MessageList = ({
   }
 
   return (
-    <div className="messages-scrollbar flex flex-1 flex-col-reverse overflow-y-auto pb-4">
+    <div className="messages-scrollbar flex w-full flex-1 flex-col-reverse overflow-y-auto pb-4">
       <div className="mb-2 flex justify-between">
         {/* Load Older Messages */}
         <Button onClick={fetchPreviousPage} disabled={!hasPreviousPage || isFetchingPreviousPage} size="sm" variant="ghost">
@@ -136,8 +140,8 @@ export const MessageList = ({
           <Spinner />
         </div>
       )}
-      {variant === 'channel' && channelName && channelCreationTime && <ChannelHero name={channelName} creationTime={channelCreationTime} />}
-      {variant === 'conversation' && <ConversationHero name={userName} image={userImage} />}
+      {variant === 'channel' && channelName && channelCreatedAt && <ChannelHero name={channelName} creationTime={channelCreatedAt} />}
+      {variant === 'conversation' && userId && <ConversationHero name={userName} image={userImage} userId={userId} />}
     </div>
   );
 };

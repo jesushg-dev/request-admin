@@ -14,25 +14,25 @@ abstract model TenantScoped {
   @@allow('update', tenant.userTenants?[user.id == auth().id && isActive == true]) 
   
   // Allow delete access for authenticated users in the tenant if their userTenant is active and current
-  @@allow('delete', tenant.userTenants?[user.id == auth().id && isActive == true]) 
+  @@allow('delete', tenant.userTenants?[user.id == auth().id && isActive == true])
 }
 
 // Abstract model for auditable entities
 abstract model Auditable {
   // Timestamps
-  createdAt  DateTime @default(now()) // Timestamp when the entity was created
+  createdAt  DateTime  @default(now()) // Timestamp when the entity was created
   updatedAt  DateTime? @updatedAt // Timestamp when the entity was last updated
   deletedAt  DateTime? // Timestamp when the entity was deleted (soft delete)
 
   // User tracking
-  createdBy  String? @db.VarChar(50) @default(auth().id) // ID of the user who created the entity
-  modifiedBy String? @db.VarChar(50) @default(auth().id) // ID of the user who last modified the entity
+  createdBy  String?   @db.VarChar(50) @default(auth().id) // ID of the user who created the entity
+  modifiedBy String?   @db.VarChar(50) @default(auth().id) // ID of the user who last modified the entity
 }
 
 /// Abstract model for base catalog fields.
-abstract model CatalogBase  {
+abstract model CatalogBase {
   id          String  @id @default(uuid()) @db.UniqueIdentifier
   name        String  @db.VarChar(100) // Name of the catalog item
   description String? @db.VarChar(255) // Optional description
-  isActive              Boolean   @default(true) 
+  isActive    Boolean @default(true)
 }

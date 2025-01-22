@@ -30,10 +30,10 @@ export async function findOrCreateConversation({ tenantId, userId }: { tenantId:
       tenantId,
       OR: [
         {
-          AND: [{ userTenantOne: { userId: session.user.id } }, { userTenantTwoId: userId }],
+          AND: [{ userTenantOne: { userId: session.user.id } }, { userTenantTwo: { userId } }],
         },
         {
-          AND: [{ userTenantOne: { userId } }, { userTenantTwoId: session.user.id }],
+          AND: [{ userTenantOne: { userId } }, { userTenantTwo: { userId: session.user.id } }],
         },
       ],
     },

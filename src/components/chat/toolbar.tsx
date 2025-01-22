@@ -1,8 +1,8 @@
 import { MessageSquareTextIcon, PencilIcon, SmileIcon, Trash2Icon } from 'lucide-react';
 
+import { Hint } from '../hint';
+import { Button } from '../ui/button';
 import { EmojiPopover } from './emoji-popover';
-import { Hint } from './hint';
-import { Button } from './ui/button';
 
 interface ToolbarProps {
   isAuthor: boolean;

@@ -1,3 +1,5 @@
+'use client';
+
 import { useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useCreateMessage } from '@/services/api/hooks';
@@ -5,18 +7,17 @@ import { Prisma } from '@zenstackhq/runtime/models';
 import Quill from 'quill';
 import { toast } from 'sonner';
 
-const Editor = dynamic(() => import('@/components/editor'), { ssr: false });
+const Editor = dynamic(() => import('@/components/chat/editor'), { ssr: false });
 
 interface ChatInputProps {
   tenantId: string;
   relatedId: string;
   placeholder: string;
   currentUserId: string;
-  parentId?: string | null;
-  relatedType: 'conversation' | 'channel';
+  relatedType: 'conversation' | 'channel' | 'parentMessage';
 }
 
-export const ChatInput = ({ placeholder, parentId, relatedId, relatedType, tenantId, currentUserId }: ChatInputProps) => {
+export const ChatInput = ({ placeholder, relatedId, relatedType, tenantId, currentUserId }: ChatInputProps) => {
   const [editorKey, setEditorKey] = useState(0);
   const [isPending, setIsPending] = useState(false);
 
@@ -33,8 +34,7 @@ export const ChatInput = ({ placeholder, parentId, relatedId, relatedType, tenan
         body,
         tenant: { connect: { id: tenantId } },
         userTenant: { connect: { userId_tenantId: { tenantId, userId: currentUserId } } },
-        ...(relatedType === 'conversation' ? { conversation: { connect: { id: relatedId } } } : { channel: { connect: { id: relatedId } } }),
-        ...(parentId ? { parentMessage: { connect: { id: parentId } } } : {}),
+        ...getRelatedConnection(relatedType, relatedId),
       };
 
       if (image) {
@@ -58,4 +58,17 @@ export const ChatInput = ({ placeholder, parentId, relatedId, relatedType, tenan
       <Editor key={editorKey} variant="create" placeholder={placeholder} onSubmit={handleSubmit} disabled={isPending} innerRef={editorRef} />
     </div>
   );
+};
+
+const getRelatedConnection = (relatedType: 'conversation' | 'channel' | 'parentMessage', relatedId: string) => {
+  switch (relatedType) {
+    case 'conversation':
+      return { conversation: { connect: { id: relatedId } } };
+    case 'channel':
+      return { channel: { connect: { id: relatedId } } };
+    case 'parentMessage':
+      return { parentMessage: { connect: { id: relatedId } } };
+    default:
+      throw new Error('Invalid related type');
+  }
 };

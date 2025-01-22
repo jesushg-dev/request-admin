@@ -11,15 +11,15 @@ import { cn } from '@/lib/utils';
 import { usePanel } from '@/hooks/use-panel';
 
 import { Hint } from '../hint';
-import { Reactions } from '../reactions';
-import { ThreadBar } from '../thread-bar';
-import { Thumbnail } from '../thumbnail';
-import { Toolbar } from '../toolbar';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { UpdatedAtText } from '../updated-at-text';
+import { Reactions } from './reactions';
+import { ThreadBar } from './thread-bar';
+import { Thumbnail } from './thumbnail';
+import { Toolbar } from './toolbar';
+import { UpdatedAtText } from './updated-at-text';
 
-const Editor = dynamic(() => import('@/components/editor'), { ssr: false });
-const Renderer = dynamic(() => import('@/components/renderer'), { ssr: false });
+const Editor = dynamic(() => import('@/components/chat/editor'), { ssr: false });
+const Renderer = dynamic(() => import('@/components/chat/renderer'), { ssr: false });
 
 interface MessageProps {
   id: string;
@@ -140,7 +140,7 @@ export const Message = ({
             <div className="flex w-full flex-col overflow-hidden">
               <Renderer value={body} />
               <Thumbnail url={image} />
-              <UpdatedAtText text={updatedAt} />
+              <UpdatedAtText createdAt={createdAt} updatedAt={updatedAt} />
               <Reactions data={reactions} onChange={handleReaction} currentUserId={currentUserId} />
               <ThreadBar count={threadCount} image={threadImage} timestamp={threadTimestamp} name={threadName} onClick={() => onOpenMessage(id)} />
             </div>
@@ -194,7 +194,7 @@ export const Message = ({
             </div>
             <Renderer value={body} />
             <Thumbnail url={image} />
-            <UpdatedAtText text={updatedAt} />
+            <UpdatedAtText createdAt={createdAt} updatedAt={updatedAt} />
             <Reactions data={reactions} onChange={handleReaction} currentUserId={currentUserId} />
             <ThreadBar count={threadCount} image={threadImage} name={threadName} timestamp={threadTimestamp} onClick={() => onOpenMessage(id)} />
           </div>

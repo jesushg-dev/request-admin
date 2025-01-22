@@ -27,9 +27,6 @@ export const MessageDefaultArgs = Prisma.validator<Prisma.MessageDefaultArgs>()(
     imageId: true,
     createdAt: true,
     updatedAt: true,
-    _count: {
-      select: {},
-    },
   },
 });
 

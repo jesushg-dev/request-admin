@@ -1,3 +1,5 @@
+'use client';
+
 import { useFindFirstPerson, useInfiniteFindManyMessage } from '@/services/api/hooks';
 
 import { MessageDefaultArgs } from '@/types/prisma/message';

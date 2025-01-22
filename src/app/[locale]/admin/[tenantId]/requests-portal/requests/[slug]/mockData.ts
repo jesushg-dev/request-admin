@@ -52,47 +52,6 @@ export const attachments = [
   { id: 4, name: 'Timeline.png', type: 'image', size: '3.7mb' },
 ];
 
-export const comments = [
-  {
-    id: 1,
-    author: 'James Rich',
-    avatar: '/placeholder.svg?height=40&width=40',
-    time: '10 minutes ago',
-    content: 'How many tasks will we do in this project?',
-    replies: [
-      {
-        id: 2,
-        author: 'Ari Budin',
-        avatar: '/placeholder.svg?height=40&width=40',
-        time: '8 minutes ago',
-        content: "We're looking at about 45 total tasks for this project.",
-      },
-      {
-        id: 3,
-        author: 'James Rich',
-        avatar: '/placeholder.svg?height=40&width=40',
-        time: '5 minutes ago',
-        content: "Wow, that's quite a lot! We'll need to prioritize carefully.",
-      },
-    ],
-  },
-  {
-    id: 4,
-    author: 'Jesica Tan',
-    avatar: '/placeholder.svg?height=40&width=40',
-    time: '1 hour ago',
-    content: "I've completed 3 tasks today. Making good progress!",
-    replies: [
-      {
-        id: 5,
-        author: 'Ari Budin',
-        avatar: '/placeholder.svg?height=40&width=40',
-        time: '45 minutes ago',
-        content: 'Great job, Jesica! Keep up the good work.',
-      },
-    ],
-  },
-];
 
 export const tasks = [
   { id: 1, description: 'Review client requirements', completed: true },
