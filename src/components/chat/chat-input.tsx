@@ -10,12 +10,13 @@ const Editor = dynamic(() => import('@/components/editor'), { ssr: false });
 interface ChatInputProps {
   tenantId: string;
   relatedId: string;
-  relatedType: 'conversation' | 'channel';
   placeholder: string;
   currentUserId: string;
+  parentId?: string | null;
+  relatedType: 'conversation' | 'channel';
 }
 
-export const ChatInput = ({ placeholder, relatedId, relatedType, tenantId, currentUserId }: ChatInputProps) => {
+export const ChatInput = ({ placeholder, parentId, relatedId, relatedType, tenantId, currentUserId }: ChatInputProps) => {
   const [editorKey, setEditorKey] = useState(0);
   const [isPending, setIsPending] = useState(false);
 
@@ -33,6 +34,7 @@ export const ChatInput = ({ placeholder, relatedId, relatedType, tenantId, curre
         tenant: { connect: { id: tenantId } },
         userTenant: { connect: { userId_tenantId: { tenantId, userId: currentUserId } } },
         ...(relatedType === 'conversation' ? { conversation: { connect: { id: relatedId } } } : { channel: { connect: { id: relatedId } } }),
+        ...(parentId ? { parentMessage: { connect: { id: parentId } } } : {}),
       };
 
       if (image) {

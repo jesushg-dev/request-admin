@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
-import { toggleReaction } from '@/actions/reaction';
+import { toggleReaction } from '@/actions/message';
 import { useDeleteMessage, useUpdateMessage } from '@/services/api/hooks';
 import { format, isToday, isYesterday } from 'date-fns';
 import { toast } from 'sonner';
 
 import { MessageType } from '@/types/prisma/message';
+import useMessage from '@/lib/message';
 import { cn } from '@/lib/utils';
-import { useConfirmation } from '@/hooks/use-confirmation';
 import { usePanel } from '@/hooks/use-panel';
 
 import { Hint } from '../hint';
@@ -66,9 +66,9 @@ export const Message = ({
   reactions,
   threadName,
 }: MessageProps) => {
+  const message = useMessage();
   const { onOpenMessage, onClose, parentMessageId, onOpenProfile } = usePanel();
 
-  const [ConfirmDialog, confirm] = useConfirmation('Delete message', 'Are you sure you want to delete this message? This action cannot be undone.');
   const avatarFallback = authorName.charAt(0).toUpperCase();
 
   const [isTogglingReaction, setTogglingReaction] = useState(false);
@@ -89,7 +89,7 @@ export const Message = ({
   };
 
   const handleRemove = async () => {
-    const ok = await confirm();
+    const ok = await message.showConfirm('Are you sure you want to delete this message? This action cannot be undone.', 'Delete message');
 
     if (!ok) return;
 
@@ -120,88 +120,29 @@ export const Message = ({
 
   if (isCompact) {
     return (
-      <>
-        <ConfirmDialog />
-        <div
-          className={cn(
-            'hover:bg-fade-200/60 group relative flex flex-col gap-2 p-1.5 px-5',
-            isEditing && 'bg-paleyellow-100 hover:bg-paleyellow-100',
-            isRemovingMessage && 'origin-bottom scale-y-0 transform bg-rose-500/50 transition-all duration-200'
-          )}>
-          <div className="flex items-start gap-2">
-            <Hint label={createdAt ? formatFullTime(createdAt) : 'N/A'}>
-              <button className="w-[40px] text-center text-xs leading-[22px] text-muted-foreground opacity-0 hover:underline group-hover:opacity-100">
-                {createdAt ? format(createdAt, 'hh:mm') : 'N/A'}
-              </button>
-            </Hint>
-            {isEditing ? (
-              <div className="size-full">
-                <Editor onSubmit={handleUpdate} disabled={isPending} defaultValue={JSON.parse(body)} onCancel={() => setEditingId(null)} variant="update" />
-              </div>
-            ) : (
-              <div className="flex w-full flex-col overflow-hidden">
-                <Renderer value={body} />
-                <Thumbnail url={image} />
-                <UpdatedAtText text={updatedAt} />
-                <Reactions data={reactions} onChange={handleReaction} currentUserId={currentUserId} />
-                <ThreadBar count={threadCount} image={threadImage} timestamp={threadTimestamp} name={threadName} onClick={() => onOpenMessage(id)} />
-              </div>
-            )}
-          </div>
-          {!isEditing && (
-            <Toolbar
-              isPending={isPending}
-              isAuthor={currentUserId === userId}
-              handelEdit={() => setEditingId(id)}
-              handleThread={() => onOpenMessage(id)}
-              handleDelete={handleRemove}
-              handleReaction={handleReaction}
-              hideThreadButton={hideThreadButton}
-            />
-          )}
-        </div>
-      </>
-    );
-  }
-
-  // ELSE
-  return (
-    <>
-      <ConfirmDialog />
       <div
         className={cn(
           'hover:bg-fade-200/60 group relative flex flex-col gap-2 p-1.5 px-5',
           isEditing && 'bg-paleyellow-100 hover:bg-paleyellow-100',
           isRemovingMessage && 'origin-bottom scale-y-0 transform bg-rose-500/50 transition-all duration-200'
         )}>
-        <div className="flex items-center gap-2">
-          <button onClick={() => onOpenProfile(userId)}>
-            <Avatar>
-              <AvatarImage src={authorImage || ''} alt={authorName} />
-              <AvatarFallback>{avatarFallback}</AvatarFallback>
-            </Avatar>
-          </button>
+        <div className="flex items-start gap-2">
+          <Hint label={createdAt ? formatFullTime(createdAt) : 'N/A'}>
+            <button className="w-[40px] text-center text-xs leading-[22px] text-muted-foreground opacity-0 hover:underline group-hover:opacity-100">
+              {createdAt ? format(createdAt, 'hh:mm') : 'N/A'}
+            </button>
+          </Hint>
           {isEditing ? (
             <div className="size-full">
               <Editor onSubmit={handleUpdate} disabled={isPending} defaultValue={JSON.parse(body)} onCancel={() => setEditingId(null)} variant="update" />
             </div>
           ) : (
-            //  IS NOT EDITING
             <div className="flex w-full flex-col overflow-hidden">
-              <div className="text-sm">
-                <button onClick={() => onOpenProfile(userId)} className="font-semibold text-primary hover:underline">
-                  {authorName}
-                </button>
-                <span>&nbsp;&nbsp;</span>
-                <Hint label={createdAt ? formatFullTime(createdAt) : 'N/A'}>
-                  <button className="text-xs text-muted-foreground hover:underline">{createdAt ? format(createdAt, 'h:mm a') : 'N/A'}</button>
-                </Hint>
-              </div>
               <Renderer value={body} />
               <Thumbnail url={image} />
               <UpdatedAtText text={updatedAt} />
               <Reactions data={reactions} onChange={handleReaction} currentUserId={currentUserId} />
-              <ThreadBar count={threadCount} image={threadImage} name={threadName} timestamp={threadTimestamp} onClick={() => onOpenMessage(id)} />
+              <ThreadBar count={threadCount} image={threadImage} timestamp={threadTimestamp} name={threadName} onClick={() => onOpenMessage(id)} />
             </div>
           )}
         </div>
@@ -217,6 +158,59 @@ export const Message = ({
           />
         )}
       </div>
-    </>
+    );
+  }
+
+  // ELSE
+  return (
+    <div
+      className={cn(
+        'hover:bg-fade-200/60 group relative flex flex-col gap-2 p-1.5 px-5',
+        isEditing && 'bg-paleyellow-100 hover:bg-paleyellow-100',
+        isRemovingMessage && 'origin-bottom scale-y-0 transform bg-rose-500/50 transition-all duration-200'
+      )}>
+      <div className="flex items-center gap-2">
+        <button onClick={() => onOpenProfile(userId)}>
+          <Avatar>
+            <AvatarImage src={authorImage || ''} alt={authorName} />
+            <AvatarFallback>{avatarFallback}</AvatarFallback>
+          </Avatar>
+        </button>
+        {isEditing ? (
+          <div className="size-full">
+            <Editor onSubmit={handleUpdate} disabled={isPending} defaultValue={JSON.parse(body)} onCancel={() => setEditingId(null)} variant="update" />
+          </div>
+        ) : (
+          //  IS NOT EDITING
+          <div className="flex w-full flex-col overflow-hidden">
+            <div className="text-sm">
+              <button onClick={() => onOpenProfile(userId)} className="font-semibold text-primary hover:underline">
+                {authorName}
+              </button>
+              <span>&nbsp;&nbsp;</span>
+              <Hint label={createdAt ? formatFullTime(createdAt) : 'N/A'}>
+                <button className="text-xs text-muted-foreground hover:underline">{createdAt ? format(createdAt, 'h:mm a') : 'N/A'}</button>
+              </Hint>
+            </div>
+            <Renderer value={body} />
+            <Thumbnail url={image} />
+            <UpdatedAtText text={updatedAt} />
+            <Reactions data={reactions} onChange={handleReaction} currentUserId={currentUserId} />
+            <ThreadBar count={threadCount} image={threadImage} name={threadName} timestamp={threadTimestamp} onClick={() => onOpenMessage(id)} />
+          </div>
+        )}
+      </div>
+      {!isEditing && (
+        <Toolbar
+          isPending={isPending}
+          isAuthor={currentUserId === userId}
+          handelEdit={() => setEditingId(id)}
+          handleThread={() => onOpenMessage(id)}
+          handleDelete={handleRemove}
+          handleReaction={handleReaction}
+          hideThreadButton={hideThreadButton}
+        />
+      )}
+    </div>
   );
 };
