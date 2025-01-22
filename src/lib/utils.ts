@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from 'clsx';
+import { format, isToday, isYesterday } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
@@ -13,6 +14,14 @@ export function formatDate(date: Date | string | number, opts: Intl.DateTimeForm
     ...opts,
   }).format(new Date(date));
 }
+
+export const formatDateLabel = (dateKey: string) => {
+  const date = new Date(dateKey);
+  if (isToday(date)) return 'Today';
+  if (isYesterday(date)) return 'Yesterday';
+
+  return format(date, 'EEEE, MMMM d');
+};
 
 export function toSentenceCase(str: string) {
   return str
@@ -59,3 +68,6 @@ export const extractTenantId = (pathname: string, locales: readonly string[]) =>
   // Return null if no tenantId is found
   return null;
 };
+
+export const TIME_THRESHOLD = 5;
+export const BATCH_SIZE = 20;

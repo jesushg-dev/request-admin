@@ -1,3 +1,5 @@
+import { auth } from '@/server/auth';
+
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Comments from '@/components/common/request/detail/comments';
@@ -7,7 +9,12 @@ import TaskProgress from '@/components/common/request/detail/requirement-progres
 
 import { activities, comments, projectDetails, tasks } from './mockData';
 
-export default function CaseDetailPage() {
+export default async function CaseDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const session = await auth();
+
+  if (!session) return null;
+
   return (
     <ResizablePanelGroup direction="horizontal" className="h-full">
       <ResizablePanel minSize={30} defaultSize={30}>
@@ -28,7 +35,7 @@ export default function CaseDetailPage() {
               <TaskProgress tasks={tasks} />
             </TabsContent>
             <TabsContent value="chat">
-              <Comments comments={comments} />
+              <Comments comments={comments} slug={slug} currentUserId={session.user.id} />
             </TabsContent>
             <TabsContent value="history">
               <ProjectActivities activities={activities} />

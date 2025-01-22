@@ -1,0 +1,25 @@
+'use client';
+
+import { ReactNode } from 'react';
+
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
+
+interface HintProps {
+  label: string;
+  children: ReactNode;
+  side?: 'top' | 'right' | 'bottom' | 'left';
+  align?: 'center' | 'end' | 'start';
+}
+
+export const Hint = ({ children, label, align, side }: HintProps) => {
+  return (
+    <TooltipProvider>
+      <Tooltip delayDuration={50}>
+        <TooltipTrigger asChild>{children}</TooltipTrigger>
+        <TooltipContent side={side} align={align} className="border-white/5 bg-[#1F1F1F] text-white">
+          <p className="text-medium text-xs">{label}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
