@@ -456,6 +456,8 @@ export function useCheckRequestAssignment<TError = DefaultError>(
       userTenantId?: string;
       areaId?: string;
       statusId?: string;
+      requestCategoryId?: string;
+      assignmentCategoryId?: string;
     };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions

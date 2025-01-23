@@ -31,13 +31,13 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ ten
         <div className="h-full p-4">
           <Tabs defaultValue="tasks" className="w-full">
             <TabsList className="flex gap-2">
-              <TabsTrigger value="tasks">Tasks</TabsTrigger>
+              <TabsTrigger value="requirements">Requirements</TabsTrigger>
               <TabsTrigger value="submissions">Submissions</TabsTrigger>
               <TabsTrigger value="chat">Chat</TabsTrigger>
               <TabsTrigger value="history">History</TabsTrigger>
               <TabsTrigger value="files">Files</TabsTrigger>
             </TabsList>
-            <TabsContent value="tasks">
+            <TabsContent value="requirements">
               <TaskProgress tasks={tasks} />
             </TabsContent>
             <TabsContent value="submissions">

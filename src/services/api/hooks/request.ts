@@ -383,8 +383,6 @@ export function useCheckRequest<TError = DefaultError>(
       closedComment?: string;
       comment?: string;
       statusId?: string;
-      requestCategoryId?: string;
-      assignmentCategoryId?: string;
       satisfactionSurveyId?: string;
       channelId?: string;
     };

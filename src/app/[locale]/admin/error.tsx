@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import Link from 'next/link';
-import { CircleAlertIcon, RefreshCwIcon } from 'lucide-react';
+import { BugIcon, CircleAlertIcon, RefreshCwIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -40,6 +40,10 @@ const ErrorPage: React.FC<ErrorPageProps> = ({ error }) => {
             </Button>
             <Button asChild>
               <Link href="/">Go back to home</Link>
+            </Button>
+            <Button type="button" variant="secondary" onClick={() => window.location.reload()}>
+              Report
+              <BugIcon className="ml-2 h-4 w-4" />
             </Button>
           </div>
         </CardContent>

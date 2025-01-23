@@ -442,7 +442,10 @@ export function useSuspenseCountRequestStatusType<
 }
 
 export function useCheckRequestStatusType<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; name?: string; description?: string; isActive?: boolean } },
+  args: {
+    operation: PolicyCrudKind;
+    where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; name?: string; description?: string; isActive?: boolean; allowCategoryChange?: boolean };
+  },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

@@ -304,6 +304,7 @@
     },
     "request": {
       "main": {
+        "new": "New",
         "entityLabel": "Requests",
         "columns": {
           "issueSubject": "Issue Subject",

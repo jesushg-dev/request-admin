@@ -1,6 +1,6 @@
 import React from 'react';
 import { QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
-import { CircleAlertIcon, RotateCcwIcon } from 'lucide-react';
+import { BugIcon, CircleAlertIcon, RotateCcwIcon } from 'lucide-react';
 
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader } from '../ui/card';
@@ -20,10 +20,14 @@ const ErrorRetryFallback: React.FC<ErrorRetryFallbackProps> = ({ error, onRetry 
       <CardContent>
         <p className="text-center text-muted-foreground">We encountered an unexpected error. Please try again.</p>
         {error?.message && <span className="text-center text-muted-foreground">{error?.message}</span>}
-        <div className="mt-4 flex justify-center">
+        <div className="mt-4 flex justify-center gap-2">
           <Button type="button" variant="destructive" onClick={onRetry}>
             Retry
             <RotateCcwIcon className="ml-2 h-4 w-4" />
+          </Button>
+          <Button type="button" variant="secondary" onClick={() => window.location.reload()}>
+            Report
+            <BugIcon className="ml-2 h-4 w-4" />
           </Button>
         </div>
       </CardContent>

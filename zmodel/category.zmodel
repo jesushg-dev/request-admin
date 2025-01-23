@@ -14,8 +14,8 @@ model RequestHierarchy extends TenantScoped, Auditable, CatalogBase {
 
 /// Represents a level within a request hierarchy.
 model RequestHierarchyLevel extends TenantScoped, Auditable, CatalogBase {
-  hierarchyId String              @db.UniqueIdentifier
-  hierarchy   RequestHierarchy    @relation(fields: [hierarchyId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cyclic referential actions
+  hierarchyId String            @db.UniqueIdentifier
+  hierarchy   RequestHierarchy  @relation(fields: [hierarchyId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cyclic referential actions
   categories  RequestCategory[]   // Categories associated with this level
   position    Int
 
@@ -28,20 +28,20 @@ model RequestHierarchyLevel extends TenantScoped, Auditable, CatalogBase {
 
 /// Represents a request category, with SLA and required documents.
 model RequestCategory extends TenantScoped, Auditable, CatalogBase {
-  parentCategoryId String?               @db.UniqueIdentifier // ID of the parent category
-  parentCategory   RequestCategory?      @relation("ParentRequestCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Handle self-relation correctly
-  subcategories    RequestCategory[]     @relation("ParentRequestCategory") // Subcategories under this category
-  hierarchyLevelId String                @db.UniqueIdentifier
-  hierarchyLevel   RequestHierarchyLevel @relation(fields: [hierarchyLevelId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
-  hierarchyId      String                @db.UniqueIdentifier
-  hierarchy        RequestHierarchy      @relation(fields: [hierarchyId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
-  sla              SLA?                  // SLA specific to this category
-  guideDocuments   GuideDocument[]       // Documents guiding the resolution of requests
-  isEligibleForNewClients Boolean @default(true) // Indicates if the category accepts new clients
-  categoryForms    CategoryForm[]        // Links the category to multiple forms
+  parentCategoryId           String?                      @db.UniqueIdentifier // ID of the parent category
+  parentCategory             RequestCategory?             @relation("ParentRequestCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Handle self-relation correctly
+  subcategories              RequestCategory[]            @relation("ParentRequestCategory") // Subcategories under this category
+  hierarchyLevelId           String                       @db.UniqueIdentifier
+  hierarchyLevel             RequestHierarchyLevel        @relation(fields: [hierarchyLevelId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
+  hierarchyId                String                       @db.UniqueIdentifier
+  hierarchy                  RequestHierarchy             @relation(fields: [hierarchyId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
+  sla                        SLA?                  // SLA specific to this category
+  guideDocuments             GuideDocument[]       // Documents guiding the resolution of requests
+  isEligibleForNewClients    Boolean                      @default(true) // Indicates if the category accepts new clients
+  categoryForms              CategoryForm[]        // Links the category to multiple forms
   requestCategoryRequirement RequestCategoryRequirement[] // Requirement mappings
 
-  requests       Request[] @relation("RequestCategory") // Requests where this category is the request category
+  requests                   RequestAssignment[]          @relation("RequestCategory") // Requests where this category is the request category
 
   @@index([name], name: "idx_request_category_name")
   @@index([hierarchyId], name: "idx_request_category_hierarchy_id")
@@ -51,21 +51,21 @@ model RequestCategory extends TenantScoped, Auditable, CatalogBase {
 
 /// SLA (Service Level Agreement) model.
 model SLA extends TenantScoped, Auditable {
-  id               String       @id @default(uuid()) @db.UniqueIdentifier
-  resolutionTime   Int          // Time in hours to resolve the request
-  escalationTime   Int?         // Time in hours before escalation
-  requestCategoryId String?     @db.UniqueIdentifier @unique
-  requestCategory  RequestCategory? @relation(fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
+  id                String           @id @default(uuid()) @db.UniqueIdentifier
+  resolutionTime    Int          // Time in hours to resolve the request
+  escalationTime    Int?         // Time in hours before escalation
+  requestCategoryId String?          @db.UniqueIdentifier @unique
+  requestCategory   RequestCategory? @relation(fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
 
-  changeLogs       SLAChangeLog[]
+  changeLogs        SLAChangeLog[]
 
   @@index([requestCategoryId], name: "idx_sla_request_category_id")
 }
 
 model SLAChangeLog extends TenantScoped, Auditable {
-  id              String       @id @default(uuid()) @db.UniqueIdentifier
-  slaId           String       @db.UniqueIdentifier
-  sla             SLA          @relation(fields: [slaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                String @id @default(uuid()) @db.UniqueIdentifier
+  slaId             String @db.UniqueIdentifier
+  sla               SLA    @relation(fields: [slaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   oldResolutionTime Int?       // Old resolution time
   newResolutionTime Int        // New resolution time
 
@@ -75,12 +75,12 @@ model SLAChangeLog extends TenantScoped, Auditable {
 
 /// Represents a guide document used to resolve a request.
 model GuideDocument extends TenantScoped, Auditable, CatalogBase {
-  url              String?      @db.VarChar(500) // Optional URL for the document
-  status           Int          // Status code representing the state of the document
-  expirationDate   DateTime?    // Optional expiration date for the document
-  version          Int          @default(1) //  Version number of the document
-  requestCategoryId String      @db.UniqueIdentifier // ID of the associated request category
-  requestCategory  RequestCategory @relation(fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
+  url               String?         @db.VarChar(500) // Optional URL for the document
+  status            Int          // Status code representing the state of the document
+  expirationDate    DateTime?    // Optional expiration date for the document
+  version           Int             @default(1) //  Version number of the document
+  requestCategoryId String          @db.UniqueIdentifier // ID of the associated request category
+  requestCategory   RequestCategory @relation(fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
 
   @@index([requestCategoryId], name: "idx_guide_document_request_category_id")
   @@unique([name, tenantId])
@@ -88,10 +88,10 @@ model GuideDocument extends TenantScoped, Auditable, CatalogBase {
 
 /// Links a requirement to a specific category.
 model RequestCategoryRequirement extends TenantScoped, Auditable {
-  id            String       @id @default(uuid()) @db.UniqueIdentifier
-  requirementId String       @db.UniqueIdentifier
-  requirement   Requirement  @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Maintain referential integrity
-  categoryId    String       @db.UniqueIdentifier
+  id              String          @id @default(uuid()) @db.UniqueIdentifier
+  requirementId   String          @db.UniqueIdentifier
+  requirement     Requirement     @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Maintain referential integrity
+  categoryId      String          @db.UniqueIdentifier
   requestCategory RequestCategory @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Maintain referential integrity
 
   @@index([requirementId], name: "idx_category_requirement_id")
@@ -100,11 +100,11 @@ model RequestCategoryRequirement extends TenantScoped, Auditable {
 
 /// Represents a specific requirement for a request/assignment category.
 model Requirement extends TenantScoped, Auditable, CatalogBase {
-  isRequiredOnlyForNewClients  Boolean      @default(false)
+  isRequiredOnlyForNewClients   Boolean                         @default(false)
   requirementComplianceTracking RequirementComplianceTracking[]
-  requestCategoryRequirement   RequestCategoryRequirement[]
-  requirementTypeId            String       @db.UniqueIdentifier
-  requirementType              RequirementType @relation(fields: [requirementTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
+  requestCategoryRequirement    RequestCategoryRequirement[]
+  requirementTypeId             String                          @db.UniqueIdentifier
+  requirementType               RequirementType                 @relation(fields: [requirementTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
 
   @@index([name], name: "idx_requirement_name")
   @@unique([name, tenantId])
@@ -122,8 +122,8 @@ model RequirementType extends TenantScoped, Auditable, CatalogBase {
 model AssignmentHierarchy extends TenantScoped, Auditable, CatalogBase {
   levels     AssignmentHierarchyLevel[] // Levels within this hierarchy
   categories AssignmentCategory[]       // Categories directly associated with this hierarchy
-  areaId     String?                     @db.UniqueIdentifier // Optional: can be null for global hierarchies
-  area       Area?                       @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Optional association with Area
+  areaId     String?                    @db.UniqueIdentifier // Optional: can be null for global hierarchies
+  area       Area?                      @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Optional association with Area
 
   @@index([name], name: "idx_assignment_hierarchy_name")
   @@unique([name]) // Name uniqueness is already scoped by tenant via TenantScoped
@@ -132,8 +132,8 @@ model AssignmentHierarchy extends TenantScoped, Auditable, CatalogBase {
 
 /// Represents a level within an assignment hierarchy.
 model AssignmentHierarchyLevel extends TenantScoped, Auditable, CatalogBase {
-  hierarchyId String                  @db.UniqueIdentifier
-  hierarchy   AssignmentHierarchy    @relation(fields: [hierarchyId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cyclic referential actions
+  hierarchyId String               @db.UniqueIdentifier
+  hierarchy   AssignmentHierarchy  @relation(fields: [hierarchyId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cyclic referential actions
   categories  AssignmentCategory[]   // Categories associated with this level
   position    Int
 
@@ -147,23 +147,23 @@ model AssignmentHierarchyLevel extends TenantScoped, Auditable, CatalogBase {
 /// Represents an assignment category, linked to specific rules and an area.
 /// Represents an assignment category, linked to specific rules and an area.
 model AssignmentCategory extends TenantScoped, Auditable, CatalogBase {
-  parentCategoryId String?                    @db.UniqueIdentifier // ID of the parent category
-  parentCategory   AssignmentCategory?       @relation("ParentAssignmentCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Handle self-relation correctly
-  subcategories    AssignmentCategory[]      @relation("ParentAssignmentCategory") // Subcategories under this category
+  parentCategoryId   String?                  @db.UniqueIdentifier // ID of the parent category
+  parentCategory     AssignmentCategory?      @relation("ParentAssignmentCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Handle self-relation correctly
+  subcategories      AssignmentCategory[]     @relation("ParentAssignmentCategory") // Subcategories under this category
 
-  hierarchyLevelId String                     @db.UniqueIdentifier
-  hierarchyLevel   AssignmentHierarchyLevel  @relation(fields: [hierarchyLevelId], references: [id], onDelete: Cascade, onUpdate: NoAction) // Ensure integrity
-  hierarchyId      String                     @db.UniqueIdentifier
-  hierarchy        AssignmentHierarchy       @relation(fields: [hierarchyId], references: [id], onDelete: Cascade, onUpdate: NoAction) // Ensure integrity
+  hierarchyLevelId   String                   @db.UniqueIdentifier
+  hierarchyLevel     AssignmentHierarchyLevel @relation(fields: [hierarchyLevelId], references: [id], onDelete: Cascade, onUpdate: NoAction) // Ensure integrity
+  hierarchyId        String                   @db.UniqueIdentifier
+  hierarchy          AssignmentHierarchy      @relation(fields: [hierarchyId], references: [id], onDelete: Cascade, onUpdate: NoAction) // Ensure integrity
 
-  areaId           String                     @db.UniqueIdentifier
-  area             Area                       @relation(fields: [areaId], references: [id], onDelete: Cascade, onUpdate: NoAction) // Maintain referential integrity
+  areaId             String                   @db.UniqueIdentifier
+  area               Area                     @relation(fields: [areaId], references: [id], onDelete: Cascade, onUpdate: NoAction) // Maintain referential integrity
 
-  assignmentRequests    Request[] @relation("AssignmentCategory") // Requests where this category is the assignment category
+  assignmentRequests RequestAssignment[]      @relation("AssignmentCategory") // Requests where this category is the assignment category
 
-  @@index([name, tenantId], name: "idx_assignment_category_name_tenant") 
+  @@index([name, tenantId], name: "idx_assignment_category_name_tenant")
   @@index([hierarchyId, tenantId], name: "idx_assignment_category_hierarchy_tenant")
   @@index([areaId, tenantId], name: "idx_assignment_category_area_tenant")
 
-  @@unique([name, hierarchyLevelId, areaId, parentCategoryId, tenantId]) 
+  @@unique([name, hierarchyLevelId, areaId, parentCategoryId, tenantId])
 }

@@ -1,17 +1,23 @@
 'use client';
 
 import React, { memo, useMemo } from 'react';
+import { Link } from '@/i18n/routing';
 import { useCountRequest, useFindManyRequest } from '@/services/api/hooks';
 import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
 import { Prisma } from '@prisma/client';
+import { ScrollArea } from '@radix-ui/react-scroll-area';
 import { ColumnDef } from '@tanstack/react-table';
+import { Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
+import { parseAsInteger, parseAsStringEnum, useQueryState, useQueryStates } from 'nuqs';
 
 import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
 import useTenantId from '@/hooks/use-tenant-id';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
@@ -19,6 +25,7 @@ import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-adv
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
+import { KanbanBoard } from '@/components/kanban/kanban-board';
 
 const RequestDefaultArgs = Prisma.validator<Prisma.RequestDefaultArgs>()({
   select: {
@@ -31,14 +38,27 @@ const RequestDefaultArgs = Prisma.validator<Prisma.RequestDefaultArgs>()({
         name: true,
       },
     },
-    requestCategory: {
+    requestAssignments: {
       select: {
-        name: true,
+        requestCategory: {
+          select: {
+            name: true,
+          },
+        },
+        assignmentCategory: {
+          select: {
+            name: true,
+          },
+        },
+        status: {
+          select: {
+            name: true,
+          },
+        },
       },
-    },
-    assignmentCategory: {
-      select: {
-        name: true,
+      take: 1,
+      orderBy: {
+        createdAt: 'desc',
       },
     },
     _count: {
@@ -65,6 +85,9 @@ const RequestMainPage: React.FC = () => {
   const tenantId = useTenantId();
   const t = useTranslations('admin.request.main');
   const [search] = useQueryStates(searchParamsParsers);
+  const [view, setView] = useQueryState('task-view', {
+    defaultValue: 'table',
+  });
 
   const { data, isLoading, isError, error, refetch, pageCount } = useFetchTableData<RequestWithRelations, Prisma.RequestFindManyArgs, Prisma.RequestCountArgs>({
     search,
@@ -95,21 +118,49 @@ const RequestMainPage: React.FC = () => {
   }
 
   return (
-    <DataTableShell table={table} floatingBar={<DataTableFloatingBar table={table} />}>
-      <DataTable table={table} isLoading={isLoading}>
-        <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
-          <DataTableToolbarActions
-            table={table}
-            exportFilename="requests"
-            entityLabel={t('entityLabel')}
-            addLink={{
+    <Tabs defaultValue={view} onValueChange={setView} className="flex w-full flex-1 flex-col gap-4 overflow-auto p-4">
+      <div className="flex w-full items-center justify-between gap-y-2 lg:flex-row">
+        <TabsList className="h-8 w-full lg:w-auto">
+          <TabsTrigger value="table" className="h-7 text-xs">
+            Table
+          </TabsTrigger>
+          <TabsTrigger value="kanban" className="h-7 text-xs">
+            Kanban
+          </TabsTrigger>
+          <TabsTrigger value="calendar" className="h-7 text-xs">
+            Calendar
+          </TabsTrigger>
+        </TabsList>
+        <Button variant="outline" size="sm" className="gap-2" asChild>
+          <Link
+            href={{
               pathname: '/admin/[tenantId]/requests-portal/requests/new',
               params: { tenantId },
-            }}
-          />
-        </DataTableAdvancedToolbar>
-      </DataTable>
-    </DataTableShell>
+            }}>
+            <Plus className="size-4" aria-hidden="true" />
+            {t('new')}
+          </Link>
+        </Button>
+      </div>
+      <Separator orientation="horizontal" />
+      <TabsContent value="table" className={`mt-0 ${view === 'table' ? 'flex flex-1' : ''}`}>
+        <DataTableShell className="p-0" table={table} floatingBar={<DataTableFloatingBar table={table} />}>
+          <DataTable table={table} isLoading={isLoading}>
+            <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
+              <DataTableToolbarActions table={table} exportFilename="requests" entityLabel={t('entityLabel')} />
+            </DataTableAdvancedToolbar>
+          </DataTable>
+        </DataTableShell>
+      </TabsContent>
+      <TabsContent value="kanban" className={`mt-0 ${view === 'kanban' ? 'flex flex-1' : ''}`}>
+        <div className="flex flex-1 overflow-hidden border-2 border-red-800">
+          <KanbanBoard />
+        </div>
+      </TabsContent>
+      <TabsContent value="calendar" className={`mt-0 ${view === 'calendar' ? 'flex flex-1' : ''}`}>
+        {/*<DataCalendar data={tasks?.documents ?? []} /> */}
+      </TabsContent>
+    </Tabs>
   );
 };
 

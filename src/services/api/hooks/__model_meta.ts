@@ -1485,34 +1485,6 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'statusId' },
         },
-        requestCategoryId: {
-          name: 'requestCategoryId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'requestCategory',
-        },
-        requestCategory: {
-          name: 'requestCategory',
-          type: 'RequestCategory',
-          isDataModel: true,
-          backLink: 'requests',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'requestCategoryId' },
-        },
-        assignmentCategoryId: {
-          name: 'assignmentCategoryId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'assignmentCategory',
-        },
-        assignmentCategory: {
-          name: 'assignmentCategory',
-          type: 'AssignmentCategory',
-          isDataModel: true,
-          backLink: 'assignmentRequests',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'assignmentCategoryId' },
-        },
         documents: {
           name: 'documents',
           type: 'Document',
@@ -1851,6 +1823,34 @@ const metadata = {
           type: 'DateTime',
           isOptional: true,
         },
+        requestCategoryId: {
+          name: 'requestCategoryId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'requestCategory',
+        },
+        requestCategory: {
+          name: 'requestCategory',
+          type: 'RequestCategory',
+          isDataModel: true,
+          backLink: 'requests',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'requestCategoryId' },
+        },
+        assignmentCategoryId: {
+          name: 'assignmentCategoryId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'assignmentCategory',
+        },
+        assignmentCategory: {
+          name: 'assignmentCategory',
+          type: 'AssignmentCategory',
+          isDataModel: true,
+          backLink: 'assignmentRequests',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'assignmentCategoryId' },
+        },
       },
       uniqueConstraints: {
         id: {
@@ -2009,6 +2009,11 @@ const metadata = {
         },
         isActive: {
           name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
+        allowCategoryChange: {
+          name: 'allowCategoryChange',
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: true }] }],
         },
@@ -2249,6 +2254,11 @@ const metadata = {
         },
         isFulfilled: {
           name: 'isFulfilled',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        isArchived: {
+          name: 'isArchived',
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: false }] }],
         },
@@ -3447,7 +3457,7 @@ const metadata = {
         },
         requests: {
           name: 'requests',
-          type: 'Request',
+          type: 'RequestAssignment',
           isDataModel: true,
           isArray: true,
           backLink: 'requestCategory',
@@ -4399,7 +4409,7 @@ const metadata = {
         },
         assignmentRequests: {
           name: 'assignmentRequests',
-          type: 'Request',
+          type: 'RequestAssignment',
           isDataModel: true,
           isArray: true,
           backLink: 'assignmentCategory',

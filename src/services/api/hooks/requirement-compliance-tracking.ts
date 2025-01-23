@@ -479,7 +479,10 @@ export function useSuspenseCountRequirementComplianceTracking<
 }
 
 export function useCheckRequirementComplianceTracking<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; requestId?: string; requirementId?: string; isFulfilled?: boolean } },
+  args: {
+    operation: PolicyCrudKind;
+    where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; requestId?: string; requirementId?: string; isFulfilled?: boolean; isArchived?: boolean };
+  },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

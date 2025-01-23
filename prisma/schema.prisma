@@ -293,10 +293,6 @@ model Request {
   comment              String?                         @db.VarChar(255)
   statusId             String                          @db.UniqueIdentifier()
   status               RequestStatusType               @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  requestCategoryId    String                          @db.UniqueIdentifier()
-  requestCategory      RequestCategory                 @relation("RequestCategory", fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  assignmentCategoryId String                          @db.UniqueIdentifier()
-  assignmentCategory   AssignmentCategory              @relation("AssignmentCategory", fields: [assignmentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   documents            Document[]
   formSubmission       FormSubmission[]
   complianceTrackings  RequirementComplianceTracking[]
@@ -309,10 +305,6 @@ model Request {
   channelId            String?                         @db.UniqueIdentifier()
   channel              Channel?
 
-  @@index([requestCategoryId], name: "idx_request_request_category_id")
-  @@index([assignmentCategoryId], name: "idx_request_assignment_category_id")
-  @@index([statusId, requestCategoryId], name: "idx_request_status_category")
-  @@index([statusId, assignmentCategoryId], name: "idx_request_status_assignment")
   @@index([statusId], name: "idx_request_status_id")
   @@index([closedAt], name: "idx_request_closed_at")
   @@index([closedBy], name: "idx_request_closed_by")
@@ -342,32 +334,47 @@ model RelatedIncident {
 
 /// Represents an assignment of a request to a user or area.
 model RequestAssignment {
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime?            @updatedAt()
-  deletedAt          DateTime?
-  createdBy          String?              @db.VarChar(50)
-  modifiedBy         String?              @db.VarChar(50)
-  tenantId           String               @db.UniqueIdentifier()
-  tenant             Tenant               @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                 String               @id() @default(uuid()) @db.UniqueIdentifier()
-  priority           String?              @db.VarChar(50)
-  comment            String?              @db.VarChar(255)
-  assignmentDate     DateTime
-  unAssignmentDate   DateTime?
-  typeId             String               @db.UniqueIdentifier()
-  type               AssignmentType       @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  requestId          String               @db.UniqueIdentifier()
-  request            Request              @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  userTenantId       String?              @db.UniqueIdentifier()
-  userTenant         UserTenant?          @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  areaId             String?              @db.UniqueIdentifier()
-  area               Area?                @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  statusId           String               @db.UniqueIdentifier()
-  status             RequestStatusType    @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  documentAssignment DocumentAssignment[]
-  slaStart           DateTime?
-  slaDeadline        DateTime?
-  slaEnd             DateTime?
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime?            @updatedAt()
+  deletedAt            DateTime?
+  createdBy            String?              @db.VarChar(50)
+  modifiedBy           String?              @db.VarChar(50)
+  tenantId             String               @db.UniqueIdentifier()
+  tenant               Tenant               @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                   String               @id() @default(uuid()) @db.UniqueIdentifier()
+  priority             String?              @db.VarChar(50)
+  comment              String?              @db.VarChar(255)
+  assignmentDate       DateTime
+  unAssignmentDate     DateTime?
+  typeId               String               @db.UniqueIdentifier()
+  type                 AssignmentType       @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  requestId            String               @db.UniqueIdentifier()
+  request              Request              @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  userTenantId         String?              @db.UniqueIdentifier()
+  userTenant           UserTenant?          @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  areaId               String?              @db.UniqueIdentifier()
+  area                 Area?                @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  statusId             String               @db.UniqueIdentifier()
+  status               RequestStatusType    @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  documentAssignment   DocumentAssignment[]
+  slaStart             DateTime?
+  slaDeadline          DateTime?
+  slaEnd               DateTime?
+  requestCategoryId    String               @db.UniqueIdentifier()
+  requestCategory      RequestCategory      @relation("RequestCategory", fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  assignmentCategoryId String               @db.UniqueIdentifier()
+  assignmentCategory   AssignmentCategory   @relation("AssignmentCategory", fields: [assignmentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([typeId], name: "idx_assignment_type_id")
+  @@index([requestId], name: "idx_assignment_request_id")
+  @@index([userTenantId], name: "idx_assignment_user_tenant_id")
+  @@index([areaId], name: "idx_assignment_area_id")
+  @@index([statusId], name: "idx_assignment_status_id")
+  @@index([slaStart], name: "idx_assignment_sla_start")
+  @@index([slaDeadline], name: "idx_assignment_sla_deadline")
+  @@index([slaEnd], name: "idx_assignment_sla_end")
+  @@index([requestCategoryId], name: "idx_assignment_request_category_id")
+  @@index([assignmentCategoryId], name: "idx_assignment_assignment_category_id")
 }
 
 model AssignmentType {
@@ -389,21 +396,22 @@ model AssignmentType {
 
 /// Represents a catalog of possible statuses for requests or assignments.
 model RequestStatusType {
-  createdAt       DateTime                  @default(now())
-  updatedAt       DateTime?                 @updatedAt()
-  deletedAt       DateTime?
-  createdBy       String?                   @db.VarChar(50)
-  modifiedBy      String?                   @db.VarChar(50)
-  tenantId        String                    @db.UniqueIdentifier()
-  tenant          Tenant                    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id              String                    @id() @default(uuid()) @db.UniqueIdentifier()
-  name            String                    @unique() @db.VarChar(50)
-  description     String?                   @db.VarChar(255)
-  isActive        Boolean                   @default(true)
-  requests        Request[]
-  assignments     RequestAssignment[]
-  fromTransitions RequestStatusTransition[] @relation("FromStatus")
-  toTransitions   RequestStatusTransition[] @relation("ToStatus")
+  createdAt           DateTime                  @default(now())
+  updatedAt           DateTime?                 @updatedAt()
+  deletedAt           DateTime?
+  createdBy           String?                   @db.VarChar(50)
+  modifiedBy          String?                   @db.VarChar(50)
+  tenantId            String                    @db.UniqueIdentifier()
+  tenant              Tenant                    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                  String                    @id() @default(uuid()) @db.UniqueIdentifier()
+  name                String                    @unique() @db.VarChar(50)
+  description         String?                   @db.VarChar(255)
+  isActive            Boolean                   @default(true)
+  allowCategoryChange Boolean                   @default(true)
+  requests            Request[]
+  assignments         RequestAssignment[]
+  fromTransitions     RequestStatusTransition[] @relation("FromStatus")
+  toTransitions       RequestStatusTransition[] @relation("ToStatus")
 }
 
 /// Manages valid transitions between statuses and can track SLA details.
@@ -445,6 +453,7 @@ model RequirementComplianceTracking {
   requirementId String      @db.UniqueIdentifier()
   requirement   Requirement @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   isFulfilled   Boolean     @default(false)
+  isArchived    Boolean     @default(false)
   document      Document[]
 
   @@index([requestId], name: "idx_compliance_request_id")
@@ -684,7 +693,7 @@ model RequestCategory {
   isEligibleForNewClients    Boolean                      @default(true)
   categoryForms              CategoryForm[]
   requestCategoryRequirement RequestCategoryRequirement[]
-  requests                   Request[]                    @relation("RequestCategory")
+  requests                   RequestAssignment[]          @relation("RequestCategory")
 
   @@unique([name, hierarchyLevelId, parentCategoryId])
   @@index([name], name: "idx_request_category_name")
@@ -881,7 +890,7 @@ model AssignmentCategory {
   hierarchy          AssignmentHierarchy      @relation(fields: [hierarchyId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   areaId             String                   @db.UniqueIdentifier()
   area               Area                     @relation(fields: [areaId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  assignmentRequests Request[]                @relation("AssignmentCategory")
+  assignmentRequests RequestAssignment[]      @relation("AssignmentCategory")
 
   @@unique([name, hierarchyLevelId, areaId, parentCategoryId, tenantId])
   @@index([name, tenantId], name: "idx_assignment_category_name_tenant")
