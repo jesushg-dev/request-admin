@@ -5,7 +5,6 @@ import { Link } from '@/i18n/routing';
 import { useCountRequest, useFindManyRequest } from '@/services/api/hooks';
 import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
 import { Prisma } from '@prisma/client';
-import { ScrollArea } from '@radix-ui/react-scroll-area';
 import { ColumnDef } from '@tanstack/react-table';
 import { Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -25,7 +24,7 @@ import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-adv
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
-import { KanbanBoard } from '@/components/kanban/kanban-board';
+import KanbanBoard from '@/components/kanban/kanban-board';
 
 const RequestDefaultArgs = Prisma.validator<Prisma.RequestDefaultArgs>()({
   select: {
@@ -153,9 +152,7 @@ const RequestMainPage: React.FC = () => {
         </DataTableShell>
       </TabsContent>
       <TabsContent value="kanban" className={`mt-0 ${view === 'kanban' ? 'flex flex-1' : ''}`}>
-        <div className="flex flex-1 overflow-hidden border-2 border-red-800">
-          <KanbanBoard />
-        </div>
+        <KanbanBoard />
       </TabsContent>
       <TabsContent value="calendar" className={`mt-0 ${view === 'calendar' ? 'flex flex-1' : ''}`}>
         {/*<DataCalendar data={tasks?.documents ?? []} /> */}
