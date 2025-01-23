@@ -24,7 +24,7 @@ function PreviewDialogBtn() {
           {t('preview')}
         </Button>
       </DialogTrigger>
-      <DialogContent className="flex h-screen max-h-screen w-screen max-w-full flex-grow flex-col gap-0 p-0">
+      <DialogContent className="flex h-screen max-h-screen w-screen max-w-full grow flex-col gap-0 p-0">
         {/* Dialog Title with Hidden Accessibility Text */}
         <DialogTitle>
           <VisuallyHidden>{t('formPreview')}</VisuallyHidden>
@@ -37,8 +37,8 @@ function PreviewDialogBtn() {
         </div>
 
         {/* Main Content Area */}
-        <div className="dark:bg-muted-dark flex flex-grow flex-col items-center justify-center overflow-y-hidden bg-muted bg-[url('/paper.svg')] p-4 dark:bg-[url('/paper-dark.svg')]">
-          <div className="flex h-full w-full max-w-[620px] flex-grow flex-col gap-4 overflow-y-hidden rounded-2xl bg-background">
+        <div className="dark:bg-muted-dark flex grow flex-col items-center justify-center overflow-y-hidden bg-muted bg-[url('/paper.svg')] p-4 dark:bg-[url('/paper-dark.svg')]">
+          <div className="flex h-full w-full max-w-[620px] grow flex-col gap-4 overflow-y-hidden rounded-2xl bg-background">
             <ScrollArea className="p-8">
               <div className="m-1 flex flex-col gap-4">
                 {elements.map((element) => {

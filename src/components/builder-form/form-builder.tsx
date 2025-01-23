@@ -122,7 +122,7 @@ function FormBuilder({ form }: { form: Form }) {
         </div>
 
         {/* Main Content */}
-        <div className="dark:bg-muted-dark relative flex h-[200px] w-full flex-grow items-center justify-center overflow-y-auto bg-muted bg-[url('/paper.svg')] dark:bg-[url('/paper-dark.svg')]">
+        <div className="dark:bg-muted-dark relative flex h-[200px] w-full grow items-center justify-center overflow-y-auto bg-muted bg-[url('/paper.svg')] dark:bg-[url('/paper-dark.svg')]">
           <Designer />
         </div>
 

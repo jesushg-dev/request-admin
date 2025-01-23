@@ -134,7 +134,7 @@ const Editor = ({ onCancel, onSubmit, disabled = false, innerRef, defaultValue =
   return (
     <div className="flex flex-col">
       <input type="file" accept="image/*" ref={imageElementRef} onChange={(e) => setImage(e.target.files?.[0] || null)} className="hidden" />
-      <div className={cn('flex flex-col overflow-hidden rounded-md border-slate-200 bg-white focus-within:border-slate-300 focus-within:shadow-sm', disabled && 'opacity-50')}>
+      <div className={cn('flex flex-col overflow-hidden rounded-md border-slate-200 bg-white focus-within:border-slate-300 focus-within:shadow-xs', disabled && 'opacity-50')}>
         <div ref={containerRef} className="ql-custom h-full" />
         {!!image && (
           <div className="p-2">
@@ -145,7 +145,7 @@ const Editor = ({ onCancel, onSubmit, disabled = false, innerRef, defaultValue =
                     setImage(null);
                     imageElementRef.current!.value = '';
                   }}
-                  className="absolute -right-2.5 -top-2.5 z-[4] hidden size-6 items-center justify-center rounded-full border-2 border-white bg-black/70 text-white hover:bg-black group-hover/image:flex">
+                  className="absolute -right-2.5 -top-2.5 z-4 hidden size-6 items-center justify-center rounded-full border-2 border-white bg-black/70 text-white hover:bg-black group-hover/image:flex">
                   <XIcon className="size3.5" />
                 </button>
               </Hint>
@@ -153,7 +153,7 @@ const Editor = ({ onCancel, onSubmit, disabled = false, innerRef, defaultValue =
             </div>
           </div>
         )}
-        <div className="z-[5] flex px-2">
+        <div className="z-5 flex px-2">
           <Hint label={isToolbarVisible ? 'Hide formatting' : 'Show formatting'}>
             <Button disabled={disabled} size="sm" variant="ghost" onClick={toggleToolbar}>
               <PiTextAa className="size-4" />

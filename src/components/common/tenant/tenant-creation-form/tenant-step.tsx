@@ -110,7 +110,7 @@ export function TenantStep() {
               <FormControl>
                 <div className="flex items-center">
                   <Input {...field} type="color" className="mr-2 h-12 w-12 p-1" />
-                  <Input {...field} className="flex-grow" />
+                  <Input {...field} className="grow" />
                 </div>
               </FormControl>
               <FormDescription>Select the primary brand color.</FormDescription>
@@ -128,7 +128,7 @@ export function TenantStep() {
               <FormControl>
                 <div className="flex items-center">
                   <Input {...field} type="color" className="mr-2 h-12 w-12 p-1" />
-                  <Input {...field} className="flex-grow" />
+                  <Input {...field} className="grow" />
                 </div>
               </FormControl>
               <FormDescription>Select the secondary brand color.</FormDescription>

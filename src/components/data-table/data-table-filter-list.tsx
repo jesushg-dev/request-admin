@@ -387,7 +387,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
           id={`${id}-filter-dialog`}
           align="start"
           collisionPadding={16}
-          className={cn('flex w-[calc(100vw-theme(spacing.12))] min-w-60 origin-[var(--radix-popover-content-transform-origin)] flex-col p-4 sm:w-[36rem]', filters.length > 0 ? 'gap-3.5' : 'gap-2')}>
+          className={cn('flex w-[calc(100vw-(--spacing(12)))] min-w-60 origin-[var(--radix-popover-content-transform-origin)] flex-col p-4 sm:w-[36rem]', filters.length > 0 ? 'gap-3.5' : 'gap-2')}>
           {filters.length > 0 ? (
             <h4 className="font-medium leading-none">Filters</h4>
           ) : (
@@ -437,7 +437,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
                           role="combobox"
                           aria-label="Select filter field"
                           aria-controls={fieldListboxId}
-                          className="h-8 w-32 justify-between gap-2 rounded focus:outline-none focus:ring-1 focus:ring-ring focus-visible:ring-0">
+                          className="h-8 w-32 justify-between gap-2 rounded focus:outline-hidden focus:ring-1 focus:ring-ring focus-visible:ring-0">
                           <span className="truncate">{filterFields.find((field) => field.id === filter.id)?.label ?? 'Select field'}</span>
                           <ChevronsUpDown className="size-4 shrink-0 opacity-50" />
                         </Button>

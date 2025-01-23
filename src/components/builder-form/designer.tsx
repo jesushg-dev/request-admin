@@ -111,7 +111,7 @@ function Designer() {
         <ScrollArea
           ref={droppable.setNodeRef}
           className={cn(
-            'm-auto flex h-full max-w-[920px] flex-1 flex-grow flex-col items-center justify-start overflow-y-auto rounded-xl bg-background',
+            'm-auto flex h-full max-w-[920px] flex-1 grow flex-col items-center justify-start overflow-y-auto rounded-xl bg-background',
             droppable.isOver && 'ring-4 ring-inset ring-primary'
           )}>
           {/* Empty State - No Elements */}
@@ -204,7 +204,7 @@ function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
           </div>
 
           {/* Actions */}
-          <div className="absolute right-0 top-0 z-50 flex flex-row items-center gap-2 p-1 shadow-sm">
+          <div className="absolute right-0 top-0 z-50 flex flex-row items-center gap-2 p-1 shadow-xs">
             {/* Properties Button */}
             <Button
               variant="secondary"

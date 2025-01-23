@@ -21,7 +21,7 @@ export function LevelsStep() {
         value={fields}
         onMove={({ activeIndex, overIndex }) => move(activeIndex, overIndex)}
         overlay={
-          <div className="grid grid-cols-[1fr,auto,auto] items-center gap-2">
+          <div className="grid grid-cols-[1fr_auto_auto] items-center gap-2">
             <div className="h-10 w-full rounded-md bg-primary/10" />
             <div className="h-10 w-10 shrink-0 rounded-md bg-primary/10" />
             <div className="h-10 w-10 shrink-0 rounded-md bg-primary/10" />
@@ -30,7 +30,7 @@ export function LevelsStep() {
         <div className="flex w-full flex-col gap-2">
           {fields.map((field, index) => (
             <SortableItem key={field.id} value={field.id} asChild>
-              <div className="grid grid-cols-[1fr,auto,auto] items-center gap-2">
+              <div className="grid grid-cols-[1fr_auto_auto] items-center gap-2">
                 <FormField
                   control={control}
                   name={`levels.${index}.name`}

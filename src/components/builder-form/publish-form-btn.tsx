@@ -45,7 +45,7 @@ function PublishFormBtn({ id }: { id: string }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button className="gap-2 bg-gradient-to-r from-indigo-400 to-cyan-400 text-white">
+        <Button className="gap-2 bg-linear-to-r from-indigo-400 to-cyan-400 text-white">
           <MdOutlinePublish className="h-4 w-4" />
           {t('publish')}
         </Button>

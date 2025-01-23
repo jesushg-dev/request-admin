@@ -42,7 +42,7 @@ export function TenantSwitcher({ tenants, tenantId, isGlobalAdmin }: { tenants: 
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg" align="start" side={isMobile ? 'bottom' : 'right'} sideOffset={4}>
+          <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg" align="start" side={isMobile ? 'bottom' : 'right'} sideOffset={4}>
             <DropdownMenuLabel className="text-xs text-muted-foreground">{t('label.tenants')}</DropdownMenuLabel>
             {tenants.length > 1 && (
               <>

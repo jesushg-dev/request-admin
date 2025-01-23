@@ -103,7 +103,7 @@ export const MessageList = ({
         <div key={dateKey}>
           <div className="relative my-2 text-center">
             <hr className="absolute left-0 right-0 top-1/2 border-t border-gray-300" />
-            <span className="relative inline-block rounded-full border border-gray-300 bg-white px-4 py-1 text-xs shadow-sm">{formatDateLabel(dateKey)}</span>
+            <span className="relative inline-block rounded-full border border-gray-300 bg-white px-4 py-1 text-xs shadow-xs">{formatDateLabel(dateKey)}</span>
           </div>
           {messages.map((message, index) => {
             const prevMsg = messages[index - 1];

@@ -50,7 +50,7 @@ export function BoardColumn({ column, tasks, isOverlay }: BoardColumnProps) {
     transform: CSS.Translate.toString(transform),
   };
 
-  const variants = cva('min-w-3xs flex max-w-full flex-1 flex-shrink-0 snap-center flex-col bg-primary-foreground', {
+  const variants = cva('min-w-3xs flex max-w-full flex-1 shrink-0 snap-center flex-col bg-primary-foreground', {
     variants: {
       dragging: {
         default: 'border-2 border-transparent',
@@ -75,7 +75,7 @@ export function BoardColumn({ column, tasks, isOverlay }: BoardColumnProps) {
         <span className="ml-auto"> {column.title}</span>
       </CardHeader>
       <ScrollArea>
-        <CardContent className="flex flex-grow flex-col gap-2 p-2">
+        <CardContent className="flex grow flex-col gap-2 p-2">
           <SortableContext items={tasksIds}>
             {tasks.map((task) => (
               <TaskCard key={task.id} task={task} />

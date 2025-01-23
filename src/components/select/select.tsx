@@ -27,14 +27,14 @@ export type OptionType = { label: string; value: string | number };
  */
 const selectStyles = {
   controlStyles: {
-    base: 'flex !min-h-9 w-full rounded-md border border-input bg-transparent pl-3 py-1 pr-1 gap-1 text-sm shadow-sm transition-colors hover:cursor-pointer',
-    focus: 'outline-none ring-1 ring-ring',
+    base: 'flex min-h-9! w-full rounded-md border border-input bg-transparent pl-3 py-1 pr-1 gap-1 text-sm shadow-xs transition-colors hover:cursor-pointer',
+    focus: 'outline-hidden ring-1 ring-ring',
     disabled: 'cursor-not-allowed opacity-50',
   },
   placeholderStyles: 'text-muted-foreground text-sm ml-1 font-medium',
   valueContainerStyles: 'gap-1',
   multiValueStyles:
-    'inline-flex items-center gap-2 rounded-md border border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80 px-1.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+    'inline-flex items-center gap-2 rounded-md border border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80 px-1.5 py-0.5 text-xs font-semibold transition-colors focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2',
   indicatorsContainerStyles: 'gap-1',
   clearIndicatorStyles: 'p-1 rounded-md',
   indicatorSeparatorStyles: 'bg-muted',
@@ -43,7 +43,7 @@ const selectStyles = {
   menuList: 'morel-scrollbar',
   groupHeadingStyles: 'py-2 px-1 text-secondary-foreground text-sm font-semibold',
   optionStyles: {
-    base: 'hover:cursor-pointer hover:bg-accent hover:text-accent-foreground px-2 py-1.5 rounded-sm !text-sm !cursor-default !select-none !outline-none font-sans',
+    base: 'hover:cursor-pointer hover:bg-accent hover:text-accent-foreground px-2 py-1.5 rounded-sm text-sm! cursor-default! select-none! outline-hidden! font-sans',
     focus: 'active:bg-accent/90 bg-accent text-accent-foreground',
     disabled: 'pointer-events-none opacity-50',
     selected: '',
