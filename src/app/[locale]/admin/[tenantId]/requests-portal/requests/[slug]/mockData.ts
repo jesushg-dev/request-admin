@@ -1,3 +1,5 @@
+import { FormSubmission } from '@/components/common/request/detail/submissions-viewer';
+
 export type Area = {
   id: string;
   name: string;
@@ -52,7 +54,6 @@ export const attachments = [
   { id: 4, name: 'Timeline.png', type: 'image', size: '3.7mb' },
 ];
 
-
 export const tasks = [
   { id: 1, description: 'Review client requirements', completed: true },
   { id: 2, description: 'Create system architecture diagram', completed: false },
@@ -100,3 +101,105 @@ export const requestAssignment = {
   statusId: 'status123',
   statusName: 'In Progress',
 };
+
+export const submissions: FormSubmission[] = [
+  {
+    id: '1',
+    formName: 'Customer Feedback',
+    submittedAt: '2023-05-15T10:30:00Z',
+    content: {
+      name: 'John Doe',
+      email: 'john@example.com',
+      rating: '5',
+      feedback: 'Great service!',
+    },
+  },
+  {
+    id: '2',
+    formName: 'Product Survey',
+    submittedAt: '2023-05-16T14:45:00Z',
+    content: {
+      productName: 'SuperWidget',
+      satisfaction: '4',
+      improvements: 'Could be more durable',
+    },
+  },
+  {
+    id: '3',
+    formName: 'Event Registration',
+    submittedAt: '2023-05-17T09:15:00Z',
+    content: {
+      attendeeName: 'Jane Smith',
+      eventDate: '2023-06-01',
+      dietaryRestrictions: 'Vegetarian',
+    },
+  },
+];
+
+export const sLAs = [
+  {
+    id: '1',
+    resolutionTime: 24,
+    escalationTime: 12,
+    requestCategoryId: 'cat1',
+    requestCategoryName: 'IT Support',
+  },
+  {
+    id: '2',
+    resolutionTime: 48,
+    escalationTime: null,
+    requestCategoryId: 'cat2',
+    requestCategoryName: 'HR Inquiries',
+  },
+  {
+    id: '3',
+    resolutionTime: 72,
+    escalationTime: 36,
+    requestCategoryId: 'cat3',
+    requestCategoryName: 'Facilities Management',
+  },
+];
+
+export const guideDocuments = [
+  {
+    id: 'gd1',
+    name: 'IT Troubleshooting Guide',
+    url: 'https://example.com/it-guide',
+    status: 1,
+    expirationDate: '2024-12-31T23:59:59Z',
+    version: 2,
+    requestCategoryId: 'cat1',
+    requestCategoryName: 'IT Support',
+  },
+  {
+    id: 'gd2',
+    name: 'Employee Onboarding Checklist',
+    url: null,
+    status: 1,
+    expirationDate: null,
+    version: 1,
+    requestCategoryId: 'cat2',
+    requestCategoryName: 'HR Inquiries',
+  },
+];
+
+export const documents = [
+  {
+    id: 'doc1',
+    name: 'Laptop Replacement Request',
+    url: 'https://example.com/laptop-request',
+    status: 2,
+    expirationDate: '2023-12-31T23:59:59Z',
+    requestId: 'req1',
+    requestName: 'New Laptop Request',
+  },
+  {
+    id: 'doc2',
+    name: 'Vacation Request Form',
+    url: null,
+    status: 1,
+    expirationDate: null,
+    requestId: 'req2',
+    requestName: 'Vacation Request',
+  },
+];

@@ -21,45 +21,37 @@ model User extends Auditable {
 
   accounts                Account[]
   sessions                Session[]
-  requestAssignments      RequestAssignment[]
-  userRoles               UserRole[]
-
   userTenants             UserTenant[]
-
-  userAreas               UserArea[]
 
   @@allow("read", userTenants?[user.id == auth().id && isActive == true])
 }
 
-model UserTenant {
-  id                           String         @id @default(uuid()) @db.UniqueIdentifier
-  isActive                     Boolean        @default(true) // Indicates if the user is active in the tenant
-  isTermAccepted               Boolean        @default(false) // Indicates if the user has accepted the terms of the tenant
-  joinedAt                     DateTime       @default(now()) // Timestamp of when the user joined the tenant
-  isSuperAdmin                 Boolean        @default(false) // Flag for super admin status
+model UserTenant extends TenantScoped, Auditable {
+  id                           String              @id @default(uuid()) @db.UniqueIdentifier
+  isActive                     Boolean             @default(true) // Indicates if the user is active in the tenant
+  isTermAccepted               Boolean             @default(false) // Indicates if the user has accepted the terms of the tenant
+  joinedAt                     DateTime            @default(now()) // Timestamp of when the user joined the tenant
+  isSuperAdmin                 Boolean             @default(false) // Flag for super admin status
 
-  userId                       String         @db.UniqueIdentifier
-  user                         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                       String              @db.UniqueIdentifier
+  user                         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  personId                     String?        @db.UniqueIdentifier
+  personId                     String?             @db.UniqueIdentifier
   person                       Person?
 
-  tenantId                     String         @db.UniqueIdentifier
-  tenant                       Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-
+  userAreas                    UserTenantArea[]
+  userRoles                    UserTenantRole[]
+  requestAssignments           RequestAssignment[]
   reactions                    Reaction[]     // Reactions made by the user in the tenant
   messages                     Message[]      // Messages sent by the user
-  conversationsAsUserTenantOne Conversation[] @relation("UserTenantOne") // Conversations where this user is UserTenantOne
-  conversationsAsUserTenantTwo Conversation[] @relation("UserTenantTwo") // Conversations where this user is UserTenantTwo
+  conversationsAsUserTenantOne Conversation[]      @relation("UserTenantOne") // Conversations where this user is UserTenantOne
+  conversationsAsUserTenantTwo Conversation[]      @relation("UserTenantTwo") // Conversations where this user is UserTenantTwo
 
 
   @@unique([userId, tenantId]) // Ensure unique user-tenant relationships
   @@index([userId]) // Index for efficient queries by userId
   @@index([tenantId]) // Index for efficient queries by tenantId
-  @@allow('read', isActive == true && (user.id == auth().id ))
-  @@allow('update', isActive == true && (user.id == auth().id))
 }
-
 
 model Session {
   // Primary identifier

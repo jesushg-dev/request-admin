@@ -3,12 +3,14 @@ import { db } from '@/server/db-client';
 
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import AssociatedFilesViewer from '@/components/common/request/detail/associated-files-viewer';
 import Comments from '@/components/common/request/detail/comments';
 import ProjectActivities from '@/components/common/request/detail/request-activities';
 import ProjectDetails from '@/components/common/request/detail/request-details';
 import TaskProgress from '@/components/common/request/detail/requirement-progress';
+import FormSubmissionsViewer from '@/components/common/request/detail/submissions-viewer';
 
-import { activities, projectDetails, tasks } from './mockData';
+import { activities, documents, guideDocuments, projectDetails, submissions, tasks } from './mockData';
 
 export default async function CaseDetailPage({ params }: { params: Promise<{ tenantId: string; slug: string }> }) {
   const { tenantId, slug } = await params;
@@ -30,17 +32,25 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ ten
           <Tabs defaultValue="tasks" className="w-full">
             <TabsList className="flex gap-2">
               <TabsTrigger value="tasks">Tasks</TabsTrigger>
+              <TabsTrigger value="submissions">Submissions</TabsTrigger>
               <TabsTrigger value="chat">Chat</TabsTrigger>
               <TabsTrigger value="history">History</TabsTrigger>
+              <TabsTrigger value="files">Files</TabsTrigger>
             </TabsList>
             <TabsContent value="tasks">
               <TaskProgress tasks={tasks} />
+            </TabsContent>
+            <TabsContent value="submissions">
+              <FormSubmissionsViewer submissions={submissions} />
             </TabsContent>
             <TabsContent value="chat">
               <Comments slug={slug} currentUserId={session.user.id} channel={channel} tenantId={tenantId} />
             </TabsContent>
             <TabsContent value="history">
               <ProjectActivities activities={activities} />
+            </TabsContent>
+            <TabsContent value="files">
+              <AssociatedFilesViewer guideDocuments={guideDocuments} documents={documents} />
             </TabsContent>
           </Tabs>
         </div>

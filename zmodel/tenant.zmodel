@@ -65,13 +65,13 @@ model Tenant extends Auditable {
 
   // --- Areas and Categories ---
   areas                          Area[]
-  userAreas                      UserArea[]
+  userAreas                      UserTenantArea[]
   areaRoles                      AreaRole[]
   areaRoleFeatures               AreaRoleFeature[]
 
   // --- Roles and Permissions ---
   persons                        Person[]
-  userRoles                      UserRole[]
+  userRoles                      UserTenantRole[]
   roles                          Role[]
   roleFeatures                   RoleFeature[]
 

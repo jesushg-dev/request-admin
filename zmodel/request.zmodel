@@ -98,8 +98,8 @@ model RequestAssignment extends TenantScoped, Auditable {
   requestId          String               @db.UniqueIdentifier
   request            Request              @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  userId             String?              @db.UniqueIdentifier
-  user               User?                @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  userTenantId       String?              @db.UniqueIdentifier
+  userTenant         UserTenant?          @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   areaId             String?              @db.UniqueIdentifier
   area               Area?                @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)

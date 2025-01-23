@@ -426,6 +426,7 @@
       "main": {
         "entityLabel": "Usuarios",
         "columns": {
+          "person": "Infomarción Personal",
           "username": "Nombre de usuario",
           "email": "Correo electrónico",
           "emailVerified": "Correo verificado",
@@ -435,6 +436,10 @@
           "requestAssignments": "Asignaciones de solicitudes"
         },
         "filters": {
+          "firstName": "Nombre",
+          "firstNamePlaceholder": "Buscar por nombre",	
+          "lastName": "Apellido",
+          "lastNamePlaceholder": "Buscar por apellido",
           "username": "Nombre de usuario",
           "usernamePlaceholder": "Buscar por nombre de usuario",
           "email": "Correo electrónico",

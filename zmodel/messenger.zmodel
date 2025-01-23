@@ -23,6 +23,7 @@ model Conversation extends TenantScoped {
   messages        Message[]
 
   @@index([userTenantOneId, userTenantTwoId])
+  @@unique([userTenantOneId, userTenantTwoId])
 }
 
 model Message extends TenantScoped, Auditable {

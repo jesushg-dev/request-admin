@@ -27,15 +27,6 @@ const RoleDefaultArgs = Prisma.validator<Prisma.RoleDefaultArgs>()({
     name: true,
     description: true,
     createdAt: true,
-    userRole: {
-      select: {
-        user: {
-          select: {
-            email: true,
-          },
-        },
-      },
-    },
     roleFeature: {
       select: {
         feature: {

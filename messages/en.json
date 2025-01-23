@@ -426,6 +426,7 @@
       "main": {
         "entityLabel": "Users",
         "columns": {
+          "person": "Person Information",
           "username": "Username",
           "email": "Email",
           "emailVerified": "Email Verified",
@@ -435,6 +436,10 @@
           "requestAssignments": "Request Assignments"
         },
         "filters": {
+          "firstName": "First Name",
+          "firstNamePlaceholder": "Search by first name",
+          "lastName": "Last Name",
+          "lastNamePlaceholder": "Search by last name",
           "username": "Username",
           "usernamePlaceholder": "Search by username",
           "email": "Email",

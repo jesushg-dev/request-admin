@@ -88,7 +88,7 @@ const IdentificationTypeMainPage: React.FC = () => {
             exportFilename="identification-types"
             entityLabel={t('entityLabel')}
             addLink={{
-              pathname: '/admin/[tenantId]/management/identification-types/new',
+              pathname: '/admin/[tenantId]/security/identification-types/new',
               params: { tenantId },
             }}
           />

@@ -58,11 +58,11 @@ model Tenant {
   categoryForms                  CategoryForm[]
   menuItems                      MenuItem[]
   areas                          Area[]
-  userAreas                      UserArea[]
+  userAreas                      UserTenantArea[]
   areaRoles                      AreaRole[]
   areaRoleFeatures               AreaRoleFeature[]
   persons                        Person[]
-  userRoles                      UserRole[]
+  userRoles                      UserTenantRole[]
   roles                          Role[]
   roleFeatures                   RoleFeature[]
   modules                        Module[]
@@ -159,28 +159,33 @@ model User {
   isGlobalAdmin           Boolean                @default(false)
   accounts                Account[]
   sessions                Session[]
-  requestAssignments      RequestAssignment[]
-  userRoles               UserRole[]
   userTenants             UserTenant[]
-  userAreas               UserArea[]
 }
 
 model UserTenant {
-  id                           String         @id() @default(uuid()) @db.UniqueIdentifier()
-  isActive                     Boolean        @default(true)
-  isTermAccepted               Boolean        @default(false)
-  joinedAt                     DateTime       @default(now())
-  isSuperAdmin                 Boolean        @default(false)
-  userId                       String         @db.UniqueIdentifier()
-  user                         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  personId                     String?        @db.UniqueIdentifier()
+  createdAt                    DateTime            @default(now())
+  updatedAt                    DateTime?           @updatedAt()
+  deletedAt                    DateTime?
+  createdBy                    String?             @db.VarChar(50)
+  modifiedBy                   String?             @db.VarChar(50)
+  tenantId                     String              @db.UniqueIdentifier()
+  tenant                       Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                           String              @id() @default(uuid()) @db.UniqueIdentifier()
+  isActive                     Boolean             @default(true)
+  isTermAccepted               Boolean             @default(false)
+  joinedAt                     DateTime            @default(now())
+  isSuperAdmin                 Boolean             @default(false)
+  userId                       String              @db.UniqueIdentifier()
+  user                         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  personId                     String?             @db.UniqueIdentifier()
   person                       Person?
-  tenantId                     String         @db.UniqueIdentifier()
-  tenant                       Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  userAreas                    UserTenantArea[]
+  userRoles                    UserTenantRole[]
+  requestAssignments           RequestAssignment[]
   reactions                    Reaction[]
   messages                     Message[]
-  conversationsAsUserTenantOne Conversation[] @relation("UserTenantOne")
-  conversationsAsUserTenantTwo Conversation[] @relation("UserTenantTwo")
+  conversationsAsUserTenantOne Conversation[]      @relation("UserTenantOne")
+  conversationsAsUserTenantTwo Conversation[]      @relation("UserTenantTwo")
 
   @@unique([userId, tenantId])
   @@index([userId])
@@ -301,6 +306,8 @@ model Request {
   changeLog            RequestChangeLog[]
   satisfactionSurveyId String?                         @db.UniqueIdentifier()
   satisfactionSurvey   CustomerSatisfactionSurvey?     @relation("RequestSurvey")
+  channelId            String?                         @db.UniqueIdentifier()
+  channel              Channel?
 
   @@index([requestCategoryId], name: "idx_request_request_category_id")
   @@index([assignmentCategoryId], name: "idx_request_assignment_category_id")
@@ -351,8 +358,8 @@ model RequestAssignment {
   type               AssignmentType       @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   requestId          String               @db.UniqueIdentifier()
   request            Request              @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  userId             String?              @db.UniqueIdentifier()
-  user               User?                @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  userTenantId       String?              @db.UniqueIdentifier()
+  userTenant         UserTenant?          @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   areaId             String?              @db.UniqueIdentifier()
   area               Area?                @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   statusId           String               @db.UniqueIdentifier()
@@ -536,7 +543,7 @@ model Area {
   tenant                Tenant                @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   requestAssignments    RequestAssignment[]
   assignmentCategories  AssignmentCategory[]
-  userAreas             UserArea[]
+  userAreas             UserTenantArea[]
   areaRole              AreaRole[]
   assignmentHierarchies AssignmentHierarchy[]
 
@@ -546,24 +553,24 @@ model Area {
 
 /// Represents the assignment of users to areas with specific roles.
 /// This model acts as an intermediate table for associating users, areas, and area-specific roles.
-model UserArea {
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime? @updatedAt()
-  deletedAt  DateTime?
-  createdBy  String?   @db.VarChar(50)
-  modifiedBy String?   @db.VarChar(50)
-  tenantId   String    @db.UniqueIdentifier()
-  tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id         String    @id() @default(uuid()) @db.UniqueIdentifier()
-  isActive   Boolean   @default(true)
-  userId     String    @db.UniqueIdentifier()
-  areaId     String    @db.UniqueIdentifier()
-  roleId     String?   @db.UniqueIdentifier()
-  user       User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  area       Area      @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  role       AreaRole? @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+model UserTenantArea {
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime?  @updatedAt()
+  deletedAt    DateTime?
+  createdBy    String?    @db.VarChar(50)
+  modifiedBy   String?    @db.VarChar(50)
+  tenantId     String     @db.UniqueIdentifier()
+  tenant       Tenant     @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id           String     @id() @default(uuid()) @db.UniqueIdentifier()
+  isActive     Boolean    @default(true)
+  userTenantId String     @db.UniqueIdentifier()
+  areaId       String     @db.UniqueIdentifier()
+  roleId       String?    @db.UniqueIdentifier()
+  userTenant   UserTenant @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  area         Area       @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  role         AreaRole?  @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([userId, areaId])
+  @@unique([userTenantId, areaId])
 }
 
 /// Represents roles that are specific to an area.
@@ -582,7 +589,7 @@ model AreaRole {
   tenant           Tenant            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   areaId           String?           @db.UniqueIdentifier()
   area             Area?             @relation(fields: [areaId], references: [id])
-  userAreas        UserArea[]
+  userAreas        UserTenantArea[]
   areaRoleFeatures AreaRoleFeature[]
 
   @@unique([name, areaId, tenantId])
@@ -979,37 +986,37 @@ model MenuItem {
   children   MenuItem[] @relation("MenuItemToParent")
 }
 
-model UserRole {
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime? @updatedAt()
-  deletedAt  DateTime?
-  createdBy  String?   @db.VarChar(50)
-  modifiedBy String?   @db.VarChar(50)
-  tenantId   String    @db.UniqueIdentifier()
-  tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id         String    @id() @default(uuid()) @db.UniqueIdentifier()
-  isActive   Boolean   @default(true)
-  userId     String    @db.UniqueIdentifier()
-  roleId     String    @db.UniqueIdentifier()
-  user       User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  role       Role      @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+model UserTenantRole {
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime?  @updatedAt()
+  deletedAt    DateTime?
+  createdBy    String?    @db.VarChar(50)
+  modifiedBy   String?    @db.VarChar(50)
+  tenantId     String     @db.UniqueIdentifier()
+  tenant       Tenant     @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id           String     @id() @default(uuid()) @db.UniqueIdentifier()
+  isActive     Boolean    @default(true)
+  userTenantId String     @db.UniqueIdentifier()
+  roleId       String     @db.UniqueIdentifier()
+  userTenant   UserTenant @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 /// Represents a system role within a tenant.
 /// Roles define sets of features that can be assigned to users.
 model Role {
-  id          String        @id() @default(uuid()) @db.UniqueIdentifier()
-  name        String        @db.VarChar(100)
-  description String?       @db.VarChar(255)
-  isActive    Boolean       @default(true)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime?     @updatedAt()
+  id          String           @id() @default(uuid()) @db.UniqueIdentifier()
+  name        String           @db.VarChar(100)
+  description String?          @db.VarChar(255)
+  isActive    Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime?        @updatedAt()
   deletedAt   DateTime?
-  createdBy   String?       @db.VarChar(50)
-  modifiedBy  String?       @db.VarChar(50)
-  tenantId    String        @db.UniqueIdentifier()
-  tenant      Tenant        @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  userRole    UserRole[]
+  createdBy   String?          @db.VarChar(50)
+  modifiedBy  String?          @db.VarChar(50)
+  tenantId    String           @db.UniqueIdentifier()
+  tenant      Tenant           @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  userRole    UserTenantRole[]
   roleFeature RoleFeature[]
 
   @@unique([name, tenantId])
@@ -1090,6 +1097,8 @@ model Channel {
   id         String    @id() @default(uuid()) @db.UniqueIdentifier()
   name       String
   messages   Message[]
+  requestId  String?   @unique() @db.UniqueIdentifier()
+  request    Request?  @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([tenantId])
 }
@@ -1104,6 +1113,7 @@ model Conversation {
   userTenantTwo   UserTenant @relation("UserTenantTwo", fields: [userTenantTwoId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   messages        Message[]
 
+  @@unique([userTenantOneId, userTenantTwoId])
   @@index([userTenantOneId, userTenantTwoId])
 }
 

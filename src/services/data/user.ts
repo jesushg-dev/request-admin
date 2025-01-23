@@ -45,15 +45,15 @@ export const getUserByIdWithFeatures = async (id: string) => {
                 image: true,
               },
             },
-          },
-        },
-        userRoles: {
-          select: {
-            role: {
+            userRoles: {
               select: {
-                name: true,
-                roleFeature: {
-                  select: { feature: true },
+                role: {
+                  select: {
+                    name: true,
+                    roleFeature: {
+                      select: { feature: true },
+                    },
+                  },
                 },
               },
             },
@@ -64,6 +64,7 @@ export const getUserByIdWithFeatures = async (id: string) => {
 
     if (!user) return null;
 
+    // todo: we can't use this method to fetch user with features and roles since we don't have access to a specific tenant
     // Flatten roles and features
     const roles = user.userRoles?.map((ur) => ur.role.name) || [];
     const features = user.userRoles?.flatMap((ur) => ur.role.roleFeature.map((rp) => rp.feature.name)) || [];

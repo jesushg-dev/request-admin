@@ -386,6 +386,7 @@ export function useCheckRequest<TError = DefaultError>(
       requestCategoryId?: string;
       assignmentCategoryId?: string;
       satisfactionSurveyId?: string;
+      channelId?: string;
     };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions

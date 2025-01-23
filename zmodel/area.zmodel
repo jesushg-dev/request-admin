@@ -9,42 +9,41 @@ import './permission.zmodel'
 model Area extends TenantScoped, Auditable, CatalogBase {
   // Relationships
   requestAssignments    RequestAssignment[] // Links request assignments to this area
-  assignmentCategories AssignmentCategory[] // Links categories to this area
-  userAreas             UserArea[]          // Intermediate table to associate users with this area
+  assignmentCategories  AssignmentCategory[] // Links categories to this area
+  userAreas             UserTenantArea[]          // Intermediate table to associate users with this area
   areaRole              AreaRole[]          // Links roles specifically defined for this area
   assignmentHierarchies AssignmentHierarchy[] // Links hierarchies to this area
 
   // Index for efficient lookups by area name
   @@index([name, tenantId], name: "idx_area_name")
-  @@unique([name, tenantId])  
+  @@unique([name, tenantId])
 }
 
 
 /// Represents the assignment of users to areas with specific roles.
 /// This model acts as an intermediate table for associating users, areas, and area-specific roles.
-model UserArea extends TenantScoped, Auditable {
-  id                   String    @id @default(uuid()) @db.UniqueIdentifier
-  isActive             Boolean   @default(true)
-  userId               String    @db.UniqueIdentifier
-  areaId               String    @db.UniqueIdentifier
-  roleId               String?   @db.UniqueIdentifier
+model UserTenantArea extends TenantScoped, Auditable {
+  id           String     @id @default(uuid()) @db.UniqueIdentifier
+  isActive     Boolean    @default(true)
+  userTenantId String     @db.UniqueIdentifier
+  areaId       String     @db.UniqueIdentifier
+  roleId       String?    @db.UniqueIdentifier
 
-  user                 User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  area                 Area      @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  role                 AreaRole? @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  userTenant   UserTenant @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  area         Area       @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  role         AreaRole?  @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  // Ensures a user can have only one role within a specific area
-  @@unique([userId, areaId])
+  @@unique([userTenantId, areaId])
 }
 
 /// Represents roles that are specific to an area.
 /// Area roles define features and responsibilities of users within a specific organizational area.
 model AreaRole extends TenantScoped, Auditable, CatalogBase {
   // Relationships
-  areaId               String?   @db.UniqueIdentifier 
-  area                 Area?     @relation(fields: [areaId], references: [id]) // Links to the Area model
-  userAreas            UserArea[] // Links this role to users assigned within an area
-  areaRoleFeatures  AreaRoleFeature[] // Links this role to features specific to the area
+  areaId           String?           @db.UniqueIdentifier
+  area             Area?             @relation(fields: [areaId], references: [id]) // Links to the Area model
+  userAreas        UserTenantArea[] // Links this role to users assigned within an area
+  areaRoleFeatures AreaRoleFeature[] // Links this role to features specific to the area
 
   // Ensures role names are unique within the same area
   @@unique([name, areaId, tenantId])
@@ -53,14 +52,14 @@ model AreaRole extends TenantScoped, Auditable, CatalogBase {
 /// Links area-specific roles to features.
 /// This model defines which features are granted to roles within a specific area.
 model AreaRoleFeature extends TenantScoped, Auditable {
-  id                   String     @id @default(uuid()) @db.UniqueIdentifier
-  isActive             Boolean    @default(true)
+  id         String   @id @default(uuid()) @db.UniqueIdentifier
+  isActive   Boolean  @default(true)
 
   // Relationships
-  areaRoleId           String     @db.UniqueIdentifier
-  areaRole             AreaRole   @relation(fields: [areaRoleId], references: [id]) // Links to AreaRole
-  featureId         String     @db.UniqueIdentifier
-  feature           Feature @relation(fields: [featureId], references: [id]) // Links to Feature
+  areaRoleId String   @db.UniqueIdentifier
+  areaRole   AreaRole @relation(fields: [areaRoleId], references: [id]) // Links to AreaRole
+  featureId  String   @db.UniqueIdentifier
+  feature    Feature  @relation(fields: [featureId], references: [id]) // Links to Feature
 
   // Ensures a role cannot have duplicate features within the same scope
   @@unique([areaRoleId, featureId])

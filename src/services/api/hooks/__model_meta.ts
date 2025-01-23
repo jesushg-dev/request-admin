@@ -300,7 +300,7 @@ const metadata = {
         },
         userAreas: {
           name: 'userAreas',
-          type: 'UserArea',
+          type: 'UserTenantArea',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
@@ -328,7 +328,7 @@ const metadata = {
         },
         userRoles: {
           name: 'userRoles',
-          type: 'UserRole',
+          type: 'UserTenantRole',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
@@ -846,30 +846,9 @@ const metadata = {
           isArray: true,
           backLink: 'user',
         },
-        requestAssignments: {
-          name: 'requestAssignments',
-          type: 'RequestAssignment',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'user',
-        },
-        userRoles: {
-          name: 'userRoles',
-          type: 'UserRole',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'user',
-        },
         userTenants: {
           name: 'userTenants',
           type: 'UserTenant',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'user',
-        },
-        userAreas: {
-          name: 'userAreas',
-          type: 'UserArea',
           isDataModel: true,
           isArray: true,
           backLink: 'user',
@@ -893,6 +872,50 @@ const metadata = {
     userTenant: {
       name: 'UserTenant',
       fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$UserTenant$createdBy,
+        },
+        modifiedBy: {
+          name: 'modifiedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$UserTenant$modifiedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'userTenants',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
         id: {
           name: 'id',
           type: 'String',
@@ -945,19 +968,26 @@ const metadata = {
           isOptional: true,
           backLink: 'userTenant',
         },
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
+        userAreas: {
+          name: 'userAreas',
+          type: 'UserTenantArea',
           isDataModel: true,
-          backLink: 'userTenants',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
+          isArray: true,
+          backLink: 'userTenant',
+        },
+        userRoles: {
+          name: 'userRoles',
+          type: 'UserTenantRole',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'userTenant',
+        },
+        requestAssignments: {
+          name: 'requestAssignments',
+          type: 'RequestAssignment',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'userTenant',
         },
         reactions: {
           name: 'reactions',
@@ -1544,6 +1574,18 @@ const metadata = {
           isOptional: true,
           backLink: 'request',
         },
+        channelId: {
+          name: 'channelId',
+          type: 'String',
+          isOptional: true,
+        },
+        channel: {
+          name: 'channel',
+          type: 'Channel',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'request',
+        },
       },
       uniqueConstraints: {
         id: {
@@ -1741,21 +1783,21 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'requestId' },
         },
-        userId: {
-          name: 'userId',
+        userTenantId: {
+          name: 'userTenantId',
           type: 'String',
           isOptional: true,
           isForeignKey: true,
-          relationField: 'user',
+          relationField: 'userTenant',
         },
-        user: {
-          name: 'user',
-          type: 'User',
+        userTenant: {
+          name: 'userTenant',
+          type: 'UserTenant',
           isDataModel: true,
           isOptional: true,
           backLink: 'requestAssignments',
           isRelationOwner: true,
-          foreignKeyMapping: { id: 'userId' },
+          foreignKeyMapping: { id: 'userTenantId' },
         },
         areaId: {
           name: 'areaId',
@@ -2695,7 +2737,7 @@ const metadata = {
         },
         userAreas: {
           name: 'userAreas',
-          type: 'UserArea',
+          type: 'UserTenantArea',
           isDataModel: true,
           isArray: true,
           backLink: 'area',
@@ -2726,8 +2768,8 @@ const metadata = {
         },
       },
     },
-    userArea: {
-      name: 'UserArea',
+    userTenantArea: {
+      name: 'UserTenantArea',
       fields: {
         createdAt: {
           name: 'createdAt',
@@ -2750,14 +2792,14 @@ const metadata = {
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$UserArea$createdBy,
+          defaultValueProvider: $default$UserTenantArea$createdBy,
         },
         modifiedBy: {
           name: 'modifiedBy',
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$UserArea$modifiedBy,
+          defaultValueProvider: $default$UserTenantArea$modifiedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -2784,11 +2826,11 @@ const metadata = {
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: true }] }],
         },
-        userId: {
-          name: 'userId',
+        userTenantId: {
+          name: 'userTenantId',
           type: 'String',
           isForeignKey: true,
-          relationField: 'user',
+          relationField: 'userTenant',
         },
         areaId: {
           name: 'areaId',
@@ -2803,13 +2845,13 @@ const metadata = {
           isForeignKey: true,
           relationField: 'role',
         },
-        user: {
-          name: 'user',
-          type: 'User',
+        userTenant: {
+          name: 'userTenant',
+          type: 'UserTenant',
           isDataModel: true,
           backLink: 'userAreas',
           isRelationOwner: true,
-          foreignKeyMapping: { id: 'userId' },
+          foreignKeyMapping: { id: 'userTenantId' },
         },
         area: {
           name: 'area',
@@ -2834,9 +2876,9 @@ const metadata = {
           name: 'id',
           fields: ['id'],
         },
-        userId_areaId: {
-          name: 'userId_areaId',
-          fields: ['userId', 'areaId'],
+        userTenantId_areaId: {
+          name: 'userTenantId_areaId',
+          fields: ['userTenantId', 'areaId'],
         },
       },
     },
@@ -2925,7 +2967,7 @@ const metadata = {
         },
         userAreas: {
           name: 'userAreas',
-          type: 'UserArea',
+          type: 'UserTenantArea',
           isDataModel: true,
           isArray: true,
           backLink: 'role',
@@ -4889,8 +4931,8 @@ const metadata = {
         },
       },
     },
-    userRole: {
-      name: 'UserRole',
+    userTenantRole: {
+      name: 'UserTenantRole',
       fields: {
         createdAt: {
           name: 'createdAt',
@@ -4913,14 +4955,14 @@ const metadata = {
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$UserRole$createdBy,
+          defaultValueProvider: $default$UserTenantRole$createdBy,
         },
         modifiedBy: {
           name: 'modifiedBy',
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$UserRole$modifiedBy,
+          defaultValueProvider: $default$UserTenantRole$modifiedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -4947,11 +4989,11 @@ const metadata = {
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: true }] }],
         },
-        userId: {
-          name: 'userId',
+        userTenantId: {
+          name: 'userTenantId',
           type: 'String',
           isForeignKey: true,
-          relationField: 'user',
+          relationField: 'userTenant',
         },
         roleId: {
           name: 'roleId',
@@ -4959,13 +5001,13 @@ const metadata = {
           isForeignKey: true,
           relationField: 'role',
         },
-        user: {
-          name: 'user',
-          type: 'User',
+        userTenant: {
+          name: 'userTenant',
+          type: 'UserTenant',
           isDataModel: true,
           backLink: 'userRoles',
           isRelationOwner: true,
-          foreignKeyMapping: { id: 'userId' },
+          foreignKeyMapping: { id: 'userTenantId' },
         },
         role: {
           name: 'role',
@@ -5052,7 +5094,7 @@ const metadata = {
         },
         userRole: {
           name: 'userRole',
-          type: 'UserRole',
+          type: 'UserTenantRole',
           isDataModel: true,
           isArray: true,
           backLink: 'role',
@@ -5447,11 +5489,31 @@ const metadata = {
           isArray: true,
           backLink: 'channel',
         },
+        requestId: {
+          name: 'requestId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'request',
+        },
+        request: {
+          name: 'request',
+          type: 'Request',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'channel',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'requestId' },
+        },
       },
       uniqueConstraints: {
         id: {
           name: 'id',
           fields: ['id'],
+        },
+        requestId: {
+          name: 'requestId',
+          fields: ['requestId'],
         },
       },
     },
@@ -5518,6 +5580,10 @@ const metadata = {
         id: {
           name: 'id',
           fields: ['id'],
+        },
+        userTenantOneId_userTenantTwoId: {
+          name: 'userTenantOneId_userTenantTwoId',
+          fields: ['userTenantOneId', 'userTenantTwoId'],
         },
       },
     },
@@ -5962,7 +6028,6 @@ const metadata = {
     },
   },
   deleteCascade: {
-    tenant: ['UserTenant'],
     user: ['UserTenant', 'Session', 'Account', 'TwoFactorConfirmation', 'Authenticator'],
     area: ['AssignmentCategory'],
     requestCategory: ['CategoryForm'],
@@ -5986,6 +6051,14 @@ function $default$User$createdBy(user: any): unknown {
 }
 
 function $default$User$modifiedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$UserTenant$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$UserTenant$modifiedBy(user: any): unknown {
   return user?.id;
 }
 
@@ -6085,11 +6158,11 @@ function $default$Area$modifiedBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$UserArea$createdBy(user: any): unknown {
+function $default$UserTenantArea$createdBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$UserArea$modifiedBy(user: any): unknown {
+function $default$UserTenantArea$modifiedBy(user: any): unknown {
   return user?.id;
 }
 
@@ -6245,11 +6318,11 @@ function $default$MenuItem$modifiedBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$UserRole$createdBy(user: any): unknown {
+function $default$UserTenantRole$createdBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$UserRole$modifiedBy(user: any): unknown {
+function $default$UserTenantRole$modifiedBy(user: any): unknown {
   return user?.id;
 }
 
