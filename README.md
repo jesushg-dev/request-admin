@@ -28,6 +28,8 @@ The development follows the **Waterfall Methodology**, a structured and sequenti
 - Real-time notifications for status changes and updates.
 - Reports: Customizable and exportable in PDF/Excel formats.
 - Workflow creation and management for streamlined operations.
+- Dynamic form 
+
 
 ### Technologies
 

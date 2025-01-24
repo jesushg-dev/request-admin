@@ -38,8 +38,9 @@
     "description": "Un sistema robusto y escalable diseñado para optimizar la gestión de solicitudes de servicios de telecomunicaciones, siguiendo las mejores prácticas de ITIL.",
     "applicationName": "Gestor de Servicios",
     "keywords": "telecomunicaciones, gestión de servicios, ITIL, cumplimiento de solicitudes, flujo de trabajo, multi-tenant",
-    "subHeading": "Optimiza, supervisa y simplifica tus procesos de solicitudes de servicio.",
-    "signInButton": "Acceder al Sistema"
+    "subHeading": "Impulsa la eficiencia en la gestión de solicitudes de servicio con un sistema basado en las mejores prácticas de ITIL, adaptado para entornos empresariales modernos. Diseñado para organizaciones que buscan flexibilidad y escalabilidad, nuestro sistema incluye flujos de trabajo personalizables, seguimiento en tiempo real, y suscripciones adaptadas a las necesidades de tu negocio.",
+    "signInButton": "Acceder al Sistema",
+    "brandName": "Request Engine"
   },
   "auth": {
     "loginForm": {

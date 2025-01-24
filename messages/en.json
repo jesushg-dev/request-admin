@@ -38,8 +38,9 @@
     "description": "A robust and scalable system designed to streamline the management of telecommunication service requests, adhering to ITIL best practices.",
     "applicationName": "Service Manager",
     "keywords": "telecommunications, service management, ITIL, request fulfillment, workflow, multi-tenant",
-    "subHeading": "Optimize, track, and streamline your service request processes.",
-    "signInButton": "Access System"
+    "subHeading": "Boost efficiency in service request management with a system built on ITIL best practices, tailored for modern business environments. Designed for organizations seeking flexibility and scalability, our system includes customizable workflows, real-time tracking, and subscription plans tailored to your business needs.",
+    "signInButton": "Access System",
+    "brandName": "Request Engine"
   },
   "auth": {
     "loginForm": {
