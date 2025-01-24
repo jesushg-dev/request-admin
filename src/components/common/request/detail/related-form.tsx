@@ -4,14 +4,30 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-import { mockRequests } from '../mockData';
-import { Request, type RelatedIncident } from '../types/relatedIncident';
+export const mockRequests: Request[] = [
+  { id: 'request-1', title: 'Network Issue' },
+  { id: 'request-2', title: 'Software Bug' },
+  { id: 'request-3', title: 'Hardware Failure' },
+  { id: 'request-4', title: 'Access Problem' },
+];
+export interface RelatedIncident {
+  id: string;
+  requestId: string;
+  relatedId: string;
+}
+
+export interface Request {
+  id: string;
+  title: string;
+  // Add other relevant fields here
+}
 
 interface RelatedIncidentFormProps {
   currentRequestId: string;
+  onComplete?: () => void;
 }
 
-export function RelatedIncidentForm({ currentRequestId }: RelatedIncidentFormProps) {
+export function RelatedIncidentForm({ currentRequestId, onComplete }: RelatedIncidentFormProps) {
   const form = useForm<RelatedIncident>({
     defaultValues: {
       requestId: currentRequestId,
@@ -20,6 +36,9 @@ export function RelatedIncidentForm({ currentRequestId }: RelatedIncidentFormPro
 
   const onSubmit = (data: RelatedIncident) => {
     console.log('Related Incident Form Data:', data);
+    if (onComplete) {
+      onComplete();
+    }
     // Here you would typically send this data to your API
   };
 

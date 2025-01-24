@@ -10,35 +10,33 @@ import { mockRequestAssignments, mockTeamMembers } from './mock-data';
 
 export default function TeamMembers() {
   return (
-    <div className="w-full overflow-x-auto">
-      <div className="flex gap-4">
-        {mockRequestAssignments.map((assignment, index) => (
-          <Card key={index} className="min-w-xs">
-            <CardHeader>
-              <div className="flex w-full items-center justify-between">
-                <MemberCard name="John Doe" role="Software Engineer" />
-                <div className="flex flex-col items-end justify-center">
-                  <CardTitle className="text-sm">#{assignment.id}</CardTitle>
-                  <Badge variant={assignment.priority === 'High' ? 'destructive' : 'default'}>{assignment.priority}</Badge>
-                </div>
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4">
+      {mockRequestAssignments.map((assignment, index) => (
+        <Card key={index}>
+          <CardHeader>
+            <div className="flex w-full items-center justify-between">
+              <MemberCard name="John Doe" role="Software Engineer" />
+              <div className="flex flex-col items-end justify-center">
+                <CardTitle className="text-sm">#{assignment.id}</CardTitle>
+                <Badge variant={assignment.priority === 'High' ? 'destructive' : 'default'}>{assignment.priority}</Badge>
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex justify-between">
-                <div className="text-sm">
-                  <p>
-                    <strong>SLA Deadline:</strong> {new Date(assignment.slaDeadline).toLocaleDateString()}
-                  </p>
-                  <p className="text-muted-foreground">{assignment.comment}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <ViewAllMembers />
-                </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="flex justify-between">
+              <div className="text-sm">
+                <p>
+                  <strong>SLA Deadline:</strong> {new Date(assignment.slaDeadline).toLocaleDateString()}
+                </p>
+                <p className="text-muted-foreground">{assignment.comment}</p>
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+              <div className="flex items-center gap-2">
+                <ViewAllMembers />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 }

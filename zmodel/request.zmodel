@@ -134,8 +134,6 @@ model AssignedUser extends TenantScoped, Auditable {
   unAssignmentDate    DateTime?
 }
 
-
-
 // Represents a type of assignment for requests.
 model AssignmentType extends  TenantScoped, Auditable, CatalogBase {
   assignments RequestAssignment[]

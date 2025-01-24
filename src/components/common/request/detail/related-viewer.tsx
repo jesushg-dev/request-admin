@@ -1,17 +1,30 @@
+'use client';
+
 import { useState } from 'react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
-import { mockRequests } from '../mockData';
 import { RelatedIncidentModal } from './related-modal';
-import { ViewToggle } from './ViewToggle';
+import { ViewToggle } from './view-toggle';
 
-interface RelatedIncidentsListProps {
+type Request = {
+  id: string;
+  title: string;
+};
+
+export const mockRequests: Request[] = [
+  { id: 'request-1', title: 'Network Issue' },
+  { id: 'request-2', title: 'Software Bug' },
+  { id: 'request-3', title: 'Hardware Failure' },
+  { id: 'request-4', title: 'Access Problem' },
+];
+
+interface RelatedViewerProps {
   currentRequestId: string;
 }
 
-export function RelatedIncidentsList({ currentRequestId }: RelatedIncidentsListProps) {
+export function RelatedViewer({ currentRequestId }: RelatedViewerProps) {
   const [viewType, setViewType] = useState<'table' | 'card'>('table');
   const relatedIncidents = mockRequests.filter((request) => request.id !== currentRequestId).slice(0, 3);
 
@@ -52,12 +65,17 @@ export function RelatedIncidentsList({ currentRequestId }: RelatedIncidentsListP
   );
 
   return (
-    <div className="space-y-4">
-      <div className="mb-4 flex items-center justify-between">
-        <RelatedIncidentModal currentRequestId={currentRequestId} />
-        <ViewToggle viewType={viewType} onViewChange={setViewType} />
-      </div>
-      {viewType === 'table' ? renderTableView() : renderCardView()}
-    </div>
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle>Related Incidents</CardTitle>
+          <div className="flex items-center gap-2">
+            <RelatedIncidentModal currentRequestId={currentRequestId} />
+            <ViewToggle viewType={viewType} onViewChange={setViewType} />
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>{viewType === 'table' ? renderTableView() : renderCardView()}</CardContent>
+    </Card>
   );
 }

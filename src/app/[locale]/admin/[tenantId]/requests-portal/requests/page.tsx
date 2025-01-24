@@ -17,7 +17,7 @@ import KanbanBoard from '@/components/kanban/kanban-board';
 const RequestMainPage: React.FC = () => {
   const tenantId = useTenantId();
   const t = useTranslations('admin.request.main');
-  const [view, setView] = useQueryState('main-request-view', { defaultValue: 'table' });
+  const [view, setView] = useQueryState('view', { defaultValue: 'table' });
 
   return (
     <Tabs defaultValue={view} onValueChange={setView} className="flex w-full flex-1 flex-col gap-4 overflow-auto p-4">
