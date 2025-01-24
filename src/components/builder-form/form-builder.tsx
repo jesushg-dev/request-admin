@@ -72,10 +72,10 @@ function FormBuilder({ form }: { form: Form }) {
               <AlertTitle>{t('formPublished')}</AlertTitle>
               <AlertDescription>{t('shareThisForm')}</AlertDescription>
             </Alert>
-            <CardTitle className="text-center text-3xl font-bold text-primary sm:text-4xl">{t('formPublished')}</CardTitle>
+            <CardTitle className="text-primary text-center text-3xl font-bold sm:text-4xl">{t('formPublished')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <p className="text-center text-lg text-muted-foreground">{t('shareInstructions')}</p>
+            <p className="text-muted-foreground text-center text-lg">{t('shareInstructions')}</p>
             <Separator />
             <div className="flex justify-center space-x-4">
               <VisitBtn shareUrl={form.shareURL} tenantId={form.tenantId} />
@@ -83,13 +83,13 @@ function FormBuilder({ form }: { form: Form }) {
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">
-            <Button variant="outline" asChild className="w-full transition-colors hover:bg-primary hover:text-primary-foreground sm:w-auto">
+            <Button variant="outline" asChild className="hover:bg-primary hover:text-primary-foreground w-full transition-colors sm:w-auto">
               <Link href={{ pathname: '/admin/[tenantId]/form-designer', params: { tenantId: form.tenantId } }} className="flex items-center gap-2">
                 <ArrowLeft className="h-4 w-4" />
                 {t('goBackHome')}
               </Link>
             </Button>
-            <Button variant="outline" asChild className="transition-colors hover:bg-primary hover:text-primary-foreground">
+            <Button variant="outline" asChild className="hover:bg-primary hover:text-primary-foreground transition-colors">
               <Link href={{ pathname: '/admin/[tenantId]/form-designer/[slug]', params: { tenantId: form.tenantId, slug: form.id } }} className="flex items-center gap-2">
                 {t('formDetails')}
                 <ArrowRight className="h-4 w-4" />
@@ -105,9 +105,9 @@ function FormBuilder({ form }: { form: Form }) {
     <div className="shadow-default dark:border-border-dark dark:bg-surface-dark bg-surface flex flex-1 flex-col rounded-sm border">
       <DndContext sensors={sensors}>
         {/* Header */}
-        <div className="dark:border-border-dark flex w-full items-center justify-between border-b border-border px-6 py-4">
-          <h3 className="dark:text-foreground-dark font-medium text-foreground">
-            <span className="dark:text-muted-foreground-dark mr-2 text-muted-foreground">{t('form')}:</span>
+        <div className="dark:border-border-dark border-border flex w-full items-center justify-between border-b px-6 py-4">
+          <h3 className="dark:text-foreground-dark text-foreground font-medium">
+            <span className="dark:text-muted-foreground-dark text-muted-foreground mr-2">{t('form')}:</span>
             {form.name}
           </h3>
           <div className="flex items-center gap-2">
@@ -122,7 +122,7 @@ function FormBuilder({ form }: { form: Form }) {
         </div>
 
         {/* Main Content */}
-        <div className="dark:bg-muted-dark relative flex h-[200px] w-full grow items-center justify-center overflow-y-auto bg-muted bg-[url('/paper.svg')] dark:bg-[url('/paper-dark.svg')]">
+        <div className="dark:bg-muted-dark bg-muted relative flex h-[200px] w-full grow items-center justify-center overflow-y-auto bg-[url('/paper.svg')] dark:bg-[url('/paper-dark.svg')]">
           <Designer />
         </div>
 

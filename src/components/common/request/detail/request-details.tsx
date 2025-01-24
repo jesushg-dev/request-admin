@@ -1,108 +1,137 @@
-import { CalendarIcon, FlagIcon, FolderIcon, TagIcon, UserIcon } from 'lucide-react';
+'use client';
+
+import { Link } from '@/i18n/routing';
+import { CalendarIcon, Edit3Icon, FlagIcon, FolderIcon, StarIcon, TagIcon, UserIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { areas, attachments, requestAssignment, teamMembers } from '@/app/[locale]/admin/[tenantId]/requests-portal/requests/[slug]/mockData';
+import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { MetadataItem } from '@/components/metadata-item';
+import { ProgressCircle } from '@/components/progress-circle';
 
-import Attachments from './attachments';
+import { AddAttachment, Attachments } from './attachments';
+import { mockRequest, mockSatisfactionSurvey, mockSLA, mockSubmissions, mockTaskProgress } from './mock-data';
 import TeamMembers from './user-members';
 
-interface ProjectDetailsProps {
-  details: {
-    id: string;
-    clientName: string;
-    issueSubject: string;
-    description: string;
-    priority: string;
-    statusName: string;
-    requestCategoryName: string;
-    assignmentCategoryName: string;
-    createdAt: string;
-    updatedAt: string;
-  };
-}
-
-export default function ProjectDetails({ details }: ProjectDetailsProps) {
+export default function ProjectDetails({ tenantId, slug }: { tenantId: string; slug: string }) {
   return (
-    <Card>
+    <Card className="flex flex-1 flex-col">
       <CardHeader>
         <CardTitle className="flex w-full justify-between">
-          {details.issueSubject}
-          <Button variant="outline" size="sm">
-            Change Status
+          {mockRequest.issueSubject}
+          <Button variant="outline" size="sm" asChild>
+            <Link
+              href={{
+                pathname: '/admin/[tenantId]/requests-portal/requests/[slug]/edit',
+                params: { tenantId, slug },
+              }}>
+              <Edit3Icon className="h-4 w-4" />
+              <span className="sr-only">Edit</span>
+            </Link>
           </Button>
         </CardTitle>
-        <CardDescription className="-mt-2">{details.description}</CardDescription>
+        <CardDescription>{mockRequest.description}</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <ScrollArea>
-          <p className="text-muted-foreground"></p>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            <div className="flex items-center gap-2">
-              <UserIcon className="h-4 w-4" />
-              <div>
-                <p className="text-sm font-medium">Client</p>
-                <p className="text-sm text-muted-foreground">{details.clientName}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <FlagIcon className="h-4 w-4" />
-              <div>
-                <p className="text-sm font-medium">Priority</p>
-                <Select defaultValue={details.priority}>
-                  <SelectTrigger className="w-[100px]">
-                    <SelectValue placeholder="Priority" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Low">Low</SelectItem>
-                    <SelectItem value="Medium">Medium</SelectItem>
-                    <SelectItem value="High">High</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <CalendarIcon className="h-4 w-4" />
-              <div>
-                <p className="text-sm font-medium">Created</p>
-                <p className="text-sm text-muted-foreground">{new Date(details.createdAt).toLocaleDateString()}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <TagIcon className="h-4 w-4" />
-              <div>
-                <p className="text-sm font-medium">Status</p>
-                <p className="text-sm text-muted-foreground">{details.statusName}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <FolderIcon className="h-4 w-4" />
-              <div>
-                <p className="text-sm font-medium">Request Category</p>
-                <p className="text-sm text-muted-foreground">{details.requestCategoryName}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <FolderIcon className="h-4 w-4" />
-              <div>
-                <p className="text-sm font-medium">Assignment Category</p>
-                <p className="text-sm text-muted-foreground">{details.assignmentCategoryName}</p>
+      <CardContent className="flex flex-1">
+        <div className="relative flex flex-1">
+          <div className="absolute inset-0 flex overflow-hidden">
+            <div className="flex flex-1 flex-col overflow-y-auto">
+              <div className="space-y-4">
+                {/* Progress Indicators */}
+                <div>
+                  <div className="flex gap-4 pb-4">
+                    <ProgressCircle value={mockTaskProgress.completed} total={mockTaskProgress.total} label="Tasks Completed" />
+                    <ProgressCircle value={mockSubmissions.count} total={mockSubmissions.total} label="Submissions" />
+                    <div className="min-w-[200px] p-4">
+                      <h4 className="mb-2 text-sm font-medium">Current SLA</h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span>Resolution: {mockSLA.resolutionTime}h</span>
+                          <span>Remaining: {mockSLA.timeRemaining}h</span>
+                        </div>
+                        <Progress value={mockSLA.progress} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Metadata */}
+                <div className="w-full overflow-x-auto">
+                  <div className="flex gap-4">
+                    <MetadataItem icon={<UserIcon className="h-4 w-4" />} label="Client" value={mockRequest.clientName} />
+                    <MetadataItem
+                      icon={<FlagIcon className="h-4 w-4" />}
+                      label="Priority"
+                      value={
+                        <Select defaultValue={mockRequest.priority}>
+                          <SelectTrigger className="w-[100px]">
+                            <SelectValue placeholder="Priority" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Low">Low</SelectItem>
+                            <SelectItem value="Medium">Medium</SelectItem>
+                            <SelectItem value="High">High</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      }
+                    />
+                    <MetadataItem icon={<TagIcon className="h-4 w-4" />} label="Status" value={mockRequest.statusName} />
+                    <MetadataItem icon={<FolderIcon className="h-4 w-4" />} label="Category" value={mockRequest.requestCategoryName} />
+                    <MetadataItem icon={<CalendarIcon className="h-4 w-4" />} label="Created" value={new Date(mockRequest.createdAt).toLocaleDateString()} />
+                  </div>
+                </div>
+
+                {/* Satisfaction Survey */}
+                {mockSatisfactionSurvey && (
+                  <div className="bg-muted/50 flex items-center gap-4 rounded-lg p-4">
+                    <div className="flex">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <StarIcon key={i} className={`h-5 w-5 ${i < mockSatisfactionSurvey.rating ? 'fill-current text-yellow-400' : 'text-gray-300'}`} />
+                      ))}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm">{mockSatisfactionSurvey.feedback}</p>
+                      <p className="text-muted-foreground text-xs">Submitted {new Date(mockSatisfactionSurvey.submittedAt).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Team Members */}
+                <TeamMembers />
+
+                {/* Attachments */}
+                <Card>
+                  <CardHeader>
+                    <div className="flex justify-between">
+                      <CardTitle>Attachments</CardTitle>
+                      <AddAttachment />
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <Tabs defaultValue="document">
+                      <TabsList>
+                        <TabsTrigger value="document">Documents</TabsTrigger>
+                        <TabsTrigger value="guide">Guides</TabsTrigger>
+                      </TabsList>
+                      <TabsContent value="document">
+                        <Attachments type="document" />
+                      </TabsContent>
+                      <TabsContent value="guide">
+                        <Attachments type="guide" />
+                      </TabsContent>
+                    </Tabs>
+                  </CardContent>
+                </Card>
               </div>
             </div>
           </div>
-          <div className="flex justify-end space-x-2">
-            <Button variant="outline">Change Request Category</Button>
-            <Button variant="outline">Change Assignment Category</Button>
-          </div>
-          <TeamMembers members={teamMembers} areas={areas} assignment={requestAssignment} />
-          <Attachments files={attachments} />
-        </ScrollArea>
+        </div>
       </CardContent>
-      <CardFooter>
-        <Button>Edit Details</Button>
-      </CardFooter>
     </Card>
   );
 }

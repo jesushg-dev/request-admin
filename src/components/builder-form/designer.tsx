@@ -111,16 +111,16 @@ function Designer() {
         <ScrollArea
           ref={droppable.setNodeRef}
           className={cn(
-            'm-auto flex h-full max-w-[920px] flex-1 grow flex-col items-center justify-start overflow-y-auto rounded-xl bg-background',
-            droppable.isOver && 'ring-4 ring-inset ring-primary'
+            'bg-background m-auto flex h-full max-w-[920px] flex-1 grow flex-col items-center justify-start overflow-y-auto rounded-xl',
+            droppable.isOver && 'ring-primary ring-4 ring-inset'
           )}>
           {/* Empty State - No Elements */}
-          {!droppable.isOver && elements.length === 0 && <p className="w-full py-10 text-center text-3xl font-bold text-muted-foreground">{t('dropHere')}</p>}
+          {!droppable.isOver && elements.length === 0 && <p className="text-muted-foreground w-full py-10 text-center text-3xl font-bold">{t('dropHere')}</p>}
 
           {/* Droppable Area Highlight */}
           {droppable.isOver && elements.length === 0 && (
             <div className="w-full p-4">
-              <div className="h-[120px] rounded-md bg-primary/20"></div>
+              <div className="bg-primary/20 h-[120px] rounded-md"></div>
             </div>
           )}
 
@@ -184,7 +184,7 @@ function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
       {...draggable.listeners}
       {...draggable.attributes}
       style={styles}
-      className="relative flex flex-col overflow-hidden rounded-md border-2 border-dashed text-foreground hover:cursor-pointer"
+      className="text-foreground relative flex flex-col overflow-hidden rounded-md border-2 border-dashed hover:cursor-pointer"
       onMouseEnter={() => setMouseIsOver(true)}
       onMouseLeave={() => setMouseIsOver(false)}>
       {/* Top Half */}
@@ -194,17 +194,17 @@ function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
       <div ref={bottomHalf.setNodeRef} className="absolute bottom-0 h-1/2 w-full rounded-b-md" />
 
       {mouseIsOver && (
-        <div className="absolute inset-0 flex items-center justify-center rounded-md ring-1 ring-border">
-          <div className="absolute inset-0 isolate flex flex-col bg-background/80 opacity-100 transition-opacity" />
-          <div className="absolute inset-0 flex items-center justify-center rounded-md bg-muted/20" />
+        <div className="ring-border absolute inset-0 flex items-center justify-center rounded-md ring-1">
+          <div className="bg-background/80 absolute inset-0 isolate flex flex-col opacity-100 transition-opacity" />
+          <div className="bg-muted/20 absolute inset-0 flex items-center justify-center rounded-md" />
 
-          <div className="z-20 flex items-center justify-center gap-2 text-primary">
+          <div className="text-primary z-20 flex items-center justify-center gap-2">
             <RiDragMove2Line />
             <p className="text-sm">{t('dragToMove')}</p>
           </div>
 
           {/* Actions */}
-          <div className="absolute right-0 top-0 z-50 flex flex-row items-center gap-2 p-1 shadow-xs">
+          <div className="absolute top-0 right-0 z-50 flex flex-row items-center gap-2 p-1 shadow-xs">
             {/* Properties Button */}
             <Button
               variant="secondary"
@@ -233,15 +233,15 @@ function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
       )}
 
       {/* Top Drag Indicator */}
-      {topHalf.isOver && <div className="absolute top-0 h-[7px] w-full rounded-md rounded-b-none bg-primary" />}
+      {topHalf.isOver && <div className="bg-primary absolute top-0 h-[7px] w-full rounded-md rounded-b-none" />}
 
       {/* Content */}
-      <div className={cn('pointer-events-none flex h-[120px] w-full items-center rounded-md bg-muted/40 px-4 py-2 opacity-100', mouseIsOver && 'opacity-30')}>
+      <div className={cn('bg-muted/40 pointer-events-none flex h-[120px] w-full items-center rounded-md px-4 py-2 opacity-100', mouseIsOver && 'opacity-30')}>
         <DesignerElement elementInstance={element} />
       </div>
 
       {/* Bottom Drag Indicator */}
-      {bottomHalf.isOver && <div className="absolute bottom-0 h-[7px] w-full rounded-md rounded-t-none bg-primary" />}
+      {bottomHalf.isOver && <div className="bg-primary absolute bottom-0 h-[7px] w-full rounded-md rounded-t-none" />}
     </div>
   );
 }

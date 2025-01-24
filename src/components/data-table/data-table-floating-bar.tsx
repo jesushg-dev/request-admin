@@ -41,19 +41,19 @@ export function DataTableFloatingBar<T>({ table, entityLabel = 'item', onDelete 
     <Portal>
       <div className="fixed inset-x-0 bottom-6 z-50 mx-auto w-fit px-2.5">
         <div className="w-full overflow-x-auto">
-          <div className="mx-auto flex w-fit items-center gap-2 rounded-md border bg-background p-2 text-foreground shadow-sm">
-            <div className="flex h-7 items-center rounded-md border border-dashed pl-2.5 pr-1">
-              <span className="whitespace-nowrap text-xs">
+          <div className="bg-background text-foreground mx-auto flex w-fit items-center gap-2 rounded-md border p-2 shadow-sm">
+            <div className="flex h-7 items-center rounded-md border border-dashed pr-1 pl-2.5">
+              <span className="text-xs whitespace-nowrap">
                 {rows.length} {rows.length === 1 ? entityLabel : `${entityLabel}s`} {t('selected')}
               </span>
-              <Separator orientation="vertical" className="ml-2 mr-1" />
+              <Separator orientation="vertical" className="mr-1 ml-2" />
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="ghost" size="icon" className="size-5 hover:border" onClick={() => table.toggleAllRowsSelected(false)}>
                     <X className="size-3.5 shrink-0" aria-hidden="true" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent className="flex items-center border bg-accent px-2 py-1 font-semibold text-foreground dark:bg-zinc-900">
+                <TooltipContent className="bg-accent text-foreground flex items-center border px-2 py-1 font-semibold dark:bg-zinc-900">
                   <p className="mr-2">{t('clearSelection')}</p>
                   <Kbd abbrTitle="Escape" variant="outline">
                     Esc
@@ -83,7 +83,7 @@ export function DataTableFloatingBar<T>({ table, entityLabel = 'item', onDelete 
                     {isPending && action === 'export' ? <Loader className="size-3.5 animate-spin" aria-hidden="true" /> : <Download className="size-3.5" aria-hidden="true" />}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent className="border bg-accent font-semibold text-foreground dark:bg-zinc-900">
+                <TooltipContent className="bg-accent text-foreground border font-semibold dark:bg-zinc-900">
                   <p>{t('export', { entity: entityLabel })}</p>
                 </TooltipContent>
               </Tooltip>
@@ -106,7 +106,7 @@ export function DataTableFloatingBar<T>({ table, entityLabel = 'item', onDelete 
                       {isPending && action === 'delete' ? <Loader className="size-3.5 animate-spin" aria-hidden="true" /> : <Trash2 className="size-3.5" aria-hidden="true" />}
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent className="border bg-accent font-semibold text-foreground dark:bg-zinc-900">
+                  <TooltipContent className="bg-accent text-foreground border font-semibold dark:bg-zinc-900">
                     <p>{t('delete', { entity: entityLabel })}</p>
                   </TooltipContent>
                 </Tooltip>

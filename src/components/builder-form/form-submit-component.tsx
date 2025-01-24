@@ -72,7 +72,7 @@ function FormSubmitComponent({ formUrl, content }: { content: FormElementInstanc
   if (submitted) {
     return (
       <div className="flex h-full w-full items-center justify-center p-8">
-        <div className="flex w-full max-w-[620px] grow flex-col gap-4 overflow-y-auto rounded border bg-background p-8 shadow-xl shadow-blue-700">
+        <div className="bg-background flex w-full max-w-[620px] grow flex-col gap-4 overflow-y-auto rounded border p-8 shadow-xl shadow-blue-700">
           <h1 className="text-2xl font-bold">{t('formSubmitted')}</h1>
           <p className="text-muted-foreground">{t('submissionMessage')}</p>
         </div>

@@ -75,7 +75,7 @@ function DesignerComponent({ elementInstance }: { elementInstance: FormElementIn
         <CalendarIcon className="mr-2 h-4 w-4" />
         <span>Pick a date</span>
       </Button>
-      {helperText && <p className="text-[0.8rem] text-muted-foreground">{helperText}</p>}
+      {helperText && <p className="text-muted-foreground text-[0.8rem]">{helperText}</p>}
     </div>
   );
 }
@@ -121,7 +121,7 @@ function FormComponent({ elementInstance, submitValue, isInvalid, defaultValue }
           />
         </PopoverContent>
       </Popover>
-      {helperText && <p className={cn('text-[0.8rem] text-muted-foreground', error && 'text-red-500')}>{helperText}</p>}
+      {helperText && <p className={cn('text-muted-foreground text-[0.8rem]', error && 'text-red-500')}>{helperText}</p>}
     </div>
   );
 }

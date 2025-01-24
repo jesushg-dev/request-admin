@@ -31,14 +31,14 @@ function PreviewDialogBtn() {
         </DialogTitle>
 
         {/* Header Section */}
-        <div className="border-b border-border px-4 py-2">
-          <p className="text-lg font-bold text-foreground">{t('formPreview')}</p>
-          <p className="text-sm text-muted-foreground">{t('formPreviewDescription')}</p>
+        <div className="border-border border-b px-4 py-2">
+          <p className="text-foreground text-lg font-bold">{t('formPreview')}</p>
+          <p className="text-muted-foreground text-sm">{t('formPreviewDescription')}</p>
         </div>
 
         {/* Main Content Area */}
-        <div className="dark:bg-muted-dark flex grow flex-col items-center justify-center overflow-y-hidden bg-muted bg-[url('/paper.svg')] p-4 dark:bg-[url('/paper-dark.svg')]">
-          <div className="flex h-full w-full max-w-[620px] grow flex-col gap-4 overflow-y-hidden rounded-2xl bg-background">
+        <div className="dark:bg-muted-dark bg-muted flex grow flex-col items-center justify-center overflow-y-hidden bg-[url('/paper.svg')] p-4 dark:bg-[url('/paper-dark.svg')]">
+          <div className="bg-background flex h-full w-full max-w-[620px] grow flex-col gap-4 overflow-y-hidden rounded-2xl">
             <ScrollArea className="p-8">
               <div className="m-1 flex flex-col gap-4">
                 {elements.map((element) => {

@@ -102,7 +102,7 @@ export const MessageList = ({
       {Object.entries(groupedMessages).map(([dateKey, messages]) => (
         <div key={dateKey}>
           <div className="relative my-2 text-center">
-            <hr className="absolute left-0 right-0 top-1/2 border-t border-gray-300" />
+            <hr className="absolute top-1/2 right-0 left-0 border-t border-gray-300" />
             <span className="relative inline-block rounded-full border border-gray-300 bg-white px-4 py-1 text-xs shadow-xs">{formatDateLabel(dateKey)}</span>
           </div>
           {messages.map((message, index) => {

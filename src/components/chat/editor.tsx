@@ -145,7 +145,7 @@ const Editor = ({ onCancel, onSubmit, disabled = false, innerRef, defaultValue =
                     setImage(null);
                     imageElementRef.current!.value = '';
                   }}
-                  className="absolute -right-2.5 -top-2.5 z-4 hidden size-6 items-center justify-center rounded-full border-2 border-white bg-black/70 text-white hover:bg-black group-hover/image:flex">
+                  className="absolute -top-2.5 -right-2.5 z-4 hidden size-6 items-center justify-center rounded-full border-2 border-white bg-black/70 text-white group-hover/image:flex hover:bg-black">
                   <XIcon className="size3.5" />
                 </button>
               </Hint>
@@ -182,7 +182,7 @@ const Editor = ({ onCancel, onSubmit, disabled = false, innerRef, defaultValue =
                   image,
                 })
               }
-              className={cn('ml-auto', isEmpty ? 'bg-white text-muted-foreground hover:bg-white' : 'bg-seagreen-100 hover:bg-seagreen-100/80 text-white')}>
+              className={cn('ml-auto', isEmpty ? 'text-muted-foreground bg-white hover:bg-white' : 'bg-seagreen-100 hover:bg-seagreen-100/80 text-white')}>
               <MdSend className="size-4" />
             </Button>
           ) : (
@@ -208,7 +208,7 @@ const Editor = ({ onCancel, onSubmit, disabled = false, innerRef, defaultValue =
         </div>
       </div>
       {variant === 'create' && (
-        <div className={cn('flex justify-end p-2 text-[10px] text-muted-foreground opacity-0 transition', !isEmpty && 'opacity-100')}>
+        <div className={cn('text-muted-foreground flex justify-end p-2 text-[10px] opacity-0 transition', !isEmpty && 'opacity-100')}>
           <p>
             <strong>Shift + Enter</strong> to add a new line
           </p>

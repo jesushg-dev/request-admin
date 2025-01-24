@@ -1,26 +1,16 @@
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { useCalendarContext } from '../calendar-context'
-import { format } from 'date-fns'
-import { DateTimePicker } from '@/components/form/date-time-picker'
-import { ColorPicker } from '@/components/form/color-picker'
+import { zodResolver } from '@hookform/resolvers/zod';
+import { format } from 'date-fns';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { ColorPicker } from '@/components/form/color-picker';
+import { DateTimePicker } from '@/components/form/date-time-picker';
+
+import { useCalendarContext } from '../calendar-context';
 
 const formSchema = z
   .object({
@@ -31,19 +21,18 @@ const formSchema = z
   })
   .refine(
     (data) => {
-      const start = new Date(data.start)
-      const end = new Date(data.end)
-      return end >= start
+      const start = new Date(data.start);
+      const end = new Date(data.end);
+      return end >= start;
     },
     {
       message: 'End time must be after start time',
       path: ['end'],
     }
-  )
+  );
 
 export default function CalendarNewEventDialog() {
-  const { newEventDialogOpen, setNewEventDialogOpen, date, events, setEvents } =
-    useCalendarContext()
+  const { newEventDialogOpen, setNewEventDialogOpen, date, events, setEvents } = useCalendarContext();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -53,7 +42,7 @@ export default function CalendarNewEventDialog() {
       end: format(date, "yyyy-MM-dd'T'HH:mm"),
       color: 'blue',
     },
-  })
+  });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const newEvent = {
@@ -62,11 +51,11 @@ export default function CalendarNewEventDialog() {
       start: new Date(values.start),
       end: new Date(values.end),
       color: values.color,
-    }
+    };
 
-    setEvents([...events, newEvent])
-    setNewEventDialogOpen(false)
-    form.reset()
+    setEvents([...events, newEvent]);
+    setNewEventDialogOpen(false);
+    form.reset();
   }
 
   return (
@@ -140,5 +129,5 @@ export default function CalendarNewEventDialog() {
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

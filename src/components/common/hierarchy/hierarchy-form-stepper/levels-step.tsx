@@ -22,9 +22,9 @@ export function LevelsStep() {
         onMove={({ activeIndex, overIndex }) => move(activeIndex, overIndex)}
         overlay={
           <div className="grid grid-cols-[1fr_auto_auto] items-center gap-2">
-            <div className="h-10 w-full rounded-md bg-primary/10" />
-            <div className="h-10 w-10 shrink-0 rounded-md bg-primary/10" />
-            <div className="h-10 w-10 shrink-0 rounded-md bg-primary/10" />
+            <div className="bg-primary/10 h-10 w-full rounded-md" />
+            <div className="bg-primary/10 h-10 w-10 shrink-0 rounded-md" />
+            <div className="bg-primary/10 h-10 w-10 shrink-0 rounded-md" />
           </div>
         }>
         <div className="flex w-full flex-col gap-2">
@@ -47,7 +47,7 @@ export function LevelsStep() {
                   <DragHandleDots2Icon className="h-4 w-4" aria-hidden="true" />
                 </SortableDragHandle>
                 <Button type="button" variant="outline" size="icon" className="h-10 w-10 shrink-0" onClick={() => remove(index)} disabled={fields.length === 1}>
-                  <TrashIcon className="h-4 w-4 text-destructive" aria-hidden="true" />
+                  <TrashIcon className="text-destructive h-4 w-4" aria-hidden="true" />
                   <span className="sr-only">Remove</span>
                 </Button>
               </div>

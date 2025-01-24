@@ -1,28 +1,9 @@
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { useEffect } from 'react'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { useCalendarContext } from '../calendar-context'
-import { format } from 'date-fns'
-import { DateTimePicker } from '@/components/form/date-time-picker'
-import { ColorPicker } from '@/components/form/color-picker'
+import { useEffect } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { format } from 'date-fns';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,7 +14,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { ColorPicker } from '@/components/form/color-picker';
+import { DateTimePicker } from '@/components/form/date-time-picker';
+
+import { useCalendarContext } from '../calendar-context';
 
 const formSchema = z
   .object({
@@ -49,28 +38,21 @@ const formSchema = z
   .refine(
     (data) => {
       try {
-        const start = new Date(data.start)
-        const end = new Date(data.end)
-        return end >= start
+        const start = new Date(data.start);
+        const end = new Date(data.end);
+        return end >= start;
       } catch {
-        return false
+        return false;
       }
     },
     {
       message: 'End time must be after start time',
       path: ['end'],
     }
-  )
+  );
 
 export default function CalendarManageEventDialog() {
-  const {
-    manageEventDialogOpen,
-    setManageEventDialogOpen,
-    selectedEvent,
-    setSelectedEvent,
-    events,
-    setEvents,
-  } = useCalendarContext()
+  const { manageEventDialogOpen, setManageEventDialogOpen, selectedEvent, setSelectedEvent, events, setEvents } = useCalendarContext();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -80,7 +62,7 @@ export default function CalendarManageEventDialog() {
       end: '',
       color: 'blue',
     },
-  })
+  });
 
   useEffect(() => {
     if (selectedEvent) {
@@ -89,12 +71,12 @@ export default function CalendarManageEventDialog() {
         start: format(selectedEvent.start, "yyyy-MM-dd'T'HH:mm"),
         end: format(selectedEvent.end, "yyyy-MM-dd'T'HH:mm"),
         color: selectedEvent.color,
-      })
+      });
     }
-  }, [selectedEvent, form])
+  }, [selectedEvent, form]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!selectedEvent) return
+    if (!selectedEvent) return;
 
     const updatedEvent = {
       ...selectedEvent,
@@ -102,26 +84,22 @@ export default function CalendarManageEventDialog() {
       start: new Date(values.start),
       end: new Date(values.end),
       color: values.color,
-    }
+    };
 
-    setEvents(
-      events.map((event) =>
-        event.id === selectedEvent.id ? updatedEvent : event
-      )
-    )
-    handleClose()
+    setEvents(events.map((event) => (event.id === selectedEvent.id ? updatedEvent : event)));
+    handleClose();
   }
 
   function handleDelete() {
-    if (!selectedEvent) return
-    setEvents(events.filter((event) => event.id !== selectedEvent.id))
-    handleClose()
+    if (!selectedEvent) return;
+    setEvents(events.filter((event) => event.id !== selectedEvent.id));
+    handleClose();
   }
 
   function handleClose() {
-    setManageEventDialogOpen(false)
-    setSelectedEvent(null)
-    form.reset()
+    setManageEventDialogOpen(false);
+    setSelectedEvent(null);
+    form.reset();
   }
 
   return (
@@ -198,16 +176,11 @@ export default function CalendarManageEventDialog() {
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>Delete event</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Are you sure you want to delete this event? This action
-                      cannot be undone.
-                    </AlertDialogDescription>
+                    <AlertDialogDescription>Are you sure you want to delete this event? This action cannot be undone.</AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDelete}>
-                      Delete
-                    </AlertDialogAction>
+                    <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
@@ -217,5 +190,5 @@ export default function CalendarManageEventDialog() {
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

@@ -151,7 +151,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
                 size="sm"
                 aria-label={`${filterField.label} filter value`}
                 aria-controls={`${inputId}-listbox`}
-                className="h-8 w-full justify-start gap-2 rounded px-1.5 text-left text-muted-foreground hover:text-muted-foreground">
+                className="text-muted-foreground hover:text-muted-foreground h-8 w-full justify-start gap-2 rounded px-1.5 text-left">
                 {filter.value && typeof filter.value === 'string' ? (
                   <Badge variant="secondary" className="rounded-sm px-1 font-normal">
                     {filterField?.options?.find((option) => option.value === filter.value)?.label || filter.value}
@@ -180,7 +180,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
                           document.getElementById(inputId)?.click();
                         }, 0);
                       }}>
-                      {option.icon && <option.icon className="mr-2 size-4 text-muted-foreground" aria-hidden="true" />}
+                      {option.icon && <option.icon className="text-muted-foreground mr-2 size-4" aria-hidden="true" />}
                       <span>{option.label}</span>
                       {option.count && <span className="ml-auto flex size-4 items-center justify-center font-mono text-xs">{option.count}</span>}
                     </FacetedFilterItem>
@@ -202,7 +202,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
                 size="sm"
                 aria-label={`${filterField.label} filter values`}
                 aria-controls={`${inputId}-listbox`}
-                className="h-8 w-full justify-start gap-2 rounded px-1.5 text-left text-muted-foreground hover:text-muted-foreground">
+                className="text-muted-foreground hover:text-muted-foreground h-8 w-full justify-start gap-2 rounded px-1.5 text-left">
                 <>
                   {selectedValues.size === 0 && (
                     <>
@@ -253,7 +253,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
                           field: { value: newValue },
                         });
                       }}>
-                      {option.icon && <option.icon className="mr-2 size-4 text-muted-foreground" aria-hidden="true" />}
+                      {option.icon && <option.icon className="text-muted-foreground mr-2 size-4" aria-hidden="true" />}
                       <span>{option.label}</span>
                       {option.count && <span className="ml-auto flex size-4 items-center justify-center font-mono text-xs">{option.count}</span>}
                     </FacetedFilterItem>
@@ -363,12 +363,12 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
       onMove={({ activeIndex, overIndex }) => moveFilter(activeIndex, overIndex)}
       overlay={
         <div className="flex items-center gap-2">
-          <div className="h-8 min-w-[4.5rem] rounded-sm bg-primary/10" />
-          <div className="h-8 w-32 rounded-sm bg-primary/10" />
-          <div className="h-8 w-32 rounded-sm bg-primary/10" />
-          <div className="h-8 min-w-36 flex-1 rounded-sm bg-primary/10" />
-          <div className="size-8 shrink-0 rounded-sm bg-primary/10" />
-          <div className="size-8 shrink-0 rounded-sm bg-primary/10" />
+          <div className="bg-primary/10 h-8 min-w-[4.5rem] rounded-sm" />
+          <div className="bg-primary/10 h-8 w-32 rounded-sm" />
+          <div className="bg-primary/10 h-8 w-32 rounded-sm" />
+          <div className="bg-primary/10 h-8 min-w-36 flex-1 rounded-sm" />
+          <div className="bg-primary/10 size-8 shrink-0 rounded-sm" />
+          <div className="bg-primary/10 size-8 shrink-0 rounded-sm" />
         </div>
       }>
       <Popover>
@@ -389,11 +389,11 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
           collisionPadding={16}
           className={cn('flex w-[calc(100vw-(--spacing(12)))] min-w-60 origin-[var(--radix-popover-content-transform-origin)] flex-col p-4 sm:w-[36rem]', filters.length > 0 ? 'gap-3.5' : 'gap-2')}>
           {filters.length > 0 ? (
-            <h4 className="font-medium leading-none">Filters</h4>
+            <h4 className="leading-none font-medium">Filters</h4>
           ) : (
             <div className="flex flex-col gap-1">
-              <h4 className="font-medium leading-none">No filters applied</h4>
-              <p className="text-sm text-muted-foreground">Add filters to refine your results.</p>
+              <h4 className="leading-none font-medium">No filters applied</h4>
+              <p className="text-muted-foreground text-sm">Add filters to refine your results.</p>
             </div>
           )}
           <div className="flex max-h-40 flex-col gap-2 overflow-y-auto py-0.5 pr-1">
@@ -410,7 +410,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
                   <div className="flex items-center gap-2">
                     <div className="min-w-[4.5rem] text-center">
                       {index === 0 ? (
-                        <span className="text-sm text-muted-foreground">Where</span>
+                        <span className="text-muted-foreground text-sm">Where</span>
                       ) : index === 1 ? (
                         <Select value={joinOperator} onValueChange={(value: JoinOperator) => setJoinOperator(value)}>
                           <SelectTrigger aria-label="Select join operator" aria-controls={joinOperatorListboxId} className="h-8 rounded lowercase">
@@ -425,7 +425,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
                           </SelectContent>
                         </Select>
                       ) : (
-                        <span className="text-sm text-muted-foreground">{joinOperator}</span>
+                        <span className="text-muted-foreground text-sm">{joinOperator}</span>
                       )}
                     </div>
                     <Popover modal>
@@ -437,7 +437,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
                           role="combobox"
                           aria-label="Select filter field"
                           aria-controls={fieldListboxId}
-                          className="h-8 w-32 justify-between gap-2 rounded focus:outline-hidden focus:ring-1 focus:ring-ring focus-visible:ring-0">
+                          className="focus:ring-ring h-8 w-32 justify-between gap-2 rounded focus:ring-1 focus:outline-hidden focus-visible:ring-0">
                           <span className="truncate">{filterFields.find((field) => field.id === filter.id)?.label ?? 'Select field'}</span>
                           <ChevronsUpDown className="size-4 shrink-0 opacity-50" />
                         </Button>

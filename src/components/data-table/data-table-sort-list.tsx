@@ -87,10 +87,10 @@ export function DataTableSortList<TData>({ table, debounceMs, shallow }: DataTab
       onValueChange={setSorting}
       overlay={
         <div className="flex items-center gap-2">
-          <div className="h-8 w-[11.25rem] rounded-sm bg-primary/10" />
-          <div className="h-8 w-24 rounded-sm bg-primary/10" />
-          <div className="size-8 shrink-0 rounded-sm bg-primary/10" />
-          <div className="size-8 shrink-0 rounded-sm bg-primary/10" />
+          <div className="bg-primary/10 h-8 w-[11.25rem] rounded-sm" />
+          <div className="bg-primary/10 h-8 w-24 rounded-sm" />
+          <div className="bg-primary/10 size-8 shrink-0 rounded-sm" />
+          <div className="bg-primary/10 size-8 shrink-0 rounded-sm" />
         </div>
       }>
       <Popover>
@@ -110,15 +110,15 @@ export function DataTableSortList<TData>({ table, debounceMs, shallow }: DataTab
           align="start"
           collisionPadding={16}
           className={cn(
-            'flex w-[calc(100vw-(--spacing(20)))] min-w-72 max-w-[25rem] origin-[var(--radix-popover-content-transform-origin)] flex-col p-4 sm:w-[25rem]',
+            'flex w-[calc(100vw-(--spacing(20)))] max-w-[25rem] min-w-72 origin-[var(--radix-popover-content-transform-origin)] flex-col p-4 sm:w-[25rem]',
             sorting.length > 0 ? 'gap-3.5' : 'gap-2'
           )}>
           {uniqueSorting.length > 0 ? (
-            <h4 className="font-medium leading-none">Sort by</h4>
+            <h4 className="leading-none font-medium">Sort by</h4>
           ) : (
             <div className="flex flex-col gap-1">
-              <h4 className="font-medium leading-none">No sorting applied</h4>
-              <p className="text-sm text-muted-foreground">Add sorting to organize your results.</p>
+              <h4 className="leading-none font-medium">No sorting applied</h4>
+              <p className="text-muted-foreground text-sm">Add sorting to organize your results.</p>
             </div>
           )}
           <div className="flex max-h-40 flex-col gap-2 overflow-y-auto p-0.5">
@@ -139,7 +139,7 @@ export function DataTableSortList<TData>({ table, debounceMs, shallow }: DataTab
                             variant="outline"
                             size="sm"
                             role="combobox"
-                            className="h-8 w-44 justify-between gap-2 rounded focus:outline-hidden focus:ring-1 focus:ring-ring"
+                            className="focus:ring-ring h-8 w-44 justify-between gap-2 rounded focus:ring-1 focus:outline-hidden"
                             aria-controls={fieldListboxId}>
                             <span className="truncate">{toSentenceCase(sort.id)}</span>
                             <div className="ml-auto flex items-center gap-1">

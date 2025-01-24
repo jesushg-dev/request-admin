@@ -16,7 +16,7 @@ interface ToolbarProps {
 
 export const Toolbar = ({ handelEdit, handleDelete, handleThread, handleReaction, hideThreadButton, isAuthor, isPending }: ToolbarProps) => {
   return (
-    <div className="absolute right-5 top-0">
+    <div className="absolute top-0 right-5">
       <div className="rounded-md border bg-white opacity-0 shadow-xs transition-opacity group-hover:opacity-100">
         <EmojiPopover hint="Add reaction" onEmojiSelect={(emoji) => handleReaction(emoji.native)}>
           <Button variant="ghost" size="sm" disabled={isPending}>

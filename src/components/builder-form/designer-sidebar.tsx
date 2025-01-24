@@ -9,7 +9,7 @@ const DesignerSidebar: FC = () => {
   const { selectedElement } = useDesigner();
 
   return (
-    <aside className="flex h-full w-[400px] max-w-[400px] grow flex-col gap-2 overflow-y-hidden border-l-2 border-muted bg-background">
+    <aside className="border-muted bg-background flex h-full w-[400px] max-w-[400px] grow flex-col gap-2 overflow-y-hidden border-l-2">
       {selectedElement ? <PropertiesFormSidebar /> : <FormElementsSidebar />}
     </aside>
   );

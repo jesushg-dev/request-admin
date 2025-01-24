@@ -18,8 +18,8 @@ const ErrorRetryFallback: React.FC<ErrorRetryFallbackProps> = ({ error, onRetry 
         <h1 className="text-center text-xl font-bold">Oops! Something went wrong.</h1>
       </CardHeader>
       <CardContent>
-        <p className="text-center text-muted-foreground">We encountered an unexpected error. Please try again.</p>
-        {error?.message && <span className="text-center text-muted-foreground">{error?.message}</span>}
+        <p className="text-muted-foreground text-center">We encountered an unexpected error. Please try again.</p>
+        {error?.message && <span className="text-muted-foreground text-center">{error?.message}</span>}
         <div className="mt-4 flex justify-center gap-2">
           <Button type="button" variant="destructive" onClick={onRetry}>
             Retry
