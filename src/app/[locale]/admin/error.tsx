@@ -30,7 +30,7 @@ const ErrorPage: React.FC<ErrorPageProps> = ({ error }) => {
           <h1 className="text-center text-xl font-bold">Oops! Something went wrong.</h1>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center gap-4">
-          <p className="text-center text-muted-foreground">
+          <p className="text-muted-foreground text-center">
             {process.env.NODE_ENV === 'development' && error?.message ? `Error message: ${error.message}` : 'We encountered an unexpected error. Please try again later.'}
           </p>
           <div className="mt-4 flex items-center gap-4">

@@ -45,6 +45,7 @@ model Tenant {
   documentAssignments            DocumentAssignment[]
   requests                       Request[]
   requestAssignments             RequestAssignment[]
+  assignedUsers                  AssignedUser[]
   requestStatusTypes             RequestStatusType[]
   requestStatusTransitions       RequestStatusTransition[]
   requirementComplianceTrackings RequirementComplianceTracking[]
@@ -163,29 +164,29 @@ model User {
 }
 
 model UserTenant {
-  createdAt                    DateTime            @default(now())
-  updatedAt                    DateTime?           @updatedAt()
+  createdAt                    DateTime         @default(now())
+  updatedAt                    DateTime?        @updatedAt()
   deletedAt                    DateTime?
-  createdBy                    String?             @db.VarChar(50)
-  modifiedBy                   String?             @db.VarChar(50)
-  tenantId                     String              @db.UniqueIdentifier()
-  tenant                       Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                           String              @id() @default(uuid()) @db.UniqueIdentifier()
-  isActive                     Boolean             @default(true)
-  isTermAccepted               Boolean             @default(false)
-  joinedAt                     DateTime            @default(now())
-  isSuperAdmin                 Boolean             @default(false)
-  userId                       String              @db.UniqueIdentifier()
-  user                         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  personId                     String?             @db.UniqueIdentifier()
+  createdBy                    String?          @db.VarChar(50)
+  modifiedBy                   String?          @db.VarChar(50)
+  tenantId                     String           @db.UniqueIdentifier()
+  tenant                       Tenant           @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                           String           @id() @default(uuid()) @db.UniqueIdentifier()
+  isActive                     Boolean          @default(true)
+  isTermAccepted               Boolean          @default(false)
+  joinedAt                     DateTime         @default(now())
+  isSuperAdmin                 Boolean          @default(false)
+  userId                       String           @db.UniqueIdentifier()
+  user                         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  personId                     String?          @db.UniqueIdentifier()
   person                       Person?
   userAreas                    UserTenantArea[]
   userRoles                    UserTenantRole[]
-  requestAssignments           RequestAssignment[]
+  assignedUsers                AssignedUser[]
   reactions                    Reaction[]
   messages                     Message[]
-  conversationsAsUserTenantOne Conversation[]      @relation("UserTenantOne")
-  conversationsAsUserTenantTwo Conversation[]      @relation("UserTenantTwo")
+  conversationsAsUserTenantOne Conversation[]   @relation("UserTenantOne")
+  conversationsAsUserTenantTwo Conversation[]   @relation("UserTenantTwo")
 
   @@unique([userId, tenantId])
   @@index([userId])
@@ -332,7 +333,7 @@ model RelatedIncident {
   @@index([relatedId], name: "idx_related_incident_related_id")
 }
 
-/// Represents an assignment of a request to a user or area.
+/// Represents an assignment of a request to users or areas.
 model RequestAssignment {
   createdAt            DateTime             @default(now())
   updatedAt            DateTime?            @updatedAt()
@@ -350,8 +351,7 @@ model RequestAssignment {
   type                 AssignmentType       @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   requestId            String               @db.UniqueIdentifier()
   request              Request              @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  userTenantId         String?              @db.UniqueIdentifier()
-  userTenant           UserTenant?          @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  assignedUsers        AssignedUser[]       @relation("AssignedUsers")
   areaId               String?              @db.UniqueIdentifier()
   area                 Area?                @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   statusId             String               @db.UniqueIdentifier()
@@ -367,14 +367,31 @@ model RequestAssignment {
 
   @@index([typeId], name: "idx_assignment_type_id")
   @@index([requestId], name: "idx_assignment_request_id")
-  @@index([userTenantId], name: "idx_assignment_user_tenant_id")
-  @@index([areaId], name: "idx_assignment_area_id")
   @@index([statusId], name: "idx_assignment_status_id")
   @@index([slaStart], name: "idx_assignment_sla_start")
   @@index([slaDeadline], name: "idx_assignment_sla_deadline")
   @@index([slaEnd], name: "idx_assignment_sla_end")
   @@index([requestCategoryId], name: "idx_assignment_request_category_id")
   @@index([assignmentCategoryId], name: "idx_assignment_assignment_category_id")
+}
+
+/// Represents the users assigned to a request, including the coordinator.
+model AssignedUser {
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime?         @updatedAt()
+  deletedAt           DateTime?
+  createdBy           String?           @db.VarChar(50)
+  modifiedBy          String?           @db.VarChar(50)
+  tenantId            String            @db.UniqueIdentifier()
+  tenant              Tenant            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                  String            @id() @default(uuid()) @db.UniqueIdentifier()
+  requestAssignment   RequestAssignment @relation("AssignedUsers", fields: [requestAssignmentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  requestAssignmentId String            @db.UniqueIdentifier()
+  userTenantId        String            @db.UniqueIdentifier()
+  userTenant          UserTenant        @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  role                String            @db.VarChar(150)
+  isCoordinator       Boolean           @default(false)
+  unAssignmentDate    DateTime?
 }
 
 model AssignmentType {

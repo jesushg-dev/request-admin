@@ -54,13 +54,13 @@ const Navbar = async () => {
                           <li key={idx}>
                             <a
                               className={cn(
-                                'flex select-none gap-4 rounded-md p-3 leading-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground'
+                                'hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex gap-4 rounded-md p-3 leading-none transition-colors select-none'
                               )}
                               href="#">
                               {item.icon}
                               <div>
                                 <div className="text-sm font-semibold">{item.title}</div>
-                                <p className="text-sm leading-snug text-muted-foreground">{item.description}</p>
+                                <p className="text-muted-foreground text-sm leading-snug">{item.description}</p>
                               </div>
                             </a>
                           </li>
@@ -132,7 +132,7 @@ const Navbar = async () => {
                     </div>
                   </SheetTitle>
                 </SheetHeader>
-                <div className="mb-8 mt-8 flex flex-col gap-4">
+                <div className="mt-8 mb-8 flex flex-col gap-4">
                   <Accordion type="single" collapsible className="w-full">
                     <AccordionItem value="resources" className="border-b-0">
                       <AccordionTrigger className="py-0 font-semibold hover:no-underline">{t('resources.title')}</AccordionTrigger>
@@ -141,13 +141,13 @@ const Navbar = async () => {
                           <a
                             key={idx}
                             className={cn(
-                              'flex select-none gap-4 rounded-md p-3 leading-none outline-hidden transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground'
+                              'hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex gap-4 rounded-md p-3 leading-none outline-hidden transition-colors select-none'
                             )}
                             href="#">
                             {item.icon}
                             <div>
                               <div className="text-sm font-semibold">{item.title}</div>
-                              <p className="text-sm leading-snug text-muted-foreground">{item.description}</p>
+                              <p className="text-muted-foreground text-sm leading-snug">{item.description}</p>
                             </div>
                           </a>
                         ))}
@@ -160,22 +160,22 @@ const Navbar = async () => {
                 </div>
                 <div className="border-t pt-4">
                   <div className="grid grid-cols-2 justify-start">
-                    <a className={cn(buttonVariants({ variant: 'ghost' }), 'justify-start text-muted-foreground')} href="#">
+                    <a className={cn(buttonVariants({ variant: 'ghost' }), 'text-muted-foreground justify-start')} href="#">
                       {t('footer.press')}
                     </a>
-                    <a className={cn(buttonVariants({ variant: 'ghost' }), 'justify-start text-muted-foreground')} href="#">
+                    <a className={cn(buttonVariants({ variant: 'ghost' }), 'text-muted-foreground justify-start')} href="#">
                       {t('footer.contact')}
                     </a>
-                    <a className={cn(buttonVariants({ variant: 'ghost' }), 'justify-start text-muted-foreground')} href="#">
+                    <a className={cn(buttonVariants({ variant: 'ghost' }), 'text-muted-foreground justify-start')} href="#">
                       {t('footer.imprint')}
                     </a>
-                    <a className={cn(buttonVariants({ variant: 'ghost' }), 'justify-start text-muted-foreground')} href="#">
+                    <a className={cn(buttonVariants({ variant: 'ghost' }), 'text-muted-foreground justify-start')} href="#">
                       {t('footer.sitemap')}
                     </a>
-                    <a className={cn(buttonVariants({ variant: 'ghost' }), 'justify-start text-muted-foreground')} href="#">
+                    <a className={cn(buttonVariants({ variant: 'ghost' }), 'text-muted-foreground justify-start')} href="#">
                       {t('footer.legal')}
                     </a>
-                    <a className={cn(buttonVariants({ variant: 'ghost' }), 'justify-start text-muted-foreground')} href="#">
+                    <a className={cn(buttonVariants({ variant: 'ghost' }), 'text-muted-foreground justify-start')} href="#">
                       {t('footer.cookieSettings')}
                     </a>
                   </div>

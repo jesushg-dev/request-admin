@@ -453,7 +453,6 @@ export function useCheckRequestAssignment<TError = DefaultError>(
       comment?: string;
       typeId?: string;
       requestId?: string;
-      userTenantId?: string;
       areaId?: string;
       statusId?: string;
       requestCategoryId?: string;

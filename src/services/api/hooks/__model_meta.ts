@@ -207,6 +207,13 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
+        assignedUsers: {
+          name: 'assignedUsers',
+          type: 'AssignedUser',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
         requestStatusTypes: {
           name: 'requestStatusTypes',
           type: 'RequestStatusType',
@@ -982,9 +989,9 @@ const metadata = {
           isArray: true,
           backLink: 'userTenant',
         },
-        requestAssignments: {
-          name: 'requestAssignments',
-          type: 'RequestAssignment',
+        assignedUsers: {
+          name: 'assignedUsers',
+          type: 'AssignedUser',
           isDataModel: true,
           isArray: true,
           backLink: 'userTenant',
@@ -1755,21 +1762,12 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'requestId' },
         },
-        userTenantId: {
-          name: 'userTenantId',
-          type: 'String',
-          isOptional: true,
-          isForeignKey: true,
-          relationField: 'userTenant',
-        },
-        userTenant: {
-          name: 'userTenant',
-          type: 'UserTenant',
+        assignedUsers: {
+          name: 'assignedUsers',
+          type: 'AssignedUser',
           isDataModel: true,
-          isOptional: true,
-          backLink: 'requestAssignments',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'userTenantId' },
+          isArray: true,
+          backLink: 'requestAssignment',
         },
         areaId: {
           name: 'areaId',
@@ -1850,6 +1848,109 @@ const metadata = {
           backLink: 'assignmentRequests',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'assignmentCategoryId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    assignedUser: {
+      name: 'AssignedUser',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$AssignedUser$createdBy,
+        },
+        modifiedBy: {
+          name: 'modifiedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$AssignedUser$modifiedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'assignedUsers',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        requestAssignment: {
+          name: 'requestAssignment',
+          type: 'RequestAssignment',
+          isDataModel: true,
+          backLink: 'assignedUsers',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'requestAssignmentId' },
+        },
+        requestAssignmentId: {
+          name: 'requestAssignmentId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'requestAssignment',
+        },
+        userTenantId: {
+          name: 'userTenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'userTenant',
+        },
+        userTenant: {
+          name: 'userTenant',
+          type: 'UserTenant',
+          isDataModel: true,
+          backLink: 'assignedUsers',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'userTenantId' },
+        },
+        role: {
+          name: 'role',
+          type: 'String',
+        },
+        isCoordinator: {
+          name: 'isCoordinator',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        unAssignmentDate: {
+          name: 'unAssignmentDate',
+          type: 'DateTime',
+          isOptional: true,
         },
       },
       uniqueConstraints: {
@@ -6039,6 +6140,7 @@ const metadata = {
   },
   deleteCascade: {
     user: ['UserTenant', 'Session', 'Account', 'TwoFactorConfirmation', 'Authenticator'],
+    requestAssignment: ['AssignedUser'],
     area: ['AssignmentCategory'],
     requestCategory: ['CategoryForm'],
     assignmentHierarchy: ['AssignmentCategory'],
@@ -6093,6 +6195,14 @@ function $default$RequestAssignment$createdBy(user: any): unknown {
 }
 
 function $default$RequestAssignment$modifiedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AssignedUser$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AssignedUser$modifiedBy(user: any): unknown {
   return user?.id;
 }
 

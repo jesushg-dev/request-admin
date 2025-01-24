@@ -27,25 +27,25 @@ model User extends Auditable {
 }
 
 model UserTenant extends TenantScoped, Auditable {
-  id                           String              @id @default(uuid()) @db.UniqueIdentifier
-  isActive                     Boolean             @default(true) // Indicates if the user is active in the tenant
-  isTermAccepted               Boolean             @default(false) // Indicates if the user has accepted the terms of the tenant
-  joinedAt                     DateTime            @default(now()) // Timestamp of when the user joined the tenant
-  isSuperAdmin                 Boolean             @default(false) // Flag for super admin status
+  id                           String           @id @default(uuid()) @db.UniqueIdentifier
+  isActive                     Boolean          @default(true) // Indicates if the user is active in the tenant
+  isTermAccepted               Boolean          @default(false) // Indicates if the user has accepted the terms of the tenant
+  joinedAt                     DateTime         @default(now()) // Timestamp of when the user joined the tenant
+  isSuperAdmin                 Boolean          @default(false) // Flag for super admin status
 
-  userId                       String              @db.UniqueIdentifier
-  user                         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                       String           @db.UniqueIdentifier
+  user                         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  personId                     String?             @db.UniqueIdentifier
+  personId                     String?          @db.UniqueIdentifier
   person                       Person?
 
   userAreas                    UserTenantArea[]
   userRoles                    UserTenantRole[]
-  requestAssignments           RequestAssignment[]
+  assignedUsers                AssignedUser[]
   reactions                    Reaction[]     // Reactions made by the user in the tenant
   messages                     Message[]      // Messages sent by the user
-  conversationsAsUserTenantOne Conversation[]      @relation("UserTenantOne") // Conversations where this user is UserTenantOne
-  conversationsAsUserTenantTwo Conversation[]      @relation("UserTenantTwo") // Conversations where this user is UserTenantTwo
+  conversationsAsUserTenantOne Conversation[]   @relation("UserTenantOne") // Conversations where this user is UserTenantOne
+  conversationsAsUserTenantTwo Conversation[]   @relation("UserTenantTwo") // Conversations where this user is UserTenantTwo
 
 
   @@unique([userId, tenantId]) // Ensure unique user-tenant relationships

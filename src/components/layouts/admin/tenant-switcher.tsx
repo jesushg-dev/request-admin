@@ -27,7 +27,7 @@ export function TenantSwitcher({ tenants, tenantId, isGlobalAdmin }: { tenants: 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg border border-dashed bg-accent p-0.5">
+              <div className="bg-accent flex aspect-square size-8 items-center justify-center rounded-lg border border-dashed p-0.5">
                 {currentTenant?.logoUrl && (
                   <Avatar>
                     <AvatarImage src={currentTenant.logoUrl ?? ''} alt={currentTenant.name} style={{ objectFit: 'contain', objectPosition: 'center' }} />
@@ -43,15 +43,15 @@ export function TenantSwitcher({ tenants, tenantId, isGlobalAdmin }: { tenants: 
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg" align="start" side={isMobile ? 'bottom' : 'right'} sideOffset={4}>
-            <DropdownMenuLabel className="text-xs text-muted-foreground">{t('label.tenants')}</DropdownMenuLabel>
+            <DropdownMenuLabel className="text-muted-foreground text-xs">{t('label.tenants')}</DropdownMenuLabel>
             {tenants.length > 1 && (
               <>
                 {tenants.map((tenant, index) => {
                   if (tenant.id === tenantId) return null;
                   return (
                     <DropdownMenuItem key={tenant.id} className="p-0">
-                      <Link className="flex w-full cursor-pointer items-center gap-2 p-2 hover:bg-accent" href={{ pathname: '/admin/[tenantId]', params: { tenantId: tenant.id } }} passHref>
-                        <div className="flex aspect-square size-6 items-center justify-center rounded-lg border border-dashed bg-accent p-0.5">
+                      <Link className="hover:bg-accent flex w-full cursor-pointer items-center gap-2 p-2" href={{ pathname: '/admin/[tenantId]', params: { tenantId: tenant.id } }} passHref>
+                        <div className="bg-accent flex aspect-square size-6 items-center justify-center rounded-lg border border-dashed p-0.5">
                           {tenant?.logoUrl && (
                             <Avatar>
                               <AvatarImage src={tenant.logoUrl ?? ''} alt={tenant.name} style={{ objectFit: 'contain', objectPosition: 'center' }} />
@@ -70,11 +70,11 @@ export function TenantSwitcher({ tenants, tenantId, isGlobalAdmin }: { tenants: 
             )}
             {isGlobalAdmin && (
               <DropdownMenuItem className="p-0">
-                <Link className="flex w-full cursor-pointer items-center gap-2 p-2 hover:bg-accent" href="/admin/global/tenants/new" passHref>
-                  <div className="flex size-6 items-center justify-center rounded-md border bg-background">
+                <Link className="hover:bg-accent flex w-full cursor-pointer items-center gap-2 p-2" href="/admin/global/tenants/new" passHref>
+                  <div className="bg-background flex size-6 items-center justify-center rounded-md border">
                     <Plus className="size-4" />
                   </div>
-                  <div className="font-medium text-muted-foreground">{t('addTenant')}</div>
+                  <div className="text-muted-foreground font-medium">{t('addTenant')}</div>
                 </Link>
               </DropdownMenuItem>
             )}

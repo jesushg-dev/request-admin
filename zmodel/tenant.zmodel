@@ -47,6 +47,7 @@ model Tenant extends Auditable {
   // --- Requests and Statuses ---
   requests                       Request[]
   requestAssignments             RequestAssignment[]
+  assignedUsers                  AssignedUser[]
   requestStatusTypes             RequestStatusType[]
   requestStatusTransitions       RequestStatusTransition[]
   requirementComplianceTrackings RequirementComplianceTracking[]

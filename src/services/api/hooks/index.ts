@@ -23,6 +23,7 @@ export * from './authenticator';
 export * from './request';
 export * from './related-incident';
 export * from './request-assignment';
+export * from './assigned-user';
 export * from './assignment-type';
 export * from './request-status-type';
 export * from './request-status-transition';

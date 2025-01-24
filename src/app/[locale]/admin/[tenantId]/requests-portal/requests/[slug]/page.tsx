@@ -10,7 +10,7 @@ import ProjectDetails from '@/components/common/request/detail/request-details';
 import TaskProgress from '@/components/common/request/detail/requirement-progress';
 import FormSubmissionsViewer from '@/components/common/request/detail/submissions-viewer';
 
-import { activities, documents, guideDocuments, projectDetails, submissions, tasks } from './mockData';
+import { activities, documents, guideDocuments, submissions, tasks } from './mockData';
 
 export default async function CaseDetailPage({ params }: { params: Promise<{ tenantId: string; slug: string }> }) {
   const { tenantId, slug } = await params;
@@ -22,8 +22,8 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ ten
   return (
     <ResizablePanelGroup direction="horizontal" className="flex-1">
       <ResizablePanel minSize={30} defaultSize={30}>
-        <div className="h-full overflow-hidden p-4">
-          <ProjectDetails details={projectDetails} />
+        <div className="flex h-full flex-1 overflow-hidden p-4">
+          <ProjectDetails tenantId={tenantId} slug={slug} />
         </div>
       </ResizablePanel>
       <ResizableHandle withHandle />
