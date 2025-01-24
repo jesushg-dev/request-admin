@@ -57,9 +57,8 @@ export default function ProjectDetails({ tenantId, slug }: { tenantId: string; s
                     </div>
                   </div>
                 </div>
-
                 <Separator />
-
+                {/*todo: metadata can be fixed at the top and be hidden when scrolling down but shown when scrolling up */}
                 {/* Metadata */}
                 <div className="w-full overflow-x-auto">
                   <div className="flex gap-4">
@@ -85,7 +84,6 @@ export default function ProjectDetails({ tenantId, slug }: { tenantId: string; s
                     <MetadataItem icon={<CalendarIcon className="h-4 w-4" />} label="Created" value={new Date(mockRequest.createdAt).toLocaleDateString()} />
                   </div>
                 </div>
-
                 {/* Satisfaction Survey */}
                 {mockSatisfactionSurvey && (
                   <div className="bg-muted/50 flex items-center gap-4 rounded-lg p-4">
@@ -102,31 +100,47 @@ export default function ProjectDetails({ tenantId, slug }: { tenantId: string; s
                 )}
 
                 {/* Team Members */}
-                <TeamMembers />
-
-                {/* Attachments */}
                 <Card>
                   <CardHeader>
-                    <div className="flex justify-between">
-                      <CardTitle>Attachments</CardTitle>
-                      <AddAttachment />
+                    <div className="flex items-center justify-between">
+                      <CardTitle>Team Members</CardTitle>
+                      <Button>Assign</Button>
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <Tabs defaultValue="document">
-                      <TabsList>
-                        <TabsTrigger value="document">Documents</TabsTrigger>
-                        <TabsTrigger value="guide">Guides</TabsTrigger>
-                      </TabsList>
+                    <TeamMembers />
+                  </CardContent>
+                </Card>
+
+                {/* Attachments */}
+                <Tabs defaultValue="document">
+                  <Card>
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <CardTitle>Attachments</CardTitle>
+                        <div className="flex items-center gap-2">
+                          <TabsList className="h-8">
+                            <TabsTrigger value="document" className="h-7 text-xs">
+                              Documents
+                            </TabsTrigger>
+                            <TabsTrigger value="guide" className="h-7 text-xs">
+                              Guides
+                            </TabsTrigger>
+                          </TabsList>
+                          <AddAttachment />
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
                       <TabsContent value="document">
                         <Attachments type="document" />
                       </TabsContent>
                       <TabsContent value="guide">
                         <Attachments type="guide" />
                       </TabsContent>
-                    </Tabs>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </Tabs>
               </div>
             </div>
           </div>

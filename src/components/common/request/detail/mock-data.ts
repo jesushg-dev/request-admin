@@ -125,6 +125,42 @@ export const mockAttachments = [
     createdAt: '2024-01-21T09:45:00Z',
     isActive: false,
   },
+  {
+    id: '4',
+    name: 'New Specs.pdf',
+    size: '1.2 MB',
+    type: 'document',
+    url: '/placeholder.svg?height=200&width=200',
+    createdAt: '2024-01-22T14:00:00Z',
+    isActive: true,
+  },
+  {
+    id: '5',
+    name: 'User Guide.pdf',
+    size: '3.1 MB',
+    type: 'guide',
+    url: '/placeholder.svg?height=200&width=200',
+    createdAt: '2024-01-23T09:00:00Z',
+    isActive: true,
+  },
+  {
+    id: '6',
+    name: 'API Reference.pdf',
+    size: '2.7 MB',
+    type: 'guide',
+    url: '/placeholder.svg?height=200&width=200',
+    createdAt: '2024-01-23T11:30:00Z',
+    isActive: true,
+  },
+  {
+    id: '7',
+    name: 'Data Model.pdf',
+    size: '1.9 MB',
+    type: 'guide',
+    url: '/placeholder.svg?height=200&width=200',
+    createdAt: '2024-01-23T14:45:00Z',
+    isActive: true,
+  }
 ];
 
 export const mockSatisfactionSurvey = {

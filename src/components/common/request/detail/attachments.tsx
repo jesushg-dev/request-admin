@@ -11,8 +11,8 @@ import { mockAttachments } from './mock-data';
 
 export const Attachments = ({ type }: { type: string }) => {
   return (
-    <div>
-      <div className="flex gap-4 pb-4">
+    <div className="w-full overflow-x-auto">
+      <div className="flex gap-4">
         {mockAttachments
           .filter((file) => file.type === type)
           .map((file) => (

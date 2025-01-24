@@ -36,6 +36,8 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ ten
               <TabsTrigger value="chat">Chat</TabsTrigger>
               <TabsTrigger value="history">History</TabsTrigger>
               <TabsTrigger value="files">Files</TabsTrigger>
+              <TabsTrigger value="assignments">Assignments</TabsTrigger>
+              <TabsTrigger value="related">Related</TabsTrigger>
             </TabsList>
             <TabsContent value="requirements">
               <TaskProgress tasks={tasks} />
@@ -52,6 +54,8 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ ten
             <TabsContent value="files">
               <AssociatedFilesViewer guideDocuments={guideDocuments} documents={documents} />
             </TabsContent>
+            <TabsContent value="assignments">Assignments</TabsContent>
+            <TabsContent value="related">Related</TabsContent>
           </Tabs>
         </div>
       </ResizablePanel>

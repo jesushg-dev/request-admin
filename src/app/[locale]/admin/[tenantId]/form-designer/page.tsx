@@ -1,4 +1,4 @@
-import React, { ReactNode, Suspense } from 'react';
+import React, { Suspense } from 'react';
 import { GetForms, GetFormStats } from '@/actions/form';
 import { ArrowDownIcon, BookOpenCheckIcon, MousePointerClickIcon, ViewIcon } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
@@ -7,16 +7,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import CreateFormBtn from '@/components/builder-form/create-form-btn';
 import { Draggable, FormCard } from '@/components/builder-form/form-card';
+import { StatCard } from '@/components/stat-card';
 
 const Home = async () => {
   const t = await getTranslations('admin.formBuilder.main');
 
   return (
-    <div className="flex w-full flex-1 flex-col gap-4">
-      <Suspense fallback={<StatsCards loading={true} />}>
+    <div className="flex w-full flex-1 flex-col gap-4 p-4">
+      <Suspense fallback={<StatCards loading={true} />}>
         <CardStatsWrapper />
       </Suspense>
-      <Card className="flex-1 bg-background">
+      <Card className="bg-background flex-1">
         <CardHeader>
           <CardTitle>{t('yourForms')}</CardTitle>
         </CardHeader>
@@ -38,65 +39,43 @@ const Home = async () => {
 
 const CardStatsWrapper = async () => {
   const stats = await GetFormStats();
-  return <StatsCards loading={false} data={stats} />;
+  return <StatCards loading={false} data={stats} />;
 };
 
-interface StatsCardProps {
+interface StatCardProps {
   data?: Awaited<ReturnType<typeof GetFormStats>>;
   loading: boolean;
 }
 
-const StatsCards = async (props: StatsCardProps) => {
+const StatCards = async (props: StatCardProps) => {
   const t = await getTranslations('admin.formBuilder.main');
   const { data, loading } = props;
 
   return (
     <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <StatsCard title={t('totalVisits')} icon={<ViewIcon className="h-4 w-4 text-blue-600" />} helperText={t('visitsHelper')} value={data?.visits.toLocaleString() ?? ''} loading={loading} />
-      <StatsCard
+      <StatCard title={t('totalVisits')} icon={<ViewIcon className="h-4 w-4 text-blue-600" />} description={t('visitsHelper')} value={data?.visits.toLocaleString() ?? ''} loading={loading} />
+      <StatCard
         title={t('totalSubmissions')}
         icon={<BookOpenCheckIcon className="h-4 w-4 text-yellow-600" />}
-        helperText={t('submissionsHelper')}
+        description={t('submissionsHelper')}
         value={data?.submissions.toLocaleString() ?? ''}
         loading={loading}
       />
-      <StatsCard
+      <StatCard
         title={t('submissionRate')}
         icon={<MousePointerClickIcon className="h-4 w-4 text-green-600" />}
-        helperText={t('submissionRateHelper')}
+        description={t('submissionRateHelper')}
         value={data?.submissionRate.toLocaleString() + '%'}
         loading={loading}
       />
-      <StatsCard
+      <StatCard
         title={t('bounceRate')}
         icon={<ArrowDownIcon className="h-4 w-4 text-red-600" />}
-        helperText={t('bounceRateHelper')}
+        description={t('bounceRateHelper')}
         value={data?.bounceRate.toLocaleString() + '%'}
         loading={loading}
       />
     </div>
-  );
-};
-
-export const StatsCard = ({ title, value, icon, helperText, loading, className }: { title: string; value: string; helperText: string; className?: string; loading: boolean; icon: ReactNode }) => {
-  return (
-    <Card className={className}>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 pb-0">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        {icon}
-      </CardHeader>
-      <CardContent className="p-4">
-        <div className="text-xl font-bold">
-          {loading && (
-            <Skeleton>
-              <span className="opacity-0">0</span>
-            </Skeleton>
-          )}
-          {!loading && value}
-        </div>
-        <p className="pt-1 text-xs text-muted-foreground">{helperText}</p>
-      </CardContent>
-    </Card>
   );
 };
 
