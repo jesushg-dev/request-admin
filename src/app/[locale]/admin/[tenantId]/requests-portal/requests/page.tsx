@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
+import CalendarTab from '@/components/common/request/calendar-tab';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
 import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-advanced-toolbar';
@@ -155,7 +156,7 @@ const RequestMainPage: React.FC = () => {
         <KanbanBoard />
       </TabsContent>
       <TabsContent value="calendar" className={`mt-0 ${view === 'calendar' ? 'flex flex-1' : ''}`}>
-        {/*<DataCalendar data={tasks?.documents ?? []} /> */}
+        <CalendarTab />
       </TabsContent>
     </Tabs>
   );
