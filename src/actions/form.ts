@@ -86,17 +86,14 @@ export async function GetForms() {
   });
 }
 
-export async function GetFormById(id: string) {
+export async function GetFormById(id: string, tenantId: string) {
   const session = await auth();
   if (!session) {
     throw new UserNotFoundErr();
   }
 
   return await db.form.findUnique({
-    where: {
-      userId: session.user.id,
-      id,
-    },
+    where: { userId: session.user.id, id, tenantId },
   });
 }
 
@@ -137,6 +134,8 @@ export async function PublishForm(id: string) {
 export async function GetFormContentByUrl(formUrl: string, tenantId: string) {
   return await db.form.update({
     select: {
+      id: true,
+      name: true,
       content: true,
     },
     data: {
@@ -148,11 +147,33 @@ export async function GetFormContentByUrl(formUrl: string, tenantId: string) {
       tenantId,
       shareURL: formUrl,
       published: true,
+      isPublic: true,
     },
   });
 }
 
-export async function SubmitForm(tenantId: string, formUrl: string, content: string) {
+export async function GetFormContentById(id: string, tenantId: string) {
+  return await db.form.update({
+    select: {
+      id: true,
+      name: true,
+      content: true,
+    },
+    data: {
+      visits: {
+        increment: 1,
+      },
+    },
+    where: {
+      tenantId,
+      id,
+      published: true,
+    },
+  });
+}
+
+export async function SubmitForm(tenantId: string, formId: string, content: string) {
+  console.log('🚀 ~ SubmitForm ~ content:', content);
   return await db.form.update({
     data: {
       submissions: {
@@ -168,25 +189,9 @@ export async function SubmitForm(tenantId: string, formUrl: string, content: str
       },
     },
     where: {
-      shareURL: formUrl,
+      id: formId,
       published: true,
     },
   });
 }
 
-export async function GetFormWithSubmissions(id: string) {
-  const session = await auth();
-  if (!session) {
-    throw new UserNotFoundErr();
-  }
-
-  return await db.form.findUnique({
-    where: {
-      userId: session.user.id,
-      id,
-    },
-    include: {
-      formSubmissions: true,
-    },
-  });
-}

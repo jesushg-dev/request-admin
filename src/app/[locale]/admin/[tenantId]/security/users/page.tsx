@@ -52,7 +52,7 @@ const UserTenantDefaultArgs = Prisma.validator<Prisma.UserTenantDefaultArgs>()({
       select: {
         userAreas: true,
         userRoles: true,
-        requestAssignments: true,
+        assignedUsers: true,
       },
     },
   },

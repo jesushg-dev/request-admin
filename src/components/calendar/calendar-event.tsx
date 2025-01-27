@@ -1,5 +1,5 @@
 import { format, isSameDay, isSameMonth } from 'date-fns';
-import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
+import { AnimatePresence, motion, MotionConfig } from 'motion/react';
 
 import { cn } from '@/lib/utils';
 import { useCalendarContext } from '@/components/calendar/calendar-context';

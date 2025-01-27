@@ -2,7 +2,7 @@
 
 import React, { memo } from 'react';
 import { Link } from '@/i18n/routing';
-import { Plus } from 'lucide-react';
+import { CircleFadingArrowUpIcon, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useQueryState } from 'nuqs';
 
@@ -33,16 +33,22 @@ const RequestMainPage: React.FC = () => {
             Calendar
           </TabsTrigger>
         </TabsList>
-        <Button variant="outline" size="sm" className="gap-2" asChild>
-          <Link
-            href={{
-              pathname: '/admin/[tenantId]/requests-portal/requests/new',
-              params: { tenantId },
-            }}>
-            <Plus className="size-4" aria-hidden="true" />
-            {t('new')}
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" asChild>
+            <Link
+              href={{
+                pathname: '/admin/[tenantId]/requests-portal/requests/new',
+                params: { tenantId },
+              }}>
+              <Plus className="size-4" aria-hidden="true" />
+              {t('new')}
+            </Link>
+          </Button>
+          <Button variant="outline" size="sm">
+            <CircleFadingArrowUpIcon className="size-4" aria-hidden="true" />
+            {t('assignMassively')}
+          </Button>
+        </div>
       </div>
       <Separator orientation="horizontal" />
       <TabsContent value="table" className={`mt-0 ${view === 'table' ? 'flex flex-1' : ''}`}>

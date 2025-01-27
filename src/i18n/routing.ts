@@ -219,6 +219,10 @@ const formsPathnames = {
     en: '/admin/[tenantId]/form-designer/[slug]/edit',
     es: '/admin/[tenantId]/disenador-de-formularios/[slug]/editar',
   },
+  '/admin/[tenantId]/form-designer/[slug]/new': {
+    en: '/admin/[tenantId]/form-designer/[slug]/new',
+    es: '/admin/[tenantId]/disenador-de-formularios/[slug]/nuevo',
+  },
 } satisfies Pathnames<Locale[]>;
 
 const settingsPathnames = {

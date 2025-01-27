@@ -4608,6 +4608,11 @@ const metadata = {
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: false }] }],
         },
+        isPublic: {
+          name: 'isPublic',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
         visits: {
           name: 'visits',
           type: 'Int',

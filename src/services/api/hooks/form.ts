@@ -364,6 +364,7 @@ export function useCheckForm<TError = DefaultError>(
       userId?: string;
       content?: string;
       published?: boolean;
+      isPublic?: boolean;
       visits?: number;
       submissions?: number;
       shareURL?: string;

@@ -930,6 +930,7 @@ model Form {
   userId          String           @db.UniqueIdentifier()
   content         String           @default("[]") @db.NVarChar(Max)
   published       Boolean          @default(false)
+  isPublic        Boolean          @default(false)
   visits          Int              @default(0)
   submissions     Int              @default(0)
   shareURL        String           @unique() @default(uuid())

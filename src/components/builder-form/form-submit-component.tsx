@@ -12,7 +12,7 @@ import { toast } from '@/components/ui/use-toast';
 
 import { FormElementInstance, FormElements } from './form-elements';
 
-function FormSubmitComponent({ formUrl, content }: { content: FormElementInstance[]; formUrl: string }) {
+function FormSubmitComponent({ formId, content }: { content: FormElementInstance[]; formId: string }) {
   const t = useTranslations('component.formBuilder');
   const tenantId = useTenantId();
   const formValues = useRef<Record<string, string>>({});
@@ -58,7 +58,7 @@ function FormSubmitComponent({ formUrl, content }: { content: FormElementInstanc
 
     try {
       const jsonContent = JSON.stringify(formValues.current);
-      await SubmitForm(tenantId, formUrl, jsonContent);
+      await SubmitForm(tenantId, formId, jsonContent);
       setSubmitted(true);
     } catch {
       toast({
@@ -72,7 +72,7 @@ function FormSubmitComponent({ formUrl, content }: { content: FormElementInstanc
   if (submitted) {
     return (
       <div className="flex h-full w-full items-center justify-center p-8">
-        <div className="bg-background flex w-full max-w-[620px] grow flex-col gap-4 overflow-y-auto rounded border p-8 shadow-xl shadow-blue-700">
+        <div className="bg-background flex w-full max-w-[620px] grow flex-col gap-4 overflow-y-auto rounded border p-8 ">
           <h1 className="text-2xl font-bold">{t('formSubmitted')}</h1>
           <p className="text-muted-foreground">{t('submissionMessage')}</p>
         </div>

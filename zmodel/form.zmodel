@@ -8,6 +8,7 @@ model Form extends TenantScoped, Auditable, CatalogBase {
   userId          String           @db.UniqueIdentifier // ID of the user who owns the form
   content         String           @default("[]") @db.NVarChar(Max) // Structure of the form in JSON format
   published       Boolean          @default(false) // Publication status of the form
+  isPublic        Boolean          @default(false) // Indicates if the form is public
 
   // Form statistics
   visits          Int              @default(0) // Number of visits to the form

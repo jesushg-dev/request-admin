@@ -306,6 +306,7 @@
     "request": {
       "main": {
         "new": "New",
+        "assignMassively": "Assign Massively",
         "entityLabel": "Requests",
         "columns": {
           "issueSubject": "Issue Subject",
