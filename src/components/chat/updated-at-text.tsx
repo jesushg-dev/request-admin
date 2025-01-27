@@ -7,5 +7,5 @@ interface UpdatedAtTextProps {
 
 export const UpdatedAtText = ({ updatedAt, createdAt }: UpdatedAtTextProps) => {
   const isUpdated = updatedAt && createdAt && !isEqual(updatedAt, createdAt);
-  return <>{isUpdated ? <span className="text-xs text-muted-foreground">(edited)</span> : null}</>;
+  return <>{isUpdated ? <span className="text-muted-foreground text-xs">(edited)</span> : null}</>;
 };

@@ -55,7 +55,7 @@ export function DataTableFacetedFilter<TData, TValue>({ column, title, options }
           <CommandInput placeholder={title} />
           <CommandList className="max-h-full">
             <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup className="max-h-[18.75rem] overflow-y-auto overflow-x-hidden">
+            <CommandGroup className="max-h-[18.75rem] overflow-x-hidden overflow-y-auto">
               {options.map((option) => {
                 const isSelected = selectedValues.has(option.value);
 
@@ -73,12 +73,12 @@ export function DataTableFacetedFilter<TData, TValue>({ column, title, options }
                     }}>
                     <div
                       className={cn(
-                        'mr-2 flex size-4 items-center justify-center rounded-sm border border-primary',
+                        'border-primary mr-2 flex size-4 items-center justify-center rounded-sm border',
                         isSelected ? 'bg-primary text-primary-foreground' : 'opacity-50 [&_svg]:invisible'
                       )}>
                       <Check className="size-4" aria-hidden="true" />
                     </div>
-                    {option.icon && <option.icon className="mr-2 size-4 text-muted-foreground" aria-hidden="true" />}
+                    {option.icon && <option.icon className="text-muted-foreground mr-2 size-4" aria-hidden="true" />}
                     <span>{option.label}</span>
                     {option.count && <span className="ml-auto flex size-4 items-center justify-center font-mono text-xs">{option.count}</span>}
                   </CommandItem>

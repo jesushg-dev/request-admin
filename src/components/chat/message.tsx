@@ -128,7 +128,7 @@ export const Message = ({
         )}>
         <div className="flex items-start gap-2">
           <Hint label={createdAt ? formatFullTime(createdAt) : 'N/A'}>
-            <button className="w-[40px] text-center text-xs leading-[22px] text-muted-foreground opacity-0 hover:underline group-hover:opacity-100">
+            <button className="text-muted-foreground w-[40px] text-center text-xs leading-[22px] opacity-0 group-hover:opacity-100 hover:underline">
               {createdAt ? format(createdAt, 'hh:mm') : 'N/A'}
             </button>
           </Hint>
@@ -184,12 +184,12 @@ export const Message = ({
           //  IS NOT EDITING
           <div className="flex w-full flex-col overflow-hidden">
             <div className="text-sm">
-              <button onClick={() => onOpenProfile(userId)} className="font-semibold text-primary hover:underline">
+              <button onClick={() => onOpenProfile(userId)} className="text-primary font-semibold hover:underline">
                 {authorName}
               </button>
               <span>&nbsp;&nbsp;</span>
               <Hint label={createdAt ? formatFullTime(createdAt) : 'N/A'}>
-                <button className="text-xs text-muted-foreground hover:underline">{createdAt ? format(createdAt, 'h:mm a') : 'N/A'}</button>
+                <button className="text-muted-foreground text-xs hover:underline">{createdAt ? format(createdAt, 'h:mm a') : 'N/A'}</button>
               </Hint>
             </div>
             <Renderer value={body} />

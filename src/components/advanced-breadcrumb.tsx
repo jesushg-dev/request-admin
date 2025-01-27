@@ -125,7 +125,7 @@ export function AdvancedBreadcrumb({ tenants = [] }: AdvancedBreadcrumbProps) {
         if (!crumb.IsExistingRoute) {
           return (
             <React.Fragment key={index}>
-              {index > 0 && <ChevronsRight className="h-4 w-4 text-muted-foreground" />}
+              {index > 0 && <ChevronsRight className="text-muted-foreground h-4 w-4" />}
               <span className="text-muted-foreground">{crumb.label}</span>
             </React.Fragment>
           );
@@ -150,7 +150,7 @@ export function AdvancedBreadcrumb({ tenants = [] }: AdvancedBreadcrumbProps) {
                 <DropdownMenuTrigger asChild>
                   <Button variant="link" className="gap-1 p-0 font-normal">
                     {crumb.label}
-                    <ChevronDown className="h-2 w-2 text-muted-foreground" />
+                    <ChevronDown className="text-muted-foreground h-2 w-2" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">

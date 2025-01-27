@@ -160,7 +160,7 @@ async function SubmissionsTable({ id }: { id: string }) {
                   {column.label}
                 </TableHead>
               ))}
-              <TableHead className="text-right uppercase text-muted-foreground">{t('submittedAt')}</TableHead>
+              <TableHead className="text-muted-foreground text-right uppercase">{t('submittedAt')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -169,7 +169,7 @@ async function SubmissionsTable({ id }: { id: string }) {
                 {columns.map((column) => (
                   <RowCell key={column.id} type={column.type} value={row[column.id] ?? ''} />
                 ))}
-                <TableCell className="text-right text-muted-foreground">
+                <TableCell className="text-muted-foreground text-right">
                   {formatDistance(row.submittedAt, new Date(), {
                     addSuffix: true,
                   })}

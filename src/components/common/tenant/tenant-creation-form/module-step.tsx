@@ -20,13 +20,13 @@ export function ModulesStep({ modules }: ModulesFormProps) {
           control={control}
           name={`modules.${index}.isActive`}
           render={({ field }) => (
-            <FormItem className="mx-1 flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+            <FormItem className="mx-1 flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4">
               <FormControl>
                 <Checkbox checked={field.value} onCheckedChange={field.onChange} />
               </FormControl>
               <div className="space-y-1 leading-none">
-                <FormLabel className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{module.name}</FormLabel>
-                {module.description && <FormDescription className="text-sm text-muted-foreground">{module.description}</FormDescription>}
+                <FormLabel className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{module.name}</FormLabel>
+                {module.description && <FormDescription className="text-muted-foreground text-sm">{module.description}</FormDescription>}
               </div>
             </FormItem>
           )}

@@ -82,7 +82,7 @@ export function FeatureRoleFormDialog({ roleIndex, modules, isBatch }: FeatureRo
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger>
-                              <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                              <HelpCircle className="text-muted-foreground h-4 w-4" />
                             </TooltipTrigger>
                             <TooltipContent>
                               <p>{module.description}</p>
@@ -101,7 +101,7 @@ export function FeatureRoleFormDialog({ roleIndex, modules, isBatch }: FeatureRo
                             checked={features.some((perm: { id: string; moduleId: string; name: string }) => perm.id === feature.id)}
                             onCheckedChange={(checked) => toggleFeature(module.id, feature.id, feature.name, checked as boolean)}
                           />
-                          <label htmlFor={`${module.id}-${feature.id}`} className="cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                          <label htmlFor={`${module.id}-${feature.id}`} className="cursor-pointer text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                             {feature.name}
                           </label>
                         </div>

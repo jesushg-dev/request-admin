@@ -8,7 +8,7 @@ interface SpinnerProps {
 export const Spinner = ({ className }: SpinnerProps) => {
   return (
     <div className={cn('flex h-full items-center justify-center', className)}>
-      <Loader className="size-5 animate-spin text-muted-foreground" />
+      <Loader className="text-muted-foreground size-5 animate-spin" />
     </div>
   );
 };

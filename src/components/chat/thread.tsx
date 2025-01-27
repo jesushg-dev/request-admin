@@ -57,7 +57,7 @@ export const Thread = ({ messageId, currentUserId, onClose }: ThreadProps) => {
         </div>
         <div className="flex h-full flex-col items-center justify-center gap-y-2">
           <AlertTriangle className="size-5 text-white" />
-          <p className="text-sm text-muted-foreground">Thread not found</p>
+          <p className="text-muted-foreground text-sm">Thread not found</p>
         </div>
       </div>
     );

@@ -30,7 +30,7 @@ export function FormCard({ form, className }: FormCardProps) {
           {form.published && <Badge>{t('published')}</Badge>}
           {!form.published && <Badge variant="destructive">{t('draft')}</Badge>}
         </CardTitle>
-        <CardDescription className="flex items-center justify-between text-sm text-muted-foreground">
+        <CardDescription className="text-muted-foreground flex items-center justify-between text-sm">
           {formatDistance(form.createdAt, new Date(), {
             addSuffix: true,
           })}
@@ -44,7 +44,7 @@ export function FormCard({ form, className }: FormCardProps) {
           )}
         </CardDescription>
       </CardHeader>
-      <CardContent className="h-[20px] truncate text-sm text-muted-foreground">{form.description ?? t('noDescription')}</CardContent>
+      <CardContent className="text-muted-foreground h-[20px] truncate text-sm">{form.description ?? t('noDescription')}</CardContent>
       <CardFooter>
         {form.published && (
           <Button asChild className="text-md z-50 mt-2 w-full gap-4">

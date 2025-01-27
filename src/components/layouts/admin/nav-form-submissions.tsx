@@ -41,7 +41,7 @@ export function NavFormSubmissions({ currentPath }: NavFormSubmissionsProps) {
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Form Submissions</SidebarGroupLabel>
-      <SidebarMenu ref={setNodeRef} className={cn('transition-colors duration-200', isOver && 'rounded-lg bg-muted/50')}>
+      <SidebarMenu ref={setNodeRef} className={cn('transition-colors duration-200', isOver && 'bg-muted/50 rounded-lg')}>
         <SidebarMenuItem>
           {isLoading ? (
             <div className="rounded-lg border-2 border-dashed p-4">
@@ -57,7 +57,7 @@ export function NavFormSubmissions({ currentPath }: NavFormSubmissionsProps) {
                   <div className="flex flex-col items-center gap-2 text-center">
                     <Plus className="h-6 w-6" />
                     <p className="text-sm font-medium">Drop forms here</p>
-                    <p className="text-xs text-muted-foreground">Drag and drop forms to add them to your navigation</p>
+                    <p className="text-muted-foreground text-xs">Drag and drop forms to add them to your navigation</p>
                   </div>
                 </div>
               ) : (
@@ -75,7 +75,7 @@ export function NavFormSubmissions({ currentPath }: NavFormSubmissionsProps) {
                         <ContextMenuTrigger className="">
                           <li style={{ paddingLeft: `${depth * 10}px`, marginLeft: `2px` }} {...context.itemContainerWithChildrenProps}>
                             <div
-                              className={cn('flex w-full items-center gap-1 space-x-3 overflow-hidden rounded-md text-xs hover:bg-sidebar-accent hover:text-sidebar-accent-foreground')}
+                              className={cn('hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex w-full items-center gap-1 space-x-3 overflow-hidden rounded-md text-xs')}
                               {...context.itemContainerWithoutChildrenProps}
                               {...context.interactiveElementProps}>
                               <div className="pl-1">

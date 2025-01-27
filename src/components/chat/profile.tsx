@@ -44,8 +44,8 @@ export const Profile = ({ userId, onClose }: ProfileProps) => {
           </Button>
         </div>
         <div className="flex h-full flex-col items-center justify-center gap-y-2">
-          <AlertTriangle className="size-5 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">Profile not found</p>
+          <AlertTriangle className="text-muted-foreground size-5" />
+          <p className="text-muted-foreground text-sm">Profile not found</p>
         </div>
       </div>
     );
@@ -77,11 +77,11 @@ export const Profile = ({ userId, onClose }: ProfileProps) => {
         <div className="flex flex-col p-4">
           <p className="mb-4 text-sm font-bold">Contact Information</p>
           <div className="flex items-center gap-2">
-            <div className="flex size-9 items-center justify-center rounded-md bg-accent">
+            <div className="bg-accent flex size-9 items-center justify-center rounded-md">
               <MailIcon className="size-4" />
             </div>
             <div className="flex flex-col">
-              <p className="text-[13px] font-semibold text-accent-foreground">Email Address</p>
+              <p className="text-accent-foreground text-[13px] font-semibold">Email Address</p>
               <Link href={`mailto:${user.email}`} className="text-seablue-300 text-sm hover:underline">
                 {user.email}
               </Link>

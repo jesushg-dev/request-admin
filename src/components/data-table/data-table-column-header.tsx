@@ -38,7 +38,7 @@ export function DataTableColumnHeader<TData, TValue>({ column, title, className 
                 ? 'Sorted ascending. Click to sort descending.'
                 : 'Not sorted. Click to sort ascending.'
           }
-          className="-ml-3 h-8 w-fit border-none text-xs hover:bg-accent hover:text-accent-foreground data-[state=open]:bg-accent [&>svg:last-child]:hidden">
+          className="hover:bg-accent hover:text-accent-foreground data-[state=open]:bg-accent -ml-3 h-8 w-fit border-none text-xs [&>svg:last-child]:hidden">
           {title}
           <SelectIcon asChild>
             {column.getCanSort() && column.getIsSorted() === 'desc' ? (
@@ -55,13 +55,13 @@ export function DataTableColumnHeader<TData, TValue>({ column, title, className 
             <>
               <SelectItem value={ascValue}>
                 <span className="flex items-center">
-                  <ArrowUp className="mr-2 size-3.5 text-muted-foreground/70" aria-hidden="true" />
+                  <ArrowUp className="text-muted-foreground/70 mr-2 size-3.5" aria-hidden="true" />
                   Asc
                 </span>
               </SelectItem>
               <SelectItem value={descValue}>
                 <span className="flex items-center">
-                  <ArrowDown className="mr-2 size-3.5 text-muted-foreground/70" aria-hidden="true" />
+                  <ArrowDown className="text-muted-foreground/70 mr-2 size-3.5" aria-hidden="true" />
                   Desc
                 </span>
               </SelectItem>
@@ -70,7 +70,7 @@ export function DataTableColumnHeader<TData, TValue>({ column, title, className 
           {column.getCanHide() && (
             <SelectItem value={hideValue}>
               <span className="flex items-center">
-                <EyeOff className="mr-2 size-3.5 text-muted-foreground/70" aria-hidden="true" />
+                <EyeOff className="text-muted-foreground/70 mr-2 size-3.5" aria-hidden="true" />
                 Hide
               </span>
             </SelectItem>

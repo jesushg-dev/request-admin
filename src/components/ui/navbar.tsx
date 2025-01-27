@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 interface NavbarProps extends React.HTMLAttributes<HTMLElement> {}
 export function Navbar({ children, className, ...props }: NavbarProps) {
   return (
-    <nav className={cn('border-b bg-background', className)} {...props}>
+    <nav className={cn('bg-background border-b', className)} {...props}>
       <div className="container mx-auto flex h-16 items-center px-4">{children}</div>
     </nav>
   );

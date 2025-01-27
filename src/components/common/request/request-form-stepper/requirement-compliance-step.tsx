@@ -97,7 +97,7 @@ export default function RequirementComplianceStep() {
               <Label htmlFor={requirement.id} className={`font-medium ${requirement.completed ? 'text-muted-foreground' : ''}`}>
                 {requirement.title}
               </Label>
-              <p className="text-sm text-muted-foreground">{requirement.description}</p>
+              <p className="text-muted-foreground text-sm">{requirement.description}</p>
               {!requirement.completed && (
                 <div className="mt-2">
                   <Label htmlFor={`file-${requirement.id}`} className="text-sm">
@@ -119,13 +119,13 @@ export default function RequirementComplianceStep() {
                       </Button>
                     )}
                   </div>
-                  {documents[requirement.id] && <p className="mt-1 text-sm text-muted-foreground">File uploaded: {documents[requirement.id].name}</p>}
+                  {documents[requirement.id] && <p className="text-muted-foreground mt-1 text-sm">File uploaded: {documents[requirement.id].name}</p>}
                 </div>
               )}
             </div>
             {requirement.completed && (
-              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary">
-                <Check className="h-3 w-3 text-primary-foreground" />
+              <div className="bg-primary flex h-5 w-5 items-center justify-center rounded-full">
+                <Check className="text-primary-foreground h-3 w-3" />
               </div>
             )}
           </div>

@@ -34,7 +34,7 @@ export const Reactions = ({ currentUserId, data, onChange }: ReactionsProps) => 
   if (data.length === 0) return null;
 
   return (
-    <div className="mb-1 mt-1 flex items-center gap-1">
+    <div className="mt-1 mb-1 flex items-center gap-1">
       {reactionsArray.map((reaction) => (
         <Hint label={`${reaction.count} ${reaction.count === 1 ? 'person' : 'people'} reacted with ${reaction.value}`} key={reaction.value}>
           <button
@@ -44,7 +44,7 @@ export const Reactions = ({ currentUserId, data, onChange }: ReactionsProps) => 
               reaction.memberIds.includes(currentUserId) && 'border-blue-500 bg-blue-100/70 text-white'
             )}>
             {reaction.value}
-            <span className={cn('text-xs font-semibold text-muted-foreground', reaction.memberIds.includes(currentUserId) && 'bg-blue-100/70')}>{reaction.count}</span>
+            <span className={cn('text-muted-foreground text-xs font-semibold', reaction.memberIds.includes(currentUserId) && 'bg-blue-100/70')}>{reaction.count}</span>
           </button>
         </Hint>
       ))}

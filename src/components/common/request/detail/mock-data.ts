@@ -160,7 +160,7 @@ export const mockAttachments = [
     url: '/placeholder.svg?height=200&width=200',
     createdAt: '2024-01-23T14:45:00Z',
     isActive: true,
-  }
+  },
 ];
 
 export const mockSatisfactionSurvey = {

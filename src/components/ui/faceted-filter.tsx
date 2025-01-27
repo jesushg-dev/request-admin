@@ -38,7 +38,7 @@ interface FacetedFilterItemProps extends React.ComponentPropsWithoutRef<typeof C
 const FacetedFilterItem = React.forwardRef<React.ComponentRef<typeof CommandItem>, FacetedFilterItemProps>(({ className, children, selected, ...props }, ref) => {
   return (
     <CommandItem ref={ref} aria-selected={selected} data-selected={selected} className={cn(className)} {...props}>
-      <span className={cn('mr-2 flex size-4 items-center justify-center rounded-sm border border-primary', selected ? 'bg-primary text-primary-foreground' : 'opacity-50 [&_svg]:invisible')}>
+      <span className={cn('border-primary mr-2 flex size-4 items-center justify-center rounded-sm border', selected ? 'bg-primary text-primary-foreground' : 'opacity-50 [&_svg]:invisible')}>
         <Check className="size-4" />
       </span>
       {children}

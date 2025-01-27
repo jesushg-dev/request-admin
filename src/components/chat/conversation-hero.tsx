@@ -13,7 +13,7 @@ export const ConversationHero = ({ name = 'Member', image, userId }: Conversatio
   const { onOpenProfile } = usePanel();
 
   return (
-    <div className="mx-5 mb-4 mt-[88px]">
+    <div className="mx-5 mt-[88px] mb-4">
       <div className="mb-2 flex items-center gap-x-1">
         <Avatar onClick={() => onOpenProfile(userId)} className="mr-2 size-14 hover:cursor-pointer">
           <AvatarImage src={image} />

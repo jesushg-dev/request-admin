@@ -18,8 +18,8 @@ const UserIdPage = async ({ params }: UserIdPageProps) => {
   if (!conversation.id) {
     return (
       <div className="flex h-full flex-1 flex-col items-center justify-center gap-y-2">
-        <TriangleAlert className="size-5 text-muted-foreground" />
-        <span className="text-sm text-muted-foreground">Conversation not found</span>
+        <TriangleAlert className="text-muted-foreground size-5" />
+        <span className="text-muted-foreground text-sm">Conversation not found</span>
       </div>
     );
   }

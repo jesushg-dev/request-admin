@@ -23,7 +23,7 @@ function FormElementsSidebar() {
         <div className="flex flex-col gap-2">
           {/* Form Elements Section */}
           <Collapsible defaultOpen className="group/collapsible">
-            <CollapsibleTrigger className="flex w-full items-center justify-between gap-2 py-2 text-xs font-medium text-muted-foreground hover:underline">
+            <CollapsibleTrigger className="text-muted-foreground flex w-full items-center justify-between gap-2 py-2 text-xs font-medium hover:underline">
               <div className="flex items-center gap-1">
                 <TextCursorInputIcon className="h-4 w-4" />
                 <span>{t('formElements')}</span>
@@ -42,7 +42,7 @@ function FormElementsSidebar() {
 
           {/* Layout Elements Section */}
           <Collapsible defaultOpen className="group/collapsible">
-            <CollapsibleTrigger className="flex w-full items-center justify-between gap-2 py-2 text-xs font-medium text-muted-foreground hover:underline">
+            <CollapsibleTrigger className="text-muted-foreground flex w-full items-center justify-between gap-2 py-2 text-xs font-medium hover:underline">
               <div className="flex items-center gap-1">
                 <GalleryVerticalIcon className="h-4 w-4" />
                 <span>{t('layoutElements')}</span>

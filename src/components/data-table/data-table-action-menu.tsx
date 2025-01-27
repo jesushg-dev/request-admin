@@ -20,7 +20,7 @@ function ActionCell<TData, TValue>({ cell, onUpdate, onDelete, children }: Actio
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button aria-label={t('columns.actions')} variant="ghost" className="flex size-8 p-0 data-[state=open]:bg-muted">
+        <Button aria-label={t('columns.actions')} variant="ghost" className="data-[state=open]:bg-muted flex size-8 p-0">
           <Ellipsis className="size-4" aria-hidden="true" />
         </Button>
       </DropdownMenuTrigger>

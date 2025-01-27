@@ -33,7 +33,7 @@ const RequestSubcategoryFormDialog: React.FC<RequestSubcategoryFormDialogProps> 
         <Button type="button" className="relative" aria-label={t('editSubcategoryButton', { categoryName })} variant="outline" size="sm">
           <Settings className="size-4" />
           {requirementsCount > 0 && (
-            <Badge className="absolute -right-2 -top-2 px-1 py-0 text-[10px]">
+            <Badge className="absolute -top-2 -right-2 px-1 py-0 text-[10px]">
               <span>{requirementsCount > 9 ? '9+' : requirementsCount}</span>
             </Badge>
           )}

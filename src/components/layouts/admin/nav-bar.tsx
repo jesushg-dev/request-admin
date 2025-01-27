@@ -41,7 +41,7 @@ const Navbar = ({ tenants = [] }: NavbarProps) => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background px-4">
+    <header className="bg-background sticky top-0 z-50 w-full border-b px-4">
       <div className="flex h-14 items-center justify-between">
         <div className="flex w-full items-center gap-2">
           <Button variant="ghost" size="icon" onClick={toggleSidebar}>
@@ -67,9 +67,9 @@ const Navbar = ({ tenants = [] }: NavbarProps) => {
               <Button variant="ghost" size="icon" className="relative">
                 <Bell className="h-5 w-5" />
                 {notifications.length > 0 && (
-                  <span className="absolute right-1 top-1 flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-primary"></span>
+                  <span className="absolute top-1 right-1 flex h-2 w-2">
+                    <span className="bg-primary absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"></span>
+                    <span className="bg-primary relative inline-flex h-2 w-2 rounded-full"></span>
                   </span>
                 )}
                 <span className="sr-only">Notifications</span>
@@ -82,9 +82,9 @@ const Navbar = ({ tenants = [] }: NavbarProps) => {
                 <DropdownMenuItem key={notification.id} className="flex flex-col items-start">
                   <div className="flex w-full justify-between">
                     <span className="font-medium">{notification.title}</span>
-                    <span className="text-xs text-muted-foreground">{notification.time}</span>
+                    <span className="text-muted-foreground text-xs">{notification.time}</span>
                   </div>
-                  <p className="text-sm text-muted-foreground">{notification.description}</p>
+                  <p className="text-muted-foreground text-sm">{notification.description}</p>
                 </DropdownMenuItem>
               ))}
               <DropdownMenuSeparator />
