@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import { FC, ReactNode, useMemo } from 'react';
 import { useCountFormSubmission, useFindManyFormSubmission } from '@/services/api/hooks';
 import { FormSubmission, Prisma } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
@@ -20,6 +20,7 @@ import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable, DataTableShell, DataTableStatsToggle, DataTableStatsWrapper } from '@/components/data-table/data-table';
 import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-advanced-toolbar';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
+import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
 
 const searchParamsParsers = {
@@ -37,7 +38,7 @@ interface DynamicDataTableProps {
   slug: string;
   name: string;
   columns: DynamicColumn[];
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 type Column = {
@@ -45,7 +46,7 @@ type Column = {
   [key: string]: string | number | Date;
 };
 
-const DynamicDataTable: React.FC<DynamicDataTableProps> = ({ tenantId, slug, name, columns, children }) => {
+const DynamicDataTable: FC<DynamicDataTableProps> = ({ tenantId, slug, name, columns, children }) => {
   const t = useTranslations('admin.formBuilder.view');
   const [search] = useQueryStates(searchParamsParsers);
 
@@ -82,7 +83,7 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({ tenantId, slug, nam
   }
 
   return (
-    <DataTableShell table={table}>
+    <DataTableShell table={table} floatingBar={<DataTableFloatingBar table={table} />}>
       <DataTable table={table} isLoading={isLoading}>
         <DataTableAdvancedToolbar table={table} filterFields={[]} shallow={false}>
           <DataTableStatsToggle />
@@ -108,23 +109,49 @@ interface GetTableConfigurationProps {
 }
 
 export function getTableConfiguration({ t, columns }: GetTableConfigurationProps) {
-  const tableColumns: ColumnDef<Column>[] = columns.map(
-    (col) =>
-      ({
+  const renderCellContent = (value: unknown, type?: string): ReactNode | string => {
+    if (type === 'DateField') {
+      return (
+        <Badge variant="outline">
+          {value && (typeof value === 'string' || typeof value === 'number' || value instanceof Date) && !isNaN(Date.parse(value.toString())) ? format(new Date(value), 'dd/MM/yyyy') : 'N/A'}
+        </Badge>
+      );
+    }
+    if (type === 'CheckboxField') {
+      return <Checkbox checked={value === 'true'} disabled />;
+    }
+    return value as string;
+  };
+
+  const tableColumns: ColumnDef<Column>[] = columns.map((col, index) => {
+    if (index === 0) {
+      return {
         accessorKey: col.id,
-        header: ({ column }) => <DataTableColumnHeader column={column} title={col.label} />,
-        cell: ({ cell }) => {
-          const value = cell.getValue();
-          if (col.type === 'DateField') {
-            return <Badge variant="outline">{value && !isNaN(Date.parse(value as string)) ? format(new Date(Date.parse(value as string)), 'dd/MM/yyyy') : 'N/A'}</Badge>;
-          }
-          if (col.type === 'CheckboxField') {
-            return <Checkbox checked={value === 'true'} disabled />;
-          }
-          return value;
-        },
-      }) as ColumnDef<Column>
-  );
+        header: ({ table, column }) => (
+          <div className="flex items-center">
+            <Checkbox
+              checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+              onCheckedChange={(value) => table.toggleAllRowsSelected(!!value)}
+              className="mr-2"
+            />
+            <DataTableColumnHeader column={column} title={col.label} />
+          </div>
+        ),
+        cell: ({ cell, row }) => (
+          <div style={{ paddingLeft: `${row.depth * 1.5}rem` }} className="flex items-center">
+            <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label={t('selectRow')} className="mr-2" />
+            <span>{renderCellContent(cell.getValue(), col.type)}</span>
+          </div>
+        ),
+      };
+    }
+
+    return {
+      accessorKey: col.id,
+      header: ({ column }) => <DataTableColumnHeader column={column} title={col.label} />,
+      cell: ({ cell }) => renderCellContent(cell.getValue(), col.type),
+    };
+  });
 
   tableColumns.push({
     accessorKey: 'submittedAt',

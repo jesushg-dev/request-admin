@@ -5,12 +5,14 @@ import { type Table } from '@tanstack/react-table';
 import { Download, Loader, Trash2, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { exportTableToCSV } from '@/lib/export';
+import { exportTableToCSV, exportTableToExcel } from '@/lib/export';
 import { Button } from '@/components/ui/button';
 import { Portal } from '@/components/ui/portal';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Kbd } from '@/components/kbd';
+
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
 
 interface DataTableFloatingBarProps<T> {
   table: Table<T>; // The table instance
@@ -63,30 +65,34 @@ export function DataTableFloatingBar<T>({ table, entityLabel = 'item', onDelete 
             </div>
             <Separator orientation="vertical" className="hidden h-5 sm:block" />
             <div className="flex items-center gap-1.5">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="secondary"
-                    size="icon"
-                    className="size-7 border"
-                    onClick={() => {
-                      setAction('export');
-
-                      startTransition(() => {
-                        exportTableToCSV(table, {
-                          excludeColumns: ['select', 'actions'],
-                          onlySelected: true,
-                        });
-                      });
-                    }}
-                    disabled={isPending}>
-                    {isPending && action === 'export' ? <Loader className="size-3.5 animate-spin" aria-hidden="true" /> : <Download className="size-3.5" aria-hidden="true" />}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="secondary" size="sm">
+                    <Download className="size-4" aria-hidden="true" />
+                    {t('export', { entity: entityLabel })}
                   </Button>
-                </TooltipTrigger>
-                <TooltipContent className="bg-accent text-foreground border font-semibold dark:bg-zinc-900">
-                  <p>{t('export', { entity: entityLabel })}</p>
-                </TooltipContent>
-              </Tooltip>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      exportTableToCSV(table, {
+                        excludeColumns: ['select', 'actions'],
+                        onlySelected: true,
+                      });
+                    }}>
+                    CSV
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      exportTableToExcel(table, {
+                        excludeColumns: ['select', 'actions'],
+                        onlySelected: true,
+                      });
+                    }}>
+                    Excel
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               {onDelete && (
                 <Tooltip>
                   <TooltipTrigger asChild>

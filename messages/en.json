@@ -524,7 +524,8 @@
         "bounceRate": "Bounce rate",
         "bounceRateHelper": "Visits that leave without interacting",
         "submissions": "Submissions",
-        "submittedAt": "Submitted at"
+        "submittedAt": "Submitted at",
+        "selectRow": "Select Row"
       },
       "create": {},
       "edit": {}

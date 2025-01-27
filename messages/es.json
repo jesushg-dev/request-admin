@@ -524,7 +524,8 @@
         "bounceRate": "Tasa de rebote",
         "bounceRateHelper": "Visitas que abandonan sin interactuar",
         "submissions": "Envíos",
-        "submittedAt": "Enviado el"
+        "submittedAt": "Enviado el",
+        "selectRow": "Seleccionar fila"
       },
       "create": {},
       "edit": {}

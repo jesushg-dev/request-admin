@@ -6,9 +6,10 @@ import { type Table } from '@tanstack/react-table';
 import { Download, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { exportTableToCSV } from '@/lib/export';
+import { exportTableToCSV, exportTableToExcel } from '@/lib/export';
 import { Button } from '@/components/ui/button';
 
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
 import { DataTableDeleteDialog } from './data-table-delete-dialog';
 
 interface DataTableToolbarActionsProps<T> {
@@ -27,19 +28,35 @@ export function DataTableToolbarActions<T>({ table, entityLabel, exportFilename,
       {table.getFilteredSelectedRowModel().rows.length > 0 ? (
         <DataTableDeleteDialog entityLabel={entityLabel} items={table.getFilteredSelectedRowModel().rows.map((row) => row.original)} onDelete={async () => table.toggleAllRowsSelected(false)} />
       ) : null}
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => {
-          exportTableToCSV(table, {
-            filename: exportFilename,
-            excludeColumns: ['select', 'actions'],
-          });
-        }}
-        className="gap-2">
-        <Download className="size-4" aria-hidden="true" />
-        {t('actions.export')}
-      </Button>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" size="sm">
+            <Download className="size-4" aria-hidden="true" />
+            {t('actions.export')}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem
+            onClick={() => {
+              exportTableToCSV(table, {
+                filename: exportFilename,
+                excludeColumns: ['select', 'actions'],
+              });
+            }}>
+            CSV
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              exportTableToExcel(table, {
+                filename: exportFilename,
+                excludeColumns: ['select', 'actions'],
+              });
+            }}>
+            Excel
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       {addLink && (
         <Button variant="outline" size="sm" className="gap-2" asChild>
