@@ -21,6 +21,7 @@ async function SubmitPage({ params }: { params: { tenantId: string; slug: string
       <Card className="flex-1">
         <CardHeader>
           <CardTitle>{form.name}</CardTitle>
+          <CardDescription>{form.description}</CardDescription>
         </CardHeader>
         <CardContent>
           <FormSubmitComponent formId={form.id} content={formContent} />

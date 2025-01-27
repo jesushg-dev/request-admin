@@ -12,6 +12,10 @@ const basePathnames = {
     en: '/',
     es: '/',
   },
+  '/auth/login': {
+    en: '/auth/login',
+    es: '/auth/login',
+  },
   '/admin': {
     en: '/admin',
     es: '/admin',

@@ -2,15 +2,15 @@
 
 import { auth } from '@/server/auth';
 import { db } from '@/server/db-server';
-import { formSchema, formSchemaType } from '@/services/schemas/form';
+import { formSchema, formSchemaType, keysSchema } from '@/services/schemas/form';
 
 class UserNotFoundErr extends Error {}
 
+
+
 export async function GetFormStats() {
   const session = await auth();
-  if (!session) {
-    throw new UserNotFoundErr();
-  }
+  if (!session) throw new UserNotFoundErr();
 
   const stats = await db.form.aggregate({
     where: {
@@ -42,15 +42,15 @@ export async function GetFormStats() {
 }
 
 export async function CreateForm(data: formSchemaType, tenantId: string) {
+  const session = await auth();
+  if (!session) throw new UserNotFoundErr();
+
   const validation = formSchema.safeParse(data);
   if (!validation.success) {
     throw new Error('form not valid');
   }
 
-  const session = await auth();
-  if (!session) {
-    throw new UserNotFoundErr();
-  }
+ 
 
   const { name, description } = data;
 
@@ -72,9 +72,7 @@ export async function CreateForm(data: formSchemaType, tenantId: string) {
 
 export async function GetForms() {
   const session = await auth();
-  if (!session) {
-    throw new UserNotFoundErr();
-  }
+  if (!session) throw new UserNotFoundErr();
 
   return await db.form.findMany({
     where: {
@@ -88,9 +86,7 @@ export async function GetForms() {
 
 export async function GetFormById(id: string, tenantId: string) {
   const session = await auth();
-  if (!session) {
-    throw new UserNotFoundErr();
-  }
+  if (!session) throw new UserNotFoundErr();
 
   return await db.form.findUnique({
     where: { userId: session.user.id, id, tenantId },
@@ -98,10 +94,8 @@ export async function GetFormById(id: string, tenantId: string) {
 }
 
 export async function UpdateFormContent(id: string, jsonContent: string) {
-  const session = await auth();
-  if (!session) {
-    throw new UserNotFoundErr();
-  }
+ const session = await auth();
+  if (!session) throw new UserNotFoundErr();
 
   return await db.form.update({
     where: {
@@ -116,9 +110,7 @@ export async function UpdateFormContent(id: string, jsonContent: string) {
 
 export async function PublishForm(id: string) {
   const session = await auth();
-  if (!session) {
-    throw new UserNotFoundErr();
-  }
+  if (!session) throw new UserNotFoundErr();
 
   return await db.form.update({
     data: {
@@ -153,10 +145,14 @@ export async function GetFormContentByUrl(formUrl: string, tenantId: string) {
 }
 
 export async function GetFormContentById(id: string, tenantId: string) {
+  const session = await auth();
+  if (!session) throw new UserNotFoundErr();
+
   return await db.form.update({
     select: {
       id: true,
       name: true,
+      description: true,
       content: true,
     },
     data: {
@@ -173,7 +169,14 @@ export async function GetFormContentById(id: string, tenantId: string) {
 }
 
 export async function SubmitForm(tenantId: string, formId: string, content: string) {
-  console.log('🚀 ~ SubmitForm ~ content:', content);
+  const session = await auth();
+  if (!session) throw new UserNotFoundErr();
+
+  const keys = keysSchema.safeParse(JSON.parse(content));
+  if (!keys.success)  throw new Error('invalid keys provided');
+
+  const keysData = Object.entries(keys.data).map(([key, value]) => ({ key, value, tenantId }));
+
   return await db.form.update({
     data: {
       submissions: {
@@ -184,6 +187,9 @@ export async function SubmitForm(tenantId: string, formId: string, content: stri
           {
             content,
             tenantId,
+            keys: {
+              createMany: { data: keysData },
+            },
           },
         ],
       },
@@ -194,4 +200,3 @@ export async function SubmitForm(tenantId: string, formId: string, content: stri
     },
   });
 }
-

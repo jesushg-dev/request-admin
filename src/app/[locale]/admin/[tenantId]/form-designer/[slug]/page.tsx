@@ -5,7 +5,7 @@ import { DynamicColumn } from '@/types/prisma/form';
 import { FormElementInstance } from '@/components/builder-form/form-elements';
 import { StatCard } from '@/components/stat-card';
 
-import FormDetailClient from './form-detail';
+import FormDetailClient from './table';
 
 export default async function FormDetailPage({ params }: { params: { locale: string; slug: string; tenantId: string } }) {
   const { tenantId, slug } = params;

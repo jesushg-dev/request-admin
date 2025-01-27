@@ -46,11 +46,7 @@ export default async function Home(props: { params: Promise<{ locale: string }> 
                 <Link href="#pricing">Pricing</Link>
                 <Link href="#about">About</Link>
               </nav>
-              <LoginButton asChild>
-                <Button variant="secondary" size="lg">
-                  {t('signInButton')}
-                </Button>
-              </LoginButton>
+              <LoginButton asChild>{t('signInButton')}</LoginButton>
             </div>
 
             <div className="mx-auto mt-16 max-w-3xl text-center">
