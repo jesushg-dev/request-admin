@@ -1,10 +1,11 @@
 'use client';
 
+import { ReactNode } from 'react';
 import { Link } from '@/i18n/routing';
 import { useDraggable } from '@dnd-kit/core';
 import { Form } from '@prisma/client';
 import { formatDistance } from 'date-fns';
-import { ArrowRightIcon, BookOpenCheckIcon, FilePenLineIcon, ViewIcon } from 'lucide-react';
+import { ArrowRightIcon, BookOpenCheckIcon, FilePenLineIcon, GripVertical, ViewIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { cn } from '@/lib/utils';
@@ -16,44 +17,58 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 
 interface FormCardProps {
   form: Form;
+  children?: ReactNode;
   className?: string;
 }
 
-export function FormCard({ form, className }: FormCardProps) {
+export function FormCard({ form, className, children }: FormCardProps) {
   const t = useTranslations('admin.formBuilder.main');
 
   return (
     <Card className={cn(className)}>
       <CardHeader>
-        <CardTitle className="flex items-center justify-between gap-2">
-          <span className="truncate font-bold">{form.name}</span>
-          {form.published && <Badge>{t('published')}</Badge>}
-          {!form.published && <Badge variant="destructive">{t('draft')}</Badge>}
-        </CardTitle>
-        <CardDescription className="text-muted-foreground flex items-center justify-between text-sm">
-          {formatDistance(form.createdAt, new Date(), {
-            addSuffix: true,
-          })}
-          {form.published && (
-            <span className="flex items-center gap-2">
-              <ViewIcon className="text-muted-foreground" size={14} />
-              <span>{form.visits.toLocaleString()}</span>
-              <BookOpenCheckIcon className="text-muted-foreground" size={14} />
-              <span>{form.submissions.toLocaleString()}</span>
-            </span>
-          )}
-        </CardDescription>
+        <div className="flex justify-between gap-2">
+          <div className="flex flex-col gap-2 items-start">
+            <CardTitle className="flex items-center justify-between gap-2">
+              <span className="truncate font-bold">{form.name}</span>
+            </CardTitle>
+            <CardDescription className="text-muted-foreground flex items-center justify-between text-sm gap-4">
+              {formatDistance(form.createdAt, new Date(), {
+                addSuffix: true,
+              })}
+              {form.published && (
+                <span className="flex items-center gap-2">
+                  <ViewIcon className="text-muted-foreground" size={14} />
+                  <span>{form.visits.toLocaleString()}</span>
+                  <BookOpenCheckIcon className="text-muted-foreground" size={14} />
+                  <span>{form.submissions.toLocaleString()}</span>
+                </span>
+              )}
+            </CardDescription>
+          </div>
+          <div className="flex flex-col gap-2 items-end">
+            {children || (
+              <div className="cursor-move rounded-sm p-2 hover:bg-accent">
+                <GripVertical className="h-4 w-4 text-muted-foreground" />
+              </div>
+            )}
+          </div>
+        </div>
       </CardHeader>
-      <CardContent className="text-muted-foreground h-[20px] truncate text-sm">{form.description ?? t('noDescription')}</CardContent>
+      <CardContent className="text-muted-foreground h-[20px] truncate text-sm ">
+        <div className="flex flex-1 justify-between">
+          <span> {form.description ?? t('noDescription')}</span>
+          {form.published ? <Badge>{t('published')}</Badge> : <Badge variant="destructive">{t('draft')}</Badge>}
+        </div>
+      </CardContent>
       <CardFooter>
-        {form.published && (
+        {form.published ? (
           <Button asChild className="text-md z-50 mt-2 w-full gap-4">
             <Link href={{ pathname: '/admin/[tenantId]/form-designer/[slug]', params: { tenantId: form.tenantId, slug: form.id } }}>
               {t('viewSubmissions')} <ArrowRightIcon />
             </Link>
           </Button>
-        )}
-        {!form.published && (
+        ) : (
           <Button asChild variant="secondary" className="text-md mt-2 w-full gap-4">
             <Link href={{ pathname: '/admin/[tenantId]/form-designer/[slug]/edit', params: { tenantId: form.tenantId, slug: form.id } }}>
               {t('editForm')} <FilePenLineIcon />
@@ -65,7 +80,11 @@ export function FormCard({ form, className }: FormCardProps) {
   );
 }
 
-export function Draggable<T extends { id: string }>({ data, children }: { data: T; children: React.ReactNode }) {
+interface DraggableProps {
+  data: Form;
+}
+
+export function DraggableFormCard({ data }: DraggableProps) {
   const { attributes, listeners, setNodeRef } = useDraggable({
     id: data.id,
     data: data,
@@ -73,8 +92,12 @@ export function Draggable<T extends { id: string }>({ data, children }: { data: 
 
   return (
     <ClientOnly>
-      <div ref={setNodeRef} {...listeners} {...attributes}>
-        {children}
+      <div ref={setNodeRef}>
+        <FormCard form={data}>
+          <div {...listeners} {...attributes} className="cursor-move rounded-sm p-2 hover:bg-accent">
+            <GripVertical className="h-4 w-4 text-muted-foreground" />
+          </div>
+        </FormCard>
       </div>
     </ClientOnly>
   );

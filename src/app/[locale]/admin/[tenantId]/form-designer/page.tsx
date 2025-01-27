@@ -6,7 +6,7 @@ import { getTranslations } from 'next-intl/server';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import CreateFormBtn from '@/components/builder-form/create-form-btn';
-import { Draggable, FormCard } from '@/components/builder-form/form-card';
+import { DraggableFormCard } from '@/components/builder-form/form-card';
 import { StatCard } from '@/components/stat-card';
 
 const Home = async () => {
@@ -22,7 +22,7 @@ const Home = async () => {
           <CardTitle>{t('yourForms')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             <CreateFormBtn />
             <Suspense
               fallback={[1, 2, 3, 4].map((el) => (
@@ -88,9 +88,7 @@ const FormCards = async () => {
   return (
     <>
       {forms.map((form) => (
-        <Draggable key={form.id} data={form}>
-          <FormCard form={form} />
-        </Draggable>
+        <DraggableFormCard key={form.id} data={form} />
       ))}
     </>
   );

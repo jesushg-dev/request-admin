@@ -15,8 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { ElementsType, FormElementInstance } from '@/components/builder-form/form-elements';
 import FormLinkShare from '@/components/builder-form/form-link-share';
 import VisitBtn from '@/components/builder-form/visit-btn';
-
-import { StatsCard } from '../page';
+import { StatCard } from '@/components/stat-card';
 
 async function FormDetailPage({
   params,
@@ -62,33 +61,16 @@ async function FormDetailPage({
         </CardTitle>
       </CardHeader>
       <CardContent className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatsCard title={t('totalVisits')} icon={<LuView className="text-blue-600" />} helperText={t('visitsHelper')} value={visits.toLocaleString() ?? ''} loading={false} className="shadow-md" />
-
-        <StatsCard
-          title={t('totalSubmissions')}
-          icon={<FaWpforms className="text-yellow-600" />}
-          helperText={t('submissionsHelper')}
-          value={submissions.toLocaleString() ?? ''}
-          loading={false}
-          className="shadow-md"
-        />
-        <StatsCard
+        <StatCard title={t('totalVisits')} icon={<LuView className="text-blue-600" />} description={t('visitsHelper')} value={visits.toLocaleString() ?? ''} loading={false} />
+        <StatCard title={t('totalSubmissions')} icon={<FaWpforms className="text-yellow-600" />} description={t('submissionsHelper')} value={submissions.toLocaleString() ?? ''} loading={false} />
+        <StatCard
           title={t('submissionRate')}
           icon={<HiCursorClick className="text-green-600" />}
-          helperText={t('submissionRateHelper')}
+          description={t('submissionRateHelper')}
           value={submissionRate.toLocaleString() + '%'}
           loading={false}
-          className="shadow-md"
         />
-
-        <StatsCard
-          title={t('bounceRate')}
-          icon={<TbArrowBounce className="text-red-600" />}
-          helperText={t('bounceRateHelper')}
-          value={bounceRate.toLocaleString() + '%'}
-          loading={false}
-          className="shadow-md"
-        />
+        <StatCard title={t('bounceRate')} icon={<TbArrowBounce className="text-red-600" />} description={t('bounceRateHelper')} value={bounceRate.toLocaleString() + '%'} loading={false} />
       </CardContent>
       <CardFooter className="flex flex-col items-start gap-2">
         <SubmissionsTable id={form.id} />
