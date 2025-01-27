@@ -60,8 +60,7 @@
       "cva"
     ],
     "plugins": [
-      "@ianvs/prettier-plugin-sort-imports",
-      "prettier-plugin-tailwindcss"
+      "@ianvs/prettier-plugin-sort-imports"
     ],
     "printWidth": 200
   },
@@ -75,8 +74,6 @@
     "@dnd-kit/modifiers": "^9.0.0",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
-    "@emoji-mart/data": "^1.2.1",
-    "@emoji-mart/react": "^1.1.1",
     "@faker-js/faker": "^9.4.0",
     "@hookform/error-message": "^2.0.1",
     "@hookform/resolvers": "^3.10.0",
@@ -160,7 +157,6 @@
     "sonner": "^1.7.2",
     "superjson": "^2.2.2",
     "tailwind-merge": "^2.6.0",
-    "tailwindcss-animate": "^1.0.7",
     "tw-colors": "^3.3.2",
     "use-sync-external-store": "^1.4.0",
     "uuid": "^11.0.5",
@@ -218,7 +214,6 @@
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8.5.1",
     "prettier": "^3.4.2",
-    "prettier-plugin-tailwindcss": "^0.6.11",
     "prisma": "^6.2.1",
     "scaffdog": "^4.1.0",
     "tailwindcss": "^4.0.0",
