@@ -123,6 +123,10 @@ const requestsPathnames = {
     en: '/admin/[tenantId]/requests-portal/requests/new',
     es: '/admin/[tenantId]/solicitudes-portal/solicitudes/nuevo',
   },
+  '/admin/[tenantId]/requests-portal/requests/assign-massively': {
+    en: '/admin/[tenantId]/requests-portal/requests/assign-massively',
+    es: '/admin/[tenantId]/solicitudes-portal/solicitudes/asignar-masivamente',
+  },
   '/admin/[tenantId]/requests-portal/requests/[slug]': {
     en: '/admin/[tenantId]/requests-portal/requests/[slug]',
     es: '/admin/[tenantId]/solicitudes-portal/solicitudes/[slug]',

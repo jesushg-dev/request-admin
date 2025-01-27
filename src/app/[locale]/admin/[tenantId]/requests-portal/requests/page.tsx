@@ -44,9 +44,15 @@ const RequestMainPage: React.FC = () => {
               {t('new')}
             </Link>
           </Button>
-          <Button variant="outline" size="sm">
-            <CircleFadingArrowUpIcon className="size-4" aria-hidden="true" />
-            {t('assignMassively')}
+          <Button variant="outline" size="sm" asChild>
+            <Link
+              href={{
+                pathname: '/admin/[tenantId]/requests-portal/requests/assign-massively',
+                params: { tenantId },
+              }}>
+              <CircleFadingArrowUpIcon className="size-4" aria-hidden="true" />
+              {t('assignMassively')}
+            </Link>
           </Button>
         </div>
       </div>
