@@ -1,7 +1,7 @@
 import { type Table } from '@tanstack/react-table';
-import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable, { CellInput } from 'jspdf-autotable';
+import * as XLSX from 'xlsx';
 
 export function exportTableToCSV<TData>(
   /**
@@ -82,10 +82,7 @@ export function exportTableToTSV<TData>(
 
   const tsvContent = [
     headers.join('\t'),
-    ...(onlySelected
-      ? table.getFilteredSelectedRowModel().rows
-      : table.getRowModel().rows
-    ).map((row) =>
+    ...(onlySelected ? table.getFilteredSelectedRowModel().rows : table.getRowModel().rows).map((row) =>
       headers
         .map((header) => {
           const cellValue = row.getValue(header);
@@ -142,10 +139,7 @@ export function exportTableToExcel<TData>(
     .filter((id) => !excludeColumns.includes(id as keyof TData | 'select' | 'actions'));
 
   // Build data for the Excel sheet
-  const rows = (onlySelected
-    ? table.getFilteredSelectedRowModel().rows
-    : table.getRowModel().rows
-  ).map((row) =>
+  const rows = (onlySelected ? table.getFilteredSelectedRowModel().rows : table.getRowModel().rows).map((row) =>
     headers.map((header) => {
       const cellValue = row.getValue(header);
       return typeof cellValue === 'string' ? cellValue : cellValue?.toString();
@@ -185,10 +179,7 @@ export function exportTableToJSON<TData>(
 ): void {
   const { filename = 'table', excludeColumns = [], onlySelected = false } = opts;
 
-  const rows = (onlySelected
-    ? table.getFilteredSelectedRowModel().rows
-    : table.getRowModel().rows
-  ).map((row) => {
+  const rows = (onlySelected ? table.getFilteredSelectedRowModel().rows : table.getRowModel().rows).map((row) => {
     const rowData: Partial<TData> = {};
     table.getAllLeafColumns().forEach((column) => {
       if (!excludeColumns.includes(column.id as keyof TData | 'select' | 'actions')) {
@@ -227,10 +218,7 @@ export function exportTableToPDF<TData>(
     .filter((id) => !excludeColumns.includes(id as keyof TData | 'select' | 'actions'));
 
   // Prepare rows for the table body
-  const rows: CellInput[][] = (onlySelected
-    ? table.getFilteredSelectedRowModel().rows
-    : table.getRowModel().rows
-  ).map((row) =>
+  const rows: CellInput[][] = (onlySelected ? table.getFilteredSelectedRowModel().rows : table.getRowModel().rows).map((row) =>
     headers.map((header) => {
       const value = row.getValue(header);
       // Convert values to strings or other formats compatible with CellInput
@@ -266,14 +254,14 @@ export function exportTableToXML<TData>(
     .map((column) => column.id)
     .filter((id) => !excludeColumns.includes(id as keyof TData | 'select' | 'actions'));
 
-  const rows = (onlySelected
-    ? table.getFilteredSelectedRowModel().rows
-    : table.getRowModel().rows
-  ).map((row) =>
-    headers.reduce((acc, header) => {
-      acc[header] = row.getValue(header);
-      return acc;
-    }, {} as Record<string, unknown>)
+  const rows = (onlySelected ? table.getFilteredSelectedRowModel().rows : table.getRowModel().rows).map((row) =>
+    headers.reduce(
+      (acc, header) => {
+        acc[header] = row.getValue(header);
+        return acc;
+      },
+      {} as Record<string, unknown>
+    )
   );
 
   const xmlContent = `
@@ -317,12 +305,7 @@ export function exportTableToHTML<TData>(
     .map((column) => column.id)
     .filter((id) => !excludeColumns.includes(id as keyof TData | 'select' | 'actions'));
 
-  const rows = (onlySelected
-    ? table.getFilteredSelectedRowModel().rows
-    : table.getRowModel().rows
-  ).map((row) =>
-    headers.map((header) => `<td>${row.getValue(header)}</td>`).join('')
-  );
+  const rows = (onlySelected ? table.getFilteredSelectedRowModel().rows : table.getRowModel().rows).map((row) => headers.map((header) => `<td>${row.getValue(header)}</td>`).join(''));
 
   const htmlContent = `
     <table border="1">

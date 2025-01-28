@@ -1,5 +1,6 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 import { DefaultArgs } from '@prisma/client/runtime/library';
+
 import { generateUuid, UNSTABLE_TENANT_ID, type AssignmentCategoryInput } from '../util';
 
 export async function createResuelvaReactivacionArea(

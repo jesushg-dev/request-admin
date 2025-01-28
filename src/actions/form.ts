@@ -6,8 +6,6 @@ import { formSchema, formSchemaType, keysSchema } from '@/services/schemas/form'
 
 class UserNotFoundErr extends Error {}
 
-
-
 export async function GetFormStats() {
   const session = await auth();
   if (!session) throw new UserNotFoundErr();
@@ -49,8 +47,6 @@ export async function CreateForm(data: formSchemaType, tenantId: string) {
   if (!validation.success) {
     throw new Error('form not valid');
   }
-
- 
 
   const { name, description } = data;
 
@@ -94,7 +90,7 @@ export async function GetFormById(id: string, tenantId: string) {
 }
 
 export async function UpdateFormContent(id: string, jsonContent: string) {
- const session = await auth();
+  const session = await auth();
   if (!session) throw new UserNotFoundErr();
 
   return await db.form.update({
@@ -173,7 +169,7 @@ export async function SubmitForm(tenantId: string, formId: string, content: stri
   if (!session) throw new UserNotFoundErr();
 
   const keys = keysSchema.safeParse(JSON.parse(content));
-  if (!keys.success)  throw new Error('invalid keys provided');
+  if (!keys.success) throw new Error('invalid keys provided');
 
   const keysData = Object.entries(keys.data).map(([key, value]) => ({ key, value, tenantId }));
 
