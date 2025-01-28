@@ -3,10 +3,10 @@
 import { ComponentProps } from 'react';
 import { Link } from '@/i18n/routing';
 import { type Table } from '@tanstack/react-table';
-import { Download, Plus } from 'lucide-react';
+import { Download, FileTextIcon, Plus, SheetIcon, TablePropertiesIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { exportTableToCSV, exportTableToExcel } from '@/lib/export';
+import { exportTableToCSV, exportTableToExcel, exportTableToPDF } from '@/lib/export';
 import { Button } from '@/components/ui/button';
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
@@ -38,22 +38,37 @@ export function DataTableToolbarActions<T>({ table, entityLabel, exportFilename,
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem
+            className="cursor-pointer"
             onClick={() => {
               exportTableToCSV(table, {
                 filename: exportFilename,
                 excludeColumns: ['select', 'actions'],
               });
             }}>
+            <TablePropertiesIcon className="size-4 mr-1" aria-hidden="true" />
             CSV
           </DropdownMenuItem>
           <DropdownMenuItem
+            className="cursor-pointer"
             onClick={() => {
               exportTableToExcel(table, {
                 filename: exportFilename,
                 excludeColumns: ['select', 'actions'],
               });
             }}>
+            <SheetIcon className="size-4 mr-1" aria-hidden="true" />
             Excel
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => {
+              exportTableToPDF(table, {
+                filename: exportFilename,
+                excludeColumns: ['select', 'actions'],
+              });
+            }}>
+            <FileTextIcon className="size-4 mr-1" aria-hidden="true" />
+            PDF
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

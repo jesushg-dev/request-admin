@@ -2,10 +2,10 @@
 
 import * as React from 'react';
 import { type Table } from '@tanstack/react-table';
-import { Download, Loader, Trash2, X } from 'lucide-react';
+import { Download, FileTextIcon, Loader, SheetIcon, TablePropertiesIcon, Trash2, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { exportTableToCSV, exportTableToExcel } from '@/lib/export';
+import { exportTableToCSV, exportTableToExcel, exportTableToPDF } from '@/lib/export';
 import { Button } from '@/components/ui/button';
 import { Portal } from '@/components/ui/portal';
 import { Separator } from '@/components/ui/separator';
@@ -74,22 +74,37 @@ export function DataTableFloatingBar<T>({ table, entityLabel = 'item', onDelete 
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem
+                    className="cursor-pointer"
                     onClick={() => {
                       exportTableToCSV(table, {
                         excludeColumns: ['select', 'actions'],
                         onlySelected: true,
                       });
                     }}>
+                    <TablePropertiesIcon className="size-4 mr-1" aria-hidden="true" />
                     CSV
                   </DropdownMenuItem>
                   <DropdownMenuItem
+                    className="cursor-pointer"
                     onClick={() => {
                       exportTableToExcel(table, {
                         excludeColumns: ['select', 'actions'],
                         onlySelected: true,
                       });
                     }}>
+                    <SheetIcon className="size-4 mr-1" aria-hidden="true" />
                     Excel
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => {
+                      exportTableToPDF(table, {
+                        excludeColumns: ['select', 'actions'],
+                        onlySelected: true,
+                      });
+                    }}>
+                    <FileTextIcon className="size-4 mr-1" aria-hidden="true" />
+                    PDF
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
