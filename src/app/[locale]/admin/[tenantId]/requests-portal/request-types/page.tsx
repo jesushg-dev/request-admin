@@ -29,6 +29,7 @@ const RequestCategoryDefaultArgs = Prisma.validator<Prisma.RequestCategoryDefaul
   select: {
     id: true,
     name: true,
+    description: true,
     createdAt: true,
     subcategories: {
       select: { id: true },
@@ -159,6 +160,11 @@ export function getTableConfiguration({ t }: GetTableConfigurationProps) {
           </div>
         );
       },
+    },
+    {
+      accessorKey: 'description',
+      header: () => t('columns.description'),
+      cell: ({ cell }) => cell.getValue() ?? '-', // Fallback to a dash if there is no description.
     },
     {
       accessorKey: 'isEligibleForNewClients',

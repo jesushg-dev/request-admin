@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useFindFirstAssignmentHierarchyLevel, useFindManyAssignmentCategory } from '@/services/api/hooks';
 import { Prisma } from '@prisma/client';
 import { ColumnDef, getCoreRowModel, Row, useReactTable } from '@tanstack/react-table';
@@ -17,8 +17,8 @@ const AssignmentCategoryDefaultArgs = Prisma.validator<Prisma.AssignmentCategory
     id: true,
     name: true,
     description: true,
+    hierarchyLevelId: true,
     area: { select: { name: true } },
-    subcategories: { select: { id: true } },
     _count: { select: { subcategories: true, assignmentRequests: true } },
   },
 });
@@ -26,33 +26,33 @@ const AssignmentCategoryDefaultArgs = Prisma.validator<Prisma.AssignmentCategory
 type AssignmentCategory = Prisma.AssignmentCategoryGetPayload<typeof AssignmentCategoryDefaultArgs>;
 
 interface IAssignmentCategoryBaseProps {
-  row: Row<{
-    assignmentCategories?: Array<{ id: string }> | null;
-    subcategories?: Array<{ id: string }> | null;
-  }>;
+  row: Row<{ id: string }>;
   columns: ColumnDef<AssignmentCategory>[];
   isExpanded: boolean;
+  parentType: 'area' | 'category';
+  areaId?: string;
 }
 
-function AssignmentCategorySubTable({ row, columns, isExpanded }: IAssignmentCategoryBaseProps) {
-  const ids = useMemo(() => {
-    return [...(row.original.assignmentCategories?.map((cat) => cat.id) || []), ...(row.original.subcategories?.map((subcat) => subcat.id) || [])];
-  }, [row.original.assignmentCategories, row.original.subcategories]);
-
-  const { data, isError, error, refetch } = useFindManyAssignmentCategory(
+function AssignmentCategorySubTable({ row, columns, isExpanded, parentType, areaId }: IAssignmentCategoryBaseProps) {
+  const { data, isError, error, refetch, isLoading } = useFindManyAssignmentCategory(
     {
-      where: { id: { in: ids } },
       select: AssignmentCategoryDefaultArgs.select,
+      where: {
+        areaId: parentType === 'area' ? row.original.id : areaId,
+        hierarchyLevel: parentType === 'area' ? { position: 1 } : undefined,
+        parentCategoryId: parentType === 'category' ? row.original.id : undefined,
+      },
+      orderBy: { name: 'asc' },
     },
     { enabled: isExpanded }
   );
 
   const { data: hierarchy, isLoading: hierarchyIsLoading } = useFindFirstAssignmentHierarchyLevel(
     {
-      where: { categories: { some: { id: { in: ids } } } },
-      select: { name: true },
+      select: { name: true, position: true },
+      where: { id: data?.[0]?.hierarchyLevelId },
     },
-    { enabled: isExpanded }
+    { enabled: isExpanded && !isLoading }
   );
 
   const nestedTable = useReactTable({
@@ -75,12 +75,20 @@ function AssignmentCategorySubTable({ row, columns, isExpanded }: IAssignmentCat
     <TableRow>
       <TableCell colSpan={row.getVisibleCells().length}>
         <div className="space-y-4">
-          <div className="flex items-center space-x-2">{hierarchyIsLoading ? <Skeleton className="h-5 w-32" /> : <span className="font-semibold">{hierarchy?.name}</span>}</div>
+          <div className="flex items-center space-x-2">
+            {hierarchyIsLoading ? (
+              <Skeleton className="h-5 w-32" />
+            ) : (
+              <span className="font-semibold">
+                {hierarchy?.name} #{hierarchy?.position}
+              </span>
+            )}
+          </div>
           <DataTable
             table={nestedTable}
             subComponent={{
               columns,
-              render: (props) => <AssignmentCategorySubTable {...props} />,
+              render: (props) => <AssignmentCategorySubTable {...props} parentType="category" areaId={parentType === 'area' ? row.original.id : areaId} />,
             }}
           />
         </div>
@@ -89,8 +97,8 @@ function AssignmentCategorySubTable({ row, columns, isExpanded }: IAssignmentCat
   );
 }
 
-export function AssignmentCategoryTable({ row, columns, isExpanded }: IAssignmentCategoryBaseProps) {
-  return <AssignmentCategorySubTable row={row} columns={columns} isExpanded={isExpanded} />;
+export function AssignmentCategoryTable({ row, columns, isExpanded, parentType }: Omit<IAssignmentCategoryBaseProps, 'position'>) {
+  return <AssignmentCategorySubTable row={row} columns={columns} isExpanded={isExpanded} parentType={parentType} />;
 }
 
 export function useAssignmentCategoryTableConfiguration({}: { entity?: string }) {

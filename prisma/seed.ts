@@ -1,4 +1,3 @@
-import { connect } from 'http2';
 import { PrismaClient } from '@prisma/client';
 
 import { hashPassword } from '@/lib/password';
@@ -33,7 +32,7 @@ async function main() {
   // Create Tenant
   //////////////////////////
 
-  const tenant = await prisma.tenant.create({
+  await prisma.tenant.create({
     data: {
       id: UNSTABLE_TENANT_ID,
       name: 'Claro',

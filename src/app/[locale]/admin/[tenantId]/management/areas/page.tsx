@@ -30,8 +30,7 @@ const AreaDefaultArgs = Prisma.validator<Prisma.AreaDefaultArgs>()({
     name: true,
     isActive: true,
     createdAt: true,
-    assignmentCategories: { select: { id: true } },
-    _count: { select: { userAreas: true } },
+    _count: { select: { userAreas: true, assignmentCategories: true } },
   },
 });
 
@@ -61,7 +60,7 @@ const AreaMainPage: React.FC = () => {
 
   const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t }), [t]);
 
-  // Grab the category columns from our new, fixed hook so we can pass them to the subcomponent.
+  // Grab the category columns from our new, fixed hook so we can pass them to the subComponent.
   const { columns: categoryColumns } = useAssignmentCategoryTableConfiguration({
     entity: 'area',
   });
@@ -78,7 +77,7 @@ const AreaMainPage: React.FC = () => {
     },
     shallow: false,
     clearOnDefault: true,
-    getRowCanExpand: (row) => (row.original.assignmentCategories?.length ?? 0) > 0,
+    getRowCanExpand: (row) => row.original._count.assignmentCategories > 0,
     getRowId: (originalRow) => originalRow.id,
   });
 
@@ -93,7 +92,7 @@ const AreaMainPage: React.FC = () => {
         isLoading={isLoading}
         subComponent={{
           columns: categoryColumns,
-          render: (props) => <AssignmentCategoryTable {...props} />,
+          render: (props) => <AssignmentCategoryTable {...props} parentType="area" />,
         }}>
         <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
           <DataTableToolbarActions
@@ -156,9 +155,9 @@ export function getTableConfiguration({ t }: GetTableConfigurationProps) {
       size: 20,
     },
     {
-      accessorKey: 'assignmentCategories',
+      accessorKey: '_count.assignmentCategories',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.categories')} />,
-      cell: ({ cell }) => (cell.getValue() as { length: number }).length,
+      cell: ({ cell }) => cell.getValue(),
       size: 30,
     },
     {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useFindFirstRequestHierarchyLevel, useFindManyRequestCategory } from '@/services/api/hooks';
 import { Prisma } from '@prisma/client';
 import { ColumnDef, getCoreRowModel, Row, useReactTable } from '@tanstack/react-table';
@@ -20,6 +20,7 @@ const RequestCategoryDefaultArgs = Prisma.validator<Prisma.RequestCategoryDefaul
     id: true,
     name: true,
     description: true,
+    hierarchyLevelId: true,
     isEligibleForNewClients: true,
     subcategories: { select: { id: true } },
     _count: { select: { subcategories: true, requestCategoryRequirement: true } },
@@ -29,31 +30,26 @@ const RequestCategoryDefaultArgs = Prisma.validator<Prisma.RequestCategoryDefaul
 type RequestCategory = Prisma.RequestCategoryGetPayload<typeof RequestCategoryDefaultArgs>;
 
 interface IRequestCategoryBaseProps {
-  row: Row<{
-    categories?: Array<{ id: string }> | null;
-    subcategories?: Array<{ id: string }> | null;
-  }>;
+  row: Row<{ id: string }>;
   columns: ColumnDef<RequestCategory>[];
   isExpanded: boolean;
 }
 
 function RequestCategorySubTable({ row, columns, isExpanded }: IRequestCategoryBaseProps) {
-  const ids = useMemo(() => {
-    return [...(row.original.categories?.map((cat) => cat.id) || []), ...(row.original.subcategories?.map((subcat) => subcat.id) || [])];
-  }, [row.original.categories, row.original.subcategories]);
-
   const { data, isError, error, refetch } = useFindManyRequestCategory(
     {
-      where: { id: { in: ids } },
       select: RequestCategoryDefaultArgs.select,
+      where: {
+        parentCategoryId: row.original.id,
+      },
     },
     { enabled: isExpanded }
   );
 
   const { data: hierarchy, isLoading: hierarchyIsLoading } = useFindFirstRequestHierarchyLevel(
     {
-      where: { categories: { some: { id: { in: ids } } } },
       select: { name: true },
+      where: { id: data?.[0]?.hierarchyLevelId },
     },
     { enabled: isExpanded }
   );

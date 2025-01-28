@@ -337,6 +337,7 @@
           "name": "Nombre",
           "categories": "Subcategorías",
           "requirements": "Requisitos",
+          "description": "Descripción",
           "isEligibleForNewClients": "Elegible para Nuevos Clientes",
           "createdAt": "Fecha de Creación",
           "selectRow": "Seleccionar Fila"

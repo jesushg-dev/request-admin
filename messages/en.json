@@ -337,6 +337,7 @@
           "name": "Name",
           "requirements": "Requirements",
           "categories": "Subcategories",
+          "description": "Description",
           "isEligibleForNewClients": "Eligible for New Clients",
           "createdAt": "Created At",
           "selectRow": "Select Row"
