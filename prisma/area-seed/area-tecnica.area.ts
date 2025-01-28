@@ -1,6 +1,6 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 import { DefaultArgs } from '@prisma/client/runtime/library';
-import { generateUuid, UNSTABLE_TENANT_ID, type AssignmentCategoryInput } from 'prisma/util';
+import { generateUuid, UNSTABLE_TENANT_ID, type AssignmentCategoryInput } from '../util';
 
 export async function createAreaTecnicaArea(
   prisma: PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
@@ -75,7 +75,7 @@ export async function createAreaTecnicaArea(
   await prisma.area.create({
     data: {
       id: areaId,
-      name: 'Area Tecnica',
+      name: 'Area Técnica',
       description: '',
       tenantId,
       assignmentCategories: {
