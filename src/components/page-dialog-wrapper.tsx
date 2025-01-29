@@ -31,7 +31,7 @@ export default function PageDialogWrapper({ title, description, children, classN
           <DialogTitle>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
-        {children}
+        <div className="p-1">{children}</div>
       </DialogContent>
     </Dialog>
   );

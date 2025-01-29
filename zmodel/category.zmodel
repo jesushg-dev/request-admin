@@ -100,7 +100,7 @@ model RequestCategoryRequirement extends TenantScoped, Auditable {
 
 /// Represents a specific requirement for a request/assignment category.
 model Requirement extends TenantScoped, Auditable, CatalogBase {
-  isRequiredOnlyForNewClients   Boolean                         @default(false)
+  isRequiredOnlyOnce   Boolean                         @default(false)
   requirementComplianceTracking RequirementComplianceTracking[]
   requestCategoryRequirement    RequestCategoryRequirement[]
   requirementTypeId             String                          @db.UniqueIdentifier

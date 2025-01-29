@@ -357,5 +357,5 @@ export const IsExistingRoute = (currentRoute: string): boolean => {
 
 // Lightweight wrappers around Next.js' navigation APIs
 // that will consider the routing configuration
-export type ValidLinkProps = ComponentProps<typeof Link>['href'];
+export type I18Link = ComponentProps<typeof Link>['href'];
 export const { Link, redirect, usePathname, useRouter } = createNavigation(routing);

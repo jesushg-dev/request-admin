@@ -1,7 +1,7 @@
 'use client';
 
-import { ComponentProps, useMemo } from 'react';
-import { Link } from '@/i18n/routing';
+import { useMemo } from 'react';
+import { I18Link, Link } from '@/i18n/routing';
 import { ChevronRight, type LucideIcon } from 'lucide-react';
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -11,11 +11,11 @@ export type MenuItem = {
   title: string;
   icon?: LucideIcon;
   isActive?: boolean;
-  url: ComponentProps<typeof Link>['href'];
+  url: I18Link;
   items?: {
     title: string;
     icon?: LucideIcon;
-    url: ComponentProps<typeof Link>['href'];
+    url: I18Link;
   }[];
 };
 

@@ -809,7 +809,7 @@ model Requirement {
   modifiedBy                    String?                         @db.VarChar(50)
   tenantId                      String                          @db.UniqueIdentifier()
   tenant                        Tenant                          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  isRequiredOnlyForNewClients   Boolean                         @default(false)
+  isRequiredOnlyOnce            Boolean                         @default(false)
   requirementComplianceTracking RequirementComplianceTracking[]
   requestCategoryRequirement    RequestCategoryRequirement[]
   requirementTypeId             String                          @db.UniqueIdentifier()

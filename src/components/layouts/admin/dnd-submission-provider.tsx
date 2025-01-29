@@ -1,7 +1,7 @@
 'use client';
 
-import { ComponentProps, createContext, ReactNode, useContext, useMemo, useState } from 'react';
-import { Link } from '@/i18n/routing';
+import { createContext, ReactNode, useContext, useMemo, useState } from 'react';
+import { I18Link } from '@/i18n/routing';
 import { useCreateMenuItem, useDeleteMenuItem, useFindManyMenuItem, useUpdateManyMenuItem } from '@/services/api/hooks';
 import { Active, DndContext, DragEndEvent, DragOverlay } from '@dnd-kit/core';
 import { MenuItem as DatabaseMenuItem, type Form } from '@prisma/client';
@@ -15,7 +15,7 @@ import ClientOnlyPortal from '@/components/cient-only-portal';
 export type ConvertedMenuItem = {
   title: string;
   icon?: LucideIcon;
-  url: ComponentProps<typeof Link>['href'];
+  url: I18Link;
 };
 
 interface DragEndEventForm extends DragEndEvent {

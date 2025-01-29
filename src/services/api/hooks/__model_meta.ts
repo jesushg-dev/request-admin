@@ -4024,8 +4024,8 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
-        isRequiredOnlyForNewClients: {
-          name: 'isRequiredOnlyForNewClients',
+        isRequiredOnlyOnce: {
+          name: 'isRequiredOnlyOnce',
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: false }] }],
         },

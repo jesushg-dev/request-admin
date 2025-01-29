@@ -357,7 +357,7 @@ CREATE TABLE [dbo].[Requirement] (
     [id] UNIQUEIDENTIFIER NOT NULL,
     [name] VARCHAR(200) NOT NULL,
     [description] VARCHAR(500) NOT NULL,
-    [isRequiredOnlyForNewClients] BIT NOT NULL CONSTRAINT [Requirement_isRequiredOnlyForNewClients_df] DEFAULT 0,
+    [isRequiredOnlyOnce] BIT NOT NULL CONSTRAINT [Requirement_isRequiredOnlyOnce_df] DEFAULT 0,
     [requirementTypeId] UNIQUEIDENTIFIER NOT NULL,
     CONSTRAINT [Requirement_pkey] PRIMARY KEY CLUSTERED ([id]),
     CONSTRAINT [Requirement_name_key] UNIQUE NONCLUSTERED ([name])

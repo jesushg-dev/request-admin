@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useRouter, ValidLinkProps } from '@/i18n/routing';
+import { I18Link, useRouter } from '@/i18n/routing';
 import { type DefaultError, type UseMutateAsyncFunction } from '@tanstack/react-query';
 
 import useMessage from '@/lib/message';
@@ -8,7 +8,7 @@ interface FormSubmitProps<TData = unknown> {
   errorMessage?: string | ((error: unknown) => string);
   loadingMessage?: string | (() => string);
   successMessage?: string | ((data?: TData) => string);
-  redirectUrl?: ValidLinkProps | ((data: TData) => ValidLinkProps);
+  redirectUrl?: I18Link | ((data: TData) => I18Link);
   confirmTitle?: string;
   confirmMessage?: string;
   confirmButtonText?: string;
@@ -25,13 +25,13 @@ const useFormSubmit = <TData = unknown, TError = DefaultError, TVariables = unkn
     confirmMessage = 'Please confirm to proceed.',
     successMessage = 'Request successful.',
     errorMessage = 'Request failed.',
-  }: FormSubmitProps<TData>
+  }: FormSubmitProps<TData> = {}
 ) => {
   const router = useRouter();
   const message = useMessage();
 
   const getRedirectUrl = useCallback(
-    (data: TData): ValidLinkProps | undefined => {
+    (data: TData): I18Link | undefined => {
       if (!redirectUrl) return;
 
       switch (typeof redirectUrl) {

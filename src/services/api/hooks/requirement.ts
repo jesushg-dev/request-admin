@@ -407,7 +407,7 @@ export function useCheckRequirement<TError = DefaultError>(
       createdBy?: string;
       modifiedBy?: string;
       tenantId?: string;
-      isRequiredOnlyForNewClients?: boolean;
+      isRequiredOnlyOnce?: boolean;
       requirementTypeId?: string;
     };
   },

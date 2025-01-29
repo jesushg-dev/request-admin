@@ -1,21 +1,20 @@
 'use client';
 
 import { ExitIcon } from '@radix-ui/react-icons';
+import { useSession } from 'next-auth/react';
 import { FaUser } from 'react-icons/fa';
 
-import { useCurrentUser } from '@/hooks/use-current-user';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { LogoutButton } from '@/components/auth/logout-button';
 
 export const UserButton = () => {
-  const user = useCurrentUser();
-
+  const session = useSession();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
         <Avatar>
-          <AvatarImage src={user?.image || ''} style={{ objectFit: 'contain', objectPosition: 'center' }} />
+          <AvatarImage src={session.data?.user?.image || ''} style={{ objectFit: 'contain', objectPosition: 'center' }} />
           <AvatarFallback className="bg-sky-500">
             <FaUser className="text-white" />
           </AvatarFallback>

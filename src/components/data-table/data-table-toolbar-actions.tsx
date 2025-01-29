@@ -1,7 +1,6 @@
 'use client';
 
-import { ComponentProps } from 'react';
-import { Link } from '@/i18n/routing';
+import { I18Link, Link } from '@/i18n/routing';
 import { type Table } from '@tanstack/react-table';
 import { Download, FileTextIcon, Plus, SheetIcon, TablePropertiesIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -17,7 +16,7 @@ interface DataTableToolbarActionsProps<T> {
   exportFilename?: string;
   entityLabel: string;
   children?: React.ReactNode;
-  addLink?: ComponentProps<typeof Link>['href'];
+  addLink?: I18Link;
 }
 
 export function DataTableToolbarActions<T>({ table, entityLabel, exportFilename, children, addLink }: DataTableToolbarActionsProps<T>) {

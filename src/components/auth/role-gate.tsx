@@ -1,21 +1,25 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import React from 'react';
+import { PermissionAction } from '@/constants/permissions';
 
-import { useCurrentRole } from '@/hooks/use-current-role';
-import { FormError } from '@/components/prullenbak/form-error';
+import { useUserFeatures } from '@/hooks/use-user-features';
 
 interface RoleGateProps {
+  feature: PermissionAction;
   children: React.ReactNode;
-  allowedRole: string;
+  fallback?: React.ReactNode;
 }
 
-export const RoleGate = ({ children, allowedRole }: RoleGateProps) => {
-  const t = useTranslations('system.roleGate');
-  const features = useCurrentRole();
+export const RoleGate = ({ children, feature, fallback }: RoleGateProps) => {
+  const { isLoading, checkPermission } = useUserFeatures();
 
-  if (!features?.includes(allowedRole)) {
-    return <FormError message={t('errors.noFeature')} />;
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!checkPermission(feature)) {
+    return <>{fallback ?? <div>Access Denied</div>}</>;
   }
 
   return <>{children}</>;
