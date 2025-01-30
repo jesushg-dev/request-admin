@@ -1,28 +1,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { CheckCircle } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoginButton } from '@/components/auth/login-button';
-
-const plans = [
-  {
-    name: 'Free Plan',
-    description: 'Perfect for getting started',
-    price: '$0',
-    features: ['Boost engagement with target responses', 'Automate comment replies to enhance audience interaction', 'Turn followers into customers with targeted messaging'],
-    cta: 'Get Started',
-  },
-  {
-    name: 'Smart AI Plan',
-    description: 'Advanced features for power users',
-    price: '$99',
-    features: ['All features from Free Plan', 'AI-powered response generation', 'Advanced analytics and insights', 'Priority customer support', 'Custom branding options'],
-    cta: 'Upgrade Now',
-  },
-];
+import PricingView from '@/components/common/pricing-view';
 
 export default async function Home(props: { params: Promise<{ locale: string }> }) {
   const { locale } = await props.params;
@@ -71,36 +53,10 @@ export default async function Home(props: { params: Promise<{ locale: string }> 
       <section className="bg-background container w-full py-12 md:py-24 lg:py-32">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Choose Your Plan</h2>
-            <p className="text-muted-foreground max-w-[900px]">Select the perfect plan to boost your Instagram engagement</p>
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">{t('pricingTitle')}</h2>
+            <p className="text-muted-foreground max-w-[900px]">{t('pricingDescription')}</p>
           </div>
-          <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
-            {plans.map((plan, index) => (
-              <Card key={index} className="flex flex-col justify-between">
-                <CardHeader>
-                  <CardTitle>{plan.name}</CardTitle>
-                  <CardDescription>{plan.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="grid gap-4">
-                  <div className="text-4xl font-bold">
-                    {plan.price}
-                    <span className="text-muted-foreground text-lg font-normal">/month</span>
-                  </div>
-                  <ul className="space-y-2">
-                    {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-center">
-                        <CheckCircle className="text-primary mr-2 h-4 w-4" />
-                        <span className="text-muted-foreground text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-                <CardFooter>
-                  <Button className="w-full">{plan.cta}</Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+          <PricingView />
         </div>
       </section>
     </main>

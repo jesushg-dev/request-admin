@@ -40,7 +40,9 @@
     "keywords": "telecomunicaciones, gestión de servicios, ITIL, cumplimiento de solicitudes, flujo de trabajo, multi-tenant",
     "subHeading": "Impulsa la eficiencia en la gestión de solicitudes de servicio con un sistema basado en las mejores prácticas de ITIL, adaptado para entornos empresariales modernos. Diseñado para organizaciones que buscan flexibilidad y escalabilidad, nuestro sistema incluye flujos de trabajo personalizables, seguimiento en tiempo real, y suscripciones adaptadas a las necesidades de tu negocio.",
     "signInButton": "Acceder al Sistema",
-    "brandName": "Request Engine"
+    "brandName": "Request Engine",
+    "pricingTitle": "Elige el plan que mejor se adapte a tus necesidades",
+    "pricingDescription": "Nuestros planes están diseñados para adaptarse a las necesidades de tu negocio. Comienza con nuestro plan gratuito y actualiza a medida que crece tu organización."
   },
   "auth": {
     "loginForm": {
