@@ -17,10 +17,17 @@ interface StepNavigationProps<TStepId extends string> {
   currentId: TStepId;
   getIndex: (index: TStepId) => number;
   onStepClick: (stepId: TStepId) => void;
+  isNavigationEnabled?: boolean;
 }
 
-export const StepNavigation = <TStepId extends string>({ steps, currentId, getIndex, onStepClick }: StepNavigationProps<TStepId>) => {
+export const StepNavigation = <TStepId extends string>({ steps, currentId, getIndex, onStepClick, isNavigationEnabled }: StepNavigationProps<TStepId>) => {
   const currentStepIndex = getIndex(currentId);
+
+  const onHandleStepClick = (stepId: TStepId, isAhead: boolean) => {
+    if (isNavigationEnabled || isAhead) {
+      onStepClick(stepId);
+    }
+  };
 
   return (
     <nav aria-label="Steps">
@@ -28,7 +35,11 @@ export const StepNavigation = <TStepId extends string>({ steps, currentId, getIn
         {steps.map((step, index, array) => (
           <Fragment key={step.id}>
             <li className="flex items-center gap-x-2">
-              <Button type="button" variant={index <= currentStepIndex ? 'default' : 'outline'} className="size-8 rounded-full p-0" onClick={() => onStepClick(step.id)}>
+              <Button
+                type="button"
+                variant={index <= currentStepIndex ? 'default' : 'outline'}
+                className={`size-8 rounded-full p-0" ${currentStepIndex >= index ? 'cursor-pointer' : ''}`}
+                onClick={() => onHandleStepClick(step.id, currentStepIndex >= index)}>
                 {index + 1}
               </Button>
               <span className="text-xs font-medium">{step.label}</span>

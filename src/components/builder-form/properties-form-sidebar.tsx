@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
+import { CircleXIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { AiOutlineClose } from 'react-icons/ai';
 
 import useDesigner from '@/hooks/use-designer';
 import { Button } from '@/components/ui/button';
@@ -29,7 +29,7 @@ function PropertiesFormSidebar() {
             onClick={() => {
               setSelectedElement(null);
             }}>
-            <AiOutlineClose />
+            <CircleXIcon />
           </Button>
         </div>
         <Separator className="mb-4" />

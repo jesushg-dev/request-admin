@@ -1,4 +1,4 @@
-import { FaChevronDown } from 'react-icons/fa';
+import { ChevronDown } from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -20,7 +20,7 @@ export const Header = ({ userImage, userName = 'User', onClick }: HeaderProps) =
           <AvatarFallback>{avatarFallback}</AvatarFallback>
         </Avatar>
         <span className="truncate">{userName}</span>
-        <FaChevronDown className="ml-2 size-2.5" />
+        <ChevronDown className="ml-2 size-2.5" />
       </Button>
     </div>
   );

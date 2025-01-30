@@ -2,9 +2,8 @@
 
 import React, { useTransition } from 'react';
 import { UpdateFormContent } from '@/actions/form';
+import { LoaderCircleIcon, SaveIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { FaSpinner } from 'react-icons/fa';
-import { HiSaveAs } from 'react-icons/hi';
 
 import useDesigner from '@/hooks/use-designer';
 import { Button } from '@/components/ui/button';
@@ -40,9 +39,9 @@ function SaveFormBtn({ id }: { id: string }) {
       onClick={() => {
         startTransition(updateFormContent);
       }}>
-      <HiSaveAs className="h-4 w-4" />
+      <SaveIcon className="h-4 w-4" />
       {t('save')}
-      {loading && <FaSpinner className="animate-spin" />}
+      {loading && <LoaderCircleIcon className="animate-spin" />}
     </Button>
   );
 }

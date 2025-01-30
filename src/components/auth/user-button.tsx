@@ -1,8 +1,8 @@
 'use client';
 
 import { ExitIcon } from '@radix-ui/react-icons';
+import { UserIcon } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { FaUser } from 'react-icons/fa';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -16,7 +16,7 @@ export const UserButton = () => {
         <Avatar>
           <AvatarImage src={session.data?.user?.image || ''} style={{ objectFit: 'contain', objectPosition: 'center' }} />
           <AvatarFallback className="bg-sky-500">
-            <FaUser className="text-white" />
+            <UserIcon className="text-white" />
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>

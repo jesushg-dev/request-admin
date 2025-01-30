@@ -7,8 +7,8 @@ import { StatCard } from '@/components/stat-card';
 
 import FormDetailClient from './table';
 
-export default async function FormDetailPage({ params }: { params: { locale: string; slug: string; tenantId: string } }) {
-  const { tenantId, slug } = params;
+export default async function FormDetailPage({ params }: { params: Promise<{ locale: string; tenantId: string; slug: string }> }) {
+  const { tenantId, slug } = await params;
   const t = await getTranslations('admin.formBuilder.view');
 
   const form = await GetFormById(slug, tenantId);

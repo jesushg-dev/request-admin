@@ -140,7 +140,7 @@ const ConfirmDialogContent: React.FC<{
     }
 
     return (
-      <AlertDialogTitle {...alertDialogTitle}>
+      <AlertDialogTitle {...alertDialogTitle} className="flex items-center gap-2">
         {icon}
         {title}
       </AlertDialogTitle>

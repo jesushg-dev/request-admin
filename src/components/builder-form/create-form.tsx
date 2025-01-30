@@ -5,9 +5,9 @@ import { CreateForm } from '@/actions/form';
 import { useRouter } from '@/i18n/routing';
 import { formSchema, formSchemaType } from '@/services/schemas/form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { LoaderCircleIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
-import { ImSpinner2 } from 'react-icons/im';
 
 import useTenantId from '@/hooks/use-tenant-id';
 import { Button } from '@/components/ui/button';
@@ -71,7 +71,7 @@ const CreateNewForm: FC = () => {
         />
 
         <Button type="submit" disabled={form.formState.isSubmitting} className="mt-4 w-full">
-          {form.formState.isSubmitting ? <ImSpinner2 className="animate-spin" /> : t('saveButton')}
+          {form.formState.isSubmitting ? <LoaderCircleIcon className="animate-spin" /> : t('saveButton')}
         </Button>
       </form>
     </Form>

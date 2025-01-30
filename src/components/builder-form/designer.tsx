@@ -2,9 +2,8 @@
 
 import React, { useState } from 'react';
 import { DragEndEvent, useDndMonitor, useDraggable, useDroppable } from '@dnd-kit/core';
+import { BookIcon, MoveIcon, Trash2Icon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { BiBookAlt, BiSolidTrash } from 'react-icons/bi';
-import { RiDragMove2Line } from 'react-icons/ri';
 import { v4 as idGenerator } from 'uuid';
 
 import { cn } from '@/lib/utils';
@@ -199,7 +198,7 @@ function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
           <div className="bg-muted/20 absolute inset-0 flex items-center justify-center rounded-md" />
 
           <div className="text-primary z-20 flex items-center justify-center gap-2">
-            <RiDragMove2Line />
+            <MoveIcon />
             <p className="text-sm">{t('dragToMove')}</p>
           </div>
 
@@ -214,7 +213,7 @@ function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
                 setSelectedElement(element);
               }}>
               {t('properties')}
-              <BiBookAlt />
+              <BookIcon />
             </Button>
 
             {/* Delete Button */}
@@ -226,7 +225,7 @@ function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
                 removeElement(element.id);
               }}>
               {t('delete')}
-              <BiSolidTrash />
+              <Trash2Icon />
             </Button>
           </div>
         </div>

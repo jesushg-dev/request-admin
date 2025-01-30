@@ -5,10 +5,9 @@ import { Link } from '@/i18n/routing';
 import { DndContext, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { Form } from '@prisma/client';
 import { Separator } from '@radix-ui/react-select';
-import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, LoaderCircleIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Confetti from 'react-confetti';
-import { ImSpinner2 } from 'react-icons/im';
 
 import useDesigner from '@/hooks/use-designer';
 import { Button } from '@/components/ui/button';
@@ -55,7 +54,7 @@ function FormBuilder({ form }: { form: Form }) {
   if (!isReady) {
     return (
       <div className="flex h-full w-full flex-col items-center justify-center">
-        <ImSpinner2 className="h-12 w-12 animate-spin" />
+        <LoaderCircleIcon className="h-12 w-12 animate-spin" />
         <p>{t('loading')}</p>
       </div>
     );

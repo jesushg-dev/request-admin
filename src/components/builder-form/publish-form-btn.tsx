@@ -3,9 +3,8 @@
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { PublishForm } from '@/actions/form';
+import { FileUpIcon, LoaderCircleIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { FaSpinner } from 'react-icons/fa';
-import { MdOutlinePublish } from 'react-icons/md';
 
 import {
   AlertDialog,
@@ -45,8 +44,8 @@ function PublishFormBtn({ id }: { id: string }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button className="gap-2 bg-linear-to-r from-indigo-400 to-cyan-400 text-white">
-          <MdOutlinePublish className="h-4 w-4" />
+        <Button>
+          <FileUpIcon className="h-4 w-4" />
           {t('publish')}
         </Button>
       </AlertDialogTrigger>
@@ -67,7 +66,7 @@ function PublishFormBtn({ id }: { id: string }) {
               e.preventDefault();
               startTransition(publishForm);
             }}>
-            {t('proceed')} {loading && <FaSpinner className="animate-spin" />}
+            {t('proceed')} {loading && <LoaderCircleIcon className="animate-spin" />}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -2,8 +2,9 @@
 
 import React from 'react';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'; // Import VisuallyHidden if not already part of your components
+
+import { View } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { MdPreview } from 'react-icons/md';
 
 import useDesigner from '@/hooks/use-designer';
 import { Button } from '@/components/ui/button';
@@ -20,7 +21,7 @@ function PreviewDialogBtn() {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" className="gap-2">
-          <MdPreview className="h-6 w-6" />
+          <View className="h-6 w-6" />
           {t('preview')}
         </Button>
       </DialogTrigger>

@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { login } from '@/actions/login';
 import { LoginSchema } from '@/services/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { LoaderCircleIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -66,7 +67,7 @@ export const LoginForm = () => {
   };
 
   return (
-    <CardWrapper headerLabel={t('welcome')} backButtonLabel={t('noAccount')} backButtonHref="/auth/register" showSocial>
+    <CardWrapper headerLabel={t('welcome')} backButtonLabel={t('noAccount')} backButtonHref="/auth/register">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {errorQuery === 'unauthenticated' && (
@@ -134,7 +135,7 @@ export const LoginForm = () => {
           <FormError message={error ?? urlError} />
           <FormSuccess message={success} />
           <Button disabled={isPending} type="submit" className="w-full">
-            {showTwoFactor ? t('actions.confirm') : t('actions.login')}
+            {showTwoFactor ? t('actions.confirm') : t('actions.login')} {isPending && <LoaderCircleIcon className="animate-spin" />}
           </Button>
         </form>
       </Form>

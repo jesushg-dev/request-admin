@@ -3,9 +3,8 @@
 import { useMemo } from 'react';
 import { Link } from '@/i18n/routing';
 import { useDroppable } from '@dnd-kit/core';
-import { ChevronDownIcon, ChevronUpIcon, LoaderCircle, Plus } from 'lucide-react';
+import { ChevronDownIcon, ChevronUpIcon, GripVerticalIcon, LoaderCircle, Plus } from 'lucide-react';
 import { Tree, TreeDataProvider, TreeItem, TreeItemIndex, UncontrolledTreeEnvironment } from 'react-complex-tree';
-import { BiGridVertical } from 'react-icons/bi';
 
 import { cn } from '@/lib/utils';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuShortcut, ContextMenuTrigger } from '@/components/ui/context-menu';
@@ -79,7 +78,7 @@ export function NavFormSubmissions({ currentPath }: NavFormSubmissionsProps) {
                               {...context.itemContainerWithoutChildrenProps}
                               {...context.interactiveElementProps}>
                               <div className="pl-1">
-                                <BiGridVertical className="h-4 w-4" />
+                                <GripVerticalIcon className="h-4 w-4" />
                               </div>
                               <Link
                                 className={cn('flex-1 py-2', activeKey === String(item.data.url) ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'text-sidebar-foreground')}

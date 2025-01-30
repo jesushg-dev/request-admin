@@ -4,10 +4,8 @@ import Quill, { type QuillOptions } from 'quill';
 import 'quill/dist/quill.snow.css';
 
 import Image from 'next/image';
-import { ImageIcon, Smile, XIcon } from 'lucide-react';
+import { ALargeSmallIcon, ImageIcon, SendHorizonalIcon, Smile, XIcon } from 'lucide-react';
 import { Delta, Op } from 'quill/core';
-import { MdSend } from 'react-icons/md';
-import { PiTextAa } from 'react-icons/pi';
 
 import { cn } from '@/lib/utils';
 
@@ -156,7 +154,7 @@ const Editor = ({ onCancel, onSubmit, disabled = false, innerRef, defaultValue =
         <div className="z-5 flex px-2">
           <Hint label={isToolbarVisible ? 'Hide formatting' : 'Show formatting'}>
             <Button disabled={disabled} size="sm" variant="ghost" onClick={toggleToolbar}>
-              <PiTextAa className="size-4" />
+              <ALargeSmallIcon className="size-4" />
             </Button>
           </Hint>
           <EmojiPopover onEmojiSelect={onEmojiSelect}>
@@ -183,7 +181,7 @@ const Editor = ({ onCancel, onSubmit, disabled = false, innerRef, defaultValue =
                 })
               }
               className={cn('ml-auto', isEmpty ? 'text-muted-foreground bg-white hover:bg-white' : 'bg-seagreen-100 hover:bg-seagreen-100/80 text-white')}>
-              <MdSend className="size-4" />
+              <SendHorizonalIcon className="size-4" />
             </Button>
           ) : (
             <div className="ml-auto flex items-center gap-x-2">

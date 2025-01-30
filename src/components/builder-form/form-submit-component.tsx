@@ -2,9 +2,8 @@
 
 import React, { useCallback, useRef, useState, useTransition } from 'react';
 import { SubmitForm } from '@/actions/form';
+import { LoaderCircleIcon, MousePointerClick } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { HiCursorClick } from 'react-icons/hi';
-import { ImSpinner2 } from 'react-icons/im';
 
 import useTenantId from '@/hooks/use-tenant-id';
 import { Button } from '@/components/ui/button';
@@ -94,11 +93,11 @@ function FormSubmitComponent({ formId, content }: { content: FormElementInstance
         disabled={pending}>
         {!pending && (
           <>
-            <HiCursorClick className="mr-2" />
+            <MousePointerClick className="mr-2" />
             {t('submit')}
           </>
         )}
-        {pending && <ImSpinner2 className="animate-spin" />}
+        {pending && <LoaderCircleIcon className="animate-spin" />}
       </Button>
     </div>
   );

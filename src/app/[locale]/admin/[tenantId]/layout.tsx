@@ -40,6 +40,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
   modal: React.ReactNode;
+  params: Promise<{ tenantId: string }>;
 }>) {
   const session = await auth();
   if (!session) return redirect({ href: '/', locale: 'en' });
