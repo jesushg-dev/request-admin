@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, memo, useCallback, useContext, useMemo, useState, type ComponentPropsWithRef, type ReactNode } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 import {
   AlertDialog,
@@ -23,9 +24,7 @@ export interface CustomActionsProps {
 }
 
 export type ConfigUpdater = (config: ConfirmOptions | ((prev: ConfirmOptions) => ConfirmOptions)) => void;
-
 export type LegacyCustomActions = (onConfirm: () => void, onCancel: () => void) => ReactNode;
-
 export type EnhancedCustomActions = (props: CustomActionsProps) => ReactNode;
 
 export interface ConfirmOptions {
@@ -83,11 +82,12 @@ function isLegacyCustomActions(fn: LegacyCustomActions | EnhancedCustomActions):
 }
 
 const ConfirmDialogContent: React.FC<{
+  isOpen: boolean;
   config: ConfirmOptions;
   onConfirm: () => void;
   onCancel: () => void;
-  setConfig: (config: ConfirmOptions | ((prev: ConfirmOptions) => ConfirmOptions)) => void;
-}> = memo(({ config, onConfirm, onCancel, setConfig }) => {
+  setConfig: ConfigUpdater;
+}> = memo(({ isOpen, config, onConfirm, onCancel, setConfig }) => {
   const {
     title,
     description,
@@ -121,11 +121,9 @@ const ConfirmDialogContent: React.FC<{
         </>
       );
     }
-
     if (isLegacyCustomActions(customActions)) {
       return customActions(onConfirm, onCancel);
     }
-
     return customActions({
       confirm: onConfirm,
       cancel: onCancel,
@@ -135,10 +133,7 @@ const ConfirmDialogContent: React.FC<{
   };
 
   const renderTitle = () => {
-    if (!title && !icon) {
-      return null;
-    }
-
+    if (!title && !icon) return null;
     return (
       <AlertDialogTitle {...alertDialogTitle} className="flex items-center gap-2">
         {icon}
@@ -148,16 +143,37 @@ const ConfirmDialogContent: React.FC<{
   };
 
   return (
-    <AlertDialogPortal className="">
-      <AlertDialogOverlay {...alertDialogOverlay} />
-      <AlertDialogContent {...alertDialogContent}>
-        <AlertDialogHeader {...alertDialogHeader}>
-          {renderTitle()}
-          {description && <AlertDialogDescription {...alertDialogDescription}>{description}</AlertDialogDescription>}
-          {contentSlot}
-        </AlertDialogHeader>
-        <AlertDialogFooter {...alertDialogFooter}>{renderActions()}</AlertDialogFooter>
-      </AlertDialogContent>
+    <AlertDialogPortal forceMount>
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            <AlertDialogOverlay asChild {...alertDialogOverlay}>
+              <motion.div key="overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="fixed inset-0 z-50 bg-black/80" />
+            </AlertDialogOverlay>
+
+            <AlertDialogContent asChild {...alertDialogContent}>
+              <motion.div
+                key="content"
+                initial={{ scale: 0.98, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.98, opacity: 0 }}
+                transition={{
+                  duration: 0.25,
+                  ease: [0.4, 0, 0.2, 1],
+                  scale: { duration: 0.2, ease: 'easeOut' },
+                }}
+                className="fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200">
+                <AlertDialogHeader {...alertDialogHeader}>
+                  {renderTitle()}
+                  {description && <AlertDialogDescription {...alertDialogDescription}>{description}</AlertDialogDescription>}
+                  {contentSlot}
+                </AlertDialogHeader>
+                <AlertDialogFooter {...alertDialogFooter}>{renderActions()}</AlertDialogFooter>
+              </motion.div>
+            </AlertDialogContent>
+          </>
+        )}
+      </AnimatePresence>
     </AlertDialogPortal>
   );
 });
@@ -170,10 +186,10 @@ const ConfirmDialog: React.FC<{
   config: ConfirmOptions;
   onConfirm: () => void;
   onCancel: () => void;
-  setConfig: (config: ConfirmOptions | ((prev: ConfirmOptions) => ConfirmOptions)) => void;
+  setConfig: ConfigUpdater;
 }> = memo(({ isOpen, onOpenChange, config, onConfirm, onCancel, setConfig }) => (
   <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
-    <ConfirmDialogContent config={config} onConfirm={onConfirm} onCancel={onCancel} setConfig={setConfig} />
+    <ConfirmDialogContent isOpen={isOpen} config={config} onConfirm={onConfirm} onCancel={onCancel} setConfig={setConfig} />
   </AlertDialog>
 ));
 
@@ -206,14 +222,10 @@ export const ConfirmDialogProvider: React.FC<{
 
   const confirm = useCallback(
     (options: ConfirmOptions) => {
-      setDialogState((prev) => ({
-        isOpen: true,
-        config: { ...mergedDefaultOptions, ...options },
-        resolver: prev.resolver,
-      }));
       return new Promise<boolean>((resolve) => {
-        setDialogState((prev) => ({
-          ...prev,
+        setDialogState(() => ({
+          isOpen: true,
+          config: { ...mergedDefaultOptions, ...options },
           resolver: resolve,
         }));
       });
@@ -223,35 +235,21 @@ export const ConfirmDialogProvider: React.FC<{
 
   const handleConfirm = useCallback(() => {
     setDialogState((prev) => {
-      if (prev.resolver) {
-        prev.resolver(true);
-      }
-      return {
-        ...prev,
-        isOpen: false,
-        resolver: null,
-      };
+      prev.resolver?.(true);
+      return { ...prev, isOpen: false, resolver: null };
     });
   }, []);
 
   const handleCancel = useCallback(() => {
     setDialogState((prev) => {
-      if (prev.resolver) {
-        prev.resolver(false);
-      }
-      return {
-        ...prev,
-        isOpen: false,
-        resolver: null,
-      };
+      prev.resolver?.(false);
+      return { ...prev, isOpen: false, resolver: null };
     });
   }, []);
 
   const handleOpenChange = useCallback(
     (open: boolean) => {
-      if (!open) {
-        handleCancel();
-      }
+      if (!open) handleCancel();
     },
     [handleCancel]
   );
@@ -277,12 +275,9 @@ export const useConfirm = () => {
   if (!context) {
     throw new Error('useConfirm must be used within a ConfirmDialogProvider');
   }
-
   const { confirm, updateConfig } = context;
-
   const enhancedConfirm = confirm;
   enhancedConfirm.updateConfig = updateConfig;
-
   return enhancedConfirm as ConfirmFunction & {
     updateConfig: ConfirmContextValue['updateConfig'];
   };
