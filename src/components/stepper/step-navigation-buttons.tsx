@@ -16,16 +16,14 @@ interface StepperNavigationButtonsProps {
 export const StepperNavigationButtons: React.FC<StepperNavigationButtonsProps> = ({ isFirstStep, isLastStep, onPrev, onReset, submitText = 'Finish', nextText = 'Next' }) => {
   return (
     <div className="flex justify-end gap-4">
-      {!isLastStep ? (
-        <>
-          <Button variant="secondary" onClick={onPrev} disabled={isFirstStep}>
-            Back
-          </Button>
-          <Button type="submit">{isLastStep ? submitText : nextText}</Button>
-        </>
-      ) : (
+      {isLastStep ? (
         <Button onClick={onReset}>Reset</Button>
+      ) : (
+        <Button variant="secondary" onClick={onPrev} disabled={isFirstStep}>
+          Back
+        </Button>
       )}
+      <Button type="submit">{isLastStep ? submitText : nextText}</Button>
     </div>
   );
 };
