@@ -1,4 +1,5 @@
 import { GetFormById } from '@/actions/form';
+import { redirect } from '@/i18n/routing';
 import { getTranslations } from 'next-intl/server';
 
 import { DynamicColumn } from '@/types/prisma/form';
@@ -8,12 +9,16 @@ import { StatCard } from '@/components/stat-card';
 import FormDetailClient from './table';
 
 export default async function FormDetailPage({ params }: { params: Promise<{ locale: string; tenantId: string; slug: string }> }) {
-  const { tenantId, slug } = await params;
+  const { locale, tenantId, slug } = await params;
   const t = await getTranslations('admin.formBuilder.view');
 
   const form = await GetFormById(slug, tenantId);
   if (!form) {
     throw new Error('Form not found');
+  }
+
+  if (!form.published) {
+    redirect({ href: { pathname: '/admin/[tenantId]/form-designer/[slug]/edit', params: { tenantId, slug } }, locale });
   }
 
   const columns: DynamicColumn[] = JSON.parse(form.content)

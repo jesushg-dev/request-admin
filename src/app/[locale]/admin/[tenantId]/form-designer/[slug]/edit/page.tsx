@@ -1,14 +1,20 @@
 import React from 'react';
 import { GetFormById } from '@/actions/form';
+import { redirect } from '@/i18n/routing';
 
 import FormBuilder from '@/components/builder-form/form-builder';
 
-async function BuilderPage({ params }: { params: Promise<{ slug: string; tenantId: string }> }) {
-  const { tenantId, slug } = await params;
+async function BuilderPage({ params }: { params: Promise<{ locale: string; slug: string; tenantId: string }> }) {
+  const { locale, tenantId, slug } = await params;
   const form = await GetFormById(slug, tenantId);
   if (!form) {
     throw new Error('form not found');
   }
+
+  if (form.published) {
+    redirect({ href: { pathname: '/admin/[tenantId]/form-designer/[slug]', params: { tenantId, slug } }, locale });
+  }
+
   return <FormBuilder form={form} />;
 }
 
