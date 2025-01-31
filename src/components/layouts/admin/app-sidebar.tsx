@@ -24,7 +24,6 @@ import {
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import useTenantId from '@/hooks/use-tenant-id';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '@/components/ui/sidebar';
 
 import { NavFormSubmissions } from './nav-form-submissions';
@@ -52,6 +51,7 @@ const projects: MenuProject[] = [
 ];
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  tenantId: string;
   user: ExtendedUser;
   tenants: {
     id: string;
@@ -61,8 +61,7 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   }[];
 }
 
-export function AppSidebar({ tenants, user, ...props }: AppSidebarProps) {
-  const tenantId = useTenantId();
+export function AppSidebar({ tenantId, tenants, user, ...props }: AppSidebarProps) {
   const pathname = usePathname();
   const t = useTranslations('admin.sidebar');
 

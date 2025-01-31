@@ -6,7 +6,7 @@ export const ModuleDefaultArgs = Prisma.validator<Prisma.ModuleDefaultArgs>()({
     id: true,
     name: true,
     description: true,
-    feature: { select: { id: true, name: true, description: true } },
+    feature: { select: { id: true, name: true, description: true }, orderBy: { name: 'asc' } },
   },
 });
 

@@ -19,7 +19,13 @@ export const StepperNavigationButtons: React.FC<StepperNavigationButtonsProps> =
       {isLastStep ? (
         <Button onClick={onReset}>Reset</Button>
       ) : (
-        <Button variant="secondary" onClick={onPrev} disabled={isFirstStep}>
+        <Button
+          variant="secondary"
+          onClick={() => {
+            console.log('🚀 ~ file: step-navigation-buttons.tsx ~ line 33 ~ StepperNavigationButtons ~ disabled', isFirstStep);
+            onPrev();
+          }}
+          disabled={isFirstStep}>
           Back
         </Button>
       )}

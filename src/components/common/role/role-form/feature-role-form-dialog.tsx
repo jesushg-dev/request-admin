@@ -7,12 +7,14 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { ModuleWithFeaturesType } from '@/types/prisma/module';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
+import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import ConditionalDialogWrapper from '@/components/conditional-dialog-wrapper';
+
+import { RoleFormBatchValues } from '.';
 
 interface FeatureRoleFormDialogProps {
   roleIndex: number;
@@ -21,18 +23,26 @@ interface FeatureRoleFormDialogProps {
 }
 
 export function FeatureRoleFormDialog({ roleIndex, modules, isBatch }: FeatureRoleFormDialogProps) {
-  const { control, setValue } = useFormContext();
+  const { control, setValue } = useFormContext<RoleFormBatchValues>();
   const features = useWatch({ control, name: `roles.${roleIndex}.features`, defaultValue: [] });
 
-  const toggleFeature = (moduleId: string, featureId: string, featureName: string, isChecked: boolean) => {
-    if (isChecked) {
-      setValue(`roles.${roleIndex}.features`, [...features, { id: featureId, moduleId, name: featureName }]);
-    } else {
-      setValue(
-        `roles.${roleIndex}.features`,
-        features.filter((perm: { id: string }) => perm.id !== featureId)
-      );
-    }
+  const toggleFeature = (feature: RoleFormBatchValues['roles'][0]['features'][0]) => {
+    let found = false;
+
+    const updatedFeatures = features.reduce(
+      (acc, perm) => {
+        if (perm.featureId === feature.featureId) {
+          found = true;
+          return [...acc, { ...perm, isActive: feature.isActive }];
+        }
+        return [...acc, perm];
+      },
+      [] as typeof features
+    );
+
+    if (!found) updatedFeatures.push(feature);
+
+    setValue(`roles.${roleIndex}.features`, updatedFeatures);
   };
 
   return (
@@ -59,6 +69,8 @@ export function FeatureRoleFormDialog({ roleIndex, modules, isBatch }: FeatureRo
             <FormControl>
               <Textarea placeholder="Role Description" className="resize-none" {...field} />
             </FormControl>
+            <FormDescription>Provide a description for the role</FormDescription>
+            <FormMessage />
           </FormItem>
         )}
       />
@@ -94,18 +106,32 @@ export function FeatureRoleFormDialog({ roleIndex, modules, isBatch }: FeatureRo
                   </TableCell>
                   <TableCell>
                     <div className="grid grid-cols-2 gap-4 py-1.5 md:grid-cols-3 lg:grid-cols-4">
-                      {module.feature.map((feature) => (
-                        <div key={feature.id} className="flex items-center space-x-2">
-                          <Checkbox
-                            id={`${module.id}-${feature.id}`}
-                            checked={features.some((perm: { id: string; moduleId: string; name: string }) => perm.id === feature.id)}
-                            onCheckedChange={(checked) => toggleFeature(module.id, feature.id, feature.name, checked as boolean)}
-                          />
-                          <label htmlFor={`${module.id}-${feature.id}`} className="cursor-pointer text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                            {feature.name}
-                          </label>
-                        </div>
-                      ))}
+                      {module.feature.map((feature) => {
+                        const founded = features.find((perm) => perm.featureId === feature.id);
+                        return (
+                          <div key={feature.id} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`${module.id}-${feature.id}`}
+                              checked={founded?.isActive}
+                              onCheckedChange={(checked) =>
+                                toggleFeature({
+                                  id: founded?.id,
+                                  moduleId: module.id,
+                                  moduleName: module.name,
+                                  moduleDescription: module.description,
+                                  featureId: feature.id,
+                                  featureName: feature.name,
+                                  featureDescription: feature.description,
+                                  isActive: checked === 'indeterminate' ? false : checked,
+                                })
+                              }
+                            />
+                            <label htmlFor={`${module.id}-${feature.id}`} className="cursor-pointer text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                              {feature.name}
+                            </label>
+                          </div>
+                        );
+                      })}
                     </div>
                   </TableCell>
                 </TableRow>
@@ -114,6 +140,23 @@ export function FeatureRoleFormDialog({ roleIndex, modules, isBatch }: FeatureRo
           </Table>
         </ScrollArea>
       </div>
+      <FormDescription>Select the features that the role should have access to. If a feature is not selected, the role will not have access to it.</FormDescription>
+
+      <FormField
+        control={control}
+        name={`roles.${roleIndex}.isActive` as const}
+        render={({ field }) => (
+          <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
+            <FormControl>
+              <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+            </FormControl>
+            <div className="space-y-1 leading-none">
+              <FormLabel>Active</FormLabel>
+              <FormDescription>If the role is active, users assigned to this role will have access to the selected features.</FormDescription>
+            </div>
+          </FormItem>
+        )}
+      />
     </ConditionalDialogWrapper>
   );
 }

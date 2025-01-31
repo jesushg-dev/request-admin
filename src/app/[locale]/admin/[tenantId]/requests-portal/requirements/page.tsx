@@ -27,6 +27,7 @@ const RequirementDefaultArgs = Prisma.validator<Prisma.RequirementDefaultArgs>()
   select: {
     id: true,
     name: true,
+    tenantId: true,
     description: true,
     createdAt: true,
     requirementType: { select: { name: true } },
@@ -154,7 +155,16 @@ export function getTableConfiguration({ t }: GetTableConfigurationProps) {
     },
     {
       id: 'actions',
-      cell: (data) => <ActionCell cell={data} onDelete={() => console.log('Delete', data.row.original)} onUpdate={() => console.log('Update', data.row.original)} />,
+      cell: (data) => (
+        <ActionCell
+          cell={data}
+          onDelete={() => console.log('Delete', data.row.original)}
+          updateLink={{
+            pathname: '/admin/[tenantId]/requests-portal/requirements/[slug]/edit',
+            params: { tenantId: data.row.original.tenantId, slug: data.row.original.id },
+          }}
+        />
+      ),
       size: 20,
     },
   ];

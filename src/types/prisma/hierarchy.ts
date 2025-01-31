@@ -6,7 +6,7 @@ export const RequestHierarchyDefaultArgs = Prisma.validator<Prisma.RequestHierar
     id: true,
     name: true,
     description: true,
-    levels: { select: { id: true, name: true, position: true } },
+    levels: { select: { id: true, name: true, position: true }, orderBy: { position: 'asc' } },
   },
 });
 
@@ -20,7 +20,7 @@ export const AssignmentHierarchyDefaultArgs = Prisma.validator<Prisma.Assignment
     id: true,
     name: true,
     description: true,
-    levels: { select: { id: true, name: true, position: true } },
+    levels: { select: { id: true, name: true, position: true }, orderBy: { position: 'asc' } },
   },
 });
 

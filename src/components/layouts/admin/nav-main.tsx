@@ -11,7 +11,7 @@ export type MenuItem = {
   title: string;
   icon?: LucideIcon;
   isActive?: boolean;
-  url: I18Link;
+  url?: I18Link;
   items?: {
     title: string;
     icon?: LucideIcon;

@@ -1,19 +1,19 @@
 'use client';
 
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import { Plus, Trash } from 'lucide-react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { ModuleWithFeaturesType } from '@/types/prisma/module';
 import { Button } from '@/components/ui/button';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
 import { FeatureRoleFormDialog } from './feature-role-form-dialog';
 
 // Default role structure
-const DEFAULT_ROLE = {
+export const DEFAULT_ROLE = {
   id: undefined,
   name: '',
   description: '',
@@ -28,12 +28,17 @@ export const rolesFormSchema = z.object({
         id: z.string().optional(),
         name: z.string().min(3, 'Role Name must be at least 3 characters').max(100, 'Role Name must not exceed 100 characters'),
         description: z.string().max(255, 'Description must not exceed 255 characters').optional(),
+        isActive: z.boolean().optional(),
         features: z.array(
           z.object({
-            id: z.string(),
+            id: z.string().optional(),
             moduleId: z.string(),
-            name: z.string(),
-            description: z.string().optional(),
+            moduleName: z.string(),
+            moduleDescription: z.string().nullable(),
+            featureId: z.string(),
+            featureName: z.string(),
+            featureDescription: z.string().nullable(),
+            isActive: z.boolean().optional(),
           })
         ),
       })
@@ -50,16 +55,10 @@ interface RolesFormProps {
 }
 
 const RolesForm: FC<RolesFormProps> = ({ moduleWithFeatures, isBatch }) => {
-  const { control, formState } = useFormContext<RoleFormBatchValues>();
+  const { control } = useFormContext<RoleFormBatchValues>();
   const { fields: roles, append: appendRole, remove: removeRole } = useFieldArray({ control, name: 'roles' });
 
   const addRole = () => appendRole({ ...DEFAULT_ROLE });
-
-  useEffect(() => {
-    if (!isBatch && roles.length === 0) {
-      addRole();
-    }
-  }, []);
 
   return (
     <div className="mx-1 mr-4 flex flex-col gap-2">
@@ -75,7 +74,8 @@ const RolesForm: FC<RolesFormProps> = ({ moduleWithFeatures, isBatch }) => {
                 <FormControl>
                   <Input className="h-8 w-full rounded" placeholder="Role Name" {...field} />
                 </FormControl>
-                {formState.errors.roles?.[roleIndex]?.name && <FormMessage>{formState.errors.roles[roleIndex].name?.message}</FormMessage>}
+                <FormDescription>Role Name must be at least 3 characters and not exceed 100 characters</FormDescription>
+                <FormMessage />
               </FormItem>
             )}
           />

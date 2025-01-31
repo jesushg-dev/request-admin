@@ -6,28 +6,19 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { AssignmentLevelType, RequestLevelType } from '@/types/prisma/hierarchy';
+import { Card } from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { StepNavigation } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 
-import { assignmentCategorySelectSchema } from '../../category/assignment-categories-select';
-import { requestCategorySelectSchema } from '../../category/request-categories-select';
-import AssignmentCategoryStep from './assignment-category-step';
+import AssignmentCategoryStep, { combinedCategoriesSchema } from './assignment-category-step';
 import DynamicFormStep from './dynamic-form-step';
-import RequestCategoryStep from './request-category-step';
 import RequestDetailsStep from './request-details-step';
 import RequirementComplianceStep from './requirement-compliance-step';
 import SummaryStep from './summary-step';
 
-const combinedCategoriesSchema = z.object({
-  categories: z.object({
-    requestCategory: z.array(requestCategorySelectSchema),
-    assignmentCategory: z.array(assignmentCategorySelectSchema),
-  }),
-});
-
 const combinedFormSchema = z.object({
-  categories: combinedCategoriesSchema,
   requirementCompliance: z.record(z.string(), z.boolean()),
   requestDetails: z.object({
     clientId: z.string(),
@@ -61,6 +52,7 @@ const CombinedRequestFormStepper: React.FC<CombinedFormProps> = ({ requestLevelT
     mode: 'onTouched',
     resolver: zodResolver(stepper.current.schema),
   });
+  console.log('🚀 ~ form:', form.formState.errors);
 
   const onSubmit = (values: z.infer<typeof stepper.current.schema>) => {
     if (stepper.isLast) {
@@ -72,24 +64,29 @@ const CombinedRequestFormStepper: React.FC<CombinedFormProps> = ({ requestLevelT
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between space-y-6 overflow-hidden p-6">
-        <StepNavigation steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
-        {stepper.switch({
-          categories: () => (
-            <>
-              <RequestCategoryStep levels={requestLevelTypes} prefix="categories.requestCategory" />
-              <AssignmentCategoryStep levels={assignmentLevelTypes} prefix="categories.assignmentCategory" />
-            </>
-          ),
-          requirementCompliance: () => <RequirementComplianceStep />,
-          requestDetails: () => <RequestDetailsStep />,
-          dynamicForm: () => <DynamicFormStep formElements={[]} />,
-          summary: () => <SummaryStep />,
-        })}
-        <StepperNavigationButtons isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onReset={stepper.reset} nextText="Next" submitText="Finish" />
-      </form>
-    </Form>
+    <div className="flex flex-col flex-1 p-4">
+      <Card className="w-full flex flex-col flex-1 overflow-hidden">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between space-y-6 overflow-hidden p-6">
+            <StepNavigation steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
+            {stepper.switch({
+              categories: () => (
+                <ScrollArea>
+                  <div className="w-full flex flex-col gap-4 px-1">
+                    <AssignmentCategoryStep requestLevelTypes={requestLevelTypes} assignmentLevelTypes={assignmentLevelTypes} />
+                  </div>
+                </ScrollArea>
+              ),
+              requirementCompliance: () => <RequirementComplianceStep />,
+              requestDetails: () => <RequestDetailsStep />,
+              dynamicForm: () => <DynamicFormStep formElements={[]} />,
+              summary: () => <SummaryStep />,
+            })}
+            <StepperNavigationButtons isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onReset={stepper.reset} nextText="Next" submitText="Finish" />
+          </form>
+        </Form>
+      </Card>
+    </div>
   );
 };
 

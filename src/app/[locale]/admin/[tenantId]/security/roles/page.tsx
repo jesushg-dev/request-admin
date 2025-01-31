@@ -24,6 +24,7 @@ import { DataTableToolbarActions } from '@/components/data-table/data-table-tool
 const RoleDefaultArgs = Prisma.validator<Prisma.RoleDefaultArgs>()({
   select: {
     id: true,
+    tenantId: true,
     name: true,
     description: true,
     createdAt: true,
@@ -146,7 +147,16 @@ export function getTableConfiguration({ t }: GetTableConfigurationProps) {
     },
     {
       id: 'actions',
-      cell: (data) => <ActionCell cell={data} onDelete={() => console.log('Delete', data.row.original)} onUpdate={() => console.log('Update', data.row.original)} />,
+      cell: (data) => (
+        <ActionCell
+          cell={data}
+          onDelete={() => console.log('Delete', data.row.original)}
+          updateLink={{
+            pathname: '/admin/[tenantId]/security/roles/[slug]/edit',
+            params: { tenantId: data.row.original.tenantId, slug: data.row.original.id },
+          }}
+        />
+      ),
       size: 20,
     },
   ];

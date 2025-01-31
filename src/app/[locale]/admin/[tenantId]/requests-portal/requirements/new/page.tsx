@@ -1,11 +1,20 @@
-'use client';
-
 import { FC } from 'react';
 
 import { RequirementForm } from '@/components/common/requirement/requirement-form';
+import { PageCardWrapper } from '@/components/page-card-wrapper';
 
-const NewRequirementPage: FC = () => {
-  return <RequirementForm />;
+interface NewRequirementPageProps {
+  params: Promise<{ tenantId: string }>;
+}
+
+const NewRequirementPage: FC<NewRequirementPageProps> = async ({ params }) => {
+  const { tenantId } = await params;
+
+  return (
+    <PageCardWrapper title="Requirement Information" description="Please fill in the required fields to create a new requirement.">
+      <RequirementForm tenantId={tenantId} />
+    </PageCardWrapper>
+  );
 };
 
 export default NewRequirementPage;

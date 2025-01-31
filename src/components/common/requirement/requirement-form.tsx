@@ -1,40 +1,49 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useFindManyRequirementType } from '@/services/api/hooks';
+import { useCreateRequirement, useFindManyRequirementType, useUpdateRequirement } from '@/services/api/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
+import useFormSubmit from '@/hooks/use-form-submit';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import Select from '@/components/select/select';
 
-export interface Requirement {
-  id?: string;
-  name: string;
-  description: string;
-  isRequiredOnlyForNewClients: boolean;
-  requirementType: {
-    label: string;
-    value: string;
-  };
-}
-
 const formSchema = z.object({
   name: z.string().min(1, 'Name is required').max(200, 'Name must be 200 characters or less'),
   description: z.string().min(1, 'Description is required').max(500, 'Description must be 500 characters or less'),
-  isRequiredOnlyForNewClients: z.boolean(),
+  isRequiredOnlyOnce: z.boolean(),
+  isActive: z.boolean(),
   requirementType: z.object({
     label: z.string(),
     value: z.string().nonempty('This field is required.'),
   }),
 });
 
-export function RequirementForm() {
-  const { data: requirementTypes, isLoading } = useFindManyRequirementType();
+export type RequirementFormValues = z.infer<typeof formSchema>;
+
+interface RequirementFormProps {
+  tenantId: string;
+  initialValues?: (RequirementFormValues & { id: string }) | null;
+}
+
+export function RequirementForm({ tenantId, initialValues }: RequirementFormProps) {
+  const { data: requirementTypes, isLoading: isLoadingTypes } = useFindManyRequirementType();
+
+  const { mutateAsync: createRequirement } = useCreateRequirement();
+  const { mutateAsync: updateRequirement } = useUpdateRequirement();
+
+  const submitCreate = useFormSubmit(createRequirement, {
+    redirectUrl: { pathname: '/admin/[tenantId]/requests-portal/requirements', params: { tenantId } },
+  });
+  const submitUpdate = useFormSubmit(updateRequirement, {
+    redirectUrl: { pathname: '/admin/[tenantId]/requests-portal/requirements', params: { tenantId } },
+  });
+
   const requirementTypeOptions = useMemo(() => {
     return requirementTypes?.map((requirementType) => ({
       label: requirementType.name,
@@ -42,23 +51,35 @@ export function RequirementForm() {
     }));
   }, [requirementTypes]);
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<RequirementFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: '',
-      description: '',
-      isRequiredOnlyForNewClients: false,
-      requirementType: { label: '', value: '' },
-    },
+    defaultValues: initialValues ?? {},
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log('🚀 ~ handleSubmit ~ data:', data);
+  const onSubmit = async (result: RequirementFormValues) => {
+    if (initialValues?.id) {
+      await submitUpdate({
+        data: {
+          tenantId,
+          name: result.name,
+          description: result.description,
+          requirementTypeId: result.requirementType.value,
+          isRequiredOnlyOnce: result.isRequiredOnlyOnce,
+          isActive: result.isActive,
+        },
+        where: { id: initialValues.id },
+      });
+      return;
+    }
+
+    await submitCreate({
+      data: { tenantId, name: result.name, description: result.description, requirementTypeId: result.requirementType.value, isRequiredOnlyOnce: result.isRequiredOnlyOnce, isActive: result.isActive },
+    });
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between overflow-hidden p-6 pt-0">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between gap-4">
         <FormField
           control={form.control}
           name="name"
@@ -82,7 +103,7 @@ export function RequirementForm() {
               <FormControl>
                 <Input placeholder="Requirement description" {...field} />
               </FormControl>
-              <FormDescription>The description of the requirement.</FormDescription>
+              <FormDescription>Clear instructions that will be shown to users fulfilling this requirement.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -94,31 +115,46 @@ export function RequirementForm() {
             <FormItem>
               <FormLabel>Requirement Type</FormLabel>
               <FormControl>
-                <Select isLoading={isLoading} isSearchable isClearable options={requirementTypeOptions} onChange={field.onChange} value={field.value} />
+                <Select isLoading={isLoadingTypes} isSearchable isClearable options={requirementTypeOptions} onChange={field.onChange} value={field.value} />
               </FormControl>
               <FormDescription>The type of the requirement.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
-          name="isRequiredOnlyForNewClients"
+          name="isActive"
           render={({ field }) => (
             <FormItem className="flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4">
               <FormControl>
                 <Checkbox checked={field.value} onCheckedChange={field.onChange} />
               </FormControl>
               <div className="space-y-1 leading-none">
-                <FormLabel>Required only for new clients</FormLabel>
-                <FormDescription>Check this if the requirement applies only to new clients.</FormDescription>
+                <FormLabel>Active</FormLabel>
+                <FormDescription>Enable this option to make the requirement active</FormDescription>
               </div>
             </FormItem>
           )}
         />
-
-        <Button type="submit">Submit</Button>
+        <FormField
+          control={form.control}
+          name="isRequiredOnlyOnce"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4">
+              <FormControl>
+                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel>Mark as one-time required requirement</FormLabel>
+                <FormDescription>Enable this option when the requirement should only be validated once</FormDescription>
+              </div>
+            </FormItem>
+          )}
+        />
+        <div className="w-full flex justify-end">
+          <Button type="submit">{initialValues ? 'Update' : 'Create'}</Button>
+        </div>
       </form>
     </Form>
   );

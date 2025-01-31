@@ -1,21 +1,23 @@
-import { db } from '@/server/db-server';
+import { FC } from 'react';
+import { getRequirementsAsOptions } from '@/actions/requirement';
+import { getModulesWithFeatures, getRoleAsFormById } from '@/actions/role';
+import { getUsersAsOptions } from '@/actions/user';
 
-import { ModuleDefaultArgs } from '@/types/prisma/module';
-import { RequirementDefaultArgs } from '@/types/prisma/requirement';
-import { UserDefaultArgs } from '@/types/prisma/user';
 import RoleFormStepper from '@/components/common/role/role-form-stepper';
 
-export default async function EditRolePage() {
-  const requirements = await db.requirement.findMany({ ...RequirementDefaultArgs });
-  const modules = await db.module.findMany({
-    ...ModuleDefaultArgs,
-    where: {
-      feature: { every: { scope: 'global' } },
-    },
-  });
-  const users = await db.user.findMany({ ...UserDefaultArgs });
-
-  const preparedRequirements = requirements.map((req) => ({ value: req.id, label: req.name }));
-
-  return <RoleFormStepper requirements={preparedRequirements} users={users} moduleWithFeatures={modules} />;
+interface EditRolePageProps {
+  params: Promise<{ locale: string; slug: string; tenantId: string }>;
 }
+
+const EditRolePage: FC<EditRolePageProps> = async ({ params }) => {
+  const { tenantId, slug } = await params;
+
+  const role = await getRoleAsFormById(slug, tenantId);
+  const modules = await getModulesWithFeatures(tenantId);
+  const userOptions = await getUsersAsOptions(tenantId);
+  const requirements = await getRequirementsAsOptions(tenantId);
+
+  return <RoleFormStepper initialValues={{ ...role, id: slug }} tenantId={tenantId} requirements={requirements} userOptions={userOptions} moduleWithFeatures={modules} />;
+};
+
+export default EditRolePage;

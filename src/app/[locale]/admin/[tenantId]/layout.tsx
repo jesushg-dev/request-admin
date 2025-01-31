@@ -35,6 +35,7 @@ export async function generateMetadata(props: { params: { locale: string } }): P
 }
 
 export default async function RootLayout({
+  params,
   children,
   modal,
 }: Readonly<{
@@ -42,6 +43,7 @@ export default async function RootLayout({
   modal: React.ReactNode;
   params: Promise<{ tenantId: string }>;
 }>) {
+  const { tenantId } = await params;
   const session = await auth();
   if (!session) return redirect({ href: '/', locale: 'en' });
 
@@ -53,7 +55,7 @@ export default async function RootLayout({
   return (
     <SidebarProvider>
       <DndSubmissionProvider>
-        <AppSidebar tenants={tenants} user={session.user} />
+        <AppSidebar tenants={tenants} user={session.user} tenantId={tenantId} />
         <main className="flex h-screen w-full flex-1 flex-col overflow-hidden">
           <Navbar tenants={tenants} />
           <div className="flex flex-1 overflow-hidden">

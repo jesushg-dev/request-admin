@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useFindManyRequestCategory } from '@/services/api/hooks';
 import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
@@ -7,7 +7,6 @@ import { RequestLevelType } from '@/types/prisma/hierarchy';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import Select from '@/components/select/select';
 
-// Schema for request categories
 export const requestCategorySelectSchema = z.object({
   label: z.string(),
   value: z.string().nonempty('This field is required.'),
@@ -17,30 +16,34 @@ export const requestCategorySelectSchema = z.object({
 export type RequestCategorySelectFormValues = z.infer<typeof requestCategorySelectSchema>;
 
 type RequestCategoriesSelectProps = {
-  prefix: 'categories.requestCategory' | 'requestCategory';
   levels: RequestLevelType[];
 };
 
-export const RequestCategoriesSelect: React.FC<RequestCategoriesSelectProps> = ({ levels, prefix }) => {
+export const RequestCategoriesSelect: React.FC<RequestCategoriesSelectProps> = ({ levels }) => {
   const { watch, setValue } = useFormContext<Record<string, RequestCategorySelectFormValues[]>>();
-  const watchedFields = watch(prefix, []);
-  const activeLevel = useMemo(() => watchedFields.filter((field) => !!field?.value).length, [watchedFields]);
+  const watchedFields = watch('requestCategory', []);
+  const lastSelectedIndex = watchedFields.findLastIndex((field) => !!field?.value);
+  const activeLevel = lastSelectedIndex === -1 ? 0 : lastSelectedIndex + 1;
 
   const handleClearLevels = (startIndex: number) => {
     for (let i = startIndex; i < levels.length; i++) {
-      setValue(`${prefix}.${i}.value`, '');
+      setValue(`requestCategory.${i}`, {
+        label: '',
+        value: '',
+        position: levels[i].position,
+      });
     }
   };
 
   return (
     <div className="flex flex-col gap-4">
       {levels.map((level, index) => (
-        <RequestCategorySelect
-          key={level.id}
-          name={`${prefix}.${index}`}
+        <SingleRequestCategorySelect
+          key={`${level.id}-${index}`}
+          name={`requestCategory.${index}`}
           hierarchyLevelId={level.id}
           hierarchyLevelName={level.name}
-          parentCategoryId={index > 0 ? (watchedFields[index - 1]?.value ?? '') : ''}
+          parentCategoryId={index > 0 ? watchedFields[index - 1]?.value : ''}
           enabled={index <= activeLevel}
           position={level.position}
           onClearNextLevels={() => handleClearLevels(index + 1)}
@@ -50,7 +53,7 @@ export const RequestCategoriesSelect: React.FC<RequestCategoriesSelectProps> = (
   );
 };
 
-type RequestCategorySelectProps = {
+type SingleRequestCategorySelectProps = {
   name: string;
   hierarchyLevelId: string;
   hierarchyLevelName: string;
@@ -60,17 +63,29 @@ type RequestCategorySelectProps = {
   onClearNextLevels: () => void;
 };
 
-const RequestCategorySelect: React.FC<RequestCategorySelectProps> = ({ name, hierarchyLevelId, hierarchyLevelName, parentCategoryId, enabled, position, onClearNextLevels }) => {
-  const { control } = useFormContext<Record<string, RequestCategorySelectFormValues[]>>();
+const SingleRequestCategorySelect: React.FC<SingleRequestCategorySelectProps> = ({ name, hierarchyLevelId, hierarchyLevelName, parentCategoryId, enabled, position, onClearNextLevels }) => {
+  const { control, setValue, getValues } = useFormContext();
 
-  const where = parentCategoryId ? { parentCategoryId } : { hierarchyLevelId };
-  const { data: categories = [], isLoading } = useFindManyRequestCategory({ where }, { enabled });
-  const options = useMemo(() => categories.map((category) => ({ label: category.name, value: category.id })), [categories]);
+  const where = useMemo(() => (parentCategoryId ? { parentCategoryId } : { hierarchyLevelId }), [parentCategoryId, hierarchyLevelId]);
+
+  const { data: categories = [], isLoading } = useFindManyRequestCategory({ where }, { enabled, staleTime: 60000 });
+
+  const options = useMemo(() => categories.map(({ id, name }) => ({ label: name, value: id })), [categories]);
+
+  useEffect(() => {
+    if (!enabled || !getValues(name)?.value) return;
+    const currentValue = getValues(name)?.value;
+    const exists = categories.some((c) => c.id === currentValue);
+    if (!exists) {
+      setValue(name, { label: '', value: '', position });
+      onClearNextLevels();
+    }
+  }, [categories, enabled, getValues, name, onClearNextLevels, position, setValue]);
 
   return (
     <FormField
       control={control}
-      name={name as `requestCategory.${number}`}
+      name={name}
       render={({ field }) => (
         <FormItem>
           <FormLabel>{hierarchyLevelName}</FormLabel>
@@ -82,8 +97,9 @@ const RequestCategorySelect: React.FC<RequestCategorySelectProps> = ({ name, hie
               isClearable
               options={options}
               onChange={(option) => {
-                if (option?.value !== field.value?.value) {
-                  field.onChange({ ...option, position });
+                const newValue = option ? { ...option, position } : { label: '', value: '', position };
+                if (newValue.value !== field.value?.value) {
+                  field.onChange(newValue);
                   onClearNextLevels();
                 }
               }}

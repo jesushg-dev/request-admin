@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { getRequirementAsFormById } from '@/actions/requirement';
 
 import { RequirementForm } from '@/components/common/requirement/requirement-form';
-import { PageCardWrapper } from '@/components/page-card-wrapper';
+import PageDialogWrapper from '@/components/page-dialog-wrapper';
 
 interface UpdateRequirementPageProps {
   params: Promise<{ locale: string; slug: string; tenantId: string }>;
@@ -14,9 +14,9 @@ const UpdateRequirementPage: FC<UpdateRequirementPageProps> = async ({ params })
   const requirement = await getRequirementAsFormById(slug, tenantId);
 
   return (
-    <PageCardWrapper title="Requirement Information" description="Please fill in the required fields to update the requirement.">
+    <PageDialogWrapper title="Requirement Information" description="Please fill in the required fields to update the requirement.">
       <RequirementForm tenantId={tenantId} initialValues={{ ...requirement, id: slug }} />
-    </PageCardWrapper>
+    </PageDialogWrapper>
   );
 };
 
