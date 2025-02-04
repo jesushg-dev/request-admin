@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { FormElementInstance } from '@/components/builder-form/form-elements';
 import FormSubmitComponent from '@/components/builder-form/form-submit-component';
 
-async function SubmitPage({ params }: { params: { tenantId: string; slug: string } }) {
+async function SubmitPage({ params }: { params: Promise<{ tenantId: string; slug: string }> }) {
   const { slug, tenantId } = await params;
 
   const form = await GetFormContentById(slug, tenantId);
@@ -24,7 +24,7 @@ async function SubmitPage({ params }: { params: { tenantId: string; slug: string
           <CardDescription>{form.description}</CardDescription>
         </CardHeader>
         <CardContent>
-          <FormSubmitComponent formId={form.id} content={formContent} />
+          <FormSubmitComponent formId={form.id} content={formContent} tenantId={tenantId} />
         </CardContent>
         <CardFooter></CardFooter>
       </Card>

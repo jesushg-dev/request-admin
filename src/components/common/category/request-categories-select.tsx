@@ -4,7 +4,7 @@ import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { RequestLevelType } from '@/types/prisma/hierarchy';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import Select from '@/components/select/select';
 
 export const requestCategorySelectSchema = z.object({
@@ -36,7 +36,7 @@ export const RequestCategoriesSelect: React.FC<RequestCategoriesSelectProps> = (
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <>
       {levels.map((level, index) => (
         <SingleRequestCategorySelect
           key={`${level.id}-${index}`}
@@ -49,7 +49,7 @@ export const RequestCategoriesSelect: React.FC<RequestCategoriesSelectProps> = (
           onClearNextLevels={() => handleClearLevels(index + 1)}
         />
       ))}
-    </div>
+    </>
   );
 };
 
@@ -106,6 +106,7 @@ const SingleRequestCategorySelect: React.FC<SingleRequestCategorySelectProps> = 
               value={field.value}
             />
           </FormControl>
+          <FormDescription>{categories.length === 0 && isLoading ? 'Loading' : `Select the ${hierarchyLevelName.toLowerCase()}.`}</FormDescription>
           <FormMessage />
         </FormItem>
       )}

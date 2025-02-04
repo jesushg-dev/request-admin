@@ -11,10 +11,12 @@ import { useForm } from 'react-hook-form';
 
 import useTenantId from '@/hooks/use-tenant-id';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
+
+import { Checkbox } from '../ui/checkbox';
 
 const CreateNewForm: FC = () => {
   const t = useTranslations('component.formBuilder');
@@ -41,7 +43,7 @@ const CreateNewForm: FC = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-2">
+      <form onSubmit={form.handleSubmit(handleFormSubmit)} className="flex w-full flex-col gap-4">
         <FormField
           control={form.control}
           name="name"
@@ -51,6 +53,7 @@ const CreateNewForm: FC = () => {
               <FormControl>
                 <Input {...field} />
               </FormControl>
+              <FormDescription>{t('formNameDescription')}</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -65,14 +68,33 @@ const CreateNewForm: FC = () => {
               <FormControl>
                 <Textarea rows={5} {...field} />
               </FormControl>
+              <FormDescription>{t('formDescriptionDescription')}</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <Button type="submit" disabled={form.formState.isSubmitting} className="mt-4 w-full">
-          {form.formState.isSubmitting ? <LoaderCircleIcon className="animate-spin" /> : t('saveButton')}
-        </Button>
+        <FormField
+          control={form.control}
+          name="isPublic"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
+              <FormControl>
+                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel>{t('isPublicFormLabel')}</FormLabel>
+                <FormDescription>{t('isPublicFormDescription')}</FormDescription>
+              </div>
+            </FormItem>
+          )}
+        />
+
+        <div className="flex items-end justify-end w-full">
+          <Button type="submit" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting ? <LoaderCircleIcon className="animate-spin" /> : t('saveButton')}
+          </Button>
+        </div>
       </form>
     </Form>
   );

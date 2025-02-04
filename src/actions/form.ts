@@ -48,7 +48,7 @@ export async function CreateForm(data: formSchemaType, tenantId: string) {
     throw new Error('form not valid');
   }
 
-  const { name, description } = data;
+  const { name, description, isPublic } = data;
 
   const form = await db.form.create({
     data: {
@@ -56,6 +56,7 @@ export async function CreateForm(data: formSchemaType, tenantId: string) {
       name,
       description,
       tenantId,
+      isPublic,
     },
   });
 

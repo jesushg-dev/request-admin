@@ -1,115 +1,103 @@
 'use client';
 
-import { Check, X } from 'lucide-react';
+import { FC, useEffect } from 'react';
+import { useFindManyRequirement } from '@/services/api/hooks';
 import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
-
-/*
-id: 'req1',
-    title: 'Carta de empresas hermanas o correo',
-    description: 'Documentación que acredita la relación entre empresas hermanas o comunicación oficial relativa a la prestación de servicios.',
-    completed: false,
-*/
+import { Skeleton } from '@/components/ui/skeleton';
 
 export const requirementComplianceSchema = z.object({
-  requirementCompliance: z.record(z.boolean()),
+  requirementCompliances: z.record(z.boolean().default(false)),
 });
 
-export type RequirementComplianceType = z.infer<typeof requirementComplianceSchema>;
+export type RequirementComplianceValues = z.infer<typeof requirementComplianceSchema>;
 
-export default function RequirementComplianceStep() {
-  const { watch, setValue } = useFormContext();
-  const documents = watch('documents') || {};
-  const requirementCompliance = watch('requirementCompliance') || {};
+interface RequirementComplianceStepProps {
+  requestCategoryIds: string[];
+}
 
-  const handleCheckboxChange = (requirementId: string, checked: boolean) => {
-    setValue(`requirementCompliance.${requirementId}`, checked);
-  };
+const RequirementComplianceStep: FC<RequirementComplianceStepProps> = ({ requestCategoryIds }) => {
+  const { control, setValue, watch } = useFormContext<RequirementComplianceValues>();
+
+  const { data, isLoading } = useFindManyRequirement({
+    where: {
+      requestCategoryRequirement: {
+        every: { categoryId: { in: requestCategoryIds } },
+      },
+    },
+  });
+
+  const currentRequirements = watch('requirementCompliances', {});
+
+  useEffect(() => {
+    if (data && data.length > 0 && Object.keys(currentRequirements).length === 0) {
+      const initialRequirements = data.reduce(
+        (acc, req) => {
+          acc[req.id] = false;
+          return acc;
+        },
+        {} as Record<string, boolean>
+      );
+      setValue('requirementCompliances', initialRequirements);
+    }
+  }, [data, currentRequirements, setValue]);
 
   const handleSelectAll = () => {
-    const allChecked = mockRequirements.every((req) => requirementCompliance[req.id] || req.completed);
-
-    mockRequirements.forEach((req) => {
-      if (!req.completed) {
-        setValue(`requirementCompliance.${req.id}`, !allChecked);
-      }
-    });
+    const allCompleted = Object.values(currentRequirements).every((v) => v);
+    const updated = Object.keys(currentRequirements).reduce(
+      (acc, key) => {
+        acc[key] = !allCompleted;
+        return acc;
+      },
+      {} as Record<string, boolean>
+    );
+    setValue('requirementCompliances', updated);
   };
 
-  const handleFileUpload = (requirementId: string, file: File) => {
-    setValue(`documents.${requirementId}`, file);
-  };
-
-  const handleRemoveFile = (requirementId: string) => {
-    setValue(`documents.${requirementId}`, undefined);
-  };
+  if (!data) return null;
 
   return (
-    <div className="flex flex-col gap-2 overflow-hidden">
-      <div className="flex flex-row items-center justify-between">
-        <h3 className="text-lg font-semibold">Requirements ({mockRequirements.length})</h3>
-        <Button variant="outline" size="sm" onClick={handleSelectAll}>
-          Select All
+    <div className="flex flex-col gap-4 flex-1 overflow-hidden">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold">Requirements ({data.length})</h3>
+        <Button variant="outline" size="sm" onClick={handleSelectAll} type="button" title={Object.values(currentRequirements).every((v) => v) ? 'Unselect All' : 'Select All'} disabled={isLoading}>
+          {Object.values(currentRequirements).every((v) => v) ? 'Unselect All' : 'Select All'}
         </Button>
       </div>
-      <div className="flex flex-col gap-2 overflow-hidden">
-        <ScrollArea>
-          <div className="w-full flex flex-col gap-2">
-            {mockRequirements.map((requirement) => (
-              <div key={requirement.id} className={`flex space-x-4 rounded-lg border p-4 ${requirement.completed ? 'bg-muted' : ''}`}>
-                <Checkbox
-                  id={requirement.id}
-                  checked={requirementCompliance[requirement.id] || requirement.completed}
-                  onCheckedChange={(checked) => handleCheckboxChange(requirement.id, checked as boolean)}
-                  disabled={requirement.completed}
-                  className="mt-1"
-                />
-                <div className="flex-1 space-y-1">
-                  <Label htmlFor={requirement.id} className={`font-medium ${requirement.completed ? 'text-muted-foreground' : ''}`}>
-                    {requirement.title}
-                  </Label>
-                  <p className="text-muted-foreground text-sm">{requirement.description}</p>
-                  {!requirement.completed && (
-                    <div className="mt-2">
-                      <Label htmlFor={`file-${requirement.id}`} className="text-sm">
-                        Upload Document
-                      </Label>
-                      <div className="mt-1 flex items-center gap-2">
-                        <Input
-                          id={`file-${requirement.id}`}
-                          type="file"
-                          className="max-w-xs"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) handleFileUpload(requirement.id, file);
-                          }}
-                        />
-                        {documents[requirement.id] && (
-                          <Button variant="outline" size="icon" onClick={() => handleRemoveFile(requirement.id)}>
-                            <X className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </div>
-                      {documents[requirement.id] && <p className="text-muted-foreground mt-1 text-sm">File uploaded: {documents[requirement.id].name}</p>}
+      <ScrollArea className="flex-1">
+        <div className="flex flex-col gap-2">
+          {data.map((req) => (
+            <FormField
+              key={req.id}
+              control={control}
+              name={`requirementCompliances.${req.id}`}
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center gap-4 border rounded-lg p-4">
+                    <div className="flex-1">
+                      <FormLabel htmlFor={`requirementCompliances.${req.id}`} className="font-medium">
+                        {isLoading ? <Skeleton className="h-4 w-24" /> : req.name}
+                      </FormLabel>
+                      <p className="text-sm text-muted-foreground">{isLoading ? <Skeleton className="h-3 w-48" /> : req.description}</p>
                     </div>
-                  )}
-                </div>
-                {requirement.completed && (
-                  <div className="bg-primary flex h-5 w-5 items-center justify-center rounded-full">
-                    <Check className="text-primary-foreground h-3 w-3" />
+                    <FormControl>
+                      <Checkbox id={`requirementCompliances.${req.id}`} checked={field.value} onCheckedChange={field.onChange} />
+                    </FormControl>
+                    <FormMessage />
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
-      </div>
+                </FormItem>
+              )}
+            />
+          ))}
+        </div>
+      </ScrollArea>
     </div>
   );
-}
+};
+
+export default RequirementComplianceStep;

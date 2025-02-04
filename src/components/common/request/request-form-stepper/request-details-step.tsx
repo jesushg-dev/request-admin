@@ -1,104 +1,159 @@
 'use client';
 
 import { useFormContext } from 'react-hook-form';
+import { z } from 'zod';
 
+import { useUploadFile } from '@/hooks/use-upload-file';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-
-// Datos simulados para clientes y estados
-const mockClients = [
-  { id: 'client1', name: 'Client 1' },
-  { id: 'client2', name: 'Client 2' },
-];
+import { FileUploader } from '@/components/uploader/file-uploader';
+import { UploadedFilesCard } from '@/components/uploader/uploaded-files-card';
 
 const mockStatuses = [
   { id: 'status1', name: 'Open' },
   { id: 'status2', name: 'In Progress' },
 ];
 
+export const requirementComplianceSchema = z.object({
+  requestDetails: z.object({
+    issueSubject: z.string().optional(),
+    description: z.string().max(5000).optional(),
+    priority: z.string().optional(),
+    comment: z.string().max(255).optional(),
+    statusId: z.string(),
+    additionalDocuments: z.array(z.instanceof(File)),
+  }),
+});
+
+export type RequirementComplianceValues = z.infer<typeof requirementComplianceSchema>;
+
 export default function RequestDetailsStep() {
-  const {
-    register,
-    formState: { errors },
-  } = useFormContext();
+  const { control } = useFormContext<RequirementComplianceValues>();
+
+  const { /* uploadFiles, */ progresses, uploadedFiles, isUploading } = useUploadFile('imageUploader', { defaultUploadedFiles: [] });
 
   return (
-    <div className="mx-1 mr-4 flex flex-col gap-2">
-      <h2 className="text-lg font-semibold">Request Details</h2>
+    <ScrollArea className="flex-1">
+      <div className="flex flex-col gap-2 mx-1">
+        <FormField
+          control={control}
+          name="requestDetails.issueSubject"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Issue Subject</FormLabel>
+              <FormControl>
+                <Input id="issueSubject" placeholder="Enter issue subject" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      <div className="space-y-2">
-        <Label htmlFor="clientId">Client</Label>
-        <Select onValueChange={(value) => register('requestDetails.clientId').onChange({ target: { value } })}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select a client" />
-          </SelectTrigger>
-          <SelectContent>
-            {mockClients.map((client) => (
-              <SelectItem key={client.id} value={client.id}>
-                {client.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {errors.requestDetails?.clientId && <p className="text-sm text-red-500">{errors.requestDetails.clientId.message}</p>}
-      </div>
+        <FormField
+          control={control}
+          name="requestDetails.description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Textarea id="description" placeholder="Enter description" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      <div className="space-y-2">
-        <Label htmlFor="issueSubject">Issue Subject</Label>
-        <Input id="issueSubject" {...register('requestDetails.issueSubject')} />
-        {errors.requestDetails?.issueSubject && <p className="text-sm text-red-500">{errors.requestDetails.issueSubject.message}</p>}
-      </div>
+        <FormField
+          control={control}
+          name="requestDetails.priority"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Priority</FormLabel>
+              <FormControl>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
-        <Textarea id="description" {...register('requestDetails.description')} />
-        {errors.requestDetails?.description && <p className="text-sm text-red-500">{errors.requestDetails.description.message}</p>}
-      </div>
+        <FormField
+          control={control}
+          name="requestDetails.comment"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Comment</FormLabel>
+              <FormControl>
+                <Input id="comment" placeholder="Enter comment" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      <div className="space-y-2">
-        <Label htmlFor="priority">Priority</Label>
-        <Select onValueChange={(value) => register('requestDetails.priority').onChange({ target: { value } })}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select priority" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="low">Low</SelectItem>
-            <SelectItem value="medium">Medium</SelectItem>
-            <SelectItem value="high">High</SelectItem>
-          </SelectContent>
-        </Select>
-        {errors.requestDetails?.priority && <p className="text-sm text-red-500">{errors.requestDetails.priority.message}</p>}
-      </div>
+        <FormField
+          control={control}
+          name="requestDetails.statusId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Status</FormLabel>
+              <FormControl>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {mockStatuses.map((status) => (
+                      <SelectItem key={status.id} value={status.id}>
+                        {status.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      <div className="space-y-2">
-        <Label htmlFor="comment">Comment</Label>
-        <Input id="comment" {...register('requestDetails.comment')} />
-        {errors.requestDetails?.comment && <p className="text-sm text-red-500">{errors.requestDetails.comment.message}</p>}
+        <FormField
+          control={control}
+          name="requestDetails.additionalDocuments"
+          render={({ field }) => (
+            <div className="space-y-6">
+              <FormItem className="w-full">
+                <FormLabel>Images</FormLabel>
+                <FormControl>
+                  <FileUploader
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    maxFileCount={4}
+                    maxSize={4 * 1024 * 1024}
+                    progresses={progresses}
+                    // pass the onUpload function here for direct upload
+                    // onUpload={uploadFiles}
+                    disabled={isUploading}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+              {uploadedFiles.length > 0 ? <UploadedFilesCard uploadedFiles={uploadedFiles} /> : null}
+            </div>
+          )}
+        />
       </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="additionalDocuments">Additional Documents</Label>
-        <Input id="additionalDocuments" type="file" multiple {...register('requestDetails.additionalDocuments')} />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="statusId">Status</Label>
-        <Select onValueChange={(value) => register('requestDetails.statusId').onChange({ target: { value } })}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select a status" />
-          </SelectTrigger>
-          <SelectContent>
-            {mockStatuses.map((status) => (
-              <SelectItem key={status.id} value={status.id}>
-                {status.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {errors.requestDetails?.statusId && <p className="text-sm text-red-500">{errors.requestDetails.statusId.message}</p>}
-      </div>
-    </div>
+    </ScrollArea>
   );
 }

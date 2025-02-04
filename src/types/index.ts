@@ -1,4 +1,5 @@
 import type { ColumnSort } from '@tanstack/react-table';
+import { type ClientUploadedFileData } from 'uploadthing/types';
 import { type z } from 'zod';
 
 import { type DataTableConfig } from '@/config/data-table';
@@ -7,6 +8,8 @@ import { type filterSchema } from '@/lib/parsers';
 export type Prettify<T> = {
   [K in keyof T]: T[K];
 } & {};
+
+export type UploadedFile<T = unknown> = ClientUploadedFileData<T>;
 
 export type StringKeyOf<TData> = Extract<keyof TData, string>;
 

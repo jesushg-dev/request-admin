@@ -1,4 +1,4 @@
-import React, { ReactElement, Ref } from 'react';
+import React, { ReactElement, Ref, useEffect, useState } from 'react';
 import { Check, ChevronDown, X } from 'lucide-react';
 import SelectComponent, {
   ClassNamesConfig,
@@ -198,8 +198,16 @@ export const MenuList = (props: MenuListProps<OptionType>) => {
 };
 
 const BaseSelect = <IsMulti extends boolean = false>(props: Props<OptionType, IsMulti> & { isMulti?: IsMulti }, ref: React.Ref<SelectInstance<OptionType, IsMulti, GroupBase<OptionType>>>) => {
+  const [mounted, setMounted] = useState(false);
+
   const { styles = defaultStyles, classNames = defaultClassNames, components = {}, ...rest } = props;
   const instanceId = React.useId();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
     <SelectComponent<OptionType, IsMulti, GroupBase<OptionType>>
@@ -210,6 +218,7 @@ const BaseSelect = <IsMulti extends boolean = false>(props: Props<OptionType, Is
         matchFrom: 'any',
         stringify: (option) => option.label,
       })}
+      menuPortalTarget={document.body}
       components={{
         DropdownIndicator,
         ClearIndicator,

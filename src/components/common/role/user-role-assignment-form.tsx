@@ -47,7 +47,6 @@ interface UserRoleAssignmentFormProps {
 const UserRoleAssignmentForm: FC<UserRoleAssignmentFormProps> = ({ userOptions, roleArray, predefinedRole }) => {
   const { control, formState } = useFormContext<UserRoleFormValues>();
   const { fields, append, remove } = useFieldArray({ control, name: 'userRoles', keyName: '_id' });
-  console.log('🚀 ~ fields:', fields);
 
   const roleOptions: OptionType[] = useMemo(() => roleArray.map((r) => ({ value: r.id, label: r.name })), [roleArray]);
 

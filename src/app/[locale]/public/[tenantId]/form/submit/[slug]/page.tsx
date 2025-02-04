@@ -25,7 +25,7 @@ async function SubmitPage({
   return (
     <div className="flex h-full w-full items-center justify-center p-8">
       <div className="bg-background flex w-full max-w-[620px] grow flex-col gap-4 overflow-y-auto rounded border p-8 shadow-xl shadow-blue-700">
-        <FormSubmitComponent formId={form.id} content={formContent} />
+        <FormSubmitComponent formId={form.id} content={formContent} tenantId={tenantId} />
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, type FC } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { defineStepper } from '@stepperize/react';
 import { useForm } from 'react-hook-form';
@@ -8,36 +9,21 @@ import { z } from 'zod';
 import { AssignmentLevelType, RequestLevelType } from '@/types/prisma/hierarchy';
 import { Card } from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { StepNavigation } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 
-import AssignmentCategoryStep, { combinedCategoriesSchema } from './assignment-category-step';
-import DynamicFormStep from './dynamic-form-step';
+import CategoryStep, { combinedCategoriesSchema, CombinedCategoriesValues } from './category-step';
+import DynamicFormStep, { dynamicFormSchema } from './dynamic-form-step';
 import RequestDetailsStep from './request-details-step';
-import RequirementComplianceStep from './requirement-compliance-step';
+import RequirementComplianceStep, { requirementComplianceSchema } from './requirement-compliance-step';
 import SummaryStep from './summary-step';
-
-const combinedFormSchema = z.object({
-  requirementCompliance: z.record(z.string(), z.boolean()),
-  requestDetails: z.object({
-    clientId: z.string(),
-    issueSubject: z.string().optional(),
-    description: z.string().max(5000).optional(),
-    priority: z.string().optional(),
-    comment: z.string().max(255).optional(),
-    statusId: z.string(),
-  }),
-  documents: z.record(z.string(), z.instanceof(File).optional()),
-  dynamicForm: z.record(z.string(), z.any()).optional(),
-});
 
 const { useStepper, utils } = defineStepper(
   { id: 'categories', label: 'Categories', schema: combinedCategoriesSchema },
-  { id: 'requirementCompliance', label: 'Requirement Compliance', schema: combinedFormSchema.shape.requirementCompliance },
-  { id: 'requestDetails', label: 'Request Details', schema: combinedFormSchema.shape.requestDetails },
-  { id: 'dynamicForm', label: 'Dynamic Form', schema: combinedFormSchema.shape.dynamicForm },
-  { id: 'summary', label: 'Summary', schema: combinedFormSchema }
+  { id: 'requirementCompliance', label: 'Requirement Compliance', schema: requirementComplianceSchema },
+  { id: 'requestDetails', label: 'Request Details', schema: requirementComplianceSchema },
+  { id: 'dynamicForm', label: 'Dynamic Form', schema: dynamicFormSchema },
+  { id: 'summary', label: 'Summary', schema: z.object({}) }
 );
 
 type CombinedFormProps = {
@@ -45,16 +31,26 @@ type CombinedFormProps = {
   assignmentLevelTypes: AssignmentLevelType[];
 };
 
-const CombinedRequestFormStepper: React.FC<CombinedFormProps> = ({ requestLevelTypes, assignmentLevelTypes }) => {
+const RequestFormStepper: FC<CombinedFormProps> = ({ requestLevelTypes, assignmentLevelTypes }) => {
   const stepper = useStepper();
 
   const form = useForm({
     mode: 'onTouched',
     resolver: zodResolver(stepper.current.schema),
   });
-  console.log('🚀 ~ form:', form.formState.errors);
+
+  const [requestCategoryIds, setRequestCategoryIds] = useState<string[]>([]);
 
   const onSubmit = (values: z.infer<typeof stepper.current.schema>) => {
+    console.log('🚀 ~ onSubmit ~ values:', values);
+
+    if (stepper.current.id === 'categories') {
+      const data = values as CombinedCategoriesValues;
+      if (data.requestCategory) {
+        setRequestCategoryIds(data.requestCategory.map((category) => category.value));
+      }
+    }
+
     if (stepper.isLast) {
       console.log('Final Form Values:', values);
       stepper.reset();
@@ -70,16 +66,10 @@ const CombinedRequestFormStepper: React.FC<CombinedFormProps> = ({ requestLevelT
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between space-y-6 overflow-hidden p-6">
             <StepNavigation steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
             {stepper.switch({
-              categories: () => (
-                <ScrollArea>
-                  <div className="w-full flex flex-col gap-4 px-1">
-                    <AssignmentCategoryStep requestLevelTypes={requestLevelTypes} assignmentLevelTypes={assignmentLevelTypes} />
-                  </div>
-                </ScrollArea>
-              ),
-              requirementCompliance: () => <RequirementComplianceStep />,
+              categories: () => <CategoryStep requestLevelTypes={requestLevelTypes} assignmentLevelTypes={assignmentLevelTypes} />,
+              requirementCompliance: () => <RequirementComplianceStep requestCategoryIds={requestCategoryIds} />,
               requestDetails: () => <RequestDetailsStep />,
-              dynamicForm: () => <DynamicFormStep formElements={[]} />,
+              dynamicForm: () => <DynamicFormStep requestCategoryIds={requestCategoryIds} />,
               summary: () => <SummaryStep />,
             })}
             <StepperNavigationButtons isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onReset={stepper.reset} nextText="Next" submitText="Finish" />
@@ -90,4 +80,4 @@ const CombinedRequestFormStepper: React.FC<CombinedFormProps> = ({ requestLevelT
   );
 };
 
-export default CombinedRequestFormStepper;
+export default RequestFormStepper;

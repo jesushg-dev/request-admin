@@ -4,7 +4,7 @@ import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { AssignmentLevelType } from '@/types/prisma/hierarchy';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import Select from '@/components/select/select';
 
 // Zod schema for a single selected category
@@ -38,7 +38,7 @@ export const AssignmentCategoriesSelect: React.FC<AssignmentCategoriesSelectProp
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <>
       {levels.map((level, index) => {
         const isLevelEnabled = !!areaId && index <= activeLevel;
 
@@ -56,7 +56,7 @@ export const AssignmentCategoriesSelect: React.FC<AssignmentCategoriesSelectProp
           />
         );
       })}
-    </div>
+    </>
   );
 };
 
@@ -106,14 +106,7 @@ const SingleAssignmentCategorySelect: React.FC<SingleAssignmentCategorySelectPro
     }
   );
 
-  const options = useMemo(
-    () =>
-      categories.map(({ id, name, area }) => ({
-        label: `${name}${area ? ` #${area.name}` : ''}`,
-        value: id,
-      })),
-    [categories]
-  );
+  const options = useMemo(() => categories.map(({ id, name }) => ({ label: name, value: id })), [categories]);
 
   useEffect(() => {
     if (!enabled || !getValues(name)?.value) return;
@@ -152,6 +145,7 @@ const SingleAssignmentCategorySelect: React.FC<SingleAssignmentCategorySelectPro
               value={field.value}
             />
           </FormControl>
+          <FormDescription>{categories.length === 0 && isLoading ? 'Loading' : `Select the ${hierarchyLevelName.toLowerCase()}.`}</FormDescription>
           <FormMessage />
         </FormItem>
       )}
