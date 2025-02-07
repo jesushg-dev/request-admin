@@ -343,7 +343,7 @@ async function main() {
       isEligibleForNewClients: true,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelparentCategoryId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           { requirementId: 'E1B2D4A5-7C5A-4F08-9B27-2D6E57F8C9F2', tenantId: UNSTABLE_TENANT_ID },
           { requirementId: 'F2C3A6E4-9B8A-49D3-B764-3E5F29D8B1C6', tenantId: UNSTABLE_TENANT_ID },
@@ -361,7 +361,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelparentCategoryId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           { requirementId: 'E1B2D4A5-7C5A-4F08-9B27-2D6E57F8C9F2', tenantId: UNSTABLE_TENANT_ID },
           { requirementId: 'F2C3A6E4-9B8A-49D3-B764-3E5F29D8B1C6', tenantId: UNSTABLE_TENANT_ID },
@@ -379,7 +379,7 @@ async function main() {
       isEligibleForNewClients: true,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelparentCategoryId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           { requirementId: 'E1B2D4A5-7C5A-4F08-9B27-2D6E57F8C9F2', tenantId: UNSTABLE_TENANT_ID },
           { requirementId: 'F2C3A6E4-9B8A-49D3-B764-3E5F29D8B1C6', tenantId: UNSTABLE_TENANT_ID },
@@ -396,7 +396,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelparentCategoryId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           { requirementId: 'E1B2D4A5-7C5A-4F08-9B27-2D6E57F8C9F2', tenantId: UNSTABLE_TENANT_ID },
           { requirementId: 'F2C3A6E4-9B8A-49D3-B764-3E5F29D8B1C6', tenantId: UNSTABLE_TENANT_ID },
@@ -418,7 +418,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -479,7 +479,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -540,7 +540,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: 'BF20B80C-FB60-4C7F-973D-AA2FD2E898CE',
@@ -573,7 +573,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -634,7 +634,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -695,7 +695,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -756,7 +756,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -817,7 +817,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -878,7 +878,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -939,7 +939,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -1000,7 +1000,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -1061,7 +1061,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -1125,7 +1125,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -1186,7 +1186,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -1247,7 +1247,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: 'BF20B80C-FB60-4C7F-973D-AA2FD2E898CE',
@@ -1280,7 +1280,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -1341,7 +1341,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -1402,7 +1402,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -1463,7 +1463,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -1524,7 +1524,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -1585,7 +1585,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -1646,7 +1646,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: 'BF20B80C-FB60-4C7F-973D-AA2FD2E898CE',
@@ -1679,7 +1679,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -1743,7 +1743,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -1804,7 +1804,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -1865,7 +1865,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: 'BF20B80C-FB60-4C7F-973D-AA2FD2E898CE',
@@ -1898,7 +1898,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -1959,7 +1959,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -2020,7 +2020,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -2081,7 +2081,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -2142,7 +2142,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -2203,7 +2203,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -2264,7 +2264,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -2325,7 +2325,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: 'BF20B80C-FB60-4C7F-973D-AA2FD2E898CE',
@@ -2358,7 +2358,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
-      requestCategoryRequirement: {
+      requestCategoryRequirements: {
         create: [
           {
             requirementId: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',

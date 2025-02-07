@@ -3549,8 +3549,8 @@ const metadata = {
           isArray: true,
           backLink: 'requestCategories',
         },
-        requestCategoryRequirement: {
-          name: 'requestCategoryRequirement',
+        requestCategoryRequirements: {
+          name: 'requestCategoryRequirements',
           type: 'RequestCategoryRequirement',
           isDataModel: true,
           isArray: true,
@@ -3569,9 +3569,9 @@ const metadata = {
           name: 'id',
           fields: ['id'],
         },
-        name_hierarchyLevelId_parentCategoryId: {
-          name: 'name_hierarchyLevelId_parentCategoryId',
-          fields: ['name', 'hierarchyLevelId', 'parentCategoryId'],
+        name_hierarchyLevelId_parentCategoryId_tenantId: {
+          name: 'name_hierarchyLevelId_parentCategoryId_tenantId',
+          fields: ['name', 'hierarchyLevelId', 'parentCategoryId', 'tenantId'],
         },
       },
     },
@@ -3931,7 +3931,7 @@ const metadata = {
           name: 'requirement',
           type: 'Requirement',
           isDataModel: true,
-          backLink: 'requestCategoryRequirement',
+          backLink: 'requestCategoryRequirements',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'requirementId' },
         },
@@ -3945,15 +3945,24 @@ const metadata = {
           name: 'requestCategory',
           type: 'RequestCategory',
           isDataModel: true,
-          backLink: 'requestCategoryRequirement',
+          backLink: 'requestCategoryRequirements',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'categoryId' },
+        },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
         },
       },
       uniqueConstraints: {
         id: {
           name: 'id',
           fields: ['id'],
+        },
+        categoryId_requirementId_tenantId: {
+          name: 'categoryId_requirementId_tenantId',
+          fields: ['categoryId', 'requirementId', 'tenantId'],
         },
       },
     },
@@ -4036,8 +4045,8 @@ const metadata = {
           isArray: true,
           backLink: 'requirement',
         },
-        requestCategoryRequirement: {
-          name: 'requestCategoryRequirement',
+        requestCategoryRequirements: {
+          name: 'requestCategoryRequirements',
           type: 'RequestCategoryRequirement',
           isDataModel: true,
           isArray: true,
@@ -4063,8 +4072,8 @@ const metadata = {
           name: 'id',
           fields: ['id'],
         },
-        name_tenantId: {
-          name: 'name_tenantId',
+        idx_requirement_name_tenant: {
+          name: 'idx_requirement_name_tenant',
           fields: ['name', 'tenantId'],
         },
       },
@@ -4745,9 +4754,9 @@ const metadata = {
           name: 'id',
           fields: ['id'],
         },
-        categoryId_formId: {
-          name: 'categoryId_formId',
-          fields: ['categoryId', 'formId'],
+        categoryId_formId_tenantId: {
+          name: 'categoryId_formId_tenantId',
+          fields: ['categoryId', 'formId', 'tenantId'],
         },
       },
     },

@@ -30,7 +30,7 @@ export const StepNavigation = <TStepId extends string>({ steps, currentId, getIn
   };
 
   return (
-    <nav aria-label="Steps">
+    <nav aria-label="Steps" className="w-full">
       <ol className="flex items-center gap-x-4">
         {steps.map((step, index, array) => (
           <Fragment key={step.id}>

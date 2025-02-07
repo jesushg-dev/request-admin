@@ -12,12 +12,12 @@ interface EditRolePageProps {
 const EditRolePage: FC<EditRolePageProps> = async ({ params }) => {
   const { tenantId, slug } = await params;
 
-  const role = await getRoleAsFormById(slug, tenantId);
-  const modules = await getModulesWithFeatures(tenantId);
   const userOptions = await getUsersAsOptions(tenantId);
+  const modules = await getModulesWithFeatures(tenantId);
   const requirements = await getRequirementsAsOptions(tenantId);
+  const initialValues = await getRoleAsFormById(slug, tenantId);
 
-  return <RoleFormStepper initialValues={{ ...role, id: slug }} tenantId={tenantId} requirements={requirements} userOptions={userOptions} moduleWithFeatures={modules} />;
+  return <RoleFormStepper initialValues={initialValues} tenantId={tenantId} requirements={requirements} userOptions={userOptions} moduleWithFeatures={modules} />;
 };
 
 export default EditRolePage;

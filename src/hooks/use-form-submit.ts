@@ -5,6 +5,7 @@ import { type DefaultError, type UseMutateAsyncFunction } from '@tanstack/react-
 import useMessage from '@/lib/message';
 
 interface FormSubmitProps<TData = unknown> {
+  autoRedirect?: boolean;
   errorMessage?: string | ((error: unknown) => string);
   loadingMessage?: string | (() => string);
   successMessage?: string | ((data?: TData) => string);
@@ -19,6 +20,7 @@ const useFormSubmit = <TData = unknown, TError = DefaultError, TVariables = unkn
   mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TContext>,
   {
     redirectUrl,
+    autoRedirect = true,
     confirmButtonText = 'Yes, submit it!',
     cancelButtonText = 'No, cancel!',
     confirmTitle = 'Submit your information',
@@ -73,7 +75,7 @@ const useFormSubmit = <TData = unknown, TError = DefaultError, TVariables = unkn
         }
 
         const url = getRedirectUrl(result);
-        if (url) {
+        if (url && autoRedirect) {
           if (typeof url === 'object') {
             router.push({ ...url, query: {} });
           } else {

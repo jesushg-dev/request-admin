@@ -36,7 +36,7 @@ const RequestCategoryDefaultArgs = Prisma.validator<Prisma.RequestCategoryDefaul
     },
     _count: {
       select: {
-        requestCategoryRequirement: true,
+        requestCategoryRequirements: true,
       },
     },
   },
@@ -178,7 +178,7 @@ export function getTableConfiguration({ t }: GetTableConfigurationProps) {
       size: 30,
     },
     {
-      accessorKey: '_count.requestCategoryRequirement',
+      accessorKey: '_count.requestCategoryRequirements',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.requirements')} />,
       cell: ({ cell }) => <RequirementDialogCell count={cell.getValue() as number} entity={t('entityLabel')} categoryId={cell.row.original.id} />,
       size: 20,

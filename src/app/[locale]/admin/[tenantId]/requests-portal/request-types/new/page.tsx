@@ -1,10 +1,19 @@
+import { FC } from 'react';
+import { getFormsAsOptions } from '@/actions/form';
+import { getRequirementsAsOptions } from '@/actions/requirement';
 import { db } from '@/server/db-server';
 
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import RequestTypeForm from '@/components/common/request-type/request-type-form';
+import { PageCardWrapper } from '@/components/page-card-wrapper';
 
-export default async function NewRequestTypeNew() {
-  const hierarchy = await db.requestHierarchy.findFirst({
+interface NewPageProps {
+  params: Promise<{ locale: string; tenantId: string }>;
+}
+
+const NewPage: FC<NewPageProps> = async ({ params }) => {
+  const { tenantId } = await params;
+
+  const hierarchy = await db.requestHierarchy.findFirstOrThrow({
     select: {
       id: true,
       name: true,
@@ -13,25 +22,16 @@ export default async function NewRequestTypeNew() {
     },
   });
 
-  const requirements = await db.requirement.findMany({
-    select: { id: true, name: true, description: true },
-  });
-
-  const preparedRequirements = requirements.map((req) => ({ value: req.id, label: req.name }));
-
-  if (!hierarchy) {
-    return { notFound: true };
-  }
+  const forms = await getFormsAsOptions(tenantId);
+  const requirements = await getRequirementsAsOptions(tenantId);
 
   const levels = hierarchy.levels.sort((a, b) => a.position - b.position);
 
   return (
-    <Card className="flex flex-1 flex-col overflow-y-hidden rounded-sm">
-      <CardHeader>
-        <CardTitle>Request Category</CardTitle>
-        <CardDescription>Create a new request category. A category can have multiple and recursive subcategories according to your business needs.</CardDescription>
-      </CardHeader>
-      <RequestTypeForm requirements={preparedRequirements} levels={levels} />
-    </Card>
+    <PageCardWrapper title="New Request Category" description="Create a new request category. A category can have multiple and recursive subcategories according to your business needs.">
+      <RequestTypeForm hierarchyId={hierarchy.id} forms={forms} requirements={requirements} levels={levels} tenantId={tenantId} />
+    </PageCardWrapper>
   );
-}
+};
+
+export default NewPage;

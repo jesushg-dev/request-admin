@@ -39,14 +39,14 @@ model RequestCategory extends TenantScoped, Auditable, CatalogBase {
   guideDocuments             GuideDocument[]       // Documents guiding the resolution of requests
   isEligibleForNewClients    Boolean                      @default(true) // Indicates if the category accepts new clients
   categoryForms              CategoryForm[]        // Links the category to multiple forms
-  requestCategoryRequirement RequestCategoryRequirement[] // Requirement mappings
+  requestCategoryRequirements RequestCategoryRequirement[] // Requirement mappings
 
   requests                   RequestAssignment[]          @relation("RequestCategory") // Requests where this category is the request category
 
   @@index([name], name: "idx_request_category_name")
   @@index([hierarchyId], name: "idx_request_category_hierarchy_id")
 
-  @@unique([name, hierarchyLevelId, parentCategoryId])
+  @@unique([name, hierarchyLevelId, parentCategoryId, tenantId])
 }
 
 /// SLA (Service Level Agreement) model.
@@ -93,21 +93,25 @@ model RequestCategoryRequirement extends TenantScoped, Auditable {
   requirement     Requirement     @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Maintain referential integrity
   categoryId      String          @db.UniqueIdentifier
   requestCategory RequestCategory @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Maintain referential integrity
+  isActive       Boolean         @default(true) // Indicates if the requirement is active
 
   @@index([requirementId], name: "idx_category_requirement_id")
   @@index([categoryId], name: "idx_category_category_id")
+  
+
+  @@unique([categoryId, requirementId, tenantId])
 }
 
 /// Represents a specific requirement for a request/assignment category.
 model Requirement extends TenantScoped, Auditable, CatalogBase {
   isRequiredOnlyOnce   Boolean                         @default(false)
   requirementComplianceTracking RequirementComplianceTracking[]
-  requestCategoryRequirement    RequestCategoryRequirement[]
+  requestCategoryRequirements    RequestCategoryRequirement[]
   requirementTypeId             String                          @db.UniqueIdentifier
   requirementType               RequirementType                 @relation(fields: [requirementTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
 
   @@index([name], name: "idx_requirement_name")
-  @@unique([name, tenantId])
+  @@unique([name, tenantId], name: "idx_requirement_name_tenant")
 }
 
 /// Represents a type of a requirement.

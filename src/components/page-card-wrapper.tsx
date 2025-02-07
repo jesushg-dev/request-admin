@@ -15,16 +15,14 @@ interface PageCardWrapperProps {
 
 export const PageCardWrapper = ({ title, description, children, footerActions = [], className }: PageCardWrapperProps) => {
   return (
-    <div className="flex flex-col gap-4 flex-1 p-4">
-      <Card className={cn('w-full flex flex-col flex-1', className)}>
+    <div className="flex-1 flex flex-col p-4 overflow-hidden">
+      <Card className={cn('w-full flex flex-col flex-1  overflow-hidden', className)}>
         <CardHeader>
           <CardTitle>{title}</CardTitle>
           {description && <CardDescription>{description}</CardDescription>}
         </CardHeader>
 
-        <CardContent>
-          <div className="space-y-4">{children}</div>
-        </CardContent>
+        <CardContent className="overflow-hidden flex-1 flex">{children}</CardContent>
 
         {footerActions.length > 0 && (
           <CardFooter className="flex justify-end gap-2">

@@ -39,10 +39,12 @@ const CategoryStep: React.FC<CategoryStepProps> = ({ requestLevelTypes, assignme
   const areaOptions = useMemo(() => areas.map((a) => ({ label: a.name, value: a.id })), [areas]);
 
   return (
-    <ScrollArea>
+    <ScrollArea className="flex-1">
       <div className="w-full flex flex-col gap-4 px-1">
         <h2 className="text-lg font-semibold">Request Category</h2>
-        <RequestCategoriesSelect levels={requestLevelTypes} />
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4">
+          <RequestCategoriesSelect levels={requestLevelTypes} />
+        </div>
         <h2 className="text-lg font-semibold">Assignment Category</h2>
         <FormField
           control={control}
@@ -58,7 +60,9 @@ const CategoryStep: React.FC<CategoryStepProps> = ({ requestLevelTypes, assignme
             </FormItem>
           )}
         />
-        <AssignmentCategoriesSelect levels={assignmentLevelTypes} areaId={areaId} />
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4">
+          <AssignmentCategoriesSelect levels={assignmentLevelTypes} areaId={areaId} />
+        </div>
       </div>
     </ScrollArea>
   );

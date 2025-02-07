@@ -10,11 +10,12 @@ import { Button } from '@/components/ui/button';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
+import { generateUuid } from '../../../../../prisma/util';
 import { FeatureRoleFormDialog } from './feature-role-form-dialog';
 
 // Default role structure
 export const DEFAULT_ROLE = {
-  id: undefined,
+  id: generateUuid(),
   name: '',
   description: '',
   features: [],
@@ -25,13 +26,13 @@ export const rolesFormSchema = z.object({
   roles: z
     .array(
       z.object({
-        id: z.string().optional(),
+        id: z.string().uuid().default(generateUuid),
         name: z.string().min(3, 'Role Name must be at least 3 characters').max(100, 'Role Name must not exceed 100 characters'),
         description: z.string().max(255, 'Description must not exceed 255 characters').optional(),
         isActive: z.boolean().optional(),
         features: z.array(
           z.object({
-            id: z.string().optional(),
+            id: z.string().uuid().default(generateUuid),
             moduleId: z.string(),
             moduleName: z.string(),
             moduleDescription: z.string().nullable(),

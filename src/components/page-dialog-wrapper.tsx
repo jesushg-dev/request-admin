@@ -14,8 +14,8 @@ interface PageDialogWrapperProps {
 }
 
 export default function PageDialogWrapper({ title, description, children, className }: PageDialogWrapperProps) {
-  const [isOpen, setIsOpen] = useState(true);
   const router = useRouter();
+  const [isOpen, setIsOpen] = useState(true);
 
   const handleClose = () => {
     setIsOpen(false);
@@ -26,12 +26,12 @@ export default function PageDialogWrapper({ title, description, children, classN
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className={cn('sm:max-w-[425px]', className)}>
+      <DialogContent className={cn('sm:max-w-[425px] h-[calc(100vh-2rem)]', 'flex flex-col overflow-hidden', className)}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
-        <div className="p-1">{children}</div>
+        {children}
       </DialogContent>
     </Dialog>
   );

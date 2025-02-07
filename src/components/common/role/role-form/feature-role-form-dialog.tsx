@@ -5,6 +5,7 @@ import { HelpCircle, Settings } from 'lucide-react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 import { ModuleWithFeaturesType } from '@/types/prisma/module';
+import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -115,7 +116,7 @@ export function FeatureRoleFormDialog({ roleIndex, modules, isBatch }: FeatureRo
                               checked={founded?.isActive}
                               onCheckedChange={(checked) =>
                                 toggleFeature({
-                                  id: founded?.id,
+                                  id: founded?.id ?? generateUuid(),
                                   moduleId: module.id,
                                   moduleName: module.name,
                                   moduleDescription: module.description,

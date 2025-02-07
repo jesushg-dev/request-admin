@@ -5,53 +5,49 @@ import { Plus, Trash } from 'lucide-react';
 import { Control, FieldErrors, useController, useFieldArray, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
+import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import Select, { OptionType } from '@/components/select/select';
 
 export const userRoleFormSchema = z.object({
-  userRoles: z
-    .array(
-      z.object({
-        id: z.string().optional(),
-        userId: z.object({
-          value: z.string().min(1, 'User is required'),
-          label: z.string().min(1),
-        }),
-        roleId: z.object({
-          value: z.string().min(1, 'Role is required'),
-          label: z.string().min(1),
-        }),
-        isActive: z.boolean().default(true),
-      })
-    )
-    .nonempty('At least one user role must be added'),
+  userRoles: z.array(
+    z.object({
+      id: z.string().uuid().default(generateUuid),
+      userId: z.object({
+        value: z.string().min(1, 'User is required'),
+        label: z.string().min(1),
+      }),
+      roleId: z.object({
+        value: z.string().min(1, 'Role is required'),
+        label: z.string().min(1),
+      }),
+      isActive: z.boolean().default(true),
+    })
+  ),
 });
 
 export type UserRoleFormValues = z.infer<typeof userRoleFormSchema>;
 
-export const DEFAULT_USER = {
-  id: undefined,
+export const getDefaultUserRole = (role: OptionType) => ({
+  id: generateUuid(),
   userId: { value: '', label: '' },
-  roleId: { value: 'Predefined', label: 'Predefined' },
+  roleId: { value: String(role.value), label: role.label },
   isActive: true,
-};
+});
 
 interface UserRoleAssignmentFormProps {
   userOptions: OptionType[];
-  roleArray: { id: string; name: string }[];
-  predefinedRole?: string | null;
+  roleOptions: OptionType[];
 }
 
-const UserRoleAssignmentForm: FC<UserRoleAssignmentFormProps> = ({ userOptions, roleArray, predefinedRole }) => {
+const UserRoleAssignmentForm: FC<UserRoleAssignmentFormProps> = ({ userOptions, roleOptions }) => {
   const { control, formState } = useFormContext<UserRoleFormValues>();
   const { fields, append, remove } = useFieldArray({ control, name: 'userRoles', keyName: '_id' });
 
-  const roleOptions: OptionType[] = useMemo(() => roleArray.map((r) => ({ value: r.id, label: r.name })), [roleArray]);
-
   const onAppendUser = () => {
-    const newUser = { ...DEFAULT_USER };
+    const newUser = { ...getDefaultUserRole(roleOptions[0]) };
     append(newUser);
   };
 
@@ -61,11 +57,7 @@ const UserRoleAssignmentForm: FC<UserRoleAssignmentFormProps> = ({ userOptions, 
         <div key={row._id || index} className="flex w-full items-center gap-4 border rounded-md p-4">
           <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4 flex-1 items-center">
             <UserSelectField index={index} userArray={userOptions} selectedUsers={fields.map((u) => u.userId.value)} control={control} errors={formState.errors} />
-            {predefinedRole ? (
-              <input type="hidden" value={predefinedRole} {...control.register(`userRoles.${index}.roleId.value`)} />
-            ) : (
-              <RoleSelectField index={index} roleArray={roleOptions} control={control} errors={formState.errors} />
-            )}
+            {roleOptions.length > 1 && <RoleSelectField index={index} roleArray={roleOptions} control={control} errors={formState.errors} />}
             <FormField
               control={control}
               name={`userRoles.${index}.isActive`}

@@ -6,6 +6,16 @@ import { formSchema, formSchemaType, keysSchema } from '@/services/schemas/form'
 
 class UserNotFoundErr extends Error {}
 
+export const getFormsAsOptions = async (tenantId: string) => {
+  const session = await auth();
+  if (!session) throw new UserNotFoundErr('User not found');
+
+  const Forms = await db.form.findMany({ select: { id: true, name: true }, where: { tenantId } });
+  const preparedForms = Forms.map((req) => ({ value: req.id, label: req.name }));
+
+  return preparedForms;
+};
+
 export async function GetFormStats() {
   const session = await auth();
   if (!session) throw new UserNotFoundErr();

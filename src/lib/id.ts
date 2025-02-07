@@ -1,4 +1,5 @@
 import { customAlphabet } from 'nanoid';
+import { v4 as uuidv4 } from 'uuid';
 
 const prefixes = {
   task: 'tsk',
@@ -35,3 +36,7 @@ export function generateId(prefixOrOptions?: keyof typeof prefixes | GenerateIdO
 
   return prefixOrOptions ? `${prefixes[prefixOrOptions]}${separator}${id}` : id;
 }
+
+export const generateUuid = (): string => {
+  return uuidv4();
+};

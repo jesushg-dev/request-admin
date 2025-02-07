@@ -475,7 +475,7 @@ export function useSuspenseCountRequestCategoryRequirement<
 }
 
 export function useCheckRequestCategoryRequirement<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; requirementId?: string; categoryId?: string } },
+  args: { operation: PolicyCrudKind; where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; requirementId?: string; categoryId?: string; isActive?: boolean } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

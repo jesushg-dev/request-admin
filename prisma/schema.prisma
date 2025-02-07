@@ -687,32 +687,32 @@ model RequestHierarchyLevel {
 
 /// Represents a request category, with SLA and required documents.
 model RequestCategory {
-  id                         String                       @id() @default(uuid()) @db.UniqueIdentifier()
-  name                       String                       @db.VarChar(100)
-  description                String?                      @db.VarChar(255)
-  isActive                   Boolean                      @default(true)
-  createdAt                  DateTime                     @default(now())
-  updatedAt                  DateTime?                    @updatedAt()
-  deletedAt                  DateTime?
-  createdBy                  String?                      @db.VarChar(50)
-  modifiedBy                 String?                      @db.VarChar(50)
-  tenantId                   String                       @db.UniqueIdentifier()
-  tenant                     Tenant                       @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  parentCategoryId           String?                      @db.UniqueIdentifier()
-  parentCategory             RequestCategory?             @relation("ParentRequestCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  subcategories              RequestCategory[]            @relation("ParentRequestCategory")
-  hierarchyLevelId           String                       @db.UniqueIdentifier()
-  hierarchyLevel             RequestHierarchyLevel        @relation(fields: [hierarchyLevelId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  hierarchyId                String                       @db.UniqueIdentifier()
-  hierarchy                  RequestHierarchy             @relation(fields: [hierarchyId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  sla                        SLA?
-  guideDocuments             GuideDocument[]
-  isEligibleForNewClients    Boolean                      @default(true)
-  categoryForms              CategoryForm[]
-  requestCategoryRequirement RequestCategoryRequirement[]
-  requests                   RequestAssignment[]          @relation("RequestCategory")
+  id                          String                       @id() @default(uuid()) @db.UniqueIdentifier()
+  name                        String                       @db.VarChar(100)
+  description                 String?                      @db.VarChar(255)
+  isActive                    Boolean                      @default(true)
+  createdAt                   DateTime                     @default(now())
+  updatedAt                   DateTime?                    @updatedAt()
+  deletedAt                   DateTime?
+  createdBy                   String?                      @db.VarChar(50)
+  modifiedBy                  String?                      @db.VarChar(50)
+  tenantId                    String                       @db.UniqueIdentifier()
+  tenant                      Tenant                       @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parentCategoryId            String?                      @db.UniqueIdentifier()
+  parentCategory              RequestCategory?             @relation("ParentRequestCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subcategories               RequestCategory[]            @relation("ParentRequestCategory")
+  hierarchyLevelId            String                       @db.UniqueIdentifier()
+  hierarchyLevel              RequestHierarchyLevel        @relation(fields: [hierarchyLevelId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  hierarchyId                 String                       @db.UniqueIdentifier()
+  hierarchy                   RequestHierarchy             @relation(fields: [hierarchyId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  sla                         SLA?
+  guideDocuments              GuideDocument[]
+  isEligibleForNewClients     Boolean                      @default(true)
+  categoryForms               CategoryForm[]
+  requestCategoryRequirements RequestCategoryRequirement[]
+  requests                    RequestAssignment[]          @relation("RequestCategory")
 
-  @@unique([name, hierarchyLevelId, parentCategoryId])
+  @@unique([name, hierarchyLevelId, parentCategoryId, tenantId])
   @@index([name], name: "idx_request_category_name")
   @@index([hierarchyId], name: "idx_request_category_hierarchy_id")
 }
@@ -791,7 +791,9 @@ model RequestCategoryRequirement {
   requirement     Requirement     @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   categoryId      String          @db.UniqueIdentifier()
   requestCategory RequestCategory @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  isActive        Boolean         @default(true)
 
+  @@unique([categoryId, requirementId, tenantId])
   @@index([requirementId], name: "idx_category_requirement_id")
   @@index([categoryId], name: "idx_category_category_id")
 }
@@ -811,11 +813,11 @@ model Requirement {
   tenant                        Tenant                          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   isRequiredOnlyOnce            Boolean                         @default(false)
   requirementComplianceTracking RequirementComplianceTracking[]
-  requestCategoryRequirement    RequestCategoryRequirement[]
+  requestCategoryRequirements   RequestCategoryRequirement[]
   requirementTypeId             String                          @db.UniqueIdentifier()
   requirementType               RequirementType                 @relation(fields: [requirementTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([name, tenantId])
+  @@unique([name, tenantId], name: "idx_requirement_name_tenant")
   @@index([name], name: "idx_requirement_name")
 }
 
@@ -954,7 +956,7 @@ model CategoryForm {
   requestCategories RequestCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   form              Form            @relation(fields: [formId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  @@unique([categoryId, formId])
+  @@unique([categoryId, formId, tenantId])
 }
 
 model FormSubmission {

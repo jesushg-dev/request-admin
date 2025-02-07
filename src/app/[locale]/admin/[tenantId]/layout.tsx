@@ -5,7 +5,6 @@ import { db } from '@/server/db-server';
 import { getTranslations } from 'next-intl/server';
 
 import { SidebarProvider } from '@/components/ui/sidebar';
-import { Toaster } from '@/components/ui/sonner';
 import { AppSidebar } from '@/components/layouts/admin/app-sidebar';
 import { DndSubmissionProvider } from '@/components/layouts/admin/dnd-submission-provider';
 import { Navbar } from '@/components/layouts/admin/nav-bar';
@@ -62,7 +61,6 @@ export default async function RootLayout({
             {children}
             {modal}
           </div>
-          <Toaster />
         </main>
       </DndSubmissionProvider>
     </SidebarProvider>

@@ -35,7 +35,7 @@ model CategoryForm extends TenantScoped, Auditable {
   form              Form            @relation(fields: [formId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   // Constraints
-  @@unique([categoryId, formId]) // Ensures no duplicate links between the same category and form
+  @@unique([categoryId, formId, tenantId]) // Ensures no duplicate links between the same category and form
 }
 
 model FormSubmission extends TenantScoped, Auditable {

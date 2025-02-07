@@ -19,7 +19,7 @@ export const getModulesWithFeatures = async (tenantId: string) => {
   return modules;
 };
 
-export const getRoleAsFormById = async (id: string, tenantId: string) => {
+export const getRoleAsFormById = async (id: string, tenantId: string): Promise<RoleFormStepperType> => {
   const session = await auth();
   if (!session) throw new UserNotFoundErr('User not found');
 
@@ -44,7 +44,30 @@ export const getRoleAsFormById = async (id: string, tenantId: string) => {
           },
         },
       },
-      userRole: { select: { id: true, userTenantId: true, isActive: true }, orderBy: { isActive: 'asc' } },
+      userRole: {
+        select: {
+          id: true,
+          userTenantId: true,
+
+          userTenant: {
+            select: {
+              person: {
+                select: {
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+              user: {
+                select: {
+                  username: true,
+                },
+              },
+            },
+          },
+          isActive: true,
+        },
+        orderBy: { isActive: 'asc' },
+      },
     },
     where: { id, tenantId },
   });
@@ -68,30 +91,18 @@ export const getRoleAsFormById = async (id: string, tenantId: string) => {
         })),
       },
     ],
-    userRoles:
-      role.userRole.length === 0
-        ? [
-            {
-              id: '',
-              isActive: true,
-              userId: { value: '', label: '' },
-              roleId: { value: role.id, label: role.name },
-            },
-          ]
-        : [
-            {
-              id: role.userRole[0].id,
-              isActive: role.userRole[0].isActive,
-              userId: { value: role.userRole[0].userTenantId, label: role.userRole[0].userTenantId },
-              roleId: { value: role.id, label: role.name },
-            },
-            ...role.userRole.slice(1).map((user) => ({
-              id: user.id,
-              isActive: user.isActive,
-              userId: { value: user.userTenantId, label: user.userTenantId },
-              roleId: { value: role.id, label: role.name },
-            })),
-          ],
+    userRoles: role.userRole.map((user) => ({
+      id: user.id,
+      isActive: user.isActive,
+      userId: {
+        value: user.userTenantId,
+        label:
+          user.userTenant.person?.firstName && user.userTenant.person?.lastName
+            ? `${user.userTenant.person?.firstName} ${user.userTenant.person?.lastName} @${user.userTenant.user.username}`
+            : user.userTenant.user.username,
+      },
+      roleId: { value: role.id, label: role.name },
+    })),
   };
 
   return initialValues;

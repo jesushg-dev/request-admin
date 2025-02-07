@@ -1,5 +1,6 @@
 // StepperNavigationButtons.tsx
 import React from 'react';
+import { LoaderCircleIcon } from 'lucide-react';
 
 import { Button } from '../ui/button';
 
@@ -11,11 +12,12 @@ interface StepperNavigationButtonsProps {
   onReset: () => void;
   submitText?: string; // Optional custom text for the submit button
   nextText?: string; // Optional custom text for the next button
+  isPending?: boolean; // Optional boolean to show a loading spinner on the submit button
 }
 
-export const StepperNavigationButtons: React.FC<StepperNavigationButtonsProps> = ({ isFirstStep, isLastStep, onPrev, onReset, submitText = 'Finish', nextText = 'Next' }) => {
+export const StepperNavigationButtons: React.FC<StepperNavigationButtonsProps> = ({ isPending, isFirstStep, isLastStep, onPrev, onReset, submitText = 'Finish', nextText = 'Next' }) => {
   return (
-    <div className="flex justify-end gap-4">
+    <div className="flex items-center justify-end gap-4">
       {isLastStep ? (
         <Button onClick={onReset}>Reset</Button>
       ) : (
@@ -29,7 +31,9 @@ export const StepperNavigationButtons: React.FC<StepperNavigationButtonsProps> =
           Back
         </Button>
       )}
-      <Button type="submit">{isLastStep ? submitText : nextText}</Button>
+      <Button type="submit" disabled={isPending}>
+        {isLastStep ? submitText : nextText} {isPending && <LoaderCircleIcon className="animate-spin" />}
+      </Button>
     </div>
   );
 };

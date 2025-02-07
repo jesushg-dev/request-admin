@@ -1,16 +1,23 @@
+import { FC } from 'react';
+import { getRequirementsAsOptions } from '@/actions/requirement';
 import { db } from '@/server/db-server';
 
 import { AssignmentHierarchyDefaultArgs } from '@/types/prisma/hierarchy';
 import { ModuleDefaultArgs } from '@/types/prisma/module';
-import { RequirementDefaultArgs } from '@/types/prisma/requirement';
 import { UserDefaultArgs } from '@/types/prisma/user';
 import AreaFormStepper from '@/components/common/area/area-form-stepper';
 
-export default async function NewAreaPage() {
-  // Fetch hierarchy data using Prisma
-  const hierarchy = await db.assignmentHierarchy.findFirst({ ...AssignmentHierarchyDefaultArgs });
+interface NewPageProps {
+  params: Promise<{ locale: string; tenantId: string }>;
+}
 
-  const requirements = await db.requirement.findMany({ ...RequirementDefaultArgs });
+const NewPage: FC<NewPageProps> = async ({ params }) => {
+  const { tenantId } = await params;
+
+  // Fetch hierarchy data using Prisma
+  const hierarchy = await db.assignmentHierarchy.findFirstOrThrow({ ...AssignmentHierarchyDefaultArgs });
+
+  const requirements = await getRequirementsAsOptions(tenantId);
   const modules = await db.module.findMany({
     ...ModuleDefaultArgs,
     where: {
@@ -19,13 +26,9 @@ export default async function NewAreaPage() {
   });
   const users = await db.user.findMany({ ...UserDefaultArgs });
 
-  const preparedRequirements = requirements.map((req) => ({ value: req.id, label: req.name }));
-
-  if (!hierarchy) {
-    return { notFound: true };
-  }
-
   const levels = hierarchy.levels.sort((a, b) => a.position - b.position);
 
-  return <AreaFormStepper assignmentLevels={levels} requirements={preparedRequirements} users={users} moduleWithFeatures={modules} />;
-}
+  return <AreaFormStepper assignmentLevels={levels} requirements={requirements} users={users} moduleWithFeatures={modules} />;
+};
+
+export default NewPage;

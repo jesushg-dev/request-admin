@@ -23,7 +23,7 @@ const RequestCategoryDefaultArgs = Prisma.validator<Prisma.RequestCategoryDefaul
     hierarchyLevelId: true,
     isEligibleForNewClients: true,
     subcategories: { select: { id: true } },
-    _count: { select: { subcategories: true, requestCategoryRequirement: true } },
+    _count: { select: { subcategories: true, requestCategoryRequirements: true } },
   },
 });
 
@@ -127,7 +127,7 @@ export function useRequestCategoryTableConfiguration({ entity }: { entity?: stri
       cell: ({ cell }) => cell.getValue() || 0,
     },
     {
-      accessorKey: '_count.requestCategoryRequirement',
+      accessorKey: '_count.requestCategoryRequirements',
       header: () => t('columns.requirements'),
       cell: ({ cell }) => <RequirementDialogCell count={cell.getValue() as number} entity={entity || ''} categoryId={cell.row.original.id} />,
     },
