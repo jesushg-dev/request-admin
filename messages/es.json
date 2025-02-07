@@ -341,6 +341,7 @@
           "requirements": "Requisitos",
           "description": "Descripción",
           "isEligibleForNewClients": "Elegible para Nuevos Clientes",
+          "forms": "Formularios",
           "createdAt": "Fecha de Creación",
           "selectRow": "Seleccionar Fila"
         },
@@ -548,7 +549,8 @@
         "requests": "Solicitudes",
         "requirements": "Requisitos",
         "users": "Usuarios",
-        "createdAt": "Creado En"
+        "createdAt": "Creado En",
+        "forms": "Formularios"
       },
       "common": {
         "yes": "Sí",

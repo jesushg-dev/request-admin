@@ -17,12 +17,12 @@ import { OptionType } from '@/components/select/select';
 
 import RequestSubcategoryFormDialog from './request-subcategory-form-dialog';
 
-export const DEFAULT_SUBCATEGORY: RequestCategory = {
+export const getDefaultSubcategory = (hierarchyLevelId: string): RequestCategory => ({
   id: generateUuid(),
   name: '',
   description: '',
   isActive: true,
-  hierarchyLevelId: '',
+  hierarchyLevelId,
   isEligibleForNewClients: false,
   isSubCategoryVisible: true,
   subcategories: [],
@@ -33,9 +33,9 @@ export const DEFAULT_SUBCATEGORY: RequestCategory = {
     resolutionTime: 0,
     escalationTime: 0,
   },
-};
+});
 
-type RequestCategory = {
+export type RequestCategory = {
   id: string;
   name: string;
   description?: string;
@@ -56,7 +56,7 @@ type RequestCategory = {
 
 export const requestCategoryFormSchema: z.ZodType<RequestCategory> = z.object({
   id: z.string().uuid(),
-  name: z.string({ required_error: 'requiredName' }).min(3, 'minName'),
+  name: z.string({ required_error: 'requiredName' }).min(2, 'minName'),
   description: z.string().optional(),
   isActive: z.boolean().optional(),
   hierarchyLevelId: z.string(),
@@ -95,7 +95,7 @@ const RequestCategoryForm: FC<RequestCategoryFormProps> = ({ parentPath = 'categ
   const categoryName = levels[currentDepth]?.name;
 
   const addCategory = (hierarchyLevelId: string) => {
-    append({ ...DEFAULT_SUBCATEGORY, hierarchyLevelId });
+    append(getDefaultSubcategory(hierarchyLevelId));
   };
   const toggleExpand = (currentPath: string, value: boolean) => setValue(`${currentPath}.isSubCategoryVisible` as `categories.${number}.isSubCategoryVisible`, !value);
 

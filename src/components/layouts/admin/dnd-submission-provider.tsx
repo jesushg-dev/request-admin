@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, ReactNode, useContext, useMemo, useState } from 'react';
+import { createContext, ReactNode, useContext, useOptimistic, useState, useTransition } from 'react';
 import { I18Link } from '@/i18n/routing';
 import { useCreateMenuItem, useDeleteMenuItem, useFindManyMenuItem, useUpdateManyMenuItem } from '@/services/api/hooks';
 import { Active, DndContext, DragEndEvent, DragOverlay } from '@dnd-kit/core';
@@ -8,7 +8,6 @@ import { MenuItem as DatabaseMenuItem, type Form } from '@prisma/client';
 import { BookTextIcon, LucideIcon } from 'lucide-react';
 import { TreeItem } from 'react-complex-tree';
 
-import useTenantId from '@/hooks/use-tenant-id';
 import { FormCard } from '@/components/builder-form/form-card';
 import ClientOnlyPortal from '@/components/cient-only-portal';
 
@@ -24,8 +23,8 @@ interface DragEndEventForm extends DragEndEvent {
 
 interface DndSubmissionContextProps {
   isLoading: boolean;
-  currentForm: Form | null;
   formMenuItems: Record<string, TreeItem<ConvertedMenuItem>>;
+  currentForm: Form | null;
   setCurrentForm: React.Dispatch<React.SetStateAction<Form | null>>;
   deleteMenuItemById: (id: string) => void;
   updateMenuItemsParentAndPosition: (itemId: string, newChildren: string[]) => void;
@@ -40,32 +39,89 @@ const DndSubmissionContext = createContext<DndSubmissionContextProps>({
   updateMenuItemsParentAndPosition: () => {},
 });
 
-export function DndSubmissionProvider({ children }: { children: ReactNode }) {
-  const tenantId = useTenantId();
+type OptimisticAction = { type: 'updatePositions'; itemId: string; newChildren: string[] } | { type: 'delete'; id: string } | { type: 'add'; menuItem: TreeItem<ConvertedMenuItem> };
 
-  const { data, isLoading, isRefetching } = useFindManyMenuItem({
-    where: { tenantId },
-  });
+function optimisticReducer(state: Record<string, TreeItem<ConvertedMenuItem>>, action: OptimisticAction): Record<string, TreeItem<ConvertedMenuItem>> {
+  switch (action.type) {
+    case 'updatePositions': {
+      if (action.itemId === 'root') {
+        return {
+          ...state,
+          root: {
+            ...state.root,
+            children: action.newChildren,
+          },
+        };
+      } else if (state[action.itemId]) {
+        return {
+          ...state,
+          [action.itemId]: {
+            ...state[action.itemId],
+            children: action.newChildren,
+          },
+        };
+      }
+      return state;
+    }
+    case 'delete': {
+      const newState = { ...state };
+      delete newState[action.id];
+      Object.keys(newState).forEach((key) => {
+        if (newState[key].children && newState[key].children.includes(action.id)) {
+          newState[key] = {
+            ...newState[key],
+            children: newState[key].children.filter((childId) => childId !== action.id),
+          };
+        }
+      });
+      return newState;
+    }
+    case 'add': {
+      const newState = { ...state };
+      newState[action.menuItem.index] = action.menuItem;
+      newState['root'] = {
+        ...newState['root'],
+        children: [...(newState['root'].children || []), action.menuItem.index],
+      };
+      return newState;
+    }
+    default:
+      return state;
+  }
+}
 
+export function DndSubmissionProvider({ children, tenantId }: { children: ReactNode; tenantId: string; data: DatabaseMenuItem[] }) {
   const { mutateAsync: addMenuItem } = useCreateMenuItem();
   const { mutateAsync: deleteMenuItem } = useDeleteMenuItem();
   const { mutateAsync: updateMenuItem } = useUpdateManyMenuItem();
-
+  const { data } = useFindManyMenuItem({ where: { tenantId } });
   const [currentForm, setCurrentForm] = useState<Form | null>(null);
-
-  const formMenuItems = useMemo(() => {
-    return convertMenuItemsToTree(data ?? [], tenantId);
-  }, [data, tenantId]);
+  const [optimisticMenuItems, updateOptimisticMenuItems] = useOptimistic(convertMenuItemsToTree(data ?? [], tenantId), optimisticReducer);
+  const [isPending, startTransition] = useTransition();
 
   const handleDragEnd = (event: DragEndEventForm) => {
     const { active, over } = event;
-
     if (over && over.id === 'form-submissions') {
       setCurrentForm(null);
       const existingItem = data?.some((item) => item.slug === active.data.current.id);
       if (existingItem) return;
-
-      addMenuItemToDatabase(active.data.current);
+      const newMenuItem: TreeItem<ConvertedMenuItem> = {
+        index: active.data.current.id,
+        isFolder: false,
+        children: [],
+        data: {
+          title: active.data.current.name,
+          icon: BookTextIcon,
+          url: {
+            pathname: '/admin/[tenantId]/form-designer/[slug]',
+            params: { tenantId, slug: active.data.current.id },
+          },
+        },
+      };
+      startTransition(async () => {
+        updateOptimisticMenuItems({ type: 'add', menuItem: newMenuItem });
+        await addMenuItemToDatabase(active.data.current);
+      });
     }
   };
 
@@ -86,7 +142,6 @@ export function DndSubmissionProvider({ children }: { children: ReactNode }) {
           parentId: null,
         },
       });
-
       if (!newItem) {
         throw new Error('Failed to add menu item');
       }
@@ -96,39 +151,44 @@ export function DndSubmissionProvider({ children }: { children: ReactNode }) {
   };
 
   const updateMenuItemsParentAndPosition = async (itemId: string, newChildren: string[]) => {
-    console.log('🚀 ~ updateMenuItemsParentAndPosition ~ itemId:', itemId, newChildren);
-    try {
-      await Promise.all(
-        newChildren.map((childId, index) =>
-          updateMenuItem({
-            where: { id: childId },
-            data: {
-              parentId: itemId === 'root' ? null : itemId,
-              position: index,
-            },
-          })
-        )
-      );
-      console.log('Menu items updated successfully');
-    } catch (error) {
-      console.error('Failed to update menu items:', error);
-    }
+    startTransition(async () => {
+      updateOptimisticMenuItems({ type: 'updatePositions', itemId, newChildren });
+
+      try {
+        await Promise.all(
+          newChildren.map((childId, index) =>
+            updateMenuItem({
+              where: { id: childId },
+              data: {
+                parentId: itemId === 'root' ? null : itemId,
+                position: index,
+              },
+            })
+          )
+        );
+      } catch (error) {
+        console.error('Failed to update menu items:', error);
+      }
+    });
   };
 
   const deleteMenuItemById = async (id: string) => {
-    try {
-      await updateMenuItem({ where: { parentId: id }, data: { parentId: null } });
-      await deleteMenuItem({ where: { id } });
-    } catch (error) {
-      console.error(`Failed to delete menu item with ID ${id}:`, error);
-    }
+    startTransition(async () => {
+      updateOptimisticMenuItems({ type: 'delete', id });
+      try {
+        await updateMenuItem({ where: { parentId: id }, data: { parentId: null } });
+        await deleteMenuItem({ where: { id } });
+      } catch (error) {
+        console.error(`Failed to delete menu item with ID ${id}:`, error);
+      }
+    });
   };
 
   return (
     <DndSubmissionContext.Provider
       value={{
-        isLoading: isLoading || isRefetching,
-        formMenuItems,
+        isLoading: isPending,
+        formMenuItems: optimisticMenuItems,
         currentForm,
         setCurrentForm,
         deleteMenuItemById,
@@ -136,13 +196,8 @@ export function DndSubmissionProvider({ children }: { children: ReactNode }) {
       }}>
       <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         {children}
-
         <ClientOnlyPortal selector="#body">
-          <DragOverlay
-            //disable effect that the item returns to its original position
-            adjustScale={true}>
-            {currentForm && <FormCard form={currentForm} className="cursor-pointer" />}
-          </DragOverlay>
+          <DragOverlay adjustScale={true}>{currentForm && <FormCard form={currentForm} className="cursor-pointer" />}</DragOverlay>
         </ClientOnlyPortal>
       </DndContext>
     </DndSubmissionContext.Provider>
@@ -160,14 +215,10 @@ export function useDndSubmissionContext() {
 function convertMenuItemsToTree(rawMenuItems: DatabaseMenuItem[], tenantId: string): Record<string, TreeItem<ConvertedMenuItem>> {
   const result: Record<string, TreeItem<ConvertedMenuItem>> = {};
   const itemsMap: Record<string, DatabaseMenuItem[]> = {};
-
-  // Group items by parentId
   rawMenuItems.forEach((item) => {
     const parentId = item.parentId || 'root';
     itemsMap[parentId] = [...(itemsMap[parentId] || []), item];
   });
-
-  // Process items recursively
   const processItem = (item: DatabaseMenuItem): string => {
     const children = itemsMap[item.id]?.map(processItem) || [];
     result[item.id] = {
@@ -185,11 +236,7 @@ function convertMenuItemsToTree(rawMenuItems: DatabaseMenuItem[], tenantId: stri
     };
     return item.id;
   };
-
-  // Process root-level items
   const rootChildren = itemsMap['root']?.map(processItem) || [];
-
-  // Add root node
   result['root'] = {
     index: 'root',
     isFolder: true,
@@ -200,6 +247,5 @@ function convertMenuItemsToTree(rawMenuItems: DatabaseMenuItem[], tenantId: stri
       url: { pathname: '/' },
     },
   };
-
   return result;
 }

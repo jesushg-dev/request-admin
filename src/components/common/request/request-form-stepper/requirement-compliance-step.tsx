@@ -27,7 +27,7 @@ const RequirementComplianceStep: FC<RequirementComplianceStepProps> = ({ request
   const { data, isLoading } = useFindManyRequirement({
     where: {
       requestCategoryRequirements: {
-        every: { categoryId: { in: requestCategoryIds } },
+        some: { categoryId: { in: requestCategoryIds } },
       },
     },
   });

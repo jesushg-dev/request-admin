@@ -14,14 +14,14 @@ import { StepperNavigationButtons } from '@/components/stepper/step-navigation-b
 
 import CategoryStep, { combinedCategoriesSchema, CombinedCategoriesValues } from './category-step';
 import DynamicFormStep, { dynamicFormSchema } from './dynamic-form-step';
-import RequestDetailsStep from './request-details-step';
+import RequestDetailsStep, { requestDetailSchema } from './request-details-step';
 import RequirementComplianceStep, { requirementComplianceSchema } from './requirement-compliance-step';
 import SummaryStep from './summary-step';
 
 const { useStepper, utils } = defineStepper(
   { id: 'categories', label: 'Categories', schema: combinedCategoriesSchema },
   { id: 'requirementCompliance', label: 'Requirement Compliance', schema: requirementComplianceSchema },
-  { id: 'requestDetails', label: 'Request Details', schema: requirementComplianceSchema },
+  { id: 'requestDetails', label: 'Request Details', schema: requestDetailSchema },
   { id: 'dynamicForm', label: 'Dynamic Form', schema: dynamicFormSchema },
   { id: 'summary', label: 'Summary', schema: z.object({}) }
 );

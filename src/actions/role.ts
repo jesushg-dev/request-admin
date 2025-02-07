@@ -19,11 +19,11 @@ export const getModulesWithFeatures = async (tenantId: string) => {
   return modules;
 };
 
-export const getRoleAsFormById = async (id: string, tenantId: string): Promise<RoleFormStepperType> => {
+export const getRoleAsFormById = async (ids: string[], tenantId: string): Promise<RoleFormStepperType> => {
   const session = await auth();
   if (!session) throw new UserNotFoundErr('User not found');
 
-  const role = await db.role.findFirstOrThrow({
+  const roles = await db.role.findMany({
     select: {
       id: true,
       name: true,
@@ -48,7 +48,6 @@ export const getRoleAsFormById = async (id: string, tenantId: string): Promise<R
         select: {
           id: true,
           userTenantId: true,
-
           userTenant: {
             select: {
               person: {
@@ -69,41 +68,41 @@ export const getRoleAsFormById = async (id: string, tenantId: string): Promise<R
         orderBy: { isActive: 'asc' },
       },
     },
-    where: { id, tenantId },
+    where: { id: { in: ids }, tenantId },
   });
 
-  const initialValues: RoleFormStepperType = {
-    roles: [
-      {
-        id: role.id,
-        name: role.name,
-        description: role.description ?? '',
-        isActive: role.isActive,
-        features: role.roleFeature.map((feature) => ({
-          id: feature.id,
-          moduleId: feature.feature.moduleId,
-          moduleName: feature.feature.module.name,
-          moduleDescription: feature.feature.module.description ?? '',
-          featureId: feature.feature.id,
-          featureName: feature.feature.name,
-          featureDescription: feature.feature.description ?? '',
-          isActive: feature.isActive,
-        })),
-      },
-    ],
-    userRoles: role.userRole.map((user) => ({
-      id: user.id,
-      isActive: user.isActive,
-      userId: {
-        value: user.userTenantId,
-        label:
-          user.userTenant.person?.firstName && user.userTenant.person?.lastName
-            ? `${user.userTenant.person?.firstName} ${user.userTenant.person?.lastName} @${user.userTenant.user.username}`
-            : user.userTenant.user.username,
-      },
-      roleId: { value: role.id, label: role.name },
+  const roleForm: RoleFormStepperType = {
+    roles: roles.map((role) => ({
+      id: role.id,
+      name: role.name,
+      description: role.description ?? '',
+      isActive: role.isActive,
+      features: role.roleFeature.map((feature) => ({
+        id: feature.id,
+        moduleId: feature.feature.moduleId,
+        moduleName: feature.feature.module.name,
+        moduleDescription: feature.feature.module.description ?? '',
+        featureId: feature.feature.id,
+        featureName: feature.feature.name,
+        featureDescription: feature.feature.description ?? '',
+        isActive: feature.isActive,
+      })),
     })),
-  };
+    userRoles: roles.flatMap((role) =>
+      role.userRole.map((user) => ({
+        id: user.id,
+        isActive: user.isActive,
+        userId: {
+          value: user.userTenantId,
+          label:
+            user.userTenant.person?.firstName && user.userTenant.person?.lastName
+              ? `${user.userTenant.person.firstName} ${user.userTenant.person.lastName} @${user.userTenant.user.username}`
+              : user.userTenant.user.username,
+        },
+        roleId: { value: role.id, label: role.name },
+      }))
+    ),
+  } as RoleFormStepperType;
 
-  return initialValues;
+  return roleForm;
 };

@@ -22,8 +22,7 @@ const RequestCategoryDefaultArgs = Prisma.validator<Prisma.RequestCategoryDefaul
     description: true,
     hierarchyLevelId: true,
     isEligibleForNewClients: true,
-    subcategories: { select: { id: true } },
-    _count: { select: { subcategories: true, requestCategoryRequirements: true } },
+    _count: { select: { subcategories: true, categoryForms: true, requestCategoryRequirements: true } },
   },
 });
 
@@ -36,7 +35,13 @@ interface IRequestCategoryBaseProps {
 }
 
 function RequestCategorySubTable({ row, columns, isExpanded }: IRequestCategoryBaseProps) {
-  const { data, isError, error, refetch } = useFindManyRequestCategory(
+  const {
+    data,
+    isError,
+    error,
+    isLoading: requestCategoryIsLoading,
+    refetch,
+  } = useFindManyRequestCategory(
     {
       select: RequestCategoryDefaultArgs.select,
       where: {
@@ -75,13 +80,17 @@ function RequestCategorySubTable({ row, columns, isExpanded }: IRequestCategoryB
       <TableCell colSpan={row.getVisibleCells().length}>
         <div className="space-y-4">
           <div className="flex items-center space-x-2">{hierarchyIsLoading ? <Skeleton className="h-5 w-32" /> : <span className="font-semibold">{hierarchy?.name}</span>}</div>
-          <DataTable
-            table={nestedTable}
-            subComponent={{
-              columns,
-              render: (props) => <RequestCategorySubTable {...props} />,
-            }}
-          />
+          {requestCategoryIsLoading ? (
+            <Skeleton className="h-5 w-full" />
+          ) : (
+            <DataTable
+              table={nestedTable}
+              subComponent={{
+                columns,
+                render: (props) => <RequestCategorySubTable {...props} />,
+              }}
+            />
+          )}
         </div>
       </TableCell>
     </TableRow>
@@ -120,6 +129,12 @@ export function useRequestCategoryTableConfiguration({ entity }: { entity?: stri
       accessorKey: 'isEligibleForNewClients',
       header: () => t('columns.isEligibleForNewClients'),
       cell: ({ cell }) => <Checkbox checked={cell.getValue() as boolean} disabled />,
+    },
+    {
+      accessorKey: '_count.categoryForms',
+      header: () => t('columns.forms'),
+      cell: ({ cell }) => cell.getValue(),
+      size: 30,
     },
     {
       accessorKey: '_count.subcategories',

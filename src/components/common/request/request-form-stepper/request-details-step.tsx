@@ -17,21 +17,21 @@ const mockStatuses = [
   { id: 'status2', name: 'In Progress' },
 ];
 
-export const requirementComplianceSchema = z.object({
+export const requestDetailSchema = z.object({
   requestDetails: z.object({
     issueSubject: z.string().optional(),
     description: z.string().max(5000).optional(),
     priority: z.string().optional(),
     comment: z.string().max(255).optional(),
     statusId: z.string(),
-    additionalDocuments: z.array(z.instanceof(File)),
+    additionalDocuments: z.array(z.instanceof(File)).optional(),
   }),
 });
 
-export type RequirementComplianceValues = z.infer<typeof requirementComplianceSchema>;
+export type RequestDetailValues = z.infer<typeof requestDetailSchema>;
 
 export default function RequestDetailsStep() {
-  const { control } = useFormContext<RequirementComplianceValues>();
+  const { control } = useFormContext<RequestDetailValues>();
 
   const { /* uploadFiles, */ progresses, uploadedFiles, isUploading } = useUploadFile('imageUploader', { defaultUploadedFiles: [] });
 

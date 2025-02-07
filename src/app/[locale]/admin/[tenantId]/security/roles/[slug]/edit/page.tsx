@@ -15,7 +15,7 @@ const EditRolePage: FC<EditRolePageProps> = async ({ params }) => {
   const userOptions = await getUsersAsOptions(tenantId);
   const modules = await getModulesWithFeatures(tenantId);
   const requirements = await getRequirementsAsOptions(tenantId);
-  const initialValues = await getRoleAsFormById(slug, tenantId);
+  const initialValues = await getRoleAsFormById([slug], tenantId);
 
   return <RoleFormStepper initialValues={initialValues} tenantId={tenantId} requirements={requirements} userOptions={userOptions} moduleWithFeatures={modules} />;
 };

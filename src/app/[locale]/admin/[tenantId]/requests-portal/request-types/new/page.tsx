@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { getFormsAsOptions } from '@/actions/form';
+import { getHierarchyAndLevelsByTenantId } from '@/actions/hierarchy';
 import { getRequirementsAsOptions } from '@/actions/requirement';
-import { db } from '@/server/db-server';
 
 import RequestTypeForm from '@/components/common/request-type/request-type-form';
 import { PageCardWrapper } from '@/components/page-card-wrapper';
@@ -13,19 +13,9 @@ interface NewPageProps {
 const NewPage: FC<NewPageProps> = async ({ params }) => {
   const { tenantId } = await params;
 
-  const hierarchy = await db.requestHierarchy.findFirstOrThrow({
-    select: {
-      id: true,
-      name: true,
-      description: true,
-      levels: { select: { id: true, name: true, position: true } },
-    },
-  });
-
   const forms = await getFormsAsOptions(tenantId);
   const requirements = await getRequirementsAsOptions(tenantId);
-
-  const levels = hierarchy.levels.sort((a, b) => a.position - b.position);
+  const { hierarchy, levels } = await getHierarchyAndLevelsByTenantId(tenantId);
 
   return (
     <PageCardWrapper title="New Request Category" description="Create a new request category. A category can have multiple and recursive subcategories according to your business needs.">

@@ -29,14 +29,14 @@ const RequestCategoryDefaultArgs = Prisma.validator<Prisma.RequestCategoryDefaul
   select: {
     id: true,
     name: true,
+    tenantId: true,
     description: true,
     createdAt: true,
-    subcategories: {
-      select: { id: true },
-    },
     _count: {
       select: {
         requestCategoryRequirements: true,
+        subcategories: true,
+        categoryForms: true,
       },
     },
   },
@@ -90,7 +90,7 @@ const CategoryMainPage: React.FC = () => {
     },
     shallow: false,
     clearOnDefault: true,
-    getRowCanExpand: (row) => (row.original.subcategories?.length ?? 0) > 0,
+    getRowCanExpand: (row) => row.original._count.subcategories > 0,
     getRowId: (originalRow) => originalRow.id,
   });
 
@@ -172,9 +172,15 @@ export function getTableConfiguration({ t }: GetTableConfigurationProps) {
       cell: ({ cell }) => <Checkbox checked={cell.getValue() as boolean} aria-label={(cell.getValue() as boolean) ? t('common.yes') : t('common.no')} disabled />,
     },
     {
-      accessorKey: 'subcategories',
+      accessorKey: '_count.subcategories',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.categories')} />,
-      cell: ({ cell }) => (cell.getValue() as { length: number }).length,
+      cell: ({ cell }) => cell.getValue(),
+      size: 30,
+    },
+    {
+      accessorKey: '_count.categoryForms',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.forms')} />,
+      cell: ({ cell }) => cell.getValue(),
       size: 30,
     },
     {
@@ -190,7 +196,16 @@ export function getTableConfiguration({ t }: GetTableConfigurationProps) {
     },
     {
       id: 'actions',
-      cell: (data) => <ActionCell cell={data} onDelete={() => console.log('Delete', data.row.original)} onUpdate={() => console.log('Update', data.row.original)} />,
+      cell: (data) => (
+        <ActionCell
+          cell={data}
+          onDelete={() => console.log('Delete', data.row.original)}
+          updateLink={{
+            pathname: '/admin/[tenantId]/requests-portal/request-types/[slug]',
+            params: { tenantId: data.row.original.tenantId, slug: data.row.original.id },
+          }}
+        />
+      ),
       size: 20,
     },
   ];

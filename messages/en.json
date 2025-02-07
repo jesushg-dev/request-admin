@@ -339,6 +339,7 @@
           "name": "Name",
           "requirements": "Requirements",
           "categories": "Subcategories",
+          "forms": "Forms",
           "description": "Description",
           "isEligibleForNewClients": "Eligible for New Clients",
           "createdAt": "Created At",
@@ -548,7 +549,8 @@
         "requests": "Requests",
         "requirements": "Requirements",
         "users": "Users",
-        "createdAt": "Created At"
+        "createdAt": "Created At",
+        "forms": "Forms"
       },
       "common": {
         "yes": "Yes",

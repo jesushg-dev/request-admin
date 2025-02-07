@@ -1,47 +1,153 @@
+'use server';
+
 import { db } from '@/server/db-client';
 
-type SLA = {
-  id?: string;
-  resolutionTime?: number;
-  escalationTime?: number;
+import { generateUuid } from '@/lib/id';
+import { RequestCategory, RequestCategoryFormValues } from '@/components/common/category/request-category-form';
+
+type FlatCategory = RequestCategory & {
+  _parentId?: string;
+  depth: number;
 };
 
-type FormValue = {
-  value: string;
-};
+export async function getRequestCategoriesByIds(rootIds: string[], tenantId: string): Promise<RequestCategoryFormValues> {
+  const categoriesToFetch = new Set(rootIds);
+  const categoryMap = new Map<string, RequestCategory & { parentCategoryId?: string | null }>();
 
-type RequirementValue = {
-  value: string;
-};
+  while (categoriesToFetch.size > 0) {
+    const batchIds = Array.from(categoriesToFetch);
+    categoriesToFetch.clear();
 
-type Category = {
-  id?: string;
-  name: string;
-  description?: string;
-  isSubCategoryVisible?: boolean;
-  isEligibleForNewClients?: boolean;
-  hierarchyLevelId: string;
-  forms?: FormValue[];
-  requirements?: RequirementValue[];
-  sla?: SLA;
-  subcategories?: Category[];
-};
+    // Get only the relevant categories
+    const dbCategories = await db.requestCategory.findMany({
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        isActive: true,
+        hierarchyLevelId: true,
+        parentCategoryId: true,
+        isEligibleForNewClients: true,
+        requestCategoryRequirements: {
+          select: {
+            requirementId: true,
+            requirement: { select: { name: true } },
+          },
+        },
+        categoryForms: {
+          select: {
+            formId: true,
+            form: { select: { name: true } },
+          },
+        },
+        sla: {
+          select: {
+            id: true,
+            resolutionTime: true,
+            escalationTime: true,
+          },
+        },
+      },
+      where: {
+        tenantId,
+        OR: [
+          { id: { in: batchIds } }, // Get the root categories
+          { parentCategoryId: { in: batchIds } }, // Get the children of the root categories
+        ],
+      },
+    });
 
-export async function upsertCategoriesFlat(categories: Category[], tenantId: string, hierarchyId: string) {
-  const ops: ReturnType<typeof db.requestCategory.upsert>[] = [];
+    // Add categories to the map and register children for the next iteration
+    dbCategories.forEach((cat) => {
+      if (!categoryMap.has(cat.id)) {
+        categoryMap.set(cat.id, {
+          id: cat.id,
+          name: cat.name,
+          description: cat.description || undefined,
+          isActive: cat.isActive,
+          hierarchyLevelId: cat.hierarchyLevelId,
+          subcategories: [],
+          isEligibleForNewClients: cat.isEligibleForNewClients,
+          isSubCategoryVisible: true,
+          requirements: cat.requestCategoryRequirements.map((r) => ({
+            value: r.requirementId,
+            label: r.requirement.name || '',
+          })),
+          forms: cat.categoryForms.map((f) => ({
+            value: f.formId,
+            label: f.form.name || '',
+          })),
+          sla: cat.sla
+            ? {
+                id: cat.sla.id,
+                resolutionTime: cat.sla.resolutionTime ?? 0,
+                escalationTime: cat.sla.escalationTime ?? 0,
+              }
+            : { id: generateUuid(), resolutionTime: 0, escalationTime: 0 },
+          parentCategoryId: cat.parentCategoryId,
+        });
 
-  function collectOps(cat: Category) {
-    ops.push(
-      db.requestCategory.upsert({
-        where: { id: cat.id ?? '', tenantId },
+        if (cat.parentCategoryId) {
+          categoriesToFetch.add(cat.parentCategoryId); // Add parent to the next batch
+        }
+      }
+    });
+  }
+
+  // Build the category tree
+  categoryMap.forEach((cat) => {
+    if (cat.parentCategoryId && categoryMap.has(cat.parentCategoryId)) {
+      const parent = categoryMap.get(cat.parentCategoryId);
+      if (parent) {
+        parent.subcategories.push(cat);
+      }
+    }
+  });
+
+  // Get only the root categories and build their tree
+  const categories = rootIds.map((rootId) => categoryMap.get(rootId)).filter((cat) => cat !== undefined) as RequestCategory[];
+
+  return { categories };
+}
+
+/**
+ * Upserts a flat array of RequestCategory objects into the database.
+ * This function processes categories from parents to children (using the depth property)
+ * and performs nested upserts for categoryForms and requestCategoryRequirements.
+ *
+ * It also handles deletion of orphaned nested records: if a form or requirement is not
+ * present in the current category data, it is deleted.
+ *
+ * @param categories - An array of RequestCategory objects arranged in a tree structure
+ * @param tenantId - The tenant identifier
+ * @param hierarchyId - The hierarchy identifier
+ */
+export async function upsertCategoriesFlat(categories: RequestCategory[], tenantId: string, hierarchyId: string) {
+  // Flatten the category tree and sort by depth (parents first)
+  const flatCategories = flattenCategories(categories).sort((a, b) => a.depth - b.depth);
+
+  await db.$transaction(async (tx) => {
+    for (const cat of flatCategories) {
+      // Extract form and requirement IDs from the incoming data.
+      // If the arrays are undefined, treat them as empty arrays (which will delete existing nested records).
+      const formIds: string[] = cat.forms ? cat.forms.map((f) => String(f.value)) : [];
+      const requirementIds: string[] = cat.requirements ? cat.requirements.map((r) => String(r.value)) : [];
+
+      await tx.requestCategory.upsert({
+        where: { id: cat.id },
         create: {
+          id: cat.id,
           name: cat.name,
           description: cat.description,
+          // For creation, isActive is derived from isSubCategoryVisible (as in the original logic)
           isActive: cat.isSubCategoryVisible,
           isEligibleForNewClients: cat.isEligibleForNewClients,
           tenantId,
+          // Set parentCategoryId to the provided _parentId or null if there is none
+          parentCategoryId: cat._parentId ? cat._parentId : null,
           hierarchyId,
           hierarchyLevelId: cat.hierarchyLevelId,
+          // Create nested CategoryForms records from the provided forms array
           categoryForms: {
             create:
               cat.forms?.map((f) => ({
@@ -49,6 +155,7 @@ export async function upsertCategoriesFlat(categories: Category[], tenantId: str
                 formId: String(f.value),
               })) ?? [],
           },
+          // Create nested RequestCategoryRequirements records from the provided requirements array
           requestCategoryRequirements: {
             create:
               cat.requirements?.map((r) => ({
@@ -56,14 +163,17 @@ export async function upsertCategoriesFlat(categories: Category[], tenantId: str
                 requirementId: String(r.value),
               })) ?? [],
           },
-          sla: {
-            create: {
-              tenantId,
-              resolutionTime: cat.sla?.resolutionTime ?? 0,
-              escalationTime: cat.sla?.escalationTime ?? 0,
-              id: cat.sla?.id,
-            },
-          },
+          // Create nested SLA record if provided
+          sla: cat.sla
+            ? {
+                create: {
+                  tenantId,
+                  resolutionTime: cat.sla.resolutionTime ?? 0,
+                  escalationTime: cat.sla.escalationTime ?? 0,
+                  id: cat.sla.id,
+                },
+              }
+            : undefined,
         },
         update: {
           name: cat.name,
@@ -72,13 +182,20 @@ export async function upsertCategoriesFlat(categories: Category[], tenantId: str
           isEligibleForNewClients: cat.isEligibleForNewClients,
           tenantId,
           hierarchyId,
+          parentCategoryId: cat._parentId ? cat._parentId : null,
           hierarchyLevelId: cat.hierarchyLevelId,
+          // For nested CategoryForms, first delete any forms that are not present in the incoming data,
+          // then upsert each provided form.
           categoryForms: {
+            deleteMany: {
+              formId: { notIn: formIds },
+            },
             upsert:
               cat.forms?.map((f) => ({
                 where: {
+                  // The unique index is assumed to be based on (categoryId, formId, tenantId)
                   categoryId_formId_tenantId: {
-                    categoryId: cat.id ?? '',
+                    categoryId: cat.id,
                     formId: String(f.value),
                     tenantId,
                   },
@@ -93,12 +210,18 @@ export async function upsertCategoriesFlat(categories: Category[], tenantId: str
                 },
               })) ?? [],
           },
+          // For nested RequestCategoryRequirements, delete any requirements not present in the incoming data,
+          // then upsert each provided requirement.
           requestCategoryRequirements: {
+            deleteMany: {
+              requirementId: { notIn: requirementIds },
+            },
             upsert:
               cat.requirements?.map((r) => ({
                 where: {
+                  // The unique index is assumed to be based on (categoryId, requirementId, tenantId)
                   categoryId_requirementId_tenantId: {
-                    categoryId: cat.id ?? '',
+                    categoryId: cat.id,
                     requirementId: String(r.value),
                     tenantId,
                   },
@@ -113,40 +236,43 @@ export async function upsertCategoriesFlat(categories: Category[], tenantId: str
                 },
               })) ?? [],
           },
-          sla: {
-            upsert: {
-              where: {
-                id: cat.sla?.id ?? '',
-                tenantId,
-              },
-              create: {
-                tenantId,
-                resolutionTime: cat.sla?.resolutionTime ?? 0,
-                escalationTime: cat.sla?.escalationTime ?? 0,
-                id: cat.sla?.id,
-              },
-              update: {
-                tenantId,
-                resolutionTime: cat.sla?.resolutionTime ?? 0,
-                escalationTime: cat.sla?.escalationTime ?? 0,
-                id: cat.sla?.id,
-              },
-            },
-          },
+          // For the nested SLA record, use upsert to create or update it as needed.
+          sla: cat.sla
+            ? {
+                upsert: {
+                  where: {
+                    id: cat.sla.id,
+                    tenantId,
+                  },
+                  create: {
+                    tenantId,
+                    resolutionTime: cat.sla.resolutionTime ?? 0,
+                    escalationTime: cat.sla.escalationTime ?? 0,
+                    id: cat.sla.id,
+                  },
+                  update: {
+                    tenantId,
+                    resolutionTime: cat.sla.resolutionTime ?? 0,
+                    escalationTime: cat.sla.escalationTime ?? 0,
+                    id: cat.sla.id,
+                  },
+                },
+              }
+            : undefined,
         },
-      })
-    );
+      });
+    }
+  });
+}
 
-    if (cat.subcategories) {
-      for (const sub of cat.subcategories) {
-        collectOps(sub);
-      }
+function flattenCategories(categories: RequestCategory[], parentId?: string, depth: number = 0): FlatCategory[] {
+  let flat: FlatCategory[] = [];
+  for (const cat of categories) {
+    const flatCat: FlatCategory = { ...cat, _parentId: parentId, depth };
+    flat.push(flatCat);
+    if (cat.subcategories && cat.subcategories.length > 0) {
+      flat = flat.concat(flattenCategories(cat.subcategories, cat.id, depth + 1));
     }
   }
-
-  for (const cat of categories) {
-    collectOps(cat);
-  }
-
-  await db.$transaction(ops);
+  return flat;
 }

@@ -19,14 +19,12 @@ interface NavFormSubmissionsProps {
 
 export function NavFormSubmissions({ currentPath }: NavFormSubmissionsProps) {
   const { formMenuItems, isLoading, deleteMenuItemById, updateMenuItemsParentAndPosition } = useDndSubmissionContext();
-  const activeKey = useMemo(() => {
-    return Object.keys(formMenuItems).find((key) => {
-      const menuItem = formMenuItems[key];
-      if (!menuItem?.data.url) return false;
-      const menuItemPathname = (menuItem.data.url as { pathname: string }).pathname;
-      return menuItemPathname === currentPath;
-    });
-  }, [formMenuItems, currentPath]);
+  const activeKey = Object.keys(formMenuItems).find((key) => {
+    const menuItem = formMenuItems[key];
+    if (!menuItem?.data.url) return false;
+    const menuItemPathname = (menuItem.data.url as { pathname: string }).pathname;
+    return menuItemPathname === currentPath;
+  });
 
   const { setNodeRef, isOver } = useDroppable({
     id: 'form-submissions',
@@ -101,7 +99,7 @@ export function NavFormSubmissions({ currentPath }: NavFormSubmissionsProps) {
                           </ContextMenuItem>
                         </ContextMenuContent>
                       </ContextMenu>
-                      {children}{' '}
+                      {children}
                     </>
                   )}
                   renderItemArrow={({ item, context }) =>

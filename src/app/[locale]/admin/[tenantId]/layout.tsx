@@ -51,9 +51,13 @@ export default async function RootLayout({
     where: { userTenants: { some: { userId: { equals: session.user.id } } } },
   });
 
+  const menuItems = await db.menuItem.findMany({
+    where: { tenantId },
+  });
+
   return (
     <SidebarProvider>
-      <DndSubmissionProvider>
+      <DndSubmissionProvider tenantId={tenantId} data={menuItems}>
         <AppSidebar tenants={tenants} user={session.user} tenantId={tenantId} />
         <main className="flex h-screen w-full flex-1 flex-col overflow-hidden">
           <Navbar tenants={tenants} />
