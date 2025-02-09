@@ -12,10 +12,10 @@ interface UpdateRequestTypePageProps {
 }
 
 const UpdateRequestTypePage: FC<UpdateRequestTypePageProps> = async ({ params }) => {
-  const { tenantId, slug } = await params;
+  const { locale, tenantId, slug } = await params;
   const forms = await getFormsAsOptions(tenantId);
   const requirements = await getRequirementsAsOptions(tenantId);
-  const { hierarchy, levels } = await getHierarchyAndLevelsByTenantId(tenantId);
+  const { hierarchy, levels } = await getHierarchyAndLevelsByTenantId(locale, tenantId);
   const initialValues = await getRequestCategoriesByIds([slug], tenantId);
 
   return (

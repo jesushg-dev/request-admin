@@ -11,11 +11,11 @@ interface NewPageProps {
 }
 
 const NewPage: FC<NewPageProps> = async ({ params }) => {
-  const { tenantId } = await params;
+  const { locale, tenantId } = await params;
 
   const forms = await getFormsAsOptions(tenantId);
   const requirements = await getRequirementsAsOptions(tenantId);
-  const { hierarchy, levels } = await getHierarchyAndLevelsByTenantId(tenantId);
+  const { hierarchy, levels } = await getHierarchyAndLevelsByTenantId(locale, tenantId);
 
   return (
     <PageCardWrapper title="New Request Category" description="Create a new request category. A category can have multiple and recursive subcategories according to your business needs.">
