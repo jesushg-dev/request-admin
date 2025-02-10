@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { MousePointerClickIcon, PlusIcon, XIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { cn } from '@/lib/utils';
@@ -15,7 +16,6 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
-import { toast } from '@/components/ui/use-toast';
 import { ElementsType, FormElement, FormElementInstance, SubmitFunction } from '@/components/builder-form/form-elements';
 
 const type: ElementsType = 'SelectField';
@@ -159,10 +159,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
       },
     });
 
-    toast({
-      title: 'Success',
-      description: 'Properties saved successfully',
-    });
+    toast.success('Success', { description: 'Properties saved successfully' });
 
     setSelectedElement(null);
   }

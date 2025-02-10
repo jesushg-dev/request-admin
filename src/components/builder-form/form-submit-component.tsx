@@ -3,8 +3,7 @@
 import React, { useState, useTransition, type FC } from 'react';
 import { SubmitForm } from '@/actions/form';
 import { useTranslations } from 'next-intl';
-
-import { toast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 
 import { FormElementInstance } from './form-elements';
 import FormRenderer from './form-renderer';
@@ -21,16 +20,13 @@ const FormSubmitComponent: FC<FormSubmitComponentProps> = ({ tenantId, formId, c
   const [submitted, setSubmitted] = useState(false);
   const [pending, startTransition] = useTransition();
 
-  const submitForm = async (jsonContent: string) => {
+  const submitForm = async (values: Record<string, string>) => {
     try {
+      const jsonContent = JSON.stringify(values.current);
       await SubmitForm(tenantId, formId, jsonContent);
       setSubmitted(true);
     } catch {
-      toast({
-        title: t('error'),
-        description: t('submissionError'),
-        variant: 'destructive',
-      });
+      toast(t('error'), { description: t('submissionError') });
     }
   };
 

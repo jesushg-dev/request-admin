@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { Check, ClipboardPasteIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/use-toast';
 
 function FormLinkShare({ shareUrl, tenantId }: { shareUrl: string; tenantId: string }) {
   const t = useTranslations('component.formBuilder');
@@ -16,8 +16,7 @@ function FormLinkShare({ shareUrl, tenantId }: { shareUrl: string; tenantId: str
     const shareLink = `${window.location.origin}/public/${tenantId}/form/submit/${shareUrl}`;
     await navigator.clipboard.writeText(shareLink);
     setCopied(true);
-    toast({
-      title: t('copied'),
+    toast(t('copied'), {
       description: t('linkCopied'),
     });
     setTimeout(() => setCopied(false), 2000);

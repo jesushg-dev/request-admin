@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { PublishForm } from '@/actions/form';
 import { FileUpIcon, LoaderCircleIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 import {
   AlertDialog,
@@ -18,7 +19,6 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/use-toast';
 
 function PublishFormBtn({ id }: { id: string }) {
   const t = useTranslations('component.formBuilder');
@@ -28,16 +28,10 @@ function PublishFormBtn({ id }: { id: string }) {
   async function publishForm() {
     try {
       await PublishForm(id);
-      toast({
-        title: t('success'),
-        description: t('publishSuccess'),
-      });
+      toast(t('success'), { description: t('publishSuccess') });
       router.refresh();
     } catch {
-      toast({
-        title: t('error'),
-        description: t('publishError'),
-      });
+      toast(t('error'), { description: t('publishError') });
     }
   }
 

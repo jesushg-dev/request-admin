@@ -19,6 +19,8 @@ import { FixedSizeList as List } from 'react-window';
 
 import { cn } from '@/lib/utils';
 
+import { Skeleton } from '../ui/skeleton';
+
 /** select option type */
 export type OptionType = { label: string; value: string | number };
 
@@ -207,7 +209,7 @@ const BaseSelect = <IsMulti extends boolean = false>(props: Props<OptionType, Is
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
+  if (!mounted) return <Skeleton className="h-9 w-full" />;
 
   return (
     <SelectComponent<OptionType, IsMulti, GroupBase<OptionType>>

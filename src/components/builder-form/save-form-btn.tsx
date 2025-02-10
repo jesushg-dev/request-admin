@@ -4,10 +4,10 @@ import React, { useTransition } from 'react';
 import { UpdateFormContent } from '@/actions/form';
 import { LoaderCircleIcon, SaveIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 import useDesigner from '@/hooks/use-designer';
 import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/use-toast';
 
 function SaveFormBtn({ id }: { id: string }) {
   const t = useTranslations('component.formBuilder');
@@ -18,16 +18,9 @@ function SaveFormBtn({ id }: { id: string }) {
     try {
       const jsonElements = JSON.stringify(elements);
       await UpdateFormContent(id, jsonElements);
-      toast({
-        title: t('success'),
-        description: t('saveSuccess'),
-      });
+      toast.success(t('success'), { description: t('saveSuccess') });
     } catch {
-      toast({
-        title: t('error'),
-        description: t('saveError'),
-        variant: 'destructive',
-      });
+      toast.error(t('error'), { description: t('saveError') });
     }
   };
 

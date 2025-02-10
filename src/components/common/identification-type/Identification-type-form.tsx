@@ -3,13 +3,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { toast } from '@/components/ui/use-toast';
 
 const formSchema = z.object({
   name: z.string().min(1, 'Name is required').max(150, 'Name must be 150 characters or less'),
@@ -46,10 +46,7 @@ export default function IdentificationTypeForm() {
 
   const onSubmit = (data: FormValues) => {
     console.log('Form submitted:', data);
-    toast({
-      title: 'Form Submitted',
-      description: 'The identification type has been successfully added.',
-    });
+    toast('Form Submitted', { description: 'The identification type has been successfully added.' });
     form.reset();
   };
 
