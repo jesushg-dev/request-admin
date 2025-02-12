@@ -19,11 +19,11 @@ model RequestHierarchyLevel extends TenantScoped, Auditable, CatalogBase {
   categories  RequestCategory[]   // Categories associated with this level
   position    Int
 
-  @@unique([position, hierarchyId])
-  @@index([hierarchyId], name: "idx_request_hierarchy_level_hierarchy_id")
-  @@unique([hierarchyId, position], name: "unique_hierarchy_position")
-  @@validate(position > 0)
   @@unique([name, tenantId])
+  @@unique([position, hierarchyId])
+  @@unique([hierarchyId, position], name: "unique_hierarchy_position")
+  @@index([hierarchyId], name: "idx_request_hierarchy_level_hierarchy_id")
+  @@validate(position > 0)
 }
 
 /// Represents a request category, with SLA and required documents.
@@ -47,6 +47,22 @@ model RequestCategory extends TenantScoped, Auditable, CatalogBase {
   @@index([hierarchyId], name: "idx_request_category_hierarchy_id")
 
   @@unique([name, hierarchyLevelId, parentCategoryId, tenantId])
+}
+
+model CategoryForm extends TenantScoped, Auditable {
+  // Primary identifier
+  id                String          @id @default(uuid()) @db.UniqueIdentifier
+  isActive          Boolean         @default(true) // Indicates if the link is active
+
+  // Relationships
+  categoryId        String          @db.UniqueIdentifier // ID of the associated category
+  formId            String          @db.UniqueIdentifier // ID of the associated form
+
+  requestCategories RequestCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  form              Form            @relation(fields: [formId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  // Constraints
+  @@unique([categoryId, formId, tenantId]) // Ensures no duplicate links between the same category and form
 }
 
 /// SLA (Service Level Agreement) model.
@@ -130,7 +146,7 @@ model AssignmentHierarchy extends TenantScoped, Auditable, CatalogBase {
   area       Area?                      @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Optional association with Area
 
   @@index([name], name: "idx_assignment_hierarchy_name")
-  @@unique([name]) // Name uniqueness is already scoped by tenant via TenantScoped
+  @@unique([name, tenantId]) // Name uniqueness is already scoped by tenant via TenantScoped
 }
 
 

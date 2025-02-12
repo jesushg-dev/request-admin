@@ -23,21 +23,6 @@ model Form extends TenantScoped, Auditable, CatalogBase {
   @@unique([name, tenantId])
 }
 
-model CategoryForm extends TenantScoped, Auditable {
-  // Primary identifier
-  id                String          @id @default(uuid()) @db.UniqueIdentifier
-
-  // Relationships
-  categoryId        String          @db.UniqueIdentifier // ID of the associated category
-  formId            String          @db.UniqueIdentifier // ID of the associated form
-
-  requestCategories RequestCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  form              Form            @relation(fields: [formId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  // Constraints
-  @@unique([categoryId, formId, tenantId]) // Ensures no duplicate links between the same category and form
-}
-
 model FormSubmission extends TenantScoped, Auditable {
   // Primary identifier
   id        String              @id @default(uuid()) @db.UniqueIdentifier

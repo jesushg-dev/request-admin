@@ -33,7 +33,7 @@ model UserTenantArea extends TenantScoped, Auditable {
   area         Area       @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   role         AreaRole?  @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([userTenantId, areaId])
+  @@unique([userTenantId, areaId, tenantId])
 }
 
 /// Represents roles that are specific to an area.
@@ -62,5 +62,5 @@ model AreaRoleFeature extends TenantScoped, Auditable {
   feature    Feature  @relation(fields: [featureId], references: [id]) // Links to Feature
 
   // Ensures a role cannot have duplicate features within the same scope
-  @@unique([areaRoleId, featureId])
+  @@unique([areaRoleId, featureId, tenantId])
 }
