@@ -1,5 +1,7 @@
 # Web System for Service Request Management
+
 https://ui.shadcn.com/examples/mail
+
 ## Overview
 
 This web system has been designed to optimize the management of service requests in the telecommunications industry. The system implements modern web technologies such as React, Next.js, Prisma, and TypeScript to deliver a scalable, user-friendly, and efficient platform for managing service requests.
@@ -28,8 +30,7 @@ The development follows the **Waterfall Methodology**, a structured and sequenti
 - Real-time notifications for status changes and updates.
 - Reports: Customizable and exportable in PDF/Excel formats.
 - Workflow creation and management for streamlined operations.
-- Dynamic form 
-
+- Dynamic form
 
 ### Technologies
 
@@ -98,6 +99,5 @@ Develop a web system for managing service requests efficiently while adhering to
 - [ShadCN Form Playground](https://www.shadcn-form.com/playground)
 - [Zenstack Encryption](https://zenstack.dev/docs/guides/field-encryption)
 - [tableau](https://www.tableau.com/)
-
 
 -- otros: agregar asignamiento masivo: seria selecionar varios casos, y asignarlos a una misma persona

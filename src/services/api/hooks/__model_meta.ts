@@ -2987,9 +2987,9 @@ const metadata = {
           name: 'id',
           fields: ['id'],
         },
-        userTenantId_areaId: {
-          name: 'userTenantId_areaId',
-          fields: ['userTenantId', 'areaId'],
+        userTenantId_areaId_tenantId: {
+          name: 'userTenantId_areaId_tenantId',
+          fields: ['userTenantId', 'areaId', 'tenantId'],
         },
       },
     },
@@ -3194,9 +3194,9 @@ const metadata = {
           name: 'id',
           fields: ['id'],
         },
-        areaRoleId_featureId: {
-          name: 'areaRoleId_featureId',
-          fields: ['areaRoleId', 'featureId'],
+        areaRoleId_featureId_tenantId: {
+          name: 'areaRoleId_featureId_tenantId',
+          fields: ['areaRoleId', 'featureId', 'tenantId'],
         },
       },
     },
@@ -3391,6 +3391,10 @@ const metadata = {
           name: 'id',
           fields: ['id'],
         },
+        name_tenantId: {
+          name: 'name_tenantId',
+          fields: ['name', 'tenantId'],
+        },
         position_hierarchyId: {
           name: 'position_hierarchyId',
           fields: ['position', 'hierarchyId'],
@@ -3398,10 +3402,6 @@ const metadata = {
         unique_hierarchy_position: {
           name: 'unique_hierarchy_position',
           fields: ['hierarchyId', 'position'],
-        },
-        name_tenantId: {
-          name: 'name_tenantId',
-          fields: ['name', 'tenantId'],
         },
       },
     },
@@ -3572,6 +3572,104 @@ const metadata = {
         name_hierarchyLevelId_parentCategoryId_tenantId: {
           name: 'name_hierarchyLevelId_parentCategoryId_tenantId',
           fields: ['name', 'hierarchyLevelId', 'parentCategoryId', 'tenantId'],
+        },
+      },
+    },
+    categoryForm: {
+      name: 'CategoryForm',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$CategoryForm$createdBy,
+        },
+        modifiedBy: {
+          name: 'modifiedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$CategoryForm$modifiedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'categoryForms',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
+        categoryId: {
+          name: 'categoryId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'requestCategories',
+        },
+        formId: {
+          name: 'formId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'form',
+        },
+        requestCategories: {
+          name: 'requestCategories',
+          type: 'RequestCategory',
+          isDataModel: true,
+          backLink: 'categoryForms',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'categoryId' },
+        },
+        form: {
+          name: 'form',
+          type: 'Form',
+          isDataModel: true,
+          backLink: 'categoryForms',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'formId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        categoryId_formId_tenantId: {
+          name: 'categoryId_formId_tenantId',
+          fields: ['categoryId', 'formId', 'tenantId'],
         },
       },
     },
@@ -4267,9 +4365,9 @@ const metadata = {
           name: 'id',
           fields: ['id'],
         },
-        name: {
-          name: 'name',
-          fields: ['name'],
+        name_tenantId: {
+          name: 'name_tenantId',
+          fields: ['name', 'tenantId'],
         },
       },
     },
@@ -4664,99 +4762,6 @@ const metadata = {
         name_tenantId: {
           name: 'name_tenantId',
           fields: ['name', 'tenantId'],
-        },
-      },
-    },
-    categoryForm: {
-      name: 'CategoryForm',
-      fields: {
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
-        },
-        deletedAt: {
-          name: 'deletedAt',
-          type: 'DateTime',
-          isOptional: true,
-        },
-        createdBy: {
-          name: 'createdBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$CategoryForm$createdBy,
-        },
-        modifiedBy: {
-          name: 'modifiedBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$CategoryForm$modifiedBy,
-        },
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'categoryForms',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
-        },
-        categoryId: {
-          name: 'categoryId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'requestCategories',
-        },
-        formId: {
-          name: 'formId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'form',
-        },
-        requestCategories: {
-          name: 'requestCategories',
-          type: 'RequestCategory',
-          isDataModel: true,
-          backLink: 'categoryForms',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'categoryId' },
-        },
-        form: {
-          name: 'form',
-          type: 'Form',
-          isDataModel: true,
-          backLink: 'categoryForms',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'formId' },
-        },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
-        },
-        categoryId_formId_tenantId: {
-          name: 'categoryId_formId_tenantId',
-          fields: ['categoryId', 'formId', 'tenantId'],
         },
       },
     },
@@ -6340,6 +6345,14 @@ function $default$RequestCategory$modifiedBy(user: any): unknown {
   return user?.id;
 }
 
+function $default$CategoryForm$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$CategoryForm$modifiedBy(user: any): unknown {
+  return user?.id;
+}
+
 function $default$SLA$createdBy(user: any): unknown {
   return user?.id;
 }
@@ -6417,14 +6430,6 @@ function $default$Form$createdBy(user: any): unknown {
 }
 
 function $default$Form$modifiedBy(user: any): unknown {
-  return user?.id;
-}
-
-function $default$CategoryForm$createdBy(user: any): unknown {
-  return user?.id;
-}
-
-function $default$CategoryForm$modifiedBy(user: any): unknown {
   return user?.id;
 }
 
