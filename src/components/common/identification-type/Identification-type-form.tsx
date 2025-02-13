@@ -116,10 +116,8 @@ export default function IdentificationTypeForm() {
 
                     const isValid = validateRegex(regex, testInput);
                     if (isValid !== null) {
-                      toast({
-                        title: isValid ? 'Regex Valid' : 'Regex Invalid',
+                      toast(isValid ? 'Regex Valid' : 'Regex Invalid', {
                         description: isValid ? 'The regex matches the test input.' : 'The regex does not match the test input.',
-                        variant: isValid ? 'default' : 'destructive',
                       });
                     }
                   }}

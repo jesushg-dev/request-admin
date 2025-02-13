@@ -2952,7 +2952,6 @@ const metadata = {
         roleId: {
           name: 'roleId',
           type: 'String',
-          isOptional: true,
           isForeignKey: true,
           relationField: 'role',
         },
@@ -2976,7 +2975,6 @@ const metadata = {
           name: 'role',
           type: 'AreaRole',
           isDataModel: true,
-          isOptional: true,
           backLink: 'userAreas',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'roleId' },
@@ -3063,7 +3061,6 @@ const metadata = {
         areaId: {
           name: 'areaId',
           type: 'String',
-          isOptional: true,
           isForeignKey: true,
           relationField: 'area',
         },
@@ -3071,7 +3068,6 @@ const metadata = {
           name: 'area',
           type: 'Area',
           isDataModel: true,
-          isOptional: true,
           backLink: 'areaRole',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'areaId' },

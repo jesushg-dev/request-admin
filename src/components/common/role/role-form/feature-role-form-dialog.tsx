@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { HelpCircle, Settings } from 'lucide-react';
+import { FileCogIcon, HelpCircle } from 'lucide-react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 import { ModuleWithFeaturesType } from '@/types/prisma/module';
@@ -12,8 +12,8 @@ import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessa
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import ConditionalDialogWrapper from '@/components/conditional-dialog-wrapper';
+import { Hint } from '@/components/hint';
 
 import { RoleFormBatchValues } from '.';
 
@@ -48,18 +48,14 @@ export function FeatureRoleFormDialog({ roleIndex, modules, isBatch }: FeatureRo
 
   return (
     <ConditionalDialogWrapper
+      exitText="Close"
       isDialog={isBatch}
+      title={`Role Features: #${roleIndex + 1}`}
       trigger={
         <Button type="button" className="relative" variant="outline" size="sm">
-          <Settings className="size-4" />
-          {/*requirementsCount && (
-            <Badge className="absolute -right-2 -top-2 px-1 py-0 text-[10px]">
-              <span>{requirementsCount > 9 ? '9+' : requirementsCount}</span>
-            </Badge>
-          )*/}
+          <FileCogIcon className="size-4" />
         </Button>
-      }
-      title="Role Features">
+      }>
       {/* Role Description */}
       <FormField
         control={control}
@@ -92,16 +88,9 @@ export function FeatureRoleFormDialog({ roleIndex, modules, isBatch }: FeatureRo
                     <div className="flex items-center gap-2">
                       {module.name}
                       {module.description && (
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <HelpCircle className="text-muted-foreground h-4 w-4" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>{module.description}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <Hint label={module.description}>
+                          <HelpCircle className="text-muted-foreground h-4 w-4" />
+                        </Hint>
                       )}
                     </div>
                   </TableCell>
@@ -127,9 +116,11 @@ export function FeatureRoleFormDialog({ roleIndex, modules, isBatch }: FeatureRo
                                 })
                               }
                             />
-                            <label htmlFor={`${module.id}-${feature.id}`} className="cursor-pointer text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                              {feature.name}
-                            </label>
+                            <Hint label={feature.description ?? ''}>
+                              <label htmlFor={`${module.id}-${feature.id}`} className="cursor-pointer text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                {feature.name}
+                              </label>
+                            </Hint>
                           </div>
                         );
                       })}
@@ -141,7 +132,7 @@ export function FeatureRoleFormDialog({ roleIndex, modules, isBatch }: FeatureRo
           </Table>
         </ScrollArea>
       </div>
-      <FormDescription>Select the features that the role should have access to. If a feature is not selected, the role will not have access to it.</FormDescription>
+      <FormDescription>Select the features that users with this role should have access to. If a feature is not selected, users with this role will not have access to it.</FormDescription>
 
       <FormField
         control={control}

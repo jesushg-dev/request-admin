@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { getFormsAsOptions } from '@/actions/form';
-import { getHierarchyAndLevelsByTenantId } from '@/actions/hierarchy';
+import { getRequestHierarchyAndLevelsByTenantId } from '@/actions/hierarchy';
 import { getRequirementsAsOptions } from '@/actions/requirement';
 
 import RequestTypeForm from '@/components/common/request-type/request-type-form';
@@ -15,7 +15,7 @@ const NewPage: FC<NewPageProps> = async ({ params }) => {
 
   const forms = await getFormsAsOptions(tenantId);
   const requirements = await getRequirementsAsOptions(tenantId);
-  const { hierarchy, levels } = await getHierarchyAndLevelsByTenantId(locale, tenantId);
+  const { hierarchy, levels } = await getRequestHierarchyAndLevelsByTenantId(locale, tenantId);
 
   return (
     <PageCardWrapper title="New Request Category" description="Create a new request category. A category can have multiple and recursive subcategories according to your business needs.">

@@ -3,16 +3,16 @@
 import React, { FC, PropsWithChildren } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 interface ConditionalDialogProps extends PropsWithChildren {
   isDialog?: boolean;
   trigger?: React.ReactNode;
   title?: string;
-  onClose?: () => void;
+  exitText?: string;
 }
 
-const ConditionalDialogWrapper: FC<ConditionalDialogProps> = ({ isDialog = false, trigger, title, onClose, children }) => {
+const ConditionalDialogWrapper: FC<ConditionalDialogProps> = ({ isDialog = false, trigger, title, exitText, children }) => {
   if (!isDialog) {
     return <>{children}</>;
   }
@@ -27,10 +27,11 @@ const ConditionalDialogWrapper: FC<ConditionalDialogProps> = ({ isDialog = false
           </DialogHeader>
         )}
         {children}
+
         <DialogFooter>
-          <Button type="button" onClick={onClose}>
-            Close
-          </Button>
+          <DialogClose asChild>
+            <Button type="button">{exitText}</Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

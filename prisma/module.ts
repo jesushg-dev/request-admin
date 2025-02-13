@@ -1,11 +1,13 @@
 import { ModuleName, PermissionActions } from '../src/constants/permissions';
 
+export type ModuleScope = 'global' | 'area';
+
 // Strictly type a feature to ensure its `action` matches the correct `PermissionActions` structure
 type ModuleFeature<M extends keyof typeof PermissionActions> = {
   action: (typeof PermissionActions)[M][keyof (typeof PermissionActions)[M]]; // Action must exist in PermissionActions
   name: { es: string; en: string };
   description: { es: string; en: string };
-  scope: 'global' | 'area';
+  scope: ModuleScope;
 };
 
 // Define the module structure
@@ -41,6 +43,15 @@ export const PrismaModules: PrismaModulesDefinition = {
         },
         scope: 'global',
       },
+      SCOPED_CREATE: {
+        action: PermissionActions.REQUEST_MANAGEMENT.SCOPED_CREATE,
+        name: { en: 'Scoped Create', es: 'Crear en área' },
+        description: {
+          en: 'Permission to create new requests within a specific area',
+          es: 'Permiso para crear nuevas solicitudes dentro de un área específica',
+        },
+        scope: 'area',
+      },
       VIEW: {
         action: PermissionActions.REQUEST_MANAGEMENT.VIEW,
         name: { en: 'View', es: 'Ver' },
@@ -49,6 +60,15 @@ export const PrismaModules: PrismaModulesDefinition = {
           es: 'Permiso para consultar las solicitudes registradas en el sistema',
         },
         scope: 'global',
+      },
+      SCOPED_VIEW: {
+        action: PermissionActions.REQUEST_MANAGEMENT.SCOPED_VIEW,
+        name: { en: 'Scoped View', es: 'Ver en área' },
+        description: {
+          en: 'Permission to view requests within a specific area',
+          es: 'Permiso para consultar solicitudes dentro de un área específica',
+        },
+        scope: 'area',
       },
       EDIT: {
         action: PermissionActions.REQUEST_MANAGEMENT.EDIT,
@@ -59,6 +79,15 @@ export const PrismaModules: PrismaModulesDefinition = {
         },
         scope: 'global',
       },
+      SCOPED_EDIT: {
+        action: PermissionActions.REQUEST_MANAGEMENT.SCOPED_EDIT,
+        name: { en: 'Scoped Edit', es: 'Editar en área' },
+        description: {
+          en: 'Permission to edit requests within a specific area',
+          es: 'Permiso para modificar solicitudes dentro de un área específica',
+        },
+        scope: 'area',
+      },
       DISABLE: {
         action: PermissionActions.REQUEST_MANAGEMENT.DISABLE,
         name: { en: 'Disable', es: 'Inhabilitar' },
@@ -67,6 +96,15 @@ export const PrismaModules: PrismaModulesDefinition = {
           es: 'Permiso para inhabilitar solicitudes existentes en el sistema',
         },
         scope: 'global',
+      },
+      SCOPED_DISABLE: {
+        action: PermissionActions.REQUEST_MANAGEMENT.SCOPED_DISABLE,
+        name: { en: 'Scoped Disable', es: 'Inhabilitar en área' },
+        description: {
+          en: 'Permission to disable requests within a specific area',
+          es: 'Permiso para inhabilitar solicitudes dentro de un área específica',
+        },
+        scope: 'area',
       },
       ASSIGN_USER: {
         action: PermissionActions.REQUEST_MANAGEMENT.ASSIGN_USER,
@@ -77,8 +115,17 @@ export const PrismaModules: PrismaModulesDefinition = {
         },
         scope: 'area',
       },
-      SET_PRIORITY: {
-        action: PermissionActions.REQUEST_MANAGEMENT.SET_PRIORITY,
+      SCOPED_ASSIGN_USER: {
+        action: PermissionActions.REQUEST_MANAGEMENT.SCOPED_ASSIGN_USER,
+        name: { en: 'Scoped Assign', es: 'Asignar en área' },
+        description: {
+          en: 'Permission to assign users to requests within a specific area',
+          es: 'Permiso para asignar responsables a solicitudes dentro de un área específica',
+        },
+        scope: 'area',
+      },
+      SCOPED_SET_PRIORITY: {
+        action: PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_PRIORITY,
         name: { en: 'Set Priority', es: 'Establecer prioridad' },
         description: {
           en: 'Permission to set the priority of requests within an area',
@@ -86,8 +133,8 @@ export const PrismaModules: PrismaModulesDefinition = {
         },
         scope: 'area',
       },
-      SEND_DOCUMENTS: {
-        action: PermissionActions.REQUEST_MANAGEMENT.SEND_DOCUMENTS,
+      SCOPED_SEND_DOCUMENTS: {
+        action: PermissionActions.REQUEST_MANAGEMENT.SCOPED_SEND_DOCUMENTS,
         name: { en: 'Send Documents', es: 'Enviar documentos' },
         description: {
           en: 'Permission to upload or send documents related to requests within a specific area',

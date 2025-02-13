@@ -1,6 +1,6 @@
 import { FC } from 'react';
+import { getModuleByTenantIdAndScope } from '@/actions/module';
 import { getRequirementsAsOptions } from '@/actions/requirement';
-import { getModulesWithFeatures } from '@/actions/role';
 import { getUsersAsOptions } from '@/actions/user';
 
 import RoleFormStepper from '@/components/common/role/role-form-stepper';
@@ -12,9 +12,9 @@ interface NewRolePageProps {
 const NewRolePage: FC<NewRolePageProps> = async ({ params }) => {
   const { tenantId } = await params;
 
-  const modules = await getModulesWithFeatures(tenantId);
   const userOptions = await getUsersAsOptions(tenantId);
   const requirements = await getRequirementsAsOptions(tenantId);
+  const modules = await getModuleByTenantIdAndScope(tenantId, 'global');
 
   return <RoleFormStepper tenantId={tenantId} requirements={requirements} userOptions={userOptions} moduleWithFeatures={modules} />;
 };

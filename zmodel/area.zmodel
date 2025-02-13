@@ -27,11 +27,11 @@ model UserTenantArea extends TenantScoped, Auditable {
   isActive     Boolean    @default(true)
   userTenantId String     @db.UniqueIdentifier
   areaId       String     @db.UniqueIdentifier
-  roleId       String?    @db.UniqueIdentifier
+  roleId       String    @db.UniqueIdentifier
 
   userTenant   UserTenant @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   area         Area       @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  role         AreaRole?  @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  role         AreaRole  @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([userTenantId, areaId, tenantId])
 }
@@ -40,8 +40,8 @@ model UserTenantArea extends TenantScoped, Auditable {
 /// Area roles define features and responsibilities of users within a specific organizational area.
 model AreaRole extends TenantScoped, Auditable, CatalogBase {
   // Relationships
-  areaId           String?           @db.UniqueIdentifier
-  area             Area?             @relation(fields: [areaId], references: [id]) // Links to the Area model
+  areaId           String           @db.UniqueIdentifier
+  area             Area            @relation(fields: [areaId], references: [id]) // Links to the Area model
   userAreas        UserTenantArea[] // Links this role to users assigned within an area
   areaRoleFeatures AreaRoleFeature[] // Links this role to features specific to the area
 

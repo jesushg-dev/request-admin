@@ -25,6 +25,7 @@ const RequirementComplianceStep: FC<RequirementComplianceStepProps> = ({ request
   const { control, setValue, watch } = useFormContext<RequirementComplianceValues>();
 
   const { data, isLoading } = useFindManyRequirement({
+    select: { id: true, name: true, description: true },
     where: {
       requestCategoryRequirements: {
         some: { categoryId: { in: requestCategoryIds } },
@@ -59,19 +60,27 @@ const RequirementComplianceStep: FC<RequirementComplianceStepProps> = ({ request
     setValue('requirementCompliances', updated);
   };
 
-  if (!data) return null;
+  if (isLoading)
+    return (
+      <div className="space-y-4 flex-1 overflow-hidden">
+        <Skeleton className="h-15" />
+        {Array.from({ length: 15 }).map((_, index) => (
+          <Skeleton key={index} className="h-10" />
+        ))}
+      </div>
+    );
 
   return (
     <div className="flex flex-col gap-4 flex-1 overflow-hidden">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Requirements ({data.length})</h3>
+        <h3 className="text-lg font-semibold">Requirements ({data?.length ?? 0})</h3>
         <Button variant="outline" size="sm" onClick={handleSelectAll} type="button" title={Object.values(currentRequirements).every((v) => v) ? 'Unselect All' : 'Select All'} disabled={isLoading}>
           {Object.values(currentRequirements).every((v) => v) ? 'Unselect All' : 'Select All'}
         </Button>
       </div>
       <ScrollArea className="flex-1">
         <div className="flex flex-col gap-2">
-          {data.map((req) => (
+          {data?.map((req) => (
             <FormField
               key={req.id}
               control={control}

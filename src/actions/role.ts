@@ -1,23 +1,9 @@
 import { auth } from '@/server/auth';
 import { db } from '@/server/db-client';
 
-import { ModuleDefaultArgs } from '@/types/prisma/module';
 import { RoleFormStepperType } from '@/components/common/role/role-form-stepper';
 
 class UserNotFoundErr extends Error {}
-
-export const getModulesWithFeatures = async (tenantId: string) => {
-  const session = await auth();
-  if (!session) {
-    throw new UserNotFoundErr('User not found');
-  }
-
-  const modules = await db.module.findMany({
-    ...ModuleDefaultArgs,
-    where: { isActive: true, tenantId, feature: { every: { scope: 'global', isActive: true } } },
-  });
-  return modules;
-};
 
 export const getRoleAsFormById = async (ids: string[], tenantId: string): Promise<RoleFormStepperType> => {
   const session = await auth();

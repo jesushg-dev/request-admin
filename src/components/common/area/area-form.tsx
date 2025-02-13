@@ -5,12 +5,21 @@ import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
+import { generateUuid } from '@/lib/id';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 
+export const getAreaDefaultValue = (): AreaFormValues => ({
+  id: generateUuid(),
+  name: '',
+  description: '',
+  isActive: true,
+});
+
 export const areaFormSchema = z.object({
+  id: z.string(),
   name: z.string().min(1, 'requiredName'),
   description: z.string().optional(),
   isActive: z.boolean().default(true),

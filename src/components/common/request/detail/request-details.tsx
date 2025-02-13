@@ -66,7 +66,7 @@ export default function ProjectDetails({ tenantId, slug }: { tenantId: string; s
                 <Separator />
                 {/* Metadata */}
                 <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4">
-                  <MetadataItem icon={<UserIcon className="h-4 w-4" />} label="Client" value={mockRequest.clientName} />
+                  <MetadataItem icon={<UserIcon className="h-4 w-4" />} label="Issue Subject" value={mockRequest.clientName} />
                   <MetadataItem
                     icon={<FlagIcon className="h-4 w-4" />}
                     label="Priority"

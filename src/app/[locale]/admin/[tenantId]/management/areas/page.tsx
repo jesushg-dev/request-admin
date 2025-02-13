@@ -27,6 +27,7 @@ import { DataTableToolbarActions } from '@/components/data-table/data-table-tool
 const AreaDefaultArgs = Prisma.validator<Prisma.AreaDefaultArgs>()({
   select: {
     id: true,
+    tenantId: true,
     name: true,
     isActive: true,
     createdAt: true,
@@ -173,7 +174,16 @@ export function getTableConfiguration({ t }: GetTableConfigurationProps) {
     },
     {
       id: 'actions',
-      cell: (data) => <ActionCell cell={data} onDelete={() => console.log('Delete', data.row.original)} onUpdate={() => console.log('Update', data.row.original)} />,
+      cell: (data) => (
+        <ActionCell
+          cell={data}
+          onDelete={() => console.log('Delete', data.row.original)}
+          updateLink={{
+            pathname: '/admin/[tenantId]/management/areas/[slug]/edit',
+            params: { tenantId: data.row.original.tenantId, slug: data.row.original.id },
+          }}
+        />
+      ),
       size: 20,
     },
   ];

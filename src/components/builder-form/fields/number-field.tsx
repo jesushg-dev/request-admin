@@ -32,15 +32,8 @@ const propertiesSchema = z.object({
 
 export const NumberFieldFormElement: FormElement = {
   type,
-  construct: (id: string) => ({
-    id,
-    type,
-    extraAttributes,
-  }),
-  designerBtnElement: {
-    icon: HashIcon,
-    label: 'Number Field',
-  },
+  construct: (id: string) => ({ id, type, extraAttributes }),
+  designerBtnElement: { icon: HashIcon, label: 'Number Field' },
   designerComponent: DesignerComponent,
   formComponent: FormComponent,
   propertiesComponent: PropertiesComponent,
@@ -133,12 +126,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
     const { label, helperText, placeHolder, required } = values;
     updateElement(element.id, {
       ...element,
-      extraAttributes: {
-        label,
-        helperText,
-        placeHolder,
-        required,
-      },
+      extraAttributes: { label, helperText, placeHolder, required },
     });
   }
 

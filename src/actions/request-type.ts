@@ -18,7 +18,7 @@ export async function getRequestCategoriesByIds(rootIds: string[], tenantId: str
     const batchIds = Array.from(categoriesToFetch);
     categoriesToFetch.clear();
 
-    // Get only the relevant categories
+    // Get categories from the current batch and their direct children
     const dbCategories = await db.requestCategory.findMany({
       select: {
         id: true,
@@ -51,13 +51,13 @@ export async function getRequestCategoriesByIds(rootIds: string[], tenantId: str
       where: {
         tenantId,
         OR: [
-          { id: { in: batchIds } }, // Get the root categories
-          { parentCategoryId: { in: batchIds } }, // Get the children of the root categories
+          { id: { in: batchIds } }, // Categories from the current batch
+          { parentCategoryId: { in: batchIds } }, // Direct children of the current batch
         ],
       },
     });
 
-    // Add categories to the map and register children for the next iteration
+    // Register categories and prepare the next iteration
     dbCategories.forEach((cat) => {
       if (!categoryMap.has(cat.id)) {
         categoryMap.set(cat.id, {
@@ -86,15 +86,16 @@ export async function getRequestCategoriesByIds(rootIds: string[], tenantId: str
             : { id: generateUuid(), resolutionTime: 0, escalationTime: 0 },
           parentCategoryId: cat.parentCategoryId,
         });
+      }
 
-        if (cat.parentCategoryId) {
-          categoriesToFetch.add(cat.parentCategoryId); // Add parent to the next batch
-        }
+      // If the category is a direct child of the current batch, add its ID to search for its children
+      if (cat.parentCategoryId && batchIds.includes(cat.parentCategoryId)) {
+        categoriesToFetch.add(cat.id);
       }
     });
   }
 
-  // Build the category tree
+  // Build the hierarchical tree
   categoryMap.forEach((cat) => {
     if (cat.parentCategoryId && categoryMap.has(cat.parentCategoryId)) {
       const parent = categoryMap.get(cat.parentCategoryId);
@@ -104,8 +105,8 @@ export async function getRequestCategoriesByIds(rootIds: string[], tenantId: str
     }
   });
 
-  // Get only the root categories and build their tree
-  const categories = rootIds.map((rootId) => categoryMap.get(rootId)).filter((cat) => cat !== undefined) as RequestCategory[];
+  // Retrieve only the root categories
+  const categories = rootIds.map((rootId) => categoryMap.get(rootId)).filter((cat): cat is RequestCategory => cat !== undefined);
 
   return { categories };
 }

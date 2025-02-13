@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { db } from '@/server/db-server';
 
 import { AssignmentHierarchyDefaultArgs, RequestHierarchyDefaultArgs } from '@/types/prisma/hierarchy';
 import RequestFormStepper from '@/components/common/request/request-form-stepper';
 
-const NewRequestPage: React.FC = async () => {
+interface NewPageProps {
+  params: Promise<{ locale: string; tenantId: string }>;
+}
+
+const NewPage: FC<NewPageProps> = async ({ params }) => {
+  const { tenantId } = await params;
+
   const requestHierarchy = await db.requestHierarchy.findFirst({
     select: RequestHierarchyDefaultArgs.select,
     orderBy: { name: 'asc' },
@@ -19,7 +25,7 @@ const NewRequestPage: React.FC = async () => {
     return null;
   }
 
-  return <RequestFormStepper requestLevelTypes={requestHierarchy.levels} assignmentLevelTypes={assignmentHierarchy.levels} />;
+  return <RequestFormStepper tenantId={tenantId} requestLevelTypes={requestHierarchy.levels} assignmentLevelTypes={assignmentHierarchy.levels} />;
 };
 
-export default NewRequestPage;
+export default NewPage;

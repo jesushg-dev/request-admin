@@ -1,12 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Settings } from 'lucide-react';
+import { InboxIcon, Settings } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import EmptyState from '@/components/shared/empty-state';
 
 import { ViewToggle } from './view-toggle';
 
@@ -23,7 +25,7 @@ export interface FormSubmission {
   content: Record<string, string>;
 }
 
-export default function FormSubmissionsViewer({ submissions }: { submissions: FormSubmission[] }) {
+export default function FormSubmissionsViewer({ submissions, isLoading }: { submissions: FormSubmission[]; isLoading?: boolean }) {
   const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
   const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>({
     formName: true,
@@ -35,6 +37,10 @@ export default function FormSubmissionsViewer({ submissions }: { submissions: Fo
     setColumnVisibility((prev) => ({ ...prev, [column]: !prev[column] }));
   };
 
+  if (submissions.length === 0) {
+    return <EmptyState title="No submissions available" icon={<InboxIcon className="w-10 h-10" />} description="No form submissions have been made yet." />;
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -43,7 +49,7 @@ export default function FormSubmissionsViewer({ submissions }: { submissions: Fo
           <div className="flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
+                <Button type="button" variant="outline" size="sm">
                   <Settings className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -64,7 +70,17 @@ export default function FormSubmissionsViewer({ submissions }: { submissions: Fo
         </div>
       </CardHeader>
       <CardContent>
-        {viewMode === 'table' ? <TableView submissions={submissions} columnVisibility={columnVisibility} /> : <CardView submissions={submissions} columnVisibility={columnVisibility} />}
+        {isLoading ? (
+          <div className="flex justify-center py-8">
+            <Skeleton className="w-32 h-6" />
+            <Skeleton className="w-32 h-6" />
+            <Skeleton className="w-32 h-6" />
+          </div>
+        ) : viewMode === 'table' ? (
+          <TableView submissions={submissions} columnVisibility={columnVisibility} />
+        ) : (
+          <CardView submissions={submissions} columnVisibility={columnVisibility} />
+        )}
       </CardContent>
     </Card>
   );
@@ -91,7 +107,7 @@ function TableView({ submissions, columnVisibility }: { submissions: FormSubmiss
                   <CardContent className="p-4">
                     {Object.entries(submission.content).map(([key, value]) => (
                       <div key={key} className="mb-2">
-                        <span className="font-semibold">{formatFieldName(key)}:</span> {value}
+                        <span className="font-semibold">{key}:</span> {value}
                       </div>
                     ))}
                   </CardContent>
@@ -117,7 +133,7 @@ function CardView({ submissions, columnVisibility }: { submissions: FormSubmissi
               <div className="space-y-2">
                 {Object.entries(submission.content).map(([key, value]) => (
                   <div key={key}>
-                    <span className="font-semibold">{formatFieldName(key)}:</span> {value}
+                    <span className="font-semibold">{key}:</span> {value}
                   </div>
                 ))}
               </div>
@@ -127,9 +143,4 @@ function CardView({ submissions, columnVisibility }: { submissions: FormSubmissi
       ))}
     </div>
   );
-}
-
-function formatFieldName(fieldName: string): string {
-  const words = fieldName.split(/(?=[A-Z])/);
-  return words.map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 }

@@ -201,7 +201,7 @@ export function getTableConfiguration({ t }: GetTableConfigurationProps) {
           cell={data}
           onDelete={() => console.log('Delete', data.row.original)}
           updateLink={{
-            pathname: '/admin/[tenantId]/requests-portal/request-types/[slug]',
+            pathname: '/admin/[tenantId]/requests-portal/request-types/[slug]/edit',
             params: { tenantId: data.row.original.tenantId, slug: data.row.original.id },
           }}
         />

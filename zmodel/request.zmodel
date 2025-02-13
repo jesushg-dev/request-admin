@@ -14,15 +14,10 @@ model Request extends TenantScoped, Auditable {
   // Request details
   issueSubject         String?                         @db.VarChar(255)    // Optional issue subject
   description          String?                         @db.VarChar(5000)   // Detailed request description
-  priority             String?                         @db.VarChar(50)     // Optional priority level
   closedAt             DateTime?
   closedBy             String?                         @db.VarChar(50)     // User ID who closed the request
   closedComment        String?                         @db.VarChar(500)    // Closure comment
   comment              String?                         @db.VarChar(255)    // Optional comment
-
-  // Status categorization
-  statusId             String                          @db.UniqueIdentifier
-  status               RequestStatusType               @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   // Related documents
   documents            Document[]
@@ -51,11 +46,9 @@ model Request extends TenantScoped, Auditable {
   channelId            String?                         @db.UniqueIdentifier
   channel              Channel?
 
-  @@index([statusId], name: "idx_request_status_id")
   @@index([closedAt], name: "idx_request_closed_at")
   @@index([closedBy], name: "idx_request_closed_by")
   @@index([closedComment], name: "idx_request_closed_comment")
-  @@index([priority], name: "idx_request_priority")
   @@index([issueSubject], name: "idx_request_issue_subject")
 }
 
@@ -75,25 +68,25 @@ model RelatedIncident extends TenantScoped, Auditable {
 /// Represents an assignment of a request to users or areas.
 model RequestAssignment extends TenantScoped, Auditable {
   id                   String               @id @default(uuid()) @db.UniqueIdentifier
-  priority             String?              @db.VarChar(50)
   comment              String?              @db.VarChar(255)
   assignmentDate       DateTime
   unAssignmentDate     DateTime?
-
-  typeId               String               @db.UniqueIdentifier
-  type                 AssignmentType       @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
   requestId            String               @db.UniqueIdentifier
   request              Request              @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  // Updated relationship to support multiple users
-  assignedUsers        AssignedUser[]       @relation("AssignedUsers")
 
   areaId               String?              @db.UniqueIdentifier
   area                 Area?                @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   statusId             String               @db.UniqueIdentifier
   status               RequestStatusType    @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  typeId               String               @db.UniqueIdentifier
+  type                 AssignmentType       @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  priorityId           String              @db.UniqueIdentifier
+  priority             RequestPriorityType @relation(fields: [priorityId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  assignedUsers        AssignedUser[]       @relation("AssignedUsers")
 
   documentAssignment   DocumentAssignment[]
 
@@ -140,6 +133,11 @@ model AssignmentType extends  TenantScoped, Auditable, CatalogBase {
   @@unique([name, tenantId])
 }
 
+/// Represents a catalog of possible priority levels for requests or assignments.
+model RequestPriorityType extends TenantScoped, Auditable, CatalogBase {
+  assignments RequestAssignment[]
+  @@unique([name, tenantId])
+}
 
 /// Represents a catalog of possible statuses for requests or assignments.
 model RequestStatusType extends TenantScoped, Auditable {
@@ -147,9 +145,8 @@ model RequestStatusType extends TenantScoped, Auditable {
   name                String                    @db.VarChar(50) @unique
   description         String?                   @db.VarChar(255)
   isActive            Boolean                   @default(true)
-  allowCategoryChange Boolean                   @default(true) // Defines if categories can be changed for this status
+  isAllowedToChangeCategory Boolean             @default(true) // Defines if categories can be changed for this status
 
-  requests            Request[]
   assignments         RequestAssignment[]
 
   fromTransitions     RequestStatusTransition[] @relation("FromStatus")

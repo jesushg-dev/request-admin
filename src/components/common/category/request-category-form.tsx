@@ -70,11 +70,39 @@ export const requestCategoryFormSchema: z.ZodType<RequestCategory> = z.object({
     escalationTime: z.coerce.number().min(0),
   }),
   additionalDocuments: z.array(z.instanceof(File)).optional(),
-  subcategories: z.lazy(() => z.array(requestCategoryFormSchema)),
+  subcategories: z
+    .lazy(() => z.array(requestCategoryFormSchema))
+    .superRefine((categories, ctx) => {
+      const seen = new Set<string>();
+      categories.forEach((category, index) => {
+        if (seen.has(category.name)) {
+          ctx.addIssue({
+            path: [index, 'name'],
+            code: z.ZodIssueCode.custom,
+            message: 'duplicateName',
+          });
+        } else {
+          seen.add(category.name);
+        }
+      });
+    }),
 });
 
 export const categoriesSchema = z.object({
-  categories: z.array(requestCategoryFormSchema),
+  categories: z.array(requestCategoryFormSchema).superRefine((categories, ctx) => {
+    const seen = new Set<string>();
+    categories.forEach((category, index) => {
+      if (seen.has(category.name)) {
+        ctx.addIssue({
+          path: [index, 'name'],
+          code: z.ZodIssueCode.custom,
+          message: 'duplicateName',
+        });
+      } else {
+        seen.add(category.name);
+      }
+    });
+  }),
 });
 
 export type RequestCategoryFormValues = z.infer<typeof categoriesSchema>;
@@ -90,7 +118,7 @@ interface RequestCategoryFormProps {
 
 const RequestCategoryForm: FC<RequestCategoryFormProps> = ({ parentPath = 'categories', currentDepth = 0, levels, forms, requirements, mode = 'multiple' }) => {
   const t = useTranslations('component.categoryForm');
-  const { control, setValue, watch, formState } = useFormContext<RequestCategoryFormValues>();
+  const { control, setValue, watch } = useFormContext<RequestCategoryFormValues>();
   const { fields, append, remove } = useFieldArray({ control, name: parentPath as 'categories' });
   const categoryName = levels[currentDepth]?.name;
 
@@ -104,7 +132,6 @@ const RequestCategoryForm: FC<RequestCategoryFormProps> = ({ parentPath = 'categ
       {fields.map((field, index) => {
         const currentPath = `${parentPath}.${index}`;
         const isExpanded = watch(`${currentPath}.isSubCategoryVisible` as `categories.${number}.isSubCategoryVisible`) ?? true;
-        const currentFormState = formState.errors?.categories?.[index];
 
         return (
           <div key={field.id || currentPath} className={`flex flex-col gap-2 ${currentDepth > 0 ? 'border-l-2 border-dashed pl-2' : ''}`}>
@@ -116,22 +143,19 @@ const RequestCategoryForm: FC<RequestCategoryFormProps> = ({ parentPath = 'categ
                   <FormItem className="ml-1 w-full">
                     <FormLabel className="text-xs">{t('categoryNameLabel', { categoryName, index: index + 1 })}</FormLabel>
                     <FormControl>
-                      <Input className="h-8 w-full rounded text-xs" placeholder={t('categoryNamePlaceholder', { categoryName })} {...field} />
+                      <Input placeholder={t('categoryNamePlaceholder', { categoryName })} {...field} />
                     </FormControl>
                     <div className="flex w-full justify-between gap-4 items-center">
-                      {currentFormState?.name?.message ? (
-                        <FormMessage className="text-xs">{t(currentFormState?.name?.message as 'requiredName') || t(currentFormState?.requirements?.message as 'requiredRequirements')}</FormMessage>
-                      ) : (
-                        <FormDescription className="text-xs">{t('nameDescription', { categoryName, index: index + 1 })}</FormDescription>
-                      )}
+                      <FormDescription className="text-xs">{t('nameDescription', { categoryName, index: index + 1 })}</FormDescription>
                       <RequestCategoryBadges currentPath={currentPath} />
                     </div>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
 
               <div className="flex gap-2">
-                <RequestSubcategoryFormDialog currentPath={currentPath} forms={forms} requirements={requirements} categoryName={levels[currentDepth]?.name ?? ''} />
+                <RequestSubcategoryFormDialog isBatch currentPath={currentPath} forms={forms} requirements={requirements} categoryName={levels[currentDepth]?.name ?? ''} />
 
                 {currentDepth < levels.length - 1 && (
                   <Button type="button" variant="outline" size="sm" onClick={() => toggleExpand(currentPath, isExpanded)}>
@@ -169,6 +193,7 @@ const RequestCategoryBadges: FC<{ currentPath: string }> = ({ currentPath }) => 
   const { watch } = useFormContext<RequestCategoryFormValues>();
   const formsCount = watch(`${currentPath}.forms` as `categories.${number}.forms`)?.length ?? 0;
   const requirementsCount = watch(`${currentPath}.requirements` as `categories.${number}.requirements`)?.length ?? 0;
+  const isActive = watch(`${currentPath}.isActive` as `categories.${number}.isActive`) ?? true;
 
   return (
     <div className="flex gap-2">
@@ -182,6 +207,11 @@ const RequestCategoryBadges: FC<{ currentPath: string }> = ({ currentPath }) => 
         <Badge className="flex gap-1" variant="outline">
           <BookCopy className="size-3" />
           {formsCount}
+        </Badge>
+      </Hint>
+      <Hint label="Role is active">
+        <Badge className="flex gap-1" variant={isActive ? 'outline' : 'destructive'}>
+          {isActive ? 'Active' : 'Inactive'}
         </Badge>
       </Hint>
     </div>

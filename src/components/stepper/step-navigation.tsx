@@ -18,9 +18,10 @@ interface StepNavigationProps<TStepId extends string> {
   getIndex: (index: TStepId) => number;
   onStepClick: (stepId: TStepId) => void;
   isNavigationEnabled?: boolean;
+  children?: (index: number, currentIndex: number) => React.ReactNode;
 }
 
-export const StepNavigation = <TStepId extends string>({ steps, currentId, getIndex, onStepClick, isNavigationEnabled }: StepNavigationProps<TStepId>) => {
+export const StepNavigation = <TStepId extends string>({ children, steps, currentId, getIndex, onStepClick, isNavigationEnabled }: StepNavigationProps<TStepId>) => {
   const currentStepIndex = getIndex(currentId);
 
   const onHandleStepClick = (stepId: TStepId, isAhead: boolean) => {
@@ -31,18 +32,21 @@ export const StepNavigation = <TStepId extends string>({ steps, currentId, getIn
 
   return (
     <nav aria-label="Steps" className="w-full">
-      <ol className="flex items-center gap-x-4">
+      <ol className="flex items-center gap-4">
         {steps.map((step, index, array) => (
           <Fragment key={step.id}>
-            <li className="flex items-center gap-x-2">
-              <Button
-                type="button"
-                variant={index <= currentStepIndex ? 'default' : 'outline'}
-                className={`size-8 rounded-full p-0" ${currentStepIndex >= index ? 'cursor-pointer' : ''}`}
-                onClick={() => onHandleStepClick(step.id, currentStepIndex >= index)}>
-                {index + 1}
-              </Button>
-              <span className="text-xs font-medium">{step.label}</span>
+            <li className="flex items-center gap-2 flex-col">
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant={index <= currentStepIndex ? 'default' : 'outline'}
+                  className={`size-8 rounded-full p-0" ${currentStepIndex >= index ? 'cursor-pointer' : ''}`}
+                  onClick={() => onHandleStepClick(step.id, currentStepIndex >= index)}>
+                  {index + 1}
+                </Button>
+                <span className="text-xs font-medium">{step.label}</span>
+              </div>
+              {children && children(index, currentStepIndex)}
             </li>
             {index < array.length - 1 && <Separator className={`flex-1 ${index < currentStepIndex ? 'bg-primary' : 'bg-muted'}`} />}
           </Fragment>

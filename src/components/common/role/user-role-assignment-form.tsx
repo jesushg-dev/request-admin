@@ -15,6 +15,7 @@ export const userRoleFormSchema = z.object({
   userRoles: z.array(
     z.object({
       id: z.string().uuid().default(generateUuid),
+      isActive: z.boolean().default(true),
       userId: z.object({
         value: z.string().min(1, 'User is required'),
         label: z.string().min(1),
@@ -23,7 +24,6 @@ export const userRoleFormSchema = z.object({
         value: z.string().min(1, 'Role is required'),
         label: z.string().min(1),
       }),
-      isActive: z.boolean().default(true),
     })
   ),
 });
@@ -47,7 +47,7 @@ const UserRoleAssignmentForm: FC<UserRoleAssignmentFormProps> = ({ userOptions, 
   const { fields, append, remove } = useFieldArray({ control, name: 'userRoles', keyName: '_id' });
 
   const onAppendUser = () => {
-    const newUser = { ...getDefaultUserRole(roleOptions[0]) };
+    const newUser = { ...getDefaultUserRole(roleOptions.length === 1 ? roleOptions[0] : { value: '', label: '' }) };
     append(newUser);
   };
 
@@ -75,11 +75,9 @@ const UserRoleAssignmentForm: FC<UserRoleAssignmentFormProps> = ({ userOptions, 
               )}
             />
           </div>
-          {!row.id && (
-            <Button type="button" variant="destructive" size="sm" onClick={() => remove(index)}>
-              <Trash className="size-4" />
-            </Button>
-          )}
+          <Button type="button" variant="destructive" size="sm" onClick={() => remove(index)}>
+            <Trash className="size-4" />
+          </Button>
         </div>
       ))}
       <Button type="button" variant="outline" role="combobox" size="sm" className="border-2 border-dashed" onClick={onAppendUser}>
@@ -140,8 +138,8 @@ const RoleSelectField: FC<RoleSelectFieldProps> = ({ index, roleArray, control, 
           className="w-full"
         />
       </FormControl>
+      <FormDescription>Select a role for the user</FormDescription>
       <FormMessage>{errors.userRoles?.[index]?.roleId?.value?.message || errors.userRoles?.[index]?.roleId?.label?.message || errors.userRoles?.[index]?.roleId?.message}</FormMessage>
-      <FormMessage />
     </FormItem>
   );
 };

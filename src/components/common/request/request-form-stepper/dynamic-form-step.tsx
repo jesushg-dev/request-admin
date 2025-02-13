@@ -1,151 +1,167 @@
 'use client';
 
-import { type FC } from 'react';
+import { FC, useEffect, useRef } from 'react';
 import { useFindManyForm } from '@/services/api/hooks';
-import { defineStepper } from '@stepperize/react';
-import { useFormContext } from 'react-hook-form';
+import { ScrollArea } from '@radix-ui/react-scroll-area';
+import { InboxIcon } from 'lucide-react';
+import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
-import { Button } from '@/components/ui/button';
-import FormRenderer from '@/components/builder-form/form-renderer';
+import { CardDescription, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { FormElementInstance } from '@/components/builder-form/form-elements';
+import FormRenderer, { FormRendererRef } from '@/components/builder-form/form-renderer';
+import EmptyState from '@/components/shared/empty-state';
+import { ZodErrorAlert } from '@/components/shared/zod-error-alert';
+import { useChildSteps } from '@/components/stepper/child-steps-context';
+import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 
-export const dynamicFormSchema = z.object({
-  dynamicForms: z.record(z.string()),
+export const formResponseSchema = z.object({
+  submissions: z.record(z.record(z.string())).optional(),
 });
 
-export type DynamicFormValues = z.infer<typeof dynamicFormSchema>;
+export type FormResponsesValues = z.infer<typeof formResponseSchema>;
 
 interface DynamicFormStepProps {
+  onPrev: () => void;
+  onNext: () => void;
   requestCategoryIds: string[];
 }
 
-const { useStepper, utils } = defineStepper(
-  {
-    id: 'shipping',
-    title: 'Shipping',
-    description: 'Enter your shipping details',
-  },
-  {
-    id: 'payment',
-    title: 'Payment',
-    description: 'Enter your payment details',
-  },
-  {
-    id: 'comfirmation',
-    title: 'Confirmation',
-    description: 'Confirm your order',
-  },
-  {
-    id: 'address',
-    title: 'Address',
-    description: 'Enter your address',
-  },
-  {
-    id: 'card',
-    title: 'Card',
-    description: 'Enter your card details',
-  },
-  {
-    id: 'complete',
-    title: 'Complete',
-    description: 'Stepper complete',
-  }
-);
+const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds, onPrev, onNext }) => {
+  const formRef = useRef<FormRendererRef>(null);
 
-const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds }) => {
-  const { control, setValue, watch } = useFormContext<DynamicFormValues>();
+  const { control, formState } = useFormContext<FormResponsesValues>();
+  const { steps, currentChildStepIndex, setChildrenSteps, updateChildStepStatus, setCurrentChildStepIndex } = useChildSteps();
 
   const { data, isLoading } = useFindManyForm({
-    select: { id: true, name: true, content: true },
+    orderBy: { name: 'asc' },
+    select: { id: true, name: true, description: true, content: true },
     where: {
-      isPublic: true,
-      categoryForms: { every: { categoryId: { in: requestCategoryIds } } },
+      categoryForms: { some: { categoryId: { in: requestCategoryIds } } },
     },
   });
-  console.log('🚀 ~ data:', data);
 
-  const stepper = useStepper();
+  useEffect(() => {
+    if (data) {
+      if (!data.length && !steps['dynamicForm']) {
+        onNext();
+      }
 
-  const currentIndex = utils.getIndex(stepper.current.id);
+      if (steps['dynamicForm']) return;
+
+      setChildrenSteps(
+        'dynamicForm',
+        data.map((form) => ({
+          id: form.id,
+          label: form.name,
+          description: form.description,
+          status: 'pending',
+        }))
+      );
+    }
+  }, [data, steps]);
+
+  const onBack = () => {
+    if (currentChildStepIndex === 0) {
+      onPrev();
+    } else {
+      setCurrentChildStepIndex((prev) => prev - 1);
+    }
+  };
+
+  const onSubmit = () => {
+    console.log('fantastic');
+    if (formRef.current) {
+      formRef.current.submit();
+    }
+  };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="space-y-4 flex-1 overflow-hidden">
+        <Skeleton className="h-15" />
+        {Array.from({ length: 15 }).map((_, index) => (
+          <Skeleton key={index} className="h-10" />
+        ))}
+      </div>
+    );
+  }
+
+  if (!data || data.length === 0) {
+    return (
+      <>
+        <EmptyState
+          title="No forms available"
+          icon={<InboxIcon className="w-10 h-10" />}
+          description="As a result of the selected categories, there are no forms to fill out. Press the next button to continue."
+        />
+        <StepperNavigationButtons isLastStep={false} isFirstStep={false} onPrev={onBack} onReset={console.log} nextText="Next" submitText="Finish" onNext={onNext} />
+      </>
+    );
   }
 
   return (
-    <div className="flex-1 flex flex-col gap-4">
-      <div className="flex items-center gap-4">
-        <StepIndicator currentStep={currentIndex + 1} totalSteps={stepper.all.length} />
-        <div className="flex flex-col">
-          <h2 className="flex-1 text-lg font-medium">{stepper.current.title}</h2>
-          <p className="text-sm text-muted-foreground">{stepper.current.description}</p>
+    <>
+      <div className="flex justify-between items-center w-full">
+        <div>
+          <CardTitle>{data[currentChildStepIndex]?.name}</CardTitle>
+          <CardDescription>{data[currentChildStepIndex]?.description}</CardDescription>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">
+            Step {currentChildStepIndex + 1} of {data.length}
+          </span>
+          <div />
         </div>
       </div>
-      <div className="m-1 flex flex-col gap-2">
-        {/*data?.map((form) => (
-          <FormRenderer
-            isSubmitting={pending}
-            content={content}
-            onSubmit={(jsonContent) => {
-              startTransition(submitForm.bind(null, jsonContent));
-            }}
-          />
-        ))*/}
+      <div className="flex flex-col gap-4 flex-1 overflow-y-hidden">
+        <div className="flex flex-1 flex-col gap-4 overflow-y-hidden">
+          <ZodErrorAlert />
+          <ScrollArea className="flex flex-1 gap-4">
+            <div className="flex flex-col gap-4 flex-1 mx-1">
+              {data[currentChildStepIndex] && (
+                <Controller
+                  control={control}
+                  name={`submissions.${data[currentChildStepIndex].id}`}
+                  render={({ field: { onChange, value } }) => {
+                    return (
+                      <FormRenderer
+                        ref={formRef}
+                        onSubmit={(value) => {
+                          onChange(value);
+                          updateChildStepStatus('dynamicForm', data[currentChildStepIndex].id, 'completed');
+                          if (currentChildStepIndex === data.length - 1) {
+                            onNext();
+                          } else {
+                            setCurrentChildStepIndex((prev) => prev + 1);
+                          }
+                        }}
+                        showSubmitButton={false}
+                        initialValues={value}
+                        content={JSON.parse(data[currentChildStepIndex].content ?? '[]') as FormElementInstance[]}
+                      />
+                    );
+                  }}
+                />
+              )}
+            </div>
+          </ScrollArea>
+          {formState.errors?.submissions?.[data[currentChildStepIndex]?.id]?.response?.message && (
+            <p className="text-red-500 text-sm">{formState.errors.submissions?.[data[currentChildStepIndex]?.id]?.response?.message?.toString() ?? ''}</p>
+          )}
+        </div>
       </div>
-      ;{stepper.switch({})}
-      <div className="space-y-4">
-        {!stepper.isLast ? (
-          <div className="flex justify-end gap-4">
-            <Button variant="secondary" onClick={stepper.prev} disabled={stepper.isFirst}>
-              Back
-            </Button>
-            <Button onClick={stepper.next}>{stepper.isLast ? 'Complete' : 'Next'}</Button>
-          </div>
-        ) : (
-          <Button onClick={stepper.reset}>Reset</Button>
-        )}
-      </div>
-    </div>
-  );
-};
-
-interface StepIndicatorProps {
-  currentStep: number;
-  totalSteps: number;
-  size?: number;
-  strokeWidth?: number;
-}
-
-const StepIndicator = ({ currentStep, totalSteps, size = 80, strokeWidth = 6 }: StepIndicatorProps) => {
-  const radius = (size - strokeWidth) / 2;
-  const circumference = radius * 2 * Math.PI;
-  const fillPercentage = (currentStep / totalSteps) * 100;
-  const dashOffset = circumference - (circumference * fillPercentage) / 100;
-
-  return (
-    <div className="relative inline-flex items-center justify-center">
-      <svg width={size} height={size}>
-        <title>Step Indicator</title>
-        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="currentColor" strokeWidth={strokeWidth} className="text-muted-foreground" />
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={strokeWidth}
-          strokeDasharray={circumference}
-          strokeDashoffset={dashOffset}
-          className="text-primary transition-all duration-300 ease-in-out"
-          transform={`rotate(-90 ${size / 2} ${size / 2})`}
-        />
-      </svg>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-sm font-medium" aria-live="polite">
-          {currentStep} of {totalSteps}
-        </span>
-      </div>
-    </div>
+      <StepperNavigationButtons
+        isLastStep={false}
+        isFirstStep={false}
+        onPrev={onBack}
+        onReset={console.log}
+        nextText="Next"
+        submitText="Finish"
+        onNext={currentChildStepIndex !== data.length ? onSubmit : undefined}
+      />
+    </>
   );
 };
 

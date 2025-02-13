@@ -86,7 +86,7 @@ export default async function RootLayout({ children, params }: Props) {
                 <NuqsAdapter>
                   <ConfirmDialogProvider>{children}</ConfirmDialogProvider>
                 </NuqsAdapter>
-                <Toaster />
+                <Toaster position="top-right" />
               </TanstackQueryProvider>
             </NextIntlClientProvider>
           </ThemeProvider>

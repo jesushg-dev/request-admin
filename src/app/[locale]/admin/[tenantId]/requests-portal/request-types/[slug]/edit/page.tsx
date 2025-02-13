@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { getFormsAsOptions } from '@/actions/form';
-import { getHierarchyAndLevelsByTenantId } from '@/actions/hierarchy';
+import { getRequestHierarchyAndLevelsByTenantId } from '@/actions/hierarchy';
 import { getRequestCategoriesByIds } from '@/actions/request-type';
 import { getRequirementsAsOptions } from '@/actions/requirement';
 
@@ -15,7 +15,7 @@ const UpdateRequestTypePage: FC<UpdateRequestTypePageProps> = async ({ params })
   const { locale, tenantId, slug } = await params;
   const forms = await getFormsAsOptions(tenantId);
   const requirements = await getRequirementsAsOptions(tenantId);
-  const { hierarchy, levels } = await getHierarchyAndLevelsByTenantId(locale, tenantId);
+  const { hierarchy, levels } = await getRequestHierarchyAndLevelsByTenantId(locale, tenantId);
   const initialValues = await getRequestCategoriesByIds([slug], tenantId);
 
   return (

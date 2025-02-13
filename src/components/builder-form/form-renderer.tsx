@@ -1,11 +1,11 @@
 'use client';
 
-import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from 'react';
 import { LoaderCircleIcon, MousePointerClick } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/use-toast';
 
 import { FormElementInstance, FormElements } from './form-elements';
 
@@ -14,19 +14,20 @@ export interface FormRendererRef {
 }
 
 interface FormRendererProps {
-  isSubmitting: boolean;
+  isSubmitting?: boolean;
   content: FormElementInstance[];
-  onSubmit: (jsonContent: string) => void;
+  initialValues?: Record<string, string>;
+  onSubmit: (values: Record<string, string>) => void;
   showSubmitButton?: boolean;
 }
 
-const FormRenderer = forwardRef<FormRendererRef, FormRendererProps>(({ isSubmitting, content, onSubmit, showSubmitButton = true }, ref) => {
+const FormRenderer = forwardRef<FormRendererRef, FormRendererProps>(({ initialValues = {}, isSubmitting, content, onSubmit, showSubmitButton = true }, ref) => {
   const t = useTranslations('component.formBuilder');
-  const formValues = useRef<Record<string, string>>({});
+  const formValues = useRef<Record<string, string>>({ ...initialValues });
   const formErrors = useRef<Record<string, boolean>>({});
-  const [renderKey, setRenderKey] = useState(new Date().getTime());
 
   const validateForm = useCallback(() => {
+    formErrors.current = {};
     for (const field of content) {
       const actualValue = formValues.current[field.id] || '';
       const valid = FormElements[field.type].validate(field, actualValue);
@@ -34,48 +35,45 @@ const FormRenderer = forwardRef<FormRendererRef, FormRendererProps>(({ isSubmitt
         formErrors.current[field.id] = true;
       }
     }
-    if (Object.keys(formErrors.current).length > 0) {
-      return false;
-    }
-    return true;
+    return Object.keys(formErrors.current).length === 0;
   }, [content]);
 
   const submitValue = useCallback((key: string, value: string) => {
     formValues.current[key] = value;
   }, []);
 
-  const submitForm = async () => {
-    formErrors.current = {};
-    const validForm = validateForm();
-    if (!validForm) {
-      setRenderKey(new Date().getTime());
-      toast({ title: t('error'), description: t('formError'), variant: 'destructive' });
-      return;
-    }
+  const submitForm = () => {
     try {
-      const jsonContent = JSON.stringify(formValues.current);
-      onSubmit(jsonContent);
+      const validForm = validateForm();
+
+      if (!validForm) {
+        toast.error(t('error'), { description: t('formError'), position: 'top-right' });
+        return;
+      }
+
+      onSubmit(formValues.current);
     } catch {
-      toast({
-        title: t('error'),
-        description: t('submissionError'),
-        variant: 'destructive',
-      });
+      toast.error(t('error'), { description: t('submissionError'), position: 'top-right' });
     }
   };
 
+  // Usar useImperativeHandle con el tipo correcto
   useImperativeHandle(ref, () => ({
     submit: submitForm,
   }));
 
+  useEffect(() => {
+    formValues.current = { ...initialValues };
+  }, [initialValues]);
+
   return (
-    <div key={renderKey}>
+    <>
       {content.map((element) => {
         const FormElement = FormElements[element.type].formComponent;
         return <FormElement key={element.id} elementInstance={element} submitValue={submitValue} isInvalid={formErrors.current[element.id]} defaultValue={formValues.current[element.id]} />;
       })}
       {showSubmitButton && (
-        <Button className="mt-8" onClick={submitForm} disabled={isSubmitting}>
+        <Button onClick={submitForm} disabled={isSubmitting}>
           {!isSubmitting && (
             <>
               <MousePointerClick className="mr-2" />
@@ -85,7 +83,7 @@ const FormRenderer = forwardRef<FormRendererRef, FormRendererProps>(({ isSubmitt
           {isSubmitting && <LoaderCircleIcon className="animate-spin" />}
         </Button>
       )}
-    </div>
+    </>
   );
 });
 

@@ -1,25 +1,28 @@
 'use client';
 
 import React, { FC } from 'react';
-import { Plus, Trash } from 'lucide-react';
+import { CombineIcon, Plus, Trash } from 'lucide-react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { ModuleWithFeaturesType } from '@/types/prisma/module';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Hint } from '@/components/hint';
 
 import { generateUuid } from '../../../../../prisma/util';
 import { FeatureRoleFormDialog } from './feature-role-form-dialog';
 
 // Default role structure
-export const DEFAULT_ROLE = {
+export const getDefaultRole = () => ({
   id: generateUuid(),
   name: '',
   description: '',
   features: [],
-};
+  isActive: true,
+});
 
 // Validation Schema
 export const rolesFormSchema = z.object({
@@ -29,7 +32,7 @@ export const rolesFormSchema = z.object({
         id: z.string().uuid().default(generateUuid),
         name: z.string().min(3, 'Role Name must be at least 3 characters').max(100, 'Role Name must not exceed 100 characters'),
         description: z.string().max(255, 'Description must not exceed 255 characters').optional(),
-        isActive: z.boolean().optional(),
+        isActive: z.boolean(),
         features: z.array(
           z.object({
             id: z.string().uuid().default(generateUuid),
@@ -44,7 +47,20 @@ export const rolesFormSchema = z.object({
         ),
       })
     )
-    .nonempty('At least one role is required'),
+    .superRefine((roles, ctx) => {
+      const seen = new Set<string>();
+      roles.forEach((role, index) => {
+        if (seen.has(role.name)) {
+          ctx.addIssue({
+            path: [`${index}.name`],
+            code: z.ZodIssueCode.custom,
+            message: `The role name "${role.name}" is duplicated.`,
+          });
+        } else {
+          seen.add(role.name);
+        }
+      });
+    }),
 });
 
 // Types
@@ -55,16 +71,18 @@ interface RolesFormProps {
   moduleWithFeatures: ModuleWithFeaturesType[];
 }
 
+// todo: Add Role Template to allow for pre-defined roles to be added to the form in a batch or individually
+
 const RolesForm: FC<RolesFormProps> = ({ moduleWithFeatures, isBatch }) => {
   const { control } = useFormContext<RoleFormBatchValues>();
   const { fields: roles, append: appendRole, remove: removeRole } = useFieldArray({ control, name: 'roles' });
 
-  const addRole = () => appendRole({ ...DEFAULT_ROLE });
+  const addRole = () => appendRole(getDefaultRole());
 
   return (
     <div className="mx-1 mr-4 flex flex-col gap-2">
       {roles.map((role, roleIndex) => (
-        <div key={role.id || roleIndex} className={`relative flex ${isBatch ? 'items-end rounded border p-4' : 'flex-col'} gap-2`}>
+        <div key={role.id || roleIndex} className={`relative flex ${isBatch ? 'items-center rounded border p-4' : 'flex-col'} gap-2`}>
           {/* Role Name */}
           <FormField
             control={control}
@@ -75,8 +93,13 @@ const RolesForm: FC<RolesFormProps> = ({ moduleWithFeatures, isBatch }) => {
                 <FormControl>
                   <Input className="h-8 w-full rounded" placeholder="Role Name" {...field} />
                 </FormControl>
-                <FormDescription>Role Name must be at least 3 characters and not exceed 100 characters</FormDescription>
-                <FormMessage />
+                <div className="flex w-full justify-between gap-4 items-center">
+                  <div>
+                    <FormMessage />
+                    <FormDescription>Role Name must be at least 3 characters and not exceed 100 characters</FormDescription>
+                  </div>
+                  <RoleCategoryBadges roleIndex={roleIndex} />
+                </div>
               </FormItem>
             )}
           />
@@ -96,6 +119,29 @@ const RolesForm: FC<RolesFormProps> = ({ moduleWithFeatures, isBatch }) => {
           Add Role
         </Button>
       )}
+    </div>
+  );
+};
+
+const RoleCategoryBadges: FC<{ roleIndex: number }> = ({ roleIndex }) => {
+  const { watch } = useFormContext<RoleFormBatchValues>();
+  const forms = watch(`roles.${roleIndex}.features`);
+  const formsActiveCount = forms.filter((form) => form.isActive).length;
+  const isActive = watch(`roles.${roleIndex}.isActive`);
+
+  return (
+    <div className="flex gap-2">
+      <Hint label={`Total number of features for this role: ${forms.length}`}>
+        <Badge className="flex gap-1" variant="outline">
+          <CombineIcon className="size-3" />
+          {formsActiveCount}
+        </Badge>
+      </Hint>
+      <Hint label="Role is active">
+        <Badge className="flex gap-1" variant={isActive ? 'outline' : 'destructive'}>
+          {isActive ? 'Active' : 'Inactive'}
+        </Badge>
+      </Hint>
     </div>
   );
 };

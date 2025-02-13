@@ -1,7 +1,5 @@
 # Web System for Service Request Management
 
-https://ui.shadcn.com/examples/mail
-
 ## Overview
 
 This web system has been designed to optimize the management of service requests in the telecommunications industry. The system implements modern web technologies such as React, Next.js, Prisma, and TypeScript to deliver a scalable, user-friendly, and efficient platform for managing service requests.
@@ -99,5 +97,6 @@ Develop a web system for managing service requests efficiently while adhering to
 - [ShadCN Form Playground](https://www.shadcn-form.com/playground)
 - [Zenstack Encryption](https://zenstack.dev/docs/guides/field-encryption)
 - [tableau](https://www.tableau.com/)
+- [Gestion de niveles de servicio](https://blog.invgate.com/es/topic/gesti%C3%B3n-de-niveles-de-servicio)
 
 -- otros: agregar asignamiento masivo: seria selecionar varios casos, y asignarlos a una misma persona

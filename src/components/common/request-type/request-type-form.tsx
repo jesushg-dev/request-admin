@@ -37,7 +37,6 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ hierarchyId, requirements, 
   });
 
   const onSubmit = (values: RequestCategoryFormValues) => {
-    console.log('🚀 ~ onSubmit ~ values:', values);
     startTransition(async () => {
       const operation = upsertCategoriesFlat(values.categories, tenantId, hierarchyId);
       toast.promise(operation, {
@@ -47,7 +46,6 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ hierarchyId, requirements, 
           return 'Saved successfully.';
         },
         error: (err) => {
-          console.log('🚀 ~ startTransition ~ err:', err);
           return `Failed to save: ${err.message}`;
         },
         position: 'top-right',

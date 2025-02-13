@@ -20,7 +20,7 @@ import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
 import { StepNavigation } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 
-import RoleForm, { DEFAULT_ROLE, rolesFormSchema } from './role-form';
+import RoleForm, { getDefaultRole, rolesFormSchema } from './role-form';
 import RoleFormReview from './role-form-review';
 
 const { useStepper, utils } = defineStepper(
@@ -40,8 +40,8 @@ interface RoleFormStepperProps {
 }
 
 const RoleFormStepper: FC<RoleFormStepperProps> = ({ tenantId, userOptions, moduleWithFeatures, initialValues }) => {
-  const stepper = useStepper();
   const router = useRouter();
+  const stepper = useStepper();
   const [isPending, startTransition] = useTransition();
   const { mutateAsync: upsert, error } = useUpsertRole();
 
@@ -50,7 +50,7 @@ const RoleFormStepper: FC<RoleFormStepperProps> = ({ tenantId, userOptions, modu
   const form = useForm({
     mode: 'onTouched',
     resolver: zodResolver(stepper.current.schema),
-    defaultValues: stepper.current.id === 'role' ? { roles: initialValues?.roles ?? [DEFAULT_ROLE], userRoles: initialValues?.userRoles ?? [] } : {},
+    defaultValues: stepper.current.id === 'role' ? { roles: initialValues?.roles ?? [getDefaultRole()], userRoles: initialValues?.userRoles ?? [] } : {},
   });
 
   const onSubmit = async (values: z.infer<typeof stepper.current.schema>) => {
@@ -78,18 +78,12 @@ const RoleFormStepper: FC<RoleFormStepperProps> = ({ tenantId, userOptions, modu
               description: role.description,
               isActive: role.isActive,
               userRole: {
-                upsert: userRole.map((item) => ({
-                  where: { id: item.id, tenantId },
-                  update: { tenantId, isActive: item.isActive, userTenantId: item.userId.value },
-                  create: { tenantId, isActive: item.isActive, userTenantId: item.userId.value },
-                })),
+                deleteMany: { tenantId, roleId: role.id },
+                create: userRole.map((item) => ({ tenantId, id: item.id, isActive: item.isActive, userTenantId: item.userId.value })),
               },
               roleFeature: {
-                upsert: role.features.map((feature) => ({
-                  where: { id: feature.id, tenantId },
-                  update: { tenantId, featureId: feature.featureId, isActive: feature.isActive },
-                  create: { tenantId, isActive: feature.isActive, featureId: feature.featureId },
-                })),
+                deleteMany: { tenantId, roleId: role.id },
+                create: role.features.map((feature) => ({ tenantId, id: feature.id, isActive: feature.isActive, featureId: feature.featureId })),
               },
             },
             create: {
@@ -119,7 +113,6 @@ const RoleFormStepper: FC<RoleFormStepperProps> = ({ tenantId, userOptions, modu
         error: (error) => {
           return `Failed to save roles: ${error.message}`;
         },
-        position: 'top-right',
       });
     });
   };

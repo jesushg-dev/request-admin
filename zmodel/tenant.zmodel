@@ -55,6 +55,7 @@ model Tenant extends Auditable {
   requestChangeLogs              RequestChangeLog[]
   customerSatisfactionSurveys    CustomerSatisfactionSurvey[]
   assignmentTypes                AssignmentType[]
+  requestPriorityTypes           RequestPriorityType[]
 
 
   // --- Forms ---

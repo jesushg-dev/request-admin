@@ -12,12 +12,17 @@ export enum ModuleName {
 export const PermissionActions = {
   REQUEST_MANAGEMENT: {
     CREATE: 'request_create',
+    SCOPED_CREATE: 'request_scoped_create',
     VIEW: 'request_view',
+    SCOPED_VIEW: 'request_scoped_view',
     EDIT: 'request_edit',
+    SCOPED_EDIT: 'request_scoped_edit',
     DISABLE: 'request_disable',
+    SCOPED_DISABLE: 'request_scoped_disable',
     ASSIGN_USER: 'request_assign_user',
-    SET_PRIORITY: 'request_set_priority',
-    SEND_DOCUMENTS: 'request_send_documents',
+    SCOPED_ASSIGN_USER: 'request_scoped_assign_user',
+    SCOPED_SET_PRIORITY: 'request_set_priority',
+    SCOPED_SEND_DOCUMENTS: 'request_send_documents',
   },
   FORM_DESIGNER: {
     CREATE: 'form_create',

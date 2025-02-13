@@ -591,12 +591,12 @@ model UserTenantArea {
   isActive     Boolean    @default(true)
   userTenantId String     @db.UniqueIdentifier()
   areaId       String     @db.UniqueIdentifier()
-  roleId       String?    @db.UniqueIdentifier()
+  roleId       String     @db.UniqueIdentifier()
   userTenant   UserTenant @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   area         Area       @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  role         AreaRole?  @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  role         AreaRole   @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([userTenantId, areaId])
+  @@unique([userTenantId, areaId, tenantId])
 }
 
 /// Represents roles that are specific to an area.
@@ -613,8 +613,8 @@ model AreaRole {
   modifiedBy       String?           @db.VarChar(50)
   tenantId         String            @db.UniqueIdentifier()
   tenant           Tenant            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  areaId           String?           @db.UniqueIdentifier()
-  area             Area?             @relation(fields: [areaId], references: [id])
+  areaId           String            @db.UniqueIdentifier()
+  area             Area              @relation(fields: [areaId], references: [id])
   userAreas        UserTenantArea[]
   areaRoleFeatures AreaRoleFeature[]
 
@@ -638,7 +638,7 @@ model AreaRoleFeature {
   featureId  String    @db.UniqueIdentifier()
   feature    Feature   @relation(fields: [featureId], references: [id])
 
-  @@unique([areaRoleId, featureId])
+  @@unique([areaRoleId, featureId, tenantId])
 }
 
 /// Represents a hierarchy for requests.
@@ -679,9 +679,9 @@ model RequestHierarchyLevel {
   categories  RequestCategory[]
   position    Int
 
+  @@unique([name, tenantId])
   @@unique([position, hierarchyId])
   @@unique([hierarchyId, position], name: "unique_hierarchy_position")
-  @@unique([name, tenantId])
   @@index([hierarchyId], name: "idx_request_hierarchy_level_hierarchy_id")
 }
 
@@ -715,6 +715,24 @@ model RequestCategory {
   @@unique([name, hierarchyLevelId, parentCategoryId, tenantId])
   @@index([name], name: "idx_request_category_name")
   @@index([hierarchyId], name: "idx_request_category_hierarchy_id")
+}
+
+model CategoryForm {
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime?       @updatedAt()
+  deletedAt         DateTime?
+  createdBy         String?         @db.VarChar(50)
+  modifiedBy        String?         @db.VarChar(50)
+  tenantId          String          @db.UniqueIdentifier()
+  tenant            Tenant          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                String          @id() @default(uuid()) @db.UniqueIdentifier()
+  isActive          Boolean         @default(true)
+  categoryId        String          @db.UniqueIdentifier()
+  formId            String          @db.UniqueIdentifier()
+  requestCategories RequestCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  form              Form            @relation(fields: [formId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([categoryId, formId, tenantId])
 }
 
 /// SLA (Service Level Agreement) model.
@@ -858,7 +876,7 @@ model AssignmentHierarchy {
   areaId      String?                    @db.UniqueIdentifier()
   area        Area?                      @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([name])
+  @@unique([name, tenantId])
   @@index([name], name: "idx_assignment_hierarchy_name")
 }
 
@@ -940,23 +958,6 @@ model Form {
   formSubmissions FormSubmission[]
 
   @@unique([name, tenantId])
-}
-
-model CategoryForm {
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime?       @updatedAt()
-  deletedAt         DateTime?
-  createdBy         String?         @db.VarChar(50)
-  modifiedBy        String?         @db.VarChar(50)
-  tenantId          String          @db.UniqueIdentifier()
-  tenant            Tenant          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                String          @id() @default(uuid()) @db.UniqueIdentifier()
-  categoryId        String          @db.UniqueIdentifier()
-  formId            String          @db.UniqueIdentifier()
-  requestCategories RequestCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  form              Form            @relation(fields: [formId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  @@unique([categoryId, formId, tenantId])
 }
 
 model FormSubmission {

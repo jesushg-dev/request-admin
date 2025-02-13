@@ -5,11 +5,10 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/componen
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AssignmentHistory } from '@/components/common/request/detail/assignments-viewer';
 import AssociatedFilesViewer from '@/components/common/request/detail/associated-files-viewer';
-import Comments from '@/components/common/request/detail/comments';
 import { RelatedViewer } from '@/components/common/request/detail/related-viewer';
 import ProjectActivities from '@/components/common/request/detail/request-activities';
 import ProjectDetails from '@/components/common/request/detail/request-details';
-import TaskProgress from '@/components/common/request/detail/requirement-progress';
+import RequirementProgress from '@/components/common/request/detail/requirement-progress';
 import FormSubmissionsViewer from '@/components/common/request/detail/submissions-viewer';
 
 import { activities, documents, guideDocuments, submissions, tasks } from './mockData';
@@ -31,7 +30,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ ten
       <ResizableHandle withHandle />
       <ResizablePanel minSize={30} defaultSize={70}>
         <div className="h-full p-4">
-          <Tabs defaultValue="tasks" className="w-full">
+          <Tabs defaultValue="requirements" className="w-full">
             <TabsList className="flex gap-2">
               <TabsTrigger value="requirements">Requirements</TabsTrigger>
               <TabsTrigger value="chat">Chat</TabsTrigger>
@@ -42,11 +41,9 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ ten
               <TabsTrigger value="history">History</TabsTrigger>
             </TabsList>
             <TabsContent value="requirements">
-              <TaskProgress tasks={tasks} />
+              <RequirementProgress requirements={tasks} />
             </TabsContent>
-            <TabsContent value="chat">
-              <Comments slug={slug} currentUserId={session.user.id} channel={channel} tenantId={tenantId} />
-            </TabsContent>
+            <TabsContent value="chat">{/*<Comments slug={slug} currentUserId={session.user.id} channel={channel} tenantId={tenantId} />*/}</TabsContent>
             <TabsContent value="files">
               <AssociatedFilesViewer guideDocuments={guideDocuments} documents={documents} />
             </TabsContent>
