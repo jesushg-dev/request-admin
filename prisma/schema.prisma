@@ -53,6 +53,7 @@ model Tenant {
   requestChangeLogs              RequestChangeLog[]
   customerSatisfactionSurveys    CustomerSatisfactionSurvey[]
   assignmentTypes                AssignmentType[]
+  requestPriorityTypes           RequestPriorityType[]
   forms                          Form[]
   formSubmissions                FormSubmission[]
   formSubmissionKeys             FormSubmissionKey[]
@@ -287,13 +288,10 @@ model Request {
   id                   String                          @id() @default(uuid()) @db.UniqueIdentifier()
   issueSubject         String?                         @db.VarChar(255)
   description          String?                         @db.VarChar(5000)
-  priority             String?                         @db.VarChar(50)
   closedAt             DateTime?
   closedBy             String?                         @db.VarChar(50)
   closedComment        String?                         @db.VarChar(500)
   comment              String?                         @db.VarChar(255)
-  statusId             String                          @db.UniqueIdentifier()
-  status               RequestStatusType               @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   documents            Document[]
   formSubmission       FormSubmission[]
   complianceTrackings  RequirementComplianceTracking[]
@@ -306,11 +304,9 @@ model Request {
   channelId            String?                         @db.UniqueIdentifier()
   channel              Channel?
 
-  @@index([statusId], name: "idx_request_status_id")
   @@index([closedAt], name: "idx_request_closed_at")
   @@index([closedBy], name: "idx_request_closed_by")
   @@index([closedComment], name: "idx_request_closed_comment")
-  @@index([priority], name: "idx_request_priority")
   @@index([issueSubject], name: "idx_request_issue_subject")
 }
 
@@ -343,19 +339,20 @@ model RequestAssignment {
   tenantId             String               @db.UniqueIdentifier()
   tenant               Tenant               @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id                   String               @id() @default(uuid()) @db.UniqueIdentifier()
-  priority             String?              @db.VarChar(50)
   comment              String?              @db.VarChar(255)
   assignmentDate       DateTime
   unAssignmentDate     DateTime?
-  typeId               String               @db.UniqueIdentifier()
-  type                 AssignmentType       @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   requestId            String               @db.UniqueIdentifier()
   request              Request              @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  assignedUsers        AssignedUser[]       @relation("AssignedUsers")
   areaId               String?              @db.UniqueIdentifier()
   area                 Area?                @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   statusId             String               @db.UniqueIdentifier()
   status               RequestStatusType    @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  typeId               String               @db.UniqueIdentifier()
+  type                 AssignmentType       @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  priorityId           String               @db.UniqueIdentifier()
+  priority             RequestPriorityType  @relation(fields: [priorityId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  assignedUsers        AssignedUser[]       @relation("AssignedUsers")
   documentAssignment   DocumentAssignment[]
   slaStart             DateTime?
   slaDeadline          DateTime?
@@ -411,24 +408,47 @@ model AssignmentType {
   @@unique([name, tenantId])
 }
 
+/// Represents a catalog of possible priority levels for requests or assignments.
+model RequestPriorityType {
+  id           String              @id() @default(uuid()) @db.UniqueIdentifier()
+  name         String              @db.VarChar(100)
+  description  String?             @db.VarChar(255)
+  isActive     Boolean             @default(true)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime?           @updatedAt()
+  deletedAt    DateTime?
+  createdBy    String?             @db.VarChar(50)
+  modifiedBy   String?             @db.VarChar(50)
+  tenantId     String              @db.UniqueIdentifier()
+  tenant       Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  primaryColor String              @db.VarChar(10)
+  assignments  RequestAssignment[]
+
+  @@unique([name, tenantId])
+}
+
 /// Represents a catalog of possible statuses for requests or assignments.
 model RequestStatusType {
-  createdAt           DateTime                  @default(now())
-  updatedAt           DateTime?                 @updatedAt()
-  deletedAt           DateTime?
-  createdBy           String?                   @db.VarChar(50)
-  modifiedBy          String?                   @db.VarChar(50)
-  tenantId            String                    @db.UniqueIdentifier()
-  tenant              Tenant                    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                  String                    @id() @default(uuid()) @db.UniqueIdentifier()
-  name                String                    @unique() @db.VarChar(50)
-  description         String?                   @db.VarChar(255)
-  isActive            Boolean                   @default(true)
-  allowCategoryChange Boolean                   @default(true)
-  requests            Request[]
-  assignments         RequestAssignment[]
-  fromTransitions     RequestStatusTransition[] @relation("FromStatus")
-  toTransitions       RequestStatusTransition[] @relation("ToStatus")
+  createdAt                 DateTime                  @default(now())
+  updatedAt                 DateTime?                 @updatedAt()
+  deletedAt                 DateTime?
+  createdBy                 String?                   @db.VarChar(50)
+  modifiedBy                String?                   @db.VarChar(50)
+  tenantId                  String                    @db.UniqueIdentifier()
+  tenant                    Tenant                    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                        String                    @id() @default(uuid()) @db.UniqueIdentifier()
+  name                      String                    @unique() @db.VarChar(50)
+  description               String?                   @db.VarChar(255)
+  isActive                  Boolean                   @default(true)
+  isAllowedToChangeCategory Boolean                   @default(true)
+  assignments               RequestAssignment[]
+  level                     Int
+  fromTransitions           RequestStatusTransition[] @relation("FromStatus")
+  toTransitions             RequestStatusTransition[] @relation("ToStatus")
+
+  @@index([name], name: "idx_request_status_name")
+  @@index([isActive], name: "idx_request_status_is_active")
+  @@index([level], name: "idx_request_status_level")
 }
 
 /// Manages valid transitions between statuses and can track SLA details.

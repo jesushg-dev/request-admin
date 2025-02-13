@@ -444,7 +444,7 @@ export function useSuspenseCountRequestStatusType<
 export function useCheckRequestStatusType<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
-    where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; name?: string; description?: string; isActive?: boolean; allowCategoryChange?: boolean };
+    where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; name?: string; description?: string; isActive?: boolean; isAllowedToChangeCategory?: boolean; level?: number };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {

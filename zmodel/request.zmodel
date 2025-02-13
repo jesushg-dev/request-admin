@@ -135,6 +135,7 @@ model AssignmentType extends  TenantScoped, Auditable, CatalogBase {
 
 /// Represents a catalog of possible priority levels for requests or assignments.
 model RequestPriorityType extends TenantScoped, Auditable, CatalogBase {
+  primaryColor        String                   @db.VarChar(10)
   assignments RequestAssignment[]
   @@unique([name, tenantId])
 }
@@ -146,11 +147,15 @@ model RequestStatusType extends TenantScoped, Auditable {
   description         String?                   @db.VarChar(255)
   isActive            Boolean                   @default(true)
   isAllowedToChangeCategory Boolean             @default(true) // Defines if categories can be changed for this status
-
   assignments         RequestAssignment[]
+  level               Int                       @gt(0) @lt(10) 
 
   fromTransitions     RequestStatusTransition[] @relation("FromStatus")
   toTransitions       RequestStatusTransition[] @relation("ToStatus")
+
+  @@index([name], name: "idx_request_status_name")
+  @@index([isActive], name: "idx_request_status_is_active")
+  @@index([level], name: "idx_request_status_level")
 }
 
 /// Manages valid transitions between statuses and can track SLA details.

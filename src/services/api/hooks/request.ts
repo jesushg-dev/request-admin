@@ -378,11 +378,9 @@ export function useCheckRequest<TError = DefaultError>(
       id?: string;
       issueSubject?: string;
       description?: string;
-      priority?: string;
       closedBy?: string;
       closedComment?: string;
       comment?: string;
-      statusId?: string;
       satisfactionSurveyId?: string;
       channelId?: string;
     };

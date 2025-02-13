@@ -263,6 +263,13 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
+        requestPriorityTypes: {
+          name: 'requestPriorityTypes',
+          type: 'RequestPriorityType',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
         forms: {
           name: 'forms',
           type: 'Form',
@@ -1453,11 +1460,6 @@ const metadata = {
           type: 'String',
           isOptional: true,
         },
-        priority: {
-          name: 'priority',
-          type: 'String',
-          isOptional: true,
-        },
         closedAt: {
           name: 'closedAt',
           type: 'DateTime',
@@ -1477,20 +1479,6 @@ const metadata = {
           name: 'comment',
           type: 'String',
           isOptional: true,
-        },
-        statusId: {
-          name: 'statusId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'status',
-        },
-        status: {
-          name: 'status',
-          type: 'RequestStatusType',
-          isDataModel: true,
-          backLink: 'requests',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'statusId' },
         },
         documents: {
           name: 'documents',
@@ -1715,11 +1703,6 @@ const metadata = {
           isId: true,
           attributes: [{ name: '@default', args: [] }],
         },
-        priority: {
-          name: 'priority',
-          type: 'String',
-          isOptional: true,
-        },
         comment: {
           name: 'comment',
           type: 'String',
@@ -1734,20 +1717,6 @@ const metadata = {
           type: 'DateTime',
           isOptional: true,
         },
-        typeId: {
-          name: 'typeId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'type',
-        },
-        type: {
-          name: 'type',
-          type: 'AssignmentType',
-          isDataModel: true,
-          backLink: 'assignments',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'typeId' },
-        },
         requestId: {
           name: 'requestId',
           type: 'String',
@@ -1761,13 +1730,6 @@ const metadata = {
           backLink: 'requestAssignments',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'requestId' },
-        },
-        assignedUsers: {
-          name: 'assignedUsers',
-          type: 'AssignedUser',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'requestAssignment',
         },
         areaId: {
           name: 'areaId',
@@ -1798,6 +1760,41 @@ const metadata = {
           backLink: 'assignments',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'statusId' },
+        },
+        typeId: {
+          name: 'typeId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'type',
+        },
+        type: {
+          name: 'type',
+          type: 'AssignmentType',
+          isDataModel: true,
+          backLink: 'assignments',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'typeId' },
+        },
+        priorityId: {
+          name: 'priorityId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'priority',
+        },
+        priority: {
+          name: 'priority',
+          type: 'RequestPriorityType',
+          isDataModel: true,
+          backLink: 'assignments',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'priorityId' },
+        },
+        assignedUsers: {
+          name: 'assignedUsers',
+          type: 'AssignedUser',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'requestAssignment',
         },
         documentAssignment: {
           name: 'documentAssignment',
@@ -2046,6 +2043,96 @@ const metadata = {
         },
       },
     },
+    requestPriorityType: {
+      name: 'RequestPriorityType',
+      fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        description: {
+          name: 'description',
+          type: 'String',
+          isOptional: true,
+        },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$RequestPriorityType$createdBy,
+        },
+        modifiedBy: {
+          name: 'modifiedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$RequestPriorityType$modifiedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'requestPriorityTypes',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        primaryColor: {
+          name: 'primaryColor',
+          type: 'String',
+        },
+        assignments: {
+          name: 'assignments',
+          type: 'RequestAssignment',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'priority',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        name_tenantId: {
+          name: 'name_tenantId',
+          fields: ['name', 'tenantId'],
+        },
+      },
+    },
     requestStatusType: {
       name: 'RequestStatusType',
       fields: {
@@ -2113,17 +2200,10 @@ const metadata = {
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: true }] }],
         },
-        allowCategoryChange: {
-          name: 'allowCategoryChange',
+        isAllowedToChangeCategory: {
+          name: 'isAllowedToChangeCategory',
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: true }] }],
-        },
-        requests: {
-          name: 'requests',
-          type: 'Request',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'status',
         },
         assignments: {
           name: 'assignments',
@@ -2131,6 +2211,10 @@ const metadata = {
           isDataModel: true,
           isArray: true,
           backLink: 'status',
+        },
+        level: {
+          name: 'level',
+          type: 'Int',
         },
         fromTransitions: {
           name: 'fromTransitions',
@@ -6226,6 +6310,14 @@ function $default$AssignmentType$createdBy(user: any): unknown {
 }
 
 function $default$AssignmentType$modifiedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestPriorityType$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestPriorityType$modifiedBy(user: any): unknown {
   return user?.id;
 }
 

@@ -449,12 +449,12 @@ export function useCheckRequestAssignment<TError = DefaultError>(
       modifiedBy?: string;
       tenantId?: string;
       id?: string;
-      priority?: string;
       comment?: string;
-      typeId?: string;
       requestId?: string;
       areaId?: string;
       statusId?: string;
+      typeId?: string;
+      priorityId?: string;
       requestCategoryId?: string;
       assignmentCategoryId?: string;
     };
