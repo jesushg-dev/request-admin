@@ -24,6 +24,9 @@ export function DataTableToolbarActions<T>({ table, entityLabel, exportFilename,
 
   return (
     <div className="flex items-center gap-2">
+      {/* Additional actions can be added dynamically */}
+      {children}
+
       {table.getFilteredSelectedRowModel().rows.length > 0 ? (
         <DataTableDeleteDialog entityLabel={entityLabel} items={table.getFilteredSelectedRowModel().rows.map((row) => row.original)} onDelete={async () => table.toggleAllRowsSelected(false)} />
       ) : null}
@@ -80,8 +83,6 @@ export function DataTableToolbarActions<T>({ table, entityLabel, exportFilename,
           </Link>
         </Button>
       )}
-      {/* Additional actions can be added dynamically */}
-      {children}
     </div>
   );
 }

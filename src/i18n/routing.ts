@@ -81,43 +81,6 @@ const securityPathnames = {
   },
 } satisfies Pathnames<Locale[]>;
 
-const managementPathnames = {
-  // areas
-  '/admin/[tenantId]/management/areas': {
-    en: '/admin/[tenantId]/management/areas',
-    es: '/admin/[tenantId]/gestion/areas',
-  },
-  '/admin/[tenantId]/management/areas/new': {
-    en: '/admin/[tenantId]/management/areas/new',
-    es: '/admin/[tenantId]/gestion/areas/nuevo',
-  },
-  '/admin/[tenantId]/management/areas/[slug]': {
-    en: '/admin/[tenantId]/management/areas/[slug]',
-    es: '/admin/[tenantId]/gestion/areas/[slug]',
-  },
-  '/admin/[tenantId]/management/areas/[slug]/edit': {
-    en: '/admin/[tenantId]/management/areas/[slug]/edit',
-    es: '/admin/[tenantId]/gestion/areas/[slug]/editar',
-  },
-  // area hierarchies
-  '/admin/[tenantId]/management/areas/hierarchies': {
-    en: '/admin/[tenantId]/management/areas/hierarchies',
-    es: '/admin/[tenantId]/gestion/areas/jerarquias',
-  },
-  '/admin/[tenantId]/management/areas/hierarchies/new': {
-    en: '/admin/[tenantId]/management/areas/hierarchies/new',
-    es: '/admin/[tenantId]/gestion/areas/jerarquias/nuevo',
-  },
-  '/admin/[tenantId]/management/areas/hierarchies/[slug]': {
-    en: '/admin/[tenantId]/management/areas/hierarchies/[slug]',
-    es: '/admin/[tenantId]/gestion/areas/jerarquias/[slug]',
-  },
-  '/admin/[tenantId]/management/areas/hierarchies/[slug]/edit': {
-    en: '/admin/[tenantId]/management/areas/hierarchies/[slug]/edit',
-    es: '/admin/[tenantId]/gestion/areas/jerarquias/[slug]/editar',
-  },
-} satisfies Pathnames<Locale[]>;
-
 const requestsPathnames = {
   '/admin/[tenantId]/requests-portal/requests': {
     en: '/admin/[tenantId]/requests-portal/requests',
@@ -156,22 +119,14 @@ const requestsPathnames = {
     en: '/admin/[tenantId]/requests-portal/request-types/[slug]/edit',
     es: '/admin/[tenantId]/solicitudes-portal/tipo-de-solicitudes/[slug]/editar',
   },
-  // Request hierarchies
-  '/admin/[tenantId]/requests-portal/request-types/hierarchies': {
-    en: '/admin/[tenantId]/requests-portal/request-types/hierarchies',
-    es: '/admin/[tenantId]/solicitudes-portal/tipo-de-solicitudes/jerarquias',
+  // hierarchies
+  '/admin/[tenantId]/requests-portal/hierarchies/assignment': {
+    en: '/admin/[tenantId]/requests-portal/hierarchies/assignment',
+    es: '/admin/[tenantId]/solicitudes-portal/jerarquias/asignacion',
   },
-  '/admin/[tenantId]/requests-portal/request-types/hierarchies/new': {
-    en: '/admin/[tenantId]/requests-portal/request-types/hierarchies/new',
-    es: '/admin/[tenantId]/solicitudes-portal/tipo-de-solicitudes/jerarquias/nuevo',
-  },
-  '/admin/[tenantId]/requests-portal/request-types/hierarchies/[slug]': {
-    en: '/admin/[tenantId]/requests-portal/request-types/hierarchies/[slug]',
-    es: '/admin/[tenantId]/solicitudes-portal/tipo-de-solicitudes/jerarquias/[slug]',
-  },
-  '/admin/[tenantId]/requests-portal/request-types/hierarchies/[slug]/edit': {
-    en: '/admin/[tenantId]/requests-portal/request-types/hierarchies/[slug]/edit',
-    es: '/admin/[tenantId]/solicitudes-portal/tipo-de-solicitudes/jerarquias/[slug]/editar',
+  '/admin/[tenantId]/requests-portal/hierarchies/request': {
+    en: '/admin/[tenantId]/requests-portal/hierarchies/request',
+    es: '/admin/[tenantId]/solicitudes-portal/jerarquias/solicitud',
   },
   // Requirements
   '/admin/[tenantId]/requests-portal/requirements': {
@@ -206,6 +161,23 @@ const requestsPathnames = {
   '/admin/[tenantId]/requests-portal/documents/[slug]/edit': {
     en: '/admin/[tenantId]/requests-portal/documents/[slug]/edit',
     es: '/admin/[tenantId]/solicitudes-portal/documentos/[slug]/editar',
+  },
+  // areas
+  '/admin/[tenantId]/requests-portal/areas': {
+    en: '/admin/[tenantId]/requests-portal/areas',
+    es: '/admin/[tenantId]/solicitudes-portal/areas',
+  },
+  '/admin/[tenantId]/requests-portal/areas/new': {
+    en: '/admin/[tenantId]/requests-portal/areas/new',
+    es: '/admin/[tenantId]/solicitudes-portal/areas/nuevo',
+  },
+  '/admin/[tenantId]/requests-portal/areas/[slug]': {
+    en: '/admin/[tenantId]/requests-portal/areas/[slug]',
+    es: '/admin/[tenantId]/solicitudes-portal/areas/[slug]',
+  },
+  '/admin/[tenantId]/requests-portal/areas/[slug]/edit': {
+    en: '/admin/[tenantId]/requests-portal/areas/[slug]/edit',
+    es: '/admin/[tenantId]/solicitudes-portal/areas/[slug]/editar',
   },
 } satisfies Pathnames<Locale[]>;
 
@@ -305,7 +277,6 @@ const globalPathnames = {
 export const pathnames = {
   ...basePathnames,
   ...securityPathnames,
-  ...managementPathnames,
   ...requestsPathnames,
   ...formsPathnames,
   ...settingsPathnames,

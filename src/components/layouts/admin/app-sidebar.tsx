@@ -18,7 +18,6 @@ import {
   Map,
   PieChart,
   RadarIcon,
-  SettingsIcon,
   ShieldIcon,
   UsersIcon,
 } from 'lucide-react';
@@ -88,11 +87,6 @@ export function AppSidebar({ tenantId, tenants, user, ...props }: AppSidebarProp
             icon: LayersIcon,
           },
           {
-            title: t('requestTypesHierarchies'),
-            url: { pathname: '/admin/[tenantId]/requests-portal/request-types/hierarchies', params: { tenantId } },
-            icon: ListTreeIcon,
-          },
-          {
             title: t('requirements'),
             url: { pathname: '/admin/[tenantId]/requests-portal/requirements', params: { tenantId } },
             icon: ListIcon,
@@ -102,6 +96,21 @@ export function AppSidebar({ tenantId, tenants, user, ...props }: AppSidebarProp
             url: { pathname: '/admin/[tenantId]/requests-portal/documents', params: { tenantId } },
             icon: FileTextIcon,
           },
+          {
+            title: t('areas'),
+            url: { pathname: '/admin/[tenantId]/requests-portal/areas', params: { tenantId } },
+            icon: LandPlotIcon,
+          },
+          {
+            title: t('requestTypesHierarchies'),
+            url: { pathname: '/admin/[tenantId]/requests-portal/hierarchies/request', params: { tenantId } },
+            icon: ListTreeIcon,
+          },
+          {
+            title: t('areasHierarchies'),
+            url: { pathname: '/admin/[tenantId]/requests-portal/hierarchies/assignment', params: { tenantId } },
+            icon: ListTreeIcon,
+          },
         ],
       },
 
@@ -110,22 +119,6 @@ export function AppSidebar({ tenantId, tenants, user, ...props }: AppSidebarProp
         url: { pathname: '/admin/[tenantId]/form-designer', params: { tenantId } },
         icon: GridIcon,
         items: [],
-      },
-      {
-        title: t('management'),
-        icon: SettingsIcon,
-        items: [
-          {
-            title: t('areas'),
-            url: { pathname: '/admin/[tenantId]/management/areas', params: { tenantId } },
-            icon: LandPlotIcon,
-          },
-          {
-            title: t('areasHierarchies'),
-            url: { pathname: '/admin/[tenantId]/management/areas/hierarchies', params: { tenantId } },
-            icon: ListTreeIcon,
-          },
-        ],
       },
       {
         title: t('security'),

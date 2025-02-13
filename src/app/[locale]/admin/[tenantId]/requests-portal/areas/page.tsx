@@ -101,7 +101,7 @@ const AreaMainPage: React.FC = () => {
             exportFilename="areas"
             entityLabel={t('entityLabel')}
             addLink={{
-              pathname: '/admin/[tenantId]/management/areas/new',
+              pathname: '/admin/[tenantId]/requests-portal/areas/new',
               params: { tenantId },
             }}
           />
@@ -179,7 +179,7 @@ export function getTableConfiguration({ t }: GetTableConfigurationProps) {
           cell={data}
           onDelete={() => console.log('Delete', data.row.original)}
           updateLink={{
-            pathname: '/admin/[tenantId]/management/areas/[slug]/edit',
+            pathname: '/admin/[tenantId]/requests-portal/areas/[slug]/edit',
             params: { tenantId: data.row.original.tenantId, slug: data.row.original.id },
           }}
         />
