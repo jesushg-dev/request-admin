@@ -371,7 +371,7 @@ export function useCheckTenant<TError = DefaultError>(
     operation: PolicyCrudKind;
     where?: {
       createdBy?: string;
-      modifiedBy?: string;
+      updatedBy?: string;
       id?: string;
       name?: string;
       logoUrl?: string;

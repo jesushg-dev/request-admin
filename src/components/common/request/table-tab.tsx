@@ -24,12 +24,6 @@ const RequestDefaultArgs = Prisma.validator<Prisma.RequestDefaultArgs>()({
     id: true,
     issueSubject: true,
     description: true,
-    priority: true,
-    status: {
-      select: {
-        name: true,
-      },
-    },
     requestAssignments: {
       select: {
         requestCategory: {
@@ -43,6 +37,11 @@ const RequestDefaultArgs = Prisma.validator<Prisma.RequestDefaultArgs>()({
           },
         },
         status: {
+          select: {
+            name: true,
+          },
+        },
+        priority: {
           select: {
             name: true,
           },
@@ -68,7 +67,12 @@ type RequestWithRelations = Prisma.RequestGetPayload<typeof RequestDefaultArgs>;
 const searchParamsParsers = {
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(10),
-  sort: getSortingStateParser<RequestWithRelations>().withDefault([{ id: 'priority', desc: true }]),
+  sort: getSortingStateParser<RequestWithRelations>().withDefault([
+    {
+      desc: true,
+      id: 'id',
+    },
+  ]),
   filters: getFiltersStateParser<RequestWithRelations>().withDefault([]),
   joinOperator: parseAsStringEnum(['and', 'or']).withDefault('and'),
 };
@@ -93,7 +97,12 @@ const RequestMainPage: React.FC = () => {
     filterFields,
     enableAdvancedFilter: true,
     initialState: {
-      sorting: [{ id: 'priority', desc: true }],
+      sorting: [
+        {
+          desc: true,
+          id: 'id',
+        },
+      ],
       columnPinning: { right: ['actions'] },
     },
     shallow: false,
@@ -179,15 +188,15 @@ export function getTableConfiguration({ t }: GetTableConfigurationProps) {
 
   const filterFields: DataTableFilterField<RequestWithRelations>[] = [
     { id: 'issueSubject', label: t('filters.issueSubject'), placeholder: t('filters.issueSubjectPlaceholder') },
-    { id: 'priority', label: t('filters.priority'), placeholder: t('filters.priorityPlaceholder') },
+    // { id: 'priority', label: t('filters.priority'), placeholder: t('filters.priorityPlaceholder') },
   ];
 
   const advancedFilterFields: DataTableAdvancedFilterField<RequestWithRelations>[] = [
     { id: 'issueSubject', label: t('filters.issueSubject'), type: 'text' },
-    { id: 'priority', label: t('filters.priority'), type: 'text' },
-    { id: 'status', label: t('filters.status'), type: 'text' },
-    { id: 'requestCategory', label: t('filters.requestCategory'), type: 'text' },
-    { id: 'assignmentCategory', label: t('filters.assignmentCategory'), type: 'text' },
+    //   { id: 'priority', label: t('filters.priority'), type: 'text' },
+    //  { id: 'status', label: t('filters.status'), type: 'text' },
+    // { id: 'requestCategory', label: t('filters.requestCategory'), type: 'text' },
+    // { id: 'assignmentCategory', label: t('filters.assignmentCategory'), type: 'text' },
   ];
 
   return { columns, filterFields, advancedFilterFields };

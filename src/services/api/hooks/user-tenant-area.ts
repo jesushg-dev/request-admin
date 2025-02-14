@@ -429,7 +429,7 @@ export function useSuspenseCountUserTenantArea<
 }
 
 export function useCheckUserTenantArea<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; isActive?: boolean; userTenantId?: string; areaId?: string; roleId?: string } },
+  args: { operation: PolicyCrudKind; where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; isActive?: boolean; userTenantId?: string; areaId?: string; roleId?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

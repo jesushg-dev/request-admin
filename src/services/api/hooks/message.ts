@@ -373,7 +373,7 @@ export function useCheckMessage<TError = DefaultError>(
     operation: PolicyCrudKind;
     where?: {
       createdBy?: string;
-      modifiedBy?: string;
+      updatedBy?: string;
       tenantId?: string;
       id?: string;
       body?: string;

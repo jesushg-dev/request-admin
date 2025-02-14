@@ -399,7 +399,7 @@ export function useSuspenseCountCategoryForm<
 }
 
 export function useCheckCategoryForm<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; isActive?: boolean; categoryId?: string; formId?: string } },
+  args: { operation: PolicyCrudKind; where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; isActive?: boolean; categoryId?: string; formId?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

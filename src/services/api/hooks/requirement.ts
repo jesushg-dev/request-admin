@@ -405,7 +405,7 @@ export function useCheckRequirement<TError = DefaultError>(
       description?: string;
       isActive?: boolean;
       createdBy?: string;
-      modifiedBy?: string;
+      updatedBy?: string;
       tenantId?: string;
       isRequiredOnlyOnce?: boolean;
       requirementTypeId?: string;

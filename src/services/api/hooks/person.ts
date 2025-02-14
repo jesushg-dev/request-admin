@@ -371,7 +371,7 @@ export function useCheckPerson<TError = DefaultError>(
     operation: PolicyCrudKind;
     where?: {
       createdBy?: string;
-      modifiedBy?: string;
+      updatedBy?: string;
       tenantId?: string;
       id?: string;
       firstName?: string;

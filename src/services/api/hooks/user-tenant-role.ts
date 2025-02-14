@@ -429,7 +429,7 @@ export function useSuspenseCountUserTenantRole<
 }
 
 export function useCheckUserTenantRole<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; isActive?: boolean; userTenantId?: string; roleId?: string } },
+  args: { operation: PolicyCrudKind; where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; isActive?: boolean; userTenantId?: string; roleId?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

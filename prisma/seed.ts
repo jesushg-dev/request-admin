@@ -24,6 +24,8 @@ import { createResuelvaReactivacionArea } from './area-seed/resuelva-reactivacio
 import { createSerdicoReactivacionArea } from './area-seed/serdico-reactivacion.area';
 import { createTrasladosDeEquiposArea } from './area-seed/traslados-equipos.area';
 import { PrismaModules } from './module';
+import { getPriorities } from './priority';
+import { getITILStatuses, getITILTransitions } from './status';
 import { UNSTABLE_TENANT_ID } from './util';
 
 const prisma = new PrismaClient();
@@ -60,7 +62,7 @@ async function main() {
     },
   });
 
-  const passportIdentificationType = await prisma.identificationType.create({
+  await prisma.identificationType.create({
     data: {
       id: 'EBFB6FA0-BA18-4DF4-B925-12659A259957',
       name: 'Pasaporte',
@@ -72,7 +74,7 @@ async function main() {
   //////////////////////////
   // Create users
   //////////////////////////
-  const user = await prisma.user.create({
+  await prisma.user.create({
     data: {
       id: '51C9BBA8-6C86-4E6C-8FE2-E98BB42A07F8',
       email: 'jess232016@gmail.com',
@@ -103,7 +105,7 @@ async function main() {
     },
   });
 
-  const secondUser = await prisma.user.create({
+  await prisma.user.create({
     data: {
       id: 'D1A3D3A4-3D3A-4D3A-8D3A-3D3A3D3A3D3A',
       email: 'danilo@gmail.com',
@@ -132,6 +134,76 @@ async function main() {
       },
     },
   });
+
+  // Create ITIL statuses
+  const priorities = getPriorities();
+  for (const priority of priorities) {
+    await prisma.requestPriorityType.upsert({
+      where: { name_tenantId: { name: priority.name, tenantId: UNSTABLE_TENANT_ID } },
+      update: {},
+      create: {
+        ...priority,
+        isActive: true,
+        createdBy: 'system',
+        tenantId: UNSTABLE_TENANT_ID,
+        level: priority.level,
+      },
+    });
+  }
+
+  // Create ITIL states
+  const itilStates = getITILStatuses();
+  for (const state of itilStates) {
+    await prisma.requestStatusType.create({
+      data: {
+        ...state,
+        tenant: { connect: { id: UNSTABLE_TENANT_ID } },
+        createdBy: 'system-seed',
+        updatedBy: 'system-seed',
+      },
+    });
+  }
+
+  // Create ITIL transitions
+  const itilTransitions = getITILTransitions();
+  for (const transition of itilTransitions) {
+    // Get status IDs from ITIL codes
+    const fromStatus = await prisma.requestStatusType.findUnique({
+      where: {
+        unique_itil_code_per_tenant: {
+          tenantId: UNSTABLE_TENANT_ID,
+          itilCode: transition.fromCode,
+        },
+      },
+    });
+
+    const toStatus = await prisma.requestStatusType.findUnique({
+      where: {
+        unique_itil_code_per_tenant: {
+          tenantId: UNSTABLE_TENANT_ID,
+          itilCode: transition.toCode,
+        },
+      },
+    });
+
+    if (!fromStatus || !toStatus) {
+      throw new Error(`Missing status for transition: ${transition.fromCode}->${transition.toCode}`);
+    }
+
+    await prisma.requestStatusTransition.create({
+      data: {
+        maxDuration: transition.maxDuration,
+        isDefault: transition.isDefault || false,
+        priority: transition.priority || 0,
+        description: transition.description || '',
+        fromStatus: { connect: { id: fromStatus.id } },
+        toStatus: { connect: { id: toStatus.id } },
+        tenant: { connect: { id: UNSTABLE_TENANT_ID } },
+        createdBy: 'system-seed',
+        updatedBy: 'system-seed',
+      },
+    });
+  }
 
   //////////////////////////
   // Create areas
@@ -178,7 +250,7 @@ async function main() {
   //////////////////////////
   // Create requirements
   //////////////////////////
-  let requirements = await prisma.requirement.createMany({
+  await prisma.requirement.createMany({
     data: [
       {
         id: '93D0BF8B-D813-4D12-A2C9-00A8D01E91EA',
@@ -334,7 +406,7 @@ async function main() {
   const { hierarchyId, hierarchyLevelparentCategoryId, hierarchyLevelServiceTypeId } = await createSalesChannelHierarchy();
 
   // Crear cada sales channel de manera individual
-  let grandesEmpresas = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: 'D37582FB-067A-4CC0-A634-B127D76511EC',
       name: 'Grandes Empresas',
@@ -352,7 +424,7 @@ async function main() {
     },
   });
 
-  let pymes = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '348EC35A-E7A2-4389-A489-E4153EB6F92F',
       name: 'Pymes',
@@ -370,7 +442,7 @@ async function main() {
     },
   });
 
-  let gobierno = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '02644847-C00E-44F6-843F-68907975B0B6',
       name: 'Gobierno',
@@ -388,7 +460,7 @@ async function main() {
     },
   });
 
-  let mayoristas = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '6E472E4B-C06A-40AB-AB2D-D6715D0F1599',
       name: 'Mayoristas',
@@ -408,7 +480,7 @@ async function main() {
   //////////////////////////
   // Service types Grandes Empresas
   //////////////////////////
-  const RonavacionGrandesEmpresas = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: 'D0476505-DF26-4295-8B8F-1DB96492635A',
       parentCategoryId: 'D37582FB-067A-4CC0-A634-B127D76511EC',
@@ -469,7 +541,7 @@ async function main() {
     },
   });
 
-  const CambioPlanGrandesEmpresas = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: 'CD61EB0E-D297-4F94-9346-9636751ADB52',
       parentCategoryId: 'D37582FB-067A-4CC0-A634-B127D76511EC',
@@ -530,7 +602,7 @@ async function main() {
     },
   });
 
-  const DespachoEquiposGrandesEmpresas = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '983B9DA5-C323-49FB-9C64-794504F180C1',
       parentCategoryId: 'D37582FB-067A-4CC0-A634-B127D76511EC',
@@ -563,7 +635,7 @@ async function main() {
     },
   });
 
-  const ActivacionLineasPospagoGrandesEmpresas = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '94529F80-7519-472A-9C4C-E2B38D83C175',
       parentCategoryId: 'D37582FB-067A-4CC0-A634-B127D76511EC',
@@ -624,7 +696,7 @@ async function main() {
     },
   });
 
-  const AdicionLineasPospagoGrandesEmpresas = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '241FD5CD-131F-43C0-B239-A62EB8C7CA6F',
       parentCategoryId: 'D37582FB-067A-4CC0-A634-B127D76511EC',
@@ -685,7 +757,7 @@ async function main() {
     },
   });
 
-  const Internet1615GrandesEmpresas = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '03E03558-0ED2-43AF-8037-77258E806802',
       parentCategoryId: 'D37582FB-067A-4CC0-A634-B127D76511EC',
@@ -746,7 +818,7 @@ async function main() {
     },
   });
 
-  const InternetGponGrandesEmpresas = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: 'B01A3A8C-BA8D-4888-BC0E-F27570335DA2',
       parentCategoryId: 'D37582FB-067A-4CC0-A634-B127D76511EC',
@@ -807,7 +879,7 @@ async function main() {
     },
   });
 
-  const TVGrandesEmpresas = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '0A193625-D7CE-4F87-8AFA-C2035D577949',
       parentCategoryId: 'D37582FB-067A-4CC0-A634-B127D76511EC',
@@ -868,7 +940,7 @@ async function main() {
     },
   });
 
-  const LineaBasicaGrandesEmpresas = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '0AA39BC6-2C94-4FFC-8C9B-29E20417364E',
       parentCategoryId: 'D37582FB-067A-4CC0-A634-B127D76511EC',
@@ -929,7 +1001,7 @@ async function main() {
     },
   });
 
-  const InternetGrandesEmpresas = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '83BC7839-704A-4965-9D58-5E5DDA1F6B51',
       parentCategoryId: 'D37582FB-067A-4CC0-A634-B127D76511EC',
@@ -990,7 +1062,7 @@ async function main() {
     },
   });
 
-  const CesiónDerechoGrandesEmpresas = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '8D438EAA-BDDC-4034-BA52-C269BB449B9F',
       parentCategoryId: 'D37582FB-067A-4CC0-A634-B127D76511EC',
@@ -1051,7 +1123,7 @@ async function main() {
     },
   });
 
-  const CambioRazonSocialGrandesEmpresas = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '4DEF976D-EEC6-4CFF-B369-34253BA27215',
       parentCategoryId: 'D37582FB-067A-4CC0-A634-B127D76511EC',
@@ -1115,7 +1187,7 @@ async function main() {
   //////////////////////////
   // Service types Pymes
   //////////////////////////
-  const RenovacionPymes = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '6A4A2234-256C-4494-978D-E61C99351467',
       parentCategoryId: '348EC35A-E7A2-4389-A489-E4153EB6F92F',
@@ -1176,7 +1248,7 @@ async function main() {
     },
   });
 
-  const CambioPlanPymes = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: 'F0E7128E-A0CB-4617-BC62-628D720E2D5F',
       parentCategoryId: '348EC35A-E7A2-4389-A489-E4153EB6F92F',
@@ -1237,7 +1309,7 @@ async function main() {
     },
   });
 
-  const DespachoEquiposPymes = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: 'C50FB7AC-78D8-4780-A6D4-1B96F9AF1861',
       parentCategoryId: '348EC35A-E7A2-4389-A489-E4153EB6F92F',
@@ -1270,7 +1342,7 @@ async function main() {
     },
   });
 
-  const ActivacionLineasPospagoPymes = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '71FEAB5A-05A3-4DC4-A12C-8512A4EF89C2',
       parentCategoryId: '348EC35A-E7A2-4389-A489-E4153EB6F92F',
@@ -1331,7 +1403,7 @@ async function main() {
     },
   });
 
-  const Internet1615Pymes = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: 'B74652EB-9456-4D66-9895-9BD77E6C3E55',
       parentCategoryId: '348EC35A-E7A2-4389-A489-E4153EB6F92F',
@@ -1392,7 +1464,7 @@ async function main() {
     },
   });
 
-  const InternetGponPymes = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '521929C1-F029-48A1-91FC-D67CBFEE47F4',
       parentCategoryId: '348EC35A-E7A2-4389-A489-E4153EB6F92F',
@@ -1453,7 +1525,7 @@ async function main() {
     },
   });
 
-  const TVPymes = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '18768DD2-5EEE-47BF-942C-8F4BEE39EBF1',
       parentCategoryId: '348EC35A-E7A2-4389-A489-E4153EB6F92F',
@@ -1514,7 +1586,7 @@ async function main() {
     },
   });
 
-  const LineaBasicaPymes = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '0FBD66FD-0C13-49E6-A498-EB162C56DE71',
       parentCategoryId: '348EC35A-E7A2-4389-A489-E4153EB6F92F',
@@ -1575,7 +1647,7 @@ async function main() {
     },
   });
 
-  const InternetPymes = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '7EC04EB1-3954-46C9-9ECF-E5DFEB02B03F',
       parentCategoryId: '348EC35A-E7A2-4389-A489-E4153EB6F92F',
@@ -1636,7 +1708,7 @@ async function main() {
     },
   });
 
-  const CesiónDerechoPymes = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '0A758B23-4ECC-4170-9C31-73058DDBA544',
       parentCategoryId: '348EC35A-E7A2-4389-A489-E4153EB6F92F',
@@ -1669,7 +1741,7 @@ async function main() {
     },
   });
 
-  const CambioRazonSocialPymes = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '057DCBAE-4184-43B2-9980-77DCE3F9F2A8',
       parentCategoryId: '348EC35A-E7A2-4389-A489-E4153EB6F92F',
@@ -1733,7 +1805,7 @@ async function main() {
   //////////////////////////
   // Service types Gobierno
   //////////////////////////
-  const RenovacionGobierno = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '09527C48-CEC7-4FE2-927C-19BFB5E60210',
       parentCategoryId: '02644847-C00E-44F6-843F-68907975B0B6',
@@ -1794,7 +1866,7 @@ async function main() {
     },
   });
 
-  const CambioPlanGobierno = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '123C7C6C-6DF0-49D2-ACC9-2774EDC5551C',
       parentCategoryId: '02644847-C00E-44F6-843F-68907975B0B6',
@@ -1855,7 +1927,7 @@ async function main() {
     },
   });
 
-  const DespachoEquiposGobierno = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '4954EE72-AE04-4B30-B342-653F635FB182',
       parentCategoryId: '02644847-C00E-44F6-843F-68907975B0B6',
@@ -1888,7 +1960,7 @@ async function main() {
     },
   });
 
-  const ActivacionLineasPospagoGobierno = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '90B0195E-CADF-4D3D-9EAF-1558AF1A3047',
       parentCategoryId: '02644847-C00E-44F6-843F-68907975B0B6',
@@ -1949,7 +2021,7 @@ async function main() {
     },
   });
 
-  const AdicionLineasPospagosGobierno = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: 'ED2D802C-57D2-422C-9A9B-F472A8102ADD',
       parentCategoryId: '02644847-C00E-44F6-843F-68907975B0B6',
@@ -2010,7 +2082,7 @@ async function main() {
     },
   });
 
-  const Internet1615Gobierno = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '57E6C79B-8E32-42EF-AF4F-DD2D79410B0F',
       parentCategoryId: '02644847-C00E-44F6-843F-68907975B0B6',
@@ -2071,7 +2143,7 @@ async function main() {
     },
   });
 
-  const InternetGponGobierno = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '2C513C16-2070-47A5-A3A7-12619E1265B9',
       parentCategoryId: '02644847-C00E-44F6-843F-68907975B0B6',
@@ -2132,7 +2204,7 @@ async function main() {
     },
   });
 
-  const TVGobierno = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: 'C870D269-25A8-4AF3-B3D4-782A6EA296E4',
       parentCategoryId: '02644847-C00E-44F6-843F-68907975B0B6',
@@ -2193,7 +2265,7 @@ async function main() {
     },
   });
 
-  const LineaBasicaGobierno = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: 'D2189CDA-0B66-44BF-BED9-84CFFE34D36D',
       parentCategoryId: '02644847-C00E-44F6-843F-68907975B0B6',
@@ -2254,7 +2326,7 @@ async function main() {
     },
   });
 
-  const InternetGobierno = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '6171B46E-EBD0-4232-9BFB-DC549EAC4203',
       parentCategoryId: '02644847-C00E-44F6-843F-68907975B0B6',
@@ -2315,7 +2387,7 @@ async function main() {
     },
   });
 
-  const CesiónDerechoGobierno = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: '6FABDCFB-2C23-4BB5-9A13-FEDE912B7874',
       parentCategoryId: '02644847-C00E-44F6-843F-68907975B0B6',
@@ -2348,7 +2420,7 @@ async function main() {
     },
   });
 
-  const CambioRazonSocialGobierno = await prisma.requestCategory.create({
+  await prisma.requestCategory.create({
     data: {
       id: 'B2164B28-A492-4AC1-9749-ACFC08F51584',
       parentCategoryId: '02644847-C00E-44F6-843F-68907975B0B6',

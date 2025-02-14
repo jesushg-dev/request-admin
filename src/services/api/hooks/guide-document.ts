@@ -409,7 +409,7 @@ export function useCheckGuideDocument<TError = DefaultError>(
       description?: string;
       isActive?: boolean;
       createdBy?: string;
-      modifiedBy?: string;
+      updatedBy?: string;
       tenantId?: string;
       url?: string;
       status?: number;

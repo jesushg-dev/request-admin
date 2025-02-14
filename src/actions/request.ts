@@ -67,3 +67,39 @@ export const upsertRequest = async (tenantId: string, data: RequestFormStepperTy
     },
   });
 };
+
+export const getPrioritiesAsOptions = async (tenantId: string) => {
+  const session = await auth();
+  if (!session) throw new UserNotFoundErr();
+
+  const priorities = await db.requestPriorityType.findMany({
+    select: {
+      id: true,
+      name: true,
+    },
+    where: { tenantId },
+  });
+
+  return priorities.map((priority) => ({
+    label: priority.name,
+    value: priority.id,
+  }));
+};
+
+export const getStatusesAsOptions = async (tenantId: string) => {
+  const session = await auth();
+  if (!session) throw new UserNotFoundErr();
+
+  const statuses = await db.requestStatusType.findMany({
+    select: {
+      id: true,
+      name: true,
+    },
+    where: { tenantId },
+  });
+
+  return statuses.map((status) => ({
+    label: status.name,
+    value: status.id,
+  }));
+};

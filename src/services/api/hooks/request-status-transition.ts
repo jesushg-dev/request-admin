@@ -474,7 +474,19 @@ export function useSuspenseCountRequestStatusTransition<
 export function useCheckRequestStatusTransition<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
-    where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; reason?: string; fromStatusId?: string; toStatusId?: string; isDefault?: boolean };
+    where?: {
+      createdBy?: string;
+      updatedBy?: string;
+      tenantId?: string;
+      id?: string;
+      isDefault?: boolean;
+      priority?: number;
+      maxDuration?: number;
+      notifyAfter?: number;
+      description?: string;
+      fromStatusId?: string;
+      toStatusId?: string;
+    };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {

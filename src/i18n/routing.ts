@@ -120,13 +120,13 @@ const requestsPathnames = {
     es: '/admin/[tenantId]/solicitudes-portal/tipo-de-solicitudes/[slug]/editar',
   },
   // hierarchies
-  '/admin/[tenantId]/requests-portal/hierarchies/assignment': {
-    en: '/admin/[tenantId]/requests-portal/hierarchies/assignment',
-    es: '/admin/[tenantId]/solicitudes-portal/jerarquias/asignacion',
+  '/admin/[tenantId]/settings/hierarchies/assignment': {
+    en: '/admin/[tenantId]/settings/hierarchies/assignment',
+    es: '/admin/[tenantId]/configuraciones/jerarquias/asignacion',
   },
-  '/admin/[tenantId]/requests-portal/hierarchies/request': {
-    en: '/admin/[tenantId]/requests-portal/hierarchies/request',
-    es: '/admin/[tenantId]/solicitudes-portal/jerarquias/solicitud',
+  '/admin/[tenantId]/settings/hierarchies/request': {
+    en: '/admin/[tenantId]/settings/hierarchies/request',
+    es: '/admin/[tenantId]/configuraciones/jerarquias/solicitud',
   },
   // Requirements
   '/admin/[tenantId]/requests-portal/requirements': {

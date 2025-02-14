@@ -399,7 +399,7 @@ export function useSuspenseCountSLAChangeLog<
 }
 
 export function useCheckSLAChangeLog<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; slaId?: string; oldResolutionTime?: number; newResolutionTime?: number } },
+  args: { operation: PolicyCrudKind; where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; slaId?: string; oldResolutionTime?: number; newResolutionTime?: number } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

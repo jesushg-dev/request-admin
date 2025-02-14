@@ -18,6 +18,7 @@ import {
   Map,
   PieChart,
   RadarIcon,
+  SettingsIcon,
   ShieldIcon,
   UsersIcon,
 } from 'lucide-react';
@@ -101,16 +102,6 @@ export function AppSidebar({ tenantId, tenants, user, ...props }: AppSidebarProp
             url: { pathname: '/admin/[tenantId]/requests-portal/areas', params: { tenantId } },
             icon: LandPlotIcon,
           },
-          {
-            title: t('requestTypesHierarchies'),
-            url: { pathname: '/admin/[tenantId]/requests-portal/hierarchies/request', params: { tenantId } },
-            icon: ListTreeIcon,
-          },
-          {
-            title: t('areasHierarchies'),
-            url: { pathname: '/admin/[tenantId]/requests-portal/hierarchies/assignment', params: { tenantId } },
-            icon: ListTreeIcon,
-          },
         ],
       },
 
@@ -144,6 +135,22 @@ export function AppSidebar({ tenantId, tenants, user, ...props }: AppSidebarProp
             title: t('users'),
             url: { pathname: '/admin/[tenantId]/security/users', params: { tenantId } },
             icon: UsersIcon,
+          },
+        ],
+      },
+      {
+        title: t('settings'),
+        icon: SettingsIcon,
+        items: [
+          {
+            title: t('requestTypesHierarchy'),
+            url: { pathname: '/admin/[tenantId]/settings/hierarchies/request', params: { tenantId } },
+            icon: ListTreeIcon,
+          },
+          {
+            title: t('areasHierarchy'),
+            url: { pathname: '/admin/[tenantId]/settings/hierarchies/assignment', params: { tenantId } },
+            icon: ListTreeIcon,
           },
         ],
       },

@@ -458,7 +458,7 @@ export function useSuspenseCountRequestHierarchyLevel<
 export function useCheckRequestHierarchyLevel<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
-    where?: { id?: string; name?: string; description?: string; isActive?: boolean; createdBy?: string; modifiedBy?: string; tenantId?: string; hierarchyId?: string; position?: number };
+    where?: { id?: string; name?: string; description?: string; isActive?: boolean; createdBy?: string; updatedBy?: string; tenantId?: string; hierarchyId?: string; position?: number };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {

@@ -439,7 +439,7 @@ export function useSuspenseCountRequestHierarchy<
 }
 
 export function useCheckRequestHierarchy<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { id?: string; name?: string; description?: string; isActive?: boolean; createdBy?: string; modifiedBy?: string; tenantId?: string } },
+  args: { operation: PolicyCrudKind; where?: { id?: string; name?: string; description?: string; isActive?: boolean; createdBy?: string; updatedBy?: string; tenantId?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

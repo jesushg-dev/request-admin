@@ -458,7 +458,7 @@ export function useCheckAssignmentCategory<TError = DefaultError>(
       description?: string;
       isActive?: boolean;
       createdBy?: string;
-      modifiedBy?: string;
+      updatedBy?: string;
       tenantId?: string;
       parentCategoryId?: string;
       hierarchyLevelId?: string;

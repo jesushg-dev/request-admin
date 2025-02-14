@@ -355,7 +355,7 @@ export function useCheckUser<TError = DefaultError>(
     operation: PolicyCrudKind;
     where?: {
       createdBy?: string;
-      modifiedBy?: string;
+      updatedBy?: string;
       id?: string;
       username?: string;
       email?: string;

@@ -359,7 +359,7 @@ export function useCheckForm<TError = DefaultError>(
       description?: string;
       isActive?: boolean;
       createdBy?: string;
-      modifiedBy?: string;
+      updatedBy?: string;
       tenantId?: string;
       userId?: string;
       content?: string;

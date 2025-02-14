@@ -349,10 +349,7 @@ export function useSuspenseCountSLA<
 }
 
 export function useCheckSLA<TError = DefaultError>(
-  args: {
-    operation: PolicyCrudKind;
-    where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; resolutionTime?: number; escalationTime?: number; requestCategoryId?: string };
-  },
+  args: { operation: PolicyCrudKind; where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; resolutionTime?: number; escalationTime?: number; requestCategoryId?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

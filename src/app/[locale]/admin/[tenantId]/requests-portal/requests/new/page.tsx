@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { getPrioritiesAsOptions, getStatusesAsOptions } from '@/actions/request';
 import { db } from '@/server/db-server';
 
 import { AssignmentHierarchyDefaultArgs, RequestHierarchyDefaultArgs } from '@/types/prisma/hierarchy';
@@ -25,7 +26,12 @@ const NewPage: FC<NewPageProps> = async ({ params }) => {
     return null;
   }
 
-  return <RequestFormStepper tenantId={tenantId} requestLevelTypes={requestHierarchy.levels} assignmentLevelTypes={assignmentHierarchy.levels} />;
+  const statuses = await getPrioritiesAsOptions(tenantId);
+  const priorities = await getStatusesAsOptions(tenantId);
+
+  return (
+    <RequestFormStepper tenantId={tenantId} statusesOptions={statuses} prioritiesOptions={priorities} requestLevelTypes={requestHierarchy.levels} assignmentLevelTypes={assignmentHierarchy.levels} />
+  );
 };
 
 export default NewPage;

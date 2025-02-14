@@ -1,13 +1,15 @@
 'use client';
 
+import { type FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { OptionType } from '@/components/select/select';
 
 const mockStatuses = [
   { id: 'status1', name: 'Open' },
@@ -25,7 +27,12 @@ export const requestDetailSchema = z.object({
 
 export type RequestDetailValues = z.infer<typeof requestDetailSchema>;
 
-export default function RequestDetailsStep() {
+interface RequestDetailsStepProps {
+  statusesOptions: OptionType[];
+  prioritiesOptions: OptionType[];
+}
+
+const RequestDetailsStep: FC<RequestDetailsStepProps> = ({ statusesOptions, prioritiesOptions }) => {
   const { control } = useFormContext<RequestDetailValues>();
 
   return (
@@ -66,6 +73,36 @@ export default function RequestDetailsStep() {
                   </Select>
                 </FormControl>
                 <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name={`${currentPath}.forms` as `categories.${number}.forms`}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('formsLabel')}</FormLabel>
+                <FormControl>
+                  <Select menuPortalTarget={null} value={field.value} defaultValue={field.value} isMulti onChange={field.onChange} options={forms} />
+                </FormControl>
+                <FormMessage />
+                <FormDescription>{t('requirementsDescription', { categoryName })}</FormDescription>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name={`${currentPath}.forms` as `categories.${number}.forms`}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('formsLabel')}</FormLabel>
+                <FormControl>
+                  <Select menuPortalTarget={null} value={field.value} defaultValue={field.value} isMulti onChange={field.onChange} options={forms} />
+                </FormControl>
+                <FormMessage />
+                <FormDescription>{t('requirementsDescription', { categoryName })}</FormDescription>
               </FormItem>
             )}
           />
@@ -124,4 +161,6 @@ export default function RequestDetailsStep() {
       </div>
     </ScrollArea>
   );
-}
+};
+
+export default RequestDetailsStep;

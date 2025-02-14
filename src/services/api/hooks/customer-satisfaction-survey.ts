@@ -475,7 +475,7 @@ export function useSuspenseCountCustomerSatisfactionSurvey<
 }
 
 export function useCheckCustomerSatisfactionSurvey<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; rating?: number; feedback?: string; requestId?: string } },
+  args: { operation: PolicyCrudKind; where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; rating?: number; feedback?: string; requestId?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

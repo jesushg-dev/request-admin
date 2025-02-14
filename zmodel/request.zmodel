@@ -6,7 +6,7 @@ import './form.zmodel' // form submissions for requests
 import './category.zmodel' // categorization for requests
 import './messenger.zmodel' // messaging for requests
 
-/// Represents a request that includes categorization for both request and assignment.
+/// Represents a request that includes categorization for both request and assignment with ITIL compliance tracking
 model Request extends TenantScoped, Auditable {
   // Primary identifier
   id                   String                          @id @default(uuid()) @db.UniqueIdentifier // Request ID
@@ -74,6 +74,15 @@ model RequestAssignment extends TenantScoped, Auditable {
   requestId            String               @db.UniqueIdentifier
   request              Request              @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
+  assignedUsers        AssignedUser[]       @relation("AssignedUsers")
+  documentAssignment   DocumentAssignment[]
+
+  // SLA
+  slaStart             DateTime?
+  slaDeadline          DateTime?
+  slaEnd               DateTime?
+
+  // ITIL mandatory fields
   areaId               String?              @db.UniqueIdentifier
   area                 Area?                @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
@@ -86,23 +95,14 @@ model RequestAssignment extends TenantScoped, Auditable {
   priorityId           String              @db.UniqueIdentifier
   priority             RequestPriorityType @relation(fields: [priorityId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  assignedUsers        AssignedUser[]       @relation("AssignedUsers")
-
-  documentAssignment   DocumentAssignment[]
-
-  // SLA
-  slaStart             DateTime?
-  slaDeadline          DateTime?
-  slaEnd               DateTime?
-
-  // Request categorization
+ // Request categorization
   requestCategoryId    String               @db.UniqueIdentifier
   requestCategory      RequestCategory      @relation("RequestCategory", fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   // Assignment categorization
   assignmentCategoryId String               @db.UniqueIdentifier
   assignmentCategory   AssignmentCategory   @relation("AssignmentCategory", fields: [assignmentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
+ 
   @@index([typeId], name: "idx_assignment_type_id")
   @@index([requestId], name: "idx_assignment_request_id")
   @@index([statusId], name: "idx_assignment_status_id")
@@ -136,47 +136,69 @@ model AssignmentType extends  TenantScoped, Auditable, CatalogBase {
 /// Represents a catalog of possible priority levels for requests or assignments.
 model RequestPriorityType extends TenantScoped, Auditable, CatalogBase {
   primaryColor        String                   @db.VarChar(10)
+  level               Int                       @gt(0) @lt(10) 
+
   assignments RequestAssignment[]
   @@unique([name, tenantId])
 }
 
-/// Represents a catalog of possible statuses for requests or assignments.
+// Represents core ITIL request lifecycle states
 model RequestStatusType extends TenantScoped, Auditable {
   id                  String                    @id @default(uuid()) @db.UniqueIdentifier
+  // Human-readable state name
   name                String                    @db.VarChar(50) @unique
-  description         String?                   @db.VarChar(255)
+  // Technical description for support teams
+  description         String?                   @db.VarChar(255) 
+  // Controls state availability in dropdowns
   isActive            Boolean                   @default(true)
-  isAllowedToChangeCategory Boolean             @default(true) // Defines if categories can be changed for this status
-  assignments         RequestAssignment[]
-  level               Int                       @gt(0) @lt(10) 
+  // Hierarchical position in ITIL workflow (1=initial, 5=final)
+  level               Int                       @gt(0) @lt(5)
+  // ITIL-compliant state identifier
+  itilCode            String?                   @db.VarChar(20) @unique // draft, cab_review, etc.
+  // Marks terminal states where no transitions are allowed
+  isFinal             Boolean                   @default(false)
+  // Requires managerial approval when transitioning to this state
+  requiresApproval    Boolean                   @default(false)
 
+  // Relationship fields
+  assignments         RequestAssignment[]
   fromTransitions     RequestStatusTransition[] @relation("FromStatus")
   toTransitions       RequestStatusTransition[] @relation("ToStatus")
 
-  @@index([name], name: "idx_request_status_name")
-  @@index([isActive], name: "idx_request_status_is_active")
-  @@index([level], name: "idx_request_status_level")
+  // Ensures unique ITIL codes per tenant
+  @@unique([tenantId, itilCode], name: "unique_itil_code_per_tenant")
+  // Optimized querying by state hierarchy
+  @@index([level], name: "idx_status_level")
+  // Quick lookup of terminal states
+  @@index([isFinal], name: "idx_status_final")
 }
 
-/// Manages valid transitions between statuses and can track SLA details.
+
+// Manages state transitions with SLA rules
 model RequestStatusTransition extends TenantScoped, Auditable {
   id           String            @id @default(uuid()) @db.UniqueIdentifier
-  reason       String?
-  startedAt    DateTime?
-  finishedAt   DateTime?
-  deadline     DateTime?
+  // Marks default transition path
+  isDefault    Boolean           @default(false)
+  // Determines display order in UI
+  priority     Int               @default(0)
+  // Maximum allowed duration in minutes (SLA tracking)
+  maxDuration  Int?              
+  // Notification threshold before SLA breach (minutes)
+  notifyAfter  Int?
 
+  description  String?           @db.VarChar(255)           
+
+  // Relationship fields
   fromStatusId String            @db.UniqueIdentifier
   toStatusId   String            @db.UniqueIdentifier
+  fromStatus RequestStatusType @relation("FromStatus", fields: [fromStatusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  toStatus RequestStatusType @relation("ToStatus", fields: [toStatusId], references: [id])
 
-  fromStatus   RequestStatusType @relation("FromStatus", fields: [fromStatusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  toStatus     RequestStatusType @relation("ToStatus", fields: [toStatusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-
-  isDefault    Boolean           @default(false)
-
-  @@index([fromStatusId], name: "idx_transition_from_status_id")
-  @@index([toStatusId], name: "idx_transition_to_status_id")
+  // Indexes for common query patterns
+  @@index([fromStatusId], name: "idx_transition_source")
+  @@index([toStatusId], name: "idx_transition_target")
+  // Ensures unique transition paths per tenant
+  @@unique([tenantId, fromStatusId, toStatusId], name: "unique_transition_path")
 }
 
 /// Tracks compliance with requirements for a specific request.

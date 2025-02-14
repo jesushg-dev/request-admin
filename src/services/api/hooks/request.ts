@@ -373,7 +373,7 @@ export function useCheckRequest<TError = DefaultError>(
     operation: PolicyCrudKind;
     where?: {
       createdBy?: string;
-      modifiedBy?: string;
+      updatedBy?: string;
       tenantId?: string;
       id?: string;
       issueSubject?: string;

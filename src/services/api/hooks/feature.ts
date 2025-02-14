@@ -371,7 +371,7 @@ export function useSuspenseCountFeature<
 export function useCheckFeature<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
-    where?: { id?: string; name?: string; description?: string; isActive?: boolean; createdBy?: string; modifiedBy?: string; tenantId?: string; key?: string; scope?: string; moduleId?: string };
+    where?: { id?: string; name?: string; description?: string; isActive?: boolean; createdBy?: string; updatedBy?: string; tenantId?: string; key?: string; scope?: string; moduleId?: string };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {

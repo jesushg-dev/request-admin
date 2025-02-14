@@ -26,7 +26,7 @@ abstract model Auditable {
 
   // User tracking
   createdBy  String?   @db.VarChar(50) @default(auth().id) // ID of the user who created the entity
-  modifiedBy String?   @db.VarChar(50) @default(auth().id) // ID of the user who last modified the entity
+  updatedBy String?   @db.VarChar(50) @default(auth().id) // ID of the user who last modified the entity
 }
 
 /// Abstract model for base catalog fields.

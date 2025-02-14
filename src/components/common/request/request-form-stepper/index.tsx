@@ -12,6 +12,7 @@ import { z } from 'zod';
 import { AssignmentLevelType, RequestLevelType } from '@/types/prisma/hierarchy';
 import { Card } from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
+import { OptionType } from '@/components/select/select';
 import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
 import { ChildSteps } from '@/components/stepper/child-steps';
 import { ChildStepsProvider } from '@/components/stepper/child-steps-context';
@@ -44,9 +45,11 @@ type CombinedFormProps = {
   tenantId: string;
   requestLevelTypes: RequestLevelType[];
   assignmentLevelTypes: AssignmentLevelType[];
+  statusesOptions: OptionType[];
+  prioritiesOptions: OptionType[];
 };
 
-const RequestFormStepper: FC<CombinedFormProps> = ({ tenantId, requestLevelTypes, assignmentLevelTypes }) => {
+const RequestFormStepper: FC<CombinedFormProps> = ({ tenantId, requestLevelTypes, assignmentLevelTypes, statusesOptions, prioritiesOptions }) => {
   const router = useRouter();
   const stepper = useStepper();
   const [isPending, startTransition] = useTransition();
@@ -104,7 +107,7 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ tenantId, requestLevelTypes
               {stepper.switch({
                 categories: () => <CategoryStep requestLevelTypes={requestLevelTypes} assignmentLevelTypes={assignmentLevelTypes} />,
                 requirementCompliance: () => <RequirementComplianceStep requestCategoryIds={requestCategoryIds} />,
-                requestDetails: () => <RequestDetailsStep />,
+                requestDetails: () => <RequestDetailsStep statusesOptions={statusesOptions} prioritiesOptions={prioritiesOptions} />,
                 attachments: () => <AttachmentsStep />,
                 dynamicForm: () => <DynamicFormStep requestCategoryIds={requestCategoryIds} onNext={stepper.next} onPrev={stepper.prev} />,
                 summary: () => <SummaryStep requestLevelTypes={requestLevelTypes} assignmentLevelTypes={assignmentLevelTypes} />,

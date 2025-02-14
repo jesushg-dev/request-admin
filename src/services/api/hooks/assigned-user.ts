@@ -401,7 +401,7 @@ export function useSuspenseCountAssignedUser<
 export function useCheckAssignedUser<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
-    where?: { createdBy?: string; modifiedBy?: string; tenantId?: string; id?: string; requestAssignmentId?: string; userTenantId?: string; role?: string; isCoordinator?: boolean };
+    where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; requestAssignmentId?: string; userTenantId?: string; role?: string; isCoordinator?: boolean };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
