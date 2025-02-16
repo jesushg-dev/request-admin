@@ -5,6 +5,7 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/componen
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AssignmentHistory } from '@/components/common/request/detail/assignments-viewer';
 import AssociatedFilesViewer from '@/components/common/request/detail/associated-files-viewer';
+import Comments from '@/components/common/request/detail/comments';
 import { RelatedViewer } from '@/components/common/request/detail/related-viewer';
 import ProjectActivities from '@/components/common/request/detail/request-activities';
 import ProjectDetails from '@/components/common/request/detail/request-details';
@@ -43,7 +44,9 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ ten
             <TabsContent value="requirements">
               <RequirementProgress requirements={tasks} />
             </TabsContent>
-            <TabsContent value="chat">{/*<Comments slug={slug} currentUserId={session.user.id} channel={channel} tenantId={tenantId} />*/}</TabsContent>
+            <TabsContent value="chat">
+              <Comments slug={slug} currentUserId={session.user.id} channel={channel} tenantId={tenantId} />
+            </TabsContent>
             <TabsContent value="files">
               <AssociatedFilesViewer guideDocuments={guideDocuments} documents={documents} />
             </TabsContent>

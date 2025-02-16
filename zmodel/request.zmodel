@@ -69,8 +69,8 @@ model RelatedIncident extends TenantScoped, Auditable {
 model RequestAssignment extends TenantScoped, Auditable {
   id                   String               @id @default(uuid()) @db.UniqueIdentifier
   comment              String?              @db.VarChar(255)
-  assignmentDate       DateTime
-  unAssignmentDate     DateTime?
+  assignmentDate       DateTime             @default(now())
+  unAssignmentDate     DateTime? 
   requestId            String               @db.UniqueIdentifier
   request              Request              @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
@@ -94,6 +94,8 @@ model RequestAssignment extends TenantScoped, Auditable {
 
   priorityId           String              @db.UniqueIdentifier
   priority             RequestPriorityType @relation(fields: [priorityId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  isActive             Boolean              @default(true)
 
  // Request categorization
   requestCategoryId    String               @db.UniqueIdentifier
@@ -122,14 +124,14 @@ model AssignedUser extends TenantScoped, Auditable {
   userTenantId        String            @db.UniqueIdentifier
   userTenant          UserTenant        @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  role                String            @db.VarChar(150) // Role of the user in the request (e.g., Coordinator, Collaborator)
-  isCoordinator       Boolean           @default(false) // Indicates if the user is the coordinator
+  role                String            @db.VarChar(150) 
   unAssignmentDate    DateTime?
 }
 
 // Represents a type of assignment for requests.
 model AssignmentType extends  TenantScoped, Auditable, CatalogBase {
   assignments RequestAssignment[]
+  systemName        String                   @db.VarChar(100)
   @@unique([name, tenantId])
 }
 
@@ -215,6 +217,8 @@ model RequirementComplianceTracking extends TenantScoped, Auditable {
 
   @@index([requestId], name: "idx_compliance_request_id")
   @@index([requirementId], name: "idx_compliance_requirement_id")
+
+  @@unique([requestId, requirementId, tenantId], name: "unique_compliance_tracking")
 }
 
 /// Tracks customer satisfaction surveys for closed requests.

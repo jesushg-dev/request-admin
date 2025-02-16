@@ -2,16 +2,16 @@
 
 import type { FC } from 'react';
 import { useFindManyForm, useFindManyRequirement } from '@/services/api/hooks';
-import { FlagIcon, MapPin, TagIcon, UserIcon } from 'lucide-react';
+import { FlagIcon, MapPin, TagIcon, TagsIcon, UserIcon } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 
 import type { AssignmentLevelType, RequestLevelType } from '@/types/prisma/hierarchy';
-import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MetadataItem } from '@/components/metadata-item';
 
+import { RequestFormStepperType } from '.';
 import RequirementProgress from '../detail/requirement-progress';
 import FormSubmissionsViewer, { FormSubmission } from '../detail/submissions-viewer';
 
@@ -20,20 +20,7 @@ interface CategoryData {
   label?: string;
 }
 
-interface FormData {
-  requestCategory?: CategoryData[];
-  assignmentCategory?: CategoryData[];
-  areaId?: { label: string };
-  requirementCompliances?: Record<string, boolean>;
-  requestDetails?: {
-    issueSubject: string;
-    statusId: string;
-    priority: string;
-  };
-  submissions?: Record<string, Record<string, string | number | boolean>>;
-}
-
-function DetailsSection({ requestDetails, area }: { requestDetails?: { issueSubject: string; statusId: string; priority: string }; area: string }) {
+function DetailsSection({ issueSubject, priorityId, statusId, areaId }: RequestFormStepperType) {
   return (
     <Card>
       <CardHeader>
@@ -41,10 +28,10 @@ function DetailsSection({ requestDetails, area }: { requestDetails?: { issueSubj
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4">
-          <MetadataItem icon={<UserIcon className="h-4 w-4" />} label="Issue Subject" value={requestDetails?.issueSubject} />
-          <MetadataItem icon={<FlagIcon className="h-4 w-4" />} label="Priority" value={requestDetails?.priority} />
-          <MetadataItem icon={<TagIcon className="h-4 w-4" />} label="Status" value={requestDetails?.statusId} />
-          <MetadataItem icon={<MapPin className="h-4 w-4" />} label="Area" value={area} />
+          <MetadataItem icon={<UserIcon className="h-4 w-4" />} label="Issue Subject" value={issueSubject} />
+          <MetadataItem icon={<FlagIcon className="h-4 w-4" />} label="Priority" value={priorityId.label} />
+          <MetadataItem icon={<TagIcon className="h-4 w-4" />} label="Status" value={statusId.label} />
+          <MetadataItem icon={<MapPin className="h-4 w-4" />} label="Area" value={areaId.label} />
         </div>
       </CardContent>
     </Card>
@@ -73,15 +60,12 @@ function CategorySection({ title, data, levelTypes }: { title: string; data?: Ca
 // Function to render each category
 const CategoryItem: React.FC<{ category: CategoryData; level: RequestLevelType | AssignmentLevelType; depth: number }> = ({ category, level, depth }) => (
   <div
-    className="flex items-center justify-between p-2 border-l-2 border-dashed"
+    className="flex items-center justify-between py-0.5 border-l-2 border-dashed"
     style={{
       marginLeft: `${depth * 20}px`,
       paddingLeft: '10px',
     }}>
-    <div className="flex items-center gap-2">
-      <Badge variant="outline">{level?.name}</Badge>
-      <span>{category.label || 'Not selected'}</span>
-    </div>
+    <MetadataItem icon={<TagsIcon className="h-4 w-4" />} label={category.label ?? 'N/A'} value={level?.name} />
   </div>
 );
 
@@ -109,13 +93,11 @@ function SubmissionsSection({ submissions }: { submissions?: Record<string, Reco
     where: { id: { in: Object.keys(submissions || {}) } },
   });
 
-  if (!submissions) return null;
-
   const formSubmissions: FormSubmission[] =
     data?.map((form) => {
       const elements = JSON.parse(form.content || '[]') as { id: string; extraAttributes: { label: string } }[];
 
-      const submissionContent: Record<string, string> = Object.entries(submissions[form.id] || {}).reduce(
+      const submissionContent: Record<string, string> = Object.entries(submissions?.[form.id] || {}).reduce(
         (acc, [key, value]) => {
           const element = elements.find((element) => element.id === key);
           if (element && element.extraAttributes.label) {
@@ -143,13 +125,13 @@ interface SummaryStepProps {
 }
 
 const SummaryStep: FC<SummaryStepProps> = ({ requestLevelTypes, assignmentLevelTypes }) => {
-  const { watch } = useFormContext<FormData>();
+  const { watch } = useFormContext<RequestFormStepperType>();
   const formData = watch();
 
   return (
     <ScrollArea className="flex-1">
       <div className="w-full flex flex-col gap-4 px-1">
-        <DetailsSection requestDetails={formData.requestDetails} area={formData.areaId?.label ?? ''} />
+        <DetailsSection {...formData} />
 
         <div className="grid md:grid-cols-2 gap-4">
           <CategorySection title="Service Category" data={formData.requestCategory} levelTypes={requestLevelTypes} />

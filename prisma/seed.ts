@@ -23,6 +23,7 @@ import { createRecuperacionEquiposArea } from './area-seed/recuperacion-equipos.
 import { createResuelvaReactivacionArea } from './area-seed/resuelva-reactivacion.area';
 import { createSerdicoReactivacionArea } from './area-seed/serdico-reactivacion.area';
 import { createTrasladosDeEquiposArea } from './area-seed/traslados-equipos.area';
+import { getITILAssignmentTypes } from './assignment-type';
 import { PrismaModules } from './module';
 import { getPriorities } from './priority';
 import { getITILStatuses, getITILTransitions } from './status';
@@ -200,7 +201,30 @@ async function main() {
         toStatus: { connect: { id: toStatus.id } },
         tenant: { connect: { id: UNSTABLE_TENANT_ID } },
         createdBy: 'system-seed',
-        updatedBy: 'system-seed',
+      },
+    });
+  }
+
+  // Create ITIL Assignment Types
+  const assignmentTypes = getITILAssignmentTypes();
+  for (const assignmentType of assignmentTypes) {
+    await prisma.assignmentType.upsert({
+      where: { name_tenantId: { name: assignmentType.name, tenantId: UNSTABLE_TENANT_ID } },
+      update: {
+        name: assignmentType.name,
+        systemName: assignmentType.system_name,
+        description: assignmentType.description,
+        isActive: assignmentType.isActive,
+        tenantId: UNSTABLE_TENANT_ID,
+        createdBy: 'system',
+      },
+      create: {
+        name: assignmentType.name,
+        systemName: assignmentType.system_name,
+        description: assignmentType.description,
+        isActive: assignmentType.isActive,
+        tenantId: UNSTABLE_TENANT_ID,
+        createdBy: 'system',
       },
     });
   }

@@ -1,18 +1,20 @@
+import { STATUS } from '@/constants/requests';
+
 export function getITILStatuses() {
   const itilStates = [
     {
       name: 'Draft',
       itilCode: 'draft',
-      level: 1,
+      level: STATUS.DRAFT,
       description: 'Initial request registration',
       isActive: true,
       isFinal: false,
       requiresApproval: false,
     },
     {
-      name: 'CAB Review',
-      itilCode: 'cab_review',
-      level: 2,
+      name: 'Review',
+      itilCode: 'review',
+      level: STATUS.REVIEW,
       description: 'Change Advisory Board evaluation',
       isActive: true,
       isFinal: false,
@@ -21,7 +23,7 @@ export function getITILStatuses() {
     {
       name: 'Approved',
       itilCode: 'approved',
-      level: 3,
+      level: STATUS.APPROVED,
       description: 'Formally authorized for implementation',
       isActive: true,
       isFinal: false,
@@ -30,7 +32,7 @@ export function getITILStatuses() {
     {
       name: 'Implementing',
       itilCode: 'implementing',
-      level: 4,
+      level: STATUS.IMPLEMENTING,
       description: 'Active change implementation',
       isActive: true,
       isFinal: false,
@@ -39,7 +41,7 @@ export function getITILStatuses() {
     {
       name: 'Closed',
       itilCode: 'closed',
-      level: 5,
+      level: STATUS.CLOSED,
       description: 'Successfully completed and verified',
       isActive: true,
       isFinal: true,
@@ -54,19 +56,19 @@ export function getITILTransitions() {
   const itilTransitions = [
     {
       fromCode: 'draft',
-      toCode: 'cab_review',
+      toCode: 'review',
       maxDuration: 1440,
       isDefault: true,
       priority: 1,
     },
     {
-      fromCode: 'cab_review',
+      fromCode: 'review',
       toCode: 'draft',
       priority: 2,
       description: 'Rejection path',
     },
     {
-      fromCode: 'cab_review',
+      fromCode: 'review',
       toCode: 'approved',
       maxDuration: 2880,
       requiresApproval: true,

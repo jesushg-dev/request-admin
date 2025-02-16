@@ -4,28 +4,32 @@ import { type FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
+import { generateUuid } from '@/lib/id';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { OptionType } from '@/components/select/select';
-
-const mockStatuses = [
-  { id: 'status1', name: 'Open' },
-  { id: 'status2', name: 'In Progress' },
-];
+import Select, { OptionType } from '@/components/select/select';
 
 export const requestDetailSchema = z.object({
-  id: z.string().optional(),
+  id: z.string(),
   issueSubject: z.string().optional(),
   description: z.string().max(5000).optional(),
-  priority: z.string().optional(),
   comment: z.string().max(255).optional(),
-  statusId: z.string(),
+  priorityId: z.object({ value: z.string(), label: z.string() }),
+  statusId: z.object({ value: z.string(), label: z.string() }),
 });
 
 export type RequestDetailValues = z.infer<typeof requestDetailSchema>;
+
+export const getDefaultDetailsValues = () => ({
+  id: generateUuid(),
+  issueSubject: '',
+  description: '',
+  comment: '',
+  priorityId: { value: '', label: '' },
+  statusId: { value: '', label: '' },
+});
 
 interface RequestDetailsStepProps {
   statusesOptions: OptionType[];
@@ -47,6 +51,7 @@ const RequestDetailsStep: FC<RequestDetailsStepProps> = ({ statusesOptions, prio
               <FormControl>
                 <Input id="issueSubject" placeholder="Enter issue subject" {...field} />
               </FormControl>
+              <FormDescription>Issue Subject is used to describe the main issue of the request.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -59,19 +64,9 @@ const RequestDetailsStep: FC<RequestDetailsStepProps> = ({ statusesOptions, prio
               <FormItem>
                 <FormLabel>Status</FormLabel>
                 <FormControl>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {mockStatuses.map((status) => (
-                        <SelectItem key={status.id} value={status.id}>
-                          {status.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Select menuPortalTarget={null} value={field.value} defaultValue={field.value} onChange={field.onChange} options={statusesOptions} />
                 </FormControl>
+                <FormDescription>Status is used to determine the current state of the request.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -79,52 +74,14 @@ const RequestDetailsStep: FC<RequestDetailsStepProps> = ({ statusesOptions, prio
 
           <FormField
             control={control}
-            name={`${currentPath}.forms` as `categories.${number}.forms`}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t('formsLabel')}</FormLabel>
-                <FormControl>
-                  <Select menuPortalTarget={null} value={field.value} defaultValue={field.value} isMulti onChange={field.onChange} options={forms} />
-                </FormControl>
-                <FormMessage />
-                <FormDescription>{t('requirementsDescription', { categoryName })}</FormDescription>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={control}
-            name={`${currentPath}.forms` as `categories.${number}.forms`}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t('formsLabel')}</FormLabel>
-                <FormControl>
-                  <Select menuPortalTarget={null} value={field.value} defaultValue={field.value} isMulti onChange={field.onChange} options={forms} />
-                </FormControl>
-                <FormMessage />
-                <FormDescription>{t('requirementsDescription', { categoryName })}</FormDescription>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={control}
-            name="priority"
+            name="priorityId"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Priority</FormLabel>
                 <FormControl>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select priority" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="low">Low</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="high">High</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Select menuPortalTarget={null} value={field.value} defaultValue={field.value} onChange={field.onChange} options={prioritiesOptions} />
                 </FormControl>
+                <FormDescription>Priority is used to determine the order in which requests are handled.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -140,6 +97,7 @@ const RequestDetailsStep: FC<RequestDetailsStepProps> = ({ statusesOptions, prio
               <FormControl>
                 <Textarea id="description" placeholder="Enter description" {...field} />
               </FormControl>
+              <FormDescription>Description is used to provide more information about the request.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -154,6 +112,7 @@ const RequestDetailsStep: FC<RequestDetailsStepProps> = ({ statusesOptions, prio
               <FormControl>
                 <Input id="comment" placeholder="Enter comment" {...field} />
               </FormControl>
+              <FormDescription>Comment is used to provide even more information about the request.</FormDescription>
               <FormMessage />
             </FormItem>
           )}

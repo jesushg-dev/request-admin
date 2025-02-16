@@ -455,6 +455,7 @@ export function useCheckRequestAssignment<TError = DefaultError>(
       statusId?: string;
       typeId?: string;
       priorityId?: string;
+      isActive?: boolean;
       requestCategoryId?: string;
       assignmentCategoryId?: string;
     };

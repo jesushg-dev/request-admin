@@ -38,7 +38,11 @@ export default function FormSubmissionsViewer({ submissions, isLoading }: { subm
   };
 
   if (submissions.length === 0) {
-    return <EmptyState title="No submissions available" icon={<InboxIcon className="w-10 h-10" />} description="No form submissions have been made yet." />;
+    return (
+      <Card className="p-4">
+        <EmptyState title="No submissions available" icon={<InboxIcon className="w-10 h-10" />} description="No form submissions have been made yet." />
+      </Card>
+    );
   }
 
   return (

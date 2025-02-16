@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useTransition, type FC } from 'react';
+import { upsertRequest } from '@/actions/request';
 import { useRouter } from '@/i18n/routing';
-import { useUpsertRequest } from '@/services/api/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { defineStepper } from '@stepperize/react';
 import { useForm } from 'react-hook-form';
@@ -13,7 +13,6 @@ import { AssignmentLevelType, RequestLevelType } from '@/types/prisma/hierarchy'
 import { Card } from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
 import { OptionType } from '@/components/select/select';
-import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
 import { ChildSteps } from '@/components/stepper/child-steps';
 import { ChildStepsProvider } from '@/components/stepper/child-steps-context';
 import { StepNavigation } from '@/components/stepper/step-navigation';
@@ -22,7 +21,7 @@ import { StepperNavigationButtons } from '@/components/stepper/step-navigation-b
 import AttachmentsStep, { attachmentSchema } from './attachments-step';
 import CategoryStep, { combinedCategoriesSchema, CombinedCategoriesValues } from './category-step';
 import DynamicFormStep, { formResponseSchema } from './dynamic-form-step';
-import RequestDetailsStep, { requestDetailSchema } from './request-details-step';
+import RequestDetailsStep, { getDefaultDetailsValues, requestDetailSchema } from './request-details-step';
 import RequirementComplianceStep, { requirementComplianceSchema } from './requirement-compliance-step';
 import SummaryStep from './summary-step';
 
@@ -53,18 +52,16 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ tenantId, requestLevelTypes
   const router = useRouter();
   const stepper = useStepper();
   const [isPending, startTransition] = useTransition();
-  const { mutateAsync: upsert, error } = useUpsertRequest();
 
   const form = useForm({
     mode: 'onTouched',
     resolver: zodResolver(stepper.current.schema),
+    defaultValues: getDefaultDetailsValues(),
   });
 
   const [requestCategoryIds, setRequestCategoryIds] = useState<string[]>([]);
 
   const onSubmit = (values: z.infer<typeof stepper.current.schema>) => {
-    console.log('🚀 ~ onSubmit ~ values:', values);
-
     if (stepper.current.id === 'categories') {
       const data = values as CombinedCategoriesValues;
       if (data.requestCategory) {
@@ -79,8 +76,9 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ tenantId, requestLevelTypes
 
     startTransition(async () => {
       const data = form.getValues() as RequestFormStepperType;
+      const promise = upsertRequest(tenantId, data);
 
-      /* toast.promise(promise, {
+      toast.promise(promise, {
         loading: 'Saving request...',
         success: (response) => {
           router.push({ pathname: '/admin/[tenantId]/security/roles', params: { tenantId } });
@@ -90,7 +88,7 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ tenantId, requestLevelTypes
           return `Failed to save request: ${error.message}`;
         },
         position: 'top-right',
-      });*/
+      });
     });
   };
 
@@ -103,7 +101,6 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ tenantId, requestLevelTypes
               <StepNavigation steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo}>
                 {(index, currentIndex) => <ChildSteps index={index} currentIndex={currentIndex} currentId={stepper.current.id} />}
               </StepNavigation>
-              {error && <PrismaErrorAlert error={error} />}
               {stepper.switch({
                 categories: () => <CategoryStep requestLevelTypes={requestLevelTypes} assignmentLevelTypes={assignmentLevelTypes} />,
                 requirementCompliance: () => <RequirementComplianceStep requestCategoryIds={requestCategoryIds} />,

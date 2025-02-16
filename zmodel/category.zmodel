@@ -102,6 +102,18 @@ model GuideDocument extends TenantScoped, Auditable, CatalogBase {
   @@unique([name, tenantId])
 }
 
+/// Represents a specific requirement for a request/assignment category.
+model Requirement extends TenantScoped, Auditable, CatalogBase {
+  isRequiredOnlyOnce   Boolean                         @default(false)
+  requirementComplianceTracking RequirementComplianceTracking[]
+  requestCategoryRequirements    RequestCategoryRequirement[]
+  requirementTypeId             String                          @db.UniqueIdentifier
+  requirementType               RequirementType                 @relation(fields: [requirementTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
+
+  @@index([name], name: "idx_requirement_name")
+  @@unique([name, tenantId], name: "idx_requirement_name_tenant")
+}
+
 /// Links a requirement to a specific category.
 model RequestCategoryRequirement extends TenantScoped, Auditable {
   id              String          @id @default(uuid()) @db.UniqueIdentifier
@@ -116,18 +128,6 @@ model RequestCategoryRequirement extends TenantScoped, Auditable {
   
 
   @@unique([categoryId, requirementId, tenantId])
-}
-
-/// Represents a specific requirement for a request/assignment category.
-model Requirement extends TenantScoped, Auditable, CatalogBase {
-  isRequiredOnlyOnce   Boolean                         @default(false)
-  requirementComplianceTracking RequirementComplianceTracking[]
-  requestCategoryRequirements    RequestCategoryRequirement[]
-  requirementTypeId             String                          @db.UniqueIdentifier
-  requirementType               RequirementType                 @relation(fields: [requirementTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
-
-  @@index([name], name: "idx_requirement_name")
-  @@unique([name, tenantId], name: "idx_requirement_name_tenant")
 }
 
 /// Represents a type of a requirement.

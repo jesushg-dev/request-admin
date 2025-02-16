@@ -340,7 +340,7 @@ model RequestAssignment {
   tenant               Tenant               @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id                   String               @id() @default(uuid()) @db.UniqueIdentifier()
   comment              String?              @db.VarChar(255)
-  assignmentDate       DateTime
+  assignmentDate       DateTime             @default(now())
   unAssignmentDate     DateTime?
   requestId            String               @db.UniqueIdentifier()
   request              Request              @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -357,6 +357,7 @@ model RequestAssignment {
   type                 AssignmentType       @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   priorityId           String               @db.UniqueIdentifier()
   priority             RequestPriorityType  @relation(fields: [priorityId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  isActive             Boolean              @default(true)
   requestCategoryId    String               @db.UniqueIdentifier()
   requestCategory      RequestCategory      @relation("RequestCategory", fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   assignmentCategoryId String               @db.UniqueIdentifier()
@@ -387,7 +388,6 @@ model AssignedUser {
   userTenantId        String            @db.UniqueIdentifier()
   userTenant          UserTenant        @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   role                String            @db.VarChar(150)
-  isCoordinator       Boolean           @default(false)
   unAssignmentDate    DateTime?
 }
 
@@ -404,6 +404,7 @@ model AssignmentType {
   tenantId    String              @db.UniqueIdentifier()
   tenant      Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   assignments RequestAssignment[]
+  systemName  String              @db.VarChar(100)
 
   @@unique([name, tenantId])
 }
@@ -495,6 +496,7 @@ model RequirementComplianceTracking {
   isArchived    Boolean     @default(false)
   document      Document[]
 
+  @@unique([requestId, requirementId, tenantId], name: "unique_compliance_tracking")
   @@index([requestId], name: "idx_compliance_request_id")
   @@index([requirementId], name: "idx_compliance_requirement_id")
 }
@@ -817,27 +819,6 @@ model GuideDocument {
   @@index([requestCategoryId], name: "idx_guide_document_request_category_id")
 }
 
-/// Links a requirement to a specific category.
-model RequestCategoryRequirement {
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime?       @updatedAt()
-  deletedAt       DateTime?
-  createdBy       String?         @db.VarChar(50)
-  updatedBy       String?         @db.VarChar(50)
-  tenantId        String          @db.UniqueIdentifier()
-  tenant          Tenant          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id              String          @id() @default(uuid()) @db.UniqueIdentifier()
-  requirementId   String          @db.UniqueIdentifier()
-  requirement     Requirement     @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  categoryId      String          @db.UniqueIdentifier()
-  requestCategory RequestCategory @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  isActive        Boolean         @default(true)
-
-  @@unique([categoryId, requirementId, tenantId])
-  @@index([requirementId], name: "idx_category_requirement_id")
-  @@index([categoryId], name: "idx_category_category_id")
-}
-
 /// Represents a specific requirement for a request/assignment category.
 model Requirement {
   id                            String                          @id() @default(uuid()) @db.UniqueIdentifier()
@@ -859,6 +840,27 @@ model Requirement {
 
   @@unique([name, tenantId], name: "idx_requirement_name_tenant")
   @@index([name], name: "idx_requirement_name")
+}
+
+/// Links a requirement to a specific category.
+model RequestCategoryRequirement {
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime?       @updatedAt()
+  deletedAt       DateTime?
+  createdBy       String?         @db.VarChar(50)
+  updatedBy       String?         @db.VarChar(50)
+  tenantId        String          @db.UniqueIdentifier()
+  tenant          Tenant          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id              String          @id() @default(uuid()) @db.UniqueIdentifier()
+  requirementId   String          @db.UniqueIdentifier()
+  requirement     Requirement     @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  categoryId      String          @db.UniqueIdentifier()
+  requestCategory RequestCategory @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  isActive        Boolean         @default(true)
+
+  @@unique([categoryId, requirementId, tenantId])
+  @@index([requirementId], name: "idx_category_requirement_id")
+  @@index([categoryId], name: "idx_category_category_id")
 }
 
 /// Represents a type of a requirement.
@@ -998,6 +1000,7 @@ model FormSubmission {
   requestId String?             @db.UniqueIdentifier()
   request   Request?            @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
+  @@unique([formId, tenantId, requestId])
   @@index([formId])
 }
 

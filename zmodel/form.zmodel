@@ -42,6 +42,7 @@ model FormSubmission extends TenantScoped, Auditable {
 
   // Index for faster queries
   @@index([formId])
+  @@unique([formId, tenantId, requestId])
 }
 
 model FormSubmissionKey extends TenantScoped, Auditable {

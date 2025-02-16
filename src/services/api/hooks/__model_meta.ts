@@ -1711,6 +1711,7 @@ const metadata = {
         assignmentDate: {
           name: 'assignmentDate',
           type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
         },
         unAssignmentDate: {
           name: 'unAssignmentDate',
@@ -1817,6 +1818,11 @@ const metadata = {
           backLink: 'assignments',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'priorityId' },
+        },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
         },
         requestCategoryId: {
           name: 'requestCategoryId',
@@ -1939,11 +1945,6 @@ const metadata = {
           name: 'role',
           type: 'String',
         },
-        isCoordinator: {
-          name: 'isCoordinator',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: false }] }],
-        },
         unAssignmentDate: {
           name: 'unAssignmentDate',
           type: 'DateTime',
@@ -2030,6 +2031,10 @@ const metadata = {
           isDataModel: true,
           isArray: true,
           backLink: 'type',
+        },
+        systemName: {
+          name: 'systemName',
+          type: 'String',
         },
       },
       uniqueConstraints: {
@@ -2485,6 +2490,10 @@ const metadata = {
         id: {
           name: 'id',
           fields: ['id'],
+        },
+        unique_compliance_tracking: {
+          name: 'unique_compliance_tracking',
+          fields: ['requestId', 'requirementId', 'tenantId'],
         },
       },
     },
@@ -4072,104 +4081,6 @@ const metadata = {
         },
       },
     },
-    requestCategoryRequirement: {
-      name: 'RequestCategoryRequirement',
-      fields: {
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
-        },
-        deletedAt: {
-          name: 'deletedAt',
-          type: 'DateTime',
-          isOptional: true,
-        },
-        createdBy: {
-          name: 'createdBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$RequestCategoryRequirement$createdBy,
-        },
-        updatedBy: {
-          name: 'updatedBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$RequestCategoryRequirement$updatedBy,
-        },
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'categoryRequirements',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
-        },
-        requirementId: {
-          name: 'requirementId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'requirement',
-        },
-        requirement: {
-          name: 'requirement',
-          type: 'Requirement',
-          isDataModel: true,
-          backLink: 'requestCategoryRequirements',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'requirementId' },
-        },
-        categoryId: {
-          name: 'categoryId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'requestCategory',
-        },
-        requestCategory: {
-          name: 'requestCategory',
-          type: 'RequestCategory',
-          isDataModel: true,
-          backLink: 'requestCategoryRequirements',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'categoryId' },
-        },
-        isActive: {
-          name: 'isActive',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: true }] }],
-        },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
-        },
-        categoryId_requirementId_tenantId: {
-          name: 'categoryId_requirementId_tenantId',
-          fields: ['categoryId', 'requirementId', 'tenantId'],
-        },
-      },
-    },
     requirement: {
       name: 'Requirement',
       fields: {
@@ -4279,6 +4190,104 @@ const metadata = {
         idx_requirement_name_tenant: {
           name: 'idx_requirement_name_tenant',
           fields: ['name', 'tenantId'],
+        },
+      },
+    },
+    requestCategoryRequirement: {
+      name: 'RequestCategoryRequirement',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$RequestCategoryRequirement$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$RequestCategoryRequirement$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'categoryRequirements',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        requirementId: {
+          name: 'requirementId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'requirement',
+        },
+        requirement: {
+          name: 'requirement',
+          type: 'Requirement',
+          isDataModel: true,
+          backLink: 'requestCategoryRequirements',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'requirementId' },
+        },
+        categoryId: {
+          name: 'categoryId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'requestCategory',
+        },
+        requestCategory: {
+          name: 'requestCategory',
+          type: 'RequestCategory',
+          isDataModel: true,
+          backLink: 'requestCategoryRequirements',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'categoryId' },
+        },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        categoryId_requirementId_tenantId: {
+          name: 'categoryId_requirementId_tenantId',
+          fields: ['categoryId', 'requirementId', 'tenantId'],
         },
       },
     },
@@ -4970,6 +4979,10 @@ const metadata = {
         id: {
           name: 'id',
           fields: ['id'],
+        },
+        formId_tenantId_requestId: {
+          name: 'formId_tenantId_requestId',
+          fields: ['formId', 'tenantId', 'requestId'],
         },
       },
     },
@@ -6491,19 +6504,19 @@ function $default$GuideDocument$updatedBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$RequestCategoryRequirement$createdBy(user: any): unknown {
-  return user?.id;
-}
-
-function $default$RequestCategoryRequirement$updatedBy(user: any): unknown {
-  return user?.id;
-}
-
 function $default$Requirement$createdBy(user: any): unknown {
   return user?.id;
 }
 
 function $default$Requirement$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestCategoryRequirement$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestCategoryRequirement$updatedBy(user: any): unknown {
   return user?.id;
 }
 

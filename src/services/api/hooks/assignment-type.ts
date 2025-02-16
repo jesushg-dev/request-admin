@@ -429,7 +429,7 @@ export function useSuspenseCountAssignmentType<
 }
 
 export function useCheckAssignmentType<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { id?: string; name?: string; description?: string; isActive?: boolean; createdBy?: string; updatedBy?: string; tenantId?: string } },
+  args: { operation: PolicyCrudKind; where?: { id?: string; name?: string; description?: string; isActive?: boolean; createdBy?: string; updatedBy?: string; tenantId?: string; systemName?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();
