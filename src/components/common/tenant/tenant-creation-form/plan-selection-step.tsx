@@ -1,9 +1,22 @@
 import { useFormContext } from 'react-hook-form';
+import { z } from 'zod';
 
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
-import { Plan, PlanSelectionData } from './types';
+export const planSelectionSchema = z.object({
+  planId: z.string().min(1, 'Plan selection is required'),
+});
+
+export interface Plan {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  durationInDays?: number;
+}
+
+export type PlanSelectionData = z.infer<typeof planSelectionSchema>;
 
 interface PlanSelectionFormProps {
   plans: Plan[];

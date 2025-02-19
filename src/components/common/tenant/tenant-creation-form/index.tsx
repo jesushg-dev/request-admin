@@ -11,10 +11,9 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { StepNavigation } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 
-import { ModulesStep } from './module-step';
-import { PlanSelectionStep } from './plan-selection-step';
-import { TenantStep } from './tenant-step';
-import { Module, modulesSchema, Plan, planSelectionSchema, tenantDetailsSchema, TenantFormData } from './types';
+import { Module, modulesSchema, ModulesStep } from './module-step';
+import { Plan, planSelectionSchema, PlanSelectionStep } from './plan-selection-step';
+import { tenantDetailsSchema, TenantStep } from './tenant-step';
 
 interface TenantCreationFormProps {
   modules: Module[];
@@ -24,22 +23,26 @@ interface TenantCreationFormProps {
 const { useStepper, utils } = defineStepper(
   { id: 'tenant', label: 'Tenant Details', schema: tenantDetailsSchema },
   { id: 'modules', label: 'Modules', schema: modulesSchema },
-  { id: 'plan', label: 'Plan Selection', schema: planSelectionSchema }
+  { id: 'plan', label: 'Plan Selection', schema: planSelectionSchema },
+  { id: 'finish', label: 'Finish', schema: z.object({}) }
 );
 
 export function TenantCreationForm({ modules, plans }: TenantCreationFormProps) {
   const stepper = useStepper();
 
-  const form = useForm<TenantFormData>({
+  const form = useForm({
     mode: 'onTouched',
     resolver: zodResolver(stepper.current.schema),
-    defaultValues: {
-      modules: modules.map((module) => ({ ...module, isActive: false })),
-    },
+    defaultValues:
+      stepper.current.id === 'modules'
+        ? {
+            modules: modules.map((module) => ({ ...module, isActive: false })),
+          }
+        : {},
   });
 
   // Handle form submission
-  const onSubmit = (values: z.infer<typeof stepper.current.schema>) => {
+  const onSubmit = async (values: z.infer<typeof stepper.current.schema>) => {
     console.log(`Step: ${stepper.current.id}, Values:`, values);
     if (stepper.isLast) {
       stepper.reset();

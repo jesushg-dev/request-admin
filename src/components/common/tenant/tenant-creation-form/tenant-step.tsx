@@ -1,19 +1,41 @@
 import { useFormContext } from 'react-hook-form';
+import { z } from 'zod';
 
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
-import { TenantDetailsData } from './types';
+export const tenantDetailsSchema = z.object({
+  tenant: z.object({
+    name: z.string().min(1, 'Name is required'),
+    logoUrl: z.string().url().optional().or(z.literal('')),
+    websiteUrl: z.string().url().optional().or(z.literal('')),
+    title: z.string().optional(),
+    description: z.string().optional(),
+    primaryColor: z
+      .string()
+      .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Invalid color format')
+      .optional(),
+    secondaryColor: z
+      .string()
+      .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Invalid color format')
+      .optional(),
+    contactEmail: z.string().email('Invalid email address'),
+    contactPhone: z.string().optional(),
+    address: z.string().optional(),
+  }),
+});
+
+export type TenantDetailsValues = z.infer<typeof tenantDetailsSchema>;
 
 export function TenantStep() {
-  const { control } = useFormContext<TenantDetailsData>();
+  const { control } = useFormContext<TenantDetailsValues>();
 
   return (
     <div className="m-1 flex flex-col gap-2">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <FormField
           control={control}
-          name="name"
+          name="tenant.name"
           render={({ field }) => (
             <FormItem className="mx-1">
               <FormLabel>Tenant Name</FormLabel>
@@ -28,7 +50,7 @@ export function TenantStep() {
 
         <FormField
           control={control}
-          name="title"
+          name="tenant.title"
           render={({ field }) => (
             <FormItem className="mx-1">
               <FormLabel>Title</FormLabel>
@@ -43,7 +65,7 @@ export function TenantStep() {
 
         <FormField
           control={control}
-          name="websiteUrl"
+          name="tenant.websiteUrl"
           render={({ field }) => (
             <FormItem className="mx-1">
               <FormLabel>Website URL</FormLabel>
@@ -58,7 +80,7 @@ export function TenantStep() {
 
         <FormField
           control={control}
-          name="logoUrl"
+          name="tenant.logoUrl"
           render={({ field }) => (
             <FormItem className="mx-1">
               <FormLabel>Logo URL</FormLabel>
@@ -73,7 +95,7 @@ export function TenantStep() {
 
         <FormField
           control={control}
-          name="address"
+          name="tenant.address"
           render={({ field }) => (
             <FormItem className="mx-1 md:col-span-2">
               <FormLabel>Address</FormLabel>
@@ -88,7 +110,7 @@ export function TenantStep() {
 
         <FormField
           control={control}
-          name="description"
+          name="tenant.description"
           render={({ field }) => (
             <FormItem className="mx-1 md:col-span-2">
               <FormLabel>Description</FormLabel>
@@ -103,7 +125,7 @@ export function TenantStep() {
 
         <FormField
           control={control}
-          name="primaryColor"
+          name="tenant.primaryColor"
           render={({ field }) => (
             <FormItem className="mx-1">
               <FormLabel>Primary Color</FormLabel>
@@ -121,7 +143,7 @@ export function TenantStep() {
 
         <FormField
           control={control}
-          name="secondaryColor"
+          name="tenant.secondaryColor"
           render={({ field }) => (
             <FormItem className="mx-1">
               <FormLabel>Secondary Color</FormLabel>
@@ -139,7 +161,7 @@ export function TenantStep() {
 
         <FormField
           control={control}
-          name="contactEmail"
+          name="tenant.contactEmail"
           render={({ field }) => (
             <FormItem className="mx-1">
               <FormLabel>Contact Email</FormLabel>
@@ -154,7 +176,7 @@ export function TenantStep() {
 
         <FormField
           control={control}
-          name="contactPhone"
+          name="tenant.contactPhone"
           render={({ field }) => (
             <FormItem className="mx-1">
               <FormLabel>Contact Phone</FormLabel>

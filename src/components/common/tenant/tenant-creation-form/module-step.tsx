@@ -1,16 +1,34 @@
 import { useFormContext } from 'react-hook-form';
+import { z } from 'zod';
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel } from '@/components/ui/form';
 
-import { Module, ModulesData } from './types';
+export interface Module {
+  id: string;
+  name: string;
+  description?: string;
+  isActive: boolean;
+}
 
 interface ModulesFormProps {
   modules: Module[];
 }
 
+export const modulesSchema = z.object({
+  modules: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      isActive: z.boolean(),
+    })
+  ),
+});
+
+export type ModulesValues = z.infer<typeof modulesSchema>;
+
 export function ModulesStep({ modules }: ModulesFormProps) {
-  const { control } = useFormContext<ModulesData>();
+  const { control } = useFormContext<ModulesValues>();
 
   return (
     <div className="m-1 flex flex-col gap-2">

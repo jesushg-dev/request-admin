@@ -30,7 +30,6 @@ const DocumentDefaultArgs = Prisma.validator<Prisma.DocumentDefaultArgs>()({
     request: {
       select: {
         id: true,
-        priority: true,
       },
     },
   },

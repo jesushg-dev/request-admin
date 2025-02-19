@@ -1,14 +1,8 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@/server/auth';
 import { db } from '@/server/db-client';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const POST = auth(async (req) => {
-  if (!req.auth) {
-    return NextResponse.redirect('/auth/login');
-  }
-
-  const { tenantId } = await req.json();
+export async function POST(request: Request) {
+  const { tenantId } = (await request.json()) as { tenantId: string };
 
   if (!tenantId) {
     return NextResponse.json({ error: 'Tenant ID is required' }, { status: 400 });
@@ -22,4 +16,4 @@ export const POST = auth(async (req) => {
     console.error(error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
-});
+}

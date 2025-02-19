@@ -11,9 +11,10 @@ async function getCookies() {
   return _cookies?.toString() ?? '';
 }
 
-export async function getTenantsForUser() {
+export async function getTenantsForUser(userId: string): Promise<{ id: string }[]> {
   const response = await fetch(`${getBaseUrl()}/api/tenants`, {
-    method: 'GET',
+    method: 'POST',
+    body: JSON.stringify({ userId }),
     headers: {
       Cookie: await getCookies(), // Forward cookies to the API
     },

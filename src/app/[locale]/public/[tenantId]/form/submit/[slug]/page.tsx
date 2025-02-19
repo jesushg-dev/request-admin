@@ -4,14 +4,7 @@ import { GetFormContentByUrl } from '@/actions/form';
 import { FormElementInstance } from '@/components/builder-form/form-elements';
 import FormSubmitComponent from '@/components/builder-form/form-submit-component';
 
-async function SubmitPage({
-  params,
-}: {
-  params: {
-    tenantId: string;
-    slug: string;
-  };
-}) {
+async function SubmitPage({ params }: { params: Promise<{ tenantId: string; slug: string }> }) {
   const { slug, tenantId } = await params;
 
   const form = await GetFormContentByUrl(slug, tenantId);
