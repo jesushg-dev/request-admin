@@ -1,5 +1,6 @@
 import { TenantCreationForm } from '@/components/common/tenant/tenant-creation-form';
-import { Module, Plan } from '@/components/common/tenant/tenant-creation-form/types';
+import { Module } from '@/components/common/tenant/tenant-creation-form/module-step';
+import { Plan } from '@/components/common/tenant/tenant-creation-form/plan-selection-step';
 
 // Mock data for modules and plans
 const mockModules: Module[] = [

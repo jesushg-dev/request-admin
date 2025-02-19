@@ -1,25 +1,29 @@
 import type { Filter, JoinOperator } from '@/types';
 import { addDays, endOfDay, startOfDay } from 'date-fns';
 
-type PrismaFilter = Record<string, unknown>;
+type PrismaCondition = { [key: string]: unknown } | { AND: PrismaCondition[] } | { OR: PrismaCondition[] } | { NOT: PrismaCondition };
 
 /**
- * Builds Prisma filter conditions based on provided filters and join operator
- * @param filters - Array of filters to apply
- * @param joinOperator - Logical operator to combine filters ('AND' or 'OR')
- * @returns Prisma filter object or undefined
+ * Builds Prisma filter conditions with strict type checking
  */
-export function buildPrismaFilters<T extends Record<string, unknown>>(filters: Array<Filter<T>>, joinOperator: JoinOperator): PrismaFilter | undefined {
-  const conditions = filters
+export function buildPrismaFilters<T extends Record<string, unknown>>(filters: Array<Filter<T>>, joinOperator: JoinOperator): PrismaCondition | undefined {
+  const conditions: PrismaCondition[] = filters
     .map((filter) => {
       const { id, operator, value, type } = filter;
       const column = id as string;
 
-      // Type guard para valores de fecha
       const getDateValue = (val: unknown): Date | null => {
-        if (typeof val === 'string') return new Date(val);
-        if (val instanceof Date) return val;
-        return null;
+        try {
+          return val ? new Date(val as string) : null;
+        } catch {
+          return null;
+        }
+      };
+
+      // Handler for date comparisons
+      const dateComparison = (operator: 'lt' | 'lte' | 'gt' | 'gte', value: unknown, modifier: (d: Date) => Date): PrismaCondition | undefined => {
+        const dateValue = getDateValue(value);
+        return dateValue ? { [column]: { [operator]: modifier(dateValue) } } : undefined;
       };
 
       switch (operator) {
@@ -32,10 +36,11 @@ export function buildPrismaFilters<T extends Record<string, unknown>>(filters: A
           }
           if (type === 'date') {
             const dateValue = getDateValue(value);
-            if (!dateValue) return undefined;
-            return {
-              AND: [{ [column]: { gte: startOfDay(dateValue) } }, { [column]: { lte: endOfDay(dateValue) } }],
-            };
+            return dateValue
+              ? {
+                  AND: [{ [column]: { gte: startOfDay(dateValue) } }, { [column]: { lte: endOfDay(dateValue) } }],
+                }
+              : undefined;
           }
           return { [column]: value };
 
@@ -48,10 +53,11 @@ export function buildPrismaFilters<T extends Record<string, unknown>>(filters: A
           }
           if (type === 'date') {
             const dateValue = getDateValue(value);
-            if (!dateValue) return undefined;
-            return {
-              OR: [{ [column]: { lt: startOfDay(dateValue) } }, { [column]: { gt: endOfDay(dateValue) } }],
-            };
+            return dateValue
+              ? {
+                  OR: [{ [column]: { lt: startOfDay(dateValue) } }, { [column]: { gt: endOfDay(dateValue) } }],
+                }
+              : undefined;
           }
           return { [column]: { not: value } };
 
@@ -63,35 +69,19 @@ export function buildPrismaFilters<T extends Record<string, unknown>>(filters: A
 
         case 'lt':
           if (type === 'number') return { [column]: { lt: value } };
-          if (type === 'date') {
-            const dateValue = getDateValue(value);
-            return dateValue ? { [column]: { lt: endOfDay(dateValue) } } : undefined;
-          }
-          return undefined;
+          return dateComparison('lt', value, endOfDay);
 
         case 'lte':
           if (type === 'number') return { [column]: { lte: value } };
-          if (type === 'date') {
-            const dateValue = getDateValue(value);
-            return dateValue ? { [column]: { lte: endOfDay(dateValue) } } : undefined;
-          }
-          return undefined;
+          return dateComparison('lte', value, endOfDay);
 
         case 'gt':
           if (type === 'number') return { [column]: { gt: value } };
-          if (type === 'date') {
-            const dateValue = getDateValue(value);
-            return dateValue ? { [column]: { gt: startOfDay(dateValue) } } : undefined;
-          }
-          return undefined;
+          return dateComparison('gt', value, startOfDay);
 
         case 'gte':
           if (type === 'number') return { [column]: { gte: value } };
-          if (type === 'date') {
-            const dateValue = getDateValue(value);
-            return dateValue ? { [column]: { gte: startOfDay(dateValue) } } : undefined;
-          }
-          return undefined;
+          return dateComparison('gte', value, startOfDay);
 
         case 'isBetween':
           if (type === 'date' && Array.isArray(value)) {
@@ -99,7 +89,7 @@ export function buildPrismaFilters<T extends Record<string, unknown>>(filters: A
             const startDate = getDateValue(startVal);
             const endDate = getDateValue(endVal);
 
-            const conditions: PrismaFilter[] = [];
+            const conditions: PrismaCondition[] = [];
             if (startDate) conditions.push({ [column]: { gte: startOfDay(startDate) } });
             if (endDate) conditions.push({ [column]: { lte: endOfDay(endDate) } });
 
@@ -143,18 +133,20 @@ export function buildPrismaFilters<T extends Record<string, unknown>>(filters: A
         }
 
         case 'isEmpty':
-          // Verifica si es null o cadena vacía según tu modelo
-          return { OR: [{ [column]: null }, { [column]: '' }] };
+          return {
+            OR: [{ [column]: null }, { [column]: '' }],
+          };
 
         case 'isNotEmpty':
-          // Verifica que no sea null ni cadena vacía
-          return { AND: [{ [column]: { not: null } }, { [column]: { not: '' } }] };
+          return {
+            AND: [{ [column]: { not: null } }, { [column]: { not: '' } }],
+          };
 
         default:
           throw new Error(`Unsupported operator: ${operator}`);
       }
     })
-    .filter((condition): condition is PrismaFilter => condition !== undefined);
+    .filter((condition): condition is PrismaCondition => condition !== undefined);
 
-  return conditions.length > 0 ? { [joinOperator.toUpperCase()]: conditions } : undefined;
+  return conditions.length > 0 ? { [joinOperator.toUpperCase() === 'AND' ? 'AND' : 'OR']: conditions } : undefined;
 }
