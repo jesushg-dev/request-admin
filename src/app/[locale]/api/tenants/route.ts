@@ -4,7 +4,7 @@ import { db } from '@/server/db-server';
 
 export const GET = auth(async (req) => {
   if (!req.auth?.user) {
-    return NextResponse.json({ error: 'User  is required' }, { status: 400 });
+    return NextResponse.json({ error: 'User is required' }, { status: 400 });
   }
 
   try {

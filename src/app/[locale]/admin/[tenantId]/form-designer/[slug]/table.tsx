@@ -108,7 +108,7 @@ interface GetTableConfigurationProps {
   t: ReturnType<typeof useTranslations>;
 }
 
-export function getTableConfiguration({ t, columns }: GetTableConfigurationProps) {
+function getTableConfiguration({ t, columns }: GetTableConfigurationProps) {
   const renderCellContent = (value: unknown, type?: string): ReactNode | string => {
     if (type === 'DateField') {
       return (

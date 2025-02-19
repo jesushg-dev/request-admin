@@ -66,10 +66,10 @@ export const getUserByIdWithFeatures = async (id: string) => {
 
     // todo: we can't use this method to fetch user with features and roles since we don't have access to a specific tenant
     // Flatten roles and features
-    const roles = user.userRoles?.map((ur) => ur.role.name) || [];
-    const features = user.userRoles?.flatMap((ur) => ur.role.roleFeature.map((rp) => rp.feature.name)) || [];
+    //const roles = user.userRoles?.map((ur) => ur.role.name) || [];
+    //const features = user.userRoles?.flatMap((ur) => ur.role.roleFeature.map((rp) => rp.feature.name)) || [];
 
-    return { ...user, roles, features };
+    return { ...user, roles: [], features: [] };
   } catch {
     return null;
   }

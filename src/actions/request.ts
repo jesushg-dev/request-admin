@@ -92,7 +92,6 @@ export const upsertRequest = async (tenantId: string, data: RequestFormStepperTy
           assignedUsers: {
             create: area.userAreas.map((ua) => ({
               tenantId,
-              isCoordinator: true,
               role: ua.role.name,
               userTenantId: ua.userTenantId,
             })),
@@ -146,7 +145,6 @@ export const upsertRequest = async (tenantId: string, data: RequestFormStepperTy
           assignedUsers: {
             create: area.userAreas.map((ua) => ({
               tenantId,
-              isCoordinator: true,
               role: ua.role.name,
               userTenantId: ua.userTenantId,
             })),

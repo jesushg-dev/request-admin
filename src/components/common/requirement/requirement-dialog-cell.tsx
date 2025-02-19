@@ -79,7 +79,7 @@ interface GetTableConfigurationProps {
 }
 
 // Configuration for the table columns
-export function getTableConfiguration({ t }: GetTableConfigurationProps) {
+function getTableConfiguration({ t }: GetTableConfigurationProps) {
   const columns: ColumnDef<Requirement>[] = [
     {
       id: 'name',

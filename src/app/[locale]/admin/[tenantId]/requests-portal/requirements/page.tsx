@@ -104,7 +104,7 @@ interface GetTableConfigurationProps {
   t: ReturnType<typeof useTranslations>;
 }
 
-export function getTableConfiguration({ t }: GetTableConfigurationProps) {
+function getTableConfiguration({ t }: GetTableConfigurationProps) {
   const columns: ColumnDef<RequirementWithRelations>[] = [
     {
       id: 'name',

@@ -124,7 +124,7 @@ interface GetTableConfigurationProps {
   t: ReturnType<typeof useTranslations>;
 }
 
-export function getTableConfiguration({ t }: GetTableConfigurationProps) {
+function getTableConfiguration({ t }: GetTableConfigurationProps) {
   const columns: ColumnDef<UserWithRelations>[] = [
     {
       accessorKey: 'person',
@@ -193,17 +193,17 @@ export function getTableConfiguration({ t }: GetTableConfigurationProps) {
   ];
 
   const filterFields: DataTableFilterField<UserWithRelations>[] = [
-    { id: 'person.firstName', label: t('filters.firstName'), placeholder: t('filters.firstNamePlaceholder') },
+    /*{ id: 'person.firstName', label: t('filters.firstName'), placeholder: t('filters.firstNamePlaceholder') },
     { id: 'person.lastName', label: t('filters.lastName'), placeholder: t('filters.lastNamePlaceholder') },
     { id: 'user.username', label: t('filters.username'), placeholder: t('filters.usernamePlaceholder') },
-    { id: 'user.email', label: t('filters.email'), placeholder: t('filters.emailPlaceholder') },
+    { id: 'user.email', label: t('filters.email'), placeholder: t('filters.emailPlaceholder') },*/
   ];
 
   const advancedFilterFields: DataTableAdvancedFilterField<UserWithRelations>[] = [
-    { id: 'person.firstName', label: t('filters.firstName'), type: 'text' },
+    /*{ id: 'person.firstName', label: t('filters.firstName'), type: 'text' },
     { id: 'person.lastName', label: t('filters.lastName'), type: 'text' },
     { id: 'user.username', label: t('filters.username'), type: 'text' },
-    { id: 'user.email', label: t('filters.email'), type: 'text' },
+    { id: 'user.email', label: t('filters.email'), type: 'text' },*/
   ];
 
   return { columns, filterFields, advancedFilterFields };

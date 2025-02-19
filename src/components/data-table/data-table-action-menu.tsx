@@ -49,8 +49,10 @@ function ActionCell<TData, TValue>({ cell, viewLink, updateLink, deleteLink, onU
         {/* Update Link */}
         {updateLink && (
           <DropdownMenuItem asChild>
-            <PencilIcon className="size-4" aria-hidden="true" />
-            <Link href={updateLink}>{t('columns.edit')}</Link>
+            <Link href={updateLink} className="flex gap-2">
+              <PencilIcon className="size-4" aria-hidden="true" />
+              {t('columns.edit')}
+            </Link>
           </DropdownMenuItem>
         )}
 

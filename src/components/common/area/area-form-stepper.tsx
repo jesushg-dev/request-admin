@@ -46,7 +46,7 @@ interface AreaFormStepperProps {
   assignmentLevels: RequestLevelType[];
   requirements: RequirementOptionType[];
   moduleWithFeatures: ModuleWithFeaturesType[];
-  defaultValues: AreaFormStepperType;
+  defaultValues?: AreaFormStepperType;
 }
 
 // AreaFormStepper: Renders stepper and step content
@@ -164,7 +164,7 @@ const AreaFormStepper: FC<AreaFormStepperProps> = ({ tenantId, hierarchyId, assi
       toast.promise(Promise.all([promise, upsertCategoriesPromise]), {
         loading: 'Saving area...',
         success: ([upsertResponse]) => {
-          router.push({ pathname: '/admin/[tenantId]/management/areas', params: { tenantId } });
+          router.push({ pathname: '/admin/[tenantId]/requests-portal/areas', params: { tenantId } });
           return `Area ${upsertResponse?.name} created successfully`;
         },
         error: (error) => {

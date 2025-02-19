@@ -7,7 +7,6 @@ import {
   ClipboardIcon,
   FileTextIcon,
   FolderIcon,
-  Frame,
   GridIcon,
   HomeIcon,
   IdCardIcon,
@@ -15,8 +14,6 @@ import {
   LayersIcon,
   ListIcon,
   ListTreeIcon,
-  Map,
-  PieChart,
   RadarIcon,
   SettingsIcon,
   ShieldIcon,
@@ -28,27 +25,8 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } fr
 
 import { NavFormSubmissions } from './nav-form-submissions';
 import { MenuItem, NavMain } from './nav-main';
-import { MenuProject, NavProjects } from './nav-projects';
 import { NavUser } from './nav-user';
 import { TenantSwitcher } from './tenant-switcher';
-
-const projects: MenuProject[] = [
-  {
-    name: 'Design Engineering',
-    url: '#',
-    icon: Frame,
-  },
-  {
-    name: 'Sales & Marketing',
-    url: '#',
-    icon: PieChart,
-  },
-  {
-    name: 'Travel',
-    url: '#',
-    icon: Map,
-  },
-];
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   tenantId: string;
@@ -165,7 +143,6 @@ export function AppSidebar({ tenantId, tenants, user, ...props }: AppSidebarProp
       <SidebarContent>
         <NavMain items={navMain} currentPath={pathname} />
         <NavFormSubmissions tenantId={tenantId} currentPath={pathname} />
-        <NavProjects projects={projects} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />
