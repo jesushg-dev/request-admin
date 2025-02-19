@@ -81,7 +81,7 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ tenantId, requestLevelTypes
       toast.promise(promise, {
         loading: 'Saving request...',
         success: (response) => {
-          router.push({ pathname: '/admin/[tenantId]/security/roles', params: { tenantId } });
+          router.push({ pathname: '/admin/[tenantId]/requests-portal/requests', params: { tenantId } });
           return `Request saved: ${response?.id}`;
         },
         error: (error) => {
@@ -107,7 +107,7 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ tenantId, requestLevelTypes
                 requestDetails: () => <RequestDetailsStep statusesOptions={statusesOptions} prioritiesOptions={prioritiesOptions} />,
                 attachments: () => <AttachmentsStep />,
                 dynamicForm: () => <DynamicFormStep requestCategoryIds={requestCategoryIds} onNext={stepper.next} onPrev={stepper.prev} />,
-                summary: () => <SummaryStep requestLevelTypes={requestLevelTypes} assignmentLevelTypes={assignmentLevelTypes} />,
+                summary: () => <SummaryStep tenantId={tenantId} requestLevelTypes={requestLevelTypes} assignmentLevelTypes={assignmentLevelTypes} />,
               })}
             </ChildStepsProvider>
             {stepper.current.id !== 'dynamicForm' && (

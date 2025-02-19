@@ -22,6 +22,7 @@ import { DataTableToolbarActions } from '@/components/data-table/data-table-tool
 const RequestDefaultArgs = Prisma.validator<Prisma.RequestDefaultArgs>()({
   select: {
     id: true,
+    tenantId: true,
     issueSubject: true,
     description: true,
     requestAssignments: {
@@ -134,7 +135,7 @@ export function getTableConfiguration({ t }: GetTableConfigurationProps) {
     {
       accessorKey: 'issueSubject',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.issueSubject')} />,
-      cell: ({ cell }) => cell.getValue(),
+      cell: ({ cell }) => cell.getValue() ?? 'N/A',
     },
     {
       accessorKey: 'priority',
@@ -156,14 +157,14 @@ export function getTableConfiguration({ t }: GetTableConfigurationProps) {
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.assignmentCategory')} />,
       cell: ({ cell }) => cell.getValue(),
     },
-    {
+    /*{
       accessorKey: 'client.person',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.client')} />,
       cell: ({ cell }) => {
         const person = cell.getValue() as { firstName: string; lastName: string };
         return `${person.firstName} ${person.lastName}`;
       },
-    },
+    },*/
     {
       accessorKey: '_count.documents',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.documents')} />,
@@ -181,7 +182,16 @@ export function getTableConfiguration({ t }: GetTableConfigurationProps) {
     },
     {
       id: 'actions',
-      cell: (data) => <ActionCell cell={data} onDelete={() => console.log('Delete', data.row.original)} onUpdate={() => console.log('Update', data.row.original)} />,
+      cell: (data) => (
+        <ActionCell
+          cell={data}
+          onDelete={() => console.log('Delete', data.row.original)}
+          viewLink={{
+            pathname: '/admin/[tenantId]/requests-portal/requests/[slug]',
+            params: { tenantId: data.row.original.tenantId, slug: data.row.original.id },
+          }}
+        />
+      ),
       size: 20,
     },
   ];

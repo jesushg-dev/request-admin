@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { Checkbox } from '@radix-ui/react-checkbox';
-import { SelectContent, SelectItem, SelectTrigger, SelectValue } from '@radix-ui/react-select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@radix-ui/react-select';
 import { UserPlusIcon } from 'lucide-react';
-import { Select } from 'react-day-picker';
-import { Form, useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -12,6 +11,7 @@ import { Input } from '@/components/ui/input';
 
 import { mockDocuments, mockRequestStatusTypes } from './area-assignment-modal';
 
+// Mock data (mantenemos los mismos datos de ejemplo)
 export const mockSLA = {
   id: '1234-5678-9012-3456',
   resolutionTime: 24,
@@ -55,8 +55,7 @@ type AreaAssignmentFormProps = {
 
 export function UserAssignmentModal({ onComplete }: AreaAssignmentFormProps) {
   const [open, setOpen] = useState(false);
-
-  const form = useForm<FormData>({
+  const formMethods = useForm<FormData>({
     defaultValues: {
       slaStart: new Date().toISOString().slice(0, 16),
       slaDeadline: new Date(Date.now() + mockSLA.resolutionTime * 60 * 60 * 1000).toISOString().slice(0, 16),
@@ -82,15 +81,15 @@ export function UserAssignmentModal({ onComplete }: AreaAssignmentFormProps) {
           <DialogTitle>Assign User</DialogTitle>
           <DialogDescription>Assign a user to this request and update the status.</DialogDescription>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormProvider {...formMethods}>
+          <form onSubmit={formMethods.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
-              control={form.control}
+              control={formMethods.control}
               name="userId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Assign User</FormLabel>
-                  <Select onChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a user" />
@@ -108,13 +107,14 @@ export function UserAssignmentModal({ onComplete }: AreaAssignmentFormProps) {
                 </FormItem>
               )}
             />
+
             <FormField
-              control={form.control}
+              control={formMethods.control}
               name="requestCategoryId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Request Category</FormLabel>
-                  <Select onChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a request category" />
@@ -132,13 +132,14 @@ export function UserAssignmentModal({ onComplete }: AreaAssignmentFormProps) {
                 </FormItem>
               )}
             />
+
             <FormField
-              control={form.control}
+              control={formMethods.control}
               name="assignmentCategoryId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Assignment Category</FormLabel>
-                  <Select onChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select an assignment category" />
@@ -156,13 +157,14 @@ export function UserAssignmentModal({ onComplete }: AreaAssignmentFormProps) {
                 </FormItem>
               )}
             />
+
             <FormField
-              control={form.control}
+              control={formMethods.control}
               name="statusId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Status</FormLabel>
-                  <Select onChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a status" />
@@ -180,8 +182,9 @@ export function UserAssignmentModal({ onComplete }: AreaAssignmentFormProps) {
                 </FormItem>
               )}
             />
+
             <FormField
-              control={form.control}
+              control={formMethods.control}
               name="comment"
               render={({ field }) => (
                 <FormItem>
@@ -193,8 +196,9 @@ export function UserAssignmentModal({ onComplete }: AreaAssignmentFormProps) {
                 </FormItem>
               )}
             />
+
             <FormField
-              control={form.control}
+              control={formMethods.control}
               name="slaStart"
               render={({ field }) => (
                 <FormItem>
@@ -206,8 +210,9 @@ export function UserAssignmentModal({ onComplete }: AreaAssignmentFormProps) {
                 </FormItem>
               )}
             />
+
             <FormField
-              control={form.control}
+              control={formMethods.control}
               name="slaDeadline"
               render={({ field }) => (
                 <FormItem>
@@ -218,12 +223,14 @@ export function UserAssignmentModal({ onComplete }: AreaAssignmentFormProps) {
                       {...field}
                       onChange={(e) => {
                         const selectedDate = new Date(e.target.value);
-                        const maxDate = new Date(form.getValues().slaStart);
+                        const maxDate = new Date(formMethods.getValues().slaStart);
                         maxDate.setHours(maxDate.getHours() + mockSLA.resolutionTime);
+
                         if (selectedDate > maxDate) {
-                          e.target.value = maxDate.toISOString().slice(0, 16);
+                          formMethods.setValue('slaDeadline', maxDate.toISOString().slice(0, 16));
+                        } else {
+                          field.onChange(e);
                         }
-                        field.onChange(e);
                       }}
                     />
                   </FormControl>
@@ -231,43 +238,36 @@ export function UserAssignmentModal({ onComplete }: AreaAssignmentFormProps) {
                 </FormItem>
               )}
             />
+
             <FormField
-              control={form.control}
+              control={formMethods.control}
               name="documents"
-              render={() => (
+              render={({ field }) => (
                 <FormItem>
                   <div className="mb-4">
                     <FormLabel className="text-base">Assign Documents</FormLabel>
                   </div>
                   {mockDocuments.map((document) => (
-                    <FormField
-                      key={document.id}
-                      control={form.control}
-                      name="documents"
-                      render={({ field }) => {
-                        return (
-                          <FormItem key={document.id} className="flex flex-row items-start space-y-0 space-x-3">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(document.id)}
-                                onCheckedChange={(checked) => {
-                                  return checked ? field.onChange([...field.value, document.id]) : field.onChange(field.value?.filter((value) => value !== document.id));
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">{document.name}</FormLabel>
-                          </FormItem>
-                        );
-                      }}
-                    />
+                    <FormItem key={document.id} className="flex flex-row items-start space-y-0 space-x-3">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value?.includes(document.id)}
+                          onCheckedChange={(checked) => {
+                            return checked ? field.onChange([...field.value, document.id]) : field.onChange(field.value.filter((value) => value !== document.id));
+                          }}
+                        />
+                      </FormControl>
+                      <FormLabel className="font-normal">{document.name}</FormLabel>
+                    </FormItem>
                   ))}
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <Button type="submit">Assign User</Button>
           </form>
-        </Form>
+        </FormProvider>
       </DialogContent>
     </Dialog>
   );

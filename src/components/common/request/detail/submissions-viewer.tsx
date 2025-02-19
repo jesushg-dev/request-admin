@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useFindManyForm } from '@/services/api/hooks';
 import { InboxIcon, Settings } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -25,7 +26,12 @@ export interface FormSubmission {
   content: Record<string, string>;
 }
 
-export default function FormSubmissionsViewer({ submissions, isLoading }: { submissions: FormSubmission[]; isLoading?: boolean }) {
+export default function FormSubmissionsViewer({ submissions }: { submissions?: Record<string, Record<string, string | number | boolean>> }) {
+  const { data, isLoading } = useFindManyForm({
+    select: { id: true, name: true, content: true },
+    where: { id: { in: Object.keys(submissions || {}) } },
+  });
+
   const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
   const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>({
     formName: true,
@@ -37,16 +43,31 @@ export default function FormSubmissionsViewer({ submissions, isLoading }: { subm
     setColumnVisibility((prev) => ({ ...prev, [column]: !prev[column] }));
   };
 
-  if (submissions.length === 0) {
-    return (
-      <Card className="p-4">
-        <EmptyState title="No submissions available" icon={<InboxIcon className="w-10 h-10" />} description="No form submissions have been made yet." />
-      </Card>
-    );
-  }
+  const formSubmissions: FormSubmission[] =
+    data?.map((form) => {
+      const elements = JSON.parse(form.content || '[]') as { id: string; extraAttributes: { label: string } }[];
+
+      const submissionContent: Record<string, string> = Object.entries(submissions?.[form.id] || {}).reduce(
+        (acc, [key, value]) => {
+          const element = elements.find((element) => element.id === key);
+          if (element && element.extraAttributes.label) {
+            acc[element.extraAttributes.label] = String(value);
+          }
+          return acc;
+        },
+        {} as Record<string, string>
+      );
+
+      return {
+        id: form.id,
+        formName: form.name,
+        submittedAt: Date().toString(),
+        content: submissionContent,
+      };
+    }) || [];
 
   return (
-    <Card>
+    <Card className="flex-1 flex flex-col">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>Form Submissions</CardTitle>
@@ -73,17 +94,19 @@ export default function FormSubmissionsViewer({ submissions, isLoading }: { subm
           </div>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1 flex-col flex">
         {isLoading ? (
           <div className="flex justify-center py-8">
             <Skeleton className="w-32 h-6" />
             <Skeleton className="w-32 h-6" />
             <Skeleton className="w-32 h-6" />
           </div>
+        ) : !formSubmissions.length ? (
+          <EmptyState title="No submissions available" icon={<InboxIcon className="w-10 h-10" />} description="No form submissions have been made yet." />
         ) : viewMode === 'table' ? (
-          <TableView submissions={submissions} columnVisibility={columnVisibility} />
+          <TableView submissions={formSubmissions} columnVisibility={columnVisibility} />
         ) : (
-          <CardView submissions={submissions} columnVisibility={columnVisibility} />
+          <CardView submissions={formSubmissions} columnVisibility={columnVisibility} />
         )}
       </CardContent>
     </Card>

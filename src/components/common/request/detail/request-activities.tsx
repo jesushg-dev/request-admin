@@ -1,17 +1,17 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-interface ProjectActivitiesProps {
+interface RequestActivitiesProps {
   activities: { id: number; date: string; title: string; description: string }[];
 }
 
-export default function ProjectActivities({ activities }: ProjectActivitiesProps) {
+export default function RequestActivities({ activities }: RequestActivitiesProps) {
   return (
-    <Card>
+    <Card className="flex-1 flex flex-col">
       <CardHeader>
         <CardTitle>Project Activities</CardTitle>
         <CardDescription>Recent activities and updates</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1 flex-col flex">
         <ul className="relative space-y-4 before:absolute before:top-2 before:bottom-2 before:left-2 before:w-0.5 before:bg-gray-200">
           {activities.map((activity) => (
             <li

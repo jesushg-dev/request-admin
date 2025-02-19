@@ -24,20 +24,18 @@ const RequestDefaultArgs = Prisma.validator<Prisma.RequestDefaultArgs>()({
     id: true,
     issueSubject: true,
     description: true,
-    priority: true,
-    status: {
+    requestAssignments: {
       select: {
-        name: true,
-      },
-    },
-    requestCategory: {
-      select: {
-        name: true,
-      },
-    },
-    assignmentCategory: {
-      select: {
-        name: true,
+        requestCategory: {
+          select: {
+            name: true,
+          },
+        },
+        assignmentCategory: {
+          select: {
+            name: true,
+          },
+        },
       },
     },
     _count: {
@@ -55,7 +53,7 @@ type RequestWithRelations = Prisma.RequestGetPayload<typeof RequestDefaultArgs>;
 const searchParamsParsers = {
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(10),
-  sort: getSortingStateParser<RequestWithRelations>().withDefault([{ id: 'priority', desc: true }]),
+  sort: getSortingStateParser<RequestWithRelations>().withDefault([]),
   filters: getFiltersStateParser<RequestWithRelations>().withDefault([]),
   joinOperator: parseAsStringEnum(['and', 'or']).withDefault('and'),
 };
@@ -80,7 +78,7 @@ const RequestMainPage: React.FC = () => {
     filterFields,
     enableAdvancedFilter: true,
     initialState: {
-      sorting: [{ id: 'priority', desc: true }],
+      sorting: [],
       columnPinning: { right: ['actions'] },
     },
     shallow: false,
@@ -114,17 +112,17 @@ export function getTableConfiguration({ t }: GetTableConfigurationProps) {
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.issueSubject')} />,
       cell: ({ cell }) => cell.getValue(),
     },
-    {
+    /*{
       accessorKey: 'priority',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.priority')} />,
       cell: ({ cell }) => cell.getValue(),
-    },
-    {
+    },*/
+    /*{
       accessorKey: 'status.name',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.status')} />,
       cell: ({ cell }) => cell.getValue(),
-    },
-    {
+    },*/
+    /*{
       accessorKey: 'requestCategory.name',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.requestCategory')} />,
       cell: ({ cell }) => cell.getValue(),
@@ -133,15 +131,15 @@ export function getTableConfiguration({ t }: GetTableConfigurationProps) {
       accessorKey: 'assignmentCategory.name',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.assignmentCategory')} />,
       cell: ({ cell }) => cell.getValue(),
-    },
-    {
+    },*/
+    /* {
       accessorKey: 'client.person',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.client')} />,
       cell: ({ cell }) => {
         const person = cell.getValue() as { firstName: string; lastName: string };
         return `${person.firstName} ${person.lastName}`;
       },
-    },
+    },*/
     {
       accessorKey: '_count.documents',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.documents')} />,
@@ -166,15 +164,15 @@ export function getTableConfiguration({ t }: GetTableConfigurationProps) {
 
   const filterFields: DataTableFilterField<RequestWithRelations>[] = [
     { id: 'issueSubject', label: t('filters.issueSubject'), placeholder: t('filters.issueSubjectPlaceholder') },
-    { id: 'priority', label: t('filters.priority'), placeholder: t('filters.priorityPlaceholder') },
+    //{ id: 'priority', label: t('filters.priority'), placeholder: t('filters.priorityPlaceholder') },
   ];
 
   const advancedFilterFields: DataTableAdvancedFilterField<RequestWithRelations>[] = [
     { id: 'issueSubject', label: t('filters.issueSubject'), type: 'text' },
-    { id: 'priority', label: t('filters.priority'), type: 'text' },
-    { id: 'status', label: t('filters.status'), type: 'text' },
-    { id: 'requestCategory', label: t('filters.requestCategory'), type: 'text' },
-    { id: 'assignmentCategory', label: t('filters.assignmentCategory'), type: 'text' },
+    // { id: 'priority', label: t('filters.priority'), type: 'text' },
+    //{ id: 'status', label: t('filters.status'), type: 'text' },
+    //{ id: 'requestCategory', label: t('filters.requestCategory'), type: 'text' },
+    //{ id: 'assignmentCategory', label: t('filters.assignmentCategory'), type: 'text' },
   ];
 
   return { columns, filterFields, advancedFilterFields };

@@ -1,230 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type FC } from 'react';
+import { useFindManyRequestAssignment } from '@/services/api/hooks';
+import { Prisma } from '@prisma/client';
 import { Settings2 } from 'lucide-react';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { AreaAssignmentModal } from './area-assignment-modal';
 import { UserAssignmentModal } from './user-assignment-modal';
-import TeamMembers from './user-members';
+import UserMembers from './user-members';
 import { ViewToggle } from './view-toggle';
 
-export const mockAssignmentHistory = [
-  {
-    id: 'assign-1',
-    type: 'User',
-    from: 'Unassigned',
-    to: 'John Doe',
-    date: new Date(Date.now() - 5 * 60 * 60 * 1000),
-    slaStart: new Date(Date.now() - 5 * 60 * 60 * 1000),
-    slaDeadline: new Date(Date.now() + 19 * 60 * 60 * 1000),
-    slaEnd: null,
-  },
-  {
-    id: 'assign-2',
-    type: 'Area',
-    from: 'IT Support',
-    to: 'HR',
-    date: new Date(Date.now() - 2 * 60 * 60 * 1000),
-    slaStart: new Date(Date.now() - 2 * 60 * 60 * 1000),
-    slaDeadline: new Date(Date.now() + 22 * 60 * 60 * 1000),
-    slaEnd: new Date(Date.now() - 2 * 60 * 60 * 1000),
-  },
-];
-
-export const mockCategories = {
-  requestCategories: [
-    { id: 'req-cat-1', name: 'Technical Issue' },
-    { id: 'req-cat-2', name: 'Service Request' },
-    { id: 'req-cat-3', name: 'Incident' },
-  ],
-  assignmentCategories: [
-    { id: 'assign-cat-1', name: 'First Level Support' },
-    { id: 'assign-cat-2', name: 'Second Level Support' },
-    { id: 'assign-cat-3', name: 'Specialist' },
-  ],
-};
-export function AssignmentHistory() {
-  const [viewType, setViewType] = useState<'table' | 'card'>('table');
-  const [visibility, setVisibility] = useState<FieldVisibility>({
-    basic: true,
-    sla: true,
-    categories: true,
-    documents: true,
-    comments: true,
-  });
-
-  const userAssignments = mockAssignmentHistory.filter((a) => a.type === 'User');
-  const areaAssignments = mockAssignmentHistory.filter((a) => a.type === 'Area');
-
-  const renderTableView = (assignments: typeof mockAssignmentHistory) => (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          {visibility.basic && (
-            <>
-              <TableHead>From</TableHead>
-              <TableHead>To</TableHead>
-              <TableHead>Date</TableHead>
-            </>
-          )}
-          {visibility.categories && (
-            <>
-              <TableHead>Request Category</TableHead>
-              <TableHead>Assignment Category</TableHead>
-            </>
-          )}
-          {visibility.sla && (
-            <>
-              <TableHead>SLA Start</TableHead>
-              <TableHead>SLA Deadline</TableHead>
-              <TableHead>SLA End</TableHead>
-              <TableHead>Time Taken</TableHead>
-              <TableHead>Remaining SLA</TableHead>
-            </>
-          )}
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {assignments.map((assignment) => {
-          const timeTaken = assignment.slaEnd
-            ? Math.round((assignment.slaEnd.getTime() - assignment.slaStart.getTime()) / (1000 * 60 * 60))
-            : Math.round((new Date().getTime() - assignment.slaStart.getTime()) / (1000 * 60 * 60));
-
-          const remainingSLA = assignment.slaEnd ? 0 : Math.round((assignment.slaDeadline.getTime() - new Date().getTime()) / (1000 * 60 * 60));
-
-          return (
-            <TableRow key={assignment.id}>
-              {visibility.basic && (
-                <>
-                  <TableCell>{assignment.from}</TableCell>
-                  <TableCell>{assignment.to}</TableCell>
-                  <TableCell>{assignment.date.toLocaleString()}</TableCell>
-                </>
-              )}
-              {visibility.categories && (
-                <>
-                  <TableCell>{mockCategories.requestCategories.find((c) => c.id === 'req-cat-1')?.name}</TableCell>
-                  <TableCell>{mockCategories.assignmentCategories.find((c) => c.id === 'assign-cat-1')?.name}</TableCell>
-                </>
-              )}
-              {visibility.sla && (
-                <>
-                  <TableCell>{assignment.slaStart.toLocaleString()}</TableCell>
-                  <TableCell>{assignment.slaDeadline.toLocaleString()}</TableCell>
-                  <TableCell>{assignment.slaEnd ? assignment.slaEnd.toLocaleString() : 'N/A'}</TableCell>
-                  <TableCell>{timeTaken} hours</TableCell>
-                  <TableCell>{remainingSLA} hours</TableCell>
-                </>
-              )}
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
-  );
-
-  const renderCardView = (assignments: typeof mockAssignmentHistory) => (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {assignments.map((assignment) => {
-        const timeTaken = assignment.slaEnd
-          ? Math.round((assignment.slaEnd.getTime() - assignment.slaStart.getTime()) / (1000 * 60 * 60))
-          : Math.round((new Date().getTime() - assignment.slaStart.getTime()) / (1000 * 60 * 60));
-
-        const remainingSLA = assignment.slaEnd ? 0 : Math.round((assignment.slaDeadline.getTime() - new Date().getTime()) / (1000 * 60 * 60));
-
-        return (
-          <Card key={assignment.id}>
-            <CardHeader>
-              <CardTitle>Assignment Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {visibility.basic && (
-                <>
-                  <p>
-                    <strong>From:</strong> {assignment.from}
-                  </p>
-                  <p>
-                    <strong>To:</strong> {assignment.to}
-                  </p>
-                  <p>
-                    <strong>Date:</strong> {assignment.date.toLocaleString()}
-                  </p>
-                </>
-              )}
-              {visibility.categories && (
-                <>
-                  <p>
-                    <strong>Request Category:</strong> {mockCategories.requestCategories.find((c) => c.id === 'req-cat-1')?.name}
-                  </p>
-                  <p>
-                    <strong>Assignment Category:</strong> {mockCategories.assignmentCategories.find((c) => c.id === 'assign-cat-1')?.name}
-                  </p>
-                </>
-              )}
-              {visibility.sla && (
-                <>
-                  <p>
-                    <strong>SLA Start:</strong> {assignment.slaStart.toLocaleString()}
-                  </p>
-                  <p>
-                    <strong>SLA Deadline:</strong> {assignment.slaDeadline.toLocaleString()}
-                  </p>
-                  <p>
-                    <strong>SLA End:</strong> {assignment.slaEnd ? assignment.slaEnd.toLocaleString() : 'N/A'}
-                  </p>
-                  <p>
-                    <strong>Time Taken:</strong> {timeTaken} hours
-                  </p>
-                  <p>
-                    <strong>Remaining SLA:</strong> {remainingSLA} hours
-                  </p>
-                </>
-              )}
-            </CardContent>
-          </Card>
-        );
-      })}
-    </div>
-  );
-
-  return (
-    <Tabs defaultValue="user">
-      <Card className="flex-1">
-        <CardHeader>
-          <div className="flex items-center justify-between gap-4">
-            <CardTitle>Assignments</CardTitle>
-            <div className="flex flex-wrap items-center gap-2">
-              <FieldVisibilitySettings visibility={visibility} onChange={setVisibility} />
-              <AreaAssignmentModal onComplete={console.log} />
-              <UserAssignmentModal onComplete={console.log} />
-              <TabsList className="h-8">
-                <TabsTrigger value="user" className="h-7 text-xs">
-                  User
-                </TabsTrigger>
-                <TabsTrigger value="area" className="h-7 text-xs">
-                  Area
-                </TabsTrigger>
-              </TabsList>
-              <ViewToggle viewType={viewType} onViewChange={setViewType} />
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <TabsContent value="user">{viewType === 'table' ? renderTableView(userAssignments) : <TeamMembers />}</TabsContent>
-          <TabsContent value="area">{viewType === 'table' ? renderTableView(areaAssignments) : renderCardView(areaAssignments)}</TabsContent>
-        </CardContent>
-      </Card>
-    </Tabs>
-  );
+interface AssignmentHistoryProps {
+  tenantId: string;
+  requestId: string;
 }
 
-export interface FieldVisibility {
+interface FieldVisibility {
   basic: boolean;
   sla: boolean;
   categories: boolean;
@@ -232,37 +29,232 @@ export interface FieldVisibility {
   comments: boolean;
 }
 
+export const RequestAssignmentDefaultArgs = Prisma.validator<Prisma.RequestAssignmentDefaultArgs>()({
+  select: {
+    id: true,
+    comment: true,
+    assignmentDate: true,
+    unAssignmentDate: true,
+    assignedUsers: {
+      select: {
+        id: true,
+        role: true,
+        userTenant: {
+          select: {
+            user: { select: { id: true, username: true } },
+            person: { select: { id: true, firstName: true, lastName: true } },
+          },
+        },
+      },
+    },
+    slaStart: true,
+    slaDeadline: true,
+    slaEnd: true,
+    area: { select: { id: true, name: true } },
+    status: { select: { id: true, name: true } },
+    priority: { select: { id: true, name: true } },
+    isActive: true,
+    requestCategory: { select: { id: true, name: true } },
+    assignmentCategory: { select: { id: true, name: true } },
+  },
+});
+
+export type AssignmentData = Prisma.RequestAssignmentGetPayload<typeof RequestAssignmentDefaultArgs>;
+
 interface FieldVisibilitySettingsProps {
   visibility: FieldVisibility;
   onChange: (visibility: FieldVisibility) => void;
 }
 
-export function FieldVisibilitySettings({ visibility, onChange }: FieldVisibilitySettingsProps) {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Settings2 className="mr-2 h-4 w-4" />
-          Visible Fields
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
-        <DropdownMenuCheckboxItem checked={visibility.basic} onCheckedChange={(checked) => onChange({ ...visibility, basic: checked })}>
-          Basic Information
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem checked={visibility.sla} onCheckedChange={(checked) => onChange({ ...visibility, sla: checked })}>
-          SLA Times
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem checked={visibility.categories} onCheckedChange={(checked) => onChange({ ...visibility, categories: checked })}>
-          Categories
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem checked={visibility.documents} onCheckedChange={(checked) => onChange({ ...visibility, documents: checked })}>
-          Documents
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem checked={visibility.comments} onCheckedChange={(checked) => onChange({ ...visibility, comments: checked })}>
-          Comments
-        </DropdownMenuCheckboxItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
+interface TableHeadersProps {
+  visibility: FieldVisibility;
 }
+
+interface TableRowProps {
+  assignment: AssignmentData;
+  visibility: FieldVisibility;
+  from?: AssignmentData;
+  to?: AssignmentData;
+}
+
+const FieldVisibilitySettings: FC<FieldVisibilitySettingsProps> = ({ visibility, onChange }) => (
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      <Button variant="outline" size="sm">
+        <Settings2 className="mr-2 h-4 w-4" />
+        Campos visibles
+      </Button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent align="end" className="w-48">
+      <DropdownMenuCheckboxItem checked={visibility.basic} onCheckedChange={(checked: boolean) => onChange({ ...visibility, basic: checked })}>
+        Información básica
+      </DropdownMenuCheckboxItem>
+      <DropdownMenuCheckboxItem checked={visibility.sla} onCheckedChange={(checked: boolean) => onChange({ ...visibility, sla: checked })}>
+        Tiempos SLA
+      </DropdownMenuCheckboxItem>
+      <DropdownMenuCheckboxItem checked={visibility.categories} onCheckedChange={(checked: boolean) => onChange({ ...visibility, categories: checked })}>
+        Categorías
+      </DropdownMenuCheckboxItem>
+      <DropdownMenuCheckboxItem checked={visibility.documents} onCheckedChange={(checked: boolean) => onChange({ ...visibility, documents: checked })}>
+        Documentos
+      </DropdownMenuCheckboxItem>
+      <DropdownMenuCheckboxItem checked={visibility.comments} onCheckedChange={(checked: boolean) => onChange({ ...visibility, comments: checked })}>
+        Comentarios
+      </DropdownMenuCheckboxItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+);
+
+const TableHeaders: FC<TableHeadersProps> = ({ visibility }) => (
+  <TableHeader>
+    <TableRow>
+      {visibility.basic && <TableHead>Area</TableHead>}
+      {visibility.basic && <TableHead>Usuarios</TableHead>}
+      {visibility.basic && <TableHead>Origin</TableHead>}
+      {visibility.basic && <TableHead>Destino</TableHead>}
+      {visibility.basic && <TableHead>Fecha Asignación</TableHead>}
+      {visibility.basic && <TableHead>Fecha Desasignación</TableHead>}
+      {visibility.categories && <TableHead>Categoría Solicitud</TableHead>}
+      {visibility.categories && <TableHead>Categoría Asignación</TableHead>}
+      {visibility.sla && (
+        <>
+          <TableHead>Inicio SLA</TableHead>
+          <TableHead>Límite SLA</TableHead>
+          <TableHead>Fin SLA</TableHead>
+          <TableHead>Tiempo Transcurrido</TableHead>
+          <TableHead>Tiempo Restante</TableHead>
+        </>
+      )}
+      {visibility.comments && <TableHead>Comentarios</TableHead>}
+    </TableRow>
+  </TableHeader>
+);
+
+const AssignmentTableRow: FC<TableRowProps> = ({ assignment, visibility, from, to }) => {
+  const slaStart = assignment.slaStart ? new Date(assignment.slaStart) : null;
+  const slaDeadline = assignment.slaDeadline ? new Date(assignment.slaDeadline) : null;
+  const slaEnd = assignment.slaEnd ? new Date(assignment.slaEnd) : null;
+
+  const timeElapsed =
+    slaStart && slaDeadline ? (slaEnd ? Math.round((slaEnd.getTime() - slaStart.getTime()) / (1000 * 60 * 60)) : Math.round((Date.now() - slaStart.getTime()) / (1000 * 60 * 60))) : 'N/A';
+
+  const remainingTime = slaStart && slaDeadline ? (slaEnd ? 0 : Math.round((slaDeadline.getTime() - Date.now()) / (1000 * 60 * 60))) : 'N/A';
+
+  const getTarget = () => {
+    return assignment.assignedUsers
+      .map((user) =>
+        user.userTenant.person?.firstName && user.userTenant.person?.lastName ? `${user.userTenant.person.firstName} ${user.userTenant.person.lastName}` : `@${user.userTenant.user.username}`
+      )
+      .join(', ');
+  };
+
+  return (
+    <TableRow>
+      {visibility.basic && <TableCell>{assignment.area?.name ?? 'N/A'}</TableCell>}
+      {visibility.basic && <TableCell>{getTarget()}</TableCell>}
+      {visibility.basic && <TableCell>{from?.area?.name ?? 'N/A'}</TableCell>}
+      {visibility.basic && <TableCell>{to?.area?.name ?? 'N/A'}</TableCell>}
+      {visibility.basic && <TableCell>{assignment.assignmentDate.toLocaleDateString() ?? 'N/A'}</TableCell>}
+      {visibility.basic && <TableCell>{assignment.unAssignmentDate?.toLocaleDateString() ?? 'N/A'}</TableCell>}
+      {visibility.categories && (
+        <TableCell>
+          <Badge variant="outline">{assignment.requestCategory?.name ?? 'N/A'}</Badge>
+        </TableCell>
+      )}
+      {visibility.categories && (
+        <TableCell>
+          <Badge variant="outline">{assignment.assignmentCategory?.name ?? 'N/A'}</Badge>
+        </TableCell>
+      )}
+      {visibility.sla && (
+        <>
+          <TableCell>{slaStart?.toLocaleString() ?? 'N/A'}</TableCell>
+          <TableCell>{slaDeadline?.toLocaleString() ?? 'N/A'}</TableCell>
+          <TableCell>{slaEnd?.toLocaleString() ?? 'N/A'}</TableCell>
+          <TableCell>{typeof timeElapsed === 'number' ? `${timeElapsed} horas` : timeElapsed}</TableCell>
+          <TableCell>{typeof remainingTime === 'number' ? (remainingTime > 0 ? `${remainingTime} horas` : 'Expirado') : remainingTime}</TableCell>
+        </>
+      )}
+      {visibility.comments && <TableCell>{assignment.comment ?? 'Sin comentarios'}</TableCell>}
+    </TableRow>
+  );
+};
+
+const AssignmentHistory: FC<AssignmentHistoryProps> = ({ tenantId, requestId }) => {
+  const [viewType, setViewType] = useState<'table' | 'card'>('table');
+  const [visibility, setVisibility] = useState<FieldVisibility>({
+    basic: true,
+    sla: false,
+    categories: true,
+    documents: true,
+    comments: true,
+  });
+
+  const { data, isLoading, error } = useFindManyRequestAssignment({
+    ...RequestAssignmentDefaultArgs,
+    where: { tenantId, requestId },
+  });
+
+  if (isLoading) return <div className="p-4 text-center">Cargando asignaciones...</div>;
+  if (error) return <div className="p-4 text-center text-red-500">Error al cargar asignaciones</div>;
+
+  return (
+    <Card className="flex-1 flex flex-col">
+      <CardHeader>
+        <div className="flex items-center justify-between gap-4">
+          <CardTitle>Historial de Asignaciones</CardTitle>
+          <div className="flex flex-wrap items-center gap-2">
+            <AreaAssignmentModal onComplete={console.log} />
+            <UserAssignmentModal onComplete={console.log} />
+            <FieldVisibilitySettings visibility={visibility} onChange={setVisibility} />
+            <ViewToggle viewType={viewType} onViewChange={setViewType} />
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="flex-1 flex-col flex">
+        {viewType === 'table' ? (
+          <Table>
+            <TableHeaders visibility={visibility} />
+            <TableBody>
+              {data?.map((assignment, index) => <AssignmentTableRow key={assignment.id} assignment={assignment} visibility={visibility} from={data[index - 1]} to={data[index + 1]} />)}
+            </TableBody>
+          </Table>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {data?.map((assignment) => {
+              const isUser = assignment.assignedUsers.length > 0;
+              const target = isUser ? assignment.assignedUsers.map((u) => u.userTenant.user.username).join(', ') : assignment.area?.name;
+
+              return (
+                <Card key={assignment.id}>
+                  <CardHeader>
+                    <CardTitle className="text-sm">{isUser ? 'Asignación a Usuario' : 'Asignación a Área'}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <UserMembers />
+                    <p>
+                      <strong>Destino:</strong> {target ?? 'N/A'}
+                    </p>
+                    <p>
+                      <strong>Fecha:</strong> {assignment.slaStart ? new Date(assignment.slaStart).toLocaleDateString() : 'N/A'}
+                    </p>
+                    <p>
+                      <strong>Estado:</strong> {assignment.status.name}
+                    </p>
+                    {assignment.comment && (
+                      <p>
+                        <strong>Comentarios:</strong> {assignment.comment}
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+export default AssignmentHistory;

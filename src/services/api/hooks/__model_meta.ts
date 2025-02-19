@@ -1764,7 +1764,6 @@ const metadata = {
         areaId: {
           name: 'areaId',
           type: 'String',
-          isOptional: true,
           isForeignKey: true,
           relationField: 'area',
         },
@@ -1772,7 +1771,6 @@ const metadata = {
           name: 'area',
           type: 'Area',
           isDataModel: true,
-          isOptional: true,
           backLink: 'requestAssignments',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'areaId' },
@@ -2025,16 +2023,16 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
+        systemName: {
+          name: 'systemName',
+          type: 'String',
+        },
         assignments: {
           name: 'assignments',
           type: 'RequestAssignment',
           isDataModel: true,
           isArray: true,
           backLink: 'type',
-        },
-        systemName: {
-          name: 'systemName',
-          type: 'String',
         },
       },
       uniqueConstraints: {
@@ -5763,6 +5761,10 @@ const metadata = {
         requestId: {
           name: 'requestId',
           fields: ['requestId'],
+        },
+        requestId_tenantId: {
+          name: 'requestId_tenantId',
+          fields: ['requestId', 'tenantId'],
         },
       },
     },

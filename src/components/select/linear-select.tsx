@@ -12,20 +12,20 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { Kbd } from '../kbd';
 
 interface Option {
-  value: string;
+  value: string | number;
   label: string;
   icon?: React.ComponentType<{ className?: string; title?: string }>;
 }
 
 interface SelectComboboxProps {
   options: Option[];
-  value?: string;
+  value?: string | number;
   defaultValue?: string;
   defaultIcon?: React.ComponentType<{ className?: string; title?: string }>;
   hotkey?: string;
   placeholder?: string;
   buttonText?: string;
-  onChange?: (value: string) => void;
+  onChange?: (value: string | number) => void;
   onSelectOption?: (option: Option | null) => void;
 }
 
@@ -42,7 +42,7 @@ export const SelectCombobox: React.FC<SelectComboboxProps> = ({
 }) => {
   const [openPopover, setOpenPopover] = React.useState(false);
   const [openTooltip, setOpenTooltip] = React.useState(false);
-  const [internalValue, setInternalValue] = React.useState(defaultValue || '');
+  const [internalValue, setInternalValue] = React.useState<string | number>(defaultValue || '');
   const [searchValue, setSearchValue] = React.useState('');
 
   const isControlled = typeof value !== 'undefined';
@@ -118,7 +118,7 @@ export const SelectCombobox: React.FC<SelectComboboxProps> = ({
               {options.map((option, index) => (
                 <CommandItem
                   key={option.value}
-                  value={option.value}
+                  value={String(option.value)}
                   onSelect={(value) => {
                     handleSelectOption(options.find((o) => o.value === value) || null);
                   }}

@@ -12,6 +12,7 @@ model Channel extends TenantScoped, Auditable {
   request   Request?  @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([tenantId])
+  @@unique([requestId, tenantId])
 }
 
 model Conversation extends TenantScoped {

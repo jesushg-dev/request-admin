@@ -8,7 +8,7 @@ import { Hint } from '@/components/hint';
 
 import { mockRequestAssignments, mockTeamMembers } from './mock-data';
 
-export default function TeamMembers() {
+export default function UserMembers() {
   return (
     <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4">
       {mockRequestAssignments.map((assignment, index) => (

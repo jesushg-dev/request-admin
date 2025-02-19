@@ -1,27 +1,28 @@
 'use client';
 
 import { useInfiniteFindManyMessage } from '@/services/api/hooks';
-import { Channel } from '@zenstackhq/runtime/models';
 
 import { MessageDefaultArgs } from '@/types/prisma/message';
+import { RequestDetailsType } from '@/types/prisma/request';
+import { Card } from '@/components/ui/card';
 import { ChatInput } from '@/components/chat/chat-input';
 import { MessageList } from '@/components/chat/message-list';
 
 interface CommentsProps {
   slug: string;
   tenantId: string;
-  channel?: Channel | null;
+  channel: RequestDetailsType['channel'];
   currentUserId: string;
 }
 
 export default function Comments({ slug, tenantId, channel, currentUserId }: CommentsProps) {
   const { data, hasNextPage, hasPreviousPage, fetchNextPage, fetchPreviousPage, isFetchingNextPage, isFetchingPreviousPage, isFetching } = useInfiniteFindManyMessage({
     ...MessageDefaultArgs,
-    where: { channelId: slug },
+    where: { channelId: channel?.id },
   });
 
   return (
-    <div className="flex w-full flex-1 flex-col gap-4">
+    <Card className="flex-1 flex flex-col">
       {!channel && <p className="rounded-md bg-red-100 p-4 text-center text-red-500">Channel not found</p>}
       <MessageList
         data={data}
@@ -38,6 +39,6 @@ export default function Comments({ slug, tenantId, channel, currentUserId }: Com
         variant="channel"
       />
       <ChatInput tenantId={tenantId} relatedId={slug} relatedType="channel" currentUserId={currentUserId} placeholder={`Message # ${channel?.name}`} />
-    </div>
+    </Card>
   );
 }

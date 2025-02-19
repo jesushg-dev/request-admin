@@ -349,8 +349,8 @@ model RequestAssignment {
   slaStart             DateTime?
   slaDeadline          DateTime?
   slaEnd               DateTime?
-  areaId               String?              @db.UniqueIdentifier()
-  area                 Area?                @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  areaId               String               @db.UniqueIdentifier()
+  area                 Area                 @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   statusId             String               @db.UniqueIdentifier()
   status               RequestStatusType    @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   typeId               String               @db.UniqueIdentifier()
@@ -403,8 +403,8 @@ model AssignmentType {
   updatedBy   String?             @db.VarChar(50)
   tenantId    String              @db.UniqueIdentifier()
   tenant      Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  assignments RequestAssignment[]
   systemName  String              @db.VarChar(100)
+  assignments RequestAssignment[]
 
   @@unique([name, tenantId])
 }
@@ -1155,6 +1155,7 @@ model Channel {
   requestId String?   @unique() @db.UniqueIdentifier()
   request   Request?  @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
+  @@unique([requestId, tenantId])
   @@index([tenantId])
 }
 

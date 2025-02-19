@@ -10,6 +10,7 @@
   "table": {
     "columns": {
       "actions": "Acciones",
+      "view": "Ver",
       "edit": "Editar",
       "delete": "Eliminar",
       "new": "Nuevo"

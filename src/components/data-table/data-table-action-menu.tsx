@@ -1,7 +1,7 @@
 import React from 'react';
 import { I18Link, Link } from '@/i18n/routing';
 import { CellContext, Row } from '@tanstack/react-table';
-import { Ellipsis } from 'lucide-react';
+import { Ellipsis, EyeIcon, PencilIcon, Trash2Icon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -12,12 +12,13 @@ type ActionCellProps<TData, TValue> = {
   cell: CellContext<TData, TValue>; // The cell context
   onUpdate?: (row: Row<TData>) => void; // Optional handler for update action
   onDelete?: (row: Row<TData>) => void; // Optional handler for delete action
+  viewLink?: I18Link; // The view link
   updateLink?: I18Link; // The update link
   deleteLink?: I18Link; // The delete link
   children?: React.ReactNode; // Additional extendible actions
 };
 
-function ActionCell<TData, TValue>({ cell, updateLink, deleteLink, onUpdate, onDelete, children }: ActionCellProps<TData, TValue>) {
+function ActionCell<TData, TValue>({ cell, viewLink, updateLink, deleteLink, onUpdate, onDelete, children }: ActionCellProps<TData, TValue>) {
   const t = useTranslations('table');
 
   return (
@@ -28,12 +29,27 @@ function ActionCell<TData, TValue>({ cell, updateLink, deleteLink, onUpdate, onD
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40">
+        {/* Default View Action */}
+        {viewLink && (
+          <DropdownMenuItem asChild>
+            <Link href={viewLink} className="flex gap-2">
+              <EyeIcon className="size-4" aria-hidden="true" /> {t('columns.view')}
+            </Link>
+          </DropdownMenuItem>
+        )}
+
         {/* Default Update Action */}
-        {onUpdate && <DropdownMenuItem onSelect={() => onUpdate(cell.row)}>{t('columns.edit')}</DropdownMenuItem>}
+        {onUpdate && (
+          <DropdownMenuItem onSelect={() => onUpdate(cell.row)}>
+            <PencilIcon className="size-4" aria-hidden="true" />
+            {t('columns.edit')}
+          </DropdownMenuItem>
+        )}
 
         {/* Update Link */}
         {updateLink && (
           <DropdownMenuItem asChild>
+            <PencilIcon className="size-4" aria-hidden="true" />
             <Link href={updateLink}>{t('columns.edit')}</Link>
           </DropdownMenuItem>
         )}
@@ -44,6 +60,7 @@ function ActionCell<TData, TValue>({ cell, updateLink, deleteLink, onUpdate, onD
         {/* Default Delete Action */}
         {onDelete && (
           <DropdownMenuItem onSelect={() => onDelete(cell.row)}>
+            <Trash2Icon className="size-4 text-danger" aria-hidden="true" />
             {t('columns.delete')}
             <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
           </DropdownMenuItem>
@@ -53,6 +70,7 @@ function ActionCell<TData, TValue>({ cell, updateLink, deleteLink, onUpdate, onD
         {deleteLink && (
           <DropdownMenuItem>
             <Link href={deleteLink} className="text-danger">
+              <Trash2Icon className="size-4 text-danger" aria-hidden="true" />
               {t('columns.delete')}
               <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
             </Link>

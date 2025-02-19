@@ -54,14 +54,6 @@ export const attachments = [
   { id: 4, name: 'Timeline.png', type: 'image', size: '3.7mb' },
 ];
 
-export const tasks = [
-  { id: 1, description: 'Review client requirements', completed: true },
-  { id: 2, description: 'Create system architecture diagram', completed: false },
-  { id: 3, description: 'Develop user authentication module', completed: false },
-  { id: 4, description: 'Design database schema', completed: false },
-  { id: 5, description: 'Implement data migration strategy', completed: false },
-];
-
 export const activities = [
   {
     id: 1,

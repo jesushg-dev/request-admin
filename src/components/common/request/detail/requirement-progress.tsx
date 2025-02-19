@@ -1,37 +1,59 @@
+'use client';
+
+import { useFindManyRequirement } from '@/services/api/hooks';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
+import EmptyState from '@/components/shared/empty-state';
 
 interface RequirementProgressProps {
-  isLoading?: boolean;
-  requirements: { id: string; description: string; completed: boolean }[];
+  tenantId: string;
+  requirementCompliances?: Record<string, boolean>;
 }
 
-export default function RequirementProgress({ requirements, isLoading }: RequirementProgressProps) {
-  const completedRequirements = requirements.filter((task) => task.completed).length;
-  const progress = (completedRequirements / requirements.length) * 100;
+export default function RequirementProgress({ tenantId, requirementCompliances }: RequirementProgressProps) {
+  const { data, isLoading } = useFindManyRequirement(
+    {
+      select: { id: true, name: true },
+      where: { id: { in: Object.keys(requirementCompliances || {}) }, tenantId },
+    },
+    { enabled: !!requirementCompliances }
+  );
 
   if (isLoading) {
     return <Skeleton className="h-40" />;
   }
 
+  if (!data || !requirementCompliances) {
+    return <EmptyState title="No requirements available" description="No requirements found for this request." />;
+  }
+
+  const requirements = data.map((requirement) => ({
+    id: requirement.id,
+    description: requirement.name,
+    completed: requirementCompliances?.[requirement.id] || false,
+  }));
+  const completedRequirements = data.filter((requirement) => requirementCompliances[requirement.id]).length;
+  const progress = (completedRequirements / data.length) * 100;
+
   return (
-    <Card className="flex-1">
+    <Card className="flex-1 flex flex-col">
       <CardHeader>
         <CardTitle>
-          Total Requirements ({completedRequirements}/{requirements.length})
+          Total Requirements ({completedRequirements}/{data.length})
         </CardTitle>
         <CardDescription>Track the progress of request requirements</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1 flex-col flex">
         <Progress value={progress} className="mb-4" />
         <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-2">
-          {requirements.map((task) => (
-            <div key={task.id} className="flex items-center space-x-2">
-              <Checkbox id={`task-${task.id}`} checked={task.completed} />
-              <label htmlFor={`task-${task.id}`} className="text-sm">
-                {task.description}
+          {requirements.map((requirement) => (
+            <div key={requirement.id} className="flex items-center space-x-2">
+              <Checkbox id={`requirement-${requirement.id}`} checked={requirement.completed} />
+              <label htmlFor={`requirement-${requirement.id}`} className="text-sm">
+                {requirement.description}
               </label>
             </div>
           ))}

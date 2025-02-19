@@ -83,8 +83,8 @@ model RequestAssignment extends TenantScoped, Auditable {
   slaEnd               DateTime?
 
   // ITIL mandatory fields
-  areaId               String?              @db.UniqueIdentifier
-  area                 Area?                @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  areaId               String              @db.UniqueIdentifier
+  area                 Area                @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   statusId             String               @db.UniqueIdentifier
   status               RequestStatusType    @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -130,8 +130,9 @@ model AssignedUser extends TenantScoped, Auditable {
 
 // Represents a type of assignment for requests.
 model AssignmentType extends  TenantScoped, Auditable, CatalogBase {
-  assignments RequestAssignment[]
   systemName        String                   @db.VarChar(100)
+  
+  assignments RequestAssignment[]
   @@unique([name, tenantId])
 }
 

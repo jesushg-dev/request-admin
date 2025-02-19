@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import EmptyState from '@/components/shared/empty-state';
 
 import { Attachments } from './attachments';
 import { ViewToggle } from './view-toggle';
@@ -34,8 +35,8 @@ export default function AssociatedFilesViewer({ guideDocuments, documents }: { g
   const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
 
   return (
-    <Tabs defaultValue="guideDocuments">
-      <Card>
+    <Tabs className="flex-1 flex flex-col" defaultValue="document">
+      <Card className="flex-1 flex flex-col">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Associated Files</CardTitle>
@@ -53,7 +54,7 @@ export default function AssociatedFilesViewer({ guideDocuments, documents }: { g
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex-1 flex-col flex">
           <TabsContent value="document">{viewMode === 'table' ? <GuideDocumentTableView guideDocuments={guideDocuments} /> : <Attachments type="document" />}</TabsContent>
           <TabsContent value="guide">{viewMode === 'table' ? <DocumentTableView documents={documents} /> : <Attachments type="guide" />}</TabsContent>
         </CardContent>
@@ -63,6 +64,8 @@ export default function AssociatedFilesViewer({ guideDocuments, documents }: { g
 }
 
 function GuideDocumentTableView({ guideDocuments }: { guideDocuments: GuideDocument[] }) {
+  if (!guideDocuments.length) return <EmptyState title="No guide documents found" />;
+
   return (
     <Table>
       <TableHeader>
@@ -90,6 +93,8 @@ function GuideDocumentTableView({ guideDocuments }: { guideDocuments: GuideDocum
 }
 
 function DocumentTableView({ documents }: { documents: Document[] }) {
+  if (!documents.length) return <EmptyState title="No documents found" />;
+
   return (
     <Table>
       <TableHeader>
