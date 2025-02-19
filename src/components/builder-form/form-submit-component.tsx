@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useTransition, type FC } from 'react';
+import React, { useTransition, type FC } from 'react';
 import { SubmitForm } from '@/actions/form';
+import { useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
@@ -15,31 +16,24 @@ interface FormSubmitComponentProps {
 }
 
 const FormSubmitComponent: FC<FormSubmitComponentProps> = ({ tenantId, formId, content }) => {
+  const router = useRouter();
   const t = useTranslations('component.formBuilder');
 
-  const [submitted, setSubmitted] = useState(false);
   const [pending, startTransition] = useTransition();
 
   const submitForm = async (values: Record<string, string>) => {
-    try {
-      const jsonContent = JSON.stringify(values.current);
-      await SubmitForm(tenantId, formId, jsonContent);
-      setSubmitted(true);
-    } catch {
-      toast(t('error'), { description: t('submissionError') });
-    }
+    const promise = SubmitForm(tenantId, formId, values);
+    toast.promise(promise, {
+      loading: t('submitting'),
+      success: () => {
+        router.push({ pathname: '/admin/[tenantId]/form-designer/[slug]', params: { tenantId, slug: formId } });
+        return t('formSubmitted');
+      },
+      error: (error) => {
+        return `${t('submissionError')}: ${error.message}`;
+      },
+    });
   };
-
-  if (submitted) {
-    return (
-      <div className="flex h-full w-full items-center justify-center p-8">
-        <div className="bg-background flex w-full max-w-[620px] grow flex-col gap-4 overflow-y-auto rounded border p-8 ">
-          <h1 className="text-2xl font-bold">{t('formSubmitted')}</h1>
-          <p className="text-muted-foreground">{t('submissionMessage')}</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <FormRenderer

@@ -647,6 +647,7 @@
       "error": "Error",
       "formError": "Please check the form for errors",
       "submissionError": "Something went wrong",
+      "submitting": "Submitting...",
       "formSubmitted": "Form submitted",
       "submissionMessage": "Thank you for submitting the form. You can close this page now.",
       "submit": "Submit",

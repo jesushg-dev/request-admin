@@ -1,7 +1,7 @@
 import React from 'react';
 import { GetFormContentById } from '@/actions/form';
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FormElementInstance } from '@/components/builder-form/form-elements';
 import FormSubmitComponent from '@/components/builder-form/form-submit-component';
 
@@ -23,10 +23,9 @@ async function SubmitPage({ params }: { params: Promise<{ tenantId: string; slug
           <CardTitle>{form.name}</CardTitle>
           <CardDescription>{form.description}</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-col gap-4 items-end">
           <FormSubmitComponent formId={form.id} content={formContent} tenantId={tenantId} />
         </CardContent>
-        <CardFooter></CardFooter>
       </Card>
     </div>
   );

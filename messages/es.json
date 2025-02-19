@@ -647,6 +647,7 @@
       "error": "Error",
       "formError": "Por favor, verifica los errores en el formulario",
       "submissionError": "Algo salió mal",
+      "submitting": "Enviando...",
       "formSubmitted": "Formulario enviado",
       "submissionMessage": "Gracias por enviar el formulario. Ahora puedes cerrar esta página.",
       "submit": "Enviar",
