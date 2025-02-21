@@ -1,3 +1,5 @@
+'use server';
+
 import { locales, redirect } from '@/i18n/routing';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 

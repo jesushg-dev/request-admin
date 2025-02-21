@@ -1,10 +1,21 @@
 'use client';
 
 import { useFormContext } from 'react-hook-form';
+import { z } from 'zod';
 
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+export const personalInfoSchema = z.object({
+  firstName: z.string().min(1, { message: 'error.firstNameRequired' }),
+  lastName: z.string().min(1, { message: 'error.lastNameRequired' }),
+  phone: z.string().min(1, { message: 'error.phoneRequired' }),
+  identificationNumber: z.string().min(1, { message: 'error.identificationNumberRequired' }),
+  identificationTypeId: z.string().min(1, { message: 'error.identificationTypeRequired' }),
+});
+
+export type PersonalInfoValues = z.infer<typeof personalInfoSchema>;
 
 // Mock data for identification types (replace with actual data fetching)
 const identificationTypes = [

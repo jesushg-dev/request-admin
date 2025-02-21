@@ -8,22 +8,30 @@ import './permission.zmodel'
 
 model User extends Auditable {
   id                      String                 @id @default(uuid()) @db.UniqueIdentifier
-  username                String                 @unique
-  email                   String                 @unique
+  username                String                 
+  email                   String                 
   emailVerified           DateTime?
+  isActive                Boolean                @default(true)
   password                String                 @password @omit
   isTwoFactorEnabled      Boolean                @default(false)
   isTemporalPassword      Boolean                @default(false)
   twoFactorConfirmationId String?                @db.UniqueIdentifier
   twoFactorConfirmation   TwoFactorConfirmation?
   Authenticators          Authenticator[]
-  isGlobalAdmin           Boolean                @default(false)
+  isGlobalAdmin           Boolean                 @default(false)
 
   accounts                Account[]
   sessions                Session[]
   userTenants             UserTenant[]
 
   @@allow("read", userTenants?[user.id == auth().id && isActive == true])
+
+  //only allow one user per email and username in the system
+  @@unique([email])
+  @@unique([username])
+
+  //vs
+  @@unique([email ,username])
 }
 
 model UserTenant extends TenantScoped, Auditable {
@@ -32,6 +40,7 @@ model UserTenant extends TenantScoped, Auditable {
   isTermAccepted               Boolean          @default(false) // Indicates if the user has accepted the terms of the tenant
   joinedAt                     DateTime         @default(now()) // Timestamp of when the user joined the tenant
   isSuperAdmin                 Boolean          @default(false) // Flag for super admin status
+  isTwoFactorRequired Boolean            @default(false)
 
   userId                       String           @db.UniqueIdentifier
   user                         User             @relation(fields: [userId], references: [id], onDelete: Cascade)

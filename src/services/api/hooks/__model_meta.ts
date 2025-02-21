@@ -808,6 +808,11 @@ const metadata = {
           type: 'DateTime',
           isOptional: true,
         },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
         password: {
           name: 'password',
           type: 'String',
@@ -873,13 +878,17 @@ const metadata = {
           name: 'id',
           fields: ['id'],
         },
+        email: {
+          name: 'email',
+          fields: ['email'],
+        },
         username: {
           name: 'username',
           fields: ['username'],
         },
-        email: {
-          name: 'email',
-          fields: ['email'],
+        email_username: {
+          name: 'email_username',
+          fields: ['email', 'username'],
         },
       },
     },
@@ -953,6 +962,11 @@ const metadata = {
         },
         isSuperAdmin: {
           name: 'isSuperAdmin',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        isTwoFactorRequired: {
+          name: 'isTwoFactorRequired',
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: false }] }],
         },
@@ -1453,7 +1467,6 @@ const metadata = {
         issueSubject: {
           name: 'issueSubject',
           type: 'String',
-          isOptional: true,
         },
         description: {
           name: 'description',
@@ -6108,11 +6121,6 @@ const metadata = {
           name: 'lastName',
           type: 'String',
         },
-        email: {
-          name: 'email',
-          type: 'String',
-          isOptional: true,
-        },
         phone: {
           name: 'phone',
           type: 'String',
@@ -6171,10 +6179,6 @@ const metadata = {
         phone_tenantId: {
           name: 'phone_tenantId',
           fields: ['phone', 'tenantId'],
-        },
-        email_tenantId: {
-          name: 'email_tenantId',
-          fields: ['email', 'tenantId'],
         },
         userTenantId_tenantId: {
           name: 'userTenantId_tenantId',

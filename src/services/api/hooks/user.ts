@@ -359,6 +359,7 @@ export function useCheckUser<TError = DefaultError>(
       id?: string;
       username?: string;
       email?: string;
+      isActive?: boolean;
       password?: string;
       isTwoFactorEnabled?: boolean;
       isTemporalPassword?: boolean;

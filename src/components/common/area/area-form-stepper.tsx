@@ -19,7 +19,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import AreaForm, { areaFormSchema, getAreaDefaultValue } from '@/components/common/area/area-form';
 import AssignmentCategoryForm, { categoriesSchema } from '@/components/common/category/assignment-category-form';
 import RolesForm, { rolesFormSchema } from '@/components/common/role/role-form';
-import UserRoleAssignmentForm, { userRoleFormSchema } from '@/components/common/role/user-role-assignment-form';
+import UserRoleAssignmentForm, { userRoleAssignmentFormSchema } from '@/components/common/role/user-role-assignment-form';
 import { OptionType } from '@/components/select/select';
 import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
 import { StepNavigation } from '@/components/stepper/step-navigation';
@@ -33,11 +33,11 @@ const { useStepper, utils } = defineStepper(
   { id: 'description', label: 'Description', schema: areaFormSchema },
   { id: 'assignmentCategory', label: 'Assignment Category', schema: categoriesSchema },
   { id: 'role', label: 'Role', schema: rolesFormSchema },
-  { id: 'user', label: 'User', schema: userRoleFormSchema },
+  { id: 'user', label: 'User', schema: userRoleAssignmentFormSchema },
   { id: 'finish', label: 'Finish', schema: z.object({}) }
 );
 
-export type AreaFormStepperType = z.infer<typeof areaFormSchema> & z.infer<typeof categoriesSchema> & z.infer<typeof rolesFormSchema> & z.infer<typeof userRoleFormSchema>;
+export type AreaFormStepperType = z.infer<typeof areaFormSchema> & z.infer<typeof categoriesSchema> & z.infer<typeof rolesFormSchema> & z.infer<typeof userRoleAssignmentFormSchema>;
 
 interface AreaFormStepperProps {
   tenantId: string;

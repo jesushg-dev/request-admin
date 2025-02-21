@@ -10,7 +10,6 @@ model Person extends TenantScoped, Auditable {
   // Personal details
   firstName             String     @db.VarChar(100) // First name of the person
   lastName              String     @db.VarChar(100) // Last name of the person
-  email                 String?    @email('must be a valid email')
   phone                 String?    @db.VarChar(50) // Optional phone number
   identificationNumber  String     @default("") @db.VarChar(110) // Unique identification number
   image                 String?    // User's profile image
@@ -23,7 +22,6 @@ model Person extends TenantScoped, Auditable {
   identificationType    IdentificationType @relation(fields: [identificationTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Type of identification
 
   @@unique([phone, tenantId])
-  @@unique([email, tenantId])
   @@unique([userTenantId, tenantId])
   @@unique([identificationNumber, tenantId])
 }

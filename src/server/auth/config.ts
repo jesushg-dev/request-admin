@@ -155,5 +155,5 @@ export const authConfig: NextAuthConfig = {
   adapter: PrismaAdapter(db),
   session: { strategy: 'jwt' },
   // todo: remove this once we have a valid domain for the app
-  trustHost: true,
+  trustHost: process.env.AUTHENTICATION_TRUST_HOST === 'true',
 } satisfies NextAuthConfig;

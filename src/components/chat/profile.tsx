@@ -17,6 +17,17 @@ export const Profile = ({ userId, onClose }: ProfileProps) => {
   const tenantId = useTenantId();
 
   const { data: user, isLoading: userLoading } = useFindFirstPerson({
+    include: {
+      userTenant: {
+        select: {
+          user: {
+            select: {
+              email: true,
+            },
+          },
+        },
+      },
+    },
     where: { userTenant: { tenantId, userId } },
   });
 
@@ -82,8 +93,8 @@ export const Profile = ({ userId, onClose }: ProfileProps) => {
             </div>
             <div className="flex flex-col">
               <p className="text-accent-foreground text-[13px] font-semibold">Email Address</p>
-              <Link href={`mailto:${user.email}`} className="text-seablue-300 text-sm hover:underline">
-                {user.email}
+              <Link href={`mailto:${user.userTenant?.user.email}`} className="text-seablue-300 text-sm hover:underline">
+                {user.userTenant?.user.email}
               </Link>
             </div>
           </div>

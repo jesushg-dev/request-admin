@@ -80,6 +80,7 @@ async function main() {
       id: '51C9BBA8-6C86-4E6C-8FE2-E98BB42A07F8',
       email: 'jess232016@gmail.com',
       username: 'jess232016',
+      emailVerified: new Date(),
       password: await hashPassword('Lamisma123*'),
       isGlobalAdmin: true,
       userTenants: {
@@ -94,7 +95,6 @@ async function main() {
               id: '7B159275-47A7-4957-9419-4ABBAED5B8AD',
               firstName: 'Jesus',
               lastName: 'Hernandez',
-              email: 'jesus.hernandez@gmail.com',
               phone: '89898989',
               identificationNumber: '134-123456-0000A',
               identificationTypeId: dnIdentificationType.id,
@@ -113,6 +113,7 @@ async function main() {
       username: 'danilo',
       password: await hashPassword('Lamisma123*'),
       isGlobalAdmin: true,
+      emailVerified: new Date(),
       userTenants: {
         create: {
           tenantId: UNSTABLE_TENANT_ID,
@@ -124,7 +125,6 @@ async function main() {
               id: 'FB420CF8-8820-4FB7-9FE5-BFE7B2F83894',
               firstName: 'Danilo',
               lastName: 'Acevedo',
-              email: 'Danico.Acevedo@gmail.com',
               phone: '12345678',
               identificationNumber: '254-555456-0000A',
               identificationTypeId: dnIdentificationType.id,

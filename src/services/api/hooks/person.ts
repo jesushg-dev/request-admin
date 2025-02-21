@@ -376,7 +376,6 @@ export function useCheckPerson<TError = DefaultError>(
       id?: string;
       firstName?: string;
       lastName?: string;
-      email?: string;
       phone?: string;
       identificationNumber?: string;
       image?: string;

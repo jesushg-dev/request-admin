@@ -2,6 +2,7 @@
 
 import { db } from '@/server/db-client';
 
+import { AreaRoleOptionType } from '@/types/prisma/user';
 import { AreaFormStepperType } from '@/components/common/area/area-form-stepper';
 
 import { getAssignmentCategoriesByIds } from './assignment-type';
@@ -147,4 +148,38 @@ export async function getAreaByTenandIdAndAreaId(tenantId: string, areaId: strin
       })
     ),
   */
+}
+
+export async function getAreasWithRolesAsOptionsByTenantId(tenantId: string): Promise<AreaRoleOptionType[]> {
+  const areas = await db.area.findMany({
+    where: {
+      tenantId,
+    },
+    select: {
+      id: true,
+      name: true,
+      isActive: true,
+      areaRole: {
+        select: {
+          id: true,
+          name: true,
+          isActive: true,
+        },
+      },
+    },
+  });
+
+  //only return active areas with active roles
+  return areas
+    .filter((area) => area.isActive /*&& area.areaRole.some((role) => role.isActive)*/)
+    .map((area) => ({
+      label: `${area.name} (${area.areaRole.filter((role) => role.isActive).length} roles)`,
+      value: area.id,
+      roleOptions: area.areaRole
+        .filter((role) => role.isActive)
+        .map((role) => ({
+          label: role.name,
+          value: role.id,
+        })),
+    }));
 }

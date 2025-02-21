@@ -13,7 +13,7 @@ import Select, { OptionType } from '@/components/select/select';
 
 export const requestDetailSchema = z.object({
   id: z.string(),
-  issueSubject: z.string().optional(),
+  issueSubject: z.string(),
   description: z.string().max(5000).optional(),
   comment: z.string().max(255).optional(),
   priorityId: z.object({ value: z.string(), label: z.string() }),

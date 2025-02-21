@@ -1,158 +1,135 @@
 'use client';
 
-import { useState } from 'react';
-import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useMemo, type FC } from 'react';
+import { Link } from '@/i18n/routing';
+import { Plus, Trash } from 'lucide-react';
+import { Control, FieldErrors, useController, useFieldArray, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
+import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Checkbox } from '@/components/ui/checkbox';
+import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import Select, { OptionType } from '@/components/select/select';
 
-// ===================
-// Zod Schemas
-// ===================
-// Schema for a role entry
 export const roleSchema = z.object({
-  roleId: z.string().nonempty({ message: 'error.roleRequired' }),
+  id: z.string().uuid().default(generateUuid),
+  roleId: z.object({ value: z.string().min(1, 'Role is required'), label: z.string() }),
+  isActive: z.boolean().default(true),
 });
 
-// Schema for the entire form
 export const userRoleFormSchema = z.object({
-  roles: z.array(roleSchema),
+  roles: z.array(roleSchema).optional(),
 });
 
-// Type for the form values
+export const getDefaultUserRole = (): UserRoleFormValues => ({
+  roles: [{ id: generateUuid(), roleId: { value: '', label: '' }, isActive: true }],
+});
+
 export type UserRoleFormValues = z.infer<typeof userRoleFormSchema>;
 
-// ===================
-// Mock Data
-// ===================
-// Mock data for roles (replace with actual data fetching)
-const roles = [
-  {
-    id: '1',
-    name: 'Admin',
-    modules: [
-      {
-        name: 'Users',
-        permissions: [{ name: 'Create' }, { name: 'Read' }, { name: 'Update' }, { name: 'Delete' }],
-      },
-    ],
-  },
-  {
-    id: '2',
-    name: 'Editor',
-    modules: [
-      {
-        name: 'Content',
-        permissions: [{ name: 'Create' }, { name: 'Read' }, { name: 'Update' }],
-      },
-    ],
-  },
-  {
-    id: '3',
-    name: 'Viewer',
-    modules: [
-      {
-        name: 'Reports',
-        permissions: [{ name: 'Read' }],
-      },
-    ],
-  },
-];
+interface UserRoleFormProps {
+  tenantId: string;
+  roleOptions: OptionType[];
+}
 
-export function UserRoleForm() {
-  const { control, setValue } = useFormContext<UserRoleFormValues>();
+const UserRoleForm: FC<UserRoleFormProps> = ({ tenantId, roleOptions }) => {
+  const { control, formState } = useFormContext<UserRoleFormValues>();
+  const { fields, append, remove } = useFieldArray({ control, name: 'roles' });
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'roles',
-  });
-
-  // State to store selected role details for each field
-  const [selectedRoles, setSelectedRoles] = useState<((typeof roles)[0] | null)[]>(fields.map(() => null));
-
-  // Handle role change by updating the form field and selectedRoles state
-  const handleRoleChange = (roleId: string, index: number) => {
-    setValue(`roles.${index}.roleId`, roleId);
-    setSelectedRoles((prev) => {
-      const newSelectedRoles = [...prev];
-      newSelectedRoles[index] = roles.find((role) => role.id === roleId) || null;
-      return newSelectedRoles;
-    });
+  const onAppendRole = () => {
+    append({ id: generateUuid(), roleId: { value: '', label: '' }, isActive: true });
   };
 
   return (
     <div className="m-1 flex flex-col gap-2">
       {fields.map((field, index) => (
-        <div key={field.id} className="space-y-4 rounded-md border p-4">
-          <h3 className="font-medium">{`Role ${index + 1}`}</h3>
-
-          {/* Role Selection Field */}
-          <FormField
-            control={control}
-            name={`roles.${index}.roleId`}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{'role.select'}</FormLabel>
-                <FormControl>
-                  <Select value={field.value} onValueChange={(value) => handleRoleChange(value, index)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {roles.map((role) => (
-                        <SelectItem key={role.id} value={role.id}>
-                          {role.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Tooltip to display role details */}
-          {selectedRoles[index] && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="outline">{'role.viewDetails'}</Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <div>
-                    <h3 className="font-bold">{selectedRoles[index]?.name} Modules:</h3>
-                    <ul>
-                      {selectedRoles[index]?.modules.map((module, moduleIndex) => (
-                        <li key={moduleIndex}>
-                          {module.name}: {module.permissions.map((p) => p.name).join(', ')}
-                        </li>
-                      ))}
-                    </ul>
+        <div key={field.id} className="flex w-full items-center gap-4 border rounded-md p-4">
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4 flex-1 items-center">
+            <RoleSelectField
+              index={index}
+              control={control}
+              tenantId={tenantId}
+              errors={formState.errors}
+              roleOptions={roleOptions}
+              selectedRoles={fields.map((role) => role.roleId?.value as string)}
+            />
+            <FormField
+              control={control}
+              name={`roles.${index}.isActive`}
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
+                  <FormControl>
+                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Active</FormLabel>
+                    <FormDescription>{field.value ? 'Role is active' : 'Role is inactive'}</FormDescription>
+                    <FormMessage />
                   </div>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
-
-          <Button variant="destructive" onClick={() => remove(index)}>
-            {'role.remove'}
+                </FormItem>
+              )}
+            />
+          </div>
+          <Button type="button" variant="destructive" size="sm" onClick={() => remove(index)}>
+            <Trash className="size-4" />
           </Button>
         </div>
       ))}
 
-      <Button type="button" onClick={() => append({ roleId: '' })}>
-        {'role.add'}
+      <Button type="button" variant="outline" role="combobox" size="sm" className="border-2 border-dashed" onClick={onAppendRole}>
+        <Plus className="mr-2 size-4" />
+        Add Role
       </Button>
     </div>
   );
+};
+
+interface RoleSelectFieldProps {
+  index: number;
+  roleOptions: OptionType[];
+  control: Control<UserRoleFormValues>;
+  selectedRoles: string[];
+  errors: FieldErrors<UserRoleFormValues>;
+  tenantId: string;
 }
 
-/*
-File Location Guide:
-- Place this component in your components directory, for example: /components/UserRoleForm.tsx.
-- The Zod schemas can be moved to a separate file (e.g., /app/schemas/userRoleFormSchema.ts) for reusability.
-*/
+const RoleSelectField: FC<RoleSelectFieldProps> = ({ index, roleOptions, tenantId, control, selectedRoles, errors }) => {
+  const { field } = useController({
+    control,
+    name: `roles.${index}.roleId`,
+    rules: { required: 'Role is required' },
+  });
+
+  const filteredOptions = useMemo(() => {
+    const currentValue = field.value?.value;
+    return roleOptions.filter((option) => option.value === currentValue || !selectedRoles.includes(option.value as string));
+  }, [roleOptions, selectedRoles, field.value]);
+
+  return (
+    <FormItem>
+      <FormLabel>Select Role</FormLabel>
+      <FormControl>
+        <Select
+          value={field.value}
+          options={filteredOptions}
+          onChange={(selected) => field.onChange(selected ? { value: selected.value, label: selected.label } : { value: '', label: '' })}
+          placeholder="Select a role..."
+        />
+      </FormControl>
+      <FormDescription>
+        <Link
+          target="_blank"
+          href={{
+            pathname: '/admin/[tenantId]/security/roles/[slug]',
+            params: { tenantId, slug: field.value?.value },
+          }}>
+          See role details
+        </Link>
+      </FormDescription>
+      <FormMessage>{errors.roles?.[index]?.roleId?.value?.message || errors.roles?.[index]?.roleId?.label?.message || errors.roles?.[index]?.roleId?.message}</FormMessage>
+    </FormItem>
+  );
+};
+
+export default UserRoleForm;

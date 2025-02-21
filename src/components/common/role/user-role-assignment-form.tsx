@@ -3,6 +3,7 @@
 import React, { FC, useMemo } from 'react';
 import { Plus, Trash } from 'lucide-react';
 import { Control, FieldErrors, useController, useFieldArray, useFormContext } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { generateUuid } from '@/lib/id';
@@ -11,7 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import Select, { OptionType } from '@/components/select/select';
 
-export const userRoleFormSchema = z.object({
+export const userRoleAssignmentFormSchema = z.object({
   userRoles: z.array(
     z.object({
       id: z.string().uuid().default(generateUuid),
@@ -28,7 +29,7 @@ export const userRoleFormSchema = z.object({
   ),
 });
 
-export type UserRoleFormValues = z.infer<typeof userRoleFormSchema>;
+export type userRoleAssignmentFormValues = z.infer<typeof userRoleAssignmentFormSchema>;
 
 export const getDefaultUserRole = (role: OptionType) => ({
   id: generateUuid(),
@@ -43,10 +44,14 @@ interface UserRoleAssignmentFormProps {
 }
 
 const UserRoleAssignmentForm: FC<UserRoleAssignmentFormProps> = ({ userOptions, roleOptions }) => {
-  const { control, formState } = useFormContext<UserRoleFormValues>();
+  const { control, formState } = useFormContext<userRoleAssignmentFormValues>();
   const { fields, append, remove } = useFieldArray({ control, name: 'userRoles', keyName: '_id' });
 
   const onAppendUser = () => {
+    if (roleOptions.length === 0) {
+      toast.warning('No roles available');
+      return;
+    }
     const newUser = { ...getDefaultUserRole(roleOptions.length === 1 ? roleOptions[0] : { value: '', label: '' }) };
     append(newUser);
   };
@@ -92,24 +97,21 @@ interface UserSelectFieldProps {
   index: number;
   userArray: OptionType[];
   selectedUsers: string[];
-  control: Control<UserRoleFormValues>;
-  errors: FieldErrors<UserRoleFormValues>;
+  control: Control<userRoleAssignmentFormValues>;
+  errors: FieldErrors<userRoleAssignmentFormValues>;
 }
 
 const UserSelectField: FC<UserSelectFieldProps> = ({ index, userArray, selectedUsers, control, errors }) => {
   const { field } = useController({ name: `userRoles.${index}.userId`, control });
-  const currentValue = field.value?.value;
-  const filteredUsers = useMemo(() => userArray.filter((opt) => opt.value === currentValue || !selectedUsers.includes(opt.value as string)), [userArray, selectedUsers, currentValue]);
+  const filteredUsers = useMemo(() => {
+    const currentValue = field.value?.value;
+    return userArray.filter((opt) => opt.value === currentValue || !selectedUsers.includes(opt.value as string));
+  }, [userArray, selectedUsers, field.value]);
   return (
     <FormItem className="flex-1">
       <FormLabel>User</FormLabel>
       <FormControl>
-        <Select
-          value={filteredUsers.find((opt) => opt.value === currentValue) || null}
-          options={filteredUsers}
-          onChange={(selected) => field.onChange(selected ? { value: selected.value, label: selected.label } : { value: '', label: '' })}
-          className="w-full"
-        />
+        <Select value={field.value} options={filteredUsers} onChange={(selected) => field.onChange(selected || null)} className="w-full" />
       </FormControl>
       <FormDescription>{filteredUsers.length === 0 ? 'No users available' : 'Select a user for the role'}</FormDescription>
       <FormMessage>{errors.userRoles?.[index]?.userId?.value?.message || errors.userRoles?.[index]?.userId?.label?.message || errors.userRoles?.[index]?.userId?.message}</FormMessage>
@@ -120,8 +122,8 @@ const UserSelectField: FC<UserSelectFieldProps> = ({ index, userArray, selectedU
 interface RoleSelectFieldProps {
   index: number;
   roleArray: OptionType[];
-  control: Control<UserRoleFormValues>;
-  errors: FieldErrors<UserRoleFormValues>;
+  control: Control<userRoleAssignmentFormValues>;
+  errors: FieldErrors<userRoleAssignmentFormValues>;
 }
 
 const RoleSelectField: FC<RoleSelectFieldProps> = ({ index, roleArray, control, errors }) => {

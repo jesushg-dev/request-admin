@@ -461,6 +461,32 @@
           "enabled": "Enabled",
           "disabled": "Disabled"
         }
+      },
+      "form": {
+        "username": "Username",
+        "usernamePlaceholder": "JohnDoe",
+        "usernameDesc": "This is your public display name.",
+        "email": "Email",
+        "emailPlaceholder": "john.doe@request.com",
+        "emailDesc": "Enter a valid email address.",
+        "firstName": "First Name",
+        "firstNamePlaceholder": "John",
+        "lastName": "Last Name",
+        "lastNamePlaceholder": "Doe",
+        "phone": "Phone",
+        "phonePlaceholder": "Enter phone number",
+        "identificationNumber": "Identification Number",
+        "identificationNumberPlaceholder": "Enter identification number",
+        "identificationType": "Identification Type",
+        "identificationTypePlaceholder": "Select an identification type",
+        "enableTwoFactor": "Enable Two-Factor Authentication",
+        "enableTwoFactorDesc": "Require two-factor authentication for added security.",
+        "active": "Active",
+        "activeDesc": "Mark as active or inactive.",
+        "error": {
+          "usernameRequired": "Username is required.",
+          "invalidEmail": "Please enter a valid email address."
+        }
       }
     },
     "document": {

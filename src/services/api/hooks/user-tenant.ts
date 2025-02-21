@@ -399,7 +399,18 @@ export function useSuspenseCountUserTenant<
 export function useCheckUserTenant<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
-    where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; isActive?: boolean; isTermAccepted?: boolean; isSuperAdmin?: boolean; userId?: string; personId?: string };
+    where?: {
+      createdBy?: string;
+      updatedBy?: string;
+      tenantId?: string;
+      id?: string;
+      isActive?: boolean;
+      isTermAccepted?: boolean;
+      isSuperAdmin?: boolean;
+      isTwoFactorRequired?: boolean;
+      userId?: string;
+      personId?: string;
+    };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {

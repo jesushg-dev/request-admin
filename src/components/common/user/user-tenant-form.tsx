@@ -4,26 +4,13 @@ import { useFieldArray, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-import { CustomCheckbox } from './custom-checkbox';
-import { PersonForm } from './person-form';
+import { personalInfoSchema, PersonForm } from './user-tenant-scoped-form/person-form';
 
-// ===================
-// Zod Schemas
-// ===================
-// Schema for personal information fields
-export const personalInfoSchema = z.object({
-  firstName: z.string().min(1, { message: 'error.firstNameRequired' }),
-  lastName: z.string().min(1, { message: 'error.lastNameRequired' }),
-  phone: z.string().min(1, { message: 'error.phoneRequired' }),
-  identificationNumber: z.string().min(1, { message: 'error.identificationNumberRequired' }),
-  identificationTypeId: z.string().min(1, { message: 'error.identificationTypeRequired' }),
-});
-
-// Schema for a tenant entry
 export const tenantSchema = z.object({
   tenantId: z.string().nonempty({ message: 'error.tenantRequired' }),
   isActive: z.boolean(),
@@ -98,7 +85,7 @@ export function UserTenantForm() {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <CustomCheckbox id={`tenants.${index}.isActive`} checked={field.value} onCheckedChange={field.onChange} label="tenant.active" description="Enable this tenant for the user" />
+                  <Checkbox id={`tenants.${index}.isActive`} checked={field.value} onCheckedChange={field.onChange} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -112,13 +99,7 @@ export function UserTenantForm() {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <CustomCheckbox
-                    id={`tenants.${index}.isTermAccepted`}
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    label="tenant.acceptTerms"
-                    description="User accepts the terms and conditions for this tenant"
-                  />
+                  <Checkbox id={`tenants.${index}.isTermAccepted`} checked={field.value} onCheckedChange={field.onChange} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -132,13 +113,7 @@ export function UserTenantForm() {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <CustomCheckbox
-                    id={`tenants.${index}.isSuperAdmin`}
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    label="tenant.superAdmin"
-                    description="Grant super administrative privileges for this tenant"
-                  />
+                  <Checkbox id={`tenants.${index}.isSuperAdmin`} checked={field.value} onCheckedChange={field.onChange} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

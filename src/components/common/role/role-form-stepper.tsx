@@ -14,7 +14,7 @@ import { RequirementOptionType } from '@/types/prisma/requirement';
 import { Card } from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import UserRoleAssignmentForm, { userRoleFormSchema } from '@/components/common/role/user-role-assignment-form';
+import UserRoleAssignmentForm, { userRoleAssignmentFormSchema } from '@/components/common/role/user-role-assignment-form';
 import { OptionType } from '@/components/select/select';
 import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
 import { StepNavigation } from '@/components/stepper/step-navigation';
@@ -25,11 +25,11 @@ import RoleFormReview from './role-form-review';
 
 const { useStepper, utils } = defineStepper(
   { id: 'role', label: 'Role', schema: rolesFormSchema },
-  { id: 'user', label: 'User', schema: userRoleFormSchema },
+  { id: 'user', label: 'User', schema: userRoleAssignmentFormSchema },
   { id: 'finish', label: 'Finish', schema: z.object({}) }
 );
 
-export type RoleFormStepperType = z.infer<typeof rolesFormSchema> & z.infer<typeof userRoleFormSchema>;
+export type RoleFormStepperType = z.infer<typeof rolesFormSchema> & z.infer<typeof userRoleAssignmentFormSchema>;
 
 interface RoleFormStepperProps {
   tenantId: string;

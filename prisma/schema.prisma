@@ -149,9 +149,10 @@ model User {
   createdBy               String?                @db.VarChar(50)
   updatedBy               String?                @db.VarChar(50)
   id                      String                 @id() @default(uuid()) @db.UniqueIdentifier()
-  username                String                 @unique()
-  email                   String                 @unique()
+  username                String
+  email                   String
   emailVerified           DateTime?
+  isActive                Boolean                @default(true)
   password                String
   isTwoFactorEnabled      Boolean                @default(false)
   isTemporalPassword      Boolean                @default(false)
@@ -162,6 +163,10 @@ model User {
   accounts                Account[]
   sessions                Session[]
   userTenants             UserTenant[]
+
+  @@unique([email])
+  @@unique([username])
+  @@unique([email, username])
 }
 
 model UserTenant {
@@ -177,6 +182,7 @@ model UserTenant {
   isTermAccepted               Boolean          @default(false)
   joinedAt                     DateTime         @default(now())
   isSuperAdmin                 Boolean          @default(false)
+  isTwoFactorRequired          Boolean          @default(false)
   userId                       String           @db.UniqueIdentifier()
   user                         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   personId                     String?          @db.UniqueIdentifier()
@@ -286,7 +292,7 @@ model Request {
   tenantId             String                          @db.UniqueIdentifier()
   tenant               Tenant                          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id                   String                          @id() @default(uuid()) @db.UniqueIdentifier()
-  issueSubject         String?                         @db.VarChar(255)
+  issueSubject         String                          @db.VarChar(255)
   description          String?                         @db.VarChar(5000)
   closedAt             DateTime?
   closedBy             String?                         @db.VarChar(50)
@@ -1226,7 +1232,6 @@ model Person {
   id                   String             @id() @default(uuid()) @db.UniqueIdentifier()
   firstName            String             @db.VarChar(100)
   lastName             String             @db.VarChar(100)
-  email                String?
   phone                String?            @db.VarChar(50)
   identificationNumber String             @default("") @db.VarChar(110)
   image                String?
@@ -1236,7 +1241,6 @@ model Person {
   identificationType   IdentificationType @relation(fields: [identificationTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([phone, tenantId])
-  @@unique([email, tenantId])
   @@unique([userTenantId, tenantId])
   @@unique([identificationNumber, tenantId])
 }

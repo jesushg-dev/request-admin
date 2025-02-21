@@ -5,11 +5,11 @@ import { getUsersAsOptions } from '@/actions/user';
 
 import RoleFormStepper from '@/components/common/role/role-form-stepper';
 
-interface NewRolePageProps {
+interface NewPageProps {
   params: Promise<{ locale: string; tenantId: string }>;
 }
 
-const NewRolePage: FC<NewRolePageProps> = async ({ params }) => {
+const NewPage: FC<NewPageProps> = async ({ params }) => {
   const { tenantId } = await params;
 
   const userOptions = await getUsersAsOptions(tenantId);
@@ -19,4 +19,4 @@ const NewRolePage: FC<NewRolePageProps> = async ({ params }) => {
   return <RoleFormStepper tenantId={tenantId} requirements={requirements} userOptions={userOptions} moduleWithFeatures={modules} />;
 };
 
-export default NewRolePage;
+export default NewPage;

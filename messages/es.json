@@ -461,6 +461,28 @@
           "enabled": "Habilitado",
           "disabled": "Deshabilitado"
         }
+      },
+      "form": {
+        "username": "Nombre de usuario",
+        "usernamePlaceholder": "JuanPerez",
+        "usernameDesc": "Introduce un nombre de usuario único.",
+        "email": "Correo electrónico",
+        "emailPlaceholder": "juan.perez@request.com",
+        "emailDesc": "Introduce una dirección de correo válida.",
+        "firstName": "Nombre",
+        "firstNamePlaceholder": "Juan",
+        "lastName": "Apellido",
+        "lastNamePlaceholder": "Pérez",
+        "phone": "Teléfono",
+        "phonePlaceholder": "Introduce un número de teléfono",
+        "identificationNumber": "Número de identificación",
+        "identificationNumberPlaceholder": "Introduce el número de identificación",
+        "identificationType": "Tipo de identificación",
+        "identificationTypePlaceholder": "Selecciona un tipo de identificación",
+        "active": "Activo",
+        "activeDesc": "Marcar como activo o inactivo.",
+        "enableTwoFactor": "Habilitar autenticación de dos factores",
+        "enableTwoFactorDesc": "Requiere autenticación de dos factores para mayor seguridad."
       }
     },
     "document": {

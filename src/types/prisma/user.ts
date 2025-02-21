@@ -1,5 +1,7 @@
 import { Prisma } from '@prisma/client';
 
+import { OptionType } from '@/components/select/select';
+
 // Default select for Users
 export const UserDefaultArgs = Prisma.validator<Prisma.UserDefaultArgs>()({
   select: {
@@ -13,6 +15,10 @@ export const UserDefaultArgs = Prisma.validator<Prisma.UserDefaultArgs>()({
     },
   },
 });
+
+export interface AreaRoleOptionType extends OptionType {
+  roleOptions: OptionType[];
+}
 
 // Type for Users with selected fields
 export type UserType = Prisma.UserGetPayload<typeof UserDefaultArgs>;
