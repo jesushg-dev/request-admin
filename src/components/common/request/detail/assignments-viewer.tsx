@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 import { AreaAssignmentModal } from './area-assignment-modal';
@@ -195,7 +196,14 @@ const AssignmentHistory: FC<AssignmentHistoryProps> = ({ tenantId, requestId }) 
     where: { tenantId, requestId },
   });
 
-  if (isLoading) return <div className="p-4 text-center">Cargando asignaciones...</div>;
+  if (isLoading)
+    return (
+      <div className="flex flex-col gap-2">
+        <Skeleton className="h-8" />
+        <Skeleton className="h-8" />
+        <Skeleton className="h-8" />
+      </div>
+    );
   if (error) return <div className="p-4 text-center text-red-500">Error al cargar asignaciones</div>;
 
   return (

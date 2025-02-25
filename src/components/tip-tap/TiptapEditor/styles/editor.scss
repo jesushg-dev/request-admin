@@ -2,8 +2,12 @@
   all: unset;
   display: flex;
   flex-direction: column;
-  border: 1px solid $border-color;
-  border-radius: $radius;
+  padding: 2px;
+
+  &.bordered {
+    border: 1px solid $border-color;
+    border-radius: $radius;
+  }
   font-family: $editor-font;
   @include font-size('sm');
 

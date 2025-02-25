@@ -4,6 +4,27 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin();
 
 /** @type {import('next').NextConfig} */
-const nextConfig: NextConfig = {};
+const nextConfig: NextConfig = {
+  reactStrictMode: false,
+  productionBrowserSourceMaps: true,
+  images: {
+    domains: ['res.cloudinary.com', 'images.unsplash.com'],
+    //   remotePatterns: [
+    //     {
+    //       protocol: "https",
+    //       hostname: "images.unsplash.com",
+    //       port: "",
+    //       pathname: "**",
+    //     },
+    //
+    //     {
+    //       protocol: "http",
+    //       hostname: "res.cloudinary.com",
+    //       port: "",
+    //       pathname: "**",
+    //     },
+    //   ],
+  },
+};
 
 export default withNextIntl(nextConfig);

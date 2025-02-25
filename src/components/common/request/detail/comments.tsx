@@ -9,13 +9,12 @@ import { ChatInput } from '@/components/chat/chat-input';
 import { MessageList } from '@/components/chat/message-list';
 
 interface CommentsProps {
-  slug: string;
   tenantId: string;
-  channel: RequestDetailsType['channel'];
   currentUserId: string;
+  channel: RequestDetailsType['channel'];
 }
 
-export default function Comments({ slug, tenantId, channel, currentUserId }: CommentsProps) {
+export default function Comments({ tenantId, channel, currentUserId }: CommentsProps) {
   const { data, hasNextPage, hasPreviousPage, fetchNextPage, fetchPreviousPage, isFetchingNextPage, isFetchingPreviousPage, isFetching } = useInfiniteFindManyMessage({
     ...MessageDefaultArgs,
     where: { channelId: channel?.id },
@@ -38,7 +37,18 @@ export default function Comments({ slug, tenantId, channel, currentUserId }: Com
         channelName={channel?.name}
         variant="channel"
       />
-      <ChatInput tenantId={tenantId} relatedId={slug} relatedType="channel" currentUserId={currentUserId} placeholder={`Message # ${channel?.name}`} />
+      {channel && (
+        <ChatInput
+          tenantId={tenantId}
+          relatedId={channel.id}
+          relatedType="channel"
+          currentUserId={currentUserId}
+          placeholder={{
+            paragraph: `Type your message here...`,
+            imageCaption: `Add a caption...`,
+          }}
+        />
+      )}
     </Card>
   );
 }

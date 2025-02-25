@@ -1,7 +1,7 @@
 import { createContext, HTMLAttributes, ReactNode, RefObject, useContext, useRef, useState } from 'react';
 import { EditorContent, type Editor } from '@tiptap/react';
-import clsx from 'clsx';
 
+import { cn } from '@/lib/utils';
 import CodeMirrorEditor from '@/components/tip-tap/SourceEditor/Editor';
 
 import useTiptapEditor, { type UseTiptapEditorOptions } from '../hooks/useTiptapEditor';
@@ -26,9 +26,11 @@ type TiptapProviderProps = {
   editorOptions: UseTiptapEditorOptions;
   editorProps?: HTMLAttributes<HTMLDivElement>;
   children?: ReactNode;
+  className?: string;
+  isBordered?: boolean;
 };
 
-export const TiptapProvider = ({ children, editorOptions, slotBefore, slotAfter }: TiptapProviderProps) => {
+export const TiptapProvider = ({ isBordered = true, className, children, editorOptions, slotBefore, slotAfter }: TiptapProviderProps) => {
   const contentElement = useRef<HTMLDivElement>(null);
   const editor = useTiptapEditor(editorOptions);
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -51,7 +53,7 @@ export const TiptapProvider = ({ children, editorOptions, slotBefore, slotAfter 
   };
 
   const editorContent = (
-    <div className={clsx('rte-editor', isFullScreen && 'rte-editor--fullscreen')}>
+    <div className={cn('rte-editor', isBordered && 'bordered', isFullScreen && 'rte-editor--fullscreen', className)}>
       {slotBefore}
       <div className="rte-editor__container" onMouseDown={focusEditorViaContainer}>
         {isSourceMode ? <CodeMirrorEditor initialContent={editor.getHTML() || ''} /> : <EditorContent ref={contentElement} editor={editor} className="rte-editor__content" />}

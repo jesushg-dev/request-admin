@@ -11,7 +11,10 @@ const Editor = dynamic(() => import('@/components/chat/editor'), { ssr: false })
 interface ChatInputProps {
   tenantId: string;
   relatedId: string;
-  placeholder: string;
+  placeholder?: {
+    paragraph?: string;
+    imageCaption?: string;
+  };
   currentUserId: string;
   relatedType: 'conversation' | 'channel' | 'parentMessage';
 }
@@ -49,7 +52,7 @@ export const ChatInput = ({ placeholder, relatedId, relatedType, tenantId, curre
   };
 
   return (
-    <div className="w-full px-5">
+    <div className="w-full p-4 pt-0">
       <Editor key={editorKey} variant="create" placeholder={placeholder} onSubmit={handleSubmit} disabled={isPending} />
     </div>
   );

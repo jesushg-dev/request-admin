@@ -37,6 +37,7 @@ export interface TiptapEditorProps {
   containerClass?: string;
   menuBarClass?: string;
   contentClass?: string;
+  isBordered?: boolean;
   contentMinHeight?: string | number;
   contentMaxHeight?: string | number;
   onContentChange?: (value: Content) => void;
@@ -51,12 +52,14 @@ const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
       disabled = false,
       initialContent,
       placeholder,
+      isBordered = true,
       hideMenuBar = false,
       hideStatusBar = false,
       hideBubbleMenu = true,
       contentMinHeight = 200,
       contentMaxHeight,
       onContentChange,
+      containerClass,
     },
     ref
   ) => {
@@ -104,7 +107,7 @@ const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
     );
 
     return (
-      <TiptapProvider editorOptions={editorOptions} slotBefore={!hideMenuBar && <MenuBar />} slotAfter={!hideStatusBar && <StatusBar />}>
+      <TiptapProvider isBordered={isBordered} className={containerClass} editorOptions={editorOptions} slotBefore={!hideMenuBar && <MenuBar />} slotAfter={!hideStatusBar && <StatusBar />}>
         {menus}
         <Resizer />
       </TiptapProvider>
