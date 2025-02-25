@@ -1,10 +1,9 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useCreateMessage } from '@/services/api/hooks';
 import { Prisma } from '@zenstackhq/runtime/models';
-import Quill from 'quill';
 import { toast } from 'sonner';
 
 const Editor = dynamic(() => import('@/components/chat/editor'), { ssr: false });
@@ -21,14 +20,11 @@ export const ChatInput = ({ placeholder, relatedId, relatedType, tenantId, curre
   const [editorKey, setEditorKey] = useState(0);
   const [isPending, setIsPending] = useState(false);
 
-  const editorRef = useRef<Quill | null>(null);
-
   const { mutateAsync: createMessage } = useCreateMessage();
 
   const handleSubmit = async ({ body, image }: { body: string; image: File | null }) => {
     try {
       setIsPending(true);
-      editorRef?.current?.enable(false);
 
       const values: Prisma.MessageCreateInput = {
         body,
@@ -49,13 +45,12 @@ export const ChatInput = ({ placeholder, relatedId, relatedType, tenantId, curre
       toast.error('Failed to send message');
     } finally {
       setIsPending(false);
-      editorRef?.current?.enable(true);
     }
   };
 
   return (
     <div className="w-full px-5">
-      <Editor key={editorKey} variant="create" placeholder={placeholder} onSubmit={handleSubmit} disabled={isPending} innerRef={editorRef} />
+      <Editor key={editorKey} variant="create" placeholder={placeholder} onSubmit={handleSubmit} disabled={isPending} />
     </div>
   );
 };

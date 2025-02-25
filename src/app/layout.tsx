@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 
+import './style.scss';
 import './globals.css';
 import 'react-complex-tree/lib/style-modern.css';
 

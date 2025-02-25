@@ -1,0 +1,52 @@
+:root {
+  /* Tema claro - Valores por defecto de Shadcn */
+  --rte-bg: hsl(var(--background));
+  --rte-fg: hsl(var(--foreground));
+  --rte-border: hsl(var(--border));
+
+  --rte-primary: hsl(var(--primary));
+  --rte-primary-fg: hsl(var(--primary-foreground));
+
+  --rte-secondary: hsl(var(--secondary));
+  --rte-secondary-fg: hsl(var(--secondary-foreground));
+
+  --rte-muted: hsl(var(--muted));
+  --rte-muted-fg: hsl(var(--muted-foreground));
+
+  --rte-accent: hsl(var(--accent));
+  --rte-accent-fg: hsl(var(--accent-foreground));
+
+  --rte-tooltip: hsl(var(--popover));
+  --rte-tooltip-fg: hsl(var(--popover-foreground));
+  --rte-overlay: hsl(var(--ring));
+
+  /* Sintaxis adaptada a Shadcn */
+  --rte-hljs-comment: hsl(var(--muted-foreground));
+  --rte-hljs-keyword: hsl(var(--primary));
+  --rte-hljs-entity: hsl(var(--secondary));
+  --rte-hljs-function: hsl(var(--primary));
+  --rte-hljs-variable: hsl(var(--foreground));
+  --rte-hljs-constant: hsl(var(--primary));
+  --rte-hljs-string: hsl(var(--secondary));
+  --rte-hljs-regexp: hsl(var(--destructive));
+  --rte-hljs-markup: hsl(var(--muted-foreground));
+  --rte-hljs-builtin: hsl(var(--warning));
+  --rte-hljs-inserted: hsl(var(--success));
+  --rte-hljs-deleted: hsl(var(--destructive));
+  --rte-hljs-changed: hsl(var(--warning));
+  --rte-hljs-ignored: hsl(var(--muted));
+
+  /* Ajustes del editor */
+  --rte-editor-code-bg: hsl(var(--muted));
+  --rte-editor-scrollbar: hsl(var(--border));
+  --rte-editor-selection: hsl(var(--accent) / 0.4);
+  --rte-radius: var(--radius);
+}
+
+.dark {
+  /* Sobreescrituras para modo oscuro */
+  --rte-hljs-inserted: hsl(var(--success) / 0.8);
+  --rte-hljs-deleted: hsl(var(--destructive) / 0.8);
+  --rte-hljs-changed: hsl(var(--warning) / 0.8);
+  --rte-overlay: hsl(var(--ring) / 0.4);
+}

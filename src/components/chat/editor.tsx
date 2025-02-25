@@ -1,13 +1,10 @@
-import { RefObject, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import Quill, { type QuillOptions } from 'quill';
-
-import 'quill/dist/quill.snow.css';
-
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
+import { Content } from '@tiptap/react';
 import { ALargeSmallIcon, ImageIcon, SendHorizonalIcon, Smile, XIcon } from 'lucide-react';
-import { Delta, Op } from 'quill/core';
 
 import { cn } from '@/lib/utils';
+import TiptapEditor, { type TiptapEditorRef } from '@/components/tip-tap/TiptapEditor';
 
 import { Hint } from '../hint';
 import { Button } from '../ui/button';
@@ -22,14 +19,13 @@ interface EditorProps {
   onSubmit: ({ image, body }: EditorValue) => void;
   onCancel?: () => void;
   placeholder?: string;
-  defaultValue?: Delta | Op[];
+  defaultValue?: Content;
   disabled?: boolean;
-  innerRef?: RefObject<Quill | null>;
   variant?: 'create' | 'update';
 }
 
-const Editor = ({ onCancel, onSubmit, disabled = false, innerRef, defaultValue = [], placeholder = 'Write something...', variant = 'create' }: EditorProps) => {
-  const [text, setText] = useState('');
+const Editor = ({ onCancel, onSubmit, disabled = false, defaultValue = [], placeholder = 'Write something...', variant = 'create' }: EditorProps) => {
+  const [text, setText] = useState<Content>('');
   const [image, setImage] = useState<File | null>(null);
   const [isToolbarVisible, setIsToolbarVisible] = useState(true);
 
@@ -37,9 +33,11 @@ const Editor = ({ onCancel, onSubmit, disabled = false, innerRef, defaultValue =
   const disabledRef = useRef(disabled);
   const defaultValueRef = useRef(defaultValue);
   const placeholderRef = useRef(placeholder);
-  const quillRef = useRef<Quill | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<TiptapEditorRef>(null);
   const imageElementRef = useRef<HTMLInputElement>(null);
+
+  const toggleToolbar = () => setIsToolbarVisible((prev) => !prev);
+  const isEmpty = useMemo(() => editorRef.current?.getInstance()?.isEmpty ?? true, []);
 
   useLayoutEffect(() => {
     submitRef.current = onSubmit;
@@ -48,92 +46,22 @@ const Editor = ({ onCancel, onSubmit, disabled = false, innerRef, defaultValue =
     placeholderRef.current = placeholder;
   });
 
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const container = containerRef.current;
-    const editorContainer = container.appendChild(container.ownerDocument.createElement('div'));
-    const options: QuillOptions = {
-      theme: 'snow',
-      placeholder: placeholderRef.current,
-      modules: {
-        toolbar: [['bold', 'italic', 'strike'], ['link'], [{ list: 'ordered' }, { list: ['bullet'] }]],
-        keyboard: {
-          bindings: {
-            enter: {
-              key: 'Enter',
-              handler: () => {
-                const text = quill.getText();
-                const addedImage = imageElementRef.current?.files?.[0] || null;
-                const isEmpty = !addedImage && text.replace(/<(.|\n)*?>/g, '').trim().length === 0;
-                if (isEmpty) return;
-
-                const body = JSON.stringify(quill.getContents());
-                submitRef.current?.({ body, image: addedImage });
-              },
-            },
-            shift_enter: {
-              key: 'Enter',
-              shiftKey: true,
-              handler: () => {
-                quill.insertText(quill.getSelection()?.index || 0, '\n');
-              },
-            },
-          },
-        },
-      },
-    };
-    const quill = new Quill(editorContainer, options);
-    quillRef.current = quill;
-    quillRef.current.focus();
-
-    // if innerRef is passed append it to quill
-    if (innerRef) innerRef.current = quill;
-
-    // appending default Value to the editor if it exists
-    quill.setContents(defaultValueRef.current);
-    setText(quill.getText());
-
-    // Refreshing the textafter every keystroke
-    quill.on(Quill.events.TEXT_CHANGE, () => {
-      setText(quill.getText());
-    });
-
-    // clean up
-    return () => {
-      // turing off the listener
-      quill.off(Quill.events.TEXT_CHANGE);
-
-      if (container) container.innerHTML = '';
-      if (quillRef.current) quillRef.current = null;
-      if (innerRef?.current) innerRef.current = null;
-    };
-  }, [innerRef]);
-
-  const toggleToolbar = () => {
-    setIsToolbarVisible((curr) => !curr);
-    const toolbarElement = containerRef?.current?.querySelector('.ql-toolbar');
-
-    if (toolbarElement) toolbarElement?.classList.toggle('hidden');
-  };
-
-  // regex to check empty states
-  // For ex: html tags -> <br /> <p></p> are EMPTY but not exactly
-  // it will be read as "<br /> <p></p>\n" which is not empty
-  const isEmpty = !image && text.replace(/<(.|\n)*?>/g, '').trim().length === 0;
-  // console.log({ isEmpty, text });
-
-  const onEmojiSelect = (emoji: { native: string }) => {
-    const quill = quillRef.current;
-
-    quill?.insertText(quill?.getSelection()?.index || 0, emoji.native);
-  };
-
   return (
     <div className="flex flex-col">
       <input type="file" accept="image/*" ref={imageElementRef} onChange={(e) => setImage(e.target.files?.[0] || null)} className="hidden" />
-      <div className={cn('flex flex-col overflow-hidden rounded-md border-slate-200 bg-white focus-within:border-slate-300 focus-within:shadow-xs', disabled && 'opacity-50')}>
-        <div ref={containerRef} className="ql-custom h-full" />
+      <div className={cn('flex flex-col overflow-hidden gap-2', disabled && 'opacity-50')}>
+        <TiptapEditor
+          containerClass="border-[0px]"
+          hideMenuBar={isToolbarVisible}
+          ref={editorRef}
+          ssr={true}
+          output="html"
+          onContentChange={setText}
+          hideStatusBar
+          initialContent={text}
+          contentMinHeight={100}
+          contentMaxHeight={100}
+        />
         {!!image && (
           <div className="p-2">
             <div className="ic group/image relative flex size-[62px] justify-center">
@@ -143,7 +71,7 @@ const Editor = ({ onCancel, onSubmit, disabled = false, innerRef, defaultValue =
                     setImage(null);
                     imageElementRef.current!.value = '';
                   }}
-                  className="absolute -top-2.5 -right-2.5 z-4 hidden size-6 items-center justify-center rounded-full border-2 border-white bg-black/70 text-white group-hover/image:flex hover:bg-black">
+                  className="absolute -top-2.5 -right-2.5 z-4 hidden size-6 items-center justify-center rounded-full border-2">
                   <XIcon className="size3.5" />
                 </button>
               </Hint>
@@ -157,7 +85,7 @@ const Editor = ({ onCancel, onSubmit, disabled = false, innerRef, defaultValue =
               <ALargeSmallIcon className="size-4" />
             </Button>
           </Hint>
-          <EmojiPopover onEmojiSelect={onEmojiSelect}>
+          <EmojiPopover onEmojiSelect={console.log}>
             <Button disabled={disabled} size="sm" variant="ghost">
               <Smile className="size-4" />
             </Button>
@@ -176,11 +104,11 @@ const Editor = ({ onCancel, onSubmit, disabled = false, innerRef, defaultValue =
               disabled={disabled || isEmpty}
               onClick={() =>
                 onSubmit({
-                  body: JSON.stringify(quillRef.current?.getContents()),
+                  body: JSON.stringify(text),
                   image,
                 })
               }
-              className={cn('ml-auto', isEmpty ? 'text-muted-foreground bg-white hover:bg-white' : 'bg-seagreen-100 hover:bg-seagreen-100/80 text-white')}>
+              className={cn('ml-auto', isEmpty ? 'text-muted-foreground ' : '')}>
               <SendHorizonalIcon className="size-4" />
             </Button>
           ) : (
@@ -193,12 +121,11 @@ const Editor = ({ onCancel, onSubmit, disabled = false, innerRef, defaultValue =
                 disabled={disabled || isEmpty}
                 onClick={() =>
                   onSubmit({
-                    body: JSON.stringify(quillRef.current?.getContents()),
+                    body: JSON.stringify(text),
                     image,
                   })
                 }
-                size="sm"
-                className="bg-seagreen-100 hover:bg-seagreen-100/80 text-white">
+                size="sm">
                 Save
               </Button>
             </div>

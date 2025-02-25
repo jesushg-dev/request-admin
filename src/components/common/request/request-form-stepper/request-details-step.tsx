@@ -1,6 +1,6 @@
 'use client';
 
-import { type FC } from 'react';
+import { useRef, type FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -8,8 +8,8 @@ import { generateUuid } from '@/lib/id';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Textarea } from '@/components/ui/textarea';
 import Select, { OptionType } from '@/components/select/select';
+import TiptapEditor, { type TiptapEditorRef } from '@/components/tip-tap/TiptapEditor';
 
 export const requestDetailSchema = z.object({
   id: z.string(),
@@ -27,7 +27,7 @@ export const getDefaultDetailsValues = () => ({
   issueSubject: '',
   description: '',
   comment: '',
-  priorityId: { value: '', label: '' },
+  priorityId: { value: null, label: '' },
   statusId: { value: '', label: '' },
 });
 
@@ -37,6 +37,7 @@ interface RequestDetailsStepProps {
 }
 
 const RequestDetailsStep: FC<RequestDetailsStepProps> = ({ statusesOptions, prioritiesOptions }) => {
+  const editorRef = useRef<TiptapEditorRef>(null);
   const { control } = useFormContext<RequestDetailValues>();
 
   return (
@@ -89,23 +90,8 @@ const RequestDetailsStep: FC<RequestDetailsStepProps> = ({ statusesOptions, prio
         </div>
 
         <FormField
-          control={control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea id="description" placeholder="Enter description" {...field} />
-              </FormControl>
-              <FormDescription>Description is used to provide more information about the request.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={control}
           name="comment"
+          control={control}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Comment</FormLabel>
@@ -113,6 +99,21 @@ const RequestDetailsStep: FC<RequestDetailsStepProps> = ({ statusesOptions, prio
                 <Input id="comment" placeholder="Enter comment" {...field} />
               </FormControl>
               <FormDescription>Comment is used to provide even more information about the request.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <TiptapEditor ref={editorRef} ssr={true} output="html" onContentChange={field.onChange} contentMinHeight={256} contentMaxHeight={640} initialContent={field.value} />
+              </FormControl>
+              <FormDescription>Description is used to provide more information about the request.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
