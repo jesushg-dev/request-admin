@@ -1,16 +1,15 @@
 import { useMemo } from 'react';
-import { SmilePlusIcon } from 'lucide-react';
+import { type EmojiClickData } from 'emoji-picker-react';
 
 import { MessageType } from '@/types/prisma/message';
 import { cn } from '@/lib/utils';
 
 import { Hint } from '../hint';
-import { EmojiPopover } from './emoji-popover';
 
 interface ReactionsProps {
   currentUserId: string;
   data: MessageType['reactions'];
-  onChange: (value: string) => void;
+  onChange: (value: EmojiClickData) => void;
 }
 
 export const Reactions = ({ currentUserId, data, onChange }: ReactionsProps) => {
@@ -48,11 +47,6 @@ export const Reactions = ({ currentUserId, data, onChange }: ReactionsProps) => 
           </button>
         </Hint>
       ))}
-      <EmojiPopover hint="Add reaction" onEmojiSelect={(emoji) => onChange(emoji.native)}>
-        <button className="flex h-7 items-center gap-x-1 rounded-full border border-transparent bg-slate-200/70 px-3 text-slate-800 hover:border-slate-500">
-          <SmilePlusIcon className="size-4" />
-        </button>
-      </EmojiPopover>
     </div>
   );
 };

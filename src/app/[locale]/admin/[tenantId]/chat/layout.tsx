@@ -13,6 +13,7 @@ interface WorkspaceLayoutProps {
 }
 
 const WorkspaceLayout = ({ children }: WorkspaceLayoutProps) => {
+  // todo: this doesnt work since we need to fetch the usertenantId from the user in the current tenant
   const session = useSession();
   const { parentMessageId, onClose, profileUserId } = usePanel();
   if (!session.data) {
@@ -31,7 +32,7 @@ const WorkspaceLayout = ({ children }: WorkspaceLayoutProps) => {
             <ResizableHandle withHandle />
             <ResizablePanel minSize={20} defaultSize={29}>
               {parentMessageId ? (
-                <Thread currentUserId={session.data.user.id} messageId={parentMessageId} onClose={onClose} />
+                <Thread currentUserTenantId={session.data.user.id} messageId={parentMessageId} onClose={onClose} />
               ) : profileUserId ? (
                 <Profile userId={profileUserId} onClose={onClose} />
               ) : (

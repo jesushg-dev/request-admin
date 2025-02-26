@@ -13,11 +13,11 @@ import { ChatInput } from './chat-input';
 
 interface ThreadProps {
   messageId: string;
-  currentUserId: string;
+  currentUserTenantId: string;
   onClose: () => void;
 }
 
-export const Thread = ({ messageId, currentUserId, onClose }: ThreadProps) => {
+export const Thread = ({ messageId, currentUserTenantId, onClose }: ThreadProps) => {
   const tenantId = useTenantId();
 
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -75,10 +75,11 @@ export const Thread = ({ messageId, currentUserId, onClose }: ThreadProps) => {
       <div className="border-b border-gray-500/80 p-4">
         <Message
           key={thread.id}
+          tenantId={tenantId}
           id={thread.id}
-          userId={thread.userTenant.user.id}
+          userTenantId={thread.userTenant.id}
           authorImage={thread.userTenant.person?.image}
-          currentUserId={currentUserId}
+          currentUserTenantId={currentUserTenantId}
           authorName={thread.userTenant.person ? `${thread.userTenant.person.firstName} ${thread.userTenant.person.lastName}` : thread.userTenant.user.email}
           reactions={thread.reactions}
           body={thread.body}
@@ -92,6 +93,7 @@ export const Thread = ({ messageId, currentUserId, onClose }: ThreadProps) => {
       {/* Thread Messages */}
       <MessageList
         data={data}
+        tenantId={tenantId}
         hasNextPage={hasNextPage}
         hasPreviousPage={hasPreviousPage}
         fetchNextPage={fetchNextPage}
@@ -99,11 +101,20 @@ export const Thread = ({ messageId, currentUserId, onClose }: ThreadProps) => {
         isFetchingNextPage={isFetchingNextPage}
         isFetchingPreviousPage={isFetchingPreviousPage}
         isFetching={isFetching}
-        currentUserId={currentUserId}
+        currentUserTenantId={currentUserTenantId}
         variant="thread"
       />
       {/* Chat Input */}
-      <ChatInput tenantId={tenantId} relatedId={messageId} relatedType="parentMessage" currentUserId={currentUserId} placeholder="Reply..." />
+      <ChatInput
+        tenantId={tenantId}
+        relatedId={messageId}
+        relatedType="parentMessage"
+        currentUserTenantId={currentUserTenantId}
+        placeholder={{
+          paragraph: 'Reply to thread...',
+          imageCaption: 'Press Enter to send message',
+        }}
+      />
     </div>
   );
 };

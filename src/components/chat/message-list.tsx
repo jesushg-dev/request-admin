@@ -23,13 +23,14 @@ interface MessageListProps {
   isFetchingNextPage: boolean;
   isFetchingPreviousPage: boolean;
   isFetching: boolean;
-  currentUserId: string;
+  currentUserTenantId: string;
   variant?: 'channel' | 'thread' | 'conversation';
   channelCreatedAt?: Date;
   channelName?: string;
   userImage?: string;
   userName?: string;
   userId?: string;
+  tenantId: string;
 }
 
 export const MessageList = ({
@@ -41,13 +42,14 @@ export const MessageList = ({
   isFetchingNextPage,
   isFetchingPreviousPage,
   isFetching,
-  currentUserId,
+  currentUserTenantId,
   variant = 'channel',
   channelCreatedAt,
   channelName,
   userImage,
   userName,
   userId,
+  tenantId,
 }: MessageListProps) => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const { ref, inView } = useInView();
@@ -88,17 +90,10 @@ export const MessageList = ({
 
   return (
     <div className="messages-scrollbar flex w-full flex-1 flex-col-reverse overflow-y-auto pb-4">
-      <div className="mb-2 flex justify-between">
-        {/* Load Older Messages */}
-        <Button onClick={fetchPreviousPage} disabled={!hasPreviousPage || isFetchingPreviousPage} size="sm" variant="ghost">
-          {isFetchingPreviousPage ? 'Loading Older...' : hasPreviousPage ? 'Load Older' : 'No Older Messages'}
-        </Button>
-        {/* Load Newer Messages */}
-        <Button ref={ref} onClick={fetchNextPage} disabled={!hasNextPage || isFetchingNextPage} size="sm" variant="ghost">
-          {isFetchingNextPage ? 'Loading Newer...' : hasNextPage ? 'Load Newer' : 'No Newer Messages'}
-        </Button>
-      </div>
-
+      {/* Load Newer Messages */}
+      <Button ref={ref} onClick={fetchNextPage} disabled={!hasNextPage || isFetchingNextPage} size="sm" variant="ghost">
+        {isFetchingNextPage ? 'Loading Newer...' : hasNextPage ? 'Load Newer' : 'No Newer Messages'}
+      </Button>
       {Object.entries(groupedMessages).map(([dateKey, messages]) => (
         <div key={dateKey}>
           <div className="relative my-2 text-center">
@@ -113,9 +108,10 @@ export const MessageList = ({
               <Message
                 key={message.id}
                 id={message.id}
-                userId={message.userTenant.user.id}
+                tenantId={tenantId}
+                userTenantId={message.userTenant.id}
                 authorImage={message.userTenant.person?.image}
-                currentUserId={currentUserId}
+                currentUserTenantId={currentUserTenantId}
                 authorName={message.userTenant.person ? `${message.userTenant.person.firstName} ${message.userTenant.person.lastName}` : message.userTenant.user.email}
                 reactions={message.reactions}
                 body={message.body}
@@ -140,6 +136,11 @@ export const MessageList = ({
           <Spinner />
         </div>
       )}
+      {/* Load Older Messages */}
+      <Button onClick={fetchPreviousPage} disabled={!hasPreviousPage || isFetchingPreviousPage} size="sm" variant="ghost">
+        {isFetchingPreviousPage ? 'Loading Older...' : hasPreviousPage ? 'Load Older' : 'No Older Messages'}
+      </Button>
+
       {variant === 'channel' && channelName && channelCreatedAt && <ChannelHero name={channelName} creationTime={channelCreatedAt} />}
       {variant === 'conversation' && userId && <ConversationHero name={userName} image={userImage} userId={userId} />}
     </div>

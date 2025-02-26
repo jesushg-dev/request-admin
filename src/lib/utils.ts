@@ -16,7 +16,8 @@ export function formatDate(date: Date | string | number, opts: Intl.DateTimeForm
 }
 
 export const formatDateLabel = (dateKey: string) => {
-  const date = new Date(dateKey);
+  const date = new Date(dateKey + 'T00:00:00');
+
   if (isToday(date)) return 'Today';
   if (isYesterday(date)) return 'Yesterday';
 

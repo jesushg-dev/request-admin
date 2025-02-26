@@ -1,5 +1,5 @@
 import { findOrCreateConversation } from '@/actions/message';
-import { auth } from '@/server/auth';
+import { getCurrentUserTenant } from '@/actions/user';
 import { TriangleAlert } from 'lucide-react';
 
 import { Conversation } from './conversation';
@@ -9,10 +9,8 @@ interface UserIdPageProps {
 }
 
 const UserIdPage = async ({ params }: UserIdPageProps) => {
-  const currentUser = await auth();
-  if (!currentUser) return null;
-
   const { tenantId, memberId: userId } = await params;
+  const currentUser = await getCurrentUserTenant(tenantId);
   const conversation = await findOrCreateConversation({ tenantId, userId });
 
   if (!conversation.id) {
@@ -24,7 +22,7 @@ const UserIdPage = async ({ params }: UserIdPageProps) => {
     );
   }
 
-  return <Conversation id={conversation.id} userId={userId} tenantId={tenantId} currentUserId={currentUser.user.id} />;
+  return <Conversation id={conversation.id} userTenantId={userId} tenantId={tenantId} currentUserTenantId={currentUser.userTenantId} />;
 };
 
 export default UserIdPage;

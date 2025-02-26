@@ -12,15 +12,15 @@ import { Header } from './header';
 
 interface ConversationProps {
   id: string;
-  userId: string;
   tenantId: string;
-  currentUserId: string;
+  userTenantId: string;
+  currentUserTenantId: string;
 }
 
-export const Conversation = ({ id, tenantId, userId, currentUserId }: ConversationProps) => {
+export const Conversation = ({ id, tenantId, userTenantId, currentUserTenantId }: ConversationProps) => {
   const { onOpenProfile } = usePanel();
   const { data: user, isLoading: userLoading } = useFindFirstPerson({
-    where: { id: currentUserId },
+    where: { userTenantId },
   });
 
   const { data, hasNextPage, hasPreviousPage, fetchNextPage, fetchPreviousPage, isFetchingNextPage, isFetchingPreviousPage, isFetching } = useInfiniteFindManyMessage({
@@ -32,9 +32,10 @@ export const Conversation = ({ id, tenantId, userId, currentUserId }: Conversati
 
   return (
     <div className="bg-fade-100 flex h-full flex-col">
-      {user && <Header userName={`${user.firstName} ${user.lastName}`} userImage={user.image ?? ''} onClick={() => onOpenProfile(userId)} />}
+      {user && <Header userName={`${user.firstName} ${user.lastName}`} userImage={user.image ?? ''} onClick={() => onOpenProfile(userTenantId)} />}
       <MessageList
         data={data}
+        tenantId={tenantId}
         hasNextPage={hasNextPage}
         hasPreviousPage={hasPreviousPage}
         fetchNextPage={fetchNextPage}
@@ -42,10 +43,19 @@ export const Conversation = ({ id, tenantId, userId, currentUserId }: Conversati
         isFetchingNextPage={isFetchingNextPage}
         isFetchingPreviousPage={isFetchingPreviousPage}
         isFetching={isFetching}
-        currentUserId={currentUserId}
+        currentUserTenantId={currentUserTenantId}
         variant="conversation"
       />
-      <ChatInput tenantId={tenantId} relatedId={id} relatedType="conversation" currentUserId={currentUserId} placeholder={`Message ${user?.firstName} ${user?.lastName}`} />
+      <ChatInput
+        tenantId={tenantId}
+        relatedId={id}
+        relatedType="conversation"
+        currentUserTenantId={currentUserTenantId}
+        placeholder={{
+          paragraph: 'Type a message...',
+          imageCaption: 'Press Enter to send message',
+        }}
+      />
     </div>
   );
 };

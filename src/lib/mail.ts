@@ -46,3 +46,12 @@ export const sendVerificationEmailWithPassword = async (email: string, token: st
     html: `<p>Click <a href="${confirmLink}">here</a> to confirm email and Your password is: ${password}</p>`,
   });
 };
+
+export const sendNotificationEmail = async (email: string[], subject: string, message: string) => {
+  await resend.emails.send({
+    from: `support@${emailDomain}`,
+    to: email,
+    subject,
+    html: `<p>${message}</p>`,
+  });
+};

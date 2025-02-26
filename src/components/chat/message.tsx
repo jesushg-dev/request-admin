@@ -1,8 +1,7 @@
-import { useState } from 'react';
 import dynamic from 'next/dynamic';
-import { toggleReaction } from '@/actions/message';
-import { useDeleteMessage, useUpdateMessage } from '@/services/api/hooks';
+import { useDeleteMessage, useDeleteReaction, useUpdateMessage, useUpsertReaction } from '@/services/api/hooks';
 import { format, isToday, isYesterday } from 'date-fns';
+import { EmojiClickData } from 'emoji-picker-react';
 import { toast } from 'sonner';
 
 import { MessageType } from '@/types/prisma/message';
@@ -12,7 +11,7 @@ import { usePanel } from '@/hooks/use-panel';
 
 import { Hint } from '../hint';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Reactions } from './reactions';
+import { Reactions } from './message-reactions';
 import { ThreadBar } from './thread-bar';
 import { Thumbnail } from './thumbnail';
 import { Toolbar } from './toolbar';
@@ -23,10 +22,11 @@ const Renderer = dynamic(() => import('@/components/chat/renderer'), { ssr: fals
 
 interface MessageProps {
   id: string;
-  userId: string;
-  authorImage?: string | null;
+  tenantId: string;
   authorName?: string;
-  currentUserId: string;
+  authorImage?: string | null;
+  userTenantId: string;
+  currentUserTenantId: string;
   reactions: MessageType['reactions'];
   body: string;
   image: string | null | undefined;
@@ -47,14 +47,16 @@ const formatFullTime = (date: Date) => {
 };
 
 export const Message = ({
+  id,
+  tenantId,
   body,
   createdAt,
   updatedAt,
-  id,
   image,
   threadTimestamp,
   threadImage,
-  currentUserId,
+  userTenantId,
+  currentUserTenantId,
   authorImage,
   authorName = 'user',
   isEditing,
@@ -62,7 +64,6 @@ export const Message = ({
   setEditingId,
   hideThreadButton,
   threadCount,
-  userId,
   reactions,
   threadName,
 }: MessageProps) => {
@@ -71,20 +72,30 @@ export const Message = ({
 
   const avatarFallback = authorName.charAt(0).toUpperCase();
 
-  const [isTogglingReaction, setTogglingReaction] = useState(false);
   const { mutateAsync: updateMessage, isPending: isUpdatingMessage } = useUpdateMessage();
   const { mutateAsync: removeMessage, isPending: isRemovingMessage } = useDeleteMessage();
+  const { mutateAsync: upsertReaction, isPending: isUpsertingReaction } = useUpsertReaction();
+  const { mutateAsync: deleteReaction, isPending: isDeletingReaction } = useDeleteReaction();
 
-  const isPending = isUpdatingMessage || isRemovingMessage || isTogglingReaction;
+  const isPending = isUpdatingMessage || isRemovingMessage || isUpsertingReaction || isDeletingReaction;
 
-  const handleReaction = (value: string) => {
+  const handleReaction = (value: EmojiClickData) => {
     try {
-      setTogglingReaction(true);
-      toggleReaction({ messageId: id, value, tenantId: '1', userTenantId: '1' });
+      upsertReaction({
+        create: { value: value.emoji, messageId: id, tenantId, userTenantId: currentUserTenantId },
+        update: { value: value.emoji },
+        where: { messageId_userTenantId: { messageId: id, userTenantId: currentUserTenantId } },
+      });
     } catch (error) {
       console.error(error);
-    } finally {
-      setTogglingReaction(false);
+    }
+  };
+
+  const handleRemoveReaction = (reactionId: string) => {
+    try {
+      deleteReaction({ where: { id: reactionId } });
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -122,8 +133,8 @@ export const Message = ({
     return (
       <div
         className={cn(
-          'hover:bg-fade-200/60 group relative flex flex-col gap-2 p-1.5 px-5',
-          isEditing && 'bg-paleyellow-100 hover:bg-paleyellow-100',
+          'hover:bg-muted group relative flex flex-col gap-2 p-1.5 px-5',
+          isEditing && 'bg-secondary hover:bg-secondary',
           isRemovingMessage && 'origin-bottom scale-y-0 transform bg-rose-500/50 transition-all duration-200'
         )}>
         <div className="flex items-start gap-2">
@@ -134,14 +145,14 @@ export const Message = ({
           </Hint>
           {isEditing ? (
             <div className="size-full">
-              <Editor onSubmit={handleUpdate} disabled={isPending} defaultValue={JSON.parse(body)} onCancel={() => setEditingId(null)} variant="update" />
+              <Editor onSubmit={handleUpdate} disabled={isPending} defaultValue={body} onCancel={() => setEditingId(null)} variant="update" />
             </div>
           ) : (
             <div className="flex w-full flex-col overflow-hidden">
               <Renderer value={body} />
               <Thumbnail url={image} />
               <UpdatedAtText createdAt={createdAt} updatedAt={updatedAt} />
-              <Reactions data={reactions} onChange={handleReaction} currentUserId={currentUserId} />
+              <Reactions reactions={reactions} onChange={handleRemoveReaction} currentUserTenantId={currentUserTenantId} />
               <ThreadBar count={threadCount} image={threadImage} timestamp={threadTimestamp} name={threadName} onClick={() => onOpenMessage(id)} />
             </div>
           )}
@@ -149,7 +160,7 @@ export const Message = ({
         {!isEditing && (
           <Toolbar
             isPending={isPending}
-            isAuthor={currentUserId === userId}
+            isAuthor={currentUserTenantId === userTenantId}
             handelEdit={() => setEditingId(id)}
             handleThread={() => onOpenMessage(id)}
             handleDelete={handleRemove}
@@ -165,12 +176,12 @@ export const Message = ({
   return (
     <div
       className={cn(
-        'hover:bg-fade-200/60 group relative flex flex-col gap-2 p-1.5 px-5',
-        isEditing && 'bg-paleyellow-100 hover:bg-paleyellow-100',
+        'hover:bg-muted group relative flex flex-col gap-2 p-1.5 px-5',
+        isEditing && 'bg-secondary hover:bg-secondary',
         isRemovingMessage && 'origin-bottom scale-y-0 transform bg-rose-500/50 transition-all duration-200'
       )}>
       <div className="flex items-center gap-2">
-        <button onClick={() => onOpenProfile(userId)}>
+        <button onClick={() => onOpenProfile(userTenantId)}>
           <Avatar>
             <AvatarImage src={authorImage || ''} alt={authorName} />
             <AvatarFallback>{avatarFallback}</AvatarFallback>
@@ -178,13 +189,13 @@ export const Message = ({
         </button>
         {isEditing ? (
           <div className="size-full">
-            <Editor onSubmit={handleUpdate} disabled={isPending} defaultValue={JSON.parse(body)} onCancel={() => setEditingId(null)} variant="update" />
+            <Editor onSubmit={handleUpdate} disabled={isPending} defaultValue={body} onCancel={() => setEditingId(null)} variant="update" />
           </div>
         ) : (
           //  IS NOT EDITING
-          <div className="flex w-full flex-col overflow-hidden">
+          <div className="flex w-full flex-col overflow-hidden items-start">
             <div className="text-sm">
-              <button onClick={() => onOpenProfile(userId)} className="text-primary font-semibold hover:underline">
+              <button onClick={() => onOpenProfile(userTenantId)} className="text-primary font-semibold hover:underline">
                 {authorName}
               </button>
               <span>&nbsp;&nbsp;</span>
@@ -195,7 +206,7 @@ export const Message = ({
             <Renderer value={body} />
             <Thumbnail url={image} />
             <UpdatedAtText createdAt={createdAt} updatedAt={updatedAt} />
-            <Reactions data={reactions} onChange={handleReaction} currentUserId={currentUserId} />
+            <Reactions currentUserTenantId={currentUserTenantId} reactions={reactions} onChange={handleRemoveReaction} />
             <ThreadBar count={threadCount} image={threadImage} name={threadName} timestamp={threadTimestamp} onClick={() => onOpenMessage(id)} />
           </div>
         )}
@@ -203,7 +214,7 @@ export const Message = ({
       {!isEditing && (
         <Toolbar
           isPending={isPending}
-          isAuthor={currentUserId === userId}
+          isAuthor={currentUserTenantId === userTenantId}
           handelEdit={() => setEditingId(id)}
           handleThread={() => onOpenMessage(id)}
           handleDelete={handleRemove}

@@ -6058,6 +6058,10 @@ const metadata = {
           name: 'id',
           fields: ['id'],
         },
+        messageId_userTenantId: {
+          name: 'messageId_userTenantId',
+          fields: ['messageId', 'userTenantId'],
+        },
       },
     },
     person: {

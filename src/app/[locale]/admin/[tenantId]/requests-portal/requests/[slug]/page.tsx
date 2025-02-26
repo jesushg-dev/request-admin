@@ -1,12 +1,12 @@
 import { getAssignmentHierarchyAndLevelsByTenantId, getRequestHierarchyAndLevelsByTenantId } from '@/actions/hierarchy';
 import { getPrioritiesAsOptions, getRequestById, getRequestDetailsByRequest } from '@/actions/request';
-import { auth } from '@/server/auth';
+import { getCurrentUserTenant } from '@/actions/user';
 
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AssignmentHistory from '@/components/common/request/detail/assignments-viewer';
 import AssociatedFilesViewer from '@/components/common/request/detail/associated-files-viewer';
-import Comments from '@/components/common/request/detail/comments';
+import Messages from '@/components/common/request/detail/messages';
 import { RelatedViewer } from '@/components/common/request/detail/related-viewer';
 import RequestActivities from '@/components/common/request/detail/request-activities';
 import ProjectDetails from '@/components/common/request/detail/request-details';
@@ -18,14 +18,12 @@ import { activities, documents, guideDocuments } from './mockData';
 export default async function CaseDetailPage({ params }: { params: Promise<{ locale: string; tenantId: string; slug: string }> }) {
   const { locale, tenantId, slug } = await params;
 
-  const session = await auth();
-  if (!session) return null;
-
   const request = await getRequestById(tenantId, slug);
-  const requestDetails = await getRequestDetailsByRequest(tenantId, request);
   const priorities = await getPrioritiesAsOptions(tenantId);
+  const requestDetails = await getRequestDetailsByRequest(tenantId, request);
   const requestHierarchy = await getRequestHierarchyAndLevelsByTenantId(locale, tenantId);
   const assignmentHierarchy = await getAssignmentHierarchyAndLevelsByTenantId(locale, tenantId);
+  const currentUser = await getCurrentUserTenant(tenantId);
 
   return (
     <ResizablePanelGroup direction="horizontal" className="flex-1">
@@ -55,25 +53,25 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ loc
               <TabsTrigger value="related">Related</TabsTrigger>
               <TabsTrigger value="history">History</TabsTrigger>
             </TabsList>
-            <TabsContent value="requirements" className="flex-1 flex flex-col">
+            <TabsContent value="requirements" className="flex-1 flex flex-col overflow-hidden">
               <RequirementProgress tenantId={tenantId} requirementCompliances={request.requirementCompliances} />
             </TabsContent>
-            <TabsContent value="assignments" className="flex-1 flex flex-col">
+            <TabsContent value="assignments" className="flex-1 flex flex-col overflow-hidden">
               <AssignmentHistory tenantId={tenantId} requestId={slug} />
             </TabsContent>
-            <TabsContent value="chat" className="flex-1 flex flex-col">
-              <Comments slug={slug} currentUserId={session.user.id} channel={requestDetails.channel} tenantId={tenantId} />
+            <TabsContent value="chat" className="flex-1 flex flex-col overflow-hidden">
+              <Messages currentUserTenantId={currentUser.userTenantId} channel={requestDetails.channel} tenantId={tenantId} />
             </TabsContent>
-            <TabsContent value="submissions" className="flex-1 flex flex-col">
+            <TabsContent value="submissions" className="flex-1 flex flex-col overflow-hidden">
               <FormSubmissionsViewer submissions={request.submissions} />
             </TabsContent>
-            <TabsContent value="files" className="flex-1 flex flex-col">
+            <TabsContent value="files" className="flex-1 flex flex-col overflow-hidden">
               <AssociatedFilesViewer guideDocuments={guideDocuments} documents={documents} />
             </TabsContent>
-            <TabsContent value="related" className="flex-1 flex flex-col">
+            <TabsContent value="related" className="flex-1 flex flex-col overflow-hidden">
               <RelatedViewer requestId={slug} tenantId={tenantId} />
             </TabsContent>
-            <TabsContent value="history" className="flex-1 flex flex-col">
+            <TabsContent value="history" className="flex-1 flex flex-col overflow-hidden">
               <RequestActivities activities={activities} />
             </TabsContent>
           </Tabs>

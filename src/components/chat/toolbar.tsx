@@ -1,3 +1,4 @@
+import { EmojiClickData } from 'emoji-picker-react';
 import { MessageSquareTextIcon, PencilIcon, SmileIcon, Trash2Icon } from 'lucide-react';
 
 import { Hint } from '../hint';
@@ -10,15 +11,15 @@ interface ToolbarProps {
   handelEdit: () => void;
   handleThread: () => void;
   handleDelete: () => void;
-  handleReaction: (value: string) => void;
+  handleReaction: (value: EmojiClickData) => void;
   hideThreadButton?: boolean;
 }
 
 export const Toolbar = ({ handelEdit, handleDelete, handleThread, handleReaction, hideThreadButton, isAuthor, isPending }: ToolbarProps) => {
   return (
-    <div className="absolute top-0 right-5">
-      <div className="rounded-md border opacity-0 shadow-xs transition-opacity group-hover:opacity-100">
-        <EmojiPopover hint="Add reaction" onEmojiSelect={(emoji) => handleReaction(emoji.native)}>
+    <div className="absolute -top-2 right-5">
+      <div className="rounded-md border opacity-0 shadow-xs transition-opacity group-hover:opacity-100 bg-card">
+        <EmojiPopover hint="Add reaction" onEmojiSelect={handleReaction}>
           <Button variant="ghost" size="sm" disabled={isPending}>
             <SmileIcon className="size-4" />
           </Button>

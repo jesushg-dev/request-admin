@@ -8,23 +8,25 @@ import { Card } from '@/components/ui/card';
 import { ChatInput } from '@/components/chat/chat-input';
 import { MessageList } from '@/components/chat/message-list';
 
-interface CommentsProps {
+interface MessagesProps {
   tenantId: string;
-  currentUserId: string;
+  currentUserTenantId: string;
   channel: RequestDetailsType['channel'];
 }
 
-export default function Comments({ tenantId, channel, currentUserId }: CommentsProps) {
+export default function Messages({ tenantId, channel, currentUserTenantId }: MessagesProps) {
   const { data, hasNextPage, hasPreviousPage, fetchNextPage, fetchPreviousPage, isFetchingNextPage, isFetchingPreviousPage, isFetching } = useInfiniteFindManyMessage({
     ...MessageDefaultArgs,
     where: { channelId: channel?.id },
+    orderBy: { createdAt: 'desc' },
   });
 
   return (
-    <Card className="flex-1 flex flex-col">
+    <Card className="flex-1 flex flex-col overflow-hidden p-4">
       {!channel && <p className="rounded-md bg-red-100 p-4 text-center text-red-500">Channel not found</p>}
       <MessageList
         data={data}
+        tenantId={tenantId}
         hasNextPage={hasNextPage}
         hasPreviousPage={hasPreviousPage}
         fetchNextPage={fetchNextPage}
@@ -32,7 +34,7 @@ export default function Comments({ tenantId, channel, currentUserId }: CommentsP
         isFetchingNextPage={isFetchingNextPage}
         isFetchingPreviousPage={isFetchingPreviousPage}
         isFetching={isFetching}
-        currentUserId={currentUserId}
+        currentUserTenantId={currentUserTenantId}
         channelCreatedAt={channel?.createdAt}
         channelName={channel?.name}
         variant="channel"
@@ -42,7 +44,7 @@ export default function Comments({ tenantId, channel, currentUserId }: CommentsP
           tenantId={tenantId}
           relatedId={channel.id}
           relatedType="channel"
-          currentUserId={currentUserId}
+          currentUserTenantId={currentUserTenantId}
           placeholder={{
             paragraph: `Type your message here...`,
             imageCaption: `Add a caption...`,

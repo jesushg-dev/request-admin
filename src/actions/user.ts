@@ -202,3 +202,17 @@ export const upsertUser = async (tenantId: string, data: UserTenantScopedFormVal
 
   return user;
 };
+
+export const getCurrentUserTenant = async (tenantId: string) => {
+  const session = await auth();
+  if (!session) throw new UserNotFoundErr();
+
+  const user = await db.userTenant.findUniqueOrThrow({
+    where: { userId_tenantId: { userId: session.user.id, tenantId } },
+    select: { id: true },
+  });
+
+  return {
+    userTenantId: user.id,
+  };
+};

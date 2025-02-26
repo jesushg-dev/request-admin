@@ -113,9 +113,9 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({ tenantId, slug, request, requ
                       />
                     }
                   />
-                  <MetadataItem icon={<TagIcon className="h-4 w-4" />} label="Status" value={request.statusId.label} />
                   <ExpandableMetadata items={assignmentCategories} />
                   <ExpandableMetadata items={requestCategories} />
+                  <MetadataItem icon={<TagIcon className="h-4 w-4" />} label="Status" value={request.statusId.label} />
                   <MetadataItem icon={<CalendarIcon className="h-4 w-4" />} label="Created" value={new Date().toLocaleDateString()} />
                 </div>
                 {/* Satisfaction Survey */}

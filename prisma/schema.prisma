@@ -1217,6 +1217,7 @@ model Reaction {
   message      Message    @relation(fields: [messageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   userTenant   UserTenant @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
+  @@unique([messageId, userTenantId])
   @@index([messageId])
   @@index([userTenantId])
 }

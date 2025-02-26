@@ -17,7 +17,7 @@ export const MessageDefaultArgs = Prisma.validator<Prisma.MessageDefaultArgs>()(
         value: true,
         userTenant: {
           select: {
-            userId: true,
+            id: true,
             person: { select: { firstName: true, lastName: true } },
           },
         },

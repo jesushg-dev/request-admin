@@ -15,11 +15,11 @@ interface ChatInputProps {
     paragraph?: string;
     imageCaption?: string;
   };
-  currentUserId: string;
+  currentUserTenantId: string;
   relatedType: 'conversation' | 'channel' | 'parentMessage';
 }
 
-export const ChatInput = ({ placeholder, relatedId, relatedType, tenantId, currentUserId }: ChatInputProps) => {
+export const ChatInput = ({ placeholder, relatedId, relatedType, tenantId, currentUserTenantId }: ChatInputProps) => {
   const [editorKey, setEditorKey] = useState(0);
   const [isPending, setIsPending] = useState(false);
 
@@ -32,7 +32,7 @@ export const ChatInput = ({ placeholder, relatedId, relatedType, tenantId, curre
       const values: Prisma.MessageCreateInput = {
         body,
         tenant: { connect: { id: tenantId } },
-        userTenant: { connect: { userId_tenantId: { tenantId, userId: currentUserId } } },
+        userTenant: { connect: { id: currentUserTenantId } },
         ...getRelatedConnection(relatedType, relatedId),
       };
 
@@ -51,11 +51,7 @@ export const ChatInput = ({ placeholder, relatedId, relatedType, tenantId, curre
     }
   };
 
-  return (
-    <div className="w-full p-4 pt-0">
-      <Editor key={editorKey} variant="create" placeholder={placeholder} onSubmit={handleSubmit} disabled={isPending} />
-    </div>
-  );
+  return <Editor key={editorKey} variant="create" placeholder={placeholder} onSubmit={handleSubmit} disabled={isPending} />;
 };
 
 const getRelatedConnection = (relatedType: 'conversation' | 'channel' | 'parentMessage', relatedId: string) => {

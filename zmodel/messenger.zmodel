@@ -58,4 +58,5 @@ model Reaction extends TenantScoped {
 
   @@index([messageId])
   @@index([userTenantId])
+  @@unique([messageId, userTenantId])
 }
