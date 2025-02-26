@@ -133,7 +133,7 @@ export const Message = ({
     return (
       <div
         className={cn(
-          'hover:bg-muted group relative flex flex-col gap-2 p-1.5 px-5',
+          'hover:border-muted hover:border rounded-sm group relative flex flex-col gap-2 p-1.5 px-5',
           isEditing && 'bg-secondary hover:bg-secondary',
           isRemovingMessage && 'origin-bottom scale-y-0 transform bg-rose-500/50 transition-all duration-200'
         )}>
@@ -148,7 +148,7 @@ export const Message = ({
               <Editor onSubmit={handleUpdate} disabled={isPending} defaultValue={body} onCancel={() => setEditingId(null)} variant="update" />
             </div>
           ) : (
-            <div className="flex w-full flex-col overflow-hidden">
+            <div className="flex w-full flex-col overflow-hidden items-start">
               <Renderer value={body} />
               <Thumbnail url={image} />
               <UpdatedAtText createdAt={createdAt} updatedAt={updatedAt} />
@@ -176,7 +176,7 @@ export const Message = ({
   return (
     <div
       className={cn(
-        'hover:bg-muted group relative flex flex-col gap-2 p-1.5 px-5',
+        'hover:border-muted hover:border group relative flex flex-col gap-2 p-1.5 px-5',
         isEditing && 'bg-secondary hover:bg-secondary',
         isRemovingMessage && 'origin-bottom scale-y-0 transform bg-rose-500/50 transition-all duration-200'
       )}>
