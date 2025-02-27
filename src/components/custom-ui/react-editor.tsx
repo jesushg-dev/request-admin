@@ -1,4 +1,4 @@
-'use client';
+/*'/=use client';
 
 import { useMemo, useState } from 'react';
 import { Lock, Moon, Sun, Unlock } from 'lucide-react';
@@ -270,3 +270,4 @@ function ReactEditor({ onContentChange, contentMinHeight = 256, contentMaxHeight
 }
 
 export default ReactEditor;
+*/
