@@ -179,20 +179,6 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
-        documents: {
-          name: 'documents',
-          type: 'Document',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
-        documentAssignments: {
-          name: 'documentAssignments',
-          type: 'DocumentAssignment',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
         requests: {
           name: 'requests',
           type: 'Request',
@@ -427,6 +413,223 @@ const metadata = {
         usageTracking: {
           name: 'usageTracking',
           type: 'UsageTracking',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        documents: {
+          name: 'documents',
+          type: 'Document',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        documentAssignments: {
+          name: 'documentAssignments',
+          type: 'DocumentAssignment',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        documentPages: {
+          name: 'documentPages',
+          type: 'DocumentPage',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        documentVersions: {
+          name: 'documentVersions',
+          type: 'DocumentVersion',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        links: {
+          name: 'links',
+          type: 'Link',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        linkPresets: {
+          name: 'linkPresets',
+          type: 'LinkPreset',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        domains: {
+          name: 'domains',
+          type: 'Domain',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        views: {
+          name: 'views',
+          type: 'DocumentView',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        viewers: {
+          name: 'viewers',
+          type: 'Viewer',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        documentReactions: {
+          name: 'documentReactions',
+          type: 'DocumentReaction',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        invitation: {
+          name: 'invitation',
+          type: 'Invitation',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        sentEmails: {
+          name: 'sentEmails',
+          type: 'SentEmail',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        documentConversations: {
+          name: 'documentConversations',
+          type: 'DocumentConversation',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        folders: {
+          name: 'folders',
+          type: 'Folder',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        dataroons: {
+          name: 'dataroons',
+          type: 'Dataroom',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        dataroomDocuments: {
+          name: 'dataroomDocuments',
+          type: 'DataroomDocument',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        dataroomFolders: {
+          name: 'dataroomFolders',
+          type: 'DataroomFolder',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        dataroomBrands: {
+          name: 'dataroomBrands',
+          type: 'DataroomBrand',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        documentFeedbaks: {
+          name: 'documentFeedbaks',
+          type: 'DocumentFeedback',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        feedbackResponses: {
+          name: 'feedbackResponses',
+          type: 'FeedbackResponse',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        agreements: {
+          name: 'agreements',
+          type: 'Agreement',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        agreementResponses: {
+          name: 'agreementResponses',
+          type: 'AgreementResponse',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        viewerGroup: {
+          name: 'viewerGroup',
+          type: 'ViewerGroup',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        viewerGroupMemberships: {
+          name: 'viewerGroupMemberships',
+          type: 'ViewerGroupMembership',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        viewerGroupAccessControls: {
+          name: 'viewerGroupAccessControls',
+          type: 'ViewerGroupAccessControls',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        incomingWeebhooks: {
+          name: 'incomingWeebhooks',
+          type: 'IncomingWebhook',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        restrictedTokens: {
+          name: 'restrictedTokens',
+          type: 'RestrictedToken',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        webhooks: {
+          name: 'webhooks',
+          type: 'Webhook',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        yearInReviews: {
+          name: 'yearInReviews',
+          type: 'YearInReview',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        customFields: {
+          name: 'customFields',
+          type: 'CustomField',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        customFieldResponse: {
+          name: 'customFieldResponse',
+          type: 'CustomFieldResponse',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
@@ -1044,6 +1247,34 @@ const metadata = {
           isDataModel: true,
           isArray: true,
           backLink: 'userTenantTwo',
+        },
+        domains: {
+          name: 'domains',
+          type: 'Domain',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'userTenant',
+        },
+        documents: {
+          name: 'documents',
+          type: 'Document',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'owner',
+        },
+        conversations: {
+          name: 'conversations',
+          type: 'DocumentConversation',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'userTenant',
+        },
+        restrictedTokens: {
+          name: 'restrictedTokens',
+          type: 'RestrictedToken',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'userTenant',
         },
       },
       uniqueConstraints: {
@@ -2754,6 +2985,20 @@ const metadata = {
           name: 'name',
           type: 'String',
         },
+        description: {
+          name: 'description',
+          type: 'String',
+          isOptional: true,
+        },
+        file: {
+          name: 'file',
+          type: 'String',
+        },
+        originalFile: {
+          name: 'originalFile',
+          type: 'String',
+          isOptional: true,
+        },
         url: {
           name: 'url',
           type: 'String',
@@ -2767,6 +3012,57 @@ const metadata = {
           name: 'expirationDate',
           type: 'DateTime',
           isOptional: true,
+        },
+        type: {
+          name: 'type',
+          type: 'String',
+          isOptional: true,
+        },
+        contentType: {
+          name: 'contentType',
+          type: 'String',
+          isOptional: true,
+        },
+        storageType: {
+          name: 'storageType',
+          type: 'String',
+          attributes: [{ name: '@default', args: [{ value: 'VERCEL_BLOB' }] }],
+        },
+        numPages: {
+          name: 'numPages',
+          type: 'Int',
+          isOptional: true,
+        },
+        ownerId: {
+          name: 'ownerId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'owner',
+        },
+        owner: {
+          name: 'owner',
+          type: 'UserTenant',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'documents',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'ownerId' },
+        },
+        assistantEnabled: {
+          name: 'assistantEnabled',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        advancedExcelEnabled: {
+          name: 'advancedExcelEnabled',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        downloadOnly: {
+          name: 'downloadOnly',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
         },
         requirementComplianceTrackingId: {
           name: 'requirementComplianceTrackingId',
@@ -2787,6 +3083,7 @@ const metadata = {
         requestId: {
           name: 'requestId',
           type: 'String',
+          isOptional: true,
           isForeignKey: true,
           relationField: 'request',
         },
@@ -2794,9 +3091,61 @@ const metadata = {
           name: 'request',
           type: 'Request',
           isDataModel: true,
+          isOptional: true,
           backLink: 'documents',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'requestId' },
+        },
+        links: {
+          name: 'links',
+          type: 'Link',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'document',
+        },
+        views: {
+          name: 'views',
+          type: 'DocumentView',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'document',
+        },
+        versions: {
+          name: 'versions',
+          type: 'DocumentVersion',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'document',
+        },
+        conversations: {
+          name: 'conversations',
+          type: 'DocumentConversation',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'document',
+        },
+        folderId: {
+          name: 'folderId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'folder',
+        },
+        folder: {
+          name: 'folder',
+          type: 'Folder',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'documents',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'folderId' },
+        },
+        datarooms: {
+          name: 'datarooms',
+          type: 'DataroomDocument',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'document',
         },
       },
       uniqueConstraints: {
@@ -2892,6 +3241,3229 @@ const metadata = {
         id: {
           name: 'id',
           fields: ['id'],
+        },
+      },
+    },
+    documentVersion: {
+      name: 'DocumentVersion',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$DocumentVersion$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$DocumentVersion$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'documentVersions',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        versionNumber: {
+          name: 'versionNumber',
+          type: 'Int',
+        },
+        documentId: {
+          name: 'documentId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'document',
+        },
+        document: {
+          name: 'document',
+          type: 'Document',
+          isDataModel: true,
+          backLink: 'versions',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'documentId' },
+        },
+        file: {
+          name: 'file',
+          type: 'String',
+        },
+        originalFile: {
+          name: 'originalFile',
+          type: 'String',
+          isOptional: true,
+        },
+        type: {
+          name: 'type',
+          type: 'String',
+          isOptional: true,
+        },
+        contentType: {
+          name: 'contentType',
+          type: 'String',
+          isOptional: true,
+        },
+        fileSize: {
+          name: 'fileSize',
+          type: 'Int',
+          isOptional: true,
+        },
+        storageType: {
+          name: 'storageType',
+          type: 'String',
+          attributes: [{ name: '@default', args: [{ value: 'VERCEL_BLOB' }] }],
+        },
+        numPages: {
+          name: 'numPages',
+          type: 'Int',
+          isOptional: true,
+        },
+        isPrimary: {
+          name: 'isPrimary',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        isVertical: {
+          name: 'isVertical',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        fileId: {
+          name: 'fileId',
+          type: 'String',
+          isOptional: true,
+        },
+        hasPages: {
+          name: 'hasPages',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        length: {
+          name: 'length',
+          type: 'Int',
+          isOptional: true,
+        },
+        pages: {
+          name: 'pages',
+          type: 'DocumentPage',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'version',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        versionNumber_documentId: {
+          name: 'versionNumber_documentId',
+          fields: ['versionNumber', 'documentId'],
+        },
+      },
+    },
+    documentPage: {
+      name: 'DocumentPage',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$DocumentPage$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$DocumentPage$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'documentPages',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        versionId: {
+          name: 'versionId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'version',
+        },
+        version: {
+          name: 'version',
+          type: 'DocumentVersion',
+          isDataModel: true,
+          backLink: 'pages',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'versionId' },
+        },
+        pageNumber: {
+          name: 'pageNumber',
+          type: 'Int',
+        },
+        embeddedLinks: {
+          name: 'embeddedLinks',
+          type: 'String',
+        },
+        pageLinks: {
+          name: 'pageLinks',
+          type: 'String',
+        },
+        metadata: {
+          name: 'metadata',
+          type: 'String',
+        },
+        file: {
+          name: 'file',
+          type: 'String',
+        },
+        storageType: {
+          name: 'storageType',
+          type: 'String',
+          attributes: [{ name: '@default', args: [{ value: 'VERCEL_BLOB' }] }],
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        pageNumber_versionId: {
+          name: 'pageNumber_versionId',
+          fields: ['pageNumber', 'versionId'],
+        },
+      },
+    },
+    link: {
+      name: 'Link',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Link$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Link$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'links',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        documentId: {
+          name: 'documentId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'document',
+        },
+        document: {
+          name: 'document',
+          type: 'Document',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'links',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'documentId' },
+        },
+        dataroomId: {
+          name: 'dataroomId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'dataroom',
+        },
+        dataroom: {
+          name: 'dataroom',
+          type: 'Dataroom',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'links',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'dataroomId' },
+        },
+        linkType: {
+          name: 'linkType',
+          type: 'String',
+          attributes: [{ name: '@default', args: [{ value: 'DOCUMENT_LINK' }] }],
+        },
+        url: {
+          name: 'url',
+          type: 'String',
+          isOptional: true,
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+          isOptional: true,
+        },
+        slug: {
+          name: 'slug',
+          type: 'String',
+          isOptional: true,
+        },
+        expiresAt: {
+          name: 'expiresAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        password: {
+          name: 'password',
+          type: 'String',
+          isOptional: true,
+        },
+        allowList: {
+          name: 'allowList',
+          type: 'String',
+        },
+        denyList: {
+          name: 'denyList',
+          type: 'String',
+        },
+        emailProtected: {
+          name: 'emailProtected',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
+        emailAuthenticated: {
+          name: 'emailAuthenticated',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        allowDownload: {
+          name: 'allowDownload',
+          type: 'Boolean',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        isArchived: {
+          name: 'isArchived',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        enableNotification: {
+          name: 'enableNotification',
+          type: 'Boolean',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
+        enableFeedback: {
+          name: 'enableFeedback',
+          type: 'Boolean',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        enableQuestion: {
+          name: 'enableQuestion',
+          type: 'Boolean',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        enableScreenshotProtection: {
+          name: 'enableScreenshotProtection',
+          type: 'Boolean',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        enableAgreement: {
+          name: 'enableAgreement',
+          type: 'Boolean',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        views: {
+          name: 'views',
+          type: 'DocumentView',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'link',
+        },
+        feedback: {
+          name: 'feedback',
+          type: 'DocumentFeedback',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'link',
+        },
+        agreementId: {
+          name: 'agreementId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'agreement',
+        },
+        agreement: {
+          name: 'agreement',
+          type: 'Agreement',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'links',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'agreementId' },
+        },
+        domainId: {
+          name: 'domainId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'domain',
+        },
+        domain: {
+          name: 'domain',
+          type: 'Domain',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'links',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'domainId' },
+        },
+        domainSlug: {
+          name: 'domainSlug',
+          type: 'String',
+          isOptional: true,
+        },
+        metaTitle: {
+          name: 'metaTitle',
+          type: 'String',
+          isOptional: true,
+        },
+        metaDescription: {
+          name: 'metaDescription',
+          type: 'String',
+          isOptional: true,
+        },
+        metaImage: {
+          name: 'metaImage',
+          type: 'String',
+          isOptional: true,
+        },
+        metaFavicon: {
+          name: 'metaFavicon',
+          type: 'String',
+          isOptional: true,
+        },
+        enableCustomMetatag: {
+          name: 'enableCustomMetatag',
+          type: 'Boolean',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        audienceType: {
+          name: 'audienceType',
+          type: 'String',
+          attributes: [{ name: '@default', args: [{ value: 'GENERAL' }] }],
+        },
+        groupId: {
+          name: 'groupId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'group',
+        },
+        group: {
+          name: 'group',
+          type: 'ViewerGroup',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'links',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'groupId' },
+        },
+        enableWatermark: {
+          name: 'enableWatermark',
+          type: 'Boolean',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        watermarkConfig: {
+          name: 'watermarkConfig',
+          type: 'String',
+        },
+        customField: {
+          name: 'customField',
+          type: 'CustomField',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'link',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        url: {
+          name: 'url',
+          fields: ['url'],
+        },
+        domainSlug_slug: {
+          name: 'domainSlug_slug',
+          fields: ['domainSlug', 'slug'],
+        },
+      },
+    },
+    linkPreset: {
+      name: 'LinkPreset',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$LinkPreset$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$LinkPreset$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'linkPresets',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        enableCustomMetaTag: {
+          name: 'enableCustomMetaTag',
+          type: 'Boolean',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        metaTitle: {
+          name: 'metaTitle',
+          type: 'String',
+          isOptional: true,
+        },
+        metaDescription: {
+          name: 'metaDescription',
+          type: 'String',
+          isOptional: true,
+        },
+        metaImage: {
+          name: 'metaImage',
+          type: 'String',
+          isOptional: true,
+        },
+        metaFavicon: {
+          name: 'metaFavicon',
+          type: 'String',
+          isOptional: true,
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    domain: {
+      name: 'Domain',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Domain$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Domain$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'domains',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        slug: {
+          name: 'slug',
+          type: 'String',
+        },
+        userTenantId: {
+          name: 'userTenantId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'userTenant',
+        },
+        userTenant: {
+          name: 'userTenant',
+          type: 'UserTenant',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'domains',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'userTenantId' },
+        },
+        verified: {
+          name: 'verified',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        isDefault: {
+          name: 'isDefault',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        lastChecked: {
+          name: 'lastChecked',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        links: {
+          name: 'links',
+          type: 'Link',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'domain',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        slug: {
+          name: 'slug',
+          fields: ['slug'],
+        },
+      },
+    },
+    documentView: {
+      name: 'DocumentView',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$DocumentView$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$DocumentView$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'views',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        linkId: {
+          name: 'linkId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'link',
+        },
+        link: {
+          name: 'link',
+          type: 'Link',
+          isDataModel: true,
+          backLink: 'views',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'linkId' },
+        },
+        documentId: {
+          name: 'documentId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'document',
+        },
+        document: {
+          name: 'document',
+          type: 'Document',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'views',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'documentId' },
+        },
+        dataroomId: {
+          name: 'dataroomId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'dataroom',
+        },
+        dataroom: {
+          name: 'dataroom',
+          type: 'Dataroom',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'views',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'dataroomId' },
+        },
+        dataroomViewId: {
+          name: 'dataroomViewId',
+          type: 'String',
+          isOptional: true,
+        },
+        viewerEmail: {
+          name: 'viewerEmail',
+          type: 'String',
+          isOptional: true,
+        },
+        viewerName: {
+          name: 'viewerName',
+          type: 'String',
+          isOptional: true,
+        },
+        verified: {
+          name: 'verified',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        viewedAt: {
+          name: 'viewedAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        downloadedAt: {
+          name: 'downloadedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        reactions: {
+          name: 'reactions',
+          type: 'DocumentReaction',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'view',
+        },
+        viewType: {
+          name: 'viewType',
+          type: 'String',
+          attributes: [{ name: '@default', args: [{ value: 'DOCUMENT_VIEW' }] }],
+        },
+        viewerId: {
+          name: 'viewerId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'viewer',
+        },
+        viewer: {
+          name: 'viewer',
+          type: 'Viewer',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'views',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'viewerId' },
+        },
+        groupId: {
+          name: 'groupId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'group',
+        },
+        group: {
+          name: 'group',
+          type: 'ViewerGroup',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'views',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'groupId' },
+        },
+        feedbackResponse: {
+          name: 'feedbackResponse',
+          type: 'FeedbackResponse',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'view',
+        },
+        agreementResponse: {
+          name: 'agreementResponse',
+          type: 'AgreementResponse',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'view',
+        },
+        customFieldResponse: {
+          name: 'customFieldResponse',
+          type: 'CustomFieldResponse',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'view',
+        },
+        isArchived: {
+          name: 'isArchived',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    viewer: {
+      name: 'Viewer',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Viewer$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Viewer$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'viewers',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        email: {
+          name: 'email',
+          type: 'String',
+        },
+        verified: {
+          name: 'verified',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        invitedAt: {
+          name: 'invitedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        notificationPreferences: {
+          name: 'notificationPreferences',
+          type: 'String',
+        },
+        dataroomId: {
+          name: 'dataroomId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'dataroom',
+        },
+        dataroom: {
+          name: 'dataroom',
+          type: 'Dataroom',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'viewers',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'dataroomId' },
+        },
+        views: {
+          name: 'views',
+          type: 'DocumentView',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'viewer',
+        },
+        groups: {
+          name: 'groups',
+          type: 'ViewerGroupMembership',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'viewer',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        tenantId_email: {
+          name: 'tenantId_email',
+          fields: ['tenantId', 'email'],
+        },
+      },
+    },
+    documentReaction: {
+      name: 'DocumentReaction',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$DocumentReaction$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$DocumentReaction$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'documentReactions',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        viewId: {
+          name: 'viewId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'view',
+        },
+        view: {
+          name: 'view',
+          type: 'DocumentView',
+          isDataModel: true,
+          backLink: 'reactions',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'viewId' },
+        },
+        pageNumber: {
+          name: 'pageNumber',
+          type: 'Int',
+        },
+        type: {
+          name: 'type',
+          type: 'String',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    invitation: {
+      name: 'Invitation',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Invitation$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Invitation$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'invitation',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        email: {
+          name: 'email',
+          type: 'String',
+        },
+        expires: {
+          name: 'expires',
+          type: 'DateTime',
+        },
+        token: {
+          name: 'token',
+          type: 'String',
+          isId: true,
+        },
+      },
+      uniqueConstraints: {
+        token: {
+          name: 'token',
+          fields: ['token'],
+        },
+        email_tenantId: {
+          name: 'email_tenantId',
+          fields: ['email', 'tenantId'],
+        },
+      },
+    },
+    sentEmail: {
+      name: 'SentEmail',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$SentEmail$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$SentEmail$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'sentEmails',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        type: {
+          name: 'type',
+          type: 'String',
+        },
+        recipient: {
+          name: 'recipient',
+          type: 'String',
+        },
+        marketing: {
+          name: 'marketing',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        domainSlug: {
+          name: 'domainSlug',
+          type: 'String',
+          isOptional: true,
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    documentConversation: {
+      name: 'DocumentConversation',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$DocumentConversation$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$DocumentConversation$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'documentConversations',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        threadId: {
+          name: 'threadId',
+          type: 'String',
+        },
+        userTenantId: {
+          name: 'userTenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'userTenant',
+        },
+        userTenant: {
+          name: 'userTenant',
+          type: 'UserTenant',
+          isDataModel: true,
+          backLink: 'conversations',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'userTenantId' },
+        },
+        documentId: {
+          name: 'documentId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'document',
+        },
+        document: {
+          name: 'document',
+          type: 'Document',
+          isDataModel: true,
+          backLink: 'conversations',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'documentId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        threadId: {
+          name: 'threadId',
+          fields: ['threadId'],
+        },
+        userTenantId_documentId: {
+          name: 'userTenantId_documentId',
+          fields: ['userTenantId', 'documentId'],
+        },
+        threadId_documentId: {
+          name: 'threadId_documentId',
+          fields: ['threadId', 'documentId'],
+        },
+      },
+    },
+    folder: {
+      name: 'Folder',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Folder$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Folder$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'folders',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        path: {
+          name: 'path',
+          type: 'String',
+        },
+        parentId: {
+          name: 'parentId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'parentFolder',
+        },
+        documents: {
+          name: 'documents',
+          type: 'Document',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'folder',
+        },
+        childFolders: {
+          name: 'childFolders',
+          type: 'Folder',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'parentFolder',
+        },
+        parentFolder: {
+          name: 'parentFolder',
+          type: 'Folder',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'childFolders',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'parentId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        tenantId_path: {
+          name: 'tenantId_path',
+          fields: ['tenantId', 'path'],
+        },
+      },
+    },
+    dataroom: {
+      name: 'Dataroom',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Dataroom$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Dataroom$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'dataroons',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        pId: {
+          name: 'pId',
+          type: 'String',
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        documents: {
+          name: 'documents',
+          type: 'DataroomDocument',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'dataroom',
+        },
+        folders: {
+          name: 'folders',
+          type: 'DataroomFolder',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'dataroom',
+        },
+        links: {
+          name: 'links',
+          type: 'Link',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'dataroom',
+        },
+        views: {
+          name: 'views',
+          type: 'DocumentView',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'dataroom',
+        },
+        viewers: {
+          name: 'viewers',
+          type: 'Viewer',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'dataroom',
+        },
+        viewerGroups: {
+          name: 'viewerGroups',
+          type: 'ViewerGroup',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'dataroom',
+        },
+        brand: {
+          name: 'brand',
+          type: 'DataroomBrand',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'dataroom',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        pId: {
+          name: 'pId',
+          fields: ['pId'],
+        },
+      },
+    },
+    dataroomDocument: {
+      name: 'DataroomDocument',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$DataroomDocument$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$DataroomDocument$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'dataroomDocuments',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        dataroomId: {
+          name: 'dataroomId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'dataroom',
+        },
+        dataroom: {
+          name: 'dataroom',
+          type: 'Dataroom',
+          isDataModel: true,
+          backLink: 'documents',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'dataroomId' },
+        },
+        documentId: {
+          name: 'documentId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'document',
+        },
+        document: {
+          name: 'document',
+          type: 'Document',
+          isDataModel: true,
+          backLink: 'datarooms',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'documentId' },
+        },
+        folderId: {
+          name: 'folderId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'folder',
+        },
+        folder: {
+          name: 'folder',
+          type: 'DataroomFolder',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'documents',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'folderId' },
+        },
+        orderIndex: {
+          name: 'orderIndex',
+          type: 'Int',
+          isOptional: true,
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        dataroomId_documentId: {
+          name: 'dataroomId_documentId',
+          fields: ['dataroomId', 'documentId'],
+        },
+      },
+    },
+    dataroomFolder: {
+      name: 'DataroomFolder',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$DataroomFolder$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$DataroomFolder$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'dataroomFolders',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        path: {
+          name: 'path',
+          type: 'String',
+        },
+        parentId: {
+          name: 'parentId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'parentFolder',
+        },
+        documents: {
+          name: 'documents',
+          type: 'DataroomDocument',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'folder',
+        },
+        childFolders: {
+          name: 'childFolders',
+          type: 'DataroomFolder',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'parentFolder',
+        },
+        parentFolder: {
+          name: 'parentFolder',
+          type: 'DataroomFolder',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'childFolders',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'parentId' },
+        },
+        dataroomId: {
+          name: 'dataroomId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'dataroom',
+        },
+        dataroom: {
+          name: 'dataroom',
+          type: 'Dataroom',
+          isDataModel: true,
+          backLink: 'folders',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'dataroomId' },
+        },
+        orderIndex: {
+          name: 'orderIndex',
+          type: 'Int',
+          isOptional: true,
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        dataroomId_path: {
+          name: 'dataroomId_path',
+          fields: ['dataroomId', 'path'],
+        },
+      },
+    },
+    dataroomBrand: {
+      name: 'DataroomBrand',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$DataroomBrand$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$DataroomBrand$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'dataroomBrands',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        logo: {
+          name: 'logo',
+          type: 'String',
+          isOptional: true,
+        },
+        banner: {
+          name: 'banner',
+          type: 'String',
+          isOptional: true,
+        },
+        brandColor: {
+          name: 'brandColor',
+          type: 'String',
+          isOptional: true,
+        },
+        accentColor: {
+          name: 'accentColor',
+          type: 'String',
+          isOptional: true,
+        },
+        dataroomId: {
+          name: 'dataroomId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'dataroom',
+        },
+        dataroom: {
+          name: 'dataroom',
+          type: 'Dataroom',
+          isDataModel: true,
+          backLink: 'brand',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'dataroomId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        dataroomId: {
+          name: 'dataroomId',
+          fields: ['dataroomId'],
+        },
+      },
+    },
+    documentFeedback: {
+      name: 'DocumentFeedback',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$DocumentFeedback$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$DocumentFeedback$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'documentFeedbaks',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        linkId: {
+          name: 'linkId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'link',
+        },
+        link: {
+          name: 'link',
+          type: 'Link',
+          isDataModel: true,
+          backLink: 'feedback',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'linkId' },
+        },
+        data: {
+          name: 'data',
+          type: 'String',
+        },
+        responses: {
+          name: 'responses',
+          type: 'FeedbackResponse',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'feedback',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        linkId: {
+          name: 'linkId',
+          fields: ['linkId'],
+        },
+      },
+    },
+    feedbackResponse: {
+      name: 'FeedbackResponse',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$FeedbackResponse$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$FeedbackResponse$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'feedbackResponses',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        feedbackId: {
+          name: 'feedbackId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'feedback',
+        },
+        feedback: {
+          name: 'feedback',
+          type: 'DocumentFeedback',
+          isDataModel: true,
+          backLink: 'responses',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'feedbackId' },
+        },
+        data: {
+          name: 'data',
+          type: 'String',
+        },
+        viewId: {
+          name: 'viewId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'view',
+        },
+        view: {
+          name: 'view',
+          type: 'DocumentView',
+          isDataModel: true,
+          backLink: 'feedbackResponse',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'viewId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        viewId: {
+          name: 'viewId',
+          fields: ['viewId'],
+        },
+      },
+    },
+    agreement: {
+      name: 'Agreement',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Agreement$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Agreement$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'agreements',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        content: {
+          name: 'content',
+          type: 'String',
+        },
+        requireName: {
+          name: 'requireName',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
+        links: {
+          name: 'links',
+          type: 'Link',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'agreement',
+        },
+        responses: {
+          name: 'responses',
+          type: 'AgreementResponse',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'agreement',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    agreementResponse: {
+      name: 'AgreementResponse',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$AgreementResponse$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$AgreementResponse$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'agreementResponses',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        agreementId: {
+          name: 'agreementId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'agreement',
+        },
+        agreement: {
+          name: 'agreement',
+          type: 'Agreement',
+          isDataModel: true,
+          backLink: 'responses',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'agreementId' },
+        },
+        viewId: {
+          name: 'viewId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'view',
+        },
+        view: {
+          name: 'view',
+          type: 'DocumentView',
+          isDataModel: true,
+          backLink: 'agreementResponse',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'viewId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        viewId: {
+          name: 'viewId',
+          fields: ['viewId'],
+        },
+      },
+    },
+    viewerGroup: {
+      name: 'ViewerGroup',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$ViewerGroup$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$ViewerGroup$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'viewerGroup',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        members: {
+          name: 'members',
+          type: 'ViewerGroupMembership',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'group',
+        },
+        domains: {
+          name: 'domains',
+          type: 'String',
+        },
+        links: {
+          name: 'links',
+          type: 'Link',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'group',
+        },
+        accessControls: {
+          name: 'accessControls',
+          type: 'ViewerGroupAccessControls',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'group',
+        },
+        allowAll: {
+          name: 'allowAll',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        dataroomId: {
+          name: 'dataroomId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'dataroom',
+        },
+        dataroom: {
+          name: 'dataroom',
+          type: 'Dataroom',
+          isDataModel: true,
+          backLink: 'viewerGroups',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'dataroomId' },
+        },
+        views: {
+          name: 'views',
+          type: 'DocumentView',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'group',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    viewerGroupMembership: {
+      name: 'ViewerGroupMembership',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$ViewerGroupMembership$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$ViewerGroupMembership$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'viewerGroupMemberships',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        viewerId: {
+          name: 'viewerId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'viewer',
+        },
+        viewer: {
+          name: 'viewer',
+          type: 'Viewer',
+          isDataModel: true,
+          backLink: 'groups',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'viewerId' },
+        },
+        groupId: {
+          name: 'groupId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'group',
+        },
+        group: {
+          name: 'group',
+          type: 'ViewerGroup',
+          isDataModel: true,
+          backLink: 'members',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'groupId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        viewerId_groupId: {
+          name: 'viewerId_groupId',
+          fields: ['viewerId', 'groupId'],
+        },
+      },
+    },
+    viewerGroupAccessControls: {
+      name: 'ViewerGroupAccessControls',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$ViewerGroupAccessControls$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$ViewerGroupAccessControls$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'viewerGroupAccessControls',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        groupId: {
+          name: 'groupId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'group',
+        },
+        group: {
+          name: 'group',
+          type: 'ViewerGroup',
+          isDataModel: true,
+          backLink: 'accessControls',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'groupId' },
+        },
+        itemId: {
+          name: 'itemId',
+          type: 'String',
+        },
+        itemType: {
+          name: 'itemType',
+          type: 'String',
+        },
+        canView: {
+          name: 'canView',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
+        canDownload: {
+          name: 'canDownload',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        groupId_itemId: {
+          name: 'groupId_itemId',
+          fields: ['groupId', 'itemId'],
+        },
+      },
+    },
+    incomingWebhook: {
+      name: 'IncomingWebhook',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$IncomingWebhook$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$IncomingWebhook$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'incomingWeebhooks',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        externalId: {
+          name: 'externalId',
+          type: 'String',
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        secret: {
+          name: 'secret',
+          type: 'String',
+          isOptional: true,
+        },
+        source: {
+          name: 'source',
+          type: 'String',
+          isOptional: true,
+        },
+        actions: {
+          name: 'actions',
+          type: 'String',
+          isOptional: true,
+        },
+        consecutiveFailures: {
+          name: 'consecutiveFailures',
+          type: 'Int',
+          attributes: [{ name: '@default', args: [{ value: 0 }] }],
+        },
+        lastFailedAt: {
+          name: 'lastFailedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        disabledAt: {
+          name: 'disabledAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        externalId: {
+          name: 'externalId',
+          fields: ['externalId'],
+        },
+      },
+    },
+    restrictedToken: {
+      name: 'RestrictedToken',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$RestrictedToken$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$RestrictedToken$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'restrictedTokens',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        hashedKey: {
+          name: 'hashedKey',
+          type: 'String',
+        },
+        partialKey: {
+          name: 'partialKey',
+          type: 'String',
+        },
+        scopes: {
+          name: 'scopes',
+          type: 'String',
+          isOptional: true,
+        },
+        expires: {
+          name: 'expires',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        lastUsed: {
+          name: 'lastUsed',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        rateLimit: {
+          name: 'rateLimit',
+          type: 'Int',
+          attributes: [{ name: '@default', args: [{ value: 60 }] }],
+        },
+        userTenantId: {
+          name: 'userTenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'userTenant',
+        },
+        userTenant: {
+          name: 'userTenant',
+          type: 'UserTenant',
+          isDataModel: true,
+          backLink: 'restrictedTokens',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'userTenantId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        hashedKey: {
+          name: 'hashedKey',
+          fields: ['hashedKey'],
+        },
+      },
+    },
+    webhook: {
+      name: 'Webhook',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Webhook$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$Webhook$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'webhooks',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        pId: {
+          name: 'pId',
+          type: 'String',
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        url: {
+          name: 'url',
+          type: 'String',
+        },
+        secret: {
+          name: 'secret',
+          type: 'String',
+        },
+        triggers: {
+          name: 'triggers',
+          type: 'String',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        pId: {
+          name: 'pId',
+          fields: ['pId'],
+        },
+      },
+    },
+    yearInReview: {
+      name: 'YearInReview',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$YearInReview$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$YearInReview$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'yearInReviews',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        status: {
+          name: 'status',
+          type: 'String',
+          attributes: [{ name: '@default', args: [{ value: 'pending' }] }],
+        },
+        attempts: {
+          name: 'attempts',
+          type: 'Int',
+          attributes: [{ name: '@default', args: [{ value: 0 }] }],
+        },
+        lastAttempted: {
+          name: 'lastAttempted',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        error: {
+          name: 'error',
+          type: 'String',
+          isOptional: true,
+        },
+        stats: {
+          name: 'stats',
+          type: 'String',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    customField: {
+      name: 'CustomField',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$CustomField$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$CustomField$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'customFields',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        type: {
+          name: 'type',
+          type: 'String',
+        },
+        identifier: {
+          name: 'identifier',
+          type: 'String',
+        },
+        label: {
+          name: 'label',
+          type: 'String',
+        },
+        placeholder: {
+          name: 'placeholder',
+          type: 'String',
+          isOptional: true,
+        },
+        required: {
+          name: 'required',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        disabled: {
+          name: 'disabled',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        linkId: {
+          name: 'linkId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'link',
+        },
+        link: {
+          name: 'link',
+          type: 'Link',
+          isDataModel: true,
+          backLink: 'customField',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'linkId' },
+        },
+        orderIndex: {
+          name: 'orderIndex',
+          type: 'Int',
+          attributes: [{ name: '@default', args: [{ value: 0 }] }],
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    customFieldResponse: {
+      name: 'CustomFieldResponse',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$CustomFieldResponse$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$CustomFieldResponse$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'customFieldResponse',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        data: {
+          name: 'data',
+          type: 'String',
+        },
+        viewId: {
+          name: 'viewId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'view',
+        },
+        view: {
+          name: 'view',
+          type: 'DocumentView',
+          isDataModel: true,
+          backLink: 'customFieldResponse',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'viewId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        viewId: {
+          name: 'viewId',
+          fields: ['viewId'],
         },
       },
     },
@@ -6423,6 +9995,238 @@ function $default$DocumentAssignment$createdBy(user: any): unknown {
 }
 
 function $default$DocumentAssignment$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentVersion$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentVersion$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentPage$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentPage$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Link$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Link$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$LinkPreset$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$LinkPreset$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Domain$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Domain$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentView$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentView$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Viewer$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Viewer$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentReaction$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentReaction$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Invitation$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Invitation$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$SentEmail$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$SentEmail$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentConversation$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentConversation$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Folder$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Folder$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Dataroom$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Dataroom$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DataroomDocument$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DataroomDocument$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DataroomFolder$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DataroomFolder$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DataroomBrand$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DataroomBrand$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentFeedback$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentFeedback$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$FeedbackResponse$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$FeedbackResponse$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Agreement$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Agreement$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AgreementResponse$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AgreementResponse$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$ViewerGroup$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$ViewerGroup$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$ViewerGroupMembership$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$ViewerGroupMembership$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$ViewerGroupAccessControls$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$ViewerGroupAccessControls$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$IncomingWebhook$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$IncomingWebhook$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RestrictedToken$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RestrictedToken$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Webhook$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Webhook$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$YearInReview$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$YearInReview$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$CustomField$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$CustomField$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$CustomFieldResponse$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$CustomFieldResponse$updatedBy(user: any): unknown {
   return user?.id;
 }
 

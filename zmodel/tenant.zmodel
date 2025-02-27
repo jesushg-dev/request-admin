@@ -40,10 +40,6 @@ model Tenant extends Auditable {
   sLAChangeLogs                  SLAChangeLog[]
   guideDocuments                 GuideDocument[] 
 
-  // --- Documents ---
-  documents                      Document[]
-  documentAssignments            DocumentAssignment[]
-
   // --- Requests and Statuses ---
   requests                       Request[]
   requestAssignments             RequestAssignment[]
@@ -56,7 +52,6 @@ model Tenant extends Auditable {
   customerSatisfactionSurveys    CustomerSatisfactionSurvey[]
   assignmentTypes                AssignmentType[]
   requestPriorityTypes           RequestPriorityType[]
-
 
   // --- Forms ---
   forms                          Form[]
@@ -96,6 +91,39 @@ model Tenant extends Auditable {
   // --- Subscriptions and Usage ---
   subscriptions                  Subscription[]
   usageTracking                  UsageTracking[]
+
+  // --- Documents and Files models ---
+  documents                     Document[]
+  documentAssignments           DocumentAssignment[]
+  documentPages                 DocumentPage[]
+  documentVersions              DocumentVersion[]
+  links                         Link[]
+  linkPresets                   LinkPreset[]
+  domains                       Domain[]
+  views                         DocumentView[]
+  viewers                       Viewer[]
+  documentReactions             DocumentReaction[]
+  invitation                    Invitation[]
+  sentEmails                    SentEmail[]
+  documentConversations         DocumentConversation[]
+  folders                       Folder[]
+  dataroons                     Dataroom[]
+  dataroomDocuments             DataroomDocument[]
+  dataroomFolders               DataroomFolder[]
+  dataroomBrands                DataroomBrand[]
+  documentFeedbaks              DocumentFeedback[]
+  feedbackResponses             FeedbackResponse[]
+  agreements                    Agreement[]
+  agreementResponses            AgreementResponse[]
+  viewerGroup                   ViewerGroup[]
+  viewerGroupMemberships        ViewerGroupMembership[]
+  viewerGroupAccessControls     ViewerGroupAccessControls[]
+  incomingWeebhooks             IncomingWebhook[]
+  restrictedTokens              RestrictedToken[]
+  webhooks                      Webhook[]
+  yearInReviews                 YearInReview[]
+  customFields                  CustomField[]
+  customFieldResponse           CustomFieldResponse[]
 
   // Access control
   @@allow("read", userTenants?[user.id == auth().id && isActive == true])

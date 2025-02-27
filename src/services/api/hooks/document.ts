@@ -373,7 +373,29 @@ export function useSuspenseCountDocument<
 export function useCheckDocument<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
-    where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; name?: string; url?: string; status?: number; requirementComplianceTrackingId?: string; requestId?: string };
+    where?: {
+      createdBy?: string;
+      updatedBy?: string;
+      tenantId?: string;
+      id?: string;
+      name?: string;
+      description?: string;
+      file?: string;
+      originalFile?: string;
+      url?: string;
+      status?: number;
+      type?: string;
+      contentType?: string;
+      storageType?: string;
+      numPages?: number;
+      ownerId?: string;
+      assistantEnabled?: boolean;
+      advancedExcelEnabled?: boolean;
+      downloadOnly?: boolean;
+      requirementComplianceTrackingId?: string;
+      requestId?: string;
+      folderId?: string;
+    };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {

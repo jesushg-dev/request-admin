@@ -5,6 +5,7 @@ import './messenger.zmodel'
 import './person.zmodel'
 import './area.zmodel'
 import './permission.zmodel'
+import './document.zmodel'
 
 model User extends Auditable {
   id                      String                 @id @default(uuid()) @db.UniqueIdentifier
@@ -32,6 +33,9 @@ model User extends Auditable {
 
   //vs
   @@unique([email ,username])
+
+  @@validate(!emailVerified || email != null, "Email must be provided if emailVerified is set")
+
 }
 
 model UserTenant extends TenantScoped, Auditable {
@@ -55,7 +59,11 @@ model UserTenant extends TenantScoped, Auditable {
   messages                     Message[]      // Messages sent by the user
   conversationsAsUserTenantOne Conversation[]   @relation("UserTenantOne") // Conversations where this user is UserTenantOne
   conversationsAsUserTenantTwo Conversation[]   @relation("UserTenantTwo") // Conversations where this user is UserTenantTwo
-
+  
+  domains          Domain[]
+  documents        Document[]
+  conversations    DocumentConversation[]
+  restrictedTokens RestrictedToken[]
 
   @@unique([userId, tenantId]) // Ensure unique user-tenant relationships
   @@index([userId]) // Index for efficient queries by userId
