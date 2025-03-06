@@ -10,7 +10,7 @@ import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import Select, { OptionType } from '@/components/select/select';
+import Select, { OptionType } from '@/components/custom-ui/select';
 
 export const userRoleAssignmentFormSchema = z.object({
   userRoles: z.array(

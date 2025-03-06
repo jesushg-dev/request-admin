@@ -21,6 +21,7 @@ export const PermissionActions = {
     SCOPED_DISABLE: 'request_scoped_disable',
     ASSIGN_USER: 'request_assign_user',
     SCOPED_ASSIGN_USER: 'request_scoped_assign_user',
+    SCOPED_SET_STATUS: 'request_set_status',
     SCOPED_SET_PRIORITY: 'request_set_priority',
     SCOPED_SEND_DOCUMENTS: 'request_send_documents',
   },

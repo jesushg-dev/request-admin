@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, type FC } from 'react';
+import { Link } from '@/i18n/routing';
 import { useFindManyRequestAssignment } from '@/services/api/hooks';
 import { Prisma } from '@prisma/client';
-import { Settings2 } from 'lucide-react';
+import { Rotate3DIcon, Settings2 } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -12,7 +13,6 @@ import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMe
 import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
-import { AreaAssignmentModal } from './area-assignment-modal';
 import { UserAssignmentModal } from './user-assignment-modal';
 import UserMembers from './user-members';
 import { ViewToggle } from './view-toggle';
@@ -194,6 +194,7 @@ const AssignmentHistory: FC<AssignmentHistoryProps> = ({ tenantId, requestId }) 
   const { data, isLoading, error } = useFindManyRequestAssignment({
     ...RequestAssignmentDefaultArgs,
     where: { tenantId, requestId },
+    orderBy: { createdAt: 'asc' },
   });
 
   if (isLoading)
@@ -212,7 +213,17 @@ const AssignmentHistory: FC<AssignmentHistoryProps> = ({ tenantId, requestId }) 
         <div className="flex items-center justify-between gap-4">
           <CardTitle>Historial de Asignaciones</CardTitle>
           <div className="flex flex-wrap items-center gap-2">
-            <AreaAssignmentModal onComplete={console.log} />
+            <Button asChild variant="outline" size="sm">
+              <Link
+                href={{
+                  pathname: '/admin/[tenantId]/requests-portal/requests/[slug]/edit',
+                  query: { reassign: 'true' },
+                  params: { tenantId, slug: requestId },
+                }}>
+                <Rotate3DIcon className="h-4 w-4" />
+                <span className="sr-only">Assign Area</span>
+              </Link>
+            </Button>
             <UserAssignmentModal onComplete={console.log} />
             <FieldVisibilitySettings visibility={visibility} onChange={setVisibility} />
             <ViewToggle viewType={viewType} onViewChange={setViewType} />

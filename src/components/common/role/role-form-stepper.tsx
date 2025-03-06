@@ -15,7 +15,7 @@ import { Card } from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import UserRoleAssignmentForm, { userRoleAssignmentFormSchema } from '@/components/common/role/user-role-assignment-form';
-import { OptionType } from '@/components/select/select';
+import { OptionType } from '@/components/custom-ui/select';
 import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
 import { StepNavigation } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';

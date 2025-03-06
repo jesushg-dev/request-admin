@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { CardWrapper } from '@/components/auth/card-wrapper';
-import { PasswordInput } from '@/components/password-input';
+import { PasswordInput } from '@/components/custom-ui/password-input';
 import { FormError } from '@/components/prullenbak/form-error';
 import { FormSuccess } from '@/components/prullenbak/form-success';
 

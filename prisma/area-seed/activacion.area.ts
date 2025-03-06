@@ -1008,7 +1008,7 @@ export async function createActivacionArea(
     },
   }));
 
-  await prisma.area.create({
+  return await prisma.area.create({
     data: {
       id: areaId,
       name: 'Activaciones',

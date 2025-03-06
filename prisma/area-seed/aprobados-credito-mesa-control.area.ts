@@ -67,7 +67,7 @@ export async function createAprobadosCreditoMesaControlArea(
     },
   }));
 
-  await prisma.area.create({
+  return await prisma.area.create({
     data: {
       id: areaId,
       name: 'Aprobados Credito Mesa Control',

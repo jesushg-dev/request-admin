@@ -13,7 +13,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import ConditionalDialogWrapper from '@/components/conditional-dialog-wrapper';
-import Select, { OptionType } from '@/components/select/select';
+import Select, { OptionType } from '@/components/custom-ui/select';
 
 import { RequestCategoryFormValues } from './request-category-form';
 

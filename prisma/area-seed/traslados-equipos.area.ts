@@ -55,7 +55,7 @@ export async function createTrasladosDeEquiposArea(
     },
   }));
 
-  await prisma.area.create({
+  return await prisma.area.create({
     data: {
       id: areaId,
       name: 'Traslados De Equipos',

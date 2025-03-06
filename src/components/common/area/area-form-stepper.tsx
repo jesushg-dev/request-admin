@@ -20,7 +20,7 @@ import AreaForm, { areaFormSchema, getAreaDefaultValue } from '@/components/comm
 import AssignmentCategoryForm, { categoriesSchema } from '@/components/common/category/assignment-category-form';
 import RolesForm, { rolesFormSchema } from '@/components/common/role/role-form';
 import UserRoleAssignmentForm, { userRoleAssignmentFormSchema } from '@/components/common/role/user-role-assignment-form';
-import { OptionType } from '@/components/select/select';
+import { OptionType } from '@/components/custom-ui/select';
 import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
 import { StepNavigation } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';

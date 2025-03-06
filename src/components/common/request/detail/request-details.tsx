@@ -10,10 +10,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
+import { SelectCombobox } from '@/components/custom-ui/linear-select';
+import { OptionType } from '@/components/custom-ui/select';
 import { ExpandableMetadata, MetadataItem, MetadataItemProps } from '@/components/metadata-item';
 import { ProgressCircle } from '@/components/progress-circle';
-import { SelectCombobox } from '@/components/select/linear-select';
-import { OptionType } from '@/components/select/select';
 
 import { RequestFormStepperType } from '../request-form-stepper';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, type FC } from 'react';
+import { type FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -8,8 +8,8 @@ import { generateUuid } from '@/lib/id';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import Select, { OptionType } from '@/components/select/select';
-import TiptapEditor, { type TiptapEditorRef } from '@/components/tip-tap/TiptapEditor';
+import Select, { OptionType } from '@/components/custom-ui/select';
+import TiptapEditor from '@/components/tip-tap/TiptapEditor';
 
 export const requestDetailSchema = z.object({
   id: z.string(),
@@ -22,12 +22,12 @@ export const requestDetailSchema = z.object({
 
 export type RequestDetailValues = z.infer<typeof requestDetailSchema>;
 
-export const getDefaultDetailsValues = () => ({
+export const getDefaultDetailsValues = (): RequestDetailValues => ({
   id: generateUuid(),
   issueSubject: '',
   description: '',
   comment: '',
-  priorityId: { value: null, label: '' },
+  priorityId: { value: '', label: '' },
   statusId: { value: '', label: '' },
 });
 
@@ -37,7 +37,6 @@ interface RequestDetailsStepProps {
 }
 
 const RequestDetailsStep: FC<RequestDetailsStepProps> = ({ statusesOptions, prioritiesOptions }) => {
-  const editorRef = useRef<TiptapEditorRef>(null);
   const { control } = useFormContext<RequestDetailValues>();
 
   return (
@@ -111,7 +110,7 @@ const RequestDetailsStep: FC<RequestDetailsStepProps> = ({ statusesOptions, prio
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <TiptapEditor ref={editorRef} ssr={true} output="html" onContentChange={field.onChange} contentMinHeight={256} contentMaxHeight={640} initialContent={field.value} />
+                <TiptapEditor ssr={true} output="html" onContentChange={field.onChange} contentMinHeight={256} contentMaxHeight={640} initialContent={field.value} />
               </FormControl>
               <FormDescription>Description is used to provide more information about the request.</FormDescription>
               <FormMessage />

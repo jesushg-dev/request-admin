@@ -1,3 +1,4 @@
+import { PermissionActions } from '@/constants/permissions';
 import { PrismaClient } from '@prisma/client';
 
 import { hashPassword } from '@/lib/password';
@@ -30,6 +31,8 @@ import { getITILStatuses, getITILTransitions } from './status';
 import { UNSTABLE_TENANT_ID } from './util';
 
 const prisma = new PrismaClient();
+const USER_TENANT_JESUS_ID = '98c74680-9b23-473d-a105-b2591e2cd187';
+const USER_TENANT_DANILO_ID = 'fb420cf8-8820-4fb7-9fe5-bfe7b2f83894';
 
 async function main() {
   //////////////////////////
@@ -85,14 +88,13 @@ async function main() {
       isGlobalAdmin: true,
       userTenants: {
         create: {
-          id: '98c74680-9b23-473d-a105-b2591e2cd187',
+          id: USER_TENANT_JESUS_ID,
           tenantId: UNSTABLE_TENANT_ID,
           isActive: true,
           joinedAt: new Date(),
           isSuperAdmin: true,
           person: {
             create: {
-              id: '7B159275-47A7-4957-9419-4ABBAED5B8AD',
               firstName: 'Jesus',
               lastName: 'Hernandez',
               phone: '89898989',
@@ -116,13 +118,13 @@ async function main() {
       emailVerified: new Date(),
       userTenants: {
         create: {
+          id: USER_TENANT_DANILO_ID,
           tenantId: UNSTABLE_TENANT_ID,
           isActive: true,
           joinedAt: new Date(),
           isSuperAdmin: true,
           person: {
             create: {
-              id: 'FB420CF8-8820-4FB7-9FE5-BFE7B2F83894',
               firstName: 'Danilo',
               lastName: 'Acevedo',
               phone: '12345678',
@@ -2527,69 +2529,97 @@ async function createModuleAndFeature() {
   }
 }
 
+// Definir permisos comunes para reutilizar
+const SUPERVISOR_FEATURES = [
+  PermissionActions.REQUEST_MANAGEMENT.SCOPED_ASSIGN_USER,
+  PermissionActions.REQUEST_MANAGEMENT.SCOPED_CREATE,
+  PermissionActions.REQUEST_MANAGEMENT.SCOPED_DISABLE,
+  PermissionActions.REQUEST_MANAGEMENT.SCOPED_EDIT,
+  PermissionActions.REQUEST_MANAGEMENT.SCOPED_SEND_DOCUMENTS,
+  PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_PRIORITY,
+  PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_STATUS,
+  PermissionActions.REQUEST_MANAGEMENT.SCOPED_VIEW,
+];
+
+const COLABORADOR_FEATURES = [
+  PermissionActions.REQUEST_MANAGEMENT.SCOPED_CREATE,
+  PermissionActions.REQUEST_MANAGEMENT.SCOPED_SEND_DOCUMENTS,
+  PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_STATUS,
+  PermissionActions.REQUEST_MANAGEMENT.SCOPED_VIEW,
+];
+
+// Función helper para crear roles
+async function createAreaRoles(prisma: PrismaClient, area: { id: string; name: string }) {
+  const roles = [
+    {
+      name: 'Supervisor',
+      description: `Supervisor de ${area.name}`,
+      features: SUPERVISOR_FEATURES,
+      userTenantId: [USER_TENANT_JESUS_ID],
+    },
+    {
+      name: 'Colaborador',
+      description: `Colaborador de ${area.name}`,
+      features: COLABORADOR_FEATURES,
+      userTenantId: [USER_TENANT_DANILO_ID],
+    },
+  ];
+
+  for (const role of roles) {
+    await prisma.areaRole.create({
+      data: {
+        name: role.name,
+        description: role.description,
+        tenantId: UNSTABLE_TENANT_ID,
+        areaId: area.id,
+        areaRoleFeatures: {
+          create: role.features.map((featureKey) => ({
+            tenant: { connect: { id: UNSTABLE_TENANT_ID } },
+            feature: { connect: { key: featureKey } },
+          })),
+        },
+        userAreas: {
+          create: role.userTenantId.map((userId) => ({
+            tenantId: UNSTABLE_TENANT_ID,
+            userTenantId: userId,
+            areaId: area.id,
+          })),
+        },
+      },
+    });
+  }
+}
+
+// Función principal refactorizada
 async function createAreas(hierarchyId: string, hierarchyLevelRequestTypeId: string, hierarchyLevelCategoryId: string, hierarchyLevelSubcategoryId: string) {
-  // Comisiones Internas
-  await createInternalCommissionsArea(prisma, hierarchyId, hierarchyLevelRequestTypeId, hierarchyLevelCategoryId, hierarchyLevelSubcategoryId);
+  const areaCreators = [
+    createInternalCommissionsArea,
+    createCommissionsArea,
+    createActivacionArea,
+    createCreditosArea,
+    createComprasArea,
+    createCobranzaArea,
+    createCIAArea,
+    createAprobadosCreditoMesaControlArea,
+    createFacturacionArea,
+    createMultipagosReactivacionArea,
+    createResuelvaReactivacionArea,
+    createEdatelReactivacionArea,
+    createInvercobroReactivacionArea,
+    createGextionaReactivacionArea,
+    createSerdicoReactivacionArea,
+    createReactivacionArea,
+    createRecuperacionEquiposArea,
+    createTrasladosDeEquiposArea,
+    createProcesamientoEquiposArea,
+    createFacturacionDeudoresVariosArea,
+    createAreaTecnicaArea,
+  ];
 
-  // Comisiones
-  await createCommissionsArea(prisma, hierarchyId, hierarchyLevelRequestTypeId, hierarchyLevelCategoryId, hierarchyLevelSubcategoryId);
-
-  // Activaciones
-  await createActivacionArea(prisma, hierarchyId, hierarchyLevelRequestTypeId, hierarchyLevelCategoryId, hierarchyLevelSubcategoryId);
-
-  // Creditos
-  await createCreditosArea(prisma, hierarchyId, hierarchyLevelRequestTypeId, hierarchyLevelCategoryId, hierarchyLevelSubcategoryId);
-
-  // Compras
-  await createComprasArea(prisma, hierarchyId, hierarchyLevelRequestTypeId, hierarchyLevelCategoryId, hierarchyLevelSubcategoryId);
-
-  // Cobranza
-  await createCobranzaArea(prisma, hierarchyId, hierarchyLevelRequestTypeId, hierarchyLevelCategoryId, hierarchyLevelSubcategoryId);
-
-  // CIA
-  await createCIAArea(prisma, hierarchyId, hierarchyLevelRequestTypeId, hierarchyLevelCategoryId, hierarchyLevelSubcategoryId);
-
-  // Aprobados Credito Mesa Control
-  await createAprobadosCreditoMesaControlArea(prisma, hierarchyId, hierarchyLevelRequestTypeId, hierarchyLevelCategoryId, hierarchyLevelSubcategoryId);
-
-  // Facturacion
-  await createFacturacionArea(prisma, hierarchyId, hierarchyLevelRequestTypeId, hierarchyLevelCategoryId, hierarchyLevelSubcategoryId);
-
-  // Multipagos Reactivacion
-  await createMultipagosReactivacionArea(prisma, hierarchyId, hierarchyLevelRequestTypeId, hierarchyLevelCategoryId, hierarchyLevelSubcategoryId);
-
-  // Resuelva Reactivacion
-  await createResuelvaReactivacionArea(prisma, hierarchyId, hierarchyLevelRequestTypeId, hierarchyLevelCategoryId, hierarchyLevelSubcategoryId);
-
-  // Edatel Reactivacion
-  await createEdatelReactivacionArea(prisma, hierarchyId, hierarchyLevelRequestTypeId, hierarchyLevelCategoryId, hierarchyLevelSubcategoryId);
-
-  // Invercobro Reactivacion
-  await createInvercobroReactivacionArea(prisma, hierarchyId, hierarchyLevelRequestTypeId, hierarchyLevelCategoryId, hierarchyLevelSubcategoryId);
-
-  // Gextiona Reactivacion
-  await createGextionaReactivacionArea(prisma, hierarchyId, hierarchyLevelRequestTypeId, hierarchyLevelCategoryId, hierarchyLevelSubcategoryId);
-
-  // Serdico Reactivacion
-  await createSerdicoReactivacionArea(prisma, hierarchyId, hierarchyLevelRequestTypeId, hierarchyLevelCategoryId, hierarchyLevelSubcategoryId);
-
-  // Reactivacion
-  await createReactivacionArea(prisma, hierarchyId, hierarchyLevelRequestTypeId, hierarchyLevelCategoryId, hierarchyLevelSubcategoryId);
-
-  // Recuperacion Equipos
-  await createRecuperacionEquiposArea(prisma, hierarchyId, hierarchyLevelRequestTypeId, hierarchyLevelCategoryId, hierarchyLevelSubcategoryId);
-
-  // Traslados De Equipos
-  await createTrasladosDeEquiposArea(prisma, hierarchyId, hierarchyLevelRequestTypeId, hierarchyLevelCategoryId, hierarchyLevelSubcategoryId);
-
-  // Procesamiento Equipos
-  await createProcesamientoEquiposArea(prisma, hierarchyId, hierarchyLevelRequestTypeId, hierarchyLevelCategoryId, hierarchyLevelSubcategoryId);
-
-  // Facturacion Deudores Varios
-  await createFacturacionDeudoresVariosArea(prisma, hierarchyId, hierarchyLevelRequestTypeId, hierarchyLevelCategoryId, hierarchyLevelSubcategoryId);
-
-  // Area Tecnica
-  await createAreaTecnicaArea(prisma, hierarchyId, hierarchyLevelRequestTypeId, hierarchyLevelCategoryId, hierarchyLevelSubcategoryId);
+  for (const createArea of areaCreators) {
+    const area = await createArea(prisma, hierarchyId, hierarchyLevelRequestTypeId, hierarchyLevelCategoryId, hierarchyLevelSubcategoryId);
+    await createAreaRoles(prisma, area);
+  }
 }
 
 async function createAreaHierarchy() {

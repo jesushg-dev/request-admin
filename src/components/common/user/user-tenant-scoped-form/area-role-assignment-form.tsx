@@ -12,7 +12,7 @@ import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import Select from '@/components/select/select';
+import Select from '@/components/custom-ui/select';
 
 // Schema for the area-role assignment form
 export const areaRoleAssignmentFormSchema = z.object({

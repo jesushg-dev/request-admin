@@ -12,8 +12,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { OptionType } from '@/components/custom-ui/select';
 import { Hint } from '@/components/hint';
-import { OptionType } from '@/components/select/select';
 
 import RequestSubcategoryFormDialog from './request-subcategory-form-dialog';
 

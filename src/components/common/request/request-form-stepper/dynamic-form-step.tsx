@@ -22,6 +22,10 @@ export const formResponseSchema = z.object({
 
 export type FormResponsesValues = z.infer<typeof formResponseSchema>;
 
+export const getDefaultFormResponsesValues = (): FormResponsesValues => ({
+  submissions: {},
+});
+
 interface DynamicFormStepProps {
   onPrev: () => void;
   onNext: () => void;

@@ -58,7 +58,7 @@ export async function createGextionaReactivacionArea(
     },
   }));
 
-  await prisma.area.create({
+  return await prisma.area.create({
     data: {
       id: areaId,
       name: 'Gextiona Reactivacion',

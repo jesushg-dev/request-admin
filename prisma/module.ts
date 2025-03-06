@@ -113,7 +113,7 @@ export const PrismaModules: PrismaModulesDefinition = {
           en: 'Permission to assign users to requests within a specific area',
           es: 'Permiso para asignar responsables a solicitudes dentro de un área específica',
         },
-        scope: 'area',
+        scope: 'global',
       },
       SCOPED_ASSIGN_USER: {
         action: PermissionActions.REQUEST_MANAGEMENT.SCOPED_ASSIGN_USER,
@@ -130,6 +130,15 @@ export const PrismaModules: PrismaModulesDefinition = {
         description: {
           en: 'Permission to set the priority of requests within an area',
           es: 'Permiso para definir la prioridad de las solicitudes dentro de un área',
+        },
+        scope: 'area',
+      },
+      SCOPED_SET_STATUS: {
+        action: PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_STATUS,
+        name: { en: 'Set Status', es: 'Establecer estado' },
+        description: {
+          en: 'Permission to set the status of requests within an area',
+          es: 'Permiso para definir el estado de las solicitudes dentro de un área',
         },
         scope: 'area',
       },

@@ -13,7 +13,7 @@ import { AreaRoleOptionType } from '@/types/prisma/user';
 import { Card } from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { OptionType } from '@/components/select/select';
+import { OptionType } from '@/components/custom-ui/select';
 import { StepNavigation } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 

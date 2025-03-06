@@ -9,8 +9,8 @@ import { generateUuid } from '@/lib/id';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { PhoneInput } from '@/components/phone-input';
-import Select, { OptionType } from '@/components/select/select';
+import { PhoneInput } from '@/components/custom-ui/phone-input';
+import Select, { OptionType } from '@/components/custom-ui/select';
 
 // Define Schema
 export const userFormSchema = z.object({

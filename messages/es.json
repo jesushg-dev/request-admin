@@ -332,6 +332,14 @@
           "requestCategory": "Categoría de Solicitud",
           "assignmentCategory": "Categoría de Asignación"
         }
+      },
+      "form": {
+        "categoryStep": {
+          "titleRequest": "Categoría de Solicitud",
+          "titleAssignment": "Categoría de Asignación",
+          "areaLabel": "Área",
+          "areaDescription": "Seleccione el área donde se asigna la solicitud."
+        }
       }
     },
     "requestType": {

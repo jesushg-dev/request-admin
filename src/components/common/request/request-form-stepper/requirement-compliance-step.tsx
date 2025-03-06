@@ -17,6 +17,10 @@ export const requirementComplianceSchema = z.object({
 
 export type RequirementComplianceValues = z.infer<typeof requirementComplianceSchema>;
 
+export const getDefaultCommplianceValues = (): RequirementComplianceValues => ({
+  requirementCompliances: {},
+});
+
 interface RequirementComplianceStepProps {
   requestCategoryIds: string[];
 }
@@ -60,6 +64,8 @@ const RequirementComplianceStep: FC<RequirementComplianceStepProps> = ({ request
     setValue('requirementCompliances', updated);
   };
 
+  const completedTotal = Object.values(currentRequirements).filter((v) => v).length;
+
   if (isLoading)
     return (
       <div className="space-y-4 flex-1 overflow-hidden">
@@ -73,7 +79,9 @@ const RequirementComplianceStep: FC<RequirementComplianceStepProps> = ({ request
   return (
     <div className="flex flex-col gap-4 flex-1 overflow-hidden">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Requirements ({data?.length ?? 0})</h3>
+        <h3 className="text-lg font-semibold">
+          Requirements ({completedTotal} of {Object.keys(currentRequirements).length})
+        </h3>
         <Button variant="outline" size="sm" onClick={handleSelectAll} type="button" title={Object.values(currentRequirements).every((v) => v) ? 'Unselect All' : 'Select All'} disabled={isLoading}>
           {Object.values(currentRequirements).every((v) => v) ? 'Unselect All' : 'Select All'}
         </Button>
@@ -89,10 +97,10 @@ const RequirementComplianceStep: FC<RequirementComplianceStepProps> = ({ request
                 <FormItem>
                   <div className="flex items-center gap-4 border rounded-lg p-4">
                     <div className="flex-1">
-                      <FormLabel htmlFor={`requirementCompliances.${req.id}`} className="font-medium">
+                      <FormLabel htmlFor={`requirementCompliances.${req.id}`} className="font-medium hover:cursor-pointer">
                         {isLoading ? <Skeleton className="h-4 w-24" /> : req.name}
+                        <p className="text-sm text-muted-foreground">{isLoading ? <Skeleton className="h-3 w-48" /> : req.description}</p>
                       </FormLabel>
-                      <p className="text-sm text-muted-foreground">{isLoading ? <Skeleton className="h-3 w-48" /> : req.description}</p>
                     </div>
                     <FormControl>
                       <Checkbox id={`requirementCompliances.${req.id}`} checked={field.value} onCheckedChange={field.onChange} />

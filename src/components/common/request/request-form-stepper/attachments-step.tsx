@@ -12,10 +12,14 @@ export const attachmentSchema = z.object({
   additionalDocuments: z.array(z.instanceof(File)).optional(),
 });
 
-export type RequestDetailValues = z.infer<typeof attachmentSchema>;
+export type AttachmentsValues = z.infer<typeof attachmentSchema>;
+
+export const getDefaultAttachmentsValues = (): AttachmentsValues => ({
+  additionalDocuments: [],
+});
 
 export default function AttachmentsStep() {
-  const { control } = useFormContext<RequestDetailValues>();
+  const { control } = useFormContext<AttachmentsValues>();
 
   const { /* uploadFiles, */ progresses, uploadedFiles, isUploading } = useUploadFile('imageUploader', { defaultUploadedFiles: [] });
 

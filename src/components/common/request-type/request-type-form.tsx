@@ -12,7 +12,7 @@ import { RequestLevelType } from '@/types/prisma/hierarchy';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { OptionType } from '@/components/select/select';
+import { OptionType } from '@/components/custom-ui/select';
 import { ZodErrorAlert } from '@/components/shared/zod-error-alert';
 
 import RequestCategoryForm, { categoriesSchema, getDefaultSubcategory, RequestCategoryFormValues } from '../category/request-category-form';

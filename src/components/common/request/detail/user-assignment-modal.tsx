@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Checkbox } from '@radix-ui/react-checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@radix-ui/react-select';
 import { UserPlusIcon } from 'lucide-react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -8,8 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-
-import { mockDocuments, mockRequestStatusTypes } from './area-assignment-modal';
 
 // Mock data (mantenemos los mismos datos de ejemplo)
 export const mockSLA = {
@@ -160,31 +157,6 @@ export function UserAssignmentModal({ onComplete }: AreaAssignmentFormProps) {
 
             <FormField
               control={formMethods.control}
-              name="statusId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a status" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {mockRequestStatusTypes.map((status) => (
-                        <SelectItem key={status.id} value={status.id}>
-                          {status.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={formMethods.control}
               name="comment"
               render={({ field }) => (
                 <FormItem>
@@ -234,32 +206,6 @@ export function UserAssignmentModal({ onComplete }: AreaAssignmentFormProps) {
                       }}
                     />
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={formMethods.control}
-              name="documents"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="mb-4">
-                    <FormLabel className="text-base">Assign Documents</FormLabel>
-                  </div>
-                  {mockDocuments.map((document) => (
-                    <FormItem key={document.id} className="flex flex-row items-start space-y-0 space-x-3">
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value?.includes(document.id)}
-                          onCheckedChange={(checked) => {
-                            return checked ? field.onChange([...field.value, document.id]) : field.onChange(field.value.filter((value) => value !== document.id));
-                          }}
-                        />
-                      </FormControl>
-                      <FormLabel className="font-normal">{document.name}</FormLabel>
-                    </FormItem>
-                  ))}
                   <FormMessage />
                 </FormItem>
               )}

@@ -12,17 +12,17 @@ import { z } from 'zod';
 import { AssignmentLevelType, RequestLevelType } from '@/types/prisma/hierarchy';
 import { Card } from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
-import { OptionType } from '@/components/select/select';
+import { OptionType } from '@/components/custom-ui/select';
 import { ChildSteps } from '@/components/stepper/child-steps';
 import { ChildStepsProvider } from '@/components/stepper/child-steps-context';
 import { StepNavigation } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 
-import AttachmentsStep, { attachmentSchema } from './attachments-step';
-import CategoryStep, { combinedCategoriesSchema, CombinedCategoriesValues } from './category-step';
-import DynamicFormStep, { formResponseSchema } from './dynamic-form-step';
-import RequestDetailsStep, { getDefaultDetailsValues, requestDetailSchema } from './request-details-step';
-import RequirementComplianceStep, { requirementComplianceSchema } from './requirement-compliance-step';
+import AttachmentsStep, { attachmentSchema, AttachmentsValues, getDefaultAttachmentsValues } from './attachments-step';
+import CategoryStep, { combinedCategoriesSchema, CombinedCategoriesValues, getDefaultCombinedCategoriesValues } from './category-step';
+import DynamicFormStep, { formResponseSchema, FormResponsesValues, getDefaultFormResponsesValues } from './dynamic-form-step';
+import RequestDetailsStep, { getDefaultDetailsValues, requestDetailSchema, RequestDetailValues } from './request-details-step';
+import RequirementComplianceStep, { getDefaultCommplianceValues, requirementComplianceSchema, RequirementComplianceValues } from './requirement-compliance-step';
 import SummaryStep from './summary-step';
 
 const { useStepper, utils } = defineStepper(
@@ -34,11 +34,7 @@ const { useStepper, utils } = defineStepper(
   { id: 'summary', label: 'Summary', schema: z.object({}) }
 );
 
-export type RequestFormStepperType = z.infer<typeof combinedCategoriesSchema> &
-  z.infer<typeof requirementComplianceSchema> &
-  z.infer<typeof requestDetailSchema> &
-  z.infer<typeof attachmentSchema> &
-  z.infer<typeof formResponseSchema>;
+export type RequestFormStepperType = CombinedCategoriesValues & RequirementComplianceValues & RequestDetailValues & AttachmentsValues & FormResponsesValues;
 
 type CombinedFormProps = {
   tenantId: string;
@@ -46,9 +42,11 @@ type CombinedFormProps = {
   assignmentLevelTypes: AssignmentLevelType[];
   statusesOptions: OptionType[];
   prioritiesOptions: OptionType[];
+  defaultValues?: RequestFormStepperType;
 };
 
-const RequestFormStepper: FC<CombinedFormProps> = ({ tenantId, requestLevelTypes, assignmentLevelTypes, statusesOptions, prioritiesOptions }) => {
+const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, requestLevelTypes, assignmentLevelTypes, statusesOptions, prioritiesOptions }) => {
+  console.log('🚀 ~ defaultValues:', defaultValues);
   const router = useRouter();
   const stepper = useStepper();
   const [isPending, startTransition] = useTransition();
@@ -56,7 +54,13 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ tenantId, requestLevelTypes
   const form = useForm({
     mode: 'onTouched',
     resolver: zodResolver(stepper.current.schema),
-    defaultValues: getDefaultDetailsValues(),
+    defaultValues: defaultValues ?? {
+      ...getDefaultCombinedCategoriesValues(),
+      ...getDefaultCommplianceValues(),
+      ...getDefaultDetailsValues(),
+      ...getDefaultAttachmentsValues(),
+      ...getDefaultFormResponsesValues(),
+    },
   });
 
   const [requestCategoryIds, setRequestCategoryIds] = useState<string[]>([]);
@@ -84,10 +88,7 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ tenantId, requestLevelTypes
           router.push({ pathname: '/admin/[tenantId]/requests-portal/requests', params: { tenantId } });
           return `Request saved: ${response?.id}`;
         },
-        error: (error) => {
-          return `Failed to save request: ${error.message}`;
-        },
-        position: 'top-right',
+        error: (error) => `Failed to save request: ${error.message}`,
       });
     });
   };

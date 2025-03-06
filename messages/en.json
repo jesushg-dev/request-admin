@@ -332,6 +332,14 @@
           "requestCategory": "Request Category",
           "assignmentCategory": "Assignment Category"
         }
+      },
+      "form": {
+        "categoryStep": {
+          "titleRequest": "Request Category",
+          "titleAssignment": "Assignment Category",
+          "areaLabel": "Area",
+          "areaDescription": "Select the area where the request is assigned."
+        }
       }
     },
     "requestType": {

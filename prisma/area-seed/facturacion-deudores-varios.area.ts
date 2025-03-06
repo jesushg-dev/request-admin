@@ -55,7 +55,7 @@ export async function createFacturacionDeudoresVariosArea(
     },
   }));
 
-  await prisma.area.create({
+  return await prisma.area.create({
     data: {
       id: areaId,
       name: 'Facturacion Deudores Varios',

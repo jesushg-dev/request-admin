@@ -458,7 +458,7 @@ export async function createCommissionsArea(
     },
   }));
 
-  await prisma.area.create({
+  return await prisma.area.create({
     data: {
       id: areaId,
       name: 'Comisiones',

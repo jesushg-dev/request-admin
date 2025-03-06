@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 
-import { OptionType } from '@/components/select/select';
+import { OptionType } from '@/components/custom-ui/select';
 
 // Default select for Users
 export const UserDefaultArgs = Prisma.validator<Prisma.UserDefaultArgs>()({
