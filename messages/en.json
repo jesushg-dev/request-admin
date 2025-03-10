@@ -333,6 +333,68 @@
           "assignmentCategory": "Assignment Category"
         }
       },
+      "view": {
+        "assignments": {
+          "columns": {
+            "area": "Area",
+            "users": "Users",
+            "origin": "Origin",
+            "destination": "Destination",
+            "assignmentDate": "Assignment Date",
+            "unAssignmentDate": "Unassignment Date",
+            "requestCategory": "Request Category",
+            "assignmentCategory": "Assignment Category",
+            "slaStart": "SLA Start",
+            "slaDeadline": "SLA Deadline",
+            "slaEnd": "SLA End",
+            "timeElapsed": "Time Elapsed",
+            "remainingTime": "Remaining Time",
+            "comments": "Comments"
+          },
+          "fields": {
+            "visibleFields": "Visible Fields",
+            "basic": "Basic Info",
+            "sla": "SLA Times",
+            "categories": "Categories",
+            "comments": "Comments"
+          },
+          "filters": {
+            "area": "Area",
+            "users": "Users",
+            "assignmentDate": "Assignment Date"
+          },
+          "reassignArea": "Reassign",
+          "assignUser": "Assign User",
+          "entityLabel": "Assignments",
+          "expired": "Expired",
+          "noComments": "No comments"
+        },
+        "submissions": {
+          "title": "Form Submissions",
+          "entityLabel": "Submissions",
+          "noSubmissions": {
+            "title": "No submissions",
+            "description": "No form submissions found"
+          },
+          "columns": {
+            "visibility": "Visible Columns",
+            "formName": "Form Name",
+            "submittedAt": "Submission Date",
+            "content": "Content"
+          }
+        },
+        "related": {
+          "title": "Related Incidents",
+          "entityLabel": "Incidents",
+          "relateRequest": "Relate Incident",
+          "columns": {
+            "relatedId": "Incident ID",
+            "issueSubject": "Subject",
+            "createdAt": "Creation Date",
+            "noSubject": "No subject"
+          }
+        }
+      },
       "form": {
         "categoryStep": {
           "titleRequest": "Request Category",

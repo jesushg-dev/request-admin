@@ -29,7 +29,7 @@ export type OptionType = { label: string; value: string | number };
  */
 const selectStyles = {
   controlStyles: {
-    base: 'flex min-h-9! w-full rounded-md border border-input bg-transparent pl-3 py-1 pr-1 gap-1 text-sm shadow-xs transition-colors hover:cursor-pointer',
+    base: 'flex min-h-[2.045rem]! w-full rounded-md border border-input bg-transparent pl-3 py-1 pr-1 gap-1 text-sm shadow-xs transition-colors hover:cursor-pointer',
     focus: 'outline-hidden ring-1 ring-ring',
     disabled: 'cursor-not-allowed opacity-50',
   },
@@ -239,7 +239,7 @@ const BaseSelect = <IsMulti extends boolean = false>(props: Props<OptionType, Is
 
 export default React.forwardRef(BaseSelect) as <IsMulti extends boolean = false>(
   p: Props<OptionType, IsMulti> & {
-    ref?: Ref<React.LegacyRef<SelectInstance<OptionType, IsMulti, GroupBase<OptionType>>>>;
+    ref?: Ref<React.RefAttributes<SelectInstance<OptionType, IsMulti, GroupBase<OptionType>>>>;
     isMulti?: IsMulti;
   }
 ) => ReactElement;

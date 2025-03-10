@@ -5,203 +5,402 @@ import { PermissionActions } from '@/constants/permissions';
 import { STATUS } from '@/constants/requests';
 import { auth } from '@/server/auth';
 import { db } from '@/server/db-server';
-import { keysSchema } from '@/services/schemas/form';
 
-import { RequestDetailsType } from '@/types/prisma/request';
+import { RequestDefaultArgs, RequestDetailsType, RequestType } from '@/types/prisma/request';
+import { UserAreaWithRoleType, UserTenantWithAreaDefaultArgs } from '@/types/prisma/user';
 import { RequestFormStepperType } from '@/components/common/request/request-form-stepper';
 
 class UserNotFoundErr extends Error {}
 
 export const upsertRequest = async (tenantId: string, data: RequestFormStepperType) => {
   const session = await auth();
-  if (!session) throw new UserNotFoundErr('User not found');
+  if (!session?.user?.id) throw new UserNotFoundErr('User not found');
 
-  // Validate required categories
+  // Validación de categorías
   if (data.requestCategory.length === 0) throw new Error('Request category is required');
   if (data.assignmentCategory.length === 0) throw new Error('Assignment category is required');
 
-  // Get area with supervisor information
-  const area = await db.area.findFirstOrThrow({
-    select: {
-      userAreas: {
-        select: {
-          userTenantId: true,
-          role: { select: { name: true } },
+  // Obtener request existente con relaciones
+  const existingRequest = await db.request.findUnique({
+    ...RequestDefaultArgs,
+    where: { id: data.id, tenantId },
+  });
+
+  return existingRequest ? await handleUpdate(existingRequest, tenantId, data, session.user.id) : await handleCreate(tenantId, data, session.user.id);
+};
+
+// ========================
+// CREACIÓN DE REQUEST
+// ========================
+const handleCreate = async (tenantId: string, data: RequestFormStepperType, userId: string) => {
+  const [userAreas, requirementCompliances, assignmentType] = await Promise.all([
+    getAreaWithSupervisors(tenantId, data.areaId.value),
+    db.requestCategoryRequirement.findMany({
+      where: { categoryId: { in: data.requestCategory.map((rc) => rc.value) } },
+      select: { requirementId: true, isActive: true },
+    }),
+    db.assignmentType.findFirstOrThrow({
+      where: { systemName: AssignmentTypeEnum.SERVICE_REQUEST, tenantId },
+      select: { id: true },
+    }),
+  ]);
+  console.log('🚀 ~ handleCreate ~ assignmentType:', assignmentType);
+  console.log('🚀 ~ handleCreate ~ requirementCompliances:', requirementCompliances);
+  console.log('🚀 ~ handleCreate ~ userAreas:', userAreas);
+
+  return db.$transaction(async (tx) => {
+    const newRequest = await tx.request.create({
+      data: {
+        id: data.id,
+        tenantId,
+        issueSubject: data.issueSubject,
+        description: data.description,
+        comment: data.comment,
+        requestAssignments: {
+          create: createAssignmentData(tenantId, data, assignmentType.id, userAreas),
         },
-        where: {
-          role: { areaRoleFeatures: { some: { feature: { key: PermissionActions.REQUEST_MANAGEMENT.ASSIGN_USER } } } },
+        complianceTrackings: {
+          create: requirementCompliances.map((rc) => ({
+            tenantId,
+            isArchived: !rc.isActive,
+            requirementId: rc.requirementId,
+            isFulfilled: data.requirementCompliances[rc.requirementId] ?? false,
+          })),
+        },
+        formSubmission: {
+          create: processFormSubmissions(data.submissions, tenantId),
+        },
+        channel: {
+          create: {
+            tenantId,
+            name: `Request ${data.id}`,
+          },
         },
       },
-    },
-    where: { id: data.areaId.value, tenantId },
-  });
-
-  // Get requirement compliances in a single query
-  const requirementCompliances = await db.requestCategoryRequirement.findMany({
-    where: {
-      categoryId: { in: data.requestCategory.map((rc) => rc.value) },
-    },
-    select: { requirementId: true, isActive: true },
-  });
-
-  // Get assignment type once
-  const assignmentType = await db.assignmentType.findFirstOrThrow({
-    select: { id: true },
-    where: { systemName: AssignmentTypeEnum.SERVICE_REQUEST, tenantId },
-  });
-
-  // Process form submissions with proper error handling
-  const processSubmissions = (submissions: typeof data.submissions) => {
-    if (!submissions) return [];
-
-    return Object.entries(submissions).map(([formId, response]) => {
-      const keys = keysSchema.safeParse(response);
-      if (!keys.success) throw new Error(`Invalid keys provided for form ${formId}`);
-
-      return {
-        formId,
-        content: JSON.stringify(response),
-        dataKeys: Object.entries(keys.data).map(([key, value]) => ({ key, value })),
-      };
     });
-  };
 
-  const processedSubmissions = processSubmissions(data.submissions);
+    // Registrar creación
+    await tx.requestChangeLog.create({
+      data: {
+        tenantId,
+        requestId: newRequest.id,
+        changedBy: userId,
+        fieldName: 'request_created',
+        oldValue: null,
+        newValue: null,
+        changedAt: new Date(),
+      },
+    });
 
-  return await db.request.upsert({
-    where: {
-      id: data.id,
-      tenantId,
-    },
-    create: {
-      id: data.id,
-      tenantId,
-      issueSubject: data.issueSubject,
-      description: data.description,
-      comment: data.comment,
-      requestAssignments: {
-        create: {
-          tenantId,
-          typeId: assignmentType.id,
-          areaId: data.areaId.value,
-          statusId: data.statusId.value,
-          priorityId: data.priorityId.value,
-          requestCategoryId: data.requestCategory.slice(-1)[0].value,
-          assignmentCategoryId: data.assignmentCategory.slice(-1)[0].value,
-          assignmentDate: new Date(),
-          assignedUsers: {
-            create: area.userAreas.map((ua) => ({
-              tenantId,
-              role: ua.role.name,
-              userTenantId: ua.userTenantId,
-            })),
+    return newRequest;
+  });
+};
+
+// ========================
+// ACTUALIZACIÓN DE REQUEST
+// ========================
+const handleUpdate = async (existingRequest: RequestType, tenantId: string, data: RequestFormStepperType, userId: string) => {
+  const [area, requirementCompliances, assignmentType] = await Promise.all([
+    getAreaWithSupervisors(tenantId, data.areaId.value),
+    db.requestCategoryRequirement.findMany({
+      where: { categoryId: { in: data.requestCategory.map((rc) => rc.value) } },
+      select: { requirementId: true, isActive: true },
+    }),
+    db.assignmentType.findFirstOrThrow({
+      where: { systemName: AssignmentTypeEnum.SERVICE_REQUEST, tenantId },
+      select: { id: true },
+    }),
+  ]);
+
+  return db.$transaction(async (tx) => {
+    // Actualizar request principal
+    const updatedRequest = await tx.request.update({
+      where: { id: existingRequest.id, tenantId },
+      data: {
+        issueSubject: data.issueSubject,
+        description: data.description,
+        comment: data.comment,
+        requestAssignments: {
+          updateMany: {
+            where: { isActive: true },
+            data: { isActive: false },
           },
+          create: createAssignmentData(tenantId, data, assignmentType.id, area),
         },
-      },
-      complianceTrackings: {
-        create: requirementCompliances.map((rc) => ({
-          tenantId,
-          isArchived: !rc.isActive,
-          requirementId: rc.requirementId,
-          //requestCategoryId: rc.categoryId,
-          isFulfilled: data.requirementCompliances[rc.requirementId] ?? false,
-        })),
-      },
-      formSubmission: {
-        create: processedSubmissions.map(({ formId, content, dataKeys }) => ({
-          tenantId,
-          formId,
-          content,
-          keys: { createMany: { data: dataKeys.map((k) => ({ ...k, tenantId })) } },
-        })),
-      },
-      channel: {
-        create: {
-          tenantId,
-          name: `Request ${data.id}`,
-        },
-      },
-    },
-    update: {
-      issueSubject: data.issueSubject,
-      description: data.description,
-      comment: data.comment,
-      requestAssignments: {
-        // Archive previous assignments
-        updateMany: {
-          where: { isActive: true, requestId: data.id },
-          data: { isActive: false },
-        },
-        // Create new assignment
-        create: {
-          tenantId,
-          typeId: assignmentType.id,
-          areaId: data.areaId.value,
-          statusId: data.statusId.value,
-          priorityId: data.priorityId.value,
-          requestCategoryId: data.requestCategory.slice(-1)[0].value,
-          assignmentCategoryId: data.assignmentCategory.slice(-1)[0].value,
-          assignmentDate: new Date(),
-          assignedUsers: {
-            create: area.userAreas.map((ua) => ({
+        complianceTrackings: {
+          upsert: requirementCompliances.map((rc) => ({
+            where: {
+              unique_compliance_tracking: {
+                tenantId,
+                requirementId: rc.requirementId,
+                requestId: data.id,
+              },
+            },
+            create: {
               tenantId,
-              role: ua.role.name,
-              userTenantId: ua.userTenantId,
-            })),
-          },
-        },
-      },
-      complianceTrackings: {
-        // Upsert compliance tracking records
-        upsert: requirementCompliances.map((rc) => ({
-          where: {
-            unique_compliance_tracking: {
-              tenantId,
+              isArchived: !rc.isActive,
               requirementId: rc.requirementId,
-              requestId: data.id,
+              isFulfilled: data.requirementCompliances[rc.requirementId] ?? false,
+            },
+            update: {
+              isArchived: !rc.isActive,
+              isFulfilled: data.requirementCompliances[rc.requirementId] ?? false,
+            },
+          })),
+        },
+        formSubmission: {
+          upsert: processFormSubmissions(data.submissions, tenantId).map((s) => ({
+            where: {
+              formId_tenantId_requestId: {
+                tenantId,
+                formId: s.formId,
+                requestId: data.id,
+              },
+            },
+            create: s,
+            update: {
+              content: s.content,
+              keys: {
+                deleteMany: {},
+                createMany: { data: s.keys.createMany.data },
+              },
+            },
+          })),
+        },
+      },
+      include: {
+        requestAssignments: {
+          where: { isActive: true },
+          include: {
+            status: true,
+            priority: true,
+            area: true,
+            requestCategory: true,
+            assignmentCategory: true,
+          },
+        },
+      },
+    });
+
+    // Detectar y registrar cambios
+    const changes = detectChanges(existingRequest, updatedRequest);
+
+    for (const change of changes) {
+      await tx.requestChangeLog.create({
+        data: {
+          tenantId,
+          requestId: updatedRequest.id,
+          changedBy: userId,
+          fieldName: change.fieldName,
+          oldValue: change.oldValue?.toString().substring(0, 500), // Asegurar límite de campo
+          newValue: change.newValue?.toString().substring(0, 500),
+          changedAt: new Date(),
+        },
+      });
+    }
+
+    return updatedRequest;
+  });
+};
+
+// ========================
+// FUNCIONES AUXILIARES
+// ========================
+const getAreaWithSupervisors = async (tenantId: string, areaId: string) => {
+  const areaRoleFeature = await db.areaRoleFeature.findMany({
+    select: {
+      areaRole: {
+        select: {
+          name: true,
+          userAreas: {
+            select: {
+              areaId: true,
+              userTenantId: true,
             },
           },
-          create: {
-            tenantId,
-            isArchived: !rc.isActive,
-            requirementId: rc.requirementId,
-            //requestCategoryId: rc.categoryId,
-            isFulfilled: data.requirementCompliances[rc.requirementId] ?? false,
-          },
-          update: {
-            tenantId,
-            isArchived: !rc.isActive,
-            requirementId: rc.requirementId,
-            //requestCategoryId: rc.categoryId,
-            isFulfilled: data.requirementCompliances[rc.requirementId] ?? false,
-          },
-        })),
+        },
       },
-      formSubmission: {
-        // Upsert form submissions with atomic key updates
-        upsert: processedSubmissions.map(({ formId, content, dataKeys }) => ({
-          where: {
-            formId_tenantId_requestId: { tenantId, formId, requestId: data.id },
+    },
+    where: {
+      AND: [
+        {
+          areaRole: {
+            areaId,
           },
-          create: {
-            tenantId,
-            formId,
-            content,
-            keys: { createMany: { data: dataKeys.map((k) => ({ ...k, tenantId })) } },
-          },
-          update: {
-            tenantId,
-            formId,
-            content,
-            keys: {
-              deleteMany: {},
-              createMany: { data: dataKeys.map((k) => ({ ...k, tenantId })) },
+        },
+        {
+          OR: [
+            {
+              feature: {
+                key: PermissionActions.REQUEST_MANAGEMENT.ASSIGN_USER,
+              },
             },
-          },
-        })),
-      },
+            {
+              feature: {
+                key: PermissionActions.REQUEST_MANAGEMENT.SCOPED_ASSIGN_USER,
+              },
+            },
+          ],
+        },
+      ],
     },
   });
+  console.log('🚀 ~ getAreaWithSupervisors ~ areaRoleFeature:', areaRoleFeature);
+
+  return db.userTenant.findMany({
+    ...UserTenantWithAreaDefaultArgs,
+    where: {
+      tenantId,
+      OR: [
+        // Usuarios con permiso GLOBAL (en cualquier área)
+        {
+          userAreas: {
+            some: {
+              role: {
+                areaRoleFeatures: {
+                  some: {
+                    feature: {
+                      key: PermissionActions.REQUEST_MANAGEMENT.ASSIGN_USER,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        // Usuarios con permiso en el ÁREA ACTUAL
+        {
+          userAreas: {
+            some: {
+              areaId: areaId,
+              role: {
+                areaRoleFeatures: {
+                  some: {
+                    feature: {
+                      key: PermissionActions.REQUEST_MANAGEMENT.SCOPED_ASSIGN_USER,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      ],
+    },
+  });
+};
+
+const createAssignmentData = (tenantId: string, data: RequestFormStepperType, assignmentTypeId: string, userAreas: UserAreaWithRoleType[]) => ({
+  tenantId,
+  typeId: assignmentTypeId,
+  areaId: data.areaId.value,
+  statusId: data.statusId.value,
+  priorityId: data.priorityId.value,
+  requestCategoryId: data.requestCategory.slice(-1)[0].value,
+  assignmentCategoryId: data.assignmentCategory.slice(-1)[0].value,
+  assignmentDate: new Date(),
+  assignedUsers: {
+    create: userAreas.map((ua) => ({
+      tenantId,
+      userTenantId: ua.id,
+      role: ua.userAreas.find((ua) => ua.areaId === data.areaId.value)?.role.name ?? 'User',
+    })),
+  },
+});
+
+const processFormSubmissions = (submissions: RequestFormStepperType['submissions'], tenantId: string) => {
+  if (!submissions) return [];
+
+  return Object.entries(submissions).map(([formId, response]) => {
+    const keys = Object.entries(response).reduce(
+      (acc, [key, value]) => {
+        if (typeof value === 'string' || typeof value === 'number') {
+          acc[key] = value.toString();
+        }
+        return acc;
+      },
+      {} as Record<string, string>
+    );
+
+    return {
+      formId,
+      tenantId,
+      content: JSON.stringify(response),
+      keys: {
+        createMany: {
+          data: Object.entries(keys).map(([key, val]) => ({
+            key,
+            value: val,
+            tenantId,
+          })),
+        },
+      },
+    };
+  });
+};
+
+type AssignmentWithRelations = {
+  status: { id: string; name: string };
+  priority: { id: string; name: string };
+  area: { id: string; name: string };
+  requestCategory: { id: string; name: string };
+  assignmentCategory: { id: string; name: string };
+  isActive: boolean;
+};
+
+const detectChanges = (oldRequest: RequestType, newRequest: RequestType) => {
+  const changes: Array<{
+    fieldName: string;
+    oldValue?: string | null;
+    newValue?: string | null;
+  }> = [];
+
+  // Campos directos del Request
+  const mainFields: Array<keyof typeof oldRequest> = ['issueSubject', 'description', 'comment'];
+
+  // Comparar campos principales
+  for (const field of mainFields) {
+    if (oldRequest[field] !== newRequest[field]) {
+      changes.push({
+        fieldName: field,
+        oldValue: oldRequest[field]?.toString(),
+        newValue: newRequest[field]?.toString(),
+      });
+    }
+  }
+
+  // Campos del Assignment
+  const oldAssignment = oldRequest.requestAssignments[0];
+  const newAssignment = newRequest.requestAssignments[0];
+
+  if (oldAssignment && newAssignment) {
+    // Tipo seguro para las propiedades del assignment
+    type AssignmentField = keyof Pick<AssignmentWithRelations, 'status' | 'priority' | 'area' | 'requestCategory' | 'assignmentCategory'>;
+
+    const assignmentFields: { name: string; prop: AssignmentField }[] = [
+      { name: 'status', prop: 'status' },
+      { name: 'priority', prop: 'priority' },
+      { name: 'area', prop: 'area' },
+      { name: 'requestCategory', prop: 'requestCategory' },
+      { name: 'assignmentCategory', prop: 'assignmentCategory' },
+    ];
+
+    // Comparar campos anidados
+    for (const { name, prop } of assignmentFields) {
+      const oldVal = oldAssignment[prop]?.name;
+      const newVal = newAssignment[prop]?.name;
+
+      if (oldVal !== newVal) {
+        changes.push({
+          fieldName: name,
+          oldValue: oldVal,
+          newValue: newVal,
+        });
+      }
+    }
+  }
+
+  return changes;
 };
 
 export const getRequestById = async (tenantId: string, requestId: string): Promise<RequestFormStepperType> => {

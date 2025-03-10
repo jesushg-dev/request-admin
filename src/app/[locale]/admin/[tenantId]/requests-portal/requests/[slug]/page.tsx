@@ -7,13 +7,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AssignmentHistory from '@/components/common/request/detail/assignments-viewer';
 import AssociatedFilesViewer from '@/components/common/request/detail/associated-files-viewer';
 import Messages from '@/components/common/request/detail/messages';
-import { RelatedViewer } from '@/components/common/request/detail/related-viewer';
+import RelatedViewer from '@/components/common/request/detail/related-viewer';
 import RequestActivities from '@/components/common/request/detail/request-activities';
 import ProjectDetails from '@/components/common/request/detail/request-details';
 import RequirementProgress from '@/components/common/request/detail/requirement-progress';
 import FormSubmissionsViewer from '@/components/common/request/detail/submissions-viewer';
 
-import { activities, documents, guideDocuments } from './mockData';
+import { documents, guideDocuments } from './mockData';
 
 export default async function CaseDetailPage({ params }: { params: Promise<{ locale: string; tenantId: string; slug: string }> }) {
   const { locale, tenantId, slug } = await params;
@@ -54,7 +54,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ loc
               <TabsTrigger value="history">History</TabsTrigger>
             </TabsList>
             <TabsContent value="requirements" className="flex-1 flex flex-col overflow-hidden">
-              <RequirementProgress tenantId={tenantId} requirementCompliances={request.requirementCompliances} />
+              <RequirementProgress tenantId={tenantId} requestId={slug} />
             </TabsContent>
             <TabsContent value="assignments" className="flex-1 flex flex-col overflow-hidden">
               <AssignmentHistory tenantId={tenantId} requestId={slug} />
@@ -63,7 +63,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ loc
               <Messages currentUserTenantId={currentUser.userTenantId} channel={requestDetails.channel} tenantId={tenantId} />
             </TabsContent>
             <TabsContent value="submissions" className="flex-1 flex flex-col overflow-hidden">
-              <FormSubmissionsViewer submissions={request.submissions} />
+              <FormSubmissionsViewer requestId={slug} />
             </TabsContent>
             <TabsContent value="files" className="flex-1 flex flex-col overflow-hidden">
               <AssociatedFilesViewer guideDocuments={guideDocuments} documents={documents} />
@@ -72,7 +72,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ loc
               <RelatedViewer requestId={slug} tenantId={tenantId} />
             </TabsContent>
             <TabsContent value="history" className="flex-1 flex flex-col overflow-hidden">
-              <RequestActivities activities={activities} />
+              <RequestActivities requestId={slug} tenantId={tenantId} />
             </TabsContent>
           </Tabs>
         </div>

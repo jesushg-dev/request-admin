@@ -41,7 +41,7 @@ interface DataTableAdvancedToolbarProps<TData> extends React.HTMLAttributes<HTML
    *   }
    * ]
    */
-  filterFields: DataTableAdvancedFilterField<TData>[];
+  filterFields?: DataTableAdvancedFilterField<TData>[];
 
   /**
    * Debounce time (ms) for filter updates to enhance performance during rapid input.
@@ -55,18 +55,36 @@ interface DataTableAdvancedToolbarProps<TData> extends React.HTMLAttributes<HTML
    * @default true
    */
   shallow?: boolean;
+  isFilterHidden?: boolean;
+  isSortHidden?: boolean;
+  isViewHidden?: boolean;
+  isDateRangeHidden?: boolean;
 }
 
-export function DataTableAdvancedToolbar<TData>({ table, filterFields = [], debounceMs = 300, shallow = true, children, className, ...props }: DataTableAdvancedToolbarProps<TData>) {
+export function DataTableAdvancedToolbar<TData>({
+  table,
+  isFilterHidden = false,
+  isSortHidden = false,
+  isViewHidden = false,
+  isDateRangeHidden = false,
+  filterFields = [],
+  debounceMs = 300,
+  shallow = true,
+  children,
+  className,
+  ...props
+}: DataTableAdvancedToolbarProps<TData>) {
   return (
     <div className={cn('flex w-full items-center justify-between gap-2 overflow-auto', className)} {...props}>
       <div className="flex items-center gap-2">
-        <DataTableViewOptions table={table} />
-        <DataTableFilterList table={table} filterFields={filterFields} debounceMs={debounceMs} shallow={shallow} />
-        <DataTableSortList table={table} debounceMs={debounceMs} shallow={shallow} />
-        <React.Suspense fallback={<Skeleton className="h-7 w-52" />}>
-          <DateRangePicker triggerSize="sm" triggerClassName="ml-auto w-56 sm:w-60" align="end" shallow={false} />
-        </React.Suspense>
+        {!isViewHidden && <DataTableViewOptions table={table} />}
+        {!isFilterHidden && <DataTableFilterList table={table} filterFields={filterFields} debounceMs={debounceMs} shallow={shallow} />}
+        {!isSortHidden && <DataTableSortList table={table} debounceMs={debounceMs} shallow={shallow} />}
+        {!isDateRangeHidden && (
+          <React.Suspense fallback={<Skeleton className="h-7 w-52" />}>
+            <DateRangePicker triggerSize="sm" triggerClassName="ml-auto w-56 sm:w-60" align="end" shallow={false} />
+          </React.Suspense>
+        )}
       </div>
       <div className="flex items-center gap-2">{children}</div>
     </div>

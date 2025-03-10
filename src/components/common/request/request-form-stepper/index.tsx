@@ -85,7 +85,7 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, re
       toast.promise(promise, {
         loading: 'Saving request...',
         success: (response) => {
-          router.push({ pathname: '/admin/[tenantId]/requests-portal/requests', params: { tenantId } });
+          router.push({ pathname: '/admin/[tenantId]/requests-portal/requests/[slug]', params: { tenantId, slug: response.id } });
           return `Request saved: ${response?.id}`;
         },
         error: (error) => `Failed to save request: ${error.message}`,
@@ -97,7 +97,7 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, re
     <div className="flex flex-col flex-1 p-4">
       <Card className="w-full flex flex-col flex-1 overflow-hidden">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between space-y-6 overflow-hidden p-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between gap-4 overflow-hidden p-6">
             <ChildStepsProvider initialSteps={{}}>
               <StepNavigation steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo}>
                 {(index, currentIndex) => <ChildSteps index={index} currentIndex={currentIndex} currentId={stepper.current.id} />}

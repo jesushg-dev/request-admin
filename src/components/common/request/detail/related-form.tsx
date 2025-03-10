@@ -1,77 +1,93 @@
+'use client';
+
+import { useTransition } from 'react';
+import { useRouter } from '@/i18n/routing';
+import { useUpsertRelatedIncident } from '@/services/api/hooks';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { LoaderCircleIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
+import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
 
-export const mockRequests: Request[] = [
-  { id: 'request-1', title: 'Network Issue' },
-  { id: 'request-2', title: 'Software Bug' },
-  { id: 'request-3', title: 'Hardware Failure' },
-  { id: 'request-4', title: 'Access Problem' },
-];
-export interface RelatedIncident {
-  id: string;
-  requestId: string;
-  relatedId: string;
-}
+const RelatedIncidentSchema = z.object({
+  id: z.string(),
+  relatedId: z.string().uuid(),
+  isActive: z.boolean().default(true),
+});
 
-export interface Request {
-  id: string;
-  title: string;
-  // Add other relevant fields here
-}
+export type RelatedIncident = z.infer<typeof RelatedIncidentSchema>;
+
+export const getDefaultValues = (): RelatedIncident => ({
+  id: generateUuid(),
+  relatedId: '',
+  isActive: true,
+});
 
 interface RelatedIncidentFormProps {
-  currentRequestId: string;
-  onComplete?: () => void;
+  tenantId: string;
+  requestId: string;
+  initialValues?: RelatedIncident | null;
 }
 
-export function RelatedIncidentForm({ currentRequestId, onComplete }: RelatedIncidentFormProps) {
+export function RelatedIncidentForm({ tenantId, requestId, initialValues }: RelatedIncidentFormProps) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const { mutateAsync: upsert, error } = useUpsertRelatedIncident();
+
   const form = useForm<RelatedIncident>({
-    defaultValues: {
-      requestId: currentRequestId,
-    },
+    resolver: zodResolver(RelatedIncidentSchema),
+    defaultValues: initialValues ?? getDefaultValues(),
   });
 
-  const onSubmit = (data: RelatedIncident) => {
-    console.log('Related Incident Form Data:', data);
-    if (onComplete) {
-      onComplete();
-    }
-    // Here you would typically send this data to your API
+  const onSubmit = ({ id, relatedId }: RelatedIncident) => {
+    startTransition(async () => {
+      const promise = upsert({
+        create: { tenantId, requestId, relatedId },
+        update: { tenantId, requestId, relatedId },
+        where: { id },
+      });
+
+      toast.promise(promise, {
+        loading: 'Saving changes...',
+        success: (response) => {
+          router.push({ pathname: '/admin/[tenantId]/requests-portal/requests/[slug]', params: { tenantId, slug: requestId } });
+          return `Related incident (${response?.id}) has been saved successfully.`;
+        },
+        error: (error) => `Failed to save requirement: ${error.message}`,
+      });
+    });
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        {error && <PrismaErrorAlert error={error} />}
+
         <FormField
           control={form.control}
           name="relatedId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Related Incident</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a related incident" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {mockRequests
-                    .filter((request) => request.id !== currentRequestId)
-                    .map((request) => (
-                      <SelectItem key={request.id} value={request.id}>
-                        {request.title}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
+              <FormLabel>Related Id</FormLabel>
+              <FormControl>
+                <Input placeholder="00000000-0000-0000-0000-000000000000" {...field} />
+              </FormControl>
+              <FormDescription>Type the id of the related incident.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Add Related Incident</Button>
+
+        <Button type="submit" disabled={isPending}>
+          {initialValues ? 'Save Changes' : 'Add Related Incident'}
+          {isPending && <LoaderCircleIcon className="animate-spin" />}
+        </Button>
       </form>
     </Form>
   );

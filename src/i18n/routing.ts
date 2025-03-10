@@ -102,6 +102,10 @@ const requestsPathnames = {
     en: '/admin/[tenantId]/requests-portal/requests/[slug]/edit',
     es: '/admin/[tenantId]/solicitudes-portal/solicitudes/[slug]/editar',
   },
+  '/admin/[tenantId]/requests-portal/requests/[slug]/relate': {
+    en: '/admin/[tenantId]/requests-portal/requests/[slug]/relate',
+    es: '/admin/[tenantId]/solicitudes-portal/solicitudes/[slug]/relacionar',
+  },
   // Request types
   '/admin/[tenantId]/requests-portal/request-types': {
     en: '/admin/[tenantId]/requests-portal/request-types',

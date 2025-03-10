@@ -1,5 +1,3 @@
-'use client';
-
 import { FC } from 'react';
 
 import AssignRequestsForm from '@/components/common/request/assign-requests-form';

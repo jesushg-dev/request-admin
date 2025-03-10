@@ -1,3 +1,24 @@
+import { Prisma } from '@prisma/client';
+
+// Default select for Requests
+export const RequestDefaultArgs = Prisma.validator<Prisma.RequestDefaultArgs>()({
+  include: {
+    requestAssignments: {
+      where: { isActive: true },
+      include: {
+        status: true,
+        priority: true,
+        area: true,
+        requestCategory: true,
+        assignmentCategory: true,
+      },
+    },
+  },
+});
+
+// Type for Requests with selected fields
+export type RequestType = Prisma.RequestGetPayload<typeof RequestDefaultArgs>;
+
 export type RequestDetailsType = {
   submissions: {
     count: number;

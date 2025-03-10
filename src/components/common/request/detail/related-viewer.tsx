@@ -1,76 +1,130 @@
 'use client';
 
-import { useState } from 'react';
-import { useFindManyRelatedIncident } from '@/services/api/hooks';
+import React, { memo, useMemo } from 'react';
+import { Link } from '@/i18n/routing';
+import { useCountRelatedIncident, useFindManyRelatedIncident } from '@/services/api/hooks';
+import { Prisma } from '@prisma/client';
+import { ColumnDef } from '@tanstack/react-table';
+import { FileSymlinkIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import EmptyState from '@/components/shared/empty-state';
+import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
+import { formatDate } from '@/lib/utils';
+import { useDataTable } from '@/hooks/use-data-table';
+import { useFetchTableData } from '@/hooks/use-fetch-table-data';
+import { Button } from '@/components/ui/button';
+import ErrorRetryFallback from '@/components/common/error-retry-fallback';
+import { DataTable, DataTableShell } from '@/components/data-table/data-table';
+import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-advanced-toolbar';
+import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
 
-import ErrorRetryFallback from '../../error-retry-fallback';
-import { RelatedIncidentModal } from './related-modal';
-import { ViewToggle } from './view-toggle';
+export const RelatedIncidentDefaultArgs = Prisma.validator<Prisma.RelatedIncidentDefaultArgs>()({
+  select: {
+    id: true,
+    createdAt: true,
+    request: { select: { id: true, issueSubject: true } },
+  },
+});
+
+export type RelatedIncident = Prisma.RelatedIncidentGetPayload<typeof RelatedIncidentDefaultArgs>;
+
+const searchParamsParsers = {
+  page: parseAsInteger.withDefault(1),
+  perPage: parseAsInteger.withDefault(100),
+  sort: getSortingStateParser<RelatedIncident>().withDefault([{ id: 'createdAt', desc: true }]),
+  filters: getFiltersStateParser<RelatedIncident>().withDefault([]),
+  joinOperator: parseAsStringEnum(['and', 'or']).withDefault('and'),
+};
 
 interface RelatedViewerProps {
   tenantId: string;
   requestId: string;
 }
 
-export function RelatedViewer({ tenantId, requestId }: RelatedViewerProps) {
-  const [viewType, setViewType] = useState<'table' | 'card'>('table');
-  const { data, isLoading, isError, error, refetch } = useFindManyRelatedIncident({
-    select: { id: true, request: { select: { id: true, issueSubject: true } } },
-    where: { tenantId, requestId },
+const RelatedViewer: React.FC<RelatedViewerProps> = ({ tenantId, requestId }) => {
+  const t = useTranslations('admin.request.view.related');
+  const [search] = useQueryStates(searchParamsParsers);
+
+  const { data, isLoading, isError, error, refetch, pageCount } = useFetchTableData<RelatedIncident, Prisma.RelatedIncidentFindManyArgs, Prisma.RelatedIncidentCountArgs>({
+    search,
+    useCountHook: useCountRelatedIncident,
+    useFindManyHook: useFindManyRelatedIncident,
+    defaultArgs: {
+      ...RelatedIncidentDefaultArgs,
+      where: { tenantId, requestId },
+    },
   });
 
-  if (isLoading) return <Skeleton />;
-  if (isError) return <ErrorRetryFallback error={error} onRetry={refetch} />;
+  const { columns } = useMemo(() => getTableConfiguration({ t }), [t]);
+
+  const { table } = useDataTable({
+    data: data ?? [],
+    columns,
+    pageCount,
+    enableAdvancedFilter: true,
+    initialState: {
+      sorting: [{ id: 'createdAt', desc: true }],
+    },
+  });
+
+  if (isError && error) return <ErrorRetryFallback error={error} onRetry={refetch} />;
 
   return (
-    <Card className="flex-1 flex flex-col">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle>Related Incidents</CardTitle>
+    <DataTableShell table={table}>
+      <DataTable table={table} isLoading={isLoading}>
+        <DataTableAdvancedToolbar table={table} isFilterHidden isSortHidden isDateRangeHidden>
           <div className="flex items-center gap-2">
-            <RelatedIncidentModal currentRequestId={requestId} />
-            <ViewToggle viewType={viewType} onViewChange={setViewType} />
+            <Button variant="outline" size="sm" asChild>
+              <Link
+                href={{
+                  pathname: '/admin/[tenantId]/requests-portal/requests/[slug]/relate',
+                  params: { tenantId, slug: requestId },
+                }}>
+                <FileSymlinkIcon className="h-4 w-4 mr-2" />
+                {t('relateRequest')}
+              </Link>
+            </Button>
+            <DataTableToolbarActions table={table} entityLabel={t('entityLabel')} exportFilename="related-incidents" />
           </div>
-        </div>
-      </CardHeader>
-      <CardContent className="flex-1 flex-col flex">
-        {!data || data.length === 0 ? <EmptyState title="No related incidents" /> : viewType === 'table' ? <RenderTableView data={data} /> : <RenderCardView data={data} />}
-      </CardContent>
-    </Card>
+        </DataTableAdvancedToolbar>
+      </DataTable>
+    </DataTableShell>
   );
+};
+
+interface GetTableConfigurationProps {
+  t: ReturnType<typeof useTranslations>;
 }
 
-interface RenderViewProps {
-  data: { id: string; request: { id: string; issueSubject: string | null } }[];
+function getTableConfiguration({ t }: GetTableConfigurationProps) {
+  const columns: ColumnDef<RelatedIncident>[] = [
+    {
+      id: 'relatedId',
+      accessorKey: 'request.id',
+      header: t('columns.relatedId'),
+      size: 120,
+      cell: ({ row }) => row.original.request.id,
+    },
+    {
+      id: 'issueSubject',
+      accessorKey: 'request.issueSubject',
+      header: t('columns.issueSubject'),
+      cell: ({ row }) => row.original.request.issueSubject || t('noSubject'),
+    },
+    {
+      id: 'createdAt',
+      accessorFn: (row) => formatDate(row.createdAt),
+      header: t('columns.createdAt'),
+    },
+  ];
+
+  return { columns };
 }
 
-const RenderTableView = ({ data }: RenderViewProps) => (
-  <Table>
-    <TableHeader>
-      <TableRow className="bg-secondary/50">
-        <TableHead>ID</TableHead>
-        <TableHead>Title</TableHead>
-        <TableHead>Issue Subject</TableHead>
-      </TableRow>
-    </TableHeader>
-    <TableBody>
-      {data.map((incident) => (
-        <TableRow key={incident.id}>
-          <TableCell>{incident.id}</TableCell>
-          <TableCell>{incident.request.id}</TableCell>
-          <TableCell>{incident.request.issueSubject}</TableCell>
-        </TableRow>
-      ))}
-    </TableBody>
-  </Table>
-);
+export default memo(RelatedViewer);
 
-const RenderCardView = ({ data }: RenderViewProps) => (
+/*const RenderCardView = ({ data }: RenderViewProps) => (
   <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
     {data.map((incident) => (
       <Card key={incident.id} className="bg-secondary/10">
@@ -89,3 +143,4 @@ const RenderCardView = ({ data }: RenderViewProps) => (
     ))}
   </div>
 );
+*/

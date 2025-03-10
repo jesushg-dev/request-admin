@@ -57,6 +57,7 @@ model RelatedIncident extends TenantScoped, Auditable {
   id        String  @id @default(uuid()) @db.UniqueIdentifier
   requestId String  @db.UniqueIdentifier
   relatedId String  @db.UniqueIdentifier
+  isActive  Boolean @default(true)
 
   request   Request @relation("RequestIncident", fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   related   Request @relation("RequestRelated", fields: [relatedId], references: [id], onDelete: NoAction, onUpdate: NoAction)

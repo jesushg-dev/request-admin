@@ -26,12 +26,16 @@ export default function PageDialogWrapper({ title, description, children, classN
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className={cn('sm:max-w-[425px] h-[calc(100vh-2rem)]', 'flex flex-col overflow-hidden', className)}>
+      <DialogContent className={cn('max-h-[calc(100vh-2rem)]', 'flex flex-col overflow-hidden', className)}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
-        {children}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex-1 overflow-auto">
+            <div className="flex flex-1 flex-col justify-between overflow-hidden px-1">{children}</div>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

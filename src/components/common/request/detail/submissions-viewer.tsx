@@ -1,153 +1,161 @@
 'use client';
 
-import { useState } from 'react';
-import { useFindManyForm } from '@/services/api/hooks';
-import { InboxIcon, Settings } from 'lucide-react';
+import React, { memo, useMemo } from 'react';
+import { useCountFormSubmission, useFindManyFormSubmission } from '@/services/api/hooks';
+import { Prisma } from '@prisma/client';
+import { ColumnDef } from '@tanstack/react-table';
+import { useTranslations } from 'next-intl';
+import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import EmptyState from '@/components/shared/empty-state';
+import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
+import { formatDate } from '@/lib/utils';
+import { useDataTable } from '@/hooks/use-data-table';
+import { useFetchTableData } from '@/hooks/use-fetch-table-data';
+import { Card, CardContent } from '@/components/ui/card';
+import ErrorRetryFallback from '@/components/common/error-retry-fallback';
+import { DataTable, DataTableShell } from '@/components/data-table/data-table';
+import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-advanced-toolbar';
+import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
 
-import { ViewToggle } from './view-toggle';
+export const FormSubmissionDefaultArgs = Prisma.validator<Prisma.FormSubmissionDefaultArgs>()({
+  select: {
+    id: true,
+    createdAt: true,
+    form: { select: { name: true, content: true } },
+    keys: { select: { key: true, value: true } },
+  },
+});
 
-type ColumnVisibility = {
-  formName: boolean;
-  submittedAt: boolean;
-  content: boolean;
-};
+export type FormSubmission = Prisma.FormSubmissionGetPayload<typeof FormSubmissionDefaultArgs>;
 
-export interface FormSubmission {
+type ProcessedSubmission = {
   id: string;
   formName: string;
-  submittedAt: string;
+  createdAt: Date;
   content: Record<string, string>;
+};
+
+const searchParamsParsers = {
+  page: parseAsInteger.withDefault(1),
+  perPage: parseAsInteger.withDefault(100),
+  sort: getSortingStateParser<FormSubmission>().withDefault([{ id: 'createdAt', desc: true }]),
+  filters: getFiltersStateParser<FormSubmission>().withDefault([]),
+  joinOperator: parseAsStringEnum(['and', 'or']).withDefault('and'),
+};
+
+interface FormSubmissionsViewerProps {
+  requestId: string;
 }
 
-export default function FormSubmissionsViewer({ submissions }: { submissions?: Record<string, Record<string, string | number | boolean>> }) {
-  const { data, isLoading } = useFindManyForm({
-    select: { id: true, name: true, content: true },
-    where: { id: { in: Object.keys(submissions || {}) } },
+const FormSubmissionsViewer: React.FC<FormSubmissionsViewerProps> = ({ requestId }) => {
+  const t = useTranslations('admin.request.view.submissions');
+  const [search] = useQueryStates(searchParamsParsers);
+
+  const { data, isLoading, isError, error, refetch, pageCount } = useFetchTableData<FormSubmission, Prisma.FormSubmissionFindManyArgs, Prisma.FormSubmissionCountArgs>({
+    search,
+    useCountHook: useCountFormSubmission,
+    useFindManyHook: useFindManyFormSubmission,
+    defaultArgs: {
+      ...FormSubmissionDefaultArgs,
+      where: { requestId },
+    },
   });
 
-  const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
-  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>({
-    formName: true,
-    submittedAt: false, // Hidden by default
-    content: true,
+  const formSubmissions = useMemo<ProcessedSubmission[]>(() => {
+    return (
+      data?.map((submission) => {
+        const elements = JSON.parse(submission.form.content || '[]') as { id: string; extraAttributes: { label: string } }[];
+
+        const submissionContent: Record<string, string> = submission.keys.reduce(
+          (acc, { key, value }) => {
+            const element = elements.find((element) => element.id === key);
+            if (element && element.extraAttributes.label) {
+              acc[element.extraAttributes.label] = String(value);
+            }
+            return acc;
+          },
+          {} as Record<string, string>
+        );
+
+        return {
+          id: submission.id,
+          formName: submission.form.name,
+          createdAt: submission.createdAt,
+          content: submissionContent,
+        };
+      }) || []
+    );
+  }, [data]);
+
+  const { columns } = useMemo(() => getTableConfiguration({ t }), [t]);
+
+  const { table } = useDataTable({
+    data: formSubmissions,
+    columns,
+    pageCount,
+    enableAdvancedFilter: true,
+    initialState: {
+      sorting: [{ id: 'createdAt', desc: true }],
+      columnVisibility: {
+        createdAt: false,
+      },
+    },
   });
 
-  const toggleColumnVisibility = (column: keyof ColumnVisibility) => {
-    setColumnVisibility((prev) => ({ ...prev, [column]: !prev[column] }));
-  };
-
-  const formSubmissions: FormSubmission[] =
-    data?.map((form) => {
-      const elements = JSON.parse(form.content || '[]') as { id: string; extraAttributes: { label: string } }[];
-
-      const submissionContent: Record<string, string> = Object.entries(submissions?.[form.id] || {}).reduce(
-        (acc, [key, value]) => {
-          const element = elements.find((element) => element.id === key);
-          if (element && element.extraAttributes.label) {
-            acc[element.extraAttributes.label] = String(value);
-          }
-          return acc;
-        },
-        {} as Record<string, string>
-      );
-
-      return {
-        id: form.id,
-        formName: form.name,
-        submittedAt: Date().toString(),
-        content: submissionContent,
-      };
-    }) || [];
+  if (isError && error) return <ErrorRetryFallback error={error} onRetry={refetch} />;
 
   return (
-    <Card className="flex-1 flex flex-col">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle>Form Submissions</CardTitle>
+    <DataTableShell table={table}>
+      <DataTable table={table} isLoading={isLoading} emptyState={{ title: t('noSubmissions.title'), description: t('noSubmissions.description') }}>
+        <DataTableAdvancedToolbar table={table} isFilterHidden isSortHidden isDateRangeHidden>
           <div className="flex items-center gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button type="button" variant="outline" size="sm">
-                  <Settings className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuCheckboxItem checked={columnVisibility.formName} onCheckedChange={() => toggleColumnVisibility('formName')}>
-                  Form Name
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem checked={columnVisibility.submittedAt} onCheckedChange={() => toggleColumnVisibility('submittedAt')}>
-                  Submitted At
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem checked={columnVisibility.content} onCheckedChange={() => toggleColumnVisibility('content')}>
-                  Content
-                </DropdownMenuCheckboxItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <ViewToggle viewType={viewMode} onViewChange={setViewMode} />
+            <DataTableToolbarActions table={table} entityLabel={t('entityLabel')} exportFilename="form-submissions" />
           </div>
-        </div>
-      </CardHeader>
-      <CardContent className="flex-1 flex-col flex">
-        {isLoading ? (
-          <div className="flex justify-center py-8">
-            <Skeleton className="w-32 h-6" />
-            <Skeleton className="w-32 h-6" />
-            <Skeleton className="w-32 h-6" />
-          </div>
-        ) : !formSubmissions.length ? (
-          <EmptyState title="No submissions available" icon={<InboxIcon className="w-10 h-10" />} description="No form submissions have been made yet." />
-        ) : viewMode === 'table' ? (
-          <TableView submissions={formSubmissions} columnVisibility={columnVisibility} />
-        ) : (
-          <CardView submissions={formSubmissions} columnVisibility={columnVisibility} />
-        )}
-      </CardContent>
-    </Card>
+        </DataTableAdvancedToolbar>
+      </DataTable>
+    </DataTableShell>
   );
+};
+
+interface GetTableConfigurationProps {
+  t: ReturnType<typeof useTranslations>;
 }
 
-function TableView({ submissions, columnVisibility }: { submissions: FormSubmission[]; columnVisibility: ColumnVisibility }) {
-  return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          {columnVisibility.formName && <TableHead>Form Name</TableHead>}
-          {columnVisibility.submittedAt && <TableHead>Submitted At</TableHead>}
-          {columnVisibility.content && <TableHead>Content</TableHead>}
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {submissions.map((submission) => (
-          <TableRow key={submission.id}>
-            {columnVisibility.formName && <TableCell className="font-medium">{submission.formName}</TableCell>}
-            {columnVisibility.submittedAt && <TableCell>{new Date(submission.submittedAt).toLocaleString()}</TableCell>}
-            {columnVisibility.content && (
-              <TableCell>
-                <Card>
-                  <CardContent className="p-4">
-                    {Object.entries(submission.content).map(([key, value]) => (
-                      <div key={key} className="mb-2">
-                        <span className="font-semibold">{key}:</span> {value}
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
-              </TableCell>
-            )}
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  );
+function getTableConfiguration({ t }: GetTableConfigurationProps) {
+  const columns: ColumnDef<ProcessedSubmission>[] = [
+    {
+      id: 'formName',
+      accessorKey: 'formName',
+      header: t('columns.formName'),
+      size: 80,
+    },
+    {
+      id: 'createdAt',
+      accessorFn: (row) => formatDate(row.createdAt),
+      header: t('columns.submittedAt'),
+    },
+    {
+      id: 'content',
+      header: t('columns.content'),
+      cell: ({ row }) => (
+        <Card>
+          <CardContent className="p-4">
+            {Object.entries(row.original.content).map(([key, value]) => (
+              <div key={key} className="mb-2">
+                <span className="font-semibold">{key}:</span> {value}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      ),
+    },
+  ];
+
+  return { columns };
 }
 
+export default memo(FormSubmissionsViewer);
+/*
 function CardView({ submissions, columnVisibility }: { submissions: FormSubmission[]; columnVisibility: ColumnVisibility }) {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -170,4 +178,4 @@ function CardView({ submissions, columnVisibility }: { submissions: FormSubmissi
       ))}
     </div>
   );
-}
+}*/

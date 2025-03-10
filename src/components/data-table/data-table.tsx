@@ -1,6 +1,6 @@
 import { createContext, Fragment, ReactNode, useContext } from 'react';
 import { ColumnDef, flexRender, type Row, type Table as TanstackTable } from '@tanstack/react-table';
-import { NotepadText, NotepadTextDashed } from 'lucide-react';
+import { InboxIcon, NotepadText, NotepadTextDashed } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { parseAsBoolean, useQueryState } from 'nuqs';
 
@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DataTablePagination } from '@/components/data-table/data-table-pagination';
 
 import { Hint } from '../hint';
+import EmptyState from '../shared/empty-state';
 import { Button } from '../ui/button';
 import { DataTableSkeleton } from './data-table-skeleton';
 
@@ -52,9 +53,13 @@ interface DataTableProps<TData, TSubData> extends CommonDataTableProps<TData> {
     render: (props: { row: Row<TData>; isExpanded: boolean; columns: ColumnDef<TSubData>[] }) => React.ReactNode;
   };
   isLoading?: boolean;
+  emptyState?: {
+    title: string;
+    description: string;
+  };
 }
 
-export function DataTable<TData, TSubData>({ table, subComponent, isLoading, children }: DataTableProps<TData, TSubData>) {
+export function DataTable<TData, TSubData>({ table, subComponent, emptyState, isLoading, children }: DataTableProps<TData, TSubData>) {
   if (isLoading) {
     return <DataTableSkeleton columnCount={10} cellWidths={['10rem', '40rem', '12rem', '12rem', '8rem', '8rem']} shrinkZero />;
   }
@@ -63,7 +68,7 @@ export function DataTable<TData, TSubData>({ table, subComponent, isLoading, chi
     <>
       {children}
       <div className="flex flex-1 overflow-auto rounded-md border">
-        <Table>
+        <Table className={table.getRowModel().rows?.length ? '' : 'h-full'}>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -92,8 +97,8 @@ export function DataTable<TData, TSubData>({ table, subComponent, isLoading, chi
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={table.getAllColumns().length} className="h-24 text-center">
-                  No results.
+                <TableCell colSpan={table.getAllColumns().length} className="h-full w-full text-center">
+                  <EmptyState title={emptyState?.title ?? 'No data'} description={emptyState?.description ?? 'There are no records to display'} icon={<InboxIcon className="w-10 h-10" />} />
                 </TableCell>
               </TableRow>
             )}

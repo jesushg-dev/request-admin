@@ -8,7 +8,7 @@ const NewRequirementPage: FC = async () => {
   const t = await getTranslations('component.formBuilder');
 
   return (
-    <PageDialogWrapper title={t('createNewForm')} className="h-[calc(90vh-4rem)]" description={t('dialogDescription')}>
+    <PageDialogWrapper title={t('createNewForm')} description={t('dialogDescription')}>
       <CreateNewForm />
     </PageDialogWrapper>
   );

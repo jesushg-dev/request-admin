@@ -20,7 +20,7 @@ import Select from '@/components/custom-ui/select';
 import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
 
 const formSchema = z.object({
-  id: z.string().uuid().default(generateUuid),
+  id: z.string().uuid(),
   name: z.string().min(1, 'Name is required').max(200, 'Name must be 200 characters or less').default(''),
   description: z.string().min(1, 'Description is required').max(500, 'Description must be 500 characters or less').default(''),
   isRequiredOnlyOnce: z.boolean().default(false),
@@ -33,9 +33,18 @@ const formSchema = z.object({
 
 export type RequirementFormValues = z.infer<typeof formSchema>;
 
+export const getDefaultValues = (): RequirementFormValues => ({
+  id: generateUuid(),
+  name: '',
+  description: '',
+  isRequiredOnlyOnce: false,
+  isActive: true,
+  requirementType: { label: '', value: '' },
+});
+
 interface RequirementFormProps {
   tenantId: string;
-  initialValues?: (RequirementFormValues & { id: string }) | null;
+  initialValues?: RequirementFormValues | null;
 }
 
 export function RequirementForm({ tenantId, initialValues }: RequirementFormProps) {
@@ -46,7 +55,7 @@ export function RequirementForm({ tenantId, initialValues }: RequirementFormProp
 
   const form = useForm<RequirementFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialValues ?? {},
+    defaultValues: initialValues ?? getDefaultValues(),
   });
 
   const requirementTypeOptions =
@@ -74,19 +83,16 @@ export function RequirementForm({ tenantId, initialValues }: RequirementFormProp
           isRequiredOnlyOnce: result.isRequiredOnlyOnce,
           isActive: result.isActive,
         },
-        where: { id: initialValues?.id ?? generateUuid() },
+        where: { id: result.id },
       });
 
       toast.promise(promise, {
-        loading: 'Saving requirement...',
+        loading: 'Saving changes...',
         success: (response) => {
           router.push({ pathname: '/admin/[tenantId]/requests-portal/requirements', params: { tenantId } });
           return `Requirement "${response?.name}" saved successfully.`;
         },
-        error: (error) => {
-          return `Failed to save requirement: ${error.message}`;
-        },
-        position: 'top-right',
+        error: (error) => `Failed to save requirement: ${error.message}`,
       });
     });
   };

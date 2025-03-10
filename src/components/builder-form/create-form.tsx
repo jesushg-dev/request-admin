@@ -3,7 +3,7 @@
 import { FC } from 'react';
 import { CreateForm } from '@/actions/form';
 import { useRouter } from '@/i18n/routing';
-import { formSchema, formSchemaType } from '@/services/schemas/form';
+import { formSchema, formSchemaType, getDefaultFormValues } from '@/services/schemas/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LoaderCircleIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -25,12 +25,13 @@ const CreateNewForm: FC = () => {
 
   const form = useForm<formSchemaType>({
     resolver: zodResolver(formSchema),
+    defaultValues: getDefaultFormValues(),
   });
 
   const handleFormSubmit = async (values: formSchemaType) => {
     try {
       const slug = await CreateForm(values, tenantId);
-      toast(t('successTitle'), { description: t('successDescription') });
+      toast.success(t('successTitle'), { description: t('successDescription') });
       router.push({ pathname: '/admin/[tenantId]/form-designer/[slug]/edit', params: { tenantId, slug } });
     } catch {
       toast.error(t('errorTitle'), { description: t('errorDescription') });

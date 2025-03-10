@@ -1,14 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useViewToggle, ViewToggle } from '@/components/custom-ui/view-toggle';
 import EmptyState from '@/components/shared/empty-state';
 
 import { Attachments } from './attachments';
-import { ViewToggle } from './view-toggle';
+
+const VIEW_QUERY_KEY = 'associated-files-view';
 
 export interface GuideDocument {
   id: string;
@@ -32,7 +32,7 @@ export interface Document {
 }
 
 export default function AssociatedFilesViewer({ guideDocuments, documents }: { guideDocuments: GuideDocument[]; documents: Document[] }) {
-  const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
+  const [viewMode] = useViewToggle(VIEW_QUERY_KEY);
 
   return (
     <Tabs className="flex-1 flex flex-col" defaultValue="document">
@@ -50,7 +50,7 @@ export default function AssociatedFilesViewer({ guideDocuments, documents }: { g
                 </TabsTrigger>
               </TabsList>
 
-              <ViewToggle viewType={viewMode} onViewChange={setViewMode} />
+              <ViewToggle queryKey={VIEW_QUERY_KEY} />
             </div>
           </div>
         </CardHeader>

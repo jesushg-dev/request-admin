@@ -19,13 +19,7 @@ export function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps
   return (
     <Popover modal>
       <PopoverTrigger asChild>
-        <Button
-          ref={triggerRef}
-          aria-label="Toggle columns"
-          variant="outline"
-          role="combobox"
-          size="sm"
-          className="focus:ring-ring ml-auto hidden h-8 gap-2 focus:ring-1 focus:outline-hidden focus-visible:ring-0 lg:flex">
+        <Button ref={triggerRef} aria-label="Toggle columns" variant="outline" role="combobox" size="sm" className="ml-auto hidden h-8 gap-2 lg:flex">
           <Settings2 className="size-4" />
           View
           <ChevronsUpDown className="ml-auto size-4 shrink-0 opacity-50" />

@@ -13,8 +13,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MetadataItem } from '@/components/metadata-item';
 
 import { RequestFormStepperType } from '.';
-import RequirementProgress from '../detail/requirement-progress';
-import FormSubmissionsViewer from '../detail/submissions-viewer';
+import RequirementProgress from './requirement-progress';
+import FormSubmissionsViewer from './submissions-viewer';
 
 interface CategoryData {
   value: string;

@@ -333,6 +333,68 @@
           "assignmentCategory": "Categoría de Asignación"
         }
       },
+      "view": {
+        "assignments": {
+          "columns": {
+            "area": "Área",
+            "users": "Usuarios",
+            "origin": "Origen",
+            "destination": "Destino",
+            "assignmentDate": "Fecha Asignación",
+            "unAssignmentDate": "Fecha Desasignación",
+            "requestCategory": "Categoría Solicitud",
+            "assignmentCategory": "Categoría Asignación",
+            "slaStart": "Inicio SLA",
+            "slaDeadline": "Límite SLA",
+            "slaEnd": "Fin SLA",
+            "timeElapsed": "Tiempo Transcurrido",
+            "remainingTime": "Tiempo Restante",
+            "comments": "Comentarios"
+          },
+          "fields": {
+            "visibleFields": "Campos Visibles",
+            "basic": "Información Básica",
+            "sla": "Tiempos SLA",
+            "categories": "Categorías",
+            "comments": "Comentarios"
+          },
+          "filters": {
+            "area": "Área",
+            "users": "Usuarios",
+            "assignmentDate": "Fecha de Asignación"
+          },
+          "reassignArea": "Reasignar Área",
+          "assignUser": "Asignar Usuario",
+          "entityLabel": "Asignaciones",
+          "expired": "Expirado",
+          "noComments": "Sin comentarios"
+        },
+        "submissions": {
+          "title": "Submisiones",
+          "entityLabel": "Submisiones",
+          "noSubmissions": {
+            "title": "No se encontraron submisiones",
+            "description": "No se encontraron submisiones para esta solicitud."
+          },
+          "columns": {
+            "visibility": "Visibilidad",
+            "formName": "Nombre del Formulario",
+            "submittedAt": "Enviado el",
+            "content": "Contenido"
+          }
+        },
+        "related": {
+          "title": "Incidentes Relacionados",
+          "entityLabel": "Incidentes",
+          "relateRequest": "Relacionar Solicitud",
+          "columns": {
+            "relatedId": "ID Incidente",
+            "issueSubject": "Asunto",
+            "createdAt": "Fecha de Creación",
+            "noSubject": "Sin asunto"
+          }
+        }
+      },
       "form": {
         "categoryStep": {
           "titleRequest": "Categoría de Solicitud",

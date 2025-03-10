@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@radix-ui/react-select';
 import { UserPlusIcon } from 'lucide-react';
@@ -46,11 +48,7 @@ type FormData = {
   comment: string;
 };
 
-type AreaAssignmentFormProps = {
-  onComplete: () => void;
-};
-
-export function UserAssignmentModal({ onComplete }: AreaAssignmentFormProps) {
+export function UserAssignmentModal() {
   const [open, setOpen] = useState(false);
   const formMethods = useForm<FormData>({
     defaultValues: {
@@ -62,7 +60,6 @@ export function UserAssignmentModal({ onComplete }: AreaAssignmentFormProps) {
 
   const onSubmit = (data: FormData) => {
     console.log('User Assignment Form Data:', data);
-    onComplete();
   };
 
   return (
