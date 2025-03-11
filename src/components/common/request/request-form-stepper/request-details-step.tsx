@@ -8,8 +8,8 @@ import { generateUuid } from '@/lib/id';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import ReactEditor from '@/components/custom-ui/react-editor';
 import Select, { OptionType } from '@/components/custom-ui/select';
-import TiptapEditor from '@/components/tip-tap/TiptapEditor';
 
 export const requestDetailSchema = z.object({
   id: z.string(),
@@ -110,7 +110,7 @@ const RequestDetailsStep: FC<RequestDetailsStepProps> = ({ statusesOptions, prio
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <TiptapEditor ssr={true} output="html" onContentChange={field.onChange} contentMinHeight={256} contentMaxHeight={640} initialContent={field.value} />
+                <ReactEditor onContentChange={field.onChange} contentMinHeight={256} contentMaxHeight={640} initialContent={field.value} />
               </FormControl>
               <FormDescription>Description is used to provide more information about the request.</FormDescription>
               <FormMessage />

@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { Content } from '@tiptap/react';
 import { ALargeSmallIcon, ImageIcon, Mail, MessageSquare, SendHorizonalIcon, Smile, XIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Toggle } from '@/components/ui/toggle';
-import TiptapEditor, { type TiptapEditorRef } from '@/components/tip-tap/TiptapEditor';
+import TiptapEditor, { type TiptapEditorRef } from '@/components/custom-ui/react-editor';
 
 import { Hint } from '../hint';
 import { EmojiPopover } from './emoji-popover';
@@ -26,13 +25,13 @@ interface EditorProps {
     paragraph?: string;
     imageCaption?: string;
   };
-  defaultValue?: Content;
+  defaultValue?: string;
   disabled?: boolean;
   variant?: 'create' | 'update';
 }
 
 const Editor = ({ onCancel, onSubmit, disabled = false, defaultValue = '', placeholder, variant = 'create' }: EditorProps) => {
-  const [text, setText] = useState<Content>(defaultValue);
+  const [text, setText] = useState<string>(defaultValue);
   const [image, setImage] = useState<File | null>(null);
   const [sendEmail, setSendEmail] = useState(false);
   const [sendWhatsApp, setSendWhatsApp] = useState(false);

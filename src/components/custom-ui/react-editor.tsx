@@ -1,8 +1,8 @@
-/*'/=use client';
+'use client';
 
-import { useMemo, useState } from 'react';
+import { forwardRef, useMemo, useState } from 'react';
 import { Lock, Moon, Sun, Unlock } from 'lucide-react';
-import RichTextEditor from 'reactjs-tiptap-editor';
+import RichTextEditor, { type Editor } from 'reactjs-tiptap-editor';
 import {
   Attachment,
   BaseKit,
@@ -52,6 +52,10 @@ import './richtext-editor.css';
 import { useTheme } from 'next-themes';
 
 // import "katex/dist/katex.min.css";
+
+export type TiptapEditorRef = {
+  getInstance: () => Editor | null;
+};
 
 function convertBase64ToBlob(base64: string): Blob {
   const arr = base64.split(',');
@@ -170,13 +174,28 @@ function debounce<T extends (...args: any[]) => void>(func: T, wait: number): (.
 }
 
 interface ReactEditorProps {
-  onContentChange?: (content: string) => void;
-  contentMinHeight?: number;
-  contentMaxHeight?: number;
+  ssr?: boolean;
+  readonly?: boolean;
+  disabled?: boolean;
   initialContent?: string;
+  placeholder?: {
+    paragraph?: string;
+    imageCaption?: string;
+  };
+  output?: 'html' | 'json';
+  hideMenuBar?: boolean;
+  hideStatusBar?: boolean;
+  hideBubbleMenu?: boolean;
+  containerClass?: string;
+  menuBarClass?: string;
+  contentClass?: string;
+  isBordered?: boolean;
+  contentMinHeight?: string | number;
+  contentMaxHeight?: string | number;
+  onContentChange?: (content: string) => void;
 }
 
-function ReactEditor({ onContentChange, contentMinHeight = 256, contentMaxHeight = 640, initialContent }: ReactEditorProps) {
+const ReactEditor = forwardRef<TiptapEditorRef, ReactEditorProps>(({ onContentChange, contentMinHeight = 256, contentMaxHeight = 640, initialContent }) => {
   const { theme } = useTheme();
   const [disable, setDisable] = useState<boolean>(false);
   const [content, setContent] = useState<string>(initialContent || DEFAULT);
@@ -267,7 +286,8 @@ function ReactEditor({ onContentChange, contentMinHeight = 256, contentMaxHeight
       />
     </div>
   );
-}
+});
+
+ReactEditor.displayName = 'ReactEditor';
 
 export default ReactEditor;
-*/

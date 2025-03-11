@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { getPost, savePost } from '@/services/post';
 import { Controller, useForm } from 'react-hook-form';
 
-import TiptapEditor, { type TiptapEditorRef } from '@/components/tip-tap/TiptapEditor';
+import TiptapEditor, { type TiptapEditorRef } from '@/components/custom-ui/react-editor';
 
 interface PostForm {
   title: string;
