@@ -39,7 +39,7 @@ export const getUsersAsOptions = async (tenantId: string) => {
     label:
       user.userTenants[0].person?.firstName && user.userTenants[0].person?.lastName
         ? `${user.userTenants[0].person?.firstName} ${user.userTenants[0].person?.lastName} @${user.username}`
-        : user.username,
+        : user.username || user.email,
     value: user.userTenants[0].id,
   }));
 };

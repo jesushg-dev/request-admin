@@ -34,7 +34,7 @@ export const getUserByIdWithFeatures = async (id: string) => {
       select: {
         id: true,
         email: true,
-        isTwoFactorEnabled: true,
+        twoFactorEnabled: true,
         isGlobalAdmin: true,
         userTenants: {
           select: {

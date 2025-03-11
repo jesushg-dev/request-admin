@@ -73,7 +73,7 @@ const UserTenantScopedForm: FC<UserTenantScopedFormProps> = ({ defaultValues, te
         loading: 'Saving user...',
         success: (response) => {
           router.push({ pathname: '/admin/[tenantId]/security/users', params: { tenantId } });
-          return `User saved successfully: ${response.username}`;
+          return `User saved successfully: ${response?.username ?? response?.email}`;
         },
         error: (error) => {
           return `Failed to save user: ${error.message}`;

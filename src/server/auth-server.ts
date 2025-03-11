@@ -46,6 +46,16 @@ export const auth = betterAuth({
     autoSignInAfterVerification: true,
     sendVerificationEmail,
   },
+  user: {
+    additionalFields: {
+      isGlobalAdmin: {
+        input: false,
+        type: 'boolean',
+        required: true,
+        defaultValue: false,
+      },
+    },
+  },
   plugins: [
     nextCookies(),
     twoFactor(),

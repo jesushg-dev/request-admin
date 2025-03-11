@@ -122,7 +122,9 @@ export async function getAreaByTenandIdAndAreaId(tenantId: string, areaId: strin
       isActive: userArea.isActive,
       userId: {
         value: userArea.userTenant.id,
-        label: userArea.userTenant.person ? `${userArea.userTenant.person.firstName} ${userArea.userTenant.person.lastName} @${userArea.userTenant.user.username}` : userArea.userTenant.user.username,
+        label: userArea.userTenant.person
+          ? `${userArea.userTenant.person.firstName} ${userArea.userTenant.person.lastName} @${userArea.userTenant.user.username}`
+          : (userArea.userTenant.user.username ?? userArea.userTenant.user.email),
       },
       roleId: {
         value: userArea.role.id,

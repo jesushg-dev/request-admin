@@ -2,7 +2,6 @@
 
 import { useMemo } from 'react';
 import { usePathname } from '@/i18n/routing';
-import { ExtendedUser } from '@/server/auth/config';
 import {
   ClipboardIcon,
   FileTextIcon,
@@ -30,7 +29,12 @@ import { TenantSwitcher } from './tenant-switcher';
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   tenantId: string;
-  user: ExtendedUser;
+  user: {
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+    isGlobalAdmin: boolean;
+  };
   tenants: {
     id: string;
     name: string;
