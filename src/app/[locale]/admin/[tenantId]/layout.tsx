@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { redirect } from '@/i18n/routing';
-import { auth } from '@/server/auth';
+import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-server';
 import { getTranslations } from 'next-intl/server';
 
@@ -43,7 +43,7 @@ export default async function RootLayout({
   params: Promise<{ tenantId: string }>;
 }>) {
   const { tenantId } = await params;
-  const session = await auth();
+  const session = await currentSession();
   if (!session) return redirect({ href: '/', locale: 'en' });
 
   const tenants = await db.tenant.findMany({

@@ -103,7 +103,7 @@ model Tenant extends Auditable {
   views                         DocumentView[]
   viewers                       Viewer[]
   documentReactions             DocumentReaction[]
-  invitation                    Invitation[]
+  invitation                    InvitationDocument[]
   sentEmails                    SentEmail[]
   documentConversations         DocumentConversation[]
   folders                       Folder[]
@@ -128,6 +128,41 @@ model Tenant extends Auditable {
   // Access control
   @@allow("read", userTenants?[user.id == auth().id && isActive == true])
 }
+
+
+model UserTenant extends TenantScoped, Auditable {
+  id                           String           @id @default(uuid()) @db.UniqueIdentifier
+  isActive                     Boolean          @default(true) // Indicates if the user is active in the tenant
+  isTermAccepted               Boolean          @default(false) // Indicates if the user has accepted the terms of the tenant
+  joinedAt                     DateTime         @default(now()) // Timestamp of when the user joined the tenant
+  isSuperAdmin                 Boolean          @default(false) // Flag for super admin status
+  isTwoFactorRequired          Boolean          @default(false)
+
+  userId                       String
+  user                         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  personId                     String?          @db.UniqueIdentifier
+  person                       Person?
+
+  userAreas                    UserTenantArea[]
+  userRoles                    UserTenantRole[]
+  assignedUsers                AssignedUser[]
+  reactions                    Reaction[]     // Reactions made by the user in the tenant
+  messages                     Message[]      // Messages sent by the user
+  conversationsAsUserTenantOne Conversation[]   @relation("UserTenantOne") // Conversations where this user is UserTenantOne
+  conversationsAsUserTenantTwo Conversation[]   @relation("UserTenantTwo") // Conversations where this user is UserTenantTwo
+  
+  domains          Domain[]
+  documents        Document[]
+  conversations    DocumentConversation[]
+  restrictedTokens RestrictedToken[]
+
+  @@unique([userId, tenantId]) // Ensure unique user-tenant relationships
+  @@index([userId]) // Index for efficient queries by userId
+  @@index([tenantId]) // Index for efficient queries by tenantId
+}
+
+
 
 model Subscription {
   id         String    @id @default(uuid()) @db.UniqueIdentifier

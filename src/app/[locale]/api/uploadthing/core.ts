@@ -1,4 +1,4 @@
-import { auth } from '@/server/auth';
+import { currentSession } from '@/server/auth-server';
 import { createUploadthing, type FileRouter } from 'uploadthing/next';
 import { UploadThingError } from 'uploadthing/server';
 
@@ -20,7 +20,7 @@ export const ourFileRouter = {
     // Set permissions and file types for this FileRoute
     .middleware(async ({}) => {
       // This code runs on your server before upload
-      const session = await auth();
+      const session = await currentSession();
 
       // If you throw, the user will not be able to upload
       if (!session) throw new UploadThingError('Unauthorized');

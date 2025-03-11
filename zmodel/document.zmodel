@@ -291,7 +291,7 @@ model DocumentReaction extends TenantScoped, Auditable {
 // ----------------------
 // Email and Conversation Models
 // ----------------------
-model Invitation extends TenantScoped, Auditable {
+model InvitationDocument extends TenantScoped, Auditable {
   email   String
   expires DateTime
   token   String @unique

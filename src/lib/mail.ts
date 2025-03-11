@@ -14,25 +14,21 @@ export const sendTwoFactorTokenEmail = async (email: string, token: string) => {
   });
 };
 
-export const sendPasswordResetEmail = async (email: string, token: string) => {
-  const resetLink = `${domain}/auth/new-password?token=${token}`;
-
+export const sendResetPassword = async ({ user, url, token }: { user: { email: string }; url: string; token: string }) => {
   await resend.emails.send({
     from: `support@${emailDomain}`,
-    to: email,
+    to: user.email,
     subject: 'Reset your password',
-    html: `<p>Click <a href="${resetLink}">here</a> to reset password.</p>`,
+    html: `<p>Click <a href="${url}">here</a> to reset password. ${token}</p>`,
   });
 };
 
-export const sendVerificationEmail = async (email: string, token: string) => {
-  const confirmLink = `${domain}/auth/new-verification?token=${token}`;
-
+export const sendVerificationEmail = async ({ user, url, token }: { user: { email: string }; url: string; token: string }) => {
   await resend.emails.send({
     from: `support@${emailDomain}`,
-    to: email,
+    to: user.email,
     subject: 'Confirm your email',
-    html: `<p>Click <a href="${confirmLink}">here</a> to confirm email.</p>`,
+    html: `<p>Click <a href="${url}">here</a> to confirm email. ${token}</p>`,
   });
 };
 
@@ -44,6 +40,24 @@ export const sendVerificationEmailWithPassword = async (email: string, token: st
     to: email,
     subject: 'Confirm your email',
     html: `<p>Click <a href="${confirmLink}">here</a> to confirm email and Your password is: ${password}</p>`,
+  });
+};
+
+export const sendVerificationOTP = async (email: string, otp: string, type: 'sign-in' | 'email-verification' | 'forget-password') => {
+  await resend.emails.send({
+    from: `support@${emailDomain}`,
+    to: email,
+    subject: 'OTP Code',
+    html: `<p>Your OTP code: ${otp} for ${type}</p>`,
+  });
+};
+
+export const sendMagicLink = async (email: string, token: string, url: string) => {
+  await resend.emails.send({
+    from: `support@${emailDomain}`,
+    to: email,
+    subject: 'Magic Link',
+    html: `<p>Click <a href="${url}?token=${token}">here</a> to sign in.</p>`,
   });
 };
 

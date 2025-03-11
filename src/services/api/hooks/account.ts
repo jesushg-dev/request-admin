@@ -371,21 +371,7 @@ export function useSuspenseCountAccount<
 export function useCheckAccount<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
-    where?: {
-      id?: string;
-      userId?: string;
-      type?: string;
-      provider?: string;
-      providerAccountId?: string;
-      refresh_token?: string;
-      access_token?: string;
-      expires_at?: number;
-      token_type?: string;
-      scope?: string;
-      id_token?: string;
-      session_state?: string;
-      refresh_token_expires_in?: number;
-    };
+    where?: { id?: string; accountId?: string; providerId?: string; userId?: string; accessToken?: string; refreshToken?: string; idToken?: string; scope?: string; password?: string };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {

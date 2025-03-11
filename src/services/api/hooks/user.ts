@@ -354,17 +354,21 @@ export function useCheckUser<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
     where?: {
-      createdBy?: string;
-      updatedBy?: string;
       id?: string;
-      username?: string;
+      name?: string;
       email?: string;
-      isActive?: boolean;
-      password?: string;
-      isTwoFactorEnabled?: boolean;
-      isTemporalPassword?: boolean;
-      twoFactorConfirmationId?: string;
+      emailVerified?: boolean;
+      image?: string;
+      twoFactorEnabled?: boolean;
+      role?: string;
+      banned?: boolean;
+      banReason?: string;
+      phoneNumber?: string;
+      phoneNumberVerified?: boolean;
+      isAnonymous?: boolean;
       isGlobalAdmin?: boolean;
+      username?: string;
+      displayUsername?: string;
     };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions

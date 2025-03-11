@@ -7,176 +7,251 @@ import './area.zmodel'
 import './permission.zmodel'
 import './document.zmodel'
 
-model User extends Auditable {
-  id                      String                 @id @default(uuid()) @db.UniqueIdentifier
-  username                String                 
-  email                   String                 
-  emailVerified           DateTime?
-  isActive                Boolean                @default(true)
-  password                String                 @password @omit
-  isTwoFactorEnabled      Boolean                @default(false)
-  isTemporalPassword      Boolean                @default(false)
-  twoFactorConfirmationId String?                @db.UniqueIdentifier
-  twoFactorConfirmation   TwoFactorConfirmation?
-  Authenticators          Authenticator[]
-  isGlobalAdmin           Boolean                 @default(false)
+model User {
+  id                  String        @id
+  name                String
+  email               String
+  emailVerified       Boolean
+  image               String?
+  createdAt           DateTime
+  updatedAt           DateTime
+  twoFactorEnabled    Boolean?
+  role                String?
+  banned              Boolean?
+  banReason           String?
+  banExpires          DateTime?
+  phoneNumber         String?
+  phoneNumberVerified Boolean?
+  isAnonymous         Boolean?
+  isGlobalAdmin       Boolean? 
+  username            String?
+  displayUsername     String?
+  sessions            Session[]
+  accounts            Account[]
+  twofactors          TwoFactor[]
+  ssoproviders        SsoProvider[]
+  members             Member[]
+  invitations         Invitation[]
+  apikeys             Apikey[]
+  passkeys            Passkey[]
+  userTenants         UserTenant[]
 
-  accounts                Account[]
-  sessions                Session[]
-  userTenants             UserTenant[]
-
-  @@allow("read", userTenants?[user.id == auth().id && isActive == true])
-
-  //only allow one user per email and username in the system
   @@unique([email])
-  @@unique([username])
-
-  //vs
-  @@unique([email ,username])
+  @@unique([email, username])
+  @@allow("read", userTenants?[user.id == auth().id && isActive == true])
 
   @@validate(!emailVerified || email != null, "Email must be provided if emailVerified is set")
 
-}
-
-model UserTenant extends TenantScoped, Auditable {
-  id                           String           @id @default(uuid()) @db.UniqueIdentifier
-  isActive                     Boolean          @default(true) // Indicates if the user is active in the tenant
-  isTermAccepted               Boolean          @default(false) // Indicates if the user has accepted the terms of the tenant
-  joinedAt                     DateTime         @default(now()) // Timestamp of when the user joined the tenant
-  isSuperAdmin                 Boolean          @default(false) // Flag for super admin status
-  isTwoFactorRequired Boolean            @default(false)
-
-  userId                       String           @db.UniqueIdentifier
-  user                         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  personId                     String?          @db.UniqueIdentifier
-  person                       Person?
-
-  userAreas                    UserTenantArea[]
-  userRoles                    UserTenantRole[]
-  assignedUsers                AssignedUser[]
-  reactions                    Reaction[]     // Reactions made by the user in the tenant
-  messages                     Message[]      // Messages sent by the user
-  conversationsAsUserTenantOne Conversation[]   @relation("UserTenantOne") // Conversations where this user is UserTenantOne
-  conversationsAsUserTenantTwo Conversation[]   @relation("UserTenantTwo") // Conversations where this user is UserTenantTwo
-  
-  domains          Domain[]
-  documents        Document[]
-  conversations    DocumentConversation[]
-  restrictedTokens RestrictedToken[]
-
-  @@unique([userId, tenantId]) // Ensure unique user-tenant relationships
-  @@index([userId]) // Index for efficient queries by userId
-  @@index([tenantId]) // Index for efficient queries by tenantId
+  @@map("user")
 }
 
 model Session {
-  // Primary identifier
-  id           String   @id @default(uuid()) @db.UniqueIdentifier
+  id                   String   @id
+  expiresAt            DateTime
+  token                String
+  createdAt            DateTime
+  updatedAt            DateTime
+  ipAddress            String?
+  userAgent            String?
+  userId               String
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activeOrganizationId String?
+  impersonatedBy       String?
 
-  // Session details
-  sessionToken String   @unique // Unique session token
-  userId       String   @db.UniqueIdentifier // Reference to the linked User
-  expires      DateTime // Expiration timestamp
-
-  // Relationships
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  // Timestamps
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  @@index([userId]) // Index for userId to optimize lookups
+  @@unique([token])
+  @@map("session")
 }
 
 model Account {
-  // Primary identifier
-  id                       String  @id @default(uuid()) @db.UniqueIdentifier
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
 
-  // Account details
-  userId                   String  @db.UniqueIdentifier // Reference to the linked User
-  type                     String   // Account type (e.g., OAuth, Password)
-  provider                 String   // Provider name (e.g., "Google", "GitHub")
-  providerAccountId        String   // Unique ID from the provider
-  refresh_token            String? @db.Text
-  access_token             String? @db.Text
-  expires_at               Int?     // Expiration timestamp
-  token_type               String?  // Type of token (e.g., "Bearer")
-  scope                    String?
-  id_token                 String? @db.Text
-  session_state            String?
-  refresh_token_expires_in Int?
-
-  // Relationships
-  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@unique([provider, providerAccountId]) // Unique constraint for provider accounts
-  @@index([userId]) // Index for userId
+  @@map("account")
 }
 
-model VerificationToken {
-  // Primary identifier
-  id      String   @id @default(uuid()) @db.UniqueIdentifier
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
 
-  // Token details
-  email   String    // Email associated with the token
-  token   String   @unique // Unique verification token
-  expires DateTime  // Expiration timestamp
-
-  @@unique([email, token]) // Unique constraint for email-token pairs
+  @@map("verification")
 }
 
-model PasswordResetToken {
-  // Primary identifier
-  id      String   @id @default(uuid()) @db.UniqueIdentifier
+model TwoFactor {
+  id          String @id
+  secret      String
+  backupCodes String
+  userId      String
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  // Token details
-  email   String    // Email associated with the token
-  token   String   @unique // Unique reset token
-  expires DateTime  // Expiration timestamp
-
-  @@unique([email, token]) // Unique constraint for email-token pairs
+  @@map("twoFactor")
 }
 
-model TwoFactorToken {
-  // Primary identifier
-  id      String   @id @default(uuid()) @db.UniqueIdentifier
+model Jwks {
+  id         String   @id
+  publicKey  String
+  privateKey String
+  createdAt  DateTime
 
-  // Token details
-  email   String    // Email associated with the token
-  token   String   @unique // Unique 2FA token
-  expires DateTime  // Expiration timestamp
-
-  @@unique([email, token]) // Unique constraint for email-token pairs
+  @@map("jwks")
 }
 
-model TwoFactorConfirmation {
-  // Primary identifier
-  id     String @id @default(uuid()) @db.UniqueIdentifier
+model SsoProvider {
+  id             String  @id
+  issuer         String
+  oidcConfig     String?
+  samlConfig     String?
+  userId         String?
+  user           User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  providerId     String
+  organizationId String?
+  domain         String
 
-  // Relationships
-  userId String @db.UniqueIdentifier // Reference to the linked User
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@unique([userId]) // Unique constraint for userId
+  @@unique([providerId])
+  @@map("ssoProvider")
 }
 
-model Authenticator {
-  // Primary identifier
-  id                   String  @id @default(uuid()) @db.UniqueIdentifier
+model OauthApplication {
+  id           String    @id
+  name         String?
+  icon         String?
+  metadata     String?
+  clientId     String?
+  clientSecret String?
+  redirectURLs String?
+  type         String?
+  disabled     Boolean?
+  userId       String?
+  createdAt    DateTime?
+  updatedAt    DateTime?
 
-  // Authenticator details
-  credentialID         String  @unique // Unique credential ID
-  userId               String  @db.UniqueIdentifier // Reference to the linked User
-  providerAccountId    String
-  credentialPublicKey  String
-  counter              Int
-  credentialDeviceType String
-  credentialBackedUp   Boolean
-  transports           String?
+  @@unique([clientId])
+  @@map("oauthApplication")
+}
 
-  // Relationships
-  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+model OauthAccessToken {
+  id                    String    @id
+  accessToken           String?
+  refreshToken          String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  clientId              String?
+  userId                String?
+  scopes                String?
+  createdAt             DateTime?
+  updatedAt             DateTime?
 
-  @@unique([userId, providerAccountId]) // Unique constraint for user-provider account pairs
+  @@unique([accessToken])
+  @@unique([refreshToken])
+  @@map("oauthAccessToken")
+}
+
+model OauthConsent {
+  id           String    @id
+  clientId     String?
+  userId       String?
+  scopes       String?
+  createdAt    DateTime?
+  updatedAt    DateTime?
+  consentGiven Boolean?
+
+  @@map("oauthConsent")
+}
+
+model Organization {
+  id          String       @id
+  name        String
+  slug        String?
+  logo        String?
+  createdAt   DateTime
+  metadata    String?
+  members     Member[]
+  invitations Invitation[]
+
+  @@unique([slug])
+  @@map("organization")
+}
+
+model Member {
+  id             String       @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role           String
+  createdAt      DateTime
+
+  @@map("member")
+}
+
+model Invitation {
+  id             String       @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  email          String
+  role           String?
+  status         String
+  expiresAt      DateTime
+  inviterId      String
+  user           User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
+
+  @@map("invitation")
+}
+
+model Apikey {
+  id                  String    @id
+  name                String?
+  start               String?
+  prefix              String?
+  key                 String
+  userId              String
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refillInterval      Int?
+  refillAmount        Int?
+  lastRefillAt        DateTime?
+  enabled             Boolean?
+  rateLimitEnabled    Boolean?
+  rateLimitTimeWindow Int?
+  rateLimitMax        Int?
+  requestCount        Int?
+  remaining           Int?
+  lastRequest         DateTime?
+  expiresAt           DateTime?
+  createdAt           DateTime
+  updatedAt           DateTime
+  permissions         String?
+  metadata            String?
+
+  @@map("apikey")
+}
+
+model Passkey {
+  id           String    @id
+  name         String?
+  publicKey    String
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  credentialID String
+  counter      Int
+  deviceType   String
+  backedUp     Boolean
+  transports   String?
+  createdAt    DateTime?
+
+  @@map("passkey")
 }

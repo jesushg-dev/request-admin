@@ -71,7 +71,10 @@
         "unauthenticatedDescription": "Por favor, inicia sesión para continuar.",
         "tenant": "No tienes permiso para acceder a este inquilino",
         "tenantDescription": "Por favor, usa las credenciales asociadas con el inquilino que deseas acceder."
-      }
+      },
+      "loading": "Cargando...",
+      "success": "¡Bienvenido de nuevo",
+      "error": "Ha ocurrido un error: {error}"
     },
     "registerForm": {
       "header": "Crear una cuenta",
@@ -88,7 +91,10 @@
       },
       "actions": {
         "createAccount": "Crear una cuenta"
-      }
+      },
+      "loading": "Cargando...",
+      "success": "¡Cuenta creada con éxito!",
+      "error": "Ha ocurrido un error: {error}"
     },
     "newPasswordForm": {
       "header": "Introduce una nueva contraseña",
@@ -105,7 +111,11 @@
       "errors": {
         "generic": "Algo salió mal",
         "invalidToken": "Token inválido o expirado"
-      }
+      },
+      "loading": "Cargando...",
+      "success": "¡Contraseña restablecida con éxito!",
+      "error": "Ha ocurrido un error: {error}",
+      "tokenNoFound": "Token no encontrado"
     },
     "newVerificationForm": {
       "header": "Confirmando tu verificación",
@@ -130,7 +140,10 @@
       "errors": {
         "generic": "Algo salió mal",
         "invalidEmail": "Dirección de correo no válida"
-      }
+      },
+      "loading": "Cargando...",
+      "success": "¡Correo de restablecimiento enviado!",
+      "error": "Ha ocurrido un error: {error}"
     }
   },
   "tenants": {

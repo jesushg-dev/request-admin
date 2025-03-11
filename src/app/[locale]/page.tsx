@@ -1,13 +1,12 @@
 import Image from 'next/image';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { getTranslations } from 'next-intl/server';
 
 import { Button } from '@/components/ui/button';
-import { LoginButton } from '@/components/auth/login-button';
 import PricingView from '@/components/common/pricing-view';
 
-export default async function Home(props: { params: Promise<{ locale: string }> }) {
-  const { locale } = await props.params;
+export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'home' });
 
   return (
@@ -24,11 +23,13 @@ export default async function Home(props: { params: Promise<{ locale: string }> 
                 <span className="text-xl font-semibold text-white">{t('brandName')}</span>
               </div>
               <nav className="hidden space-x-6 text-sm text-blue-200 md:block">
-                <Link href="#features">Features</Link>
+                {/*<Link href="#features">Features</Link>
                 <Link href="#pricing">Pricing</Link>
-                <Link href="#about">About</Link>
+                <Link href="#about">About</Link> */}
               </nav>
-              <LoginButton asChild>{t('signInButton')}</LoginButton>
+              <Button variant="secondary" size="lg" asChild={true}>
+                <Link href="/auth/login">{t('signInButton')}</Link>
+              </Button>
             </div>
 
             <div className="mx-auto mt-16 max-w-3xl text-center">

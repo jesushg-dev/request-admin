@@ -1,13 +1,23 @@
+import { cookies } from 'next/headers';
+
 function getBaseUrl() {
   if (typeof window !== 'undefined') return window.location.origin;
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
   return `http://localhost:${process.env.PORT ?? 3000}`;
 }
 
+async function getCookies() {
+  const _cookies = await cookies();
+  return _cookies?.toString() ?? '';
+}
+
 export async function getTenantsForUser(userId: string): Promise<{ id: string }[]> {
   const response = await fetch(`${getBaseUrl()}/api/tenants`, {
     method: 'POST',
     body: JSON.stringify({ userId }),
+    headers: {
+      Cookie: await getCookies(), // Forward cookies to the API
+    },
   });
 
   if (!response.ok) {
@@ -24,6 +34,9 @@ export async function validateTenantId(tenantId: string | undefined): Promise<bo
   const response = await fetch(`${getBaseUrl()}/api/tenants/validate`, {
     method: 'POST',
     body: JSON.stringify({ tenantId }),
+    headers: {
+      Cookie: await getCookies(), // Forward cookies to the API
+    },
   });
 
   if (!response.ok) {

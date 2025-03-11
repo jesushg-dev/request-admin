@@ -1,8 +1,8 @@
 'use client';
 
+import { useSession } from '@/server/auth-client';
 import { ExitIcon } from '@radix-ui/react-icons';
 import { UserIcon } from 'lucide-react';
-import { useSession } from 'next-auth/react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';

@@ -8,6 +8,7 @@ export const env = createEnv({
    */
   server: {
     AUTH_SECRET: process.env.NODE_ENV === 'production' ? z.string() : z.string().optional(),
+    BETTER_AUTH_SECRET: z.string(),
     RESEND_API_KEY: z.string(),
     UPLOADTHING_TOKEN: z.string(),
     RESEND_EMAIL_DOMAIN: z.string(),
@@ -31,6 +32,7 @@ export const env = createEnv({
    */
   runtimeEnv: {
     AUTH_SECRET: process.env.AUTH_SECRET,
+    BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     RESEND_EMAIL_DOMAIN: process.env.RESEND_EMAIL_DOMAIN,
     AUTHENTICATION_TRUST_HOST: process.env.AUTHENTICATION_TRUST_HOST,

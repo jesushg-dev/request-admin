@@ -1,12 +1,12 @@
 'use server';
 
-import { auth } from '@/server/auth';
+import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-client';
 
 class UserNotFoundErr extends Error {}
 
 export async function findOrCreateConversation({ tenantId, userId }: { tenantId: string; userId: string }) {
-  const session = await auth();
+  const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
   // Search for an existing conversation

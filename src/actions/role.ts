@@ -1,6 +1,6 @@
 'use server';
 
-import { auth } from '@/server/auth';
+import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-client';
 
 import { RoleFormStepperType } from '@/components/common/role/role-form-stepper';
@@ -8,7 +8,7 @@ import { RoleFormStepperType } from '@/components/common/role/role-form-stepper'
 class UserNotFoundErr extends Error {}
 
 export const getRoleAsFormById = async (ids: string[], tenantId: string): Promise<RoleFormStepperType> => {
-  const session = await auth();
+  const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
   const roles = await db.role.findMany({

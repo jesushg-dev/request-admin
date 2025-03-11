@@ -14,7 +14,15 @@ const basePathnames = {
   },
   '/auth/login': {
     en: '/auth/login',
-    es: '/auth/login',
+    es: '/auth/iniciar-sesion',
+  },
+  '/auth/reset': {
+    en: '/auth/reset',
+    es: '/auth/reiniciar',
+  },
+  '/auth/register': {
+    en: '/auth/register',
+    es: '/auth/registrar',
   },
   '/admin': {
     en: '/admin',

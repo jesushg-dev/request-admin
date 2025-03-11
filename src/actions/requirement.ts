@@ -1,6 +1,6 @@
 'use server';
 
-import { auth } from '@/server/auth';
+import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-client';
 import { omit } from 'lodash';
 
@@ -10,7 +10,7 @@ import { RequirementFormValues } from '@/components/common/requirement/requireme
 class UserNotFoundErr extends Error {}
 
 export const getRequirementsAsOptions = async (tenantId: string) => {
-  const session = await auth();
+  const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
   const requirements = await db.requirement.findMany({ ...RequirementDefaultArgs, where: { tenantId } });
@@ -20,7 +20,7 @@ export const getRequirementsAsOptions = async (tenantId: string) => {
 };
 
 export const getRequirementAsFormById = async (id: string, tenantId: string) => {
-  const session = await auth();
+  const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
   const requirement = await db.requirement.findFirstOrThrow({

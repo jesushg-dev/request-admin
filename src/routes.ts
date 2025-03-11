@@ -12,7 +12,7 @@ export const publicRoutes: string[] = ['/', '/auth/*', '/about/*', '*/api/auth/*
  * These routes will redirect logged in users to /settings
  * @type {string[]}
  */
-export const authRoutes: string = '/auth/*';
+export const authRoutes: string = '/auth/';
 
 /**
  * The prefix for API authentication routes
@@ -33,8 +33,6 @@ export const isPublicPage = (pathname: string, locales: readonly string[]): bool
   const result1 = publicRoutesWithLocaleRegex.test(pathname);
   const result2 = publicRoutesWithoutLocaleRegex.test(pathname);
   const result3 = pathname.includes('public');
-  if (pathname === '/es/api/auth/session' || pathname === '/api/auth/session') {
-    return true;
-  }
-  return result1 || result2 || result3;
+  const result4 = pathname.includes('api/auth');
+  return result1 || result2 || result3 || result4;
 };

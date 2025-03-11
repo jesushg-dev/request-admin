@@ -1,6 +1,6 @@
 'use server';
 
-import { auth } from '@/server/auth';
+import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-server';
 
 import { ModuleDefaultArgs } from '@/types/prisma/module';
@@ -10,7 +10,7 @@ import { ModuleScope } from '../../prisma/module';
 class UserNotFoundErr extends Error {}
 
 export const getModuleByTenantIdAndScope = async (tenantId: string, scope: ModuleScope) => {
-  const session = await auth();
+  const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
   const modules = await db.module.findMany({

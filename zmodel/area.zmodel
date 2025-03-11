@@ -1,5 +1,5 @@
 import './abstract.zmodel'
-import './auth.zmodel'
+import './tenant.zmodel'
 import './request.zmodel'
 import './category.zmodel'
 import './permission.zmodel'

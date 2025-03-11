@@ -71,7 +71,10 @@
         "unauthenticatedDescription": "Please login to access this page.",
         "tenant": "You don't have access to this tenant!",
         "tenantDescription": "Please, use the credential associated with the tenant you want to access."
-      }
+      },
+      "loading": "Loading...",
+      "success": "Welcome back, {name}!",
+      "error": "An error occurred: {error}"
     },
     "registerForm": {
       "header": "Create an account",
@@ -88,7 +91,10 @@
       },
       "actions": {
         "createAccount": "Create an account"
-      }
+      },
+      "loading": "Loading...",
+      "success": "User created successfully!",
+      "error": "An error occurred: {error}"
     },
     "newPasswordForm": {
       "header": "Enter a new password",
@@ -105,7 +111,11 @@
       "errors": {
         "generic": "Something went wrong",
         "invalidToken": "Invalid or expired token"
-      }
+      },
+      "loading": "Loading...",
+      "success": "Password reset successfully!",
+      "error": "An error occurred: {error}",
+      "tokenNoFound": "Token not found"
     },
     "newVerificationForm": {
       "header": "Confirming your verification",
@@ -130,7 +140,10 @@
       "errors": {
         "generic": "Something went wrong",
         "invalidEmail": "Invalid email address"
-      }
+      },
+      "loading": "Loading...",
+      "success": "Password reset email sent!",
+      "error": "An error occurred: {error}"
     }
   },
   "tenants": {

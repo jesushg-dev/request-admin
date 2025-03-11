@@ -3,7 +3,7 @@
 import { AssignmentTypeEnum } from '@/constants/assignment-type';
 import { PermissionActions } from '@/constants/permissions';
 import { STATUS } from '@/constants/requests';
-import { auth } from '@/server/auth';
+import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-server';
 
 import { RequestDefaultArgs, RequestDetailsType, RequestType } from '@/types/prisma/request';
@@ -13,7 +13,7 @@ import { RequestFormStepperType } from '@/components/common/request/request-form
 class UserNotFoundErr extends Error {}
 
 export const upsertRequest = async (tenantId: string, data: RequestFormStepperType) => {
-  const session = await auth();
+  const session = await currentSession();
   if (!session?.user?.id) throw new UserNotFoundErr('User not found');
 
   // Validación de categorías
@@ -404,7 +404,7 @@ const detectChanges = (oldRequest: RequestType, newRequest: RequestType) => {
 };
 
 export const getRequestById = async (tenantId: string, requestId: string): Promise<RequestFormStepperType> => {
-  const session = await auth();
+  const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
   const request = await db.request.findUniqueOrThrow({
@@ -468,7 +468,7 @@ export const getRequestById = async (tenantId: string, requestId: string): Promi
 };
 
 export const getRequestDetailsByRequest = async (tenantId: string, request: RequestFormStepperType): Promise<RequestDetailsType> => {
-  const session = await auth();
+  const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
   // Get total submissions count
@@ -499,7 +499,7 @@ export const getRequestDetailsByRequest = async (tenantId: string, request: Requ
 };
 
 export const getPrioritiesAsOptions = async (tenantId: string) => {
-  const session = await auth();
+  const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
   const priorities = await db.requestPriorityType.findMany({
@@ -514,7 +514,7 @@ export const getPrioritiesAsOptions = async (tenantId: string) => {
 };
 
 export const getStatusesAsOptions = async (tenantId: string, levels: number[] = [STATUS.DRAFT, STATUS.REVIEW, STATUS.APPROVED, STATUS.IMPLEMENTING, STATUS.CLOSED]) => {
-  const session = await auth();
+  const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
   const priorities = await db.requestStatusType.findMany({

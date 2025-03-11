@@ -2,8 +2,6 @@ import { type Metadata } from 'next';
 import localFont from 'next/font/local';
 import { notFound } from 'next/navigation';
 import { Locale, routing } from '@/i18n/routing';
-import { auth } from '@/server/auth';
-import { SessionProvider } from 'next-auth/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { ThemeProvider } from 'next-themes';
@@ -72,25 +70,22 @@ export default async function RootLayout({ children, params }: Props) {
     notFound();
   }
 
-  const session = await auth();
   const messages = await getMessages();
 
   return (
     <html lang={locale} suppressHydrationWarning>
       <body id="body" className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col antialiased`}>
-        <SessionProvider session={session}>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-            <NextIntlClientProvider locale={locale} messages={messages}>
-              <NextTopLoader />
-              <TanstackQueryProvider>
-                <NuqsAdapter>
-                  <ConfirmDialogProvider>{children}</ConfirmDialogProvider>
-                </NuqsAdapter>
-                <Toaster position="top-right" />
-              </TanstackQueryProvider>
-            </NextIntlClientProvider>
-          </ThemeProvider>
-        </SessionProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <NextTopLoader />
+            <TanstackQueryProvider>
+              <NuqsAdapter>
+                <ConfirmDialogProvider>{children}</ConfirmDialogProvider>
+              </NuqsAdapter>
+              <Toaster position="top-right" />
+            </TanstackQueryProvider>
+          </NextIntlClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

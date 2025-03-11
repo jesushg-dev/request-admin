@@ -1,5 +1,5 @@
 import './abstract.zmodel'
-import './auth.zmodel'  // user and role management
+import './tenant.zmodel'  // user and role management
 import './document.zmodel' // files and attachments for requests
 import './area.zmodel' // areas for request assignment
 import './form.zmodel' // form submissions for requests

@@ -489,7 +489,7 @@ const metadata = {
         },
         invitation: {
           name: 'invitation',
-          type: 'Invitation',
+          type: 'InvitationDocument',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
@@ -639,6 +639,199 @@ const metadata = {
         id: {
           name: 'id',
           fields: ['id'],
+        },
+      },
+    },
+    userTenant: {
+      name: 'UserTenant',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$UserTenant$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$UserTenant$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'userTenants',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
+        isTermAccepted: {
+          name: 'isTermAccepted',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        joinedAt: {
+          name: 'joinedAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        isSuperAdmin: {
+          name: 'isSuperAdmin',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        isTwoFactorRequired: {
+          name: 'isTwoFactorRequired',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        userId: {
+          name: 'userId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'user',
+        },
+        user: {
+          name: 'user',
+          type: 'User',
+          isDataModel: true,
+          backLink: 'userTenants',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'userId' },
+        },
+        personId: {
+          name: 'personId',
+          type: 'String',
+          isOptional: true,
+        },
+        person: {
+          name: 'person',
+          type: 'Person',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'userTenant',
+        },
+        userAreas: {
+          name: 'userAreas',
+          type: 'UserTenantArea',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'userTenant',
+        },
+        userRoles: {
+          name: 'userRoles',
+          type: 'UserTenantRole',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'userTenant',
+        },
+        assignedUsers: {
+          name: 'assignedUsers',
+          type: 'AssignedUser',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'userTenant',
+        },
+        reactions: {
+          name: 'reactions',
+          type: 'Reaction',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'userTenant',
+        },
+        messages: {
+          name: 'messages',
+          type: 'Message',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'userTenant',
+        },
+        conversationsAsUserTenantOne: {
+          name: 'conversationsAsUserTenantOne',
+          type: 'Conversation',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'userTenantOne',
+        },
+        conversationsAsUserTenantTwo: {
+          name: 'conversationsAsUserTenantTwo',
+          type: 'Conversation',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'userTenantTwo',
+        },
+        domains: {
+          name: 'domains',
+          type: 'Domain',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'userTenant',
+        },
+        documents: {
+          name: 'documents',
+          type: 'Document',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'owner',
+        },
+        conversations: {
+          name: 'conversations',
+          type: 'DocumentConversation',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'userTenant',
+        },
+        restrictedTokens: {
+          name: 'restrictedTokens',
+          type: 'RestrictedToken',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'userTenant',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        userId_tenantId: {
+          name: 'userId_tenantId',
+          fields: ['userId', 'tenantId'],
         },
       },
     },
@@ -962,44 +1155,13 @@ const metadata = {
     user: {
       name: 'User',
       fields: {
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
-        },
-        deletedAt: {
-          name: 'deletedAt',
-          type: 'DateTime',
-          isOptional: true,
-        },
-        createdBy: {
-          name: 'createdBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$User$createdBy,
-        },
-        updatedBy: {
-          name: 'updatedBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$User$updatedBy,
-        },
         id: {
           name: 'id',
           type: 'String',
           isId: true,
-          attributes: [{ name: '@default', args: [] }],
         },
-        username: {
-          name: 'username',
+        name: {
+          name: 'name',
           type: 'String',
         },
         email: {
@@ -1008,51 +1170,82 @@ const metadata = {
         },
         emailVerified: {
           name: 'emailVerified',
+          type: 'Boolean',
+        },
+        image: {
+          name: 'image',
+          type: 'String',
+          isOptional: true,
+        },
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+        },
+        twoFactorEnabled: {
+          name: 'twoFactorEnabled',
+          type: 'Boolean',
+          isOptional: true,
+        },
+        role: {
+          name: 'role',
+          type: 'String',
+          isOptional: true,
+        },
+        banned: {
+          name: 'banned',
+          type: 'Boolean',
+          isOptional: true,
+        },
+        banReason: {
+          name: 'banReason',
+          type: 'String',
+          isOptional: true,
+        },
+        banExpires: {
+          name: 'banExpires',
           type: 'DateTime',
           isOptional: true,
         },
-        isActive: {
-          name: 'isActive',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: true }] }],
-        },
-        password: {
-          name: 'password',
-          type: 'String',
-        },
-        isTwoFactorEnabled: {
-          name: 'isTwoFactorEnabled',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: false }] }],
-        },
-        isTemporalPassword: {
-          name: 'isTemporalPassword',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: false }] }],
-        },
-        twoFactorConfirmationId: {
-          name: 'twoFactorConfirmationId',
+        phoneNumber: {
+          name: 'phoneNumber',
           type: 'String',
           isOptional: true,
         },
-        twoFactorConfirmation: {
-          name: 'twoFactorConfirmation',
-          type: 'TwoFactorConfirmation',
-          isDataModel: true,
+        phoneNumberVerified: {
+          name: 'phoneNumberVerified',
+          type: 'Boolean',
           isOptional: true,
-          backLink: 'user',
         },
-        Authenticators: {
-          name: 'Authenticators',
-          type: 'Authenticator',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'user',
+        isAnonymous: {
+          name: 'isAnonymous',
+          type: 'Boolean',
+          isOptional: true,
         },
         isGlobalAdmin: {
           name: 'isGlobalAdmin',
           type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: false }] }],
+          isOptional: true,
+        },
+        username: {
+          name: 'username',
+          type: 'String',
+          isOptional: true,
+        },
+        displayUsername: {
+          name: 'displayUsername',
+          type: 'String',
+          isOptional: true,
+        },
+        sessions: {
+          name: 'sessions',
+          type: 'Session',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'user',
         },
         accounts: {
           name: 'accounts',
@@ -1061,9 +1254,44 @@ const metadata = {
           isArray: true,
           backLink: 'user',
         },
-        sessions: {
-          name: 'sessions',
-          type: 'Session',
+        twofactors: {
+          name: 'twofactors',
+          type: 'TwoFactor',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'user',
+        },
+        ssoproviders: {
+          name: 'ssoproviders',
+          type: 'SsoProvider',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'user',
+        },
+        members: {
+          name: 'members',
+          type: 'Member',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'user',
+        },
+        invitations: {
+          name: 'invitations',
+          type: 'Invitation',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'user',
+        },
+        apikeys: {
+          name: 'apikeys',
+          type: 'Apikey',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'user',
+        },
+        passkeys: {
+          name: 'passkeys',
+          type: 'Passkey',
           isDataModel: true,
           isArray: true,
           backLink: 'user',
@@ -1085,206 +1313,9 @@ const metadata = {
           name: 'email',
           fields: ['email'],
         },
-        username: {
-          name: 'username',
-          fields: ['username'],
-        },
         email_username: {
           name: 'email_username',
           fields: ['email', 'username'],
-        },
-      },
-    },
-    userTenant: {
-      name: 'UserTenant',
-      fields: {
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
-        },
-        deletedAt: {
-          name: 'deletedAt',
-          type: 'DateTime',
-          isOptional: true,
-        },
-        createdBy: {
-          name: 'createdBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$UserTenant$createdBy,
-        },
-        updatedBy: {
-          name: 'updatedBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$UserTenant$updatedBy,
-        },
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'userTenants',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
-        },
-        isActive: {
-          name: 'isActive',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: true }] }],
-        },
-        isTermAccepted: {
-          name: 'isTermAccepted',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: false }] }],
-        },
-        joinedAt: {
-          name: 'joinedAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
-        isSuperAdmin: {
-          name: 'isSuperAdmin',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: false }] }],
-        },
-        isTwoFactorRequired: {
-          name: 'isTwoFactorRequired',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: false }] }],
-        },
-        userId: {
-          name: 'userId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'user',
-        },
-        user: {
-          name: 'user',
-          type: 'User',
-          isDataModel: true,
-          backLink: 'userTenants',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'userId' },
-        },
-        personId: {
-          name: 'personId',
-          type: 'String',
-          isOptional: true,
-        },
-        person: {
-          name: 'person',
-          type: 'Person',
-          isDataModel: true,
-          isOptional: true,
-          backLink: 'userTenant',
-        },
-        userAreas: {
-          name: 'userAreas',
-          type: 'UserTenantArea',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'userTenant',
-        },
-        userRoles: {
-          name: 'userRoles',
-          type: 'UserTenantRole',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'userTenant',
-        },
-        assignedUsers: {
-          name: 'assignedUsers',
-          type: 'AssignedUser',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'userTenant',
-        },
-        reactions: {
-          name: 'reactions',
-          type: 'Reaction',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'userTenant',
-        },
-        messages: {
-          name: 'messages',
-          type: 'Message',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'userTenant',
-        },
-        conversationsAsUserTenantOne: {
-          name: 'conversationsAsUserTenantOne',
-          type: 'Conversation',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'userTenantOne',
-        },
-        conversationsAsUserTenantTwo: {
-          name: 'conversationsAsUserTenantTwo',
-          type: 'Conversation',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'userTenantTwo',
-        },
-        domains: {
-          name: 'domains',
-          type: 'Domain',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'userTenant',
-        },
-        documents: {
-          name: 'documents',
-          type: 'Document',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'owner',
-        },
-        conversations: {
-          name: 'conversations',
-          type: 'DocumentConversation',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'userTenant',
-        },
-        restrictedTokens: {
-          name: 'restrictedTokens',
-          type: 'RestrictedToken',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'userTenant',
-        },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
-        },
-        userId_tenantId: {
-          name: 'userId_tenantId',
-          fields: ['userId', 'tenantId'],
         },
       },
     },
@@ -1295,21 +1326,38 @@ const metadata = {
           name: 'id',
           type: 'String',
           isId: true,
-          attributes: [{ name: '@default', args: [] }],
         },
-        sessionToken: {
-          name: 'sessionToken',
+        expiresAt: {
+          name: 'expiresAt',
+          type: 'DateTime',
+        },
+        token: {
+          name: 'token',
           type: 'String',
+        },
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+        },
+        ipAddress: {
+          name: 'ipAddress',
+          type: 'String',
+          isOptional: true,
+        },
+        userAgent: {
+          name: 'userAgent',
+          type: 'String',
+          isOptional: true,
         },
         userId: {
           name: 'userId',
           type: 'String',
           isForeignKey: true,
           relationField: 'user',
-        },
-        expires: {
-          name: 'expires',
-          type: 'DateTime',
         },
         user: {
           name: 'user',
@@ -1319,15 +1367,15 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'userId' },
         },
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
+        activeOrganizationId: {
+          name: 'activeOrganizationId',
+          type: 'String',
+          isOptional: true,
         },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          attributes: [{ name: '@updatedAt', args: [] }],
+        impersonatedBy: {
+          name: 'impersonatedBy',
+          type: 'String',
+          isOptional: true,
         },
       },
       uniqueConstraints: {
@@ -1335,9 +1383,9 @@ const metadata = {
           name: 'id',
           fields: ['id'],
         },
-        sessionToken: {
-          name: 'sessionToken',
-          fields: ['sessionToken'],
+        token: {
+          name: 'token',
+          fields: ['token'],
         },
       },
     },
@@ -1348,7 +1396,14 @@ const metadata = {
           name: 'id',
           type: 'String',
           isId: true,
-          attributes: [{ name: '@default', args: [] }],
+        },
+        accountId: {
+          name: 'accountId',
+          type: 'String',
+        },
+        providerId: {
+          name: 'providerId',
+          type: 'String',
         },
         userId: {
           name: 'userId',
@@ -1356,36 +1411,37 @@ const metadata = {
           isForeignKey: true,
           relationField: 'user',
         },
-        type: {
-          name: 'type',
-          type: 'String',
+        user: {
+          name: 'user',
+          type: 'User',
+          isDataModel: true,
+          backLink: 'accounts',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'userId' },
         },
-        provider: {
-          name: 'provider',
-          type: 'String',
-        },
-        providerAccountId: {
-          name: 'providerAccountId',
-          type: 'String',
-        },
-        refresh_token: {
-          name: 'refresh_token',
+        accessToken: {
+          name: 'accessToken',
           type: 'String',
           isOptional: true,
         },
-        access_token: {
-          name: 'access_token',
+        refreshToken: {
+          name: 'refreshToken',
           type: 'String',
           isOptional: true,
         },
-        expires_at: {
-          name: 'expires_at',
-          type: 'Int',
+        idToken: {
+          name: 'idToken',
+          type: 'String',
           isOptional: true,
         },
-        token_type: {
-          name: 'token_type',
-          type: 'String',
+        accessTokenExpiresAt: {
+          name: 'accessTokenExpiresAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        refreshTokenExpiresAt: {
+          name: 'refreshTokenExpiresAt',
+          type: 'DateTime',
           isOptional: true,
         },
         scope: {
@@ -1393,135 +1449,667 @@ const metadata = {
           type: 'String',
           isOptional: true,
         },
-        id_token: {
-          name: 'id_token',
+        password: {
+          name: 'password',
           type: 'String',
           isOptional: true,
         },
-        session_state: {
-          name: 'session_state',
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    verification: {
+      name: 'Verification',
+      fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+        },
+        identifier: {
+          name: 'identifier',
+          type: 'String',
+        },
+        value: {
+          name: 'value',
+          type: 'String',
+        },
+        expiresAt: {
+          name: 'expiresAt',
+          type: 'DateTime',
+        },
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    twoFactor: {
+      name: 'TwoFactor',
+      fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+        },
+        secret: {
+          name: 'secret',
+          type: 'String',
+        },
+        backupCodes: {
+          name: 'backupCodes',
+          type: 'String',
+        },
+        userId: {
+          name: 'userId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'user',
+        },
+        user: {
+          name: 'user',
+          type: 'User',
+          isDataModel: true,
+          backLink: 'twofactors',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'userId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    jwks: {
+      name: 'Jwks',
+      fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+        },
+        publicKey: {
+          name: 'publicKey',
+          type: 'String',
+        },
+        privateKey: {
+          name: 'privateKey',
+          type: 'String',
+        },
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    ssoProvider: {
+      name: 'SsoProvider',
+      fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+        },
+        issuer: {
+          name: 'issuer',
+          type: 'String',
+        },
+        oidcConfig: {
+          name: 'oidcConfig',
           type: 'String',
           isOptional: true,
         },
-        refresh_token_expires_in: {
-          name: 'refresh_token_expires_in',
+        samlConfig: {
+          name: 'samlConfig',
+          type: 'String',
+          isOptional: true,
+        },
+        userId: {
+          name: 'userId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'user',
+        },
+        user: {
+          name: 'user',
+          type: 'User',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'ssoproviders',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'userId' },
+        },
+        providerId: {
+          name: 'providerId',
+          type: 'String',
+        },
+        organizationId: {
+          name: 'organizationId',
+          type: 'String',
+          isOptional: true,
+        },
+        domain: {
+          name: 'domain',
+          type: 'String',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        providerId: {
+          name: 'providerId',
+          fields: ['providerId'],
+        },
+      },
+    },
+    oauthApplication: {
+      name: 'OauthApplication',
+      fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+          isOptional: true,
+        },
+        icon: {
+          name: 'icon',
+          type: 'String',
+          isOptional: true,
+        },
+        metadata: {
+          name: 'metadata',
+          type: 'String',
+          isOptional: true,
+        },
+        clientId: {
+          name: 'clientId',
+          type: 'String',
+          isOptional: true,
+        },
+        clientSecret: {
+          name: 'clientSecret',
+          type: 'String',
+          isOptional: true,
+        },
+        redirectURLs: {
+          name: 'redirectURLs',
+          type: 'String',
+          isOptional: true,
+        },
+        type: {
+          name: 'type',
+          type: 'String',
+          isOptional: true,
+        },
+        disabled: {
+          name: 'disabled',
+          type: 'Boolean',
+          isOptional: true,
+        },
+        userId: {
+          name: 'userId',
+          type: 'String',
+          isOptional: true,
+        },
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        clientId: {
+          name: 'clientId',
+          fields: ['clientId'],
+        },
+      },
+    },
+    oauthAccessToken: {
+      name: 'OauthAccessToken',
+      fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+        },
+        accessToken: {
+          name: 'accessToken',
+          type: 'String',
+          isOptional: true,
+        },
+        refreshToken: {
+          name: 'refreshToken',
+          type: 'String',
+          isOptional: true,
+        },
+        accessTokenExpiresAt: {
+          name: 'accessTokenExpiresAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        refreshTokenExpiresAt: {
+          name: 'refreshTokenExpiresAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        clientId: {
+          name: 'clientId',
+          type: 'String',
+          isOptional: true,
+        },
+        userId: {
+          name: 'userId',
+          type: 'String',
+          isOptional: true,
+        },
+        scopes: {
+          name: 'scopes',
+          type: 'String',
+          isOptional: true,
+        },
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        accessToken: {
+          name: 'accessToken',
+          fields: ['accessToken'],
+        },
+        refreshToken: {
+          name: 'refreshToken',
+          fields: ['refreshToken'],
+        },
+      },
+    },
+    oauthConsent: {
+      name: 'OauthConsent',
+      fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+        },
+        clientId: {
+          name: 'clientId',
+          type: 'String',
+          isOptional: true,
+        },
+        userId: {
+          name: 'userId',
+          type: 'String',
+          isOptional: true,
+        },
+        scopes: {
+          name: 'scopes',
+          type: 'String',
+          isOptional: true,
+        },
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        consentGiven: {
+          name: 'consentGiven',
+          type: 'Boolean',
+          isOptional: true,
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    organization: {
+      name: 'Organization',
+      fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        slug: {
+          name: 'slug',
+          type: 'String',
+          isOptional: true,
+        },
+        logo: {
+          name: 'logo',
+          type: 'String',
+          isOptional: true,
+        },
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+        },
+        metadata: {
+          name: 'metadata',
+          type: 'String',
+          isOptional: true,
+        },
+        members: {
+          name: 'members',
+          type: 'Member',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'organization',
+        },
+        invitations: {
+          name: 'invitations',
+          type: 'Invitation',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'organization',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        slug: {
+          name: 'slug',
+          fields: ['slug'],
+        },
+      },
+    },
+    member: {
+      name: 'Member',
+      fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+        },
+        organizationId: {
+          name: 'organizationId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'organization',
+        },
+        organization: {
+          name: 'organization',
+          type: 'Organization',
+          isDataModel: true,
+          backLink: 'members',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'organizationId' },
+        },
+        userId: {
+          name: 'userId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'user',
+        },
+        user: {
+          name: 'user',
+          type: 'User',
+          isDataModel: true,
+          backLink: 'members',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'userId' },
+        },
+        role: {
+          name: 'role',
+          type: 'String',
+        },
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    invitation: {
+      name: 'Invitation',
+      fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+        },
+        organizationId: {
+          name: 'organizationId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'organization',
+        },
+        organization: {
+          name: 'organization',
+          type: 'Organization',
+          isDataModel: true,
+          backLink: 'invitations',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'organizationId' },
+        },
+        email: {
+          name: 'email',
+          type: 'String',
+        },
+        role: {
+          name: 'role',
+          type: 'String',
+          isOptional: true,
+        },
+        status: {
+          name: 'status',
+          type: 'String',
+        },
+        expiresAt: {
+          name: 'expiresAt',
+          type: 'DateTime',
+        },
+        inviterId: {
+          name: 'inviterId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'user',
+        },
+        user: {
+          name: 'user',
+          type: 'User',
+          isDataModel: true,
+          backLink: 'invitations',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'inviterId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    apikey: {
+      name: 'Apikey',
+      fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+          isOptional: true,
+        },
+        start: {
+          name: 'start',
+          type: 'String',
+          isOptional: true,
+        },
+        prefix: {
+          name: 'prefix',
+          type: 'String',
+          isOptional: true,
+        },
+        key: {
+          name: 'key',
+          type: 'String',
+        },
+        userId: {
+          name: 'userId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'user',
+        },
+        user: {
+          name: 'user',
+          type: 'User',
+          isDataModel: true,
+          backLink: 'apikeys',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'userId' },
+        },
+        refillInterval: {
+          name: 'refillInterval',
           type: 'Int',
           isOptional: true,
         },
-        user: {
-          name: 'user',
-          type: 'User',
-          isDataModel: true,
-          backLink: 'accounts',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'userId' },
+        refillAmount: {
+          name: 'refillAmount',
+          type: 'Int',
+          isOptional: true,
         },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
+        lastRefillAt: {
+          name: 'lastRefillAt',
+          type: 'DateTime',
+          isOptional: true,
         },
-        provider_providerAccountId: {
-          name: 'provider_providerAccountId',
-          fields: ['provider', 'providerAccountId'],
+        enabled: {
+          name: 'enabled',
+          type: 'Boolean',
+          isOptional: true,
         },
-      },
-    },
-    verificationToken: {
-      name: 'VerificationToken',
-      fields: {
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
+        rateLimitEnabled: {
+          name: 'rateLimitEnabled',
+          type: 'Boolean',
+          isOptional: true,
         },
-        email: {
-          name: 'email',
-          type: 'String',
+        rateLimitTimeWindow: {
+          name: 'rateLimitTimeWindow',
+          type: 'Int',
+          isOptional: true,
         },
-        token: {
-          name: 'token',
-          type: 'String',
+        rateLimitMax: {
+          name: 'rateLimitMax',
+          type: 'Int',
+          isOptional: true,
         },
-        expires: {
-          name: 'expires',
+        requestCount: {
+          name: 'requestCount',
+          type: 'Int',
+          isOptional: true,
+        },
+        remaining: {
+          name: 'remaining',
+          type: 'Int',
+          isOptional: true,
+        },
+        lastRequest: {
+          name: 'lastRequest',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        expiresAt: {
+          name: 'expiresAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdAt: {
+          name: 'createdAt',
           type: 'DateTime',
         },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
-        },
-        token: {
-          name: 'token',
-          fields: ['token'],
-        },
-        email_token: {
-          name: 'email_token',
-          fields: ['email', 'token'],
-        },
-      },
-    },
-    passwordResetToken: {
-      name: 'PasswordResetToken',
-      fields: {
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
-        },
-        email: {
-          name: 'email',
-          type: 'String',
-        },
-        token: {
-          name: 'token',
-          type: 'String',
-        },
-        expires: {
-          name: 'expires',
+        updatedAt: {
+          name: 'updatedAt',
           type: 'DateTime',
         },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
-        },
-        token: {
-          name: 'token',
-          fields: ['token'],
-        },
-        email_token: {
-          name: 'email_token',
-          fields: ['email', 'token'],
-        },
-      },
-    },
-    twoFactorToken: {
-      name: 'TwoFactorToken',
-      fields: {
-        id: {
-          name: 'id',
+        permissions: {
+          name: 'permissions',
           type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
+          isOptional: true,
         },
-        email: {
-          name: 'email',
+        metadata: {
+          name: 'metadata',
           type: 'String',
-        },
-        token: {
-          name: 'token',
-          type: 'String',
-        },
-        expires: {
-          name: 'expires',
-          type: 'DateTime',
+          isOptional: true,
         },
       },
       uniqueConstraints: {
@@ -1529,24 +2117,24 @@ const metadata = {
           name: 'id',
           fields: ['id'],
         },
-        token: {
-          name: 'token',
-          fields: ['token'],
-        },
-        email_token: {
-          name: 'email_token',
-          fields: ['email', 'token'],
-        },
       },
     },
-    twoFactorConfirmation: {
-      name: 'TwoFactorConfirmation',
+    passkey: {
+      name: 'Passkey',
       fields: {
         id: {
           name: 'id',
           type: 'String',
           isId: true,
-          attributes: [{ name: '@default', args: [] }],
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+          isOptional: true,
+        },
+        publicKey: {
+          name: 'publicKey',
+          type: 'String',
         },
         userId: {
           name: 'userId',
@@ -1558,59 +2146,24 @@ const metadata = {
           name: 'user',
           type: 'User',
           isDataModel: true,
-          backLink: 'twoFactorConfirmation',
+          backLink: 'passkeys',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'userId' },
-        },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
-        },
-        userId: {
-          name: 'userId',
-          fields: ['userId'],
-        },
-      },
-    },
-    authenticator: {
-      name: 'Authenticator',
-      fields: {
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
         },
         credentialID: {
           name: 'credentialID',
-          type: 'String',
-        },
-        userId: {
-          name: 'userId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'user',
-        },
-        providerAccountId: {
-          name: 'providerAccountId',
-          type: 'String',
-        },
-        credentialPublicKey: {
-          name: 'credentialPublicKey',
           type: 'String',
         },
         counter: {
           name: 'counter',
           type: 'Int',
         },
-        credentialDeviceType: {
-          name: 'credentialDeviceType',
+        deviceType: {
+          name: 'deviceType',
           type: 'String',
         },
-        credentialBackedUp: {
-          name: 'credentialBackedUp',
+        backedUp: {
+          name: 'backedUp',
           type: 'Boolean',
         },
         transports: {
@@ -1618,27 +2171,16 @@ const metadata = {
           type: 'String',
           isOptional: true,
         },
-        user: {
-          name: 'user',
-          type: 'User',
-          isDataModel: true,
-          backLink: 'Authenticators',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'userId' },
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          isOptional: true,
         },
       },
       uniqueConstraints: {
         id: {
           name: 'id',
           fields: ['id'],
-        },
-        credentialID: {
-          name: 'credentialID',
-          fields: ['credentialID'],
-        },
-        userId_providerAccountId: {
-          name: 'userId_providerAccountId',
-          fields: ['userId', 'providerAccountId'],
         },
       },
     },
@@ -1869,6 +2411,11 @@ const metadata = {
           type: 'String',
           isForeignKey: true,
           relationField: 'related',
+        },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
         },
         request: {
           name: 'request',
@@ -4403,8 +4950,8 @@ const metadata = {
         },
       },
     },
-    invitation: {
-      name: 'Invitation',
+    invitationDocument: {
+      name: 'InvitationDocument',
       fields: {
         createdAt: {
           name: 'createdAt',
@@ -4427,14 +4974,14 @@ const metadata = {
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$Invitation$createdBy,
+          defaultValueProvider: $default$InvitationDocument$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
           attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$Invitation$updatedBy,
+          defaultValueProvider: $default$InvitationDocument$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -9859,7 +10406,8 @@ const metadata = {
     },
   },
   deleteCascade: {
-    user: ['UserTenant', 'Session', 'Account', 'TwoFactorConfirmation', 'Authenticator'],
+    user: ['UserTenant', 'Session', 'Account', 'TwoFactor', 'SsoProvider', 'Member', 'Invitation', 'Apikey', 'Passkey'],
+    organization: ['Member', 'Invitation'],
     requestAssignment: ['AssignedUser'],
     area: ['AssignmentCategory'],
     requestCategory: ['CategoryForm'],
@@ -9875,14 +10423,6 @@ function $default$Tenant$createdBy(user: any): unknown {
 }
 
 function $default$Tenant$updatedBy(user: any): unknown {
-  return user?.id;
-}
-
-function $default$User$createdBy(user: any): unknown {
-  return user?.id;
-}
-
-function $default$User$updatedBy(user: any): unknown {
   return user?.id;
 }
 
@@ -10062,11 +10602,11 @@ function $default$DocumentReaction$updatedBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$Invitation$createdBy(user: any): unknown {
+function $default$InvitationDocument$createdBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$Invitation$updatedBy(user: any): unknown {
+function $default$InvitationDocument$updatedBy(user: any): unknown {
   return user?.id;
 }
 

@@ -80,11 +80,13 @@ async function main() {
   //////////////////////////
   await prisma.user.create({
     data: {
-      id: '51C9BBA8-6C86-4E6C-8FE2-E98BB42A07F8',
+      id: '2RcRZcoyoc7XtU4IvHsjDWFQjhIITaOx',
       email: 'jess232016@gmail.com',
+      name: 'Jesus Hernandez',
       username: 'jess232016',
-      emailVerified: new Date(),
-      password: await hashPassword('Lamisma123*'),
+      emailVerified: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
       isGlobalAdmin: true,
       userTenants: {
         create: {
@@ -105,17 +107,31 @@ async function main() {
           },
         },
       },
+      accounts: {
+        create: [
+          {
+            id: 'ACzer5qUxGvu9miYCEwuiAu4N129uRca',
+            accountId: '2RcRZcoyoc7XtU4IvHsjDWFQjhIITaOx',
+            providerId: 'credential',
+            password: await hashPassword('Lamisma123*'),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        ],
+      },
     },
   });
 
   await prisma.user.create({
     data: {
-      id: 'D1A3D3A4-3D3A-4D3A-8D3A-3D3A3D3A3D3A',
+      id: 'JqzXgL0Ri70ExALHFyVbLhzdglWdmuIg',
       email: 'danilo@gmail.com',
+      name: 'Danilo Acevedo',
       username: 'danilo',
-      password: await hashPassword('Lamisma123*'),
+      createdAt: new Date(),
+      updatedAt: new Date(),
       isGlobalAdmin: true,
-      emailVerified: new Date(),
+      emailVerified: true,
       userTenants: {
         create: {
           id: USER_TENANT_DANILO_ID,
@@ -134,6 +150,18 @@ async function main() {
             },
           },
         },
+      },
+      accounts: {
+        create: [
+          {
+            id: 'gKmHZl0OC8fHjCAi1FtTHIEf1EdX97Ah',
+            accountId: 'JqzXgL0Ri70ExALHFyVbLhzdglWdmuIg',
+            providerId: 'credential',
+            password: await hashPassword('Lamisma123*'),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        ],
       },
     },
   });

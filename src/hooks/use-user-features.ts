@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { PermissionAction } from '@/constants/permissions';
+import { useSession } from '@/server/auth-client';
 import { useFindManyRoleFeature } from '@/services/api/hooks';
-import { useSession } from 'next-auth/react';
 
 import useTenantId from './use-tenant-id';
 

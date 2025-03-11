@@ -1,7 +1,7 @@
 'use server';
 
 import { redirect } from '@/i18n/routing';
-import { auth } from '@/server/auth';
+import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-server';
 
 import { HierarchyFormStepperValues } from '@/components/common/hierarchy/hierarchy-form-stepper';
@@ -9,7 +9,7 @@ import { HierarchyFormStepperValues } from '@/components/common/hierarchy/hierar
 class UserNotFoundErr extends Error {}
 
 export const upsertRequestHierarchy = async (data: HierarchyFormStepperValues, tenantId: string): Promise<HierarchyFormStepperValues> => {
-  const session = await auth();
+  const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
   await db.requestHierarchy.upsert({
@@ -92,7 +92,7 @@ export const upsertAssignmentHierarchy = async (data: HierarchyFormStepperValues
 };
 
 export const getRequestHierarchyAndLevelsByTenantId = async (locale: string, tenantId: string) => {
-  const session = await auth();
+  const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
   const hierarchy = await db.requestHierarchy.findFirst({
@@ -115,7 +115,7 @@ export const getRequestHierarchyAndLevelsByTenantId = async (locale: string, ten
 };
 
 export const getAssignmentHierarchyAndLevelsByTenantId = async (locale: string, tenantId: string) => {
-  const session = await auth();
+  const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
   const hierarchy = await db.assignmentHierarchy.findFirst({

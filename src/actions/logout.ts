@@ -1,7 +1,10 @@
 'use server';
 
-import { signOut } from '@/server/auth';
+import { headers } from 'next/headers';
+import { auth } from '@/server/auth-server';
 
 export const logout = async () => {
-  await signOut();
+  await auth.api.signOut({
+    headers: await headers(),
+  });
 };

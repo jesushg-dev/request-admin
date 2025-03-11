@@ -1,13 +1,12 @@
 'use server';
 
-import { update } from '@/server/auth';
+import { currentUser, update } from '@/server/auth-server';
 import { db } from '@/server/db-client';
 import { getUserByEmail, getUserById } from '@/services/data/user';
 import { SettingsSchema } from '@/services/schemas';
 import bcrypt from 'bcryptjs';
 import * as z from 'zod';
 
-import { currentUser } from '@/lib/auth';
 import { sendVerificationEmail } from '@/lib/mail';
 import { generateVerificationToken } from '@/lib/tokens';
 

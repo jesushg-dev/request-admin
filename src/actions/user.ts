@@ -1,18 +1,17 @@
 'use server';
 
-import { auth } from '@/server/auth';
+import { auth, currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-client';
 
 import { generateUuid } from '@/lib/id';
-import { sendVerificationEmailWithPassword } from '@/lib/mail';
-import { generateTempPassword, hashPassword } from '@/lib/password';
-import { generateVerificationToken } from '@/lib/tokens';
+//import { sendVerificationEmailWithPassword } from '@/lib/mail';
+import { generateTempPassword } from '@/lib/password';
 import { UserTenantScopedFormValues } from '@/components/common/user/user-tenant-scoped-form';
 
 class UserNotFoundErr extends Error {}
 
 export const getUsersAsOptions = async (tenantId: string) => {
-  const session = await auth();
+  const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
   const users = await db.user.findMany({
@@ -46,7 +45,7 @@ export const getUsersAsOptions = async (tenantId: string) => {
 };
 
 export const getIdentityTypesAsOptions = async (tenantId: string) => {
-  const session = await auth();
+  const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
   const identityTypes = await db.identificationType.findMany({
@@ -58,7 +57,7 @@ export const getIdentityTypesAsOptions = async (tenantId: string) => {
 };
 
 export const getRolesAsOptions = async (tenantId: string) => {
-  const session = await auth();
+  const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
   const roles = await db.role.findMany({
@@ -70,7 +69,7 @@ export const getRolesAsOptions = async (tenantId: string) => {
 };
 
 export const upsertUser = async (tenantId: string, data: UserTenantScopedFormValues) => {
-  const session = await auth();
+  const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
   // 1️⃣ Check if the user already exists by email
@@ -91,49 +90,15 @@ export const upsertUser = async (tenantId: string, data: UserTenantScopedFormVal
   let isNewUser = false;
 
   if (!existingUser) {
-    isNewUser = true;
-    user = await db.user.create({
-      data: {
-        ...newUserData,
-        password: await hashPassword(newUserData.password),
-        userTenants: {
-          create: {
-            tenantId,
-            isTwoFactorRequired: data.user.isTwoFactorRequired,
-            isActive: data.user.isActive,
-            person: {
-              create: {
-                tenantId,
-                firstName: data.user.firstName,
-                lastName: data.user.lastName,
-                phone: data.user.phone,
-                identificationNumber: data.user.identificationNumber,
-                identificationTypeId: data.user.identificationTypeId.value,
-              },
-            },
-            userRoles: data.roles
-              ? {
-                  create: data.roles.map((role) => ({
-                    tenantId,
-                    roleId: role.roleId.value,
-                    isActive: role.isActive,
-                  })),
-                }
-              : undefined,
-            userAreas: data.areaRoles
-              ? {
-                  create: data.areaRoles.map((area) => ({
-                    tenantId,
-                    areaId: area.areaId.value,
-                    roleId: area.roleId.value,
-                    isActive: area.isActive,
-                  })),
-                }
-              : undefined,
-          },
-        },
+    await auth.api.signUpEmail({
+      body: {
+        email: newUserData.email,
+        password: newUserData.password,
+        name: newUserData.username,
       },
     });
+
+    isNewUser = true;
   } else {
     // 4️⃣ If the user already exists, update their information
 
@@ -196,15 +161,14 @@ export const upsertUser = async (tenantId: string, data: UserTenantScopedFormVal
 
   // 5️⃣ If the user is new, send an invitation email
   if (isNewUser) {
-    const verificationToken = await generateVerificationToken(user.email);
-    await sendVerificationEmailWithPassword(verificationToken.email, verificationToken.token, newUserData.password);
+    // todo: send email
   }
 
   return user;
 };
 
 export const getCurrentUserTenant = async (tenantId: string) => {
-  const session = await auth();
+  const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
   const user = await db.userTenant.findUniqueOrThrow({

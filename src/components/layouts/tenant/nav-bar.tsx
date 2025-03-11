@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import { logout } from '@/actions/logout';
 import { redirect } from '@/i18n/routing';
-import { auth } from '@/server/auth';
-import { ExtendedUser } from '@/server/auth/config';
+import { currentSession } from '@/server/auth-server';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@radix-ui/react-accordion';
 import { Book, Menu, Sunset, Trees, UserCircleIcon, Zap } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
@@ -13,13 +12,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 
-function getUserDisplayName(user: ExtendedUser): string {
-  const fullName = `${user.firstName} ${user.lastName}`.trim();
-  return fullName ? fullName : user.email || 'No name';
+function getUserDisplayName(user: { name: string }): string {
+  return user.name;
+  //const fullName = `${user.firstName} ${user.lastName}`.trim();
+  //return fullName ? fullName : user.email || 'No name';
 }
 
 const Navbar = async () => {
-  const user = await auth();
+  const user = await currentSession();
   if (!user) return redirect({ href: '/', locale: 'en' });
 
   const t = await getTranslations('tenants.navbar');

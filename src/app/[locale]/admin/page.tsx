@@ -1,5 +1,5 @@
 import { Link, redirect } from '@/i18n/routing';
-import { auth } from '@/server/auth';
+import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-server';
 import { getTranslations } from 'next-intl/server';
 
@@ -10,11 +10,11 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 export default async function TenantsPage() {
   const t = await getTranslations('tenants.tenants');
 
-  const user = await auth();
-  if (!user) return redirect({ href: '/', locale: 'en' });
+  const session = await currentSession();
+  if (!session) return redirect({ href: '/', locale: 'en' });
 
   const tenants = await db.tenant.findMany({
-    where: { userTenants: { some: { userId: user.user.id, isActive: true } } },
+    where: { userTenants: { some: { userId: session.user.id, isActive: true } } },
     select: { id: true, name: true, logoUrl: true, description: true, websiteUrl: true },
   });
 
