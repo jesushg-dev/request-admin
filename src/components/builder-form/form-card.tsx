@@ -22,7 +22,7 @@ interface FormCardProps {
 }
 
 export function FormCard({ form, className, children }: FormCardProps) {
-  const t = useTranslations('admin.formBuilder.main');
+  const t = useTranslations('admin.form.main');
 
   return (
     <Card className={cn(className)}>

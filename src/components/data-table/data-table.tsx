@@ -1,6 +1,6 @@
 import { createContext, Fragment, ReactNode, useContext } from 'react';
 import { ColumnDef, flexRender, type Row, type Table as TanstackTable } from '@tanstack/react-table';
-import { InboxIcon, NotepadText, NotepadTextDashed } from 'lucide-react';
+import { Files, FileText, Link, NotepadText, NotepadTextDashed } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { parseAsBoolean, useQueryState } from 'nuqs';
 
@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DataTablePagination } from '@/components/data-table/data-table-pagination';
 
 import { Hint } from '../hint';
-import EmptyState from '../shared/empty-state';
+import EmptyState, { EmptyStateProps } from '../shared/empty-state';
 import { Button } from '../ui/button';
 import { DataTableSkeleton } from './data-table-skeleton';
 
@@ -53,10 +53,7 @@ interface DataTableProps<TData, TSubData> extends CommonDataTableProps<TData> {
     render: (props: { row: Row<TData>; isExpanded: boolean; columns: ColumnDef<TSubData>[] }) => React.ReactNode;
   };
   isLoading?: boolean;
-  emptyState?: {
-    title: string;
-    description: string;
-  };
+  emptyState?: EmptyStateProps;
 }
 
 export function DataTable<TData, TSubData>({ table, subComponent, emptyState, isLoading, children }: DataTableProps<TData, TSubData>) {
@@ -98,7 +95,7 @@ export function DataTable<TData, TSubData>({ table, subComponent, emptyState, is
             ) : (
               <TableRow>
                 <TableCell colSpan={table.getAllColumns().length} className="h-full w-full text-center">
-                  <EmptyState title={emptyState?.title ?? 'No data'} description={emptyState?.description ?? 'There are no records to display'} icon={<InboxIcon className="w-10 h-10" />} />
+                  <EmptyState title={emptyState?.title ?? 'No data'} description={emptyState?.description ?? 'There are no records to display'} icons={[FileText, Link, Files]} {...emptyState} />
                 </TableCell>
               </TableRow>
             )}

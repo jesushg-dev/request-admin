@@ -10,7 +10,7 @@ import useDesigner from '@/hooks/use-designer';
 import { Button } from '@/components/ui/button';
 
 function SaveFormBtn({ id }: { id: string }) {
-  const t = useTranslations('component.formBuilder');
+  const t = useTranslations('component.form');
   const { elements } = useDesigner();
   const [loading, startTransition] = useTransition();
 

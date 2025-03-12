@@ -1,102 +1,197 @@
-import React, { Suspense, type FC } from 'react';
-import { GetForms, GetFormStats } from '@/actions/form';
-import { ArrowDownIcon, BookOpenCheckIcon, MousePointerClickIcon, ViewIcon } from 'lucide-react';
-import { getTranslations } from 'next-intl/server';
+'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import CreateFormBtn from '@/components/builder-form/create-form-btn';
-import { DraggableFormCard } from '@/components/builder-form/form-card';
-import { StatCard } from '@/components/stat-card';
+import React, { memo, useMemo } from 'react';
+import { useCountForm, useFindManyForm } from '@/services/api/hooks';
+import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
+import { Prisma } from '@prisma/client';
+import { ColumnDef } from '@tanstack/react-table';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 
-interface PageProps {
-  params: Promise<{ locale: string; tenantId: string }>;
-}
+import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
+import { formatDate } from '@/lib/utils';
+import { useDataTable } from '@/hooks/use-data-table';
+import { useFetchTableData } from '@/hooks/use-fetch-table-data';
+import useTenantId from '@/hooks/use-tenant-id';
+import { Checkbox } from '@/components/ui/checkbox';
+import ErrorRetryFallback from '@/components/common/error-retry-fallback';
+import { DataTable, DataTableShell } from '@/components/data-table/data-table';
+import { ActionCell } from '@/components/data-table/data-table-action-menu';
+import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-advanced-toolbar';
+import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
+import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
+import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
 
-const Page: FC<PageProps> = async ({ params }) => {
-  const { tenantId } = await params;
-  const t = await getTranslations('admin.formBuilder.main');
+const FormDefaultArgs = Prisma.validator<Prisma.FormDefaultArgs>()({
+  select: {
+    id: true,
+    name: true,
+    tenantId: true,
+    description: true,
+    createdAt: true,
+    published: true,
+    visits: true,
+    submissions: true,
+  },
+});
+
+type FormWithRelations = Prisma.FormGetPayload<typeof FormDefaultArgs>;
+
+const searchParamsParsers = {
+  page: parseAsInteger.withDefault(1),
+  perPage: parseAsInteger.withDefault(10),
+  sort: getSortingStateParser<FormWithRelations>().withDefault([{ id: 'createdAt', desc: true }]),
+  filters: getFiltersStateParser<FormWithRelations>().withDefault([]),
+  joinOperator: parseAsStringEnum(['and', 'or']).withDefault('and'),
+};
+
+const FormMainPage: React.FC = () => {
+  const tenantId = useTenantId();
+  const t = useTranslations('admin.form.main');
+  const [search] = useQueryStates(searchParamsParsers);
+
+  const { data, isLoading, isError, error, refetch, pageCount } = useFetchTableData<FormWithRelations, Prisma.FormFindManyArgs, Prisma.FormCountArgs>({
+    search,
+    useCountHook: useCountForm,
+    useFindManyHook: useFindManyForm,
+    defaultArgs: {
+      ...FormDefaultArgs,
+      where: { tenantId }, // Filtro base por tenant
+    },
+  });
+
+  const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t }), [t]);
+
+  const { table } = useDataTable({
+    data: data ?? [],
+    columns,
+    pageCount,
+    filterFields,
+    enableAdvancedFilter: true,
+    initialState: {
+      sorting: [{ id: 'name', desc: false }],
+      columnPinning: { right: ['actions'] },
+    },
+    shallow: false,
+    clearOnDefault: true,
+    getRowCanExpand: () => false,
+    getRowId: (originalRow) => originalRow.id,
+  });
+
+  if (isError && error) return <ErrorRetryFallback error={error} onRetry={refetch} />;
 
   return (
-    <div className="flex w-full flex-1 flex-col gap-4 p-4">
-      <Suspense fallback={<StatCards loading={true} />}>
-        <CardStatsWrapper tenantId={tenantId} />
-      </Suspense>
-      <Card className="bg-background flex-1">
-        <CardHeader>
-          <CardTitle>{t('yourForms')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <CreateFormBtn />
-            <Suspense
-              fallback={[1, 2, 3, 4].map((el) => (
-                <FormCardSkeleton key={el} />
-              ))}>
-              <FormCards tenantId={tenantId} />
-            </Suspense>
+    <DataTableShell table={table} floatingBar={<DataTableFloatingBar table={table} />}>
+      <DataTable table={table} isLoading={isLoading}>
+        <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
+          <DataTableToolbarActions
+            table={table}
+            exportFilename="forms"
+            entityLabel={t('entityLabel')}
+            addLink={{
+              pathname: '/admin/[tenantId]/form-designer/new',
+              params: { tenantId },
+            }}
+          />
+        </DataTableAdvancedToolbar>
+      </DataTable>
+    </DataTableShell>
+  );
+};
+
+interface GetTableConfigurationProps {
+  t: ReturnType<typeof useTranslations>;
+}
+
+function getTableConfiguration({ t }: GetTableConfigurationProps) {
+  const columns: ColumnDef<FormWithRelations>[] = [
+    {
+      id: 'name',
+      header: ({ table, column }) => (
+        <div className="flex items-center">
+          <Checkbox
+            checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+            onCheckedChange={(value) => table.toggleAllRowsSelected(!!value)}
+            className="mr-2"
+          />
+          <DataTableColumnHeader column={column} title={t('columns.name')} />
+        </div>
+      ),
+      cell: ({ row }) => {
+        const hasSubRows = row.getCanExpand();
+
+        return (
+          <div
+            style={{
+              paddingLeft: `${row.depth * 1.5}rem`,
+            }}
+            className="flex items-center">
+            <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label={t('columns.selectRow')} className="mr-2" />
+            {hasSubRows && (
+              <button onClick={row.getToggleExpandedHandler()} style={{ cursor: 'pointer' }} className="mr-2">
+                {row.getIsExpanded() ? <ChevronUp className="size-4 shrink-0 opacity-50" /> : <ChevronDown className="size-4 shrink-0 opacity-50" />}
+              </button>
+            )}
+            <span>{row.original.name}</span>
           </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-};
+        );
+      },
+    },
+    {
+      accessorKey: 'description',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.description')} />,
+      cell: ({ cell }) => cell.getValue(),
+    },
+    {
+      accessorKey: 'published',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.published')} />,
+      cell: ({ cell }) => (cell.getValue() ? t('states.published') : t('states.draft')),
+    },
+    {
+      accessorKey: 'visits',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.visits')} />,
+      cell: ({ cell }) => cell.getValue(),
+    },
+    {
+      accessorKey: 'submissions',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.submissions')} />,
+      cell: ({ cell }) => cell.getValue(),
+    },
+    {
+      accessorKey: 'createdAt',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.createdAt')} />,
+      cell: ({ cell }) => formatDate(cell.getValue() as Date),
+    },
+    {
+      id: 'actions',
+      cell: (data) => (
+        <ActionCell
+          cell={data}
+          onDelete={() => console.log('Delete', data.row.original)}
+          updateLink={{
+            pathname: '/admin/[tenantId]/form-designer/[slug]/edit',
+            params: { tenantId: data.row.original.tenantId, slug: data.row.original.id },
+          }}
+          viewLink={{
+            pathname: '/admin/[tenantId]/form-designer/[slug]',
+            params: { tenantId: data.row.original.tenantId, slug: data.row.original.id },
+          }}
+        />
+      ),
+      size: 20,
+    },
+  ];
 
-const FormCardSkeleton = () => {
-  return <Skeleton className="border-primary-/20 h-[190px] w-full border-2" />;
-};
+  const filterFields: DataTableFilterField<FormWithRelations>[] = [{ id: 'name', label: t('filters.name'), placeholder: t('filters.namePlaceholder') }];
 
-const FormCards = async ({ tenantId }: { tenantId: string }) => {
-  const forms = await GetForms(tenantId);
-  return (
-    <>
-      {forms.map((form) => (
-        <DraggableFormCard key={form.id} data={form} />
-      ))}
-    </>
-  );
-};
+  const advancedFilterFields: DataTableAdvancedFilterField<FormWithRelations>[] = [
+    { id: 'name', label: t('filters.name'), type: 'text' },
+    { id: 'createdAt', label: t('filters.createdAt'), type: 'date' },
+    { id: 'published', label: t('filters.published'), type: 'boolean' },
+  ];
 
-const CardStatsWrapper = async ({ tenantId }: { tenantId: string }) => {
-  const stats = await GetFormStats(tenantId);
-  return <StatCards loading={false} data={stats} />;
-};
-
-interface StatCardProps {
-  data?: Awaited<ReturnType<typeof GetFormStats>>;
-  loading: boolean;
+  return { columns, filterFields, advancedFilterFields };
 }
 
-const StatCards = async (props: StatCardProps) => {
-  const t = await getTranslations('admin.formBuilder.main');
-  const { data, loading } = props;
-
-  return (
-    <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <StatCard title={t('totalVisits')} icon={<ViewIcon className="h-4 w-4 text-blue-600" />} description={t('visitsHelper')} value={data?.visits.toLocaleString() ?? ''} loading={loading} />
-      <StatCard
-        title={t('totalSubmissions')}
-        icon={<BookOpenCheckIcon className="h-4 w-4 text-yellow-600" />}
-        description={t('submissionsHelper')}
-        value={data?.submissions.toLocaleString() ?? ''}
-        loading={loading}
-      />
-      <StatCard
-        title={t('submissionRate')}
-        icon={<MousePointerClickIcon className="h-4 w-4 text-green-600" />}
-        description={t('submissionRateHelper')}
-        value={data?.submissionRate.toLocaleString() + '%'}
-        loading={loading}
-      />
-      <StatCard
-        title={t('bounceRate')}
-        icon={<ArrowDownIcon className="h-4 w-4 text-red-600" />}
-        description={t('bounceRateHelper')}
-        value={data?.bounceRate.toLocaleString() + '%'}
-        loading={loading}
-      />
-    </div>
-  );
-};
-
-export default Page;
+export default memo(FormMainPage);

@@ -47,7 +47,7 @@ const AlertBanner = React.forwardRef<HTMLDivElement, AlertBannerProps>(({ classN
   }
 
   return (
-    <Alert ref={ref} className={cn(alertBannerVariants({ variant }), className)} {...props}>
+    <Alert ref={ref} className={cn(alertBannerVariants({ variant }), 'z-50', className)} {...props}>
       <div className="flex items-start gap-4">
         {icon && <div className="flex-shrink-0">{icon}</div>}
         <div className="flex-1">

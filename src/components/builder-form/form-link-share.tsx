@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 
 function FormLinkShare({ shareUrl, tenantId }: { shareUrl: string; tenantId: string }) {
-  const t = useTranslations('component.formBuilder');
+  const t = useTranslations('component.form');
   const [mounted, setMounted] = useState(false);
   const [copied, setCopied] = useState(false);
 

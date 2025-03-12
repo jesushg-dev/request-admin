@@ -10,7 +10,7 @@ import { Button } from '../ui/button';
 
 const CreateFormBtn = () => {
   const tenantId = useTenantId();
-  const t = useTranslations('admin.formBuilder.main');
+  const t = useTranslations('admin.form.main');
 
   return (
     <Link

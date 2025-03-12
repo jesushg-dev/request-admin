@@ -33,6 +33,6 @@ export const isPublicPage = (pathname: string, locales: readonly string[]): bool
   const result1 = publicRoutesWithLocaleRegex.test(pathname);
   const result2 = publicRoutesWithoutLocaleRegex.test(pathname);
   const result3 = pathname.includes('public');
-  const result4 = pathname.includes('api/auth');
+  const result4 = pathname.includes('auth');
   return result1 || result2 || result3 || result4;
 };

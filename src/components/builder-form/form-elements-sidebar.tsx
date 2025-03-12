@@ -12,7 +12,7 @@ import { FormElements } from './form-elements';
 import SidebarBtnElement from './sidebar-btn-element';
 
 function FormElementsSidebar() {
-  const t = useTranslations('component.formBuilder');
+  const t = useTranslations('component.form');
 
   return (
     <ScrollArea className="p-4">

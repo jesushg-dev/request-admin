@@ -19,7 +19,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '../ui/checkbox';
 
 const CreateNewForm: FC = () => {
-  const t = useTranslations('component.formBuilder');
+  const t = useTranslations('component.form');
   const router = useRouter();
   const tenantId = useTenantId();
 

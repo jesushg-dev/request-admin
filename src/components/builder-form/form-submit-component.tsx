@@ -17,7 +17,7 @@ interface FormSubmitComponentProps {
 
 const FormSubmitComponent: FC<FormSubmitComponentProps> = ({ tenantId, formId, content }) => {
   const router = useRouter();
-  const t = useTranslations('component.formBuilder');
+  const t = useTranslations('component.form');
 
   const [pending, startTransition] = useTransition();
 

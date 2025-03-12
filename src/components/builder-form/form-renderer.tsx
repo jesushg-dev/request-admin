@@ -22,7 +22,7 @@ interface FormRendererProps {
 }
 
 const FormRenderer = forwardRef<FormRendererRef, FormRendererProps>(({ initialValues = {}, isSubmitting, content, onSubmit, showSubmitButton = true }, ref) => {
-  const t = useTranslations('component.formBuilder');
+  const t = useTranslations('component.form');
   const formValues = useRef<Record<string, string>>({ ...initialValues });
   const formErrors = useRef<Record<string, boolean>>({});
 

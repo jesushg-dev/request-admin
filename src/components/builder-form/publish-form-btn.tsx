@@ -21,7 +21,7 @@ import {
 import { Button } from '@/components/ui/button';
 
 function PublishFormBtn({ id }: { id: string }) {
-  const t = useTranslations('component.formBuilder');
+  const t = useTranslations('component.form');
   const [loading, startTransition] = useTransition();
   const router = useRouter();
 

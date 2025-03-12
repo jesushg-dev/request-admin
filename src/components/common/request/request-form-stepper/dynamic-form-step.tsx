@@ -3,7 +3,7 @@
 import { FC, useEffect, useRef } from 'react';
 import { useFindManyForm } from '@/services/api/hooks';
 import { ScrollArea } from '@radix-ui/react-scroll-area';
-import { InboxIcon } from 'lucide-react';
+import { FileText } from 'lucide-react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -95,11 +95,7 @@ const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds, onPrev,
   if (!data || data.length === 0) {
     return (
       <>
-        <EmptyState
-          title="No forms available"
-          icon={<InboxIcon className="w-10 h-10" />}
-          description="As a result of the selected categories, there are no forms to fill out. Press the next button to continue."
-        />
+        <EmptyState title="No forms available" icons={[FileText]} description="As a result of the selected categories, there are no forms to fill out. Press the next button to continue." />
         <StepperNavigationButtons isLastStep={false} isFirstStep={false} onPrev={onBack} onReset={console.log} nextText="Next" submitText="Finish" onNext={onNext} />
       </>
     );

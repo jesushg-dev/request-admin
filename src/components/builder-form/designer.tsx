@@ -15,7 +15,7 @@ import DesignerSidebar from './designer-sidebar';
 import { ElementsType, FormElementInstance, FormElements, styleElements } from './form-elements';
 
 function Designer() {
-  const t = useTranslations('component.formBuilder'); // Translation namespace
+  const t = useTranslations('component.form'); // Translation namespace
   const { elements, addElement, selectedElement, setSelectedElement, removeElement } = useDesigner();
 
   const droppable = useDroppable({
@@ -141,7 +141,7 @@ function Designer() {
 }
 
 function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
-  const t = useTranslations('component.formBuilder');
+  const t = useTranslations('component.form');
   const styles = styleElements[element.type];
 
   const { removeElement, setSelectedElement } = useDesigner();

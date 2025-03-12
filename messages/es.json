@@ -52,7 +52,7 @@
       "fields": {
         "email": "Correo electrónico",
         "password": "Contraseña",
-        "twoFactor": "Código de autenticación"
+        "remember": "Recuérdame"
       },
       "placeholders": {
         "email": "juan.perez@ejemplo.com",
@@ -605,8 +605,28 @@
         }
       }
     },
-    "formBuilder": {
+    "form": {
       "main": {
+        "entityLabel": "Formularios",
+        "columns": {
+          "name": "Nombre",
+          "description": "Descripción",
+          "published": "Estado",
+          "visits": "Visitas",
+          "submissions": "Envíos",
+          "createdAt": "Fecha de creación",
+          "selectRow": "Seleccionar fila"
+        },
+        "filters": {
+          "name": "Filtrar por nombre",
+          "namePlaceholder": "Ingrese nombre del formulario...",
+          "createdAt": "Fecha de creación",
+          "published": "Publicado"
+        },
+        "states": {
+          "published": "Publicado",
+          "draft": "Borrador"
+        },
         "yourForms": "Tus formularios",
         "totalVisits": "Visitas totales",
         "visitsHelper": "Visitas totales al formulario",
@@ -716,7 +736,7 @@
         "description": "Descripción"
       }
     },
-    "formBuilder": {
+    "form": {
       "loading": "Cargando...",
       "formPublished": "🎊🎊 Formulario publicado 🎊🎊",
       "shareThisForm": "Comparte este formulario",

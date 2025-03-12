@@ -1,24 +1,78 @@
-import { FC, ReactNode } from 'react';
-import { InboxIcon } from 'lucide-react';
+import * as React from 'react';
+import { I18Link, Link } from '@/i18n/routing';
+import { LucideIcon } from 'lucide-react';
 
-// Define props for the EmptyState component
-interface EmptyStateProps {
-  title?: string;
-  description?: string;
-  icon?: ReactNode;
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+
+export interface EmptyStateProps {
+  title: string;
+  description: string;
+  icons?: LucideIcon[];
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
+  actionLink?: {
+    label: string;
+    href: I18Link;
+  };
+  className?: string;
 }
 
-// Reusable EmptyState component
-const EmptyState: FC<EmptyStateProps> = ({ title = 'No items available', description = 'No content matches your current selection.', icon = <InboxIcon className="w-10 h-10" /> }) => {
+function EmptyState({ title, description, icons = [], action, actionLink, className }: EmptyStateProps) {
   return (
-    <div className="flex-1 gap-4 flex justify-center items-center flex-col">
-      <div className="flex items-center justify-center w-20 h-20 rounded-full bg-muted">{icon}</div>
-      <div className="space-y-2 text-center">
-        <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
-        <p>{description}</p>
+    <div className="flex flex-1 items-center justify-center">
+      <div
+        className={cn(
+          'bg-background border-border hover:border-border/80 text-center',
+          'border-2 border-dashed rounded-xl p-14 w-full max-w-[620px]',
+          'group hover:bg-muted/50 transition duration-500 hover:duration-200',
+          className
+        )}>
+        <div className="flex justify-center isolate">
+          {icons.length === 3 ? (
+            <>
+              <div className="bg-background size-12 grid place-items-center rounded-xl relative left-2.5 top-1.5 -rotate-6 shadow-lg ring-1 ring-border group-hover:-translate-x-5 group-hover:-rotate-12 group-hover:-translate-y-0.5 transition duration-500 group-hover:duration-200">
+                {React.createElement(icons[0], {
+                  className: 'w-6 h-6 text-muted-foreground',
+                })}
+              </div>
+              <div className="bg-background size-12 grid place-items-center rounded-xl relative z-10 shadow-lg ring-1 ring-border group-hover:-translate-y-0.5 transition duration-500 group-hover:duration-200">
+                {React.createElement(icons[1], {
+                  className: 'w-6 h-6 text-muted-foreground',
+                })}
+              </div>
+              <div className="bg-background size-12 grid place-items-center rounded-xl relative right-2.5 top-1.5 rotate-6 shadow-lg ring-1 ring-border group-hover:translate-x-5 group-hover:rotate-12 group-hover:-translate-y-0.5 transition duration-500 group-hover:duration-200">
+                {React.createElement(icons[2], {
+                  className: 'w-6 h-6 text-muted-foreground',
+                })}
+              </div>
+            </>
+          ) : (
+            <div className="bg-background size-12 grid place-items-center rounded-xl shadow-lg ring-1 ring-border group-hover:-translate-y-0.5 transition duration-500 group-hover:duration-200">
+              {icons[0] &&
+                React.createElement(icons[0], {
+                  className: 'w-6 h-6 text-muted-foreground',
+                })}
+            </div>
+          )}
+        </div>
+        <h2 className="text-foreground font-medium mt-6">{title}</h2>
+        <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{description}</p>
+        {action && (
+          <Button onClick={action.onClick} variant="outline" className={cn('mt-4', 'shadow-sm active:shadow-none')}>
+            {action.label}
+          </Button>
+        )}
+        {actionLink && (
+          <Button variant={'outline'} className={cn('mt-4', 'shadow-sm active:shadow-none')} asChild={true}>
+            <Link href={actionLink.href}>{actionLink.label}</Link>
+          </Button>
+        )}
       </div>
     </div>
   );
-};
+}
 
 export default EmptyState;

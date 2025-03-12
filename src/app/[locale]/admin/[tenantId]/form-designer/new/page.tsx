@@ -5,7 +5,7 @@ import CreateNewForm from '@/components/builder-form/create-form';
 import { PageCardWrapper } from '@/components/page-card-wrapper';
 
 const NewRequirementPage: FC = async () => {
-  const t = await getTranslations('component.formBuilder');
+  const t = await getTranslations('component.form');
 
   return (
     <PageCardWrapper title={t('createNewForm')} description={t('dialogDescription')}>

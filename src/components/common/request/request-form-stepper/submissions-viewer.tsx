@@ -103,7 +103,7 @@ export default function FormSubmissionsViewer({ submissions }: { submissions?: R
             <Skeleton className="w-32 h-6" />
           </div>
         ) : !formSubmissions.length ? (
-          <EmptyState title="No submissions available" icon={<InboxIcon className="w-10 h-10" />} description="No form submissions have been made yet." />
+          <EmptyState title="No submissions available" icons={[InboxIcon]} description="No form submissions have been made yet." />
         ) : viewMode === 'table' ? (
           <TableView submissions={formSubmissions} columnVisibility={columnVisibility} />
         ) : (

@@ -52,7 +52,7 @@
       "fields": {
         "email": "Email",
         "password": "Password",
-        "twoFactor": "Two Factor Code"
+        "remember": "Remember me"
       },
       "placeholders": {
         "email": "john.doe@example.com",
@@ -73,7 +73,7 @@
         "tenantDescription": "Please, use the credential associated with the tenant you want to access."
       },
       "loading": "Loading...",
-      "success": "Welcome back, {name}!",
+      "success": "Welcome back!",
       "error": "An error occurred: {error}"
     },
     "registerForm": {
@@ -609,8 +609,28 @@
         }
       }
     },
-    "formBuilder": {
+    "form": {
       "main": {
+        "entityLabel": "Forms",
+        "columns": {
+          "name": "Name",
+          "description": "Description",
+          "published": "Status",
+          "visits": "Visits",
+          "submissions": "Submissions",
+          "createdAt": "Creation Date",
+          "selectRow": "Select row"
+        },
+        "filters": {
+          "name": "Filter by name",
+          "namePlaceholder": "Enter form name...",
+          "createdAt": "Creation Date",
+          "published": "Published"
+        },
+        "states": {
+          "published": "Published",
+          "draft": "Draft"
+        },
         "yourForms": "Your forms",
         "totalVisits": "Total visits",
         "visitsHelper": "All time form visits",
@@ -720,7 +740,7 @@
         "description": "Description"
       }
     },
-    "formBuilder": {
+    "form": {
       "loading": "Loading...",
       "formPublished": "🎊🎊 Form Published 🎊🎊",
       "shareThisForm": "Share this form",

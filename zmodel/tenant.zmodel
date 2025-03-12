@@ -129,7 +129,6 @@ model Tenant extends Auditable {
   @@allow("read", userTenants?[user.id == auth().id && isActive == true])
 }
 
-
 model UserTenant extends TenantScoped, Auditable {
   id                           String           @id @default(uuid()) @db.UniqueIdentifier
   isActive                     Boolean          @default(true) // Indicates if the user is active in the tenant
@@ -161,8 +160,6 @@ model UserTenant extends TenantScoped, Auditable {
   @@index([userId]) // Index for efficient queries by userId
   @@index([tenantId]) // Index for efficient queries by tenantId
 }
-
-
 
 model Subscription {
   id         String    @id @default(uuid()) @db.UniqueIdentifier

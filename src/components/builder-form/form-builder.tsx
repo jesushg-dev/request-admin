@@ -23,7 +23,7 @@ import SaveFormBtn from './save-form-btn';
 import VisitBtn from './visit-btn';
 
 function FormBuilder({ form }: { form: Form }) {
-  const t = useTranslations('component.formBuilder');
+  const t = useTranslations('component.form');
   const { setElements, setSelectedElement } = useDesigner();
   const [isReady, setIsReady] = useState(false);
 

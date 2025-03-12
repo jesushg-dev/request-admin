@@ -14,7 +14,7 @@ import { ScrollArea } from '../ui/scroll-area';
 import { FormElements } from './form-elements';
 
 function PreviewDialogBtn() {
-  const t = useTranslations('component.formBuilder');
+  const t = useTranslations('component.form');
   const { elements } = useDesigner();
 
   return (

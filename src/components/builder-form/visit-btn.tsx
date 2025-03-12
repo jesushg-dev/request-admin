@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 
 function VisitBtn({ shareUrl, tenantId }: { shareUrl: string; tenantId: string }) {
-  const t = useTranslations('component.formBuilder');
+  const t = useTranslations('component.form');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

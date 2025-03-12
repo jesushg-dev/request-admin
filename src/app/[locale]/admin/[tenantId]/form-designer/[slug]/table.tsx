@@ -47,7 +47,7 @@ type Column = {
 };
 
 const DynamicDataTable: FC<DynamicDataTableProps> = ({ tenantId, slug, name, columns, children }) => {
-  const t = useTranslations('admin.formBuilder.view');
+  const t = useTranslations('admin.form.view');
   const [search] = useQueryStates(searchParamsParsers);
 
   const { data, isError, error, refetch, isLoading, pageCount } = useFetchTableData<FormSubmission, Prisma.FormSubmissionFindManyArgs, Prisma.FormSubmissionCountArgs>({

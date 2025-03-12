@@ -12,7 +12,7 @@ import { ScrollArea } from '../ui/scroll-area';
 import { FormElements } from './form-elements';
 
 function PropertiesFormSidebar() {
-  const t = useTranslations('component.formBuilder');
+  const t = useTranslations('component.form');
   const { selectedElement, setSelectedElement } = useDesigner();
   if (!selectedElement) return null;
 

@@ -10,7 +10,7 @@ import DynamicDataTable from './table';
 
 export default async function FormDetailPage({ params }: { params: Promise<{ locale: string; tenantId: string; slug: string }> }) {
   const { locale, tenantId, slug } = await params;
-  const t = await getTranslations('admin.formBuilder.view');
+  const t = await getTranslations('admin.form.view');
 
   const form = await GetFormById(slug, tenantId);
   if (!form) {
