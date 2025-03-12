@@ -9,7 +9,6 @@ export async function POST(request: Request) {
       select: { id: true },
       where: { userTenants: { some: { userId } } },
     });
-    console.log('🚀 ~ POST ~ tenants:', tenants);
     return NextResponse.json({ tenants }, { status: 200 });
   } catch (error) {
     console.error(error);

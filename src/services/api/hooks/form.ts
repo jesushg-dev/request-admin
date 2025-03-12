@@ -361,7 +361,6 @@ export function useCheckForm<TError = DefaultError>(
       createdBy?: string;
       updatedBy?: string;
       tenantId?: string;
-      userId?: string;
       content?: string;
       published?: boolean;
       isPublic?: boolean;

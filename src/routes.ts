@@ -5,14 +5,14 @@ export type LoginError = 'unauthenticated' | 'tenant';
  * These routes do not require authentication
  * @type {string[]}
  */
-export const publicRoutes: string[] = ['/', '/auth/*', '/about/*', '*/api/auth/*', '/public/*'];
+export const publicRoutes: string[] = ['/', '/about/*', '*/api/auth/*', '/public/*'];
 
 /**
  * An array of routes that are used for authentication
  * These routes will redirect logged in users to /settings
  * @type {string[]}
  */
-export const authRoutes: string = '/auth/';
+export const authRoutes: string = '/auth/*';
 
 /**
  * The prefix for API authentication routes

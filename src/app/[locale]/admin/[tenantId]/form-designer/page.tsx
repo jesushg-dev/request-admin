@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, type FC } from 'react';
 import { GetForms, GetFormStats } from '@/actions/form';
 import { ArrowDownIcon, BookOpenCheckIcon, MousePointerClickIcon, ViewIcon } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
@@ -9,13 +9,18 @@ import CreateFormBtn from '@/components/builder-form/create-form-btn';
 import { DraggableFormCard } from '@/components/builder-form/form-card';
 import { StatCard } from '@/components/stat-card';
 
-const Home = async () => {
+interface PageProps {
+  params: Promise<{ locale: string; tenantId: string }>;
+}
+
+const Page: FC<PageProps> = async ({ params }) => {
+  const { tenantId } = await params;
   const t = await getTranslations('admin.formBuilder.main');
 
   return (
     <div className="flex w-full flex-1 flex-col gap-4 p-4">
       <Suspense fallback={<StatCards loading={true} />}>
-        <CardStatsWrapper />
+        <CardStatsWrapper tenantId={tenantId} />
       </Suspense>
       <Card className="bg-background flex-1">
         <CardHeader>
@@ -28,7 +33,7 @@ const Home = async () => {
               fallback={[1, 2, 3, 4].map((el) => (
                 <FormCardSkeleton key={el} />
               ))}>
-              <FormCards />
+              <FormCards tenantId={tenantId} />
             </Suspense>
           </div>
         </CardContent>
@@ -37,8 +42,23 @@ const Home = async () => {
   );
 };
 
-const CardStatsWrapper = async () => {
-  const stats = await GetFormStats();
+const FormCardSkeleton = () => {
+  return <Skeleton className="border-primary-/20 h-[190px] w-full border-2" />;
+};
+
+const FormCards = async ({ tenantId }: { tenantId: string }) => {
+  const forms = await GetForms(tenantId);
+  return (
+    <>
+      {forms.map((form) => (
+        <DraggableFormCard key={form.id} data={form} />
+      ))}
+    </>
+  );
+};
+
+const CardStatsWrapper = async ({ tenantId }: { tenantId: string }) => {
+  const stats = await GetFormStats(tenantId);
   return <StatCards loading={false} data={stats} />;
 };
 
@@ -79,19 +99,4 @@ const StatCards = async (props: StatCardProps) => {
   );
 };
 
-const FormCardSkeleton = () => {
-  return <Skeleton className="border-primary-/20 h-[190px] w-full border-2" />;
-};
-
-const FormCards = async () => {
-  const forms = await GetForms();
-  return (
-    <>
-      {forms.map((form) => (
-        <DraggableFormCard key={form.id} data={form} />
-      ))}
-    </>
-  );
-};
-
-export default Home;
+export default Page;

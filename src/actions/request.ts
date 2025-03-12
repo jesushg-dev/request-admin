@@ -44,9 +44,6 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
       select: { id: true },
     }),
   ]);
-  console.log('🚀 ~ handleCreate ~ assignmentType:', assignmentType);
-  console.log('🚀 ~ handleCreate ~ requirementCompliances:', requirementCompliances);
-  console.log('🚀 ~ handleCreate ~ userAreas:', userAreas);
 
   return db.$transaction(async (tx) => {
     const newRequest = await tx.request.create({
@@ -79,6 +76,7 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
       },
     });
 
+    console.log('🚀 ~ handleCreate ~ newRequest:', newRequest);
     // Registrar creación
     await tx.requestChangeLog.create({
       data: {
@@ -207,46 +205,6 @@ const handleUpdate = async (existingRequest: RequestType, tenantId: string, data
 // FUNCIONES AUXILIARES
 // ========================
 const getAreaWithSupervisors = async (tenantId: string, areaId: string) => {
-  const areaRoleFeature = await db.areaRoleFeature.findMany({
-    select: {
-      areaRole: {
-        select: {
-          name: true,
-          userAreas: {
-            select: {
-              areaId: true,
-              userTenantId: true,
-            },
-          },
-        },
-      },
-    },
-    where: {
-      AND: [
-        {
-          areaRole: {
-            areaId,
-          },
-        },
-        {
-          OR: [
-            {
-              feature: {
-                key: PermissionActions.REQUEST_MANAGEMENT.ASSIGN_USER,
-              },
-            },
-            {
-              feature: {
-                key: PermissionActions.REQUEST_MANAGEMENT.SCOPED_ASSIGN_USER,
-              },
-            },
-          ],
-        },
-      ],
-    },
-  });
-  console.log('🚀 ~ getAreaWithSupervisors ~ areaRoleFeature:', areaRoleFeature);
-
   return db.userTenant.findMany({
     ...UserTenantWithAreaDefaultArgs,
     where: {

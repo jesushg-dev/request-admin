@@ -5,7 +5,6 @@ import './category.zmodel'
 
 model Form extends TenantScoped, Auditable, CatalogBase {
   // Form details
-  userId          String           @db.UniqueIdentifier // ID of the user who owns the form
   content         String           @default("[]") @db.NVarChar(Max) // Structure of the form in JSON format
   published       Boolean          @default(false) // Publication status of the form
   isPublic        Boolean          @default(false) // Indicates if the form is public

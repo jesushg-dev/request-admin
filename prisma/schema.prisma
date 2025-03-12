@@ -708,7 +708,7 @@ model RequestChangeLog {
   id        String    @id() @default(uuid()) @db.UniqueIdentifier()
   requestId String    @db.UniqueIdentifier()
   request   Request   @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  changedBy String    @db.UniqueIdentifier()
+  changedBy String
   fieldName String    @db.VarChar(100)
   oldValue  String?   @db.VarChar(500)
   newValue  String?   @db.VarChar(500)
@@ -1806,7 +1806,6 @@ model Form {
   updatedBy       String?          @db.VarChar(50)
   tenantId        String           @db.UniqueIdentifier()
   tenant          Tenant           @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  userId          String           @db.UniqueIdentifier()
   content         String           @default("[]") @db.NVarChar(Max)
   published       Boolean          @default(false)
   isPublic        Boolean          @default(false)

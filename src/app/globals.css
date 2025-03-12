@@ -47,28 +47,32 @@
   --color-sidebar-border: hsl(var(--sidebar-border));
   --color-sidebar-ring: hsl(var(--sidebar-ring));
 
+  /* ======== Radio de Bordes ======== */
+  --radius: 0.5rem;
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 
-  --animate-accordion-down: accordion-down 0.2s ease-out;
-  --animate-accordion-up: accordion-up 0.2s ease-out;
+  /* ======== Tipografía ======== */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
 
-  @keyframes accordion-down {
-    from {
-      height: 0;
-    }
-    to {
-      height: var(--radix-accordion-content-height);
-    }
+/* ======== Animaciones ======== */
+@keyframes accordion-down {
+  from {
+    height: 0;
   }
-  @keyframes accordion-up {
-    from {
-      height: var(--radix-accordion-content-height);
-    }
-    to {
-      height: 0;
-    }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
   }
 }
 
@@ -80,6 +84,17 @@
   }
   @media (width >= 1400px) {
     max-width: 1400px;
+  }
+}
+
+@keyframes appear {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -126,8 +141,19 @@
   }
 }
 
+@keyframes appear-zoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ======== Capa Base ======== */
 @layer base {
-  /* CSS variables for light and dark themes */
   :root {
     --background: 0 0% 100%;
     --foreground: 20 14.3% 4.1%;
@@ -153,7 +179,6 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -162,7 +187,10 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    --brand: 213 100% 60%;
+    --brand-foreground: 210 100% 50%;
   }
+
   .dark {
     --background: 20 14.3% 4.1%;
     --foreground: 60 9.1% 97.8%;
@@ -197,59 +225,59 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
-  /* Universal element styles */
+
   * {
-    @apply border-border;
+    border-color: var(--color-border);
   }
+
   body {
     @apply bg-background text-foreground;
+    font-family: Arial, Helvetica, sans-serif;
   }
 }
 
-.ProseMirror {
-  @apply px-4 pt-2;
-  outline: none !important;
-}
+/* ======== Utilidades Personalizadas ======== */
+@layer utilities {
+  .container {
+    margin-inline: auto;
+    padding-inline: 2rem;
 
-h1.tiptap-heading {
-  @apply mb-6 mt-8 text-4xl font-bold;
-}
+    @media (width >= --theme(--breakpoint-sm)) {
+      max-width: none;
+    }
 
-h2.tiptap-heading {
-  @apply mb-4 mt-6 text-3xl font-bold;
-}
+    @media (width >= 1400px) {
+      max-width: 1400px;
+    }
+  }
 
-h3.tiptap-heading {
-  @apply mb-3 mt-4 text-xl font-bold;
-}
+  [class^='fab-icon-'],
+  [class*=' fab-icon-'] {
+    font-family: 'fab-icons' !important;
+    font-size: 55px;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: inherit;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-h1.tiptap-heading:first-child,
-h2.tiptap-heading:first-child,
-h3.tiptap-heading:first-child {
-  margin-top: 0;
-}
+  .fab-icon-add::before {
+    content: '\e704';
+  }
 
-h1.tiptap-heading + h2.tiptap-heading,
-h1.tiptap-heading + h3.tiptap-heading,
-h2.tiptap-heading + h1.tiptap-heading,
-h2.tiptap-heading + h3.tiptap-heading,
-h3.tiptap-heading + h1.tiptap-heading,
-h3.tiptap-heading + h2.tiptap-heading {
-  margin-top: 0;
-}
+  /* Animaciones */
+  .animate-appear {
+    animation: appear 0.5s ease-out forwards;
+  }
 
-.tiptap p.is-editor-empty:first-child::before {
-  @apply pointer-events-none float-left h-0 text-accent-foreground;
-  content: attr(data-placeholder);
-}
+  .animate-appear-zoom {
+    animation: appear-zoom 0.8s ease-out forwards;
+  }
 
-.tiptap ul,
-.tiptap ol {
-  padding: 0 1rem;
-}
-
-.tiptap blockquote {
-  border-left: 3px solid gray;
-  margin: 1.5rem 0;
-  padding-left: 1rem;
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-b from-foreground via-foreground/90 to-muted-foreground;
+  }
 }

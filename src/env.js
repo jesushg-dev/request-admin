@@ -13,6 +13,7 @@ export const env = createEnv({
     UPLOADTHING_TOKEN: z.string(),
     RESEND_EMAIL_DOMAIN: z.string(),
     DATABASE_URL: z.string(),
+    ON_PREMISE: z.boolean().default(false),
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   },
 
@@ -36,6 +37,7 @@ export const env = createEnv({
     RESEND_EMAIL_DOMAIN: process.env.RESEND_EMAIL_DOMAIN,
     UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
     DATABASE_URL: process.env.DATABASE_URL,
+    ON_PREMISE: process.env.ON_PREMISE === 'true',
     NODE_ENV: process.env.NODE_ENV,
   },
   /**

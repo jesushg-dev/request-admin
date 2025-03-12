@@ -242,7 +242,7 @@ model RequestChangeLog extends TenantScoped, Auditable {
   requestId String   @db.UniqueIdentifier
   request   Request  @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  changedBy String   @db.UniqueIdentifier
+  changedBy String   
   fieldName String   @db.VarChar(100)
   oldValue  String?  @db.VarChar(500)
   newValue  String?  @db.VarChar(500)

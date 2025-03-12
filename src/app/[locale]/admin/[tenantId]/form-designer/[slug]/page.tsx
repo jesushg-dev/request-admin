@@ -6,7 +6,7 @@ import { DynamicColumn } from '@/types/prisma/form';
 import { FormElementInstance } from '@/components/builder-form/form-elements';
 import { StatCard } from '@/components/stat-card';
 
-import FormDetailClient from './table';
+import DynamicDataTable from './table';
 
 export default async function FormDetailPage({ params }: { params: Promise<{ locale: string; tenantId: string; slug: string }> }) {
   const { locale, tenantId, slug } = await params;
@@ -46,11 +46,11 @@ export default async function FormDetailPage({ params }: { params: Promise<{ loc
   const bounceRate = 100 - submissionRate;
 
   return (
-    <FormDetailClient tenantId={tenantId} slug={slug} name={form.name} columns={columns}>
+    <DynamicDataTable tenantId={tenantId} slug={slug} name={form.name} columns={columns}>
       <StatCard title={t('totalVisits')} icon={<span className="text-blue-600">👁</span>} description={t('visitsHelper')} value={visits.toLocaleString()} loading={false} />
       <StatCard title={t('totalSubmissions')} icon={<span className="text-yellow-600">📝</span>} description={t('submissionsHelper')} value={submissions.toLocaleString()} loading={false} />
       <StatCard title={t('submissionRate')} icon={<span className="text-green-600">✅</span>} description={t('submissionRateHelper')} value={submissionRate.toFixed(2) + '%'} loading={false} />
       <StatCard title={t('bounceRate')} icon={<span className="text-red-600">❌</span>} description={t('bounceRateHelper')} value={bounceRate.toFixed(2) + '%'} loading={false} />
-    </FormDetailClient>
+    </DynamicDataTable>
   );
 }

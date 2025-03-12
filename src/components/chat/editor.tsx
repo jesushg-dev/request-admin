@@ -56,7 +56,7 @@ const Editor = ({ onCancel, onSubmit, disabled = false, defaultValue = '', place
   };
 
   const isEmptyContent = () => {
-    const editor = editorRef.current?.getInstance();
+    const editor = editorRef.current?.editor;
     return !editor || editor.isEmpty;
   };
 
@@ -107,7 +107,7 @@ const Editor = ({ onCancel, onSubmit, disabled = false, defaultValue = '', place
               </Button>
             </Hint>
 
-            <EmojiPopover onEmojiSelect={(emoji) => editorRef.current?.getInstance()?.commands.insertContent(emoji.emoji)}>
+            <EmojiPopover onEmojiSelect={(emoji) => editorRef.current?.editor?.commands.insertContent(emoji.emoji)}>
               <Button disabled={disabled} size="sm" variant="ghost">
                 <Smile className="size-4" />
                 <span className="sr-only">Add emoji</span>

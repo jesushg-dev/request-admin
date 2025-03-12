@@ -8946,10 +8946,6 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
-        userId: {
-          name: 'userId',
-          type: 'String',
-        },
         content: {
           name: 'content',
           type: 'String',

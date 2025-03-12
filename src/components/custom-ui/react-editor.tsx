@@ -1,7 +1,6 @@
 'use client';
 
 import { forwardRef, useMemo, useState } from 'react';
-import { Lock, Moon, Sun, Unlock } from 'lucide-react';
 import RichTextEditor, { type Editor } from 'reactjs-tiptap-editor';
 import {
   Attachment,
@@ -51,10 +50,8 @@ import './richtext-editor.css';
 
 import { useTheme } from 'next-themes';
 
-// import "katex/dist/katex.min.css";
-
 export type TiptapEditorRef = {
-  getInstance: () => Editor | null;
+  editor: Editor | null;
 };
 
 function convertBase64ToBlob(base64: string): Blob {
@@ -195,12 +192,11 @@ interface ReactEditorProps {
   onContentChange?: (content: string) => void;
 }
 
-const ReactEditor = forwardRef<TiptapEditorRef, ReactEditorProps>(({ onContentChange, contentMinHeight = 256, contentMaxHeight = 640, initialContent }) => {
+const ReactEditor = forwardRef<TiptapEditorRef, ReactEditorProps>((props, ref) => {
+  const { onContentChange, contentMinHeight = 256, contentMaxHeight = 640, initialContent, hideMenuBar, hideBubbleMenu } = props;
   const { theme } = useTheme();
-  const [disable, setDisable] = useState<boolean>(false);
   const [content, setContent] = useState<string>(initialContent || DEFAULT);
 
-  // Memoize the debounced function so it remains stable between renders.
   const onValueChange = useMemo(
     () =>
       debounce((value: string) => {
@@ -210,81 +206,21 @@ const ReactEditor = forwardRef<TiptapEditorRef, ReactEditorProps>(({ onContentCh
     [setContent, onContentChange]
   );
 
-  const handleMouseOver = (e: React.MouseEvent<HTMLButtonElement>) => {
-    (e.target as HTMLButtonElement).style.backgroundColor = '#1f2937';
-  };
-
-  const handleMouseOut = (e: React.MouseEvent<HTMLButtonElement>) => {
-    (e.target as HTMLButtonElement).style.backgroundColor = 'black';
-  };
-
   return (
-    <div className="container mx-auto p-4">
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
-        <h1
-          style={{
-            fontSize: '2.25rem',
-            fontWeight: '700',
-            marginTop: '1rem',
-            marginBottom: '1rem',
-            textAlign: 'center',
-          }}>
-          Text Editor
-        </h1>
-        <div
-          style={{
-            display: 'flex',
-            gap: '1rem',
-          }}>
-          <button
-            type="button"
-            style={{
-              padding: '0.5rem',
-              backgroundColor: 'black',
-              color: 'white',
-              borderRadius: '0.75rem',
-              transition: 'background-color 0.2s',
-              cursor: 'pointer',
-            }}
-            onMouseOver={handleMouseOver}
-            onMouseOut={handleMouseOut}
-            aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}>
-            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-          </button>
-          <button
-            type="button"
-            style={{
-              padding: '0.5rem',
-              backgroundColor: 'black',
-              color: 'white',
-              borderRadius: '0.75rem',
-              transition: 'background-color 0.2s',
-              cursor: 'pointer',
-            }}
-            onMouseOver={handleMouseOver}
-            onMouseOut={handleMouseOut}
-            onClick={() => setDisable(!disable)}
-            aria-label={disable ? 'Make editable' : 'Make readonly'}>
-            {disable ? <Lock size={20} /> : <Unlock size={20} />}
-          </button>
-        </div>
-      </div>
-      <RichTextEditor
-        output="html"
-        content={content}
-        onChangeContent={onValueChange}
-        extensions={extensions}
-        dark={theme === 'dark'}
-        minHeight={contentMinHeight}
-        maxHeight={contentMaxHeight}
-        disabled={disable}
-      />
-    </div>
+    <RichTextEditor
+      ref={ref}
+      output="html"
+      content={content}
+      onChangeContent={onValueChange}
+      extensions={extensions}
+      dark={theme === 'dark'}
+      minHeight={contentMinHeight}
+      maxHeight={contentMaxHeight}
+      hideToolbar={hideMenuBar}
+      hideBubble={hideBubbleMenu}
+      dense
+      removeDefaultWrapper
+    />
   );
 });
 

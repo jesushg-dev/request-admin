@@ -16,18 +16,13 @@ export const getFormsAsOptions = async (tenantId: string) => {
   return preparedForms;
 };
 
-export async function GetFormStats() {
+export async function GetFormStats(tenantId: string) {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
   const stats = await db.form.aggregate({
-    where: {
-      userId: session.user.id,
-    },
-    _sum: {
-      visits: true,
-      submissions: true,
-    },
+    where: { tenantId },
+    _sum: { visits: true, submissions: true },
   });
 
   const visits = stats._sum.visits || 0;
@@ -41,12 +36,7 @@ export async function GetFormStats() {
 
   const bounceRate = 100 - submissionRate;
 
-  return {
-    visits,
-    submissions,
-    submissionRate,
-    bounceRate,
-  };
+  return { visits, submissions, submissionRate, bounceRate };
 }
 
 export async function CreateForm(data: formSchemaType, tenantId: string) {
@@ -61,33 +51,21 @@ export async function CreateForm(data: formSchemaType, tenantId: string) {
   const { name, description, isPublic } = data;
 
   const form = await db.form.create({
-    data: {
-      userId: session.user.id,
-      name,
-      description,
-      tenantId,
-      isPublic,
-    },
+    data: { name, description, tenantId, isPublic },
   });
 
-  if (!form) {
-    throw new Error('something went wrong');
-  }
+  if (!form) throw new Error('something went wrong');
 
   return form.id;
 }
 
-export async function GetForms() {
+export async function GetForms(tenantId: string) {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
   return await db.form.findMany({
-    where: {
-      userId: session.user.id,
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
+    where: { tenantId },
+    orderBy: { createdAt: 'desc' },
   });
 }
 
@@ -96,7 +74,7 @@ export async function GetFormById(id: string, tenantId: string) {
   if (!session) throw new UserNotFoundErr();
 
   return await db.form.findUnique({
-    where: { userId: session.user.id, id, tenantId },
+    where: { id, tenantId },
   });
 }
 
@@ -105,17 +83,12 @@ export async function UpdateFormContent(id: string, jsonContent: string) {
   if (!session) throw new UserNotFoundErr();
 
   return await db.form.update({
-    where: {
-      userId: session.user.id,
-      id,
-    },
-    data: {
-      content: jsonContent,
-    },
+    where: { id },
+    data: { content: jsonContent },
   });
 }
 
-export async function PublishForm(id: string) {
+export async function PublishForm(id: string, tenantId: string) {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
@@ -123,31 +96,15 @@ export async function PublishForm(id: string) {
     data: {
       published: true,
     },
-    where: {
-      userId: session.user.id,
-      id,
-    },
+    where: { tenantId, id },
   });
 }
 
 export async function GetFormContentByUrl(formUrl: string, tenantId: string) {
   return await db.form.update({
-    select: {
-      id: true,
-      name: true,
-      content: true,
-    },
-    data: {
-      visits: {
-        increment: 1,
-      },
-    },
-    where: {
-      tenantId,
-      shareURL: formUrl,
-      published: true,
-      isPublic: true,
-    },
+    select: { id: true, name: true, content: true },
+    data: { visits: { increment: 1 } },
+    where: { tenantId, shareURL: formUrl, published: true, isPublic: true },
   });
 }
 
@@ -156,22 +113,9 @@ export async function GetFormContentById(id: string, tenantId: string) {
   if (!session) throw new UserNotFoundErr();
 
   return await db.form.update({
-    select: {
-      id: true,
-      name: true,
-      description: true,
-      content: true,
-    },
-    data: {
-      visits: {
-        increment: 1,
-      },
-    },
-    where: {
-      tenantId,
-      id,
-      published: true,
-    },
+    select: { id: true, name: true, description: true, content: true },
+    data: { visits: { increment: 1 } },
+    where: { tenantId, id, published: true },
   });
 }
 
@@ -187,9 +131,7 @@ export async function SubmitForm(tenantId: string, formId: string, content: Reco
 
   return await db.form.update({
     data: {
-      submissions: {
-        increment: 1,
-      },
+      submissions: { increment: 1 },
       formSubmissions: {
         create: [
           {
@@ -202,9 +144,6 @@ export async function SubmitForm(tenantId: string, formId: string, content: Reco
         ],
       },
     },
-    where: {
-      id: formId,
-      published: true,
-    },
+    where: { id: formId, published: true },
   });
 }

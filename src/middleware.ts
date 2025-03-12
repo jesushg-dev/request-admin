@@ -23,12 +23,12 @@ export default async function middleware(req: NextRequest) {
   //if (req.nextUrl.pathname === '/es/api/auth/get-session') {
   //  return Response.redirect(new URL('/api/auth/get-session', req.nextUrl));
   //}
+  console.log('🚀 ~ middleware ~ req.nextUrl.pathname:', req.nextUrl.pathname);
 
   if (isPublicPage(req.nextUrl.pathname, locales)) {
     return intlMiddleware(req);
   }
 
-  // Redirect to login if not authenticated with a callback URL to return to the current page after login
   const { data: session } = await betterFetch<Session>('/api/auth/get-session', {
     baseURL: req.nextUrl.origin,
     headers: {
@@ -36,6 +36,7 @@ export default async function middleware(req: NextRequest) {
     },
   });
 
+  // Redirect to login if not authenticated with a callback URL to return to the current page after login
   if (!session) {
     let callbackUrl = req.nextUrl.pathname;
     if (req.nextUrl.search) {

@@ -14,7 +14,7 @@ export default function EditForm() {
   const [isLoading, setIsLoading] = useState(true);
   const { control, reset, watch } = useForm<PostForm>();
 
-  const getWordCount = useCallback(() => editorRef.current?.getInstance()?.storage.characterCount.words() ?? 0, [editorRef.current]);
+  const getWordCount = useCallback(() => editorRef.current?.editor?.storage.characterCount.words() ?? 0, [editorRef.current]);
 
   useEffect(() => {
     getPost().then((post) => {
