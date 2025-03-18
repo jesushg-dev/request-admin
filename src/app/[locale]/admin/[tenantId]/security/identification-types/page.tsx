@@ -129,7 +129,7 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
     },
     {
       id: 'actions',
-      cell: (data) => <ActionCell cell={data} onDelete={() => console.log('Delete', data.row.original)} onUpdate={() => console.log('Update', data.row.original)} />,
+      cell: (data) => <ActionCell row={row} onDelete={() => console.log('Delete', row.original)} onUpdate={() => console.log('Update', row.original)} />,
       size: 20,
     },
   ];

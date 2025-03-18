@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
 import { RelatedIncidentForm } from '@/components/common/request/detail/related-form';
-import PageDialogWrapper from '@/components/page-dialog-wrapper';
+import { PageDialogWrapper } from '@/components/shared/page-container';
 
 interface RelateRequestPageProps {
   params: Promise<{ tenantId: string; slug: string }>;

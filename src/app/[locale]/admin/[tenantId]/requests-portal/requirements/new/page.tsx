@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
 import { RequirementForm } from '@/components/common/requirement/requirement-form';
-import { PageCardWrapper } from '@/components/page-card-wrapper';
+import { PageCardWrapper } from '@/components/shared/page-container';
 
 interface NewRequirementPageProps {
   params: Promise<{ tenantId: string }>;

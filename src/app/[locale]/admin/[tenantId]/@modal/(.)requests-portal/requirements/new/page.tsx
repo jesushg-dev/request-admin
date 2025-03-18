@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
 import { RequirementForm } from '@/components/common/requirement/requirement-form';
-import PageDialogWrapper from '@/components/page-dialog-wrapper';
+import { PageDialogWrapper } from '@/components/shared/page-container';
 
 interface NewRequirementPageProps {
   params: Promise<{ tenantId: string }>;

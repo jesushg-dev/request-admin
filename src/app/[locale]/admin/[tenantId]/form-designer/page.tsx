@@ -4,17 +4,19 @@ import React, { memo, useMemo } from 'react';
 import { useCountForm, useFindManyForm } from '@/services/api/hooks';
 import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
 import { Prisma } from '@prisma/client';
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, Row } from '@tanstack/react-table';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 
+import { FormDefaultArgs, type FormWithRelations } from '@/types/prisma/form';
 import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { formatDate } from '@/lib/utils';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
 import useTenantId from '@/hooks/use-tenant-id';
 import { Checkbox } from '@/components/ui/checkbox';
+import { DraggableFormCard } from '@/components/builder-form/form-card';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
@@ -22,21 +24,6 @@ import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-adv
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
-
-const FormDefaultArgs = Prisma.validator<Prisma.FormDefaultArgs>()({
-  select: {
-    id: true,
-    name: true,
-    tenantId: true,
-    description: true,
-    createdAt: true,
-    published: true,
-    visits: true,
-    submissions: true,
-  },
-});
-
-type FormWithRelations = Prisma.FormGetPayload<typeof FormDefaultArgs>;
 
 const searchParamsParsers = {
   page: parseAsInteger.withDefault(1),
@@ -61,7 +48,7 @@ const FormMainPage: React.FC = () => {
     },
   });
 
-  const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t }), [t]);
+  const { columns, card, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t }), [t]);
 
   const { table } = useDataTable({
     data: data ?? [],
@@ -83,7 +70,7 @@ const FormMainPage: React.FC = () => {
 
   return (
     <DataTableShell table={table} floatingBar={<DataTableFloatingBar table={table} />}>
-      <DataTable table={table} isLoading={isLoading}>
+      <DataTable table={table} isLoading={isLoading} customCard={card}>
         <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
           <DataTableToolbarActions
             table={table}
@@ -165,23 +152,25 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
     },
     {
       id: 'actions',
-      cell: (data) => (
+      cell: ({ row }) => (
         <ActionCell
-          cell={data}
-          onDelete={() => console.log('Delete', data.row.original)}
+          row={row}
+          onDelete={() => console.log('Delete', row.original)}
           updateLink={{
             pathname: '/admin/[tenantId]/form-designer/[slug]/edit',
-            params: { tenantId: data.row.original.tenantId, slug: data.row.original.id },
+            params: { tenantId: row.original.tenantId, slug: row.original.id },
           }}
           viewLink={{
             pathname: '/admin/[tenantId]/form-designer/[slug]',
-            params: { tenantId: data.row.original.tenantId, slug: data.row.original.id },
+            params: { tenantId: row.original.tenantId, slug: row.original.id },
           }}
         />
       ),
       size: 20,
     },
   ];
+
+  const card = ({ row }: { row: Row<FormWithRelations> }) => <DraggableFormCard data={row.original} />;
 
   const filterFields: DataTableFilterField<FormWithRelations>[] = [{ id: 'name', label: t('filters.name'), placeholder: t('filters.namePlaceholder') }];
 
@@ -191,7 +180,7 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
     { id: 'published', label: t('filters.published'), type: 'boolean' },
   ];
 
-  return { columns, filterFields, advancedFilterFields };
+  return { columns, card, filterFields, advancedFilterFields };
 }
 
 export default memo(FormMainPage);

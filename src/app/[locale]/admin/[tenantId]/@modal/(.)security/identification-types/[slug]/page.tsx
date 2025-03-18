@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
 import IdentificationTypeForm from '@/components/common/identification-type/Identification-type-form';
-import PageDialogWrapper from '@/components/page-dialog-wrapper';
+import { PageDialogWrapper } from '@/components/shared/page-container';
 
 const EditIdentificationTypePage: FC = () => {
   return (

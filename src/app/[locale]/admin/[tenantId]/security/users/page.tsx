@@ -190,7 +190,7 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
     },
     {
       id: 'actions',
-      cell: (data) => <ActionCell cell={data} onDelete={console.log} onUpdate={console.log} />,
+      cell: (data) => <ActionCell row={row} onDelete={console.log} onUpdate={console.log} />,
       size: 20,
     },
   ];

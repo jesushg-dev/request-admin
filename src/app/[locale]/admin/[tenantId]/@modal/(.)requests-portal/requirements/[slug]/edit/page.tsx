@@ -3,7 +3,7 @@ import { getRequirementAsFormById } from '@/actions/requirement';
 import { type Locale } from 'next-intl';
 
 import { RequirementForm } from '@/components/common/requirement/requirement-form';
-import PageDialogWrapper from '@/components/page-dialog-wrapper';
+import { PageDialogWrapper } from '@/components/shared/page-container';
 
 interface UpdateRequirementPageProps {
   params: Promise<{ locale: Locale; slug: string; tenantId: string }>;

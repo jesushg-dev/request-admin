@@ -177,13 +177,13 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
     },
     {
       id: 'actions',
-      cell: (data) => (
+      cell: ({ row }) => (
         <ActionCell
-          cell={data}
-          onDelete={() => console.log('Delete', data.row.original)}
+          row={row}
+          onDelete={() => console.log('Delete', row.original)}
           updateLink={{
             pathname: '/admin/[tenantId]/requests-portal/areas/[slug]/edit',
-            params: { tenantId: data.row.original.tenantId, slug: data.row.original.id },
+            params: { tenantId: row.original.tenantId, slug: row.original.id },
           }}
         />
       ),

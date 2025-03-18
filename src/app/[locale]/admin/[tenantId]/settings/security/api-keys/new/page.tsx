@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { getTranslations } from 'next-intl/server';
 
 import { ApiKeyCreateForm } from '@/components/common/setting/api-key-form';
-import { PageCardWrapper } from '@/components/page-card-wrapper';
+import { PageCardWrapper } from '@/components/shared/page-container';
 
 interface NewApiKeyPageProps {
   params: Promise<{ tenantId: string }>;

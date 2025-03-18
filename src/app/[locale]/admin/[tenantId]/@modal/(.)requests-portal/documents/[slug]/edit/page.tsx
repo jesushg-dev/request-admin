@@ -3,7 +3,7 @@
 import { FC } from 'react';
 
 import { DocumentForm } from '@/components/common/document/document-form';
-import PageDialogWrapper from '@/components/page-dialog-wrapper';
+import { PageDialogWrapper } from '@/components/shared/page-container';
 
 const NewRequirementPage: FC = () => {
   return (
