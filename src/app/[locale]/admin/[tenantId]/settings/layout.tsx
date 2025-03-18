@@ -1,56 +1,32 @@
 import { Metadata } from 'next';
 
-import { Separator } from '@/components/ui/separator';
-import { SidebarNav } from '@/components/sidebar-nav';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { SettingsSidebar } from '@/components/common/setting/settings-sidebar';
 
 export const metadata: Metadata = {
   title: 'Forms',
   description: 'Advanced form example using react-hook-form and Zod.',
 };
 
-const sidebarNavItems = [
-  {
-    title: 'Profile',
-    href: '/examples/forms',
-  },
-  {
-    title: 'Account',
-    href: '/examples/forms/account',
-  },
-  {
-    title: 'Appearance',
-    href: '/examples/forms/appearance',
-  },
-  {
-    title: 'Notifications',
-    href: '/examples/forms/notifications',
-  },
-  {
-    title: 'Display',
-    href: '/examples/forms/display',
-  },
-];
-
 interface SettingsLayoutProps {
   children: React.ReactNode;
+
+  params: Promise<{ tenantId: string }>;
 }
 
-export default function SettingsLayout({ children }: SettingsLayoutProps) {
+export default async function SettingsLayout({ children, params }: SettingsLayoutProps) {
+  const { tenantId } = await params;
   return (
-    <>
-      <div className="flex-1 p-4">
-        <div className="space-y-0.5">
-          <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
-          <p className="text-muted-foreground">Manage your account settings and set e-mail preferences.</p>
-        </div>
-        <Separator className="my-6" />
-        <div className="flex flex-col gap-4 lg:flex-row">
-          <aside className="-mx-4 lg:w-1/5">
-            <SidebarNav items={sidebarNavItems} />
-          </aside>
-          <div className="flex-1 flex">{children}</div>
-        </div>
+    <div className="flex flex-1">
+      {/* Sidebar with ScrollArea */}
+      <SettingsSidebar tenantId={tenantId} />
+
+      {/* Content with ScrollArea */}
+      <div className="flex-1">
+        <ScrollArea className="h-full w-full">
+          <div className="p-4">{children}</div>
+        </ScrollArea>
       </div>
-    </>
+    </div>
   );
 }

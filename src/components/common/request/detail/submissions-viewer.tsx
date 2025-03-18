@@ -44,10 +44,11 @@ const searchParamsParsers = {
 };
 
 interface FormSubmissionsViewerProps {
+  tenantId: string;
   requestId: string;
 }
 
-const FormSubmissionsViewer: React.FC<FormSubmissionsViewerProps> = ({ requestId }) => {
+const FormSubmissionsViewer: React.FC<FormSubmissionsViewerProps> = ({ tenantId, requestId }) => {
   const t = useTranslations('admin.request.view.submissions');
   const [search] = useQueryStates(searchParamsParsers);
 
@@ -57,7 +58,7 @@ const FormSubmissionsViewer: React.FC<FormSubmissionsViewerProps> = ({ requestId
     useFindManyHook: useFindManyFormSubmission,
     defaultArgs: {
       ...FormSubmissionDefaultArgs,
-      where: { requestId },
+      where: { requestId, tenantId },
     },
   });
 

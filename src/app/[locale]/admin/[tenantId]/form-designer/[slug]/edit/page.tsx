@@ -1,10 +1,15 @@
 import React from 'react';
 import { GetFormById } from '@/actions/form';
 import { redirect } from '@/i18n/routing';
+import { type Locale } from 'next-intl';
 
 import FormBuilder from '@/components/builder-form/form-builder';
 
-async function BuilderPage({ params }: { params: Promise<{ locale: string; slug: string; tenantId: string }> }) {
+interface BuilderPageProps {
+  params: Promise<{ locale: Locale; slug: string; tenantId: string }>;
+}
+
+async function BuilderPage({ params }: BuilderPageProps) {
   const { locale, tenantId, slug } = await params;
   const form = await GetFormById(slug, tenantId);
   if (!form) {

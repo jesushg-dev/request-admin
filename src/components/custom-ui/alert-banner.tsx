@@ -25,7 +25,7 @@ const alertBannerVariants = cva('relative w-full flex items-center justify-betwe
 
 export interface AlertBannerProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof alertBannerVariants> {
   title?: string;
-  description?: string;
+  description?: React.ReactNode;
   icon?: React.ReactNode;
   onClose?: () => void;
   visible?: boolean;

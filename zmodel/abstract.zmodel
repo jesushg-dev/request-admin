@@ -1,7 +1,7 @@
 import './tenant.zmodel'
 
 abstract model TenantScoped {
-  tenantId String @db.UniqueIdentifier // ID of the tenant this entity belongs to
+  tenantId String
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Relation to Tenant entity
 
   // Allow read access for authenticated users in the tenant if their userTenant is active and current

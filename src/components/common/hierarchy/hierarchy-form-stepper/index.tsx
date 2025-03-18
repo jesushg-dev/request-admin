@@ -12,7 +12,7 @@ import { Form } from '@/components/ui/form';
 import { StepNavigation } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 
-import { hierarchySchema, HierarchyStep } from './hierarchy-step';
+import { getDefaultHierarchyFormValues, HierarchyForm, hierarchySchema } from '../hierarchy-form';
 import { levelsSchema, LevelsStep } from './levels-step';
 import { SummaryStep } from './summary-step';
 
@@ -37,7 +37,9 @@ const HierarchyFormStepper: FC<HierarchyFormStepperProps> = ({ tenantId, default
 
   const form = useForm({
     resolver: zodResolver(stepper.current.schema),
-    defaultValues,
+    defaultValues: defaultValues ?? {
+      ...getDefaultHierarchyFormValues(),
+    },
   });
 
   const onSubmit = () => {
@@ -63,23 +65,21 @@ const HierarchyFormStepper: FC<HierarchyFormStepperProps> = ({ tenantId, default
   };
 
   return (
-    <div className="flex flex-col flex-1 p-4">
-      <Card className="w-full flex flex-col flex-1 overflow-hidden">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between space-y-6 overflow-hidden p-6">
-            <StepNavigation steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
-            <div className="flex flex-1 overflow-y-hidden">
-              {stepper.switch({
-                hierarchy: () => <HierarchyStep />,
-                levels: () => <LevelsStep isInUse={isInUse} />,
-                summary: () => <SummaryStep />,
-              })}
-            </div>
-            <StepperNavigationButtons isPending={isPending} isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onReset={stepper.reset} />
-          </form>
-        </Form>
-      </Card>
-    </div>
+    <Card className="w-full flex flex-col flex-1 overflow-hidden">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between space-y-6 overflow-hidden p-6">
+          <StepNavigation steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
+          <div className="flex flex-1 overflow-y-hidden">
+            {stepper.switch({
+              hierarchy: () => <HierarchyForm />,
+              levels: () => <LevelsStep isInUse={isInUse} />,
+              summary: () => <SummaryStep />,
+            })}
+          </div>
+          <StepperNavigationButtons isPending={isPending} isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onReset={stepper.reset} />
+        </form>
+      </Form>
+    </Card>
   );
 };
 

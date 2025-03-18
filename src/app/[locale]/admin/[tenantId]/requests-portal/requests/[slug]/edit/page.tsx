@@ -2,11 +2,12 @@ import React, { FC } from 'react';
 import { getAssignmentHierarchyAndLevelsByTenantId, getRequestHierarchyAndLevelsByTenantId } from '@/actions/hierarchy';
 import { getPrioritiesAsOptions, getRequestById, getStatusesAsOptions } from '@/actions/request';
 import { STATUS } from '@/constants/requests';
+import { type Locale } from 'next-intl';
 
 import RequestFormStepper from '@/components/common/request/request-form-stepper';
 
 interface EditPageProps {
-  params: Promise<{ locale: string; tenantId: string; slug: string }>;
+  params: Promise<{ locale: Locale; tenantId: string; slug: string }>;
 }
 
 const EditPage: FC<EditPageProps> = async ({ params }) => {

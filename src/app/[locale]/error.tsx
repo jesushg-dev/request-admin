@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 
-export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+export default function Error({ error }: { error: Error & { digest?: string } }) {
   useEffect(() => {
     console.error(error);
   }, [error]);
@@ -10,7 +10,6 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
   return (
     <div>
       <h2>Something went wrong!</h2>
-      <button onClick={() => reset()}>Try again</button>
     </div>
   );
 }

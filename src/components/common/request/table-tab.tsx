@@ -11,6 +11,7 @@ import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
+import useTenantId from '@/hooks/use-tenant-id';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
@@ -79,6 +80,7 @@ const searchParamsParsers = {
 };
 
 const RequestMainPage: React.FC = () => {
+  const tenantId = useTenantId();
   const t = useTranslations('admin.request.main');
   const [search] = useQueryStates(searchParamsParsers);
 
@@ -86,7 +88,10 @@ const RequestMainPage: React.FC = () => {
     search,
     useCountHook: useCountRequest,
     useFindManyHook: useFindManyRequest,
-    defaultArgs: RequestDefaultArgs,
+    defaultArgs: {
+      ...RequestDefaultArgs,
+      where: { tenantId },
+    },
   });
 
   const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t }), [t]);

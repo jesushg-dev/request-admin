@@ -1,11 +1,12 @@
 import { FC } from 'react';
 import { getRequirementAsFormById } from '@/actions/requirement';
+import { type Locale } from 'next-intl';
 
 import { RequirementForm } from '@/components/common/requirement/requirement-form';
 import { PageCardWrapper } from '@/components/page-card-wrapper';
 
 interface UpdateRequirementPageProps {
-  params: Promise<{ locale: string; slug: string; tenantId: string }>;
+  params: Promise<{ locale: Locale; slug: string; tenantId: string }>;
 }
 
 const UpdateRequirementPage: FC<UpdateRequirementPageProps> = async ({ params }) => {

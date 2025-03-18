@@ -77,7 +77,10 @@ const UserMainPage: React.FC = () => {
     search,
     useCountHook: useCountUserTenant,
     useFindManyHook: useFindManyUserTenant,
-    defaultArgs: UserTenantDefaultArgs,
+    defaultArgs: {
+      ...UserTenantDefaultArgs,
+      where: { tenantId },
+    },
   });
 
   const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t }), [t]);

@@ -12,7 +12,7 @@ import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/c
 interface TenantUser {
   id: string;
   name: string;
-  logoUrl: string | null;
+  logo: string | null;
   description: string | null;
 }
 
@@ -28,9 +28,9 @@ export function TenantSwitcher({ tenants, tenantId, isGlobalAdmin }: { tenants: 
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
               <div className="bg-accent flex aspect-square size-8 items-center justify-center rounded-lg border border-dashed p-0.5">
-                {currentTenant?.logoUrl && (
+                {currentTenant?.logo && (
                   <Avatar>
-                    <AvatarImage src={currentTenant.logoUrl ?? ''} alt={currentTenant.name} style={{ objectFit: 'contain', objectPosition: 'center' }} />
+                    <AvatarImage src={currentTenant.logo ?? ''} alt={currentTenant.name} style={{ objectFit: 'contain', objectPosition: 'center' }} />
                     <AvatarFallback>RE</AvatarFallback>
                   </Avatar>
                 )}
@@ -52,9 +52,9 @@ export function TenantSwitcher({ tenants, tenantId, isGlobalAdmin }: { tenants: 
                     <DropdownMenuItem key={tenant.id} className="p-0">
                       <Link className="hover:bg-accent flex w-full cursor-pointer items-center gap-2 p-2" href={{ pathname: '/admin/[tenantId]', params: { tenantId: tenant.id } }} passHref>
                         <div className="bg-accent flex aspect-square size-6 items-center justify-center rounded-lg border border-dashed p-0.5">
-                          {tenant?.logoUrl && (
+                          {tenant?.logo && (
                             <Avatar>
-                              <AvatarImage src={tenant.logoUrl ?? ''} alt={tenant.name} style={{ objectFit: 'contain', objectPosition: 'center' }} />
+                              <AvatarImage src={tenant.logo ?? ''} alt={tenant.name} style={{ objectFit: 'contain', objectPosition: 'center' }} />
                               <AvatarFallback>RE</AvatarFallback>
                             </Avatar>
                           )}

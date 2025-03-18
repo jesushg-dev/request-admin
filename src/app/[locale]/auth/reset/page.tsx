@@ -50,7 +50,7 @@ const ResetForm = () => {
   };
 
   return (
-    <CardWrapper headerLabel={t('header')} backButtonLabel={t('backToLogin')} backButtonHref="/auth/login">
+    <CardWrapper headerTitle={t('headerTitle')} headerLabel={t('headerLabel')} backButtonLabel={t('noAccount')} backButtonHref="/auth/register">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">

@@ -58,6 +58,7 @@ const DocumentMainPage: React.FC = () => {
     useFindManyHook: useFindManyDocument,
     defaultArgs: {
       ...DocumentDefaultArgs,
+      where: { request: { tenantId } },
     },
   });
 

@@ -58,6 +58,7 @@ const RequirementMainPage: React.FC = () => {
     useFindManyHook: useFindManyRequirement,
     defaultArgs: {
       ...RequirementDefaultArgs,
+      where: { tenantId },
     },
   });
 

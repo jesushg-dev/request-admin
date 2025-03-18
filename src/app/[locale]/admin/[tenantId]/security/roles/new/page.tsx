@@ -2,11 +2,12 @@ import { FC } from 'react';
 import { getModuleByTenantIdAndScope } from '@/actions/module';
 import { getRequirementsAsOptions } from '@/actions/requirement';
 import { getUsersAsOptions } from '@/actions/user';
+import { type Locale } from 'next-intl';
 
 import RoleFormStepper from '@/components/common/role/role-form-stepper';
 
 interface NewPageProps {
-  params: Promise<{ locale: string; tenantId: string }>;
+  params: Promise<{ locale: Locale; tenantId: string }>;
 }
 
 const NewPage: FC<NewPageProps> = async ({ params }) => {

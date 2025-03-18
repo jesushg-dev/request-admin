@@ -3,8 +3,6 @@ import { type QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
 
 import { getValidFilters } from '@/lib/data-table';
 
-import useTenantId from './use-tenant-id';
-
 //ensure FindManyArgs has select and include has keys
 type FindManyArgs<SelectArgs = unknown, IncludeArgs = unknown, WhereArgs = unknown, OrderByArgS = unknown, CursorArgs = unknown, DistinctArgs = unknown> = {
   select?: SelectArgs | null;
@@ -40,8 +38,6 @@ interface UseFetchTableDataProps<TData, FMA extends FindManyArgs, CountArgs> {
 }
 
 export function useFetchTableData<TData, FMA extends FindManyArgs, CountArgs>({ search, defaultArgs, useFindManyHook, useCountHook }: UseFetchTableDataProps<TData, FMA, CountArgs>) {
-  const tenantId = useTenantId();
-
   // Transform ExtendedSortingState to Prisma sorting state
   const prismaSortingState = extendedToPrismaSortingState(search.sort);
 
@@ -56,7 +52,6 @@ export function useFetchTableData<TData, FMA extends FindManyArgs, CountArgs>({ 
     include: defaultArgs?.include,
     select: defaultArgs?.select,
     where: {
-      tenantId,
       AND: [defaultArgs?.where || {}, ...prismaFilters],
     },
   } as FMA);
@@ -64,7 +59,6 @@ export function useFetchTableData<TData, FMA extends FindManyArgs, CountArgs>({ 
   // Fetch total count for pagination
   const { data: totalCountData, error: countError } = useCountHook({
     where: {
-      tenantId,
       AND: [defaultArgs?.where || {}, ...prismaFilters],
     },
   } as CountArgs);

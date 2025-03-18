@@ -54,7 +54,10 @@ const IdentificationTypeMainPage: React.FC = () => {
     search,
     useCountHook: useCountIdentificationType,
     useFindManyHook: useFindManyIdentificationType,
-    defaultArgs: IdentificationTypeDefaultArgs,
+    defaultArgs: {
+      ...IdentificationTypeDefaultArgs,
+      where: { tenantId },
+    },
   });
 
   const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t }), [t]);

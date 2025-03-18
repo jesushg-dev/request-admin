@@ -15,7 +15,7 @@ export default async function TenantsPage() {
 
   const tenants = await db.tenant.findMany({
     where: { userTenants: { some: { userId: session.user.id, isActive: true } } },
-    select: { id: true, name: true, logoUrl: true, description: true, websiteUrl: true },
+    select: { id: true, name: true, logo: true, description: true, websiteUrl: true },
   });
 
   return (
@@ -44,7 +44,7 @@ export default async function TenantsPage() {
                   <Link className="hover:bg-accent relative flex w-full items-center gap-6 px-6 py-4 text-left" href={{ pathname: '/admin/[tenantId]', params: { tenantId: tenant.id } }}>
                     <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-dashed">
                       <Avatar>
-                        <AvatarImage src={tenant.logoUrl ?? ''} alt={tenant.name} style={{ objectFit: 'contain', objectPosition: 'center' }} />
+                        <AvatarImage src={tenant.logo ?? ''} alt={tenant.name} style={{ objectFit: 'contain', objectPosition: 'center' }} />
                         <AvatarFallback>RE</AvatarFallback>
                       </Avatar>
                     </div>

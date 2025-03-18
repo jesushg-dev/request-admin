@@ -70,7 +70,10 @@ const RoleMainPage: React.FC = () => {
     search,
     useCountHook: useCountRole,
     useFindManyHook: useFindManyRole,
-    defaultArgs: RoleDefaultArgs,
+    defaultArgs: {
+      ...RoleDefaultArgs,
+      where: { tenantId },
+    },
   });
 
   const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t }), [t]);

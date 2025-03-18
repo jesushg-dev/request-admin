@@ -7,8 +7,7 @@ import { HeroWithMockup } from '@/components/shared/hero-with-mockup';
 
 const IS_ON_PREMISE = process.env.ON_PREMISE === 'true';
 
-const Home = async ({}: { params: Promise<{ locale: string }> }) => {
-  //const { locale } = await params;
+const Home = async () => {
   const t = await getTranslations('home');
 
   return (

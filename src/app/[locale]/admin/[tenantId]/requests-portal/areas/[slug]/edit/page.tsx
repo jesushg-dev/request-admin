@@ -4,11 +4,12 @@ import { getAssignmentHierarchyAndLevelsByTenantId } from '@/actions/hierarchy';
 import { getModuleByTenantIdAndScope } from '@/actions/module';
 import { getRequirementsAsOptions } from '@/actions/requirement';
 import { getUsersAsOptions } from '@/actions/user';
+import { type Locale } from 'next-intl';
 
 import AreaFormStepper from '@/components/common/area/area-form-stepper';
 
 interface EditPageProps {
-  params: Promise<{ locale: string; tenantId: string; slug: string }>;
+  params: Promise<{ locale: Locale; tenantId: string; slug: string }>;
 }
 
 const EditPage: FC<EditPageProps> = async ({ params }) => {

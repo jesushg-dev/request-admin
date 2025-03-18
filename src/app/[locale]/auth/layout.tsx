@@ -1,3 +1,5 @@
+import { Glow } from '@/components/ui/glow';
+
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
@@ -6,7 +8,10 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600">
             <span className="text-lg font-bold">RE</span>
           </div>
-          <h1 className="text-ms font-semibold"> Request Engine</h1>
+          <h1 className="text-ms font-semibold">Request Engine</h1>
+        </div>
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <Glow variant="above" className="animate-appear-zoom opacity-0 [animation-delay:1000ms]" />
         </div>
         {children}
       </div>

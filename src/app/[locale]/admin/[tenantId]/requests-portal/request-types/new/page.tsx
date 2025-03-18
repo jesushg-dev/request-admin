@@ -2,12 +2,13 @@ import { FC } from 'react';
 import { getFormsAsOptions } from '@/actions/form';
 import { getRequestHierarchyAndLevelsByTenantId } from '@/actions/hierarchy';
 import { getRequirementsAsOptions } from '@/actions/requirement';
+import { type Locale } from 'next-intl';
 
 import RequestTypeForm from '@/components/common/request-type/request-type-form';
 import { PageCardWrapper } from '@/components/page-card-wrapper';
 
 interface NewPageProps {
-  params: Promise<{ locale: string; tenantId: string }>;
+  params: Promise<{ locale: Locale; tenantId: string }>;
 }
 
 const NewPage: FC<NewPageProps> = async ({ params }) => {

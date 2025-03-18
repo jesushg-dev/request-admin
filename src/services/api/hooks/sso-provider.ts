@@ -397,10 +397,7 @@ export function useSuspenseCountSsoProvider<
 }
 
 export function useCheckSsoProvider<TError = DefaultError>(
-  args: {
-    operation: PolicyCrudKind;
-    where?: { id?: string; issuer?: string; oidcConfig?: string; samlConfig?: string; userId?: string; providerId?: string; organizationId?: string; domain?: string };
-  },
+  args: { operation: PolicyCrudKind; where?: { id?: string; issuer?: string; oidcConfig?: string; samlConfig?: string; userId?: string; providerId?: string; tenantId?: string; domain?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

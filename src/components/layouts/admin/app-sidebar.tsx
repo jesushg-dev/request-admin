@@ -2,22 +2,7 @@
 
 import { useMemo } from 'react';
 import { usePathname } from '@/i18n/routing';
-import {
-  ClipboardIcon,
-  FileTextIcon,
-  FolderIcon,
-  GridIcon,
-  HomeIcon,
-  IdCardIcon,
-  LandPlotIcon,
-  LayersIcon,
-  ListIcon,
-  ListTreeIcon,
-  RadarIcon,
-  SettingsIcon,
-  ShieldIcon,
-  UsersIcon,
-} from 'lucide-react';
+import { ClipboardIcon, FileTextIcon, FolderIcon, GridIcon, HomeIcon, IdCardIcon, LandPlotIcon, LayersIcon, ListIcon, RadarIcon, SettingsIcon, ShieldIcon, UsersIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '@/components/ui/sidebar';
@@ -38,7 +23,7 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   tenants: {
     id: string;
     name: string;
-    logoUrl: string | null;
+    logo: string | null;
     description: string | null;
   }[];
 }
@@ -47,7 +32,7 @@ export function AppSidebar({ tenantId, tenants, user, ...props }: AppSidebarProp
   const pathname = usePathname();
   const t = useTranslations('admin.sidebar');
 
-  const navMain: MenuItem[] = useMemo(() => {
+  const navMain = useMemo<MenuItem[]>(() => {
     return [
       {
         title: t('dashboard'),
@@ -122,19 +107,9 @@ export function AppSidebar({ tenantId, tenants, user, ...props }: AppSidebarProp
       },
       {
         title: t('settings'),
+        url: { pathname: '/admin/[tenantId]/settings/account', params: { tenantId } },
         icon: SettingsIcon,
-        items: [
-          {
-            title: t('requestTypesHierarchy'),
-            url: { pathname: '/admin/[tenantId]/settings/hierarchies/request', params: { tenantId } },
-            icon: ListTreeIcon,
-          },
-          {
-            title: t('areasHierarchy'),
-            url: { pathname: '/admin/[tenantId]/settings/hierarchies/assignment', params: { tenantId } },
-            icon: ListTreeIcon,
-          },
-        ],
+        items: [],
       },
     ];
   }, [t, tenantId]);

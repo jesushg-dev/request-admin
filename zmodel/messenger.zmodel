@@ -17,8 +17,8 @@ model Channel extends TenantScoped, Auditable {
 
 model Conversation extends TenantScoped {
   id              String     @id @default(uuid()) @db.UniqueIdentifier
-  userTenantOneId String     @db.UniqueIdentifier
-  userTenantTwoId String     @db.UniqueIdentifier
+  userTenantOneId String
+  userTenantTwoId String
   userTenantOne   UserTenant @relation("UserTenantOne", fields: [userTenantOneId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   userTenantTwo   UserTenant @relation("UserTenantTwo", fields: [userTenantTwoId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   messages        Message[]
@@ -31,7 +31,7 @@ model Message extends TenantScoped, Auditable {
   id              String        @id @default(uuid()) @db.UniqueIdentifier
   body            String
   imageId         String?
-  userTenantId    String        @db.UniqueIdentifier
+  userTenantId    String
   channelId       String?       @db.UniqueIdentifier
   parentMessageId String?       @db.UniqueIdentifier
   conversationId  String?       @db.UniqueIdentifier
@@ -52,7 +52,7 @@ model Reaction extends TenantScoped {
   id           String     @id @default(uuid()) @db.UniqueIdentifier
   value        String
   messageId    String     @db.UniqueIdentifier
-  userTenantId String     @db.UniqueIdentifier
+  userTenantId String
   message      Message    @relation(fields: [messageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   userTenant   UserTenant @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 

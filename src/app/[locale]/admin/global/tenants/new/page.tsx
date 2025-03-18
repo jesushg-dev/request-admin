@@ -1,14 +1,5 @@
 import { TenantCreationForm } from '@/components/common/tenant/tenant-creation-form';
-import { Module } from '@/components/common/tenant/tenant-creation-form/module-step';
 import { Plan } from '@/components/common/tenant/tenant-creation-form/plan-selection-step';
-
-// Mock data for modules and plans
-const mockModules: Module[] = [
-  { id: '1', name: 'Orders', description: 'Manage orders and track their status', isActive: false },
-  { id: '2', name: 'Settings', description: 'Configure system settings and preferences', isActive: false },
-  { id: '3', name: 'Analytics', description: 'View and analyze business metrics', isActive: false },
-  { id: '4', name: 'User Management', description: 'Manage user accounts and permissions', isActive: false },
-];
 
 const mockPlans: Plan[] = [
   { id: '1', name: 'Basic', description: 'Essential features for small businesses', price: 0 },
@@ -17,5 +8,5 @@ const mockPlans: Plan[] = [
 ];
 
 export default function CreateTenantPage() {
-  return <TenantCreationForm modules={mockModules} plans={mockPlans} />;
+  return <TenantCreationForm plans={mockPlans} />;
 }

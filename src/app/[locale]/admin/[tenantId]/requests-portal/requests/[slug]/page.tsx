@@ -1,6 +1,7 @@
 import { getAssignmentHierarchyAndLevelsByTenantId, getRequestHierarchyAndLevelsByTenantId } from '@/actions/hierarchy';
 import { getPrioritiesAsOptions, getRequestById, getRequestDetailsByRequest } from '@/actions/request';
 import { getCurrentUserTenant } from '@/actions/user';
+import { type Locale } from 'next-intl';
 
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -15,7 +16,11 @@ import FormSubmissionsViewer from '@/components/common/request/detail/submission
 
 import { documents, guideDocuments } from './mockData';
 
-export default async function CaseDetailPage({ params }: { params: Promise<{ locale: string; tenantId: string; slug: string }> }) {
+interface CaseDetailPageProps {
+  params: Promise<{ locale: Locale; tenantId: string; slug: string }>;
+}
+
+export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
   const { locale, tenantId, slug } = await params;
 
   const request = await getRequestById(tenantId, slug);

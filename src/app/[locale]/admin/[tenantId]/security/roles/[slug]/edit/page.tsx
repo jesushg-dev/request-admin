@@ -3,11 +3,12 @@ import { getModuleByTenantIdAndScope } from '@/actions/module';
 import { getRequirementsAsOptions } from '@/actions/requirement';
 import { getRoleAsFormById } from '@/actions/role';
 import { getUsersAsOptions } from '@/actions/user';
+import { type Locale } from 'next-intl';
 
 import RoleFormStepper from '@/components/common/role/role-form-stepper';
 
 interface EditRolePageProps {
-  params: Promise<{ locale: string; slug: string; tenantId: string }>;
+  params: Promise<{ locale: Locale; slug: string; tenantId: string }>;
 }
 
 const EditRolePage: FC<EditRolePageProps> = async ({ params }) => {

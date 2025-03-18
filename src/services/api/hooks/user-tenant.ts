@@ -408,6 +408,7 @@ export function useCheckUserTenant<TError = DefaultError>(
       isTermAccepted?: boolean;
       isSuperAdmin?: boolean;
       isTwoFactorRequired?: boolean;
+      role?: string;
       userId?: string;
       personId?: string;
     };

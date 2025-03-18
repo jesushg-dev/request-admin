@@ -3,12 +3,13 @@ import { getFormsAsOptions } from '@/actions/form';
 import { getRequestHierarchyAndLevelsByTenantId } from '@/actions/hierarchy';
 import { getRequestCategoriesByIds } from '@/actions/request-type';
 import { getRequirementsAsOptions } from '@/actions/requirement';
+import { type Locale } from 'next-intl';
 
 import RequestTypeForm from '@/components/common/request-type/request-type-form';
 import { PageCardWrapper } from '@/components/page-card-wrapper';
 
 interface UpdateRequestTypePageProps {
-  params: Promise<{ locale: string; slug: string; tenantId: string }>;
+  params: Promise<{ locale: Locale; slug: string; tenantId: string }>;
 }
 
 const UpdateRequestTypePage: FC<UpdateRequestTypePageProps> = async ({ params }) => {

@@ -1,3 +1,12 @@
-// Declaring this interface provides type safety for message keys
-type Messages = typeof import('../messages/en.json');
-declare interface IntlMessages extends Messages {}
+import { formats } from '@/i18n/request';
+import { routing } from '@/i18n/routing';
+
+import messages from '../messages/en.json';
+
+declare module 'next-intl' {
+  interface AppConfig {
+    Locale: (typeof routing.locales)[number];
+    Messages: typeof messages;
+    Formats: typeof formats;
+  }
+}

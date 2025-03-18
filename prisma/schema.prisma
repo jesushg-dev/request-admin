@@ -18,9 +18,11 @@ model Tenant {
   deletedAt                      DateTime?
   createdBy                      String?                         @db.VarChar(50)
   updatedBy                      String?                         @db.VarChar(50)
-  id                             String                          @id() @default(uuid()) @db.UniqueIdentifier()
+  id                             String                          @id()
   name                           String
-  logoUrl                        String?
+  slug                           String?
+  metadata                       String?
+  logo                           String?
   websiteUrl                     String?
   title                          String?
   description                    String?
@@ -73,6 +75,7 @@ model Tenant {
   messages                       Message[]
   reactions                      Reaction[]
   userTenants                    UserTenant[]
+  invitations                    InvitationTenant[]
   subscriptions                  Subscription[]
   usageTracking                  UsageTracking[]
   documents                      Document[]
@@ -106,6 +109,8 @@ model Tenant {
   yearInReviews                  YearInReview[]
   customFields                   CustomField[]
   customFieldResponse            CustomFieldResponse[]
+
+  @@unique([slug])
 }
 
 model UserTenant {
@@ -114,14 +119,15 @@ model UserTenant {
   deletedAt                    DateTime?
   createdBy                    String?                @db.VarChar(50)
   updatedBy                    String?                @db.VarChar(50)
-  tenantId                     String                 @db.UniqueIdentifier()
+  tenantId                     String
   tenant                       Tenant                 @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                           String                 @id() @default(uuid()) @db.UniqueIdentifier()
+  id                           String                 @id()
   isActive                     Boolean                @default(true)
   isTermAccepted               Boolean                @default(false)
   joinedAt                     DateTime               @default(now())
   isSuperAdmin                 Boolean                @default(false)
   isTwoFactorRequired          Boolean                @default(false)
+  role                         String
   userId                       String
   user                         User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
   personId                     String?                @db.UniqueIdentifier()
@@ -143,10 +149,27 @@ model UserTenant {
   @@index([tenantId])
 }
 
+model InvitationTenant {
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt()
+  deletedAt DateTime?
+  createdBy String?   @db.VarChar(50)
+  updatedBy String?   @db.VarChar(50)
+  tenantId  String
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id        String    @id()
+  email     String
+  role      String?
+  status    String
+  expiresAt DateTime
+  inviterId String
+  user      User      @relation(fields: [inviterId], references: [id], onDelete: Cascade)
+}
+
 model Subscription {
   id         String    @id() @default(uuid()) @db.UniqueIdentifier()
   tenant     Tenant    @relation(fields: [tenantId], references: [id])
-  tenantId   String    @db.UniqueIdentifier()
+  tenantId   String
   plan       Plan      @relation(fields: [planId], references: [id])
   planId     String    @db.UniqueIdentifier()
   startDate  DateTime
@@ -186,7 +209,7 @@ model PlanFeature {
 model UsageTracking {
   id          String    @id() @default(uuid()) @db.UniqueIdentifier()
   tenant      Tenant    @relation(fields: [tenantId], references: [id])
-  tenantId    String    @db.UniqueIdentifier()
+  tenantId    String
   featureName String
   usageCount  Int
   lastUsedAt  DateTime?
@@ -207,7 +230,7 @@ model Payment {
 }
 
 model User {
-  id                  String        @id()
+  id                  String             @id()
   name                String
   email               String
   emailVerified       Boolean
@@ -229,8 +252,7 @@ model User {
   accounts            Account[]
   twofactors          TwoFactor[]
   ssoproviders        SsoProvider[]
-  members             Member[]
-  invitations         Invitation[]
+  invitations         InvitationTenant[]
   apikeys             Apikey[]
   passkeys            Passkey[]
   userTenants         UserTenant[]
@@ -241,17 +263,17 @@ model User {
 }
 
 model Session {
-  id                   String   @id()
-  expiresAt            DateTime
-  token                String
-  createdAt            DateTime
-  updatedAt            DateTime
-  ipAddress            String?
-  userAgent            String?
-  userId               String
-  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  activeOrganizationId String?
-  impersonatedBy       String?
+  id             String   @id()
+  expiresAt      DateTime
+  token          String
+  createdAt      DateTime
+  updatedAt      DateTime
+  ipAddress      String?
+  userAgent      String?
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activeTenantId String?
+  impersonatedBy String?
 
   @@unique([token])
   @@map("session")
@@ -273,6 +295,7 @@ model Account {
   createdAt             DateTime
   updatedAt             DateTime
 
+  @@unique([accountId])
   @@map("account")
 }
 
@@ -307,15 +330,15 @@ model Jwks {
 }
 
 model SsoProvider {
-  id             String  @id()
-  issuer         String
-  oidcConfig     String?
-  samlConfig     String?
-  userId         String?
-  user           User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  providerId     String
-  organizationId String?
-  domain         String
+  id         String  @id()
+  issuer     String
+  oidcConfig String?
+  samlConfig String?
+  userId     String?
+  user       User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  providerId String
+  tenantId   String?
+  domain     String
 
   @@unique([providerId])
   @@map("ssoProvider")
@@ -368,46 +391,6 @@ model OauthConsent {
   @@map("oauthConsent")
 }
 
-model Organization {
-  id          String       @id()
-  name        String
-  slug        String?
-  logo        String?
-  createdAt   DateTime
-  metadata    String?
-  members     Member[]
-  invitations Invitation[]
-
-  @@unique([slug])
-  @@map("organization")
-}
-
-model Member {
-  id             String       @id()
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userId         String
-  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role           String
-  createdAt      DateTime
-
-  @@map("member")
-}
-
-model Invitation {
-  id             String       @id()
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  email          String
-  role           String?
-  status         String
-  expiresAt      DateTime
-  inviterId      String
-  user           User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
-
-  @@map("invitation")
-}
-
 model Apikey {
   id                  String    @id()
   name                String?
@@ -458,7 +441,7 @@ model Request {
   deletedAt            DateTime?
   createdBy            String?                         @db.VarChar(50)
   updatedBy            String?                         @db.VarChar(50)
-  tenantId             String                          @db.UniqueIdentifier()
+  tenantId             String
   tenant               Tenant                          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id                   String                          @id() @default(uuid()) @db.UniqueIdentifier()
   issueSubject         String                          @db.VarChar(255)
@@ -492,7 +475,7 @@ model RelatedIncident {
   deletedAt DateTime?
   createdBy String?   @db.VarChar(50)
   updatedBy String?   @db.VarChar(50)
-  tenantId  String    @db.UniqueIdentifier()
+  tenantId  String
   tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id        String    @id() @default(uuid()) @db.UniqueIdentifier()
   requestId String    @db.UniqueIdentifier()
@@ -512,7 +495,7 @@ model RequestAssignment {
   deletedAt            DateTime?
   createdBy            String?              @db.VarChar(50)
   updatedBy            String?              @db.VarChar(50)
-  tenantId             String               @db.UniqueIdentifier()
+  tenantId             String
   tenant               Tenant               @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id                   String               @id() @default(uuid()) @db.UniqueIdentifier()
   comment              String?              @db.VarChar(255)
@@ -556,12 +539,12 @@ model AssignedUser {
   deletedAt           DateTime?
   createdBy           String?           @db.VarChar(50)
   updatedBy           String?           @db.VarChar(50)
-  tenantId            String            @db.UniqueIdentifier()
+  tenantId            String
   tenant              Tenant            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id                  String            @id() @default(uuid()) @db.UniqueIdentifier()
   requestAssignment   RequestAssignment @relation("AssignedUsers", fields: [requestAssignmentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   requestAssignmentId String            @db.UniqueIdentifier()
-  userTenantId        String            @db.UniqueIdentifier()
+  userTenantId        String
   userTenant          UserTenant        @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   role                String            @db.VarChar(150)
   unAssignmentDate    DateTime?
@@ -577,7 +560,7 @@ model AssignmentType {
   deletedAt   DateTime?
   createdBy   String?             @db.VarChar(50)
   updatedBy   String?             @db.VarChar(50)
-  tenantId    String              @db.UniqueIdentifier()
+  tenantId    String
   tenant      Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   systemName  String              @db.VarChar(100)
   assignments RequestAssignment[]
@@ -596,7 +579,7 @@ model RequestPriorityType {
   deletedAt    DateTime?
   createdBy    String?             @db.VarChar(50)
   updatedBy    String?             @db.VarChar(50)
-  tenantId     String              @db.UniqueIdentifier()
+  tenantId     String
   tenant       Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   primaryColor String              @db.VarChar(10)
   level        Int
@@ -611,7 +594,7 @@ model RequestStatusType {
   deletedAt        DateTime?
   createdBy        String?                   @db.VarChar(50)
   updatedBy        String?                   @db.VarChar(50)
-  tenantId         String                    @db.UniqueIdentifier()
+  tenantId         String
   tenant           Tenant                    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id               String                    @id() @default(uuid()) @db.UniqueIdentifier()
   name             String                    @unique() @db.VarChar(50)
@@ -636,7 +619,7 @@ model RequestStatusTransition {
   deletedAt    DateTime?
   createdBy    String?           @db.VarChar(50)
   updatedBy    String?           @db.VarChar(50)
-  tenantId     String            @db.UniqueIdentifier()
+  tenantId     String
   tenant       Tenant            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id           String            @id() @default(uuid()) @db.UniqueIdentifier()
   isDefault    Boolean           @default(false)
@@ -661,7 +644,7 @@ model RequirementComplianceTracking {
   deletedAt     DateTime?
   createdBy     String?     @db.VarChar(50)
   updatedBy     String?     @db.VarChar(50)
-  tenantId      String      @db.UniqueIdentifier()
+  tenantId      String
   tenant        Tenant      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id            String      @id() @default(uuid()) @db.UniqueIdentifier()
   requestId     String      @db.UniqueIdentifier()
@@ -684,7 +667,7 @@ model CustomerSatisfactionSurvey {
   deletedAt   DateTime?
   createdBy   String?   @db.VarChar(50)
   updatedBy   String?   @db.VarChar(50)
-  tenantId    String    @db.UniqueIdentifier()
+  tenantId    String
   tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id          String    @id() @default(uuid()) @db.UniqueIdentifier()
   rating      Int
@@ -703,7 +686,7 @@ model RequestChangeLog {
   deletedAt DateTime?
   createdBy String?   @db.VarChar(50)
   updatedBy String?   @db.VarChar(50)
-  tenantId  String    @db.UniqueIdentifier()
+  tenantId  String
   tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id        String    @id() @default(uuid()) @db.UniqueIdentifier()
   requestId String    @db.UniqueIdentifier()
@@ -724,7 +707,7 @@ model Document {
   deletedAt                       DateTime?
   createdBy                       String?                        @db.VarChar(50)
   updatedBy                       String?                        @db.VarChar(50)
-  tenantId                        String                         @db.UniqueIdentifier()
+  tenantId                        String
   tenant                          Tenant                         @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id                              String                         @id() @default(uuid()) @db.UniqueIdentifier()
   name                            String                         @db.VarChar(155)
@@ -738,7 +721,7 @@ model Document {
   contentType                     String?
   storageType                     String                         @default("VERCEL_BLOB")
   numPages                        Int?
-  ownerId                         String?                        @db.UniqueIdentifier()
+  ownerId                         String?
   owner                           UserTenant?                    @relation(fields: [ownerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   assistantEnabled                Boolean                        @default(false)
   advancedExcelEnabled            Boolean                        @default(false)
@@ -769,7 +752,7 @@ model DocumentAssignment {
   deletedAt           DateTime?
   createdBy           String?           @db.VarChar(50)
   updatedBy           String?           @db.VarChar(50)
-  tenantId            String            @db.UniqueIdentifier()
+  tenantId            String
   tenant              Tenant            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   requestAssignmentId String            @db.UniqueIdentifier()
   requestAssignment   RequestAssignment @relation(fields: [requestAssignmentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -781,7 +764,7 @@ model DocumentVersion {
   deletedAt     DateTime?
   createdBy     String?        @db.VarChar(50)
   updatedBy     String?        @db.VarChar(50)
-  tenantId      String         @db.UniqueIdentifier()
+  tenantId      String
   tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id            String         @id() @default(uuid()) @db.UniqueIdentifier()
   versionNumber Int
@@ -811,7 +794,7 @@ model DocumentPage {
   deletedAt     DateTime?
   createdBy     String?         @db.VarChar(50)
   updatedBy     String?         @db.VarChar(50)
-  tenantId      String          @db.UniqueIdentifier()
+  tenantId      String
   tenant        Tenant          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id            String          @id() @default(uuid()) @db.UniqueIdentifier()
   versionId     String          @db.UniqueIdentifier()
@@ -833,7 +816,7 @@ model Link {
   deletedAt                  DateTime?
   createdBy                  String?           @db.VarChar(50)
   updatedBy                  String?           @db.VarChar(50)
-  tenantId                   String            @db.UniqueIdentifier()
+  tenantId                   String
   tenant                     Tenant            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id                         String            @id() @default(uuid()) @db.UniqueIdentifier()
   documentId                 String?           @db.UniqueIdentifier()
@@ -887,7 +870,7 @@ model LinkPreset {
   deletedAt           DateTime?
   createdBy           String?   @db.VarChar(50)
   updatedBy           String?   @db.VarChar(50)
-  tenantId            String    @db.UniqueIdentifier()
+  tenantId            String
   tenant              Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id                  String    @id() @default(uuid()) @db.UniqueIdentifier()
   name                String
@@ -906,11 +889,11 @@ model Domain {
   deletedAt    DateTime?
   createdBy    String?     @db.VarChar(50)
   updatedBy    String?     @db.VarChar(50)
-  tenantId     String      @db.UniqueIdentifier()
+  tenantId     String
   tenant       Tenant      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id           String      @id() @default(uuid()) @db.UniqueIdentifier()
   slug         String      @unique()
-  userTenantId String?     @db.UniqueIdentifier()
+  userTenantId String?
   userTenant   UserTenant? @relation(fields: [userTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   verified     Boolean     @default(false)
   isDefault    Boolean     @default(false)
@@ -927,7 +910,7 @@ model DocumentView {
   deletedAt           DateTime?
   createdBy           String?              @db.VarChar(50)
   updatedBy           String?              @db.VarChar(50)
-  tenantId            String               @db.UniqueIdentifier()
+  tenantId            String
   tenant              Tenant               @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id                  String               @id() @default(uuid()) @db.UniqueIdentifier()
   linkId              String               @db.UniqueIdentifier()
@@ -966,7 +949,7 @@ model Viewer {
   deletedAt               DateTime?
   createdBy               String?                 @db.VarChar(50)
   updatedBy               String?                 @db.VarChar(50)
-  tenantId                String                  @db.UniqueIdentifier()
+  tenantId                String
   tenant                  Tenant                  @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id                      String                  @id() @default(uuid()) @db.UniqueIdentifier()
   email                   String
@@ -989,7 +972,7 @@ model DocumentReaction {
   deletedAt  DateTime?
   createdBy  String?      @db.VarChar(50)
   updatedBy  String?      @db.VarChar(50)
-  tenantId   String       @db.UniqueIdentifier()
+  tenantId   String
   tenant     Tenant       @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id         String       @id() @default(uuid()) @db.UniqueIdentifier()
   viewId     String       @db.UniqueIdentifier()
@@ -1006,7 +989,7 @@ model InvitationDocument {
   deletedAt DateTime?
   createdBy String?   @db.VarChar(50)
   updatedBy String?   @db.VarChar(50)
-  tenantId  String    @db.UniqueIdentifier()
+  tenantId  String
   tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   email     String
   expires   DateTime
@@ -1021,7 +1004,7 @@ model SentEmail {
   deletedAt  DateTime?
   createdBy  String?   @db.VarChar(50)
   updatedBy  String?   @db.VarChar(50)
-  tenantId   String    @db.UniqueIdentifier()
+  tenantId   String
   tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id         String    @id() @default(uuid()) @db.UniqueIdentifier()
   type       String
@@ -1038,11 +1021,11 @@ model DocumentConversation {
   deletedAt    DateTime?
   createdBy    String?    @db.VarChar(50)
   updatedBy    String?    @db.VarChar(50)
-  tenantId     String     @db.UniqueIdentifier()
+  tenantId     String
   tenant       Tenant     @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id           String     @id() @default(uuid()) @db.UniqueIdentifier()
   threadId     String     @unique()
-  userTenantId String     @db.UniqueIdentifier()
+  userTenantId String
   userTenant   UserTenant @relation(fields: [userTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   documentId   String     @db.UniqueIdentifier()
   document     Document   @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
@@ -1058,7 +1041,7 @@ model Folder {
   deletedAt    DateTime?
   createdBy    String?    @db.VarChar(50)
   updatedBy    String?    @db.VarChar(50)
-  tenantId     String     @db.UniqueIdentifier()
+  tenantId     String
   tenant       Tenant     @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id           String     @id() @default(uuid()) @db.UniqueIdentifier()
   name         String
@@ -1078,7 +1061,7 @@ model Dataroom {
   deletedAt    DateTime?
   createdBy    String?            @db.VarChar(50)
   updatedBy    String?            @db.VarChar(50)
-  tenantId     String             @db.UniqueIdentifier()
+  tenantId     String
   tenant       Tenant             @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id           String             @id() @default(uuid()) @db.UniqueIdentifier()
   pId          String             @unique()
@@ -1100,7 +1083,7 @@ model DataroomDocument {
   deletedAt  DateTime?
   createdBy  String?         @db.VarChar(50)
   updatedBy  String?         @db.VarChar(50)
-  tenantId   String          @db.UniqueIdentifier()
+  tenantId   String
   tenant     Tenant          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id         String          @id() @default(uuid()) @db.UniqueIdentifier()
   dataroomId String          @db.UniqueIdentifier()
@@ -1122,7 +1105,7 @@ model DataroomFolder {
   deletedAt    DateTime?
   createdBy    String?            @db.VarChar(50)
   updatedBy    String?            @db.VarChar(50)
-  tenantId     String             @db.UniqueIdentifier()
+  tenantId     String
   tenant       Tenant             @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id           String             @id() @default(uuid()) @db.UniqueIdentifier()
   name         String
@@ -1146,7 +1129,7 @@ model DataroomBrand {
   deletedAt   DateTime?
   createdBy   String?   @db.VarChar(50)
   updatedBy   String?   @db.VarChar(50)
-  tenantId    String    @db.UniqueIdentifier()
+  tenantId    String
   tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id          String    @id() @default(uuid()) @db.UniqueIdentifier()
   logo        String?
@@ -1165,7 +1148,7 @@ model DocumentFeedback {
   deletedAt DateTime?
   createdBy String?            @db.VarChar(50)
   updatedBy String?            @db.VarChar(50)
-  tenantId  String             @db.UniqueIdentifier()
+  tenantId  String
   tenant    Tenant             @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id        String             @id() @default(uuid()) @db.UniqueIdentifier()
   linkId    String             @unique() @db.UniqueIdentifier()
@@ -1182,7 +1165,7 @@ model FeedbackResponse {
   deletedAt  DateTime?
   createdBy  String?          @db.VarChar(50)
   updatedBy  String?          @db.VarChar(50)
-  tenantId   String           @db.UniqueIdentifier()
+  tenantId   String
   tenant     Tenant           @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id         String           @id() @default(uuid()) @db.UniqueIdentifier()
   feedbackId String           @db.UniqueIdentifier()
@@ -1201,7 +1184,7 @@ model Agreement {
   deletedAt   DateTime?
   createdBy   String?             @db.VarChar(50)
   updatedBy   String?             @db.VarChar(50)
-  tenantId    String              @db.UniqueIdentifier()
+  tenantId    String
   tenant      Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id          String              @id() @default(uuid()) @db.UniqueIdentifier()
   name        String
@@ -1219,7 +1202,7 @@ model AgreementResponse {
   deletedAt   DateTime?
   createdBy   String?      @db.VarChar(50)
   updatedBy   String?      @db.VarChar(50)
-  tenantId    String       @db.UniqueIdentifier()
+  tenantId    String
   tenant      Tenant       @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id          String       @id() @default(uuid()) @db.UniqueIdentifier()
   agreementId String       @db.UniqueIdentifier()
@@ -1237,7 +1220,7 @@ model ViewerGroup {
   deletedAt      DateTime?
   createdBy      String?                     @db.VarChar(50)
   updatedBy      String?                     @db.VarChar(50)
-  tenantId       String                      @db.UniqueIdentifier()
+  tenantId       String
   tenant         Tenant                      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id             String                      @id() @default(uuid()) @db.UniqueIdentifier()
   name           String
@@ -1260,7 +1243,7 @@ model ViewerGroupMembership {
   deletedAt DateTime?
   createdBy String?     @db.VarChar(50)
   updatedBy String?     @db.VarChar(50)
-  tenantId  String      @db.UniqueIdentifier()
+  tenantId  String
   tenant    Tenant      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id        String      @id() @default(uuid()) @db.UniqueIdentifier()
   viewerId  String      @db.UniqueIdentifier()
@@ -1279,7 +1262,7 @@ model ViewerGroupAccessControls {
   deletedAt   DateTime?
   createdBy   String?     @db.VarChar(50)
   updatedBy   String?     @db.VarChar(50)
-  tenantId    String      @db.UniqueIdentifier()
+  tenantId    String
   tenant      Tenant      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id          String      @id() @default(uuid()) @db.UniqueIdentifier()
   groupId     String      @db.UniqueIdentifier()
@@ -1299,7 +1282,7 @@ model IncomingWebhook {
   deletedAt           DateTime?
   createdBy           String?   @db.VarChar(50)
   updatedBy           String?   @db.VarChar(50)
-  tenantId            String    @db.UniqueIdentifier()
+  tenantId            String
   tenant              Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id                  String    @id() @default(uuid()) @db.UniqueIdentifier()
   externalId          String    @unique()
@@ -1320,7 +1303,7 @@ model RestrictedToken {
   deletedAt    DateTime?
   createdBy    String?    @db.VarChar(50)
   updatedBy    String?    @db.VarChar(50)
-  tenantId     String     @db.UniqueIdentifier()
+  tenantId     String
   tenant       Tenant     @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id           String     @id() @default(uuid()) @db.UniqueIdentifier()
   name         String
@@ -1330,7 +1313,7 @@ model RestrictedToken {
   expires      DateTime?
   lastUsed     DateTime?
   rateLimit    Int        @default(60)
-  userTenantId String     @db.UniqueIdentifier()
+  userTenantId String
   userTenant   UserTenant @relation(fields: [userTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   @@index([userTenantId])
@@ -1343,7 +1326,7 @@ model Webhook {
   deletedAt DateTime?
   createdBy String?   @db.VarChar(50)
   updatedBy String?   @db.VarChar(50)
-  tenantId  String    @db.UniqueIdentifier()
+  tenantId  String
   tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id        String    @id() @default(uuid()) @db.UniqueIdentifier()
   pId       String    @unique()
@@ -1361,7 +1344,7 @@ model YearInReview {
   deletedAt     DateTime?
   createdBy     String?   @db.VarChar(50)
   updatedBy     String?   @db.VarChar(50)
-  tenantId      String    @db.UniqueIdentifier()
+  tenantId      String
   tenant        Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id            String    @id() @default(uuid()) @db.UniqueIdentifier()
   status        String    @default("pending")
@@ -1380,7 +1363,7 @@ model CustomField {
   deletedAt   DateTime?
   createdBy   String?   @db.VarChar(50)
   updatedBy   String?   @db.VarChar(50)
-  tenantId    String    @db.UniqueIdentifier()
+  tenantId    String
   tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id          String    @id() @default(uuid()) @db.UniqueIdentifier()
   type        String
@@ -1402,7 +1385,7 @@ model CustomFieldResponse {
   deletedAt DateTime?
   createdBy String?      @db.VarChar(50)
   updatedBy String?      @db.VarChar(50)
-  tenantId  String       @db.UniqueIdentifier()
+  tenantId  String
   tenant    Tenant       @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id        String       @id() @default(uuid()) @db.UniqueIdentifier()
   data      String       @db.NVarChar(Max)
@@ -1424,7 +1407,7 @@ model Area {
   deletedAt             DateTime?
   createdBy             String?               @db.VarChar(50)
   updatedBy             String?               @db.VarChar(50)
-  tenantId              String                @db.UniqueIdentifier()
+  tenantId              String
   tenant                Tenant                @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   requestAssignments    RequestAssignment[]
   assignmentCategories  AssignmentCategory[]
@@ -1444,11 +1427,11 @@ model UserTenantArea {
   deletedAt    DateTime?
   createdBy    String?    @db.VarChar(50)
   updatedBy    String?    @db.VarChar(50)
-  tenantId     String     @db.UniqueIdentifier()
+  tenantId     String
   tenant       Tenant     @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id           String     @id() @default(uuid()) @db.UniqueIdentifier()
   isActive     Boolean    @default(true)
-  userTenantId String     @db.UniqueIdentifier()
+  userTenantId String
   areaId       String     @db.UniqueIdentifier()
   roleId       String     @db.UniqueIdentifier()
   userTenant   UserTenant @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -1470,7 +1453,7 @@ model AreaRole {
   deletedAt        DateTime?
   createdBy        String?           @db.VarChar(50)
   updatedBy        String?           @db.VarChar(50)
-  tenantId         String            @db.UniqueIdentifier()
+  tenantId         String
   tenant           Tenant            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   areaId           String            @db.UniqueIdentifier()
   area             Area              @relation(fields: [areaId], references: [id])
@@ -1488,7 +1471,7 @@ model AreaRoleFeature {
   deletedAt  DateTime?
   createdBy  String?   @db.VarChar(50)
   updatedBy  String?   @db.VarChar(50)
-  tenantId   String    @db.UniqueIdentifier()
+  tenantId   String
   tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id         String    @id() @default(uuid()) @db.UniqueIdentifier()
   isActive   Boolean   @default(true)
@@ -1511,7 +1494,7 @@ model RequestHierarchy {
   deletedAt   DateTime?
   createdBy   String?                 @db.VarChar(50)
   updatedBy   String?                 @db.VarChar(50)
-  tenantId    String                  @db.UniqueIdentifier()
+  tenantId    String
   tenant      Tenant                  @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   levels      RequestHierarchyLevel[]
   categories  RequestCategory[]
@@ -1531,7 +1514,7 @@ model RequestHierarchyLevel {
   deletedAt   DateTime?
   createdBy   String?           @db.VarChar(50)
   updatedBy   String?           @db.VarChar(50)
-  tenantId    String            @db.UniqueIdentifier()
+  tenantId    String
   tenant      Tenant            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   hierarchyId String            @db.UniqueIdentifier()
   hierarchy   RequestHierarchy  @relation(fields: [hierarchyId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -1555,7 +1538,7 @@ model RequestCategory {
   deletedAt                   DateTime?
   createdBy                   String?                      @db.VarChar(50)
   updatedBy                   String?                      @db.VarChar(50)
-  tenantId                    String                       @db.UniqueIdentifier()
+  tenantId                    String
   tenant                      Tenant                       @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   parentCategoryId            String?                      @db.UniqueIdentifier()
   parentCategory              RequestCategory?             @relation("ParentRequestCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -1582,7 +1565,7 @@ model CategoryForm {
   deletedAt         DateTime?
   createdBy         String?         @db.VarChar(50)
   updatedBy         String?         @db.VarChar(50)
-  tenantId          String          @db.UniqueIdentifier()
+  tenantId          String
   tenant            Tenant          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id                String          @id() @default(uuid()) @db.UniqueIdentifier()
   isActive          Boolean         @default(true)
@@ -1601,7 +1584,7 @@ model SLA {
   deletedAt         DateTime?
   createdBy         String?          @db.VarChar(50)
   updatedBy         String?          @db.VarChar(50)
-  tenantId          String           @db.UniqueIdentifier()
+  tenantId          String
   tenant            Tenant           @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id                String           @id() @default(uuid()) @db.UniqueIdentifier()
   resolutionTime    Int
@@ -1619,7 +1602,7 @@ model SLAChangeLog {
   deletedAt         DateTime?
   createdBy         String?   @db.VarChar(50)
   updatedBy         String?   @db.VarChar(50)
-  tenantId          String    @db.UniqueIdentifier()
+  tenantId          String
   tenant            Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id                String    @id() @default(uuid()) @db.UniqueIdentifier()
   slaId             String    @db.UniqueIdentifier()
@@ -1641,7 +1624,7 @@ model GuideDocument {
   deletedAt         DateTime?
   createdBy         String?         @db.VarChar(50)
   updatedBy         String?         @db.VarChar(50)
-  tenantId          String          @db.UniqueIdentifier()
+  tenantId          String
   tenant            Tenant          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   url               String?         @db.VarChar(500)
   status            Int
@@ -1665,7 +1648,7 @@ model Requirement {
   deletedAt                     DateTime?
   createdBy                     String?                         @db.VarChar(50)
   updatedBy                     String?                         @db.VarChar(50)
-  tenantId                      String                          @db.UniqueIdentifier()
+  tenantId                      String
   tenant                        Tenant                          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   isRequiredOnlyOnce            Boolean                         @default(false)
   requirementComplianceTracking RequirementComplianceTracking[]
@@ -1684,7 +1667,7 @@ model RequestCategoryRequirement {
   deletedAt       DateTime?
   createdBy       String?         @db.VarChar(50)
   updatedBy       String?         @db.VarChar(50)
-  tenantId        String          @db.UniqueIdentifier()
+  tenantId        String
   tenant          Tenant          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id              String          @id() @default(uuid()) @db.UniqueIdentifier()
   requirementId   String          @db.UniqueIdentifier()
@@ -1709,7 +1692,7 @@ model RequirementType {
   deletedAt    DateTime?
   createdBy    String?       @db.VarChar(50)
   updatedBy    String?       @db.VarChar(50)
-  tenantId     String        @db.UniqueIdentifier()
+  tenantId     String
   tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   requirements Requirement[]
 
@@ -1728,7 +1711,7 @@ model AssignmentHierarchy {
   deletedAt   DateTime?
   createdBy   String?                    @db.VarChar(50)
   updatedBy   String?                    @db.VarChar(50)
-  tenantId    String                     @db.UniqueIdentifier()
+  tenantId    String
   tenant      Tenant                     @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   levels      AssignmentHierarchyLevel[]
   categories  AssignmentCategory[]
@@ -1750,7 +1733,7 @@ model AssignmentHierarchyLevel {
   deletedAt   DateTime?
   createdBy   String?              @db.VarChar(50)
   updatedBy   String?              @db.VarChar(50)
-  tenantId    String               @db.UniqueIdentifier()
+  tenantId    String
   tenant      Tenant               @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   hierarchyId String               @db.UniqueIdentifier()
   hierarchy   AssignmentHierarchy  @relation(fields: [hierarchyId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -1775,7 +1758,7 @@ model AssignmentCategory {
   deletedAt          DateTime?
   createdBy          String?                  @db.VarChar(50)
   updatedBy          String?                  @db.VarChar(50)
-  tenantId           String                   @db.UniqueIdentifier()
+  tenantId           String
   tenant             Tenant                   @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   parentCategoryId   String?                  @db.UniqueIdentifier()
   parentCategory     AssignmentCategory?      @relation("ParentAssignmentCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -1804,7 +1787,7 @@ model Form {
   deletedAt       DateTime?
   createdBy       String?          @db.VarChar(50)
   updatedBy       String?          @db.VarChar(50)
-  tenantId        String           @db.UniqueIdentifier()
+  tenantId        String
   tenant          Tenant           @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   content         String           @default("[]") @db.NVarChar(Max)
   published       Boolean          @default(false)
@@ -1824,7 +1807,7 @@ model FormSubmission {
   deletedAt DateTime?
   createdBy String?             @db.VarChar(50)
   updatedBy String?             @db.VarChar(50)
-  tenantId  String              @db.UniqueIdentifier()
+  tenantId  String
   tenant    Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id        String              @id() @default(uuid()) @db.UniqueIdentifier()
   formId    String              @db.UniqueIdentifier()
@@ -1844,7 +1827,7 @@ model FormSubmissionKey {
   deletedAt    DateTime?
   createdBy    String?        @db.VarChar(50)
   updatedBy    String?        @db.VarChar(50)
-  tenantId     String         @db.UniqueIdentifier()
+  tenantId     String
   tenant       Tenant         @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id           String         @id() @default(uuid()) @db.UniqueIdentifier()
   submissionId String         @db.UniqueIdentifier()
@@ -1861,7 +1844,7 @@ model MenuItem {
   deletedAt DateTime?
   createdBy String?    @db.VarChar(50)
   updatedBy String?    @db.VarChar(50)
-  tenantId  String     @db.UniqueIdentifier()
+  tenantId  String
   tenant    Tenant     @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id        String     @id() @default(uuid()) @db.UniqueIdentifier()
   title     String
@@ -1881,11 +1864,11 @@ model UserTenantRole {
   deletedAt    DateTime?
   createdBy    String?    @db.VarChar(50)
   updatedBy    String?    @db.VarChar(50)
-  tenantId     String     @db.UniqueIdentifier()
+  tenantId     String
   tenant       Tenant     @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id           String     @id() @default(uuid()) @db.UniqueIdentifier()
   isActive     Boolean    @default(true)
-  userTenantId String     @db.UniqueIdentifier()
+  userTenantId String
   roleId       String     @db.UniqueIdentifier()
   userTenant   UserTenant @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   role         Role       @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -1903,7 +1886,7 @@ model Role {
   deletedAt   DateTime?
   createdBy   String?          @db.VarChar(50)
   updatedBy   String?          @db.VarChar(50)
-  tenantId    String           @db.UniqueIdentifier()
+  tenantId    String
   tenant      Tenant           @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   userRole    UserTenantRole[]
   roleFeature RoleFeature[]
@@ -1925,7 +1908,7 @@ model Module {
   deletedAt   DateTime?
   createdBy   String?   @db.VarChar(50)
   updatedBy   String?   @db.VarChar(50)
-  tenantId    String    @db.UniqueIdentifier()
+  tenantId    String
   tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   feature     Feature[]
 
@@ -1946,7 +1929,7 @@ model Feature {
   deletedAt       DateTime?
   createdBy       String?           @db.VarChar(50)
   updatedBy       String?           @db.VarChar(50)
-  tenantId        String            @db.UniqueIdentifier()
+  tenantId        String
   tenant          Tenant            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   key             String            @unique() @db.VarChar(100)
   scope           String            @default("global")
@@ -1965,7 +1948,7 @@ model RoleFeature {
   deletedAt DateTime?
   createdBy String?   @db.VarChar(50)
   updatedBy String?   @db.VarChar(50)
-  tenantId  String    @db.UniqueIdentifier()
+  tenantId  String
   tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id        String    @id() @default(uuid()) @db.UniqueIdentifier()
   isActive  Boolean   @default(true)
@@ -1981,7 +1964,7 @@ model Channel {
   deletedAt DateTime?
   createdBy String?   @db.VarChar(50)
   updatedBy String?   @db.VarChar(50)
-  tenantId  String    @db.UniqueIdentifier()
+  tenantId  String
   tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id        String    @id() @default(uuid()) @db.UniqueIdentifier()
   name      String
@@ -1994,11 +1977,11 @@ model Channel {
 }
 
 model Conversation {
-  tenantId        String     @db.UniqueIdentifier()
+  tenantId        String
   tenant          Tenant     @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id              String     @id() @default(uuid()) @db.UniqueIdentifier()
-  userTenantOneId String     @db.UniqueIdentifier()
-  userTenantTwoId String     @db.UniqueIdentifier()
+  userTenantOneId String
+  userTenantTwoId String
   userTenantOne   UserTenant @relation("UserTenantOne", fields: [userTenantOneId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   userTenantTwo   UserTenant @relation("UserTenantTwo", fields: [userTenantTwoId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   messages        Message[]
@@ -2013,12 +1996,12 @@ model Message {
   deletedAt       DateTime?
   createdBy       String?       @db.VarChar(50)
   updatedBy       String?       @db.VarChar(50)
-  tenantId        String        @db.UniqueIdentifier()
+  tenantId        String
   tenant          Tenant        @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id              String        @id() @default(uuid()) @db.UniqueIdentifier()
   body            String
   imageId         String?
-  userTenantId    String        @db.UniqueIdentifier()
+  userTenantId    String
   channelId       String?       @db.UniqueIdentifier()
   parentMessageId String?       @db.UniqueIdentifier()
   conversationId  String?       @db.UniqueIdentifier()
@@ -2036,12 +2019,12 @@ model Message {
 }
 
 model Reaction {
-  tenantId     String     @db.UniqueIdentifier()
+  tenantId     String
   tenant       Tenant     @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id           String     @id() @default(uuid()) @db.UniqueIdentifier()
   value        String
   messageId    String     @db.UniqueIdentifier()
-  userTenantId String     @db.UniqueIdentifier()
+  userTenantId String
   message      Message    @relation(fields: [messageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   userTenant   UserTenant @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
@@ -2056,7 +2039,7 @@ model Person {
   deletedAt            DateTime?
   createdBy            String?            @db.VarChar(50)
   updatedBy            String?            @db.VarChar(50)
-  tenantId             String             @db.UniqueIdentifier()
+  tenantId             String
   tenant               Tenant             @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id                   String             @id() @default(uuid()) @db.UniqueIdentifier()
   firstName            String             @db.VarChar(100)
@@ -2064,7 +2047,7 @@ model Person {
   phone                String?            @db.VarChar(50)
   identificationNumber String             @default("") @db.VarChar(110)
   image                String?
-  userTenantId         String?            @unique() @db.UniqueIdentifier()
+  userTenantId         String?            @unique()
   userTenant           UserTenant?        @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   identificationTypeId String             @db.UniqueIdentifier()
   identificationType   IdentificationType @relation(fields: [identificationTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -2084,7 +2067,7 @@ model IdentificationType {
   deletedAt   DateTime?
   createdBy   String?   @db.VarChar(50)
   updatedBy   String?   @db.VarChar(50)
-  tenantId    String    @db.UniqueIdentifier()
+  tenantId    String
   tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   regex       String?   @db.VarChar(500)
   person      Person[]

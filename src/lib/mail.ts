@@ -32,18 +32,26 @@ export const sendVerificationEmail = async ({ user, url, token }: { user: { emai
   });
 };
 
-export const sendVerificationEmailWithPassword = async (email: string, token: string, password: string) => {
-  const confirmLink = `${domain}/auth/new-verification?token=${token}`;
-
+export const sendChangeEmailVerification = async ({ user, newEmail, url, token }: { user: { email: string }; newEmail: string; url: string; token: string }) => {
   await resend.emails.send({
     from: `support@${emailDomain}`,
-    to: email,
-    subject: 'Confirm your email',
-    html: `<p>Click <a href="${confirmLink}">here</a> to confirm email and Your password is: ${password}</p>`,
+    to: user.email,
+    subject: 'Approve email change',
+    html: `<p>Click <a href="${url}">here</a> to approve email change ${newEmail}. ${token}</p>`,
   });
 };
 
-export const sendVerificationOTP = async (email: string, otp: string, type: 'sign-in' | 'email-verification' | 'forget-password') => {
+export const sendInvitationEmail = async (data: { id: string; role: string; email: string }) => {
+  const url = `${domain}/auth/accept-invitation?id=${data.id}`;
+  await resend.emails.send({
+    from: `support@${emailDomain}`,
+    to: data.email,
+    subject: 'Invitation to join organization',
+    html: `<p>Click <a href="${url}">here</a> to join organization.</p>`,
+  });
+};
+
+export const sendVerificationOTP = async (email: string, otp: string, type: 'sign-in' | 'email-verification' | 'forget-password' | 'two-factor') => {
   await resend.emails.send({
     from: `support@${emailDomain}`,
     to: email,

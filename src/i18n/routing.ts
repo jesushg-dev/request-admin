@@ -16,6 +16,14 @@ const basePathnames = {
     en: '/auth/login',
     es: '/auth/iniciar-sesion',
   },
+  '/auth/login/2fa': {
+    en: '/auth/login/2fa',
+    es: '/auth/iniciar-sesion/2fa',
+  },
+  '/auth/logout': {
+    en: '/auth/logout',
+    es: '/auth/cerrar-sesion',
+  },
   '/auth/reset': {
     en: '/auth/reset',
     es: '/auth/reiniciar',
@@ -223,25 +231,93 @@ const settingsPathnames = {
     en: '/admin/[tenantId]/settings',
     es: '/admin/[tenantId]/configuracion',
   },
+
+  // account
   '/admin/[tenantId]/settings/account': {
     en: '/admin/[tenantId]/settings/account',
     es: '/admin/[tenantId]/configuracion/cuenta',
   },
-  '/admin/[tenantId]/settings/smtp': {
-    en: '/admin/[tenantId]/settings/smtp',
-    es: '/admin/[tenantId]/configuracion/smtp',
+
+  // organization
+  '/admin/[tenantId]/settings/organization': {
+    en: '/admin/[tenantId]/settings/organization',
+    es: '/admin/[tenantId]/configuracion/organizacion',
   },
-  '/admin/[tenantId]/settings/credit-card': {
-    en: '/admin/[tenantId]/settings/credit-card',
-    es: '/admin/[tenantId]/configuracion/tarjeta-de-credito',
+  '/admin/[tenantId]/settings/organization/person': {
+    en: '/admin/[tenantId]/settings/organization/person',
+    es: '/admin/[tenantId]/configuracion/organizacion/persona',
   },
-  '/admin/[tenantId]/settings/social': {
-    en: '/admin/[tenantId]/settings/social',
-    es: '/admin/[tenantId]/configuracion/redes-sociales',
+  '/admin/[tenantId]/settings/organization/roles-and-access': {
+    en: '/admin/[tenantId]/settings/organization/roles-and-access',
+    es: '/admin/[tenantId]/configuracion/organizacion/roles-y-acceso',
   },
-  '/admin/[tenantId]/settings/tenant': {
-    en: '/admin/[tenantId]/settings/tenant',
-    es: '/admin/[tenantId]/configuracion/inquilino',
+  '/admin/[tenantId]/settings/organization/smtp': {
+    en: '/admin/[tenantId]/settings/organization/smtp',
+    es: '/admin/[tenantId]/configuracion/organizacion/smtp',
+  },
+  '/admin/[tenantId]/settings/organization/subscription': {
+    en: '/admin/[tenantId]/settings/organization/subscription',
+    es: '/admin/[tenantId]/configuracion/organizacion/suscripcion',
+  },
+  '/admin/[tenantId]/settings/organization/request-hierarchy': {
+    en: '/admin/[tenantId]/settings/organization/request-hierarchy',
+    es: '/admin/[tenantId]/configuracion/organizacion/jerarquia-solicitud',
+  },
+  '/admin/[tenantId]/settings/organization/assignment-hierarchy': {
+    en: '/admin/[tenantId]/settings/organization/assignment-hierarchy',
+    es: '/admin/[tenantId]/configuracion/organizacion/jerarquia-asignacion',
+  },
+
+  // preferences
+  '/admin/[tenantId]/settings/preferences': {
+    en: '/admin/[tenantId]/settings/preferences',
+    es: '/admin/[tenantId]/configuracion/preferencias',
+  },
+  '/admin/[tenantId]/settings/preferences/appearance': {
+    en: '/admin/[tenantId]/settings/preferences/appearance',
+    es: '/admin/[tenantId]/configuracion/preferencias/apariencia',
+  },
+  '/admin/[tenantId]/settings/preferences/display': {
+    en: '/admin/[tenantId]/settings/preferences/display',
+    es: '/admin/[tenantId]/configuracion/preferencias/pantalla',
+  },
+  '/admin/[tenantId]/settings/preferences/notifications': {
+    en: '/admin/[tenantId]/settings/preferences/notifications',
+    es: '/admin/[tenantId]/configuracion/preferencias/notificaciones',
+  },
+
+  // security
+  '/admin/[tenantId]/settings/security': {
+    en: '/admin/[tenantId]/settings/security',
+    es: '/admin/[tenantId]/configuracion/seguridad',
+  },
+  '/admin/[tenantId]/settings/security/api-keys': {
+    en: '/admin/[tenantId]/settings/security/api-keys',
+    es: '/admin/[tenantId]/configuracion/seguridad/claves-api',
+  },
+  '/admin/[tenantId]/settings/security/api-keys/new': {
+    en: '/admin/[tenantId]/settings/security/api-keys/new',
+    es: '/admin/[tenantId]/configuracion/seguridad/claves-api/nuevo',
+  },
+  '/admin/[tenantId]/settings/security/connected-accounts': {
+    en: '/admin/[tenantId]/settings/security/connected-accounts',
+    es: '/admin/[tenantId]/configuracion/seguridad/cuentas-conectadas',
+  },
+  '/admin/[tenantId]/settings/security/email': {
+    en: '/admin/[tenantId]/settings/security/email',
+    es: '/admin/[tenantId]/configuracion/seguridad/correo',
+  },
+  '/admin/[tenantId]/settings/security/password': {
+    en: '/admin/[tenantId]/settings/security/password',
+    es: '/admin/[tenantId]/configuracion/seguridad/contrasena',
+  },
+  '/admin/[tenantId]/settings/security/sessions': {
+    en: '/admin/[tenantId]/settings/security/sessions',
+    es: '/admin/[tenantId]/configuracion/seguridad/sesiones',
+  },
+  '/admin/[tenantId]/settings/security/two-factor': {
+    en: '/admin/[tenantId]/settings/security/two-factor',
+    es: '/admin/[tenantId]/configuracion/seguridad/doble-factor',
   },
 } satisfies Pathnames<Locale[]>;
 

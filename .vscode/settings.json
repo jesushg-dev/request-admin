@@ -1,3 +1,5 @@
 {
-  "tailwindCSS.experimental.classRegex": ["class:\\s*?[\"'`]([^\"'`]*).*?,", "className:\\s*[\"']([^\"']*)[\"']"]
+  "tailwindCSS.experimental.classRegex": ["class:\\s*?[\"'`]([^\"'`]*).*?,", "className:\\s*[\"']([^\"']*)[\"']"],
+  "i18n-ally.localesPaths": ["messages", "src/i18n"],
+  "i18n-ally.keystyle": "nested"
 }

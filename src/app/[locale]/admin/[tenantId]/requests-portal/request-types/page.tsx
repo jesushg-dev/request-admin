@@ -66,6 +66,7 @@ const CategoryMainPage: React.FC = () => {
     defaultArgs: {
       ...RequestCategoryDefaultArgs,
       where: {
+        tenantId,
         hierarchyLevel: { is: { position: 1 } },
       },
     },

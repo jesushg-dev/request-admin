@@ -30,8 +30,7 @@ model User {
   accounts            Account[]
   twofactors          TwoFactor[]
   ssoproviders        SsoProvider[]
-  members             Member[]
-  invitations         Invitation[]
+  invitations         InvitationTenant[]
   apikeys             Apikey[]
   passkeys            Passkey[]
   userTenants         UserTenant[]
@@ -55,11 +54,13 @@ model Session {
   userAgent            String?
   userId               String
   user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  activeOrganizationId String?
+  activeTenantId       String?
   impersonatedBy       String?
 
   @@unique([token])
+
   @@map("session")
+  @@allow("read", userId == auth().id)
 }
 
 model Account {
@@ -78,7 +79,9 @@ model Account {
   createdAt             DateTime
   updatedAt             DateTime
 
+  @@unique([accountId])
   @@map("account")
+  @@allow("read", userId == auth().id)
 }
 
 model Verification {
@@ -119,7 +122,7 @@ model SsoProvider {
   userId         String?
   user           User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   providerId     String
-  organizationId String?
+  tenantId String?
   domain         String
 
   @@unique([providerId])
@@ -198,6 +201,7 @@ model Apikey {
   metadata            String?
 
   @@map("apikey")
+  @@allow("read", userId == auth().id)
 }
 
 model Passkey {
@@ -214,46 +218,4 @@ model Passkey {
   createdAt    DateTime?
 
   @@map("passkey")
-}
-
-/* THESES TABLES CAN BE MERGED WITH TENANT MODEL */
-
-model Organization {
-  id          String       @id
-  name        String
-  slug        String?
-  logo        String?
-  createdAt   DateTime
-  metadata    String?
-  members     Member[]
-  invitations Invitation[]
-
-  @@unique([slug])
-  @@map("organization")
-}
-
-model Member {
-  id             String       @id
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userId         String
-  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role           String
-  createdAt      DateTime
-
-  @@map("member")
-}
-
-model Invitation {
-  id             String       @id
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  email          String
-  role           String?
-  status         String
-  expiresAt      DateTime
-  inviterId      String
-  user           User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
-
-  @@map("invitation")
 }

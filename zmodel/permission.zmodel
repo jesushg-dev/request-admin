@@ -10,7 +10,7 @@ model UserTenantRole extends TenantScoped, Auditable {
   isActive     Boolean    @default(true) // Flag for active user role
 
   // Relationships
-  userTenantId String     @db.UniqueIdentifier // Reference to the linked User
+  userTenantId String
   roleId       String     @db.UniqueIdentifier // Reference to the linked Role
   userTenant   UserTenant @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   role         Role       @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)

@@ -74,10 +74,39 @@
       },
       "loading": "Loading...",
       "success": "Welcome back!",
-      "error": "An error occurred: {error}"
+      "error": "An error occurred: {error}",
+      "headerTitle": "Welcome back!",
+      "headerLabel": "Sign in to access the system"
+    },
+    "twoFactor": {
+      "headerTitle": "Two-Factor Authentication",
+      "headerLabel": "This account has two-factor authentication enabled.",
+      "headerBackupTitle": "Backup Code Authentication",
+      "headerBackupLabel": "Please enter one of your backup codes to access the system. You can find your backup codes in your account settings.",
+      "selectMethod": "Select verification method",
+      "methods": {
+        "email": {
+          "label": "Email",
+          "description": "You've been sent a verification code to your email address."
+        },
+        "authenticator": {
+          "label": "Authenticator App",
+          "description": "Enter the 6-digit code from your authenticator app."
+        }
+      },
+      "backupCode": "Use Backup Code",
+      "login": "Login with email and password",
+      "insertCode": "Enter the 6-digit code.",
+      "loading": "Loading...",
+      "success": "You have successfully logged in!",
+      "error": "An error occurred: {error}",
+      "actions": {
+        "login": "Login"
+      }
     },
     "registerForm": {
-      "header": "Create an account",
+      "headerTitle": "Create an account",
+      "headerLabel": "Sign up to access the system",
       "alreadyHaveAccount": "Already have an account?",
       "fields": {
         "username": "Username",
@@ -97,8 +126,9 @@
       "error": "An error occurred: {error}"
     },
     "newPasswordForm": {
-      "header": "Enter a new password",
-      "backToLogin": "Back to login",
+      "headerTitle": "Nueva contraseña",
+      "headerLabel": "Introduce tu nueva contraseña",
+      "rememberPassword": "¿Recuerdas tu contraseña?",
       "fields": {
         "password": "Password"
       },
@@ -126,8 +156,9 @@
       }
     },
     "resetForm": {
-      "header": "Forgot your password?",
-      "backToLogin": "Back to login",
+      "headerTitle": "Reset Password",
+      "headerLabel": "Enter your email address to reset your password",
+      "noAccount": "Don't have an account?",
       "fields": {
         "email": "Email"
       },
@@ -193,6 +224,77 @@
         "messageLine1": "You have more than one tenant associated with your account.",
         "messageLine2": "Select a tenant to manage."
       }
+    },
+    "organization": {
+      "title": "Organization Settings",
+      "description": "Manage your organization profile and branding",
+      "basicInfo": {
+        "title": "Basic Information",
+        "description": "Configure your organization's basic details"
+      },
+      "branding": {
+        "title": "Branding",
+        "description": "Customize your organization's colors and appearance",
+        "primaryColor": "Primary Color",
+        "secondaryColor": "Secondary Color",
+        "colorDescriptions": {
+          "primary": "Main color for your organization's branding",
+          "secondary": "Accent color for your organization's branding"
+        }
+      },
+      "contactInfo": {
+        "title": "Contact Information",
+        "description": "Set your organization's contact details"
+      },
+      "form": {
+        "labels": {
+          "name": "Organization Name",
+          "slug": "Slug",
+          "logo": "Logo URL",
+          "website": "Website URL",
+          "title": "Title/Tagline",
+          "description": "Description",
+          "contactEmail": "Contact Email",
+          "contactPhone": "Contact Phone",
+          "address": "Address"
+        },
+        "placeholders": {
+          "name": "Acme Inc.",
+          "slug": "acme",
+          "logo": "https://example.com/logo.png",
+          "website": "https://example.com",
+          "title": "Your organization's tagline",
+          "description": "Brief description of your organization",
+          "email": "contact@example.com",
+          "phone": "+1 (555) 123-4567",
+          "address": "123 Main St, City, State, ZIP"
+        },
+        "descriptions": {
+          "slug": "Used in URLs and API references"
+        },
+        "validation": {
+          "name": "Organization name must be at least 2 characters",
+          "slug": {
+            "min": "Slug must be at least 2 characters",
+            "invalid": "Slug can only contain lowercase letters, numbers, and hyphens",
+            "taken": "This slug is already taken"
+          },
+          "website": "Please enter a valid URL",
+          "email": "Please enter a valid email address"
+        },
+        "buttons": {
+          "save": "Save changes",
+          "saving": "Saving..."
+        }
+      },
+      "toast": {
+        "saving": "Saving organization...",
+        "updating": "Updating organization...",
+        "creating": "Creating organization...",
+        "updateSuccess": "Organization updated successfully",
+        "createSuccess": "Organization created successfully",
+        "error": "Error {action} organization: {error}"
+      }
     }
   },
   "admin": {
@@ -252,7 +354,6 @@
           "createdAt": "Created At",
           "actions": "Actions"
         },
-
         "actions": {
           "edit": "Edit",
           "delete": "Delete"
@@ -664,6 +765,458 @@
       },
       "create": {},
       "edit": {}
+    },
+    "setting": {
+      "sidebar": {
+        "settings": "Settings",
+        "account": "Account",
+        "security": "Security",
+        "password": "Password",
+        "email": "Email",
+        "twoFactor": "Two-Factor",
+        "sessions": "Sessions",
+        "apiKeys": "API Keys",
+        "connectedAccounts": "Connected Accounts",
+        "organization": "Organization",
+        "subscription": "Subscription",
+        "rolesAndAccess": "Roles & Access",
+        "person": "Person",
+        "preferences": "Preferences",
+        "appearance": "Appearance",
+        "display": "Display",
+        "notifications": "Notifications",
+        "requestHierarchy": "Request Hierarchy",
+        "assignementHierarchy": "Assignement Hierarchy"
+      },
+      "apiKeys": {
+        "title": "API Keys",
+        "description": "Manage your API keys for programmatic access to the API.",
+        "createButton": "Create API Key",
+        "newKeyAlert": {
+          "title": "New API Key Created",
+          "warning": "This is the only time you'll see this API key. Make sure to copy it now."
+        },
+        "table": {
+          "name": "Name",
+          "created": "Created",
+          "expires": "Expires",
+          "lastUsed": "Last Used",
+          "status": "Status",
+          "actions": "Actions",
+          "never": "Never",
+          "empty": "No API keys found. Create your first API key to get started.",
+          "lastRequest": "Last Request"
+        },
+        "status": {
+          "active": "Active",
+          "inactive": "Disabled"
+        },
+        "deleteDialog": {
+          "title": "Delete API Key",
+          "description": "Are you sure you want to delete this API key? This action cannot be undone.",
+          "cancel": "Cancel",
+          "confirm": "Delete"
+        },
+        "usage": {
+          "title": "API Key Usage",
+          "description": "Learn how to use your API keys in your applications.",
+          "authentication": "Authentication",
+          "authDescription": "To authenticate your API requests, include your API key in the Authorization header:",
+          "authExample": "Authorization: Bearer YOUR_API_KEY",
+          "rateLimiting": "Rate Limiting",
+          "rateLimitDescription": "API keys may have rate limits applied. If you exceed the rate limit, you'll receive a 429 Too Many Requests response.",
+          "rateLimitNote": "Rate limit headers are included in API responses to help you track your usage.",
+          "security": "Security",
+          "securityDescription": "Keep your API keys secure and never expose them in client-side code. If a key is compromised, delete it immediately and create a new one."
+        },
+        "createForm": {
+          "title": "Create API Key",
+          "subtitle": "Create a new API key for programmatic access to the API.",
+          "errors": {
+            "nameRequired": "Name is required",
+            "prefixRequired": "Prefix is required",
+            "invalidMetadata": "Invalid metadata. Please provide valid JSON for metadata"
+          },
+          "name": {
+            "label": "Name",
+            "placeholder": "My API Key",
+            "description": "A descriptive name for your API key."
+          },
+          "prefix": {
+            "label": "Prefix",
+            "placeholder": "app",
+            "description": "A prefix to identify the source of the API key."
+          },
+          "expiration": {
+            "label": "Expiration",
+            "placeholder": "Select expiration",
+            "description": "When the API key will expire.",
+            "options": {
+              "7d": "7 days",
+              "30d": "30 days",
+              "90d": "90 days",
+              "1y": "1 year",
+              "never": "Never expires"
+            }
+          },
+          "metadata": {
+            "label": "Metadata (JSON)",
+            "placeholder": "'{ tier: standard '}",
+            "description": "Additional metadata for the API key in JSON format."
+          },
+          "rateLimit": {
+            "label": "Rate Limiting",
+            "description": "Enable rate limiting for this API key.",
+            "maxRequests": "Max Requests",
+            "maxRequestsDesc": "Maximum number of requests allowed in the time window.",
+            "timeWindow": "Time Window (ms)",
+            "timeWindowDesc": "Time window in milliseconds (e.g., 60000 for 1 minute)."
+          },
+          "cancel": "Cancel",
+          "creating": "Creating...",
+          "createButton": "Create API Key",
+          "copySuccess": "Copied to clipboard",
+          "newKeyAlert": {
+            "title": "Attention: New API Key",
+            "warning": "Warning: This API key grants access to your data. Keep it secure.",
+            "manageKeys": "Go Back"
+          },
+          "createSuccess": "API Key created succesfully!",
+          "createError": "We have faced a problem: {error}"
+        },
+        "copySuccess": "Copied succesfully!",
+        "entityLabel": "Api Key",
+        "actions": {
+          "delete": "Delete",
+          "deleteExpiredKeys": "Delete Expired Keys"
+        },
+        "statusLoading": "Updating status...",
+        "statusError": "An error occurred: {error}",
+        "statusSuccess": "Status updated to {status}!",
+        "deleteLoading": "Deleting...",
+        "deleteSuccess": " Key deleted successfully!",
+        "deleteError": "An error occurred: {error}"
+      },
+      "sessions": {
+        "title": "Session Management",
+        "description": "Manage active sessions and security settings",
+        "entityLabel": "sessions",
+        "table": {
+          "empty": "No active sessions",
+          "device": "Device",
+          "ipAddress": "IP Address",
+          "lastActive": "Last Active",
+          "expires": "Expires",
+          "status": "Status"
+        },
+        "status": {
+          "current": "Current",
+          "active": "Active"
+        },
+        "actions": {
+          "revoke": "Revoke session"
+        },
+        "revokeDialog": {
+          "title": "Revoke Session",
+          "description": "Are you sure you want to revoke this session? The device will be immediately signed out.",
+          "confirm": "Revoke",
+          "cancel": "Cancel"
+        },
+        "revokeLoading": "Revoking session...",
+        "revokeSuccess": "Session revoked successfully",
+        "revokeError": "Error revoking session: {error}",
+        "security": {
+          "title": "Session Security",
+          "description": "Advanced security settings for user sessions",
+          "duration": "Session Duration",
+          "durationDescription": "Sessions expire after 7 days of inactivity",
+          "refresh": "Session Refresh",
+          "refreshDescription": "Active sessions are refreshed every 24 hours",
+          "freshness": "Session Freshness",
+          "freshnessDescription": "Sessions require re-authentication after 30 days for sensitive operations"
+        }
+      },
+      "password": {
+        "title": "Change Password",
+        "description": "Update your password to keep your account secure.",
+        "updating": "Updating...",
+        "success": "Password updated successfully!",
+        "error": "An error occurred: {error}",
+        "fields": {
+          "currentPassword": {
+            "label": "Current Password"
+          },
+          "newPassword": {
+            "label": "New Password"
+          },
+          "confirmPassword": {
+            "label": "Confirm New Password"
+          },
+          "revokeOtherSessions": {
+            "label": "Revoke other sessions",
+            "description": "Sign out from all other devices when changing your password."
+          }
+        },
+        "buttons": {
+          "update": "Update Password",
+          "updating": "Updating..."
+        },
+        "errors": {
+          "minLength": "Password must be at least 8 characters.",
+          "passwordMismatch": "Passwords don't match."
+        }
+      },
+      "email": {
+        "title": "Change Email",
+        "description": "Update your email address. A verification email will be sent to your current email.",
+        "verificationRequired": "Email Verification Required",
+        "verificationDescription": "You'll need to verify this change from your current email address before it takes effect.",
+        "updating": "Updating...",
+        "success": "Email updated successfully!",
+        "error": "An error occurred: {error}",
+        "fields": {
+          "newEmail": {
+            "label": "New Email Address",
+            "description": "Enter the new email address you want to use for your account."
+          }
+        },
+        "buttons": {
+          "send": "Send Verification Email",
+          "sending": "Sending..."
+        }
+      },
+      "twoFactor": {
+        "title": "Two-Factor Authentication",
+        "description": "Add an extra layer of security to your account.",
+        "recommendedTitle": "Recommended",
+        "recommendedDescription": "We strongly recommend enabling two-factor authentication for increased security.",
+        "activationStatus": {
+          "activating": "Two-factor authentication is being activated. Follow the steps below to complete the process.",
+          "inactive": "Add an extra layer of security to your account by requiring a verification code in addition to your password."
+        },
+        "steps": {
+          "qr": {
+            "1": {
+              "title": "Download and install an authenticator app",
+              "description": "We recommend Google Authenticator or Authy"
+            },
+            "2": {
+              "title": "Scan this QR code with your authenticator app",
+              "description": "Your app will display a 6-digit code that changes every 30 seconds"
+            },
+            "3": {
+              "title": "Enter the 6-digit code to verify your device",
+              "description": "After verification, two-factor authentication will be enabled for your account"
+            }
+          },
+          "email": {
+            "1": {
+              "title": "Check your email for the 6-digit code.",
+              "description": "Please check your spam folder if you don't see the email in your inbox within a few minutes."
+            },
+            "2": {
+              "title": "Enter the 6-digit code to verify your device",
+              "description": "After verification, two-factor authentication will be enabled for your account"
+            }
+          }
+        },
+        "verification": {
+          "label": "Enter the 6-digit verification code",
+          "verifyButton": "Verify",
+          "emailOption": "Use Email Instead (Not Recommended)",
+          "resendCode": "Resend Code",
+          "qrOption": "Use QR Code Instead (Recommended)"
+        },
+        "backupCodes": {
+          "title": "Backup Codes",
+          "description": "Save these backup codes in a secure place. You can use them to sign in if you lose access to your authenticator app or phone.",
+          "alert": {
+            "title": "Important",
+            "items": [
+              "Each backup code can only be used once.",
+              "Keep them safe and secure.",
+              "You'll only see these codes once, so make sure to save them in a secure place.",
+              "Otherwise, you'll need to generate new codes but that will invalidate the existing ones."
+            ]
+          },
+          "copyButton": "Copy codes",
+          "copiedButton": "Copied!"
+        },
+        "recovery": {
+          "title": "Recovery Options",
+          "description": "Manage your backup methods in case you lose access to your primary 2FA method.",
+          "backupCodes": {
+            "title": "Backup Codes",
+            "description": "Invalidates existing backup codes and generates new ones"
+          },
+          "qr": {
+            "title": "QR Code",
+            "description": "Set up a new authenticator app with a QR code"
+          }
+        },
+        "dialogs": {
+          "enable": {
+            "message": "Before you enable two-factor authentication, please enter your password.",
+            "title": "Enable Two-Factor Authentication",
+            "confirm": "Enable",
+            "cancel": "Cancel"
+          },
+          "disable": {
+            "message": "Before you disable two-factor authentication, please enter your password.",
+            "title": "Disable Two-Factor Authentication",
+            "confirm": "Disable",
+            "cancel": "Cancel"
+          },
+          "trustDevice": {
+            "message": "Do you want to trust this device for 60 days?",
+            "title": "Trust Device",
+            "confirm": "Yes, I'm sure",
+            "cancel": "No, I want to enter the code every time"
+          },
+          "getTotp": {
+            "message": "For security reasons, please enter your password to view the QR code.",
+            "title": "Verify Password",
+            "confirm": "Continue",
+            "cancel": "Cancel"
+          },
+          "generateBackup": {
+            "message": "For security reasons, please enter your password to view or generate backup codes.",
+            "title": "Verify Password",
+            "confirm": "Continue",
+            "cancel": "Cancel"
+          }
+        },
+        "toast": {
+          "enabling": "Enabling two-factor authentication...",
+          "enabled": "Two-factor authentication enabled!",
+          "disabling": "Disabling two-factor authentication...",
+          "disabled": "Two-factor authentication disabled!",
+          "sendingCode": "Sending code...",
+          "codeSent": "Code sent!",
+          "verifying": "Verifying code...",
+          "verified": "Verification successful! Two-factor authentication is now active.",
+          "generatingQr": "Generating QR code...",
+          "qrGenerated": "QR code generated!",
+          "generatingBackup": "Generating backup codes...",
+          "backupGenerated": "Backup codes generated!",
+          "error": "Error: {{message}}"
+        },
+        "errors": {
+          "invalidCode": "Please enter a valid 6-digit code"
+        }
+      },
+      "accounts": {
+        "title": "Account Connections",
+        "description": "Manage your connected accounts and authentication methods",
+        "entityLabel": "accounts",
+        "table": {
+          "empty": "No connected accounts",
+          "provider": "Provider",
+          "accountId": "Account ID",
+          "connected": "Connected",
+          "status": "Status"
+        },
+        "status": {
+          "primary": "Primary",
+          "connected": "Connected"
+        },
+        "actions": {
+          "unlink": "Unlink",
+          "link": "Link"
+        },
+        "unlinkDialog": {
+          "title": "Unlink Account",
+          "description": "Are you sure you want to unlink this account? You will no longer be able to sign in using this method.",
+          "confirm": "Unlink",
+          "cancel": "Cancel"
+        },
+        "security": {
+          "title": "Account Security",
+          "description": "Connecting multiple accounts provides backup login methods and enhances your account security."
+        },
+        "linkNew": {
+          "title": "Link New Account",
+          "description": "Connect additional authentication methods to your account.",
+          "providerDescription": "Sign in with {provider}"
+        },
+        "unlinkLoading": "Unlinking account...",
+        "unlinkSuccess": "Account unlinked successfully",
+        "unlinkError": "Error unlinking account: {error}",
+        "linkLoading": "Linking {provider} account...",
+        "linkSuccess": "{provider} account linked successfully",
+        "linkError": "Error linking {provider}: {error}"
+      },
+      "account": {
+        "title": "Profile",
+        "description": "Manage your personal information and how it appears to others.",
+        "avatarAlt": "Profile picture",
+        "buttons": {
+          "changeAvatar": "Change avatar",
+          "verify": "Verify",
+          "sending": "Sending...",
+          "saving": "Saving...",
+          "saveChanges": "Save changes"
+        },
+        "badges": {
+          "verified": "Verified"
+        },
+        "form": {
+          "name": {
+            "label": "Name",
+            "placeholder": "Your name"
+          },
+          "email": {
+            "label": "Email",
+            "placeholder": "your.email@example.com"
+          },
+          "username": {
+            "label": "Username",
+            "placeholder": "username",
+            "description": "This is your unique identifier."
+          },
+          "displayUsername": {
+            "label": "Display Username",
+            "placeholder": "Display username",
+            "description": "This is how your username will be displayed to others."
+          },
+          "phoneNumber": {
+            "label": "Phone Number",
+            "placeholder": "123-4567"
+          }
+        },
+        "toast": {
+          "savingChanges": "Saving changes...",
+          "profileUpdated": "Profile updated successfully.",
+          "sendingEmailVerification": "Sending verification code to your email.",
+          "emailCodeSent": "Verification code sent to your email.",
+          "emailVerified": "Email verified successfully.",
+          "sendingSmsVerification": "Sending verification code to your phone number.",
+          "smsCodeSent": "Verification code sent to your phone number.",
+          "phoneVerified": "Phone number verified successfully."
+        },
+        "errors": {
+          "verifyPhoneBeforeSave": "Please verify the new phone number before saving the changes.",
+          "updateProfile": "Could not update profile: {message}",
+          "sendEmailCode": "Couldn't send verification code to your email: {message}",
+          "verifyEmail": "Could not verify email: {message}",
+          "sendSmsCode": "Couldn't send verification code to your phone number: {message}",
+          "verifyPhone": "Could not verify phone number: {message}"
+        },
+        "dialogs": {
+          "emailVerification": {
+            "message": "Enter the verification code sent to your email.",
+            "title": "Email Verification",
+            "confirm": "Verify",
+            "cancel": "Cancel"
+          },
+          "phoneVerification": {
+            "message": "Enter the verification code sent to your phone number.",
+            "title": "Phone Verification",
+            "confirm": "Verify",
+            "cancel": "Cancel"
+          }
+        }
+      }
     }
   },
   "component": {

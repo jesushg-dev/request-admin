@@ -11,7 +11,7 @@ CREATE TABLE [dbo].[Tenant] (
     [updatedBy] VARCHAR(50),
     [id] UNIQUEIDENTIFIER NOT NULL,
     [name] NVARCHAR(1000) NOT NULL,
-    [logoUrl] NVARCHAR(1000),
+    [logo] NVARCHAR(1000),
     [websiteUrl] NVARCHAR(1000),
     [title] NVARCHAR(1000),
     [description] NVARCHAR(1000),

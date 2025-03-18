@@ -1,15 +1,15 @@
 import { type Metadata } from 'next';
 import localFont from 'next/font/local';
 import { notFound } from 'next/navigation';
-import { Locale, routing } from '@/i18n/routing';
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, getTranslations } from 'next-intl/server';
+import { routing } from '@/i18n/routing';
+import { Locale, NextIntlClientProvider } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 import { ThemeProvider } from 'next-themes';
 import NextTopLoader from 'nextjs-toploader';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 import { Toaster } from '@/components/ui/sonner';
-import { ConfirmDialogProvider } from '@/components/confirm-dialog';
+import { ConfirmDialogProvider } from '@/components/custom-ui/confirm-dialog';
 import TanstackQueryProvider from '@/components/hoc/tanstack-query-provider';
 
 // Font configuration
@@ -26,7 +26,7 @@ const geistMono = localFont({
 });
 
 // Metadata configuration with localization support
-export async function generateMetadata(props: { params: { locale: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
   const params = await props.params;
   const { locale } = params;
   const t = await getTranslations({ locale, namespace: 'home' });
@@ -58,7 +58,7 @@ export function generateStaticParams() {
 // Define the component props
 type Props = {
   children: React.ReactNode;
-  params: { locale: Locale };
+  params: Promise<{ locale: Locale }>;
 };
 
 // RootLayout component
@@ -70,19 +70,17 @@ export default async function RootLayout({ children, params }: Props) {
     notFound();
   }
 
-  const messages = await getMessages();
-
   return (
     <html lang={locale} suppressHydrationWarning>
       <body id="body" className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <NextIntlClientProvider locale={locale} messages={messages}>
+          <NextIntlClientProvider locale={locale}>
             <NextTopLoader />
             <TanstackQueryProvider>
               <NuqsAdapter>
                 <ConfirmDialogProvider>{children}</ConfirmDialogProvider>
               </NuqsAdapter>
-              <Toaster position="top-right" />
+              <Toaster position="top-right" closeButton />
             </TanstackQueryProvider>
           </NextIntlClientProvider>
         </ThemeProvider>

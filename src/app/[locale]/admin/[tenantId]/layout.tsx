@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { redirect } from '@/i18n/routing';
 import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-server';
+import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
 import { SidebarProvider } from '@/components/ui/sidebar';
@@ -9,7 +10,7 @@ import { AppSidebar } from '@/components/layouts/admin/app-sidebar';
 import { DndSubmissionProvider } from '@/components/layouts/admin/dnd-submission-provider';
 import { Navbar } from '@/components/layouts/admin/nav-bar';
 
-export async function generateMetadata(props: { params: { locale: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: { locale: Locale } }): Promise<Metadata> {
   const params = await props.params;
   const { locale } = params;
   const t = await getTranslations({ locale, namespace: 'admin' });
@@ -47,7 +48,7 @@ export default async function RootLayout({
   if (!session) return redirect({ href: '/', locale: 'en' });
 
   const tenants = await db.tenant.findMany({
-    select: { id: true, name: true, description: true, logoUrl: true },
+    select: { id: true, name: true, description: true, logo: true },
     where: { userTenants: { some: { userId: { equals: session.user.id } } } },
   });
 

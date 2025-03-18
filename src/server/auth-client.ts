@@ -35,7 +35,11 @@ export const authClient = createAuthClient({
     oneTapClient({ clientId: 'MY_CLIENT_ID' }),
     apiKeyClient(),
     adminClient(),
-    organizationClient(),
+    organizationClient({
+      teams: {
+        enabled: true,
+      },
+    }),
     oidcClient(),
     ssoClient(),
     multiSessionClient(),
@@ -49,11 +53,3 @@ export const currentUser = async () => {
   const session = await authClient.getSession();
   return session?.data?.user;
 };
-
-/*
-export const currentFeatures = async () => {
-  const session = await authClient.getSession();
-
-  return session?.data?.user?.features ?? [];
-};
-*/

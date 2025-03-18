@@ -3,6 +3,7 @@
 import { redirect } from '@/i18n/routing';
 import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-server';
+import { type Locale } from 'next-intl';
 
 import { HierarchyFormStepperValues } from '@/components/common/hierarchy/hierarchy-form-stepper';
 
@@ -91,7 +92,7 @@ export const upsertAssignmentHierarchy = async (data: HierarchyFormStepperValues
   return data;
 };
 
-export const getRequestHierarchyAndLevelsByTenantId = async (locale: string, tenantId: string) => {
+export const getRequestHierarchyAndLevelsByTenantId = async (locale: Locale, tenantId: string) => {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
@@ -114,7 +115,7 @@ export const getRequestHierarchyAndLevelsByTenantId = async (locale: string, ten
   return { hierarchy, levels };
 };
 
-export const getAssignmentHierarchyAndLevelsByTenantId = async (locale: string, tenantId: string) => {
+export const getAssignmentHierarchyAndLevelsByTenantId = async (locale: Locale, tenantId: string) => {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 

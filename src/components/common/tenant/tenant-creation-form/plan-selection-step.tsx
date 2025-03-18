@@ -1,7 +1,11 @@
+'use client';
+
+import { Check, CreditCard, Crown, Shield, Zap } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { cn } from '@/lib/utils';
+import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 export const planSelectionSchema = z.object({
@@ -14,6 +18,8 @@ export interface Plan {
   description: string;
   price: number;
   durationInDays?: number;
+  icon?: 'zap' | 'crown' | 'shield' | 'creditCard';
+  popular?: boolean;
 }
 
 export type PlanSelectionData = z.infer<typeof planSelectionSchema>;
@@ -21,6 +27,21 @@ export type PlanSelectionData = z.infer<typeof planSelectionSchema>;
 interface PlanSelectionFormProps {
   plans: Plan[];
 }
+
+const PlanIcon = ({ icon }: { icon?: string }) => {
+  switch (icon) {
+    case 'zap':
+      return <Zap className="h-5 w-5" />;
+    case 'crown':
+      return <Crown className="h-5 w-5" />;
+    case 'shield':
+      return <Shield className="h-5 w-5" />;
+    case 'creditCard':
+      return <CreditCard className="h-5 w-5" />;
+    default:
+      return null;
+  }
+};
 
 export function PlanSelectionStep({ plans }: PlanSelectionFormProps) {
   const { control } = useFormContext<PlanSelectionData>();
@@ -30,20 +51,43 @@ export function PlanSelectionStep({ plans }: PlanSelectionFormProps) {
       control={control}
       name="planId"
       render={({ field }) => (
-        <FormItem className="mx-1 flex flex-col gap-2">
+        <FormItem className="space-y-4">
           <FormControl>
-            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-1">
+            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {plans.map((plan) => (
-                <FormItem className="flex items-center space-y-0 space-x-3" key={plan.id}>
-                  <FormControl>
-                    <RadioGroupItem value={plan.id} />
-                  </FormControl>
-                  <FormLabel className="font-normal">
-                    <span className="font-medium">{plan.name}</span> - ${plan.price}
-                    {plan.durationInDays && ` / ${plan.durationInDays} days`}
-                    <p className="text-muted-foreground text-sm">{plan.description}</p>
-                  </FormLabel>
-                </FormItem>
+                <label
+                  key={plan.id}
+                  className={cn(
+                    'relative flex cursor-pointer flex-col rounded-lg border p-4 shadow-sm transition-all hover:border-primary',
+                    field.value === plan.id ? 'border-primary bg-primary/5' : 'border-border'
+                  )}>
+                  {plan.popular && <span className="absolute -top-2 -right-2 rounded-full bg-primary px-2 py-0.5 text-xs font-semibold text-primary-foreground">Popular</span>}
+
+                  <FormItem className="flex items-start space-y-0 space-x-3">
+                    <FormControl>
+                      <RadioGroupItem value={plan.id} className="sr-only" />
+                    </FormControl>
+
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-center">
+                        {plan.icon && (
+                          <div className={cn('mr-2 rounded-full p-1.5', field.value === plan.id ? 'bg-primary text-primary-foreground' : 'bg-muted')}>
+                            <PlanIcon icon={plan.icon} />
+                          </div>
+                        )}
+                        <span className="text-base font-medium">{plan.name}</span>
+                        {field.value === plan.id && <Check className="ml-auto h-5 w-5 text-primary" />}
+                      </div>
+
+                      <div className="flex items-baseline">
+                        <span className="text-xl font-bold">${plan.price}</span>
+                        {plan.durationInDays && <span className="ml-1 text-sm text-muted-foreground">/ {plan.durationInDays} days</span>}
+                      </div>
+
+                      <p className="text-sm text-muted-foreground">{plan.description}</p>
+                    </div>
+                  </FormItem>
+                </label>
               ))}
             </RadioGroup>
           </FormControl>

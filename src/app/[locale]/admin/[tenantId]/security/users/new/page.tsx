@@ -1,11 +1,12 @@
 import { type FC } from 'react';
 import { getAreasWithRolesAsOptionsByTenantId } from '@/actions/area';
 import { getIdentityTypesAsOptions, getRolesAsOptions } from '@/actions/user';
+import { type Locale } from 'next-intl';
 
 import UserTenantScopedForm from '@/components/common/user/user-tenant-scoped-form';
 
 interface NewPageProps {
-  params: Promise<{ locale: string; tenantId: string }>;
+  params: Promise<{ locale: Locale; tenantId: string }>;
 }
 
 const NewPage: FC<NewPageProps> = async ({ params }) => {

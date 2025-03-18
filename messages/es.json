@@ -41,6 +41,8 @@
     "keywords": "telecomunicaciones, gestión de servicios, ITIL, cumplimiento de solicitudes, flujo de trabajo, multi-tenant",
     "subHeading": "Impulsa la eficiencia en la gestión de solicitudes de servicio con un sistema basado en las mejores prácticas de ITIL, adaptado para entornos empresariales modernos.",
     "signInButton": "Acceder al Sistema",
+    "headerAuthTitle": "¡Bienvenido de nuevo!",
+    "headerAuthLabel": "Regístrate para acceder a la plataforma",
     "brandName": "Request Engine – Acciones más rápidas, mejores resultados.",
     "pricingTitle": "Elige el plan que mejor se adapte a tus necesidades",
     "pricingDescription": "Nuestros planes están diseñados para adaptarse a las necesidades de tu negocio. Comienza con nuestro plan gratuito y actualiza a medida que crece tu organización."
@@ -76,8 +78,35 @@
       "success": "¡Bienvenido de nuevo",
       "error": "Ha ocurrido un error: {error}"
     },
+    "twoFactor": {
+      "headerTitle": "Autenticación de dos factores",
+      "headerLabel": "Introduce el código de verificación de tu aplicación de autenticación o correo electrónico.",
+      "headerBackupTitle": "Código de respaldo",
+      "headerBackupLabel": "Favor Ingresa tu código de respaldo para acceder al sistema. Puedes encontrar tu código de respaldo en la configuración de tu cuenta.",
+      "selectMethod": "Select verification method",
+      "methods": {
+        "email": {
+          "label": "Correo electrónico",
+          "description": "Recibiste un correo electrónico con un código de verificación."
+        },
+        "authenticator": {
+          "label": "Aplicación de autenticación",
+          "description": "Introduce el código de verificación de tu aplicación de autenticación."
+        }
+      },
+      "backupCode": "Usar código de respaldo",
+      "login": "Ingresar con correo y contraseña",
+      "insertCode": "Introduce el código de 6 dígitos",
+      "loading": "Cargando...",
+      "success": "¡Autenticación de dos factores exitosa!",
+      "error": "Ha ocurrido un error: {error}",
+      "actions": {
+        "login": "Login"
+      }
+    },
     "registerForm": {
-      "header": "Crear una cuenta",
+      "headerTitle": "Create an account",
+      "headerLabel": "Sign up to access the system",
       "alreadyHaveAccount": "¿Ya tienes una cuenta?",
       "fields": {
         "username": "Nombre de usuario",
@@ -97,8 +126,9 @@
       "error": "Ha ocurrido un error: {error}"
     },
     "newPasswordForm": {
-      "header": "Introduce una nueva contraseña",
-      "backToLogin": "Volver al inicio de sesión",
+      "headerTitle": "Nueva contraseña",
+      "headerLabel": "Introduce tu nueva contraseña",
+      "rememberPassword": "¿Recuerdas tu contraseña?",
       "fields": {
         "password": "Contraseña"
       },
@@ -126,8 +156,9 @@
       }
     },
     "resetForm": {
-      "header": "¿Olvidaste tu contraseña?",
-      "backToLogin": "Volver al inicio de sesión",
+      "headerTitle": "Restablecer contraseña",
+      "headerLabel": "Introduce tu dirección de correo electrónico para restablecer tu contraseña.",
+      "noAccount": "¿No tienes una cuenta?",
       "fields": {
         "email": "Correo electrónico"
       },
@@ -193,6 +224,77 @@
         "messageLine1": "Tienes más de un inquilino asociado a tu cuenta.",
         "messageLine2": "Selecciona un inquilino para gestionar."
       }
+    },
+    "organization": {
+      "title": "Configuración de la Organización",
+      "description": "Administra el perfil y la marca de tu organización",
+      "basicInfo": {
+        "title": "Información Básica",
+        "description": "Configura los detalles básicos de tu organización"
+      },
+      "branding": {
+        "title": "Marca",
+        "description": "Personaliza los colores y apariencia de tu organización",
+        "primaryColor": "Color Principal",
+        "secondaryColor": "Color Secundario",
+        "colorDescriptions": {
+          "primary": "Color principal para la marca de tu organización",
+          "secondary": "Color de acento para la marca de tu organización"
+        }
+      },
+      "contactInfo": {
+        "title": "Información de Contacto",
+        "description": "Establece los detalles de contacto de tu organización"
+      },
+      "form": {
+        "labels": {
+          "name": "Nombre de la Organización",
+          "slug": "Slug",
+          "logo": "URL del Logo",
+          "website": "URL del Sitio Web",
+          "title": "Título/Eslogan",
+          "description": "Descripción",
+          "contactEmail": "Correo de Contacto",
+          "contactPhone": "Teléfono de Contacto",
+          "address": "Dirección"
+        },
+        "placeholders": {
+          "name": "Acme Inc.",
+          "slug": "acme",
+          "logo": "https://example.com/logo.png",
+          "website": "https://example.com",
+          "title": "El eslogan de tu organización",
+          "description": "Breve descripción de tu organización",
+          "email": "contacto@ejemplo.com",
+          "phone": "+1 (555) 123-4567",
+          "address": "123 Calle Principal, Ciudad, Estado, Código Postal"
+        },
+        "descriptions": {
+          "slug": "Usado en URLs y referencias de API"
+        },
+        "validation": {
+          "name": "El nombre de la organización debe tener al menos 2 caracteres",
+          "slug": {
+            "min": "El slug debe tener al menos 2 caracteres",
+            "invalid": "El slug solo puede contener letras minúsculas, números y guiones",
+            "taken": "Este slug ya está en uso"
+          },
+          "website": "Por favor ingresa una URL válida",
+          "email": "Por favor ingresa un correo electrónico válido"
+        },
+        "buttons": {
+          "save": "Guardar cambios",
+          "saving": "Guardando..."
+        }
+      },
+      "toast": {
+        "saving": "Guardando organización...",
+        "updating": "Actualizando organización...",
+        "creating": "Creando organización...",
+        "updateSuccess": "Organización actualizada exitosamente",
+        "createSuccess": "Organización creada exitosamente",
+        "error": "Error {action} organización: {error}"
+      }
     }
   },
   "admin": {
@@ -252,7 +354,6 @@
           "createdAt": "Creado el",
           "actions": "Acciones"
         },
-
         "actions": {
           "edit": "Editar",
           "delete": "Eliminar"
@@ -660,6 +761,458 @@
       },
       "create": {},
       "edit": {}
+    },
+    "setting": {
+      "sidebar": {
+        "settings": "Configuración",
+        "account": "Cuenta",
+        "security": "Seguridad",
+        "password": "Contraseña",
+        "email": "Correo",
+        "twoFactor": "Doble Factor",
+        "sessions": "Sesiones",
+        "apiKeys": "Claves API",
+        "connectedAccounts": "Cuentas Conectadas",
+        "organization": "Organización",
+        "subscription": "Suscripción",
+        "rolesAndAccess": "Roles y Acceso",
+        "person": "Persona",
+        "preferences": "Preferencias",
+        "appearance": "Apariencia",
+        "display": "Pantalla",
+        "notifications": "Notificaciones",
+        "requestHierarchy": "Jerarquía de solicitud",
+        "assignementHierarchy": "Jerarquía de asignación"
+      },
+      "apiKeys": {
+        "title": "Claves API",
+        "description": "Gestiona tus claves API para acceder a la API de manera programática.",
+        "createButton": "Crear clave API",
+        "newKeyAlert": {
+          "title": "Nueva clave API creada",
+          "warning": "Esta es la única vez que verás esta clave API. Asegúrate de copiarla ahora."
+        },
+        "table": {
+          "name": "Nombre",
+          "created": "Creada",
+          "expires": "Caduca",
+          "lastUsed": "Último uso",
+          "status": "Estado",
+          "actions": "Acciones",
+          "never": "Nunca",
+          "empty": "No se encontraron claves API. Crea tu primera clave API para comenzar.",
+          "lastRequest": "Última solicitud"
+        },
+        "status": {
+          "active": "Activa",
+          "inactive": "Deshabilitada"
+        },
+        "deleteDialog": {
+          "title": "Eliminar clave API",
+          "description": "¿Estás seguro de que deseas eliminar esta clave API? Esta acción no se puede deshacer.",
+          "cancel": "Cancelar",
+          "confirm": "Eliminar"
+        },
+        "usage": {
+          "title": "Uso de la clave API",
+          "description": "Aprende cómo usar tus claves API en tus aplicaciones.",
+          "authentication": "Autenticación",
+          "authDescription": "Para autenticar tus solicitudes API, incluye tu clave API en el encabezado Authorization:",
+          "authExample": "Authorization: Bearer TU_CLAVE_API",
+          "rateLimiting": "Limitación de tasa",
+          "rateLimitDescription": "Las claves API pueden tener límites de tasa aplicados. Si superas el límite de tasa, recibirás una respuesta 429 Too Many Requests.",
+          "rateLimitNote": "Los encabezados de límite de tasa se incluyen en las respuestas API para ayudarte a rastrear tu uso.",
+          "security": "Seguridad",
+          "securityDescription": "Mantén tus claves API seguras y nunca las expongas en el código del lado del cliente. Si una clave se ve comprometida, elimínala inmediatamente y crea una nueva."
+        },
+        "createForm": {
+          "title": "Crear clave API",
+          "subtitle": "Crea una nueva clave API para acceso programático a la API.",
+          "errors": {
+            "nameRequired": "El nombre es obligatorio",
+            "prefixRequired": "El prefijo es obligatorio",
+            "invalidMetadata": "Metadatos no válidos. Proporciona un JSON válido para los metadatos."
+          },
+          "name": {
+            "label": "Nombre",
+            "placeholder": "Mi clave API",
+            "description": "Un nombre descriptivo para tu clave API."
+          },
+          "prefix": {
+            "label": "Prefijo",
+            "placeholder": "app",
+            "description": "Un prefijo para identificar la fuente de la clave API."
+          },
+          "expiration": {
+            "label": "Expiración",
+            "placeholder": "Seleccionar expiración",
+            "description": "Cuándo expirará la clave API.",
+            "options": {
+              "7d": "7 días",
+              "30d": "30 días",
+              "90d": "90 días",
+              "1y": "1 año",
+              "never": "Nunca expira"
+            }
+          },
+          "metadata": {
+            "label": "Metadatos (JSON)",
+            "placeholder": "'{ tier: standard '}",
+            "description": "Metadatos adicionales para la clave API en formato JSON."
+          },
+          "rateLimit": {
+            "label": "Limitación de tasa",
+            "description": "Habilitar la limitación de tasa para esta clave API.",
+            "maxRequests": "Máximo de solicitudes",
+            "maxRequestsDesc": "Número máximo de solicitudes permitidas en la ventana de tiempo.",
+            "timeWindow": "Ventana de tiempo (ms)",
+            "timeWindowDesc": "Ventana de tiempo en milisegundos (por ejemplo, 60000 para 1 minuto)."
+          },
+          "cancel": "Cancelar",
+          "creating": "Creando...",
+          "createButton": "Crear clave API",
+          "copySuccess": "Copiado al portapapeles",
+          "newKeyAlert": {
+            "title": "Atención: nueva clave API",
+            "warning": "Advertencia: esta clave API otorga acceso a sus datos. \nMantenlo seguro.",
+            "manageKeys": "Volver"
+          },
+          "createSuccess": "¡Llave API creada con éxito!",
+          "createError": "Hemos enfrentado un problema: {error}"
+        },
+        "copySuccess": "¡Copiado con éxito!",
+        "entityLabel": "Claves de Api",
+        "actions": {
+          "delete": "Eliminar",
+          "deleteExpiredKeys": "Eliminar claves caducadas"
+        },
+        "statusLoading": "Cargando...",
+        "statusError": "Ha ocurrido un error: {error}",
+        "statusSuccess": "¡Estado actualizado a {status}!",
+        "deleteLoading": "Eliminando...",
+        "deleteSuccess": "¡Clave API eliminada con éxito!",
+        "deleteError": "Ha ocurrido un error: {error}"
+      },
+      "sessions": {
+        "title": "Gestión de Sesiones",
+        "description": "Administra sesiones activas y configuraciones de seguridad",
+        "entityLabel": "sesiones",
+        "table": {
+          "empty": "No hay sesiones activas",
+          "device": "Dispositivo",
+          "ipAddress": "Dirección IP",
+          "lastActive": "Última Actividad",
+          "expires": "Expira",
+          "status": "Estado"
+        },
+        "status": {
+          "current": "Actual",
+          "active": "Activa"
+        },
+        "actions": {
+          "revoke": "Revocar sesión"
+        },
+        "revokeDialog": {
+          "title": "Revocar Sesión",
+          "description": "¿Estás seguro de querer revocar esta sesión? El dispositivo será desconectado inmediatamente.",
+          "confirm": "Revocar",
+          "cancel": "Cancelar"
+        },
+        "revokeLoading": "Revocando sesión...",
+        "revokeSuccess": "Sesión revocada exitosamente",
+        "revokeError": "Error al revocar sesión: {error}",
+        "security": {
+          "title": "Seguridad de Sesiones",
+          "description": "Configuraciones avanzadas de seguridad para sesiones de usuario",
+          "duration": "Duración de Sesión",
+          "durationDescription": "Las sesiones expiran después de 7 días de inactividad",
+          "refresh": "Renovación de Sesión",
+          "refreshDescription": "Las sesiones activas se renuevan cada 24 horas",
+          "freshness": "Actualización de Sesión",
+          "freshnessDescription": "Las sesiones requieren re-autenticación después de 30 días para operaciones sensibles"
+        }
+      },
+      "password": {
+        "title": "Cambiar Contraseña",
+        "description": "Actualiza tu contraseña para mantener tu cuenta segura.",
+        "updating": "Actualizando...",
+        "success": "¡Contraseña actualizada con éxito!",
+        "error": "Ha ocurrido un error: {error}",
+        "fields": {
+          "currentPassword": {
+            "label": "Contraseña actual"
+          },
+          "newPassword": {
+            "label": "Nueva contraseña"
+          },
+          "confirmPassword": {
+            "label": "Confirmar nueva contraseña"
+          },
+          "revokeOtherSessions": {
+            "label": "Revocar otras sesiones",
+            "description": "Cierra sesión en todos los demás dispositivos al cambiar tu contraseña."
+          }
+        },
+        "buttons": {
+          "update": "Actualizar contraseña",
+          "updating": "Actualizando..."
+        },
+        "errors": {
+          "minLength": "La contraseña debe tener al menos 8 caracteres.",
+          "passwordMismatch": "Las contraseñas no coinciden."
+        }
+      },
+      "email": {
+        "title": "Cambiar correo electrónico",
+        "description": "Actualiza tu dirección de correo. Se enviará un correo de verificación a tu dirección actual.",
+        "verificationRequired": "Verificación de correo requerida",
+        "verificationDescription": "Debes verificar este cambio desde tu dirección de correo actual antes de que tenga efecto.",
+        "updating": "Actualizando...",
+        "success": "¡Correo electrónico actualizado con éxito!",
+        "error": "Ha ocurrido un error: {error}",
+        "fields": {
+          "newEmail": {
+            "label": "Nuevo correo electrónico",
+            "description": "Ingresa la nueva dirección de correo electrónico que deseas usar para tu cuenta."
+          }
+        },
+        "buttons": {
+          "send": "Enviar correo de verificación",
+          "sending": "Enviando..."
+        }
+      },
+      "twoFactor": {
+        "title": "Autenticación de Dos Factores",
+        "description": "Agrega una capa adicional de seguridad a tu cuenta.",
+        "recommendedTitle": "Recomendado",
+        "recommendedDescription": "Recomendamos encarecidamente activar la autenticación de dos factores para mayor seguridad.",
+        "activationStatus": {
+          "activating": "La autenticación de dos factores se está activando. Sigue los pasos para completar el proceso.",
+          "inactive": "Agrega una capa adicional de seguridad a tu cuenta requiriendo un código de verificación además de tu contraseña."
+        },
+        "steps": {
+          "qr": {
+            "1": {
+              "title": "Descarga e instala una aplicación de autenticación",
+              "description": "Recomendamos Google Authenticator o Authy"
+            },
+            "2": {
+              "title": "Escanear este código QR con tu aplicación",
+              "description": "Tu aplicación mostrará un código de 6 dígitos que cambia cada 30 segundos"
+            },
+            "3": {
+              "title": "Ingresa el código de 6 dígitos para verificar tu dispositivo",
+              "description": "Después de la verificación, la autenticación de dos factores estará activa"
+            }
+          },
+          "email": {
+            "1": {
+              "title": "Revisa tu correo para obtener el código de 6 dígitos",
+              "description": "Revisa tu carpeta de spam si no ves el correo en tu bandeja de entrada"
+            },
+            "2": {
+              "title": "Ingresa el código de 6 dígitos para verificar tu dispositivo",
+              "description": "Después de la verificación, la autenticación de dos factores estará activa"
+            }
+          }
+        },
+        "verification": {
+          "label": "Ingresa el código de verificación de 6 dígitos",
+          "verifyButton": "Verificar",
+          "emailOption": "Usar correo electrónico (No recomendado)",
+          "resendCode": "Reenviar código",
+          "qrOption": "Usar código QR (Recomendado)"
+        },
+        "backupCodes": {
+          "title": "Códigos de Respaldo",
+          "description": "Guarda estos códigos en un lugar seguro. Puedes usarlos para iniciar sesión si pierdes acceso a tu aplicación de autenticación.",
+          "alert": {
+            "title": "Importante",
+            "items": [
+              "Cada código solo puede ser usado una vez.",
+              "Mantenlos en un lugar seguro.",
+              "Solo verás estos códigos una vez, así que guárdalos.",
+              "De lo contrario, necesitarás generar nuevos códigos invalidando los existentes."
+            ]
+          },
+          "copyButton": "Copiar códigos",
+          "copiedButton": "¡Copiados!"
+        },
+        "recovery": {
+          "title": "Opciones de Recuperación",
+          "description": "Administra tus métodos de respaldo en caso de perder acceso a tu método 2FA principal.",
+          "backupCodes": {
+            "title": "Códigos de Respaldo",
+            "description": "Invalida los códigos existentes y genera nuevos"
+          },
+          "qr": {
+            "title": "Código QR",
+            "description": "Configura una nueva aplicación de autenticación con un código QR"
+          }
+        },
+        "dialogs": {
+          "enable": {
+            "message": "Antes de activar la autenticación de dos factores, ingresa tu contraseña.",
+            "title": "Activar Autenticación de Dos Factores",
+            "confirm": "Activar",
+            "cancel": "Cancelar"
+          },
+          "disable": {
+            "message": "Antes de desactivar la autenticación de dos factores, ingresa tu contraseña.",
+            "title": "Desactivar Autenticación de Dos Factores",
+            "confirm": "Desactivar",
+            "cancel": "Cancelar"
+          },
+          "trustDevice": {
+            "message": "¿Deseas confiar en este dispositivo por 60 días?",
+            "title": "Confiar en Dispositivo",
+            "confirm": "Sí, estoy seguro",
+            "cancel": "No, ingresaré el código cada vez"
+          },
+          "getTotp": {
+            "message": "Por seguridad, ingresa tu contraseña para ver el código QR.",
+            "title": "Verificar Contraseña",
+            "confirm": "Continuar",
+            "cancel": "Cancelar"
+          },
+          "generateBackup": {
+            "message": "Por seguridad, ingresa tu contraseña para ver o generar códigos de respaldo.",
+            "title": "Verificar Contraseña",
+            "confirm": "Continuar",
+            "cancel": "Cancelar"
+          }
+        },
+        "toast": {
+          "enabling": "Activando autenticación de dos factores...",
+          "enabled": "¡Autenticación de dos factores activada!",
+          "disabling": "Desactivando autenticación de dos factores...",
+          "disabled": "¡Autenticación de dos factores desactivada!",
+          "sendingCode": "Enviando código...",
+          "codeSent": "¡Código enviado!",
+          "verifying": "Verificando código...",
+          "verified": "¡Verificación exitosa! La autenticación de dos factores está activa.",
+          "generatingQr": "Generando código QR...",
+          "qrGenerated": "¡Código QR generado!",
+          "generatingBackup": "Generando códigos de respaldo...",
+          "backupGenerated": "¡Códigos de respaldo generados!",
+          "error": "Error: {{message}}"
+        },
+        "errors": {
+          "invalidCode": "Por favor ingresa un código válido de 6 dígitos"
+        }
+      },
+      "accounts": {
+        "title": "Cuentas Conectadas",
+        "description": "Administra tus cuentas conectadas y métodos de autenticación",
+        "entityLabel": "cuentas",
+        "table": {
+          "empty": "No hay cuentas conectadas",
+          "provider": "Proveedor",
+          "accountId": "ID de Cuenta",
+          "connected": "Conectada",
+          "status": "Estado"
+        },
+        "status": {
+          "primary": "Principal",
+          "connected": "Conectada"
+        },
+        "actions": {
+          "unlink": "Desvincular",
+          "link": "Vincular"
+        },
+        "unlinkDialog": {
+          "title": "Desvincular Cuenta",
+          "description": "¿Estás seguro de querer desvincular esta cuenta? No podrás iniciar sesión con este método.",
+          "confirm": "Desvincular",
+          "cancel": "Cancelar"
+        },
+        "security": {
+          "title": "Seguridad de Cuenta",
+          "description": "Conectar múltiples cuentas provee métodos de respaldo para inicio de sesión y mejora tu seguridad."
+        },
+        "linkNew": {
+          "title": "Vincular Nueva Cuenta",
+          "description": "Conecta métodos de autenticación adicionales a tu cuenta.",
+          "providerDescription": "Iniciar sesión con {provider}"
+        },
+        "unlinkLoading": "Desvinculando cuenta...",
+        "unlinkSuccess": "Cuenta desvinculada exitosamente",
+        "unlinkError": "Error al desvincular cuenta: {error}",
+        "linkLoading": "Vinculando cuenta de {provider}...",
+        "linkSuccess": "Cuenta de {provider} vinculada exitosamente",
+        "linkError": "Error al vincular {provider}: {error}"
+      },
+      "account": {
+        "title": "Perfil",
+        "description": "Administra tu información personal y cómo se muestra a otros.",
+        "avatarAlt": "Foto de perfil",
+        "buttons": {
+          "changeAvatar": "Cambiar avatar",
+          "verify": "Verificar",
+          "sending": "Enviando...",
+          "saving": "Guardando...",
+          "saveChanges": "Guardar cambios"
+        },
+        "badges": {
+          "verified": "Verificado"
+        },
+        "form": {
+          "name": {
+            "label": "Nombre",
+            "placeholder": "Tu nombre"
+          },
+          "email": {
+            "label": "Correo electrónico",
+            "placeholder": "tu.correo@ejemplo.com"
+          },
+          "username": {
+            "label": "Usuario",
+            "placeholder": "usuario",
+            "description": "Este es tu identificador único."
+          },
+          "displayUsername": {
+            "label": "Usuario visible",
+            "placeholder": "Usuario visible",
+            "description": "Así verán tu usuario los demás."
+          },
+          "phoneNumber": {
+            "label": "Teléfono",
+            "placeholder": "123-4567"
+          }
+        },
+        "toast": {
+          "savingChanges": "Guardando cambios...",
+          "profileUpdated": "Perfil actualizado correctamente.",
+          "sendingEmailVerification": "Enviando código de verificación a tu correo.",
+          "emailCodeSent": "Código de verificación enviado a tu correo.",
+          "emailVerified": "Correo verificado correctamente.",
+          "sendingSmsVerification": "Enviando código de verificación a tu teléfono.",
+          "smsCodeSent": "Código de verificación enviado a tu teléfono.",
+          "phoneVerified": "Teléfono verificado correctamente."
+        },
+        "errors": {
+          "verifyPhoneBeforeSave": "Por favor verifica el nuevo número antes de guardar.",
+          "updateProfile": "Error al actualizar el perfil: {message}",
+          "sendEmailCode": "Error enviando código de verificación: {message}",
+          "verifyEmail": "Error verificando correo: {message}",
+          "sendSmsCode": "Error enviando código SMS: {message}",
+          "verifyPhone": "Error verificando teléfono: {message}"
+        },
+        "dialogs": {
+          "emailVerification": {
+            "message": "Ingresa el código de verificación enviado a tu correo.",
+            "title": "Verificación de Email",
+            "confirm": "Verificar",
+            "cancel": "Cancelar"
+          },
+          "phoneVerification": {
+            "message": "Ingresa el código de verificación enviado a tu teléfono.",
+            "title": "Verificación de Teléfono",
+            "confirm": "Verificar",
+            "cancel": "Cancelar"
+          }
+        }
+      }
     }
   },
   "component": {

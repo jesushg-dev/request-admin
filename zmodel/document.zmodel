@@ -37,7 +37,7 @@ model Document extends TenantScoped, Auditable {
   numPages     Int?     // Number of pages in the document
 
   // Owner relationship
-  ownerId      String?  @db.UniqueIdentifier // Foreign key to userTenant (SQL Server GUID)
+  ownerId      String? 
   owner        UserTenant? @relation(fields: [ownerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   // Feature toggles
@@ -211,7 +211,7 @@ model LinkPreset extends TenantScoped, Auditable {
 model Domain extends TenantScoped, Auditable {
   id           String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for domain
   slug         String @unique
-  userTenantId String? @db.UniqueIdentifier // Associated userTenant foreign key
+  userTenantId String? 
   userTenant   UserTenant?   @relation(fields: [userTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   verified     Boolean @default(false) // Domain verification status
   isDefault    Boolean @default(false) // Primary domain flag
@@ -315,7 +315,7 @@ model SentEmail extends TenantScoped, Auditable {
 model DocumentConversation extends TenantScoped, Auditable {
   id         String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for conversation
   threadId   String @unique // Thread ID from OpenAI Assistant API
-  userTenantId String @db.UniqueIdentifier
+  userTenantId String
   userTenant   UserTenant   @relation(fields: [userTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   documentId String @db.UniqueIdentifier
   document   Document @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
@@ -524,7 +524,7 @@ model RestrictedToken extends TenantScoped, Auditable {
   lastUsed   DateTime?
   rateLimit  Int @default(60) // Rate limit per minute
 
-  userTenantId String @db.UniqueIdentifier
+  userTenantId String
   userTenant   UserTenant @relation(fields: [userTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   @@index([userTenantId])

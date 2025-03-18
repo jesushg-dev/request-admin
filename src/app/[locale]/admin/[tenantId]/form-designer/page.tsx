@@ -57,7 +57,7 @@ const FormMainPage: React.FC = () => {
     useFindManyHook: useFindManyForm,
     defaultArgs: {
       ...FormDefaultArgs,
-      where: { tenantId }, // Filtro base por tenant
+      where: { tenantId },
     },
   });
 

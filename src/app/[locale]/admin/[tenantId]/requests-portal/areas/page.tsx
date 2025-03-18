@@ -56,7 +56,10 @@ const AreaMainPage: React.FC = () => {
     search,
     useCountHook: useCountArea,
     useFindManyHook: useFindManyArea,
-    defaultArgs: AreaDefaultArgs,
+    defaultArgs: {
+      ...AreaDefaultArgs,
+      where: { tenantId },
+    },
   });
 
   const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t }), [t]);

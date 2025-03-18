@@ -43,7 +43,7 @@ async function main() {
     data: {
       id: UNSTABLE_TENANT_ID,
       name: 'Claro',
-      logoUrl: 'https://1000marcas.net/wp-content/uploads/2021/02/Claro-Logo.png',
+      logo: 'https://1000marcas.net/wp-content/uploads/2021/02/Claro-Logo.png',
       websiteUrl: 'https://www.claro.com.ni',
       title: 'Claro',
       description: 'Claro es una empresa de telecomunicaciones que opera en 18 países de América Latina.',
@@ -93,6 +93,7 @@ async function main() {
           id: USER_TENANT_JESUS_ID,
           tenantId: UNSTABLE_TENANT_ID,
           isActive: true,
+          role: 'admin',
           joinedAt: new Date(),
           isSuperAdmin: true,
           person: {
@@ -137,6 +138,7 @@ async function main() {
           id: USER_TENANT_DANILO_ID,
           tenantId: UNSTABLE_TENANT_ID,
           isActive: true,
+          role: 'admin',
           joinedAt: new Date(),
           isSuperAdmin: true,
           person: {

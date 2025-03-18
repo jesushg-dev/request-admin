@@ -1,5 +1,10 @@
-const Page = () => {
-  return <div>Settings Page</div>;
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Settings',
+  description: 'Manage your account and organization settings',
 };
 
-export default Page;
+export default function SettingsPage() {
+  return <div>Settings</div>;
+}

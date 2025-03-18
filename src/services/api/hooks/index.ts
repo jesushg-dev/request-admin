@@ -7,6 +7,7 @@
 
 export * from './tenant';
 export * from './user-tenant';
+export * from './invitation-tenant';
 export * from './subscription';
 export * from './plan';
 export * from './plan-feature';
@@ -22,9 +23,6 @@ export * from './sso-provider';
 export * from './oauth-application';
 export * from './oauth-access-token';
 export * from './oauth-consent';
-export * from './organization';
-export * from './member';
-export * from './invitation';
 export * from './apikey';
 export * from './passkey';
 export * from './request';

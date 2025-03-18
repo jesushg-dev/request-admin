@@ -24,7 +24,7 @@ import {
 import { passkey } from 'better-auth/plugins/passkey';
 import { sso } from 'better-auth/plugins/sso';
 
-import { sendMagicLink, sendResetPassword, sendVerificationEmail, sendVerificationOTP } from '@/lib/mail';
+import { sendChangeEmailVerification, sendInvitationEmail, sendMagicLink, sendResetPassword, sendVerificationEmail, sendVerificationOTP } from '@/lib/mail';
 import { comparePassword, hashPassword } from '@/lib/password';
 
 import { db } from './db-server';
@@ -47,6 +47,10 @@ export const auth = betterAuth({
     sendVerificationEmail,
   },
   user: {
+    changeEmail: {
+      enabled: true,
+      sendChangeEmailVerification,
+    },
     additionalFields: {
       isGlobalAdmin: {
         input: false,
@@ -58,7 +62,14 @@ export const auth = betterAuth({
   },
   plugins: [
     nextCookies(),
-    twoFactor(),
+    twoFactor({
+      issuer: process.env.APP_NAME || 'Requestum',
+      otpOptions: {
+        async sendOTP({ user, otp }) {
+          await sendVerificationOTP(user.email, otp, 'two-factor');
+        },
+      },
+    }),
     jwt(),
     openAPI(),
     oAuthProxy(),
@@ -68,9 +79,55 @@ export const auth = betterAuth({
     oidcProvider({
       loginPage: '/sign-in',
     }),
-    organization(),
+    organization({
+      teams: {
+        enabled: true,
+        allowRemovingAllTeams: false,
+      },
+      sendInvitationEmail,
+      schema: {
+        organization: {
+          modelName: 'Tenant',
+        },
+        member: {
+          modelName: 'UserTenant',
+          fields: {
+            organizationId: 'tenantId',
+          },
+        },
+        invitation: {
+          modelName: 'InvitationTenant',
+          fields: {
+            organizationId: 'tenantId',
+          },
+        },
+        team: {
+          modelName: 'Area',
+          fields: {
+            organizationId: 'tenantId',
+          },
+        },
+        session: {
+          fields: {
+            activeOrganizationId: 'activeTenantId',
+          },
+        },
+      },
+    }),
     admin(),
-    apiKey(),
+    apiKey({
+      enableMetadata: true,
+      rateLimit: {
+        enabled: true,
+        timeWindow: 1000 * 60 * 60 * 24, // 1 day
+        maxRequests: 1000, // 1,000 requests per day
+      },
+      keyExpiration: {
+        minExpiresIn: 24, // 1 day
+        maxExpiresIn: 365, // 1 year
+        defaultExpiresIn: 7, // 7 days
+      },
+    }),
     oneTap(),
     genericOAuth({
       config: [],

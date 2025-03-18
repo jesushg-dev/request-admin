@@ -44,14 +44,23 @@ const metadata = {
           name: 'id',
           type: 'String',
           isId: true,
-          attributes: [{ name: '@default', args: [] }],
         },
         name: {
           name: 'name',
           type: 'String',
         },
-        logoUrl: {
-          name: 'logoUrl',
+        slug: {
+          name: 'slug',
+          type: 'String',
+          isOptional: true,
+        },
+        metadata: {
+          name: 'metadata',
+          type: 'String',
+          isOptional: true,
+        },
+        logo: {
+          name: 'logo',
           type: 'String',
           isOptional: true,
         },
@@ -403,6 +412,13 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
+        invitations: {
+          name: 'invitations',
+          type: 'InvitationTenant',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
         subscriptions: {
           name: 'subscriptions',
           type: 'Subscription',
@@ -640,6 +656,10 @@ const metadata = {
           name: 'id',
           fields: ['id'],
         },
+        slug: {
+          name: 'slug',
+          fields: ['slug'],
+        },
       },
     },
     userTenant: {
@@ -693,7 +713,6 @@ const metadata = {
           name: 'id',
           type: 'String',
           isId: true,
-          attributes: [{ name: '@default', args: [] }],
         },
         isActive: {
           name: 'isActive',
@@ -719,6 +738,10 @@ const metadata = {
           name: 'isTwoFactorRequired',
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        role: {
+          name: 'role',
+          type: 'String',
         },
         userId: {
           name: 'userId',
@@ -832,6 +855,97 @@ const metadata = {
         userId_tenantId: {
           name: 'userId_tenantId',
           fields: ['userId', 'tenantId'],
+        },
+      },
+    },
+    invitationTenant: {
+      name: 'InvitationTenant',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$InvitationTenant$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [] }],
+          defaultValueProvider: $default$InvitationTenant$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'invitations',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+        },
+        email: {
+          name: 'email',
+          type: 'String',
+        },
+        role: {
+          name: 'role',
+          type: 'String',
+          isOptional: true,
+        },
+        status: {
+          name: 'status',
+          type: 'String',
+        },
+        expiresAt: {
+          name: 'expiresAt',
+          type: 'DateTime',
+        },
+        inviterId: {
+          name: 'inviterId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'user',
+        },
+        user: {
+          name: 'user',
+          type: 'User',
+          isDataModel: true,
+          backLink: 'invitations',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'inviterId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
         },
       },
     },
@@ -1268,16 +1382,9 @@ const metadata = {
           isArray: true,
           backLink: 'user',
         },
-        members: {
-          name: 'members',
-          type: 'Member',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'user',
-        },
         invitations: {
           name: 'invitations',
-          type: 'Invitation',
+          type: 'InvitationTenant',
           isDataModel: true,
           isArray: true,
           backLink: 'user',
@@ -1367,8 +1474,8 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'userId' },
         },
-        activeOrganizationId: {
-          name: 'activeOrganizationId',
+        activeTenantId: {
+          name: 'activeTenantId',
           type: 'String',
           isOptional: true,
         },
@@ -1467,6 +1574,10 @@ const metadata = {
         id: {
           name: 'id',
           fields: ['id'],
+        },
+        accountId: {
+          name: 'accountId',
+          fields: ['accountId'],
         },
       },
     },
@@ -1616,8 +1727,8 @@ const metadata = {
           name: 'providerId',
           type: 'String',
         },
-        organizationId: {
-          name: 'organizationId',
+        tenantId: {
+          name: 'tenantId',
           type: 'String',
           isOptional: true,
         },
@@ -1818,176 +1929,6 @@ const metadata = {
           name: 'consentGiven',
           type: 'Boolean',
           isOptional: true,
-        },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
-        },
-      },
-    },
-    organization: {
-      name: 'Organization',
-      fields: {
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-        },
-        name: {
-          name: 'name',
-          type: 'String',
-        },
-        slug: {
-          name: 'slug',
-          type: 'String',
-          isOptional: true,
-        },
-        logo: {
-          name: 'logo',
-          type: 'String',
-          isOptional: true,
-        },
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-        },
-        metadata: {
-          name: 'metadata',
-          type: 'String',
-          isOptional: true,
-        },
-        members: {
-          name: 'members',
-          type: 'Member',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'organization',
-        },
-        invitations: {
-          name: 'invitations',
-          type: 'Invitation',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'organization',
-        },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
-        },
-        slug: {
-          name: 'slug',
-          fields: ['slug'],
-        },
-      },
-    },
-    member: {
-      name: 'Member',
-      fields: {
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-        },
-        organizationId: {
-          name: 'organizationId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'organization',
-        },
-        organization: {
-          name: 'organization',
-          type: 'Organization',
-          isDataModel: true,
-          backLink: 'members',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'organizationId' },
-        },
-        userId: {
-          name: 'userId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'user',
-        },
-        user: {
-          name: 'user',
-          type: 'User',
-          isDataModel: true,
-          backLink: 'members',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'userId' },
-        },
-        role: {
-          name: 'role',
-          type: 'String',
-        },
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-        },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
-        },
-      },
-    },
-    invitation: {
-      name: 'Invitation',
-      fields: {
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-        },
-        organizationId: {
-          name: 'organizationId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'organization',
-        },
-        organization: {
-          name: 'organization',
-          type: 'Organization',
-          isDataModel: true,
-          backLink: 'invitations',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'organizationId' },
-        },
-        email: {
-          name: 'email',
-          type: 'String',
-        },
-        role: {
-          name: 'role',
-          type: 'String',
-          isOptional: true,
-        },
-        status: {
-          name: 'status',
-          type: 'String',
-        },
-        expiresAt: {
-          name: 'expiresAt',
-          type: 'DateTime',
-        },
-        inviterId: {
-          name: 'inviterId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'user',
-        },
-        user: {
-          name: 'user',
-          type: 'User',
-          isDataModel: true,
-          backLink: 'invitations',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'inviterId' },
         },
       },
       uniqueConstraints: {
@@ -10402,8 +10343,7 @@ const metadata = {
     },
   },
   deleteCascade: {
-    user: ['UserTenant', 'Session', 'Account', 'TwoFactor', 'SsoProvider', 'Member', 'Invitation', 'Apikey', 'Passkey'],
-    organization: ['Member', 'Invitation'],
+    user: ['UserTenant', 'InvitationTenant', 'Session', 'Account', 'TwoFactor', 'SsoProvider', 'Apikey', 'Passkey'],
     requestAssignment: ['AssignedUser'],
     area: ['AssignmentCategory'],
     requestCategory: ['CategoryForm'],
@@ -10427,6 +10367,14 @@ function $default$UserTenant$createdBy(user: any): unknown {
 }
 
 function $default$UserTenant$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$InvitationTenant$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$InvitationTenant$updatedBy(user: any): unknown {
   return user?.id;
 }
 

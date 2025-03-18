@@ -10,9 +10,12 @@ import './category.zmodel'
 import './permission.zmodel'
 
 model Tenant extends Auditable {
-  id                             String                          @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for the tenant
+  id                             String       @id
   name                           String   // Tenant name
-  logoUrl                        String?  // URL for the tenant's logo
+  slug                           String?
+  logo                           String?  // URL for the tenant's logo
+  metadata                       String?
+
   websiteUrl                     String?  // URL for the tenant's website
   title                          String?  // Title or tagline for the tenant
   description                    String?  // Brief description of the tenant
@@ -87,6 +90,7 @@ model Tenant extends Auditable {
 
   // --- User and Tenant Relationships ---
   userTenants                    UserTenant[]
+  invitations                    InvitationTenant[]
 
   // --- Subscriptions and Usage ---
   subscriptions                  Subscription[]
@@ -126,16 +130,18 @@ model Tenant extends Auditable {
   customFieldResponse           CustomFieldResponse[]
 
   // Access control
+  @@unique([slug])
   @@allow("read", userTenants?[user.id == auth().id && isActive == true])
 }
 
 model UserTenant extends TenantScoped, Auditable {
-  id                           String           @id @default(uuid()) @db.UniqueIdentifier
+  id                           String       @id
   isActive                     Boolean          @default(true) // Indicates if the user is active in the tenant
   isTermAccepted               Boolean          @default(false) // Indicates if the user has accepted the terms of the tenant
   joinedAt                     DateTime         @default(now()) // Timestamp of when the user joined the tenant
   isSuperAdmin                 Boolean          @default(false) // Flag for super admin status
   isTwoFactorRequired          Boolean          @default(false)
+  role                         String       // It's a dummy field required for better auth
 
   userId                       String
   user                         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -161,10 +167,20 @@ model UserTenant extends TenantScoped, Auditable {
   @@index([tenantId]) // Index for efficient queries by tenantId
 }
 
+model InvitationTenant extends TenantScoped, Auditable {
+  id             String       @id
+  email          String
+  role           String?
+  status         String
+  expiresAt      DateTime
+  inviterId      String
+  user           User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
+}
+
 model Subscription {
   id         String    @id @default(uuid()) @db.UniqueIdentifier
   tenant     Tenant    @relation(fields: [tenantId], references: [id])
-  tenantId   String    @db.UniqueIdentifier
+  tenantId   String    
   plan       Plan      @relation(fields: [planId], references: [id])
   planId     String    @db.UniqueIdentifier
   startDate  DateTime
@@ -204,7 +220,7 @@ model PlanFeature {
 model UsageTracking {
   id          String    @id @default(uuid()) @db.UniqueIdentifier
   tenant      Tenant    @relation(fields: [tenantId], references: [id])
-  tenantId    String    @db.UniqueIdentifier
+  tenantId    String    
   featureName String
   usageCount  Int
   lastUsedAt  DateTime?
