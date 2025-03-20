@@ -1,6 +1,6 @@
 import React from 'react';
 import { I18Link, Link } from '@/i18n/routing';
-import { CellContext, Row } from '@tanstack/react-table';
+import { Row } from '@tanstack/react-table';
 import { Ellipsis, EyeIcon, PencilIcon, Trash2Icon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
@@ -8,8 +8,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 
 import { Button } from '../ui/button';
 
-type ActionCellProps<TData, TValue> = {
-  cell: CellContext<TData, TValue>; // The cell context
+type ActionCellProps<TData> = {
+  row: Row<TData>; // The cell context
   onUpdate?: (row: Row<TData>) => void; // Optional handler for update action
   onDelete?: (row: Row<TData>) => void; // Optional handler for delete action
   viewLink?: I18Link; // The view link
@@ -18,7 +18,7 @@ type ActionCellProps<TData, TValue> = {
   children?: React.ReactNode; // Additional extendible actions
 };
 
-function ActionCell<TData, TValue>({ cell, viewLink, updateLink, deleteLink, onUpdate, onDelete, children }: ActionCellProps<TData, TValue>) {
+function ActionCell<TData>({ row, viewLink, updateLink, deleteLink, onUpdate, onDelete, children }: ActionCellProps<TData>) {
   const t = useTranslations('table');
 
   return (
@@ -40,7 +40,7 @@ function ActionCell<TData, TValue>({ cell, viewLink, updateLink, deleteLink, onU
 
         {/* Default Update Action */}
         {onUpdate && (
-          <DropdownMenuItem onSelect={() => onUpdate(cell.row)}>
+          <DropdownMenuItem onSelect={() => onUpdate(row)}>
             <PencilIcon className="size-4" aria-hidden="true" />
             {t('columns.edit')}
           </DropdownMenuItem>
@@ -61,7 +61,7 @@ function ActionCell<TData, TValue>({ cell, viewLink, updateLink, deleteLink, onU
 
         {/* Default Delete Action */}
         {onDelete && (
-          <DropdownMenuItem onSelect={() => onDelete(cell.row)}>
+          <DropdownMenuItem onSelect={() => onDelete(row)}>
             <Trash2Icon className="size-4 text-danger" aria-hidden="true" />
             {t('columns.delete')}
             <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>

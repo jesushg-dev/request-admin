@@ -225,6 +225,82 @@ const formsPathnames = {
   },
 } satisfies Pathnames<Locale[]>;
 
+const dataRoomsPathnames = {
+  // data rooms
+  '/admin/[tenantId]/links-and-documents/data-rooms': {
+    en: '/admin/[tenantId]/links-and-documents/data-rooms',
+    es: '/admin/[tenantId]/enlaces-y-documentos/salas-de-datos',
+  },
+  '/admin/[tenantId]/links-and-documents/data-rooms/new': {
+    en: '/admin/[tenantId]/links-and-documents/data-rooms/new',
+    es: '/admin/[tenantId]/enlaces-y-documentos/salas-de-datos/nuevo',
+  },
+  '/admin/[tenantId]/links-and-documents/data-rooms/[slug]': {
+    en: '/admin/[tenantId]/links-and-documents/data-rooms/[slug]',
+    es: '/admin/[tenantId]/enlaces-y-documentos/salas-de-datos/[slug]',
+  },
+  '/admin/[tenantId]/links-and-documents/data-rooms/[slug]/edit': {
+    en: '/admin/[tenantId]/links-and-documents/data-rooms/[slug]/edit',
+    es: '/admin/[tenantId]/enlaces-y-documentos/salas-de-datos/[slug]/editar',
+  },
+  // documents
+  '/admin/[tenantId]/links-and-documents/documents': {
+    en: '/admin/[tenantId]/links-and-documents/documents',
+    es: '/admin/[tenantId]/enlaces-y-documentos/documentos',
+  },
+  '/admin/[tenantId]/links-and-documents/documents/upload': {
+    en: '/admin/[tenantId]/links-and-documents/documents/upload',
+    es: '/admin/[tenantId]/enlaces-y-documentos/documentos/nuevo',
+  },
+  '/admin/[tenantId]/links-and-documents/documents/[slug]': {
+    en: '/admin/[tenantId]/links-and-documents/documents/[slug]',
+    es: '/admin/[tenantId]/enlaces-y-documentos/documentos/[slug]',
+  },
+  // agreements
+  '/admin/[tenantId]/links-and-documents/agreements': {
+    en: '/admin/[tenantId]/links-and-documents/agreements',
+    es: '/admin/[tenantId]/enlaces-y-documentos/acuerdos',
+  },
+  '/admin/[tenantId]/links-and-documents/agreements/new': {
+    en: '/admin/[tenantId]/links-and-documents/agreements/new',
+    es: '/admin/[tenantId]/enlaces-y-documentos/acuerdos/nuevo',
+  },
+  '/admin/[tenantId]/links-and-documents/agreements/[slug]': {
+    en: '/admin/[tenantId]/links-and-documents/agreements/[slug]',
+    es: '/admin/[tenantId]/enlaces-y-documentos/acuerdos/[slug]',
+  },
+  '/admin/[tenantId]/links-and-documents/agreements/[slug]/edit': {
+    en: '/admin/[tenantId]/links-and-documents/agreements/[slug]/edit',
+    es: '/admin/[tenantId]/enlaces-y-documentos/acuerdos/[slug]/editar',
+  },
+  // folders
+  '/admin/[tenantId]/links-and-documents/folders/new': {
+    en: '/admin/[tenantId]/links-and-documents/folders/new',
+    es: '/admin/[tenantId]/enlaces-y-documentos/carpetas/nuevo',
+  },
+  '/admin/[tenantId]/links-and-documents/folders/[slug]/edit': {
+    en: '/admin/[tenantId]/links-and-documents/folders/[slug]/edit',
+    es: '/admin/[tenantId]/enlaces-y-documentos/carpetas/[slug]/editar',
+  },
+  // links
+  '/admin/[tenantId]/links-and-documents/links': {
+    en: '/admin/[tenantId]/links-and-documents/links',
+    es: '/admin/[tenantId]/enlaces-y-documentos/enlaces',
+  },
+  '/admin/[tenantId]/links-and-documents/links/new': {
+    en: '/admin/[tenantId]/links-and-documents/links/new',
+    es: '/admin/[tenantId]/enlaces-y-documentos/enlaces/nuevo',
+  },
+  '/admin/[tenantId]/links-and-documents/links/[slug]': {
+    en: '/admin/[tenantId]/links-and-documents/links/[slug]',
+    es: '/admin/[tenantId]/enlaces-y-documentos/enlaces/[slug]',
+  },
+  '/admin/[tenantId]/links-and-documents/links/[slug]/edit': {
+    en: '/admin/[tenantId]/links-and-documents/links/[slug]/edit',
+    es: '/admin/[tenantId]/enlaces-y-documentos/enlaces/[slug]/editar',
+  },
+} satisfies Pathnames<Locale[]>;
+
 const settingsPathnames = {
   // settings
   '/admin/[tenantId]/settings': {
@@ -367,6 +443,7 @@ export const pathnames = {
   ...securityPathnames,
   ...requestsPathnames,
   ...formsPathnames,
+  ...dataRoomsPathnames,
   ...settingsPathnames,
   ...globalPathnames,
 } satisfies Pathnames<Locale[]>;
@@ -417,4 +494,4 @@ export const IsExistingRoute = (currentRoute: string): boolean => {
 // Lightweight wrappers around Next.js' navigation APIs
 // that will consider the routing configuration
 export type I18Link = ComponentProps<typeof Link>['href'];
-export const { Link, redirect, usePathname, useRouter } = createNavigation(routing);
+export const { Link, redirect, usePathname, useRouter, getPathname } = createNavigation(routing);

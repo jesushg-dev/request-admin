@@ -307,8 +307,10 @@
       "dashboard": "Panel",
       "requests": "Solicitudes",
       "request": "Solicitud",
+      "dataRooms": "Salas de Datos",
       "documents": "Documentos",
-      "requestsPortal": "Portal de Solicitudes",
+      "links": "Enlaces compartidos",
+      "requestsPortal": "Gestor de Solicitudes",
       "requestTypes": "Tipos de Solicitud",
       "requestTypesHierarchy": "Jerarquía de Tipos de Solicitud",
       "requirements": "Requisitos",
@@ -332,7 +334,8 @@
           "tenants": "Inquilinos"
         },
         "addTenant": "Agregar inquilino"
-      }
+      },
+      "linksAndDocuments": "Enlaces y documentos"
     },
     "area": {
       "main": {
@@ -1212,6 +1215,99 @@
             "cancel": "Cancelar"
           }
         }
+      }
+    },
+    "agreement": {
+      "table": {
+        "empty": "No se encontraron acuerdos",
+        "name": "Nombre",
+        "description": "Descripción",
+        "content": "Contenido",
+        "createdAt": "Creado el",
+        "updatedAt": "Actualizado el",
+        "links": "Enlaces",
+        "responses": "Respuestas",
+        "requireName": "Requiere Nombre"
+      },
+      "form": {
+        "titleCreate": "Crear Acuerdo",
+        "titleEdit": "Editar Acuerdo",
+        "subtitleCreate": "Crea un nuevo acuerdo para tus usuarios. \nIncluye todos los términos y condiciones necesarios.",
+        "subtitleEdit": "Edita el acuerdo existente. \nAsegúrate de que todos los términos y condiciones estén actualizados.",
+        "name": "Name",
+        "namePlaceholder": "Enter name",
+        "content": "Contenido",
+        "contentPlaceholder": "Ingrese el contenido",
+        "requireName": "Requerir nombre",
+        "requireNameDescription": "Habilite esta opción para hacer el nombre requerido.",
+        "savingChanges": "Guardar cambios ...",
+        "saveSuccess": "Cambios Guardados Con Exito!",
+        "contentDescription": "Contenido detallado del acuerdo. \nIncluya todos los términos y condiciones necesarios.",
+        "nameDescription": "El nombre del acuerdo. \nEsto se mostrará a los usuarios.",
+        "description": "Descripción",
+        "descriptionDescription": "Escriba una breve explicación sobre este Acuerdo.",
+        "descriptionPlaceholder": "Ingrese una breve descripción"
+      },
+      "cancel": "Cancel",
+      "saveChanges": "Guardar cambios",
+      "create": "Crear",
+      "description": "Administra y organiza acuerdos de manera eficiente.",
+      "entityLabel": "Acuerdo",
+      "status": {
+        "required": "Requerido",
+        "notRequired": "No Requerido"
+      },
+      "saveError": "No pudimos guardar sus cambios: {error]",
+      "noContent": "Sin contenido"
+    },
+    "dataroom": {
+      "main": {
+        "table": {
+          "empty": "No se encontraron salas de datos",
+          "name": "Nombre",
+          "slug": "Slug",
+          "documents": "Documentos",
+          "viewers": "Visualizadores",
+          "links": "Enlaces",
+          "views": "Vistas"
+        },
+        "description": "Administra y organiza tus salas de datos.",
+        "entityLabel": "Sala de Datos",
+        "actions": {
+          "manage": "Administrar"
+        }
+      },
+      "create": {
+        "name": "Nombre",
+        "namePlaceholder": "Ingrese el nombre",
+        "nameDescription": "El nombre de la sala de datos.",
+        "slug": "Slug",
+        "slugPlaceholder": "Ingrese el slug",
+        "slugDescription": "El slug es una versión simplificada del nombre, utilizada para la URL.",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Ingrese una descripción",
+        "descriptionDescription": "Proporcione una breve descripción de la sala de datos.",
+        "savingChanges": "Guardando cambios...",
+        "saveSuccess": "¡Sala de datos guardada con éxito!",
+        "saveChanges": "Guardar cambios",
+        "create": "Crear",
+        "saveError": "Ocurrió un error: {message}"
+      }
+    },
+    "folder": {
+      "create": {
+        "title": "Crear Carpeta",
+        "subtitle": "Organiza tus documentos y archivos.",
+        "name": "Nombre",
+        "namePlaceholder": "Ingrese el nombre de la carpeta",
+        "nameDescription": "El nombre de la carpeta.",
+        "location": "Ubicación",
+        "locationDescription": "La ubicación actual de la carpeta.",
+        "savingChanges": "Guardando cambios...",
+        "saveSuccess": "Carpeta guardada exitosamente.",
+        "saveError": "Error al guardar la carpeta: {message}",
+        "saveChanges": "Guardar Cambios",
+        "create": "Crear"
       }
     }
   },

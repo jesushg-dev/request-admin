@@ -382,8 +382,6 @@ export function useCheckDocument<TError = DefaultError>(
       description?: string;
       file?: string;
       originalFile?: string;
-      url?: string;
-      status?: number;
       type?: string;
       contentType?: string;
       storageType?: string;
@@ -392,9 +390,11 @@ export function useCheckDocument<TError = DefaultError>(
       assistantEnabled?: boolean;
       advancedExcelEnabled?: boolean;
       downloadOnly?: boolean;
-      requirementComplianceTrackingId?: string;
-      requestId?: string;
       folderId?: string;
+      dataroomId?: string;
+      orderIndex?: number;
+      requestId?: string;
+      requirementComplianceTrackingId?: string;
     };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions

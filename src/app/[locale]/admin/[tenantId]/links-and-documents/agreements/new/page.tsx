@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { getTranslations } from 'next-intl/server';
 
-import { AgreementForm } from '@/components/common/agreement/agreement-form';
+import { AgreementForm } from '@/components/common/data-room/agreement-form';
 import { PageCardWrapper } from '@/components/shared/page-container';
 
 interface NewPageProps {
@@ -9,11 +9,11 @@ interface NewPageProps {
 }
 
 const NewPage: FC<NewPageProps> = async ({ params }) => {
-  const t = await getTranslations('admin.agreement');
+  const t = await getTranslations('admin.agreement.form');
   const { tenantId } = await params;
 
   return (
-    <PageCardWrapper title={t('form.title')} description={t('form.subtitle')}>
+    <PageCardWrapper title={t('titleCreate')} description={t('subtitleCreate')}>
       <AgreementForm tenantId={tenantId} />
     </PageCardWrapper>
   );

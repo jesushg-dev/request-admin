@@ -21,7 +21,7 @@ interface PageBase {
 export const PageCardWrapper = ({ title, description, children, footerActions = [], className }: PageBase) => {
   return (
     <div className="flex-1 flex flex-col p-4 overflow-hidden">
-      <Card className={cn('w-full flex flex-col flex-1  overflow-hidden', className)}>
+      <Card className={cn('w-full flex flex-col flex-1 overflow-hidden', className)}>
         <CardHeader>
           <CardTitle>{title}</CardTitle>
           {description && <CardDescription>{description}</CardDescription>}
@@ -59,11 +59,7 @@ export const PageDialogWrapper = ({ title, description, children, className }: P
           <DialogTitle>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <div className="flex-1 overflow-auto">
-            <div className="flex flex-1 flex-col justify-between overflow-hidden px-1">{children}</div>
-          </div>
-        </div>
+        {children}
       </DialogContent>
     </Dialog>
   );

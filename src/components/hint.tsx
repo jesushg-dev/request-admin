@@ -18,7 +18,7 @@ export const Hint = ({ children, label, align, side, open, onOpenChange }: HintP
     <TooltipProvider>
       <Tooltip delayDuration={50} open={open} onOpenChange={onOpenChange}>
         <TooltipTrigger asChild>{children}</TooltipTrigger>
-        <TooltipContent side={side} align={align} className="border-white/5 bg-[#1F1F1F] text-white">
+        <TooltipContent side={side} align={align} className="border-white/5 bg-[#1F1F1F] text-white z-[1000] max-w-44">
           <p className="text-medium text-xs">{label}</p>
         </TooltipContent>
       </Tooltip>

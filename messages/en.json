@@ -307,8 +307,10 @@
       "dashboard": "Dashboard",
       "requests": "Requests",
       "request": "Request",
+      "dataRooms": "Data Rooms",
       "documents": "Documents",
-      "requestsPortal": "Requests Portal",
+      "links": "Shared Links",
+      "requestsPortal": "Requests Management",
       "requestTypes": "Request Types",
       "requestTypesHierarchy": "Request Types Hierarchy",
       "requirements": "Requirements",
@@ -332,7 +334,9 @@
           "tenants": "Tenants"
         },
         "addTenant": "Add tenant"
-      }
+      },
+      "agreements": "Agreements",
+      "linksAndDocuments": "Link and Documents"
     },
     "area": {
       "main": {
@@ -1216,6 +1220,101 @@
             "cancel": "Cancel"
           }
         }
+      }
+    },
+    "agreement": {
+      "table": {
+        "empty": "No agreements found",
+        "name": "Name",
+        "description": "Description",
+        "content": "Content",
+        "createdAt": "Created At",
+        "updatedAt": "Updated At",
+        "links": "Links",
+        "responses": "Responses",
+        "requireName": "Require Name"
+      },
+      "form": {
+        "titleCreate": "Create Agreement",
+        "titleEdit": "Edit Agreement",
+        "subtitleCreate": "Create a new agreement. \nMake sure to include all necessary terms and conditions.",
+        "subtitleEdit": "Edit the agreement. \nMake sure to include all necessary terms and conditions.",
+        "name": "Nombre",
+        "namePlaceholder": "Ingrese nombre",
+        "content": "Content",
+        "contentPlaceholder": "Enter content",
+        "requireName": "Require Name",
+        "requireNameDescription": "Enable this option to make the name required.",
+        "savingChanges": "Saving changes...",
+        "saveSuccess": "Changes saved succesfully!",
+        "nameDescription": "The name of the agreement. This will be displayed to users.",
+        "contentDescription": "Detailed content of the agreement. Include all necessary terms and conditions.",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter a brief description",
+        "descriptionDescription": "Type a brief explanation about this agreement."
+      },
+      "cancel": "Cancelar",
+      "saveChanges": "Save Changes",
+      "create": "Create",
+      "description": "Manage and organize agreements efficiently.",
+      "entityLabel": "Agreement",
+      "status": {
+        "required": "Required",
+        "notRequired": "Not Required"
+      },
+      "saveError": "We couldn't save your changes: {error]",
+      "noContent": "No content"
+    },
+    "dataroom": {
+      "main": {
+        "table": {
+          "empty": "No data rooms found",
+          "name": "Name",
+          "slug": "Slug",
+          "documents": "Documents",
+          "viewers": "Viewers",
+          "links": "Links",
+          "views": "Views"
+        },
+        "description": "Manage and organize your data rooms.",
+        "entityLabel": "Data Room",
+        "actions": {
+          "manage": "Manage"
+        }
+      },
+      "create": {
+        "title": "Create Data Room",
+        "subtitle": "Manage your documents and links in one place.",
+        "name": "Name",
+        "namePlaceholder": "Enter the name",
+        "nameDescription": "The name of the data room.",
+        "slug": "Slug",
+        "slugPlaceholder": "Enter a slug",
+        "slugDescription": "A unique identifier for the data room.",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter a description",
+        "descriptionDescription": "Provide a brief description of the data room.",
+        "savingChanges": "Saving changes...",
+        "saveSuccess": "Data room saved successfully!",
+        "saveChanges": "Save changes",
+        "create": "Create",
+        "saveError": "An error occurred: {message}"
+      }
+    },
+    "folder": {
+      "create": {
+        "title": "Create Folder",
+        "subtitle": "Organize your documents and files.",
+        "name": "Name",
+        "namePlaceholder": "Enter folder name",
+        "nameDescription": "The name of the folder.",
+        "location": "Location",
+        "locationDescription": "The current location of the folder.",
+        "savingChanges": "Saving changes...",
+        "saveSuccess": "Folder saved successfully.",
+        "saveError": "Failed to save folder: {message}",
+        "saveChanges": "Save Changes",
+        "create": "Create"
       }
     }
   },

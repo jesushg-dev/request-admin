@@ -17,15 +17,8 @@ model Document extends TenantScoped, Auditable {
   description  String?  // Optional document description
 
   // File storage references
-  file         String   // Reference to file storage location (e.g., S3, Google Cloud Storage)
-  originalFile String?  // Optional reference to the original file (e.g., pptx, xlsx)
-
-  // Legacy URL field (optional)
-  url          String?  @db.VarChar(500) // Optional URL for the document
-
-  // Status and expiration
-  status         Int       // Status code representing the document state
-  expirationDate DateTime? // Optional expiration date for the document
+  file                 String // This should be a reference to where the file is stored (S3, Google Cloud Storage, etc.)
+  originalFile         String? // This should be a reference to the original file like pptx, xlsx, etc. (S3, Google Cloud Storage, etc.)
 
   // File type and content details
   type         String?  // File type (e.g., pdf, docx)
@@ -33,7 +26,7 @@ model Document extends TenantScoped, Auditable {
 
   // Storage details
   // Allowed values: "S3_PATH", "VERCEL_BLOB"
-  storageType  String   @default("VERCEL_BLOB")
+  storageType  String   @default("UPLOADTHING")
   numPages     Int?     // Number of pages in the document
 
   // Owner relationship
@@ -45,13 +38,22 @@ model Document extends TenantScoped, Auditable {
   advancedExcelEnabled Boolean @default(false) // Indicates if advanced Excel features are enabled
   downloadOnly         Boolean @default(false) // Indicates if the document is download-only
 
-  // Compliance tracking (optional)
-  requirementComplianceTrackingId String? @db.UniqueIdentifier // Associated compliance tracking ID
-  requirementComplianceTracking   RequirementComplianceTracking? @relation(fields: [requirementComplianceTrackingId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  // Folder relationship (optional)
+  folderId String? @db.UniqueIdentifier // Optional Folder ID (SQL Server GUID)
+  folder   DataroomFolder? @relation(fields: [folderId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  // Dataroom relationship (optional)
+  dataroomId String? @db.UniqueIdentifier
+  dataroom   Dataroom? @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  orderIndex Int?
 
   // Request relationship (optional, merged from legacy model)
   requestId  String?  @db.UniqueIdentifier // Associated request ID
   request    Request? @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  // Compliance tracking (optional)
+  requirementComplianceTrackingId String? @db.UniqueIdentifier // Associated compliance tracking ID
+  requirementComplianceTracking   RequirementComplianceTracking? @relation(fields: [requirementComplianceTrackingId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   // Other relationships
   links         Link[]
@@ -59,12 +61,6 @@ model Document extends TenantScoped, Auditable {
   versions      DocumentVersion[]
   conversations DocumentConversation[]
 
-  // Folder relationship (optional)
-  folderId String? @db.UniqueIdentifier // Optional Folder ID (SQL Server GUID)
-  folder   Folder? @relation(fields: [folderId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-
-  // Dataroom association
-  datarooms DataroomDocument[]
 
   @@index([ownerId])
   @@index([folderId])
@@ -78,7 +74,7 @@ model DocumentAssignment extends TenantScoped, Auditable, CatalogBase {
 
 model DocumentVersion extends TenantScoped, Auditable {
   id            String   @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for document version
-  versionNumber Int      // Version number for control (e.g., 1, 2, 3)
+  versionNumber Int      @default(1)// Version number for control (e.g., 1, 2, 3)
   
   // Relationship to Document
   documentId    String   @db.UniqueIdentifier
@@ -328,24 +324,10 @@ model DocumentConversation extends TenantScoped, Auditable {
 // ----------------------
 // Folder and Dataroom Models
 // ----------------------
-model Folder extends TenantScoped, Auditable {
-  id        String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for folder
-  name      String
-  path      String // Materialized path (e.g., "/folder/subfolder")
-  parentId  String? @db.UniqueIdentifier
-  documents Document[]
-  childFolders Folder[] @relation("SubFolders")
-  parentFolder Folder? @relation("SubFolders", fields: [parentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
-  @@unique([tenantId, path])
-  @@index([parentId])
-}
-
-model Dataroom extends TenantScoped, Auditable {
-  id           String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for dataroom
+model Dataroom extends TenantScoped, Auditable, CatalogBase {
   pId          String @unique // Public ID (e.g., dr_1234)
-  name         String
-  documents    DataroomDocument[]
+  documents    Document[]
   folders      DataroomFolder[]
   links        Link[]
   views        DocumentView[]
@@ -356,27 +338,12 @@ model Dataroom extends TenantScoped, Auditable {
   @@index([tenantId])
 }
 
-model DataroomDocument extends TenantScoped, Auditable {
-  id         String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for dataroom document
-  dataroomId String @db.UniqueIdentifier
-  dataroom   Dataroom @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  documentId String @db.UniqueIdentifier
-  document   Document @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  folderId   String? @db.UniqueIdentifier
-  folder     DataroomFolder? @relation(fields: [folderId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  orderIndex Int?
-
-  @@unique([dataroomId, documentId])
-  @@index([folderId])
-  @@index([dataroomId, folderId, orderIndex])
-}
-
 model DataroomFolder extends TenantScoped, Auditable {
   id          String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for dataroom folder
   name        String
   path        String // Materialized path (e.g., "/folder/subfolder")
   parentId    String? @db.UniqueIdentifier
-  documents   DataroomDocument[]
+  documents   Document[]
   childFolders DataroomFolder[] @relation("SubFolders")
   parentFolder DataroomFolder? @relation("SubFolders", fields: [parentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   dataroomId  String @db.UniqueIdentifier
@@ -387,6 +354,8 @@ model DataroomFolder extends TenantScoped, Auditable {
   @@index([parentId])
   @@index([dataroomId, parentId, orderIndex])
 }
+
+
 
 model DataroomBrand extends TenantScoped, Auditable {
   id         String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for dataroom brand
@@ -425,9 +394,7 @@ model FeedbackResponse extends TenantScoped, Auditable {
   @@index([viewId])
 }
 
-model Agreement extends TenantScoped, Auditable {
-  id          String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for agreement
-  name        String  // Agreement name
+model Agreement extends TenantScoped, Auditable, CatalogBase {
   content     String  // Agreement content
   requireName Boolean @default(true) // Whether the agreement requires a name
 

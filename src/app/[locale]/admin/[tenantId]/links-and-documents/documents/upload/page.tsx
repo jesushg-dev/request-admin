@@ -1,15 +1,32 @@
-import { DocumentUpload } from '@/components/documents/document-upload';
-import { MainLayout } from '@/components/layouts/main-layout';
+import { type FC } from 'react';
+import { getPathname } from '@/i18n/routing';
+import { Locale } from 'next-intl';
+import { SearchParams } from 'nuqs/server';
 
-export default function DocumentUploadPage() {
-  return (
-    <MainLayout>
-      <div className="flex-1 space-y-4 p-8 pt-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-3xl font-bold tracking-tight">Upload Document</h2>
-        </div>
-        <DocumentUpload />
-      </div>
-    </MainLayout>
-  );
+import { loadSearchParams } from '@/lib/upload';
+import { DocumentUpload } from '@/components/common/documents/document-upload';
+import { PageCardWrapper } from '@/components/shared/page-container';
+
+interface NewPageProps {
+  params: Promise<{ locale: Locale; tenantId: string }>;
+  searchParams: Promise<SearchParams>;
 }
+
+const NewPage: FC<NewPageProps> = async ({ params, searchParams }) => {
+  const { locale, tenantId } = await params;
+  const { folderId, dataroomId, dataroomName, callbackUrl } = await loadSearchParams(searchParams);
+
+  return (
+    <PageCardWrapper title={dataroomName ? `Upload to ${dataroomName}` : 'Upload Document'} description="Drag and drop files or click to upload">
+      <DocumentUpload
+        locale={locale}
+        tenantId={tenantId}
+        folderId={folderId}
+        dataroomId={dataroomId}
+        callbackUrl={callbackUrl ? callbackUrl : getPathname({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/documents', params: { tenantId } } })}
+      />
+    </PageCardWrapper>
+  );
+};
+
+export default NewPage;

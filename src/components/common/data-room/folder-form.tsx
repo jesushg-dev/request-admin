@@ -1,0 +1,118 @@
+'use client';
+
+import React, { useTransition } from 'react';
+import { useRouter } from '@/i18n/routing';
+import { useUpsertDataroomFolder } from '@/services/api/hooks';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { LoaderCircleIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import * as z from 'zod';
+
+import { generateUuid } from '@/lib/id';
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
+
+// Define the schema for form validation
+const formSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(1, 'Name is required').max(200, 'Name must be 200 characters or less').default(''),
+});
+
+export const getDefaultValues = () => ({
+  id: generateUuid(),
+  name: '',
+});
+
+export type FolderFormValues = z.infer<typeof formSchema>;
+
+interface FolderFormProps {
+  tenantId: string;
+  dataroomId: string;
+  currentFolderId?: string;
+  initialValues?: FolderFormValues | null;
+  folders: { id: string; path: string }[];
+}
+
+export const FolderForm: React.FC<FolderFormProps> = ({ initialValues, dataroomId, tenantId, currentFolderId, folders }) => {
+  const t = useTranslations('admin.folder.create');
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const { mutateAsync: upsertDataRoom, error } = useUpsertDataroomFolder();
+
+  const form = useForm<FolderFormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: initialValues ?? getDefaultValues(),
+    mode: 'onBlur',
+  });
+
+  const onSubmitHandler = (result: FolderFormValues) => {
+    startTransition(async () => {
+      const location = currentFolderId ? folders.find((f) => f.id === currentFolderId)?.path || 'Root' : 'Root';
+
+      const promise = upsertDataRoom({
+        create: {
+          tenantId,
+          dataroomId,
+          name: result.name,
+          path: location + `/${result.name}`,
+        },
+        update: {
+          dataroomId,
+          name: result.name,
+          path: location + `/${result.name}`,
+        },
+        where: { id: result.id },
+      });
+
+      toast.promise(promise, {
+        loading: t('savingChanges'),
+        success: () => {
+          router.push({ pathname: '/admin/[tenantId]/links-and-documents/data-rooms/[slug]', params: { tenantId, slug: dataroomId } });
+          return t('saveSuccess');
+        },
+        error: (error) => t('saveError', { message: error.message }),
+      });
+    });
+  };
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmitHandler)} className="flex flex-col flex-1 overflow-hidden gap-4 items-end w-full">
+        {error && <PrismaErrorAlert error={error} />}
+        <ScrollArea className="w-full flex-1 overflow-y-hidden">
+          <div className="flex-1 flex flex-col gap-4 ml-1 mr-3">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('name')}</FormLabel>
+                  <FormControl>
+                    <Input id="folder-name" placeholder={t('namePlaceholder')} {...field} />
+                  </FormControl>
+                  <FormDescription>{t('nameDescription')}</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormItem>
+              <FormLabel>{t('location')}</FormLabel>
+              <FormControl>
+                <div className="text-sm">{currentFolderId ? folders.find((f) => f.id === currentFolderId)?.path || 'Root' : 'Root'}</div>
+              </FormControl>
+              <FormDescription>{t('locationDescription')}</FormDescription>
+            </FormItem>
+          </div>
+        </ScrollArea>
+        <Button type="submit" disabled={isPending}>
+          {initialValues ? t('saveChanges') : t('create')} {isPending && <LoaderCircleIcon className="animate-spin" />}
+        </Button>
+      </form>
+    </Form>
+  );
+};

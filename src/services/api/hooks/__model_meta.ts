@@ -54,13 +54,13 @@ const metadata = {
           type: 'String',
           isOptional: true,
         },
-        metadata: {
-          name: 'metadata',
+        logo: {
+          name: 'logo',
           type: 'String',
           isOptional: true,
         },
-        logo: {
-          name: 'logo',
+        metadata: {
+          name: 'metadata',
           type: 'String',
           isOptional: true,
         },
@@ -524,23 +524,9 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
-        folders: {
-          name: 'folders',
-          type: 'Folder',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
         dataroons: {
           name: 'dataroons',
           type: 'Dataroom',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
-        dataroomDocuments: {
-          name: 'dataroomDocuments',
-          type: 'DataroomDocument',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
@@ -3487,20 +3473,6 @@ const metadata = {
           type: 'String',
           isOptional: true,
         },
-        url: {
-          name: 'url',
-          type: 'String',
-          isOptional: true,
-        },
-        status: {
-          name: 'status',
-          type: 'Int',
-        },
-        expirationDate: {
-          name: 'expirationDate',
-          type: 'DateTime',
-          isOptional: true,
-        },
         type: {
           name: 'type',
           type: 'String',
@@ -3514,7 +3486,7 @@ const metadata = {
         storageType: {
           name: 'storageType',
           type: 'String',
-          attributes: [{ name: '@default', args: [{ value: 'VERCEL_BLOB' }] }],
+          attributes: [{ name: '@default', args: [{ value: 'UPLOADTHING' }] }],
         },
         numPages: {
           name: 'numPages',
@@ -3552,21 +3524,42 @@ const metadata = {
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: false }] }],
         },
-        requirementComplianceTrackingId: {
-          name: 'requirementComplianceTrackingId',
+        folderId: {
+          name: 'folderId',
           type: 'String',
           isOptional: true,
           isForeignKey: true,
-          relationField: 'requirementComplianceTracking',
+          relationField: 'folder',
         },
-        requirementComplianceTracking: {
-          name: 'requirementComplianceTracking',
-          type: 'RequirementComplianceTracking',
+        folder: {
+          name: 'folder',
+          type: 'DataroomFolder',
           isDataModel: true,
           isOptional: true,
-          backLink: 'document',
+          backLink: 'documents',
           isRelationOwner: true,
-          foreignKeyMapping: { id: 'requirementComplianceTrackingId' },
+          foreignKeyMapping: { id: 'folderId' },
+        },
+        dataroomId: {
+          name: 'dataroomId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'dataroom',
+        },
+        dataroom: {
+          name: 'dataroom',
+          type: 'Dataroom',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'documents',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'dataroomId' },
+        },
+        orderIndex: {
+          name: 'orderIndex',
+          type: 'Int',
+          isOptional: true,
         },
         requestId: {
           name: 'requestId',
@@ -3583,6 +3576,22 @@ const metadata = {
           backLink: 'documents',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'requestId' },
+        },
+        requirementComplianceTrackingId: {
+          name: 'requirementComplianceTrackingId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'requirementComplianceTracking',
+        },
+        requirementComplianceTracking: {
+          name: 'requirementComplianceTracking',
+          type: 'RequirementComplianceTracking',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'document',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'requirementComplianceTrackingId' },
         },
         links: {
           name: 'links',
@@ -3608,29 +3617,6 @@ const metadata = {
         conversations: {
           name: 'conversations',
           type: 'DocumentConversation',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'document',
-        },
-        folderId: {
-          name: 'folderId',
-          type: 'String',
-          isOptional: true,
-          isForeignKey: true,
-          relationField: 'folder',
-        },
-        folder: {
-          name: 'folder',
-          type: 'Folder',
-          isDataModel: true,
-          isOptional: true,
-          backLink: 'documents',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'folderId' },
-        },
-        datarooms: {
-          name: 'datarooms',
-          type: 'DataroomDocument',
           isDataModel: true,
           isArray: true,
           backLink: 'document',
@@ -3788,6 +3774,7 @@ const metadata = {
         versionNumber: {
           name: 'versionNumber',
           type: 'Int',
+          attributes: [{ name: '@default', args: [{ value: 1 }] }],
         },
         documentId: {
           name: 'documentId',
@@ -5147,53 +5134,9 @@ const metadata = {
         },
       },
     },
-    folder: {
-      name: 'Folder',
+    dataroom: {
+      name: 'Dataroom',
       fields: {
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
-        },
-        deletedAt: {
-          name: 'deletedAt',
-          type: 'DateTime',
-          isOptional: true,
-        },
-        createdBy: {
-          name: 'createdBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$Folder$createdBy,
-        },
-        updatedBy: {
-          name: 'updatedBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$Folder$updatedBy,
-        },
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'folders',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
         id: {
           name: 'id',
           type: 'String',
@@ -5204,55 +5147,16 @@ const metadata = {
           name: 'name',
           type: 'String',
         },
-        path: {
-          name: 'path',
-          type: 'String',
-        },
-        parentId: {
-          name: 'parentId',
+        description: {
+          name: 'description',
           type: 'String',
           isOptional: true,
-          isForeignKey: true,
-          relationField: 'parentFolder',
         },
-        documents: {
-          name: 'documents',
-          type: 'Document',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'folder',
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
         },
-        childFolders: {
-          name: 'childFolders',
-          type: 'Folder',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'parentFolder',
-        },
-        parentFolder: {
-          name: 'parentFolder',
-          type: 'Folder',
-          isDataModel: true,
-          isOptional: true,
-          backLink: 'childFolders',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'parentId' },
-        },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
-        },
-        tenantId_path: {
-          name: 'tenantId_path',
-          fields: ['tenantId', 'path'],
-        },
-      },
-    },
-    dataroom: {
-      name: 'Dataroom',
-      fields: {
         createdAt: {
           name: 'createdAt',
           type: 'DateTime',
@@ -5297,23 +5201,13 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
-        },
         pId: {
           name: 'pId',
           type: 'String',
         },
-        name: {
-          name: 'name',
-          type: 'String',
-        },
         documents: {
           name: 'documents',
-          type: 'DataroomDocument',
+          type: 'Document',
           isDataModel: true,
           isArray: true,
           backLink: 'dataroom',
@@ -5369,120 +5263,6 @@ const metadata = {
         pId: {
           name: 'pId',
           fields: ['pId'],
-        },
-      },
-    },
-    dataroomDocument: {
-      name: 'DataroomDocument',
-      fields: {
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
-        },
-        deletedAt: {
-          name: 'deletedAt',
-          type: 'DateTime',
-          isOptional: true,
-        },
-        createdBy: {
-          name: 'createdBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$DataroomDocument$createdBy,
-        },
-        updatedBy: {
-          name: 'updatedBy',
-          type: 'String',
-          isOptional: true,
-          attributes: [{ name: '@default', args: [] }],
-          defaultValueProvider: $default$DataroomDocument$updatedBy,
-        },
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'dataroomDocuments',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
-        },
-        dataroomId: {
-          name: 'dataroomId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'dataroom',
-        },
-        dataroom: {
-          name: 'dataroom',
-          type: 'Dataroom',
-          isDataModel: true,
-          backLink: 'documents',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'dataroomId' },
-        },
-        documentId: {
-          name: 'documentId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'document',
-        },
-        document: {
-          name: 'document',
-          type: 'Document',
-          isDataModel: true,
-          backLink: 'datarooms',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'documentId' },
-        },
-        folderId: {
-          name: 'folderId',
-          type: 'String',
-          isOptional: true,
-          isForeignKey: true,
-          relationField: 'folder',
-        },
-        folder: {
-          name: 'folder',
-          type: 'DataroomFolder',
-          isDataModel: true,
-          isOptional: true,
-          backLink: 'documents',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'folderId' },
-        },
-        orderIndex: {
-          name: 'orderIndex',
-          type: 'Int',
-          isOptional: true,
-        },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
-        },
-        dataroomId_documentId: {
-          name: 'dataroomId_documentId',
-          fields: ['dataroomId', 'documentId'],
         },
       },
     },
@@ -5556,7 +5336,7 @@ const metadata = {
         },
         documents: {
           name: 'documents',
-          type: 'DataroomDocument',
+          type: 'Document',
           isDataModel: true,
           isArray: true,
           backLink: 'folder',
@@ -5897,6 +5677,26 @@ const metadata = {
     agreement: {
       name: 'Agreement',
       fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        description: {
+          name: 'description',
+          type: 'String',
+          isOptional: true,
+        },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
         createdAt: {
           name: 'createdAt',
           type: 'DateTime',
@@ -5940,16 +5740,6 @@ const metadata = {
           backLink: 'agreements',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
-        },
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
-        },
-        name: {
-          name: 'name',
-          type: 'String',
         },
         content: {
           name: 'content',
@@ -10570,27 +10360,11 @@ function $default$DocumentConversation$updatedBy(user: any): unknown {
   return user?.id;
 }
 
-function $default$Folder$createdBy(user: any): unknown {
-  return user?.id;
-}
-
-function $default$Folder$updatedBy(user: any): unknown {
-  return user?.id;
-}
-
 function $default$Dataroom$createdBy(user: any): unknown {
   return user?.id;
 }
 
 function $default$Dataroom$updatedBy(user: any): unknown {
-  return user?.id;
-}
-
-function $default$DataroomDocument$createdBy(user: any): unknown {
-  return user?.id;
-}
-
-function $default$DataroomDocument$updatedBy(user: any): unknown {
   return user?.id;
 }
 

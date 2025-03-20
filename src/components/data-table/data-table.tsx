@@ -2,7 +2,7 @@ import { createContext, Fragment, ReactNode, useContext } from 'react';
 import { ColumnDef, flexRender, type Row, type Table as TanstackTable } from '@tanstack/react-table';
 import { Files, FileText, Link, NotepadText, NotepadTextDashed } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { parseAsBoolean, useQueryState } from 'nuqs';
+import { parseAsBoolean, parseAsStringEnum, useQueryState } from 'nuqs';
 
 import { getCommonPinningStyles } from '@/lib/data-table';
 import { cn } from '@/lib/utils';
@@ -17,6 +17,8 @@ import { DataTableSkeleton } from './data-table-skeleton';
 interface DataTableContextValue {
   isStatsOpen: boolean;
   toggleStats: () => void;
+  listType: 'table' | 'grid';
+  toggleListType: () => void;
 }
 
 interface CommonDataTableProps<TData> {
@@ -32,12 +34,13 @@ const DataTableStatsContext = createContext<DataTableContextValue | undefined>(u
 
 export function DataTableShell<TData>({ table, floatingBar = null, children, className, ...props }: DataTableShellProps<TData>) {
   const [isStatsOpen, setIsStatsOpen] = useQueryState<boolean>('stats', parseAsBoolean.withDefault(false));
-
+  const [listType, setListType] = useQueryState<'table' | 'grid'>('listType', parseAsStringEnum(['table', 'grid']).withDefault('table'));
+  const toggleListType = () => setListType((prev) => (prev === 'table' ? 'grid' : 'table'));
   const toggleStats = () => setIsStatsOpen((prev) => !prev);
 
   return (
     <div className={cn('flex w-full flex-col gap-1 overflow-auto p-2 flex-1', className)} {...props}>
-      <DataTableStatsContext.Provider value={{ isStatsOpen, toggleStats }}>{children}</DataTableStatsContext.Provider>
+      <DataTableStatsContext.Provider value={{ isStatsOpen, toggleStats, listType, toggleListType }}>{children}</DataTableStatsContext.Provider>
       <div className="flex flex-col gap-2.5">
         <DataTablePagination table={table} />
         {table.getFilteredSelectedRowModel().rows.length > 0 && floatingBar}
@@ -47,18 +50,52 @@ export function DataTableShell<TData>({ table, floatingBar = null, children, cla
 }
 
 interface DataTableProps<TData, TSubData> extends CommonDataTableProps<TData> {
+  isLoading?: boolean;
   children?: React.ReactNode;
+  emptyState?: EmptyStateProps;
   subComponent?: {
     columns: ColumnDef<TSubData>[];
     render: (props: { row: Row<TData>; isExpanded: boolean; columns: ColumnDef<TSubData>[] }) => React.ReactNode;
   };
-  isLoading?: boolean;
-  emptyState?: EmptyStateProps;
+  customCard?: (props: { row: Row<TData>; isExpanded: boolean }) => React.ReactNode;
 }
 
-export function DataTable<TData, TSubData>({ table, subComponent, emptyState, isLoading, children }: DataTableProps<TData, TSubData>) {
+export function DataTable<TData, TSubData>({ table, subComponent, emptyState, isLoading, children, customCard }: DataTableProps<TData, TSubData>) {
+  const { listType } = useDataTable();
+
   if (isLoading) {
     return <DataTableSkeleton columnCount={10} cellWidths={['10rem', '40rem', '12rem', '12rem', '8rem', '8rem']} shrinkZero />;
+  }
+
+  if (listType === 'grid') {
+    return (
+      <>
+        {children}
+        <div className="flex flex-1 overflow-auto">
+          {table.getRowModel().rows?.length ? (
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,max-content))] gap-4 w-fit">
+              {table.getRowModel().rows.map((row) => (
+                <div key={row.id} className={`min-w-[280px] flex-1 flex ${table.getRowModel().rows.length === 1 ? 'items-start' : 'items-stretch'}`}>
+                  {customCard ? (
+                    customCard({ row, isExpanded: row.getIsExpanded() })
+                  ) : (
+                    <div className="flex flex-col gap-2 p-4 border rounded-md w-full">
+                      {row.getVisibleCells().map((cell) => (
+                        <div key={cell.id} className="w-full" style={{ ...getCommonPinningStyles({ column: cell.column }) }}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyState title={emptyState?.title ?? 'No data'} description={emptyState?.description ?? 'There are no records to display'} icons={[FileText, Link, Files]} {...emptyState} />
+          )}
+        </div>
+      </>
+    );
   }
 
   return (

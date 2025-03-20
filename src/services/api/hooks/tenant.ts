@@ -375,8 +375,8 @@ export function useCheckTenant<TError = DefaultError>(
       id?: string;
       name?: string;
       slug?: string;
-      metadata?: string;
       logo?: string;
+      metadata?: string;
       websiteUrl?: string;
       title?: string;
       description?: string;

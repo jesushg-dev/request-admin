@@ -3,24 +3,23 @@ import { I18Link, Link } from '@/i18n/routing';
 import { LucideIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { Button, type ButtonVariants } from '@/components/ui/button';
 
-export interface EmptyStateProps {
+type Action = {
+  label: string;
+  variant?: ButtonVariants;
+  icon?: LucideIcon;
+} & ({ href: I18Link; onClick?: () => void } | { onClick: () => void; href?: I18Link });
+
+export type EmptyStateProps = {
   title: string;
   description: string;
   icons?: LucideIcon[];
-  action?: {
-    label: string;
-    onClick: () => void;
-  };
-  actionLink?: {
-    label: string;
-    href: I18Link;
-  };
   className?: string;
-}
+  actions?: Action[];
+};
 
-function EmptyState({ title, description, icons = [], action, actionLink, className }: EmptyStateProps) {
+function EmptyState({ title, description, icons = [], actions, className }: EmptyStateProps) {
   return (
     <div className="flex flex-1 items-center justify-center">
       <div
@@ -60,16 +59,27 @@ function EmptyState({ title, description, icons = [], action, actionLink, classN
         </div>
         <h2 className="text-foreground font-medium mt-6">{title}</h2>
         <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{description}</p>
-        {action && (
-          <Button onClick={action.onClick} variant="outline" className={cn('mt-4', 'shadow-sm active:shadow-none')}>
-            {action.label}
-          </Button>
-        )}
-        {actionLink && (
-          <Button variant={'outline'} className={cn('mt-4', 'shadow-sm active:shadow-none')} asChild={true}>
-            <Link href={actionLink.href}>{actionLink.label}</Link>
-          </Button>
-        )}
+        <div className="flex justify-center mt-6 gap-2">
+          {actions?.map((action) => {
+            if (action.href) {
+              return (
+                <Button key={action.label} asChild variant={action.variant ?? 'outline'}>
+                  <Link href={action.href}>
+                    {action.icon && <action.icon className="ml-2 h-4 w-4" />}
+                    {action.label}
+                  </Link>
+                </Button>
+              );
+            }
+
+            return (
+              <Button key={action.label} onClick={action.onClick} variant={action.variant ?? 'outline'}>
+                {action.icon && <action.icon className="ml-2 h-4 w-4" />}
+                {action.label}
+              </Button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

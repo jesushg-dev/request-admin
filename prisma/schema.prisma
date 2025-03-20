@@ -21,8 +21,8 @@ model Tenant {
   id                             String                          @id()
   name                           String
   slug                           String?
-  metadata                       String?
   logo                           String?
+  metadata                       String?
   websiteUrl                     String?
   title                          String?
   description                    String?
@@ -91,9 +91,7 @@ model Tenant {
   invitation                     InvitationDocument[]
   sentEmails                     SentEmail[]
   documentConversations          DocumentConversation[]
-  folders                        Folder[]
   dataroons                      Dataroom[]
-  dataroomDocuments              DataroomDocument[]
   dataroomFolders                DataroomFolder[]
   dataroomBrands                 DataroomBrand[]
   documentFeedbaks               DocumentFeedback[]
@@ -714,29 +712,28 @@ model Document {
   description                     String?
   file                            String
   originalFile                    String?
-  url                             String?                        @db.VarChar(500)
-  status                          Int
-  expirationDate                  DateTime?
   type                            String?
   contentType                     String?
-  storageType                     String                         @default("VERCEL_BLOB")
+  storageType                     String                         @default("UPLOADTHING")
   numPages                        Int?
   ownerId                         String?
   owner                           UserTenant?                    @relation(fields: [ownerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   assistantEnabled                Boolean                        @default(false)
   advancedExcelEnabled            Boolean                        @default(false)
   downloadOnly                    Boolean                        @default(false)
-  requirementComplianceTrackingId String?                        @db.UniqueIdentifier()
-  requirementComplianceTracking   RequirementComplianceTracking? @relation(fields: [requirementComplianceTrackingId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  folderId                        String?                        @db.UniqueIdentifier()
+  folder                          DataroomFolder?                @relation(fields: [folderId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  dataroomId                      String?                        @db.UniqueIdentifier()
+  dataroom                        Dataroom?                      @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  orderIndex                      Int?
   requestId                       String?                        @db.UniqueIdentifier()
   request                         Request?                       @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  requirementComplianceTrackingId String?                        @db.UniqueIdentifier()
+  requirementComplianceTracking   RequirementComplianceTracking? @relation(fields: [requirementComplianceTrackingId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   links                           Link[]
   views                           DocumentView[]
   versions                        DocumentVersion[]
   conversations                   DocumentConversation[]
-  folderId                        String?                        @db.UniqueIdentifier()
-  folder                          Folder?                        @relation(fields: [folderId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  datarooms                       DataroomDocument[]
 
   @@index([ownerId])
   @@index([folderId])
@@ -767,7 +764,7 @@ model DocumentVersion {
   tenantId      String
   tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id            String         @id() @default(uuid()) @db.UniqueIdentifier()
-  versionNumber Int
+  versionNumber Int            @default(1)
   documentId    String         @db.UniqueIdentifier()
   document      Document       @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   file          String
@@ -1035,38 +1032,20 @@ model DocumentConversation {
   @@index([threadId])
 }
 
-model Folder {
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime?  @updatedAt()
-  deletedAt    DateTime?
-  createdBy    String?    @db.VarChar(50)
-  updatedBy    String?    @db.VarChar(50)
-  tenantId     String
-  tenant       Tenant     @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id           String     @id() @default(uuid()) @db.UniqueIdentifier()
-  name         String
-  path         String
-  parentId     String?    @db.UniqueIdentifier()
-  documents    Document[]
-  childFolders Folder[]   @relation("SubFolders")
-  parentFolder Folder?    @relation("SubFolders", fields: [parentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-
-  @@unique([tenantId, path])
-  @@index([parentId])
-}
-
 model Dataroom {
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime?          @updatedAt()
+  id           String           @id() @default(uuid()) @db.UniqueIdentifier()
+  name         String           @db.VarChar(100)
+  description  String?          @db.VarChar(255)
+  isActive     Boolean          @default(true)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime?        @updatedAt()
   deletedAt    DateTime?
-  createdBy    String?            @db.VarChar(50)
-  updatedBy    String?            @db.VarChar(50)
+  createdBy    String?          @db.VarChar(50)
+  updatedBy    String?          @db.VarChar(50)
   tenantId     String
-  tenant       Tenant             @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id           String             @id() @default(uuid()) @db.UniqueIdentifier()
-  pId          String             @unique()
-  name         String
-  documents    DataroomDocument[]
+  tenant       Tenant           @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  pId          String           @unique()
+  documents    Document[]
   folders      DataroomFolder[]
   links        Link[]
   views        DocumentView[]
@@ -1077,45 +1056,23 @@ model Dataroom {
   @@index([tenantId])
 }
 
-model DataroomDocument {
-  createdAt  DateTime        @default(now())
-  updatedAt  DateTime?       @updatedAt()
-  deletedAt  DateTime?
-  createdBy  String?         @db.VarChar(50)
-  updatedBy  String?         @db.VarChar(50)
-  tenantId   String
-  tenant     Tenant          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id         String          @id() @default(uuid()) @db.UniqueIdentifier()
-  dataroomId String          @db.UniqueIdentifier()
-  dataroom   Dataroom        @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  documentId String          @db.UniqueIdentifier()
-  document   Document        @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  folderId   String?         @db.UniqueIdentifier()
-  folder     DataroomFolder? @relation(fields: [folderId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  orderIndex Int?
-
-  @@unique([dataroomId, documentId])
-  @@index([folderId])
-  @@index([dataroomId, folderId, orderIndex])
-}
-
 model DataroomFolder {
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime?          @updatedAt()
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime?        @updatedAt()
   deletedAt    DateTime?
-  createdBy    String?            @db.VarChar(50)
-  updatedBy    String?            @db.VarChar(50)
+  createdBy    String?          @db.VarChar(50)
+  updatedBy    String?          @db.VarChar(50)
   tenantId     String
-  tenant       Tenant             @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id           String             @id() @default(uuid()) @db.UniqueIdentifier()
+  tenant       Tenant           @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id           String           @id() @default(uuid()) @db.UniqueIdentifier()
   name         String
   path         String
-  parentId     String?            @db.UniqueIdentifier()
-  documents    DataroomDocument[]
-  childFolders DataroomFolder[]   @relation("SubFolders")
-  parentFolder DataroomFolder?    @relation("SubFolders", fields: [parentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  dataroomId   String             @db.UniqueIdentifier()
-  dataroom     Dataroom           @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  parentId     String?          @db.UniqueIdentifier()
+  documents    Document[]
+  childFolders DataroomFolder[] @relation("SubFolders")
+  parentFolder DataroomFolder?  @relation("SubFolders", fields: [parentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  dataroomId   String           @db.UniqueIdentifier()
+  dataroom     Dataroom         @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   orderIndex   Int?
 
   @@unique([dataroomId, path])
@@ -1179,6 +1136,10 @@ model FeedbackResponse {
 }
 
 model Agreement {
+  id          String              @id() @default(uuid()) @db.UniqueIdentifier()
+  name        String              @db.VarChar(100)
+  description String?             @db.VarChar(255)
+  isActive    Boolean             @default(true)
   createdAt   DateTime            @default(now())
   updatedAt   DateTime?           @updatedAt()
   deletedAt   DateTime?
@@ -1186,8 +1147,6 @@ model Agreement {
   updatedBy   String?             @db.VarChar(50)
   tenantId    String
   tenant      Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id          String              @id() @default(uuid()) @db.UniqueIdentifier()
-  name        String
   content     String
   requireName Boolean             @default(true)
   links       Link[]

@@ -3,11 +3,11 @@
 import { ReactNode } from 'react';
 import { Link } from '@/i18n/routing';
 import { useDraggable } from '@dnd-kit/core';
-import { Form } from '@prisma/client';
 import { formatDistance } from 'date-fns';
 import { ArrowRightIcon, BookOpenCheckIcon, FilePenLineIcon, GripVertical, ViewIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
+import { FormWithRelations } from '@/types/prisma/form';
 import { cn } from '@/lib/utils';
 
 import ClientOnly from '../client-only';
@@ -16,7 +16,7 @@ import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card';
 
 interface FormCardProps {
-  form: Form;
+  form: FormWithRelations;
   children?: ReactNode;
   className?: string;
 }
@@ -25,7 +25,7 @@ export function FormCard({ form, className, children }: FormCardProps) {
   const t = useTranslations('admin.form.main');
 
   return (
-    <Card className={cn(className)}>
+    <Card className={cn(className, 'w-full')} key={form.id}>
       <CardHeader>
         <div className="flex justify-between gap-2">
           <div className="flex flex-col gap-2 items-start">
@@ -63,13 +63,13 @@ export function FormCard({ form, className, children }: FormCardProps) {
       </CardContent>
       <CardFooter>
         {form.published ? (
-          <Button asChild className="text-md z-50 mt-2 w-full gap-4">
+          <Button asChild className="text-md z-50 mt-2 w-full gap-4" size="sm">
             <Link href={{ pathname: '/admin/[tenantId]/form-designer/[slug]', params: { tenantId: form.tenantId, slug: form.id } }}>
               {t('viewSubmissions')} <ArrowRightIcon />
             </Link>
           </Button>
         ) : (
-          <Button asChild variant="secondary" className="text-md mt-2 w-full gap-4">
+          <Button asChild variant="secondary" size="sm" className="text-md mt-2 w-full gap-4">
             <Link href={{ pathname: '/admin/[tenantId]/form-designer/[slug]/edit', params: { tenantId: form.tenantId, slug: form.id } }}>
               {t('editForm')} <FilePenLineIcon />
             </Link>
@@ -81,7 +81,7 @@ export function FormCard({ form, className, children }: FormCardProps) {
 }
 
 interface DraggableProps {
-  data: Form;
+  data: FormWithRelations;
 }
 
 export function DraggableFormCard({ data }: DraggableProps) {
@@ -92,7 +92,7 @@ export function DraggableFormCard({ data }: DraggableProps) {
 
   return (
     <ClientOnly>
-      <div ref={setNodeRef}>
+      <div ref={setNodeRef} className="flex w-full flex-1">
         <FormCard form={data}>
           <div {...listeners} {...attributes} className="cursor-move rounded-sm p-2 hover:bg-accent">
             <GripVertical className="h-4 w-4 text-muted-foreground" />

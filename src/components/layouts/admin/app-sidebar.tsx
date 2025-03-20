@@ -2,7 +2,25 @@
 
 import { useMemo } from 'react';
 import { usePathname } from '@/i18n/routing';
-import { ClipboardIcon, FileTextIcon, FolderIcon, GridIcon, HomeIcon, IdCardIcon, LandPlotIcon, LayersIcon, ListIcon, RadarIcon, SettingsIcon, ShieldIcon, UsersIcon } from 'lucide-react';
+import {
+  BuildingIcon,
+  ClipboardIcon,
+  FileKey2Icon,
+  FileTextIcon,
+  FolderIcon,
+  GridIcon,
+  HomeIcon,
+  IdCardIcon,
+  LandPlotIcon,
+  LayersIcon,
+  ListIcon,
+  RadarIcon,
+  RadioTowerIcon,
+  ScaleIcon,
+  SettingsIcon,
+  ShieldIcon,
+  UsersIcon,
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '@/components/ui/sidebar';
@@ -68,6 +86,32 @@ export function AppSidebar({ tenantId, tenants, user, ...props }: AppSidebarProp
             title: t('areas'),
             url: { pathname: '/admin/[tenantId]/requests-portal/areas', params: { tenantId } },
             icon: LandPlotIcon,
+          },
+        ],
+      },
+      {
+        title: t('linksAndDocuments'),
+        icon: FileKey2Icon,
+        items: [
+          {
+            title: t('dataRooms'),
+            url: { pathname: '/admin/[tenantId]/links-and-documents/data-rooms', params: { tenantId } },
+            icon: BuildingIcon,
+          },
+          {
+            title: t('documents'),
+            url: { pathname: '/admin/[tenantId]/links-and-documents/documents', params: { tenantId } },
+            icon: FileTextIcon,
+          },
+          {
+            title: t('links'),
+            url: { pathname: '/admin/[tenantId]/links-and-documents/links', params: { tenantId } },
+            icon: RadioTowerIcon,
+          },
+          {
+            title: t('agreements'),
+            url: { pathname: '/admin/[tenantId]/links-and-documents/agreements', params: { tenantId } },
+            icon: ScaleIcon,
           },
         ],
       },

@@ -36,7 +36,7 @@ export const AgreementDefaultArgs = Prisma.validator<Prisma.AgreementDefaultArgs
   },
 });
 
-type AgreementWithRelations = Prisma.AgreementGetPayload<typeof AgreementDefaultArgs>;
+export type AgreementWithRelations = Prisma.AgreementGetPayload<typeof AgreementDefaultArgs>;
 
 const searchParamsParsers = {
   page: parseAsInteger.withDefault(1),
@@ -61,7 +61,7 @@ export default function AgreementManagement() {
     },
   });
 
-  const { columns, card } = useMemo(() => getTableConfiguration({ t }), [t]);
+  const { columns, card } = useMemo(() => getTableConfiguration({ t, tenantId }), [t, tenantId]);
 
   const { table } = useDataTable({
     data: data || [],
@@ -96,11 +96,12 @@ export default function AgreementManagement() {
   );
 }
 
-interface GetTableConfigurationProps {
+interface TableConfigProps {
   t: ReturnType<typeof useTranslations>;
+  tenantId: string;
 }
 
-function getTableConfiguration({ t }: GetTableConfigurationProps) {
+function getTableConfiguration({ t, tenantId }: TableConfigProps) {
   const columns: ColumnDef<AgreementWithRelations>[] = [
     {
       accessorKey: 'name',
@@ -118,17 +119,17 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
       header: t('table.description'),
       cell: ({ row }) => (
         <Hint label={row.original.description ?? ''}>
-          <div className="text-sm">{row.original.description && row.original.description.length > 30 ? `${row.original.description.slice(0, 30)}...` : row.original.description}</div>
+          <TruncatedText text={row.original.description || ''} maxLength={30} />
         </Hint>
       ),
       size: 200,
     },
     {
-      accessorKey: 'content',
+      accessorKey: 'contentPreview',
       header: t('table.content'),
       cell: ({ row }) => (
         <Hint label={row.original.content ?? ''}>
-          <div className="text-sm">{row.original.content && row.original.content.length > 30 ? `${row.original.content.slice(0, 30)}...` : row.original.content}</div>
+          <TruncatedText text={row.original.content || ''} maxLength={30} />
         </Hint>
       ),
       size: 200,
@@ -148,7 +149,7 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
     {
       accessorKey: 'requireName',
       header: t('table.requireName'),
-      cell: ({ row }) => (row.original.requireName ? <Badge variant="outline">{t('status.required')}</Badge> : <Badge variant="outline">{t('status.notRequired')}</Badge>),
+      cell: ({ row }) => <Badge variant={row.original.requireName ? 'default' : 'outline'}>{row.original.requireName ? t('status.required') : t('status.notRequired')}</Badge>,
       size: 120,
     },
     {
@@ -156,10 +157,10 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
       cell: ({ row }) => (
         <ActionCell
           row={row}
-          onDelete={() => console.log('Delete', row.original)}
+          onDelete={() => console.log('Delete', row.original.id)}
           updateLink={{
             pathname: '/admin/[tenantId]/links-and-documents/agreements/[slug]/edit',
-            params: { tenantId: row.original.tenantId, slug: row.original.id },
+            params: { tenantId, slug: row.original.id },
           }}
         />
       ),
@@ -177,13 +178,10 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
           </div>
           <ActionCell
             row={row}
-            onDelete={() => console.log('Delete', row.original)}
+            onDelete={() => console.log('Delete', row.original.id)}
             updateLink={{
               pathname: '/admin/[tenantId]/links-and-documents/agreements/[slug]/edit',
-              params: {
-                tenantId: row.original.tenantId,
-                slug: row.original.id,
-              },
+              params: { tenantId, slug: row.original.id },
             }}
           />
         </div>
@@ -192,7 +190,9 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
       <CardContent className="flex flex-col gap-3 flex-grow">
         <div className="space-y-2">
           {row.original.description && <TruncatedText text={row.original.description} maxLength={30} />}
-          <div className="border rounded-md p-3 bg-muted/50 mb-4 h-32 overflow-auto">{row.original.content ?? 'N/A'}</div>
+          <div className="border rounded-md p-3 bg-muted/50 mb-4 h-32 overflow-auto">
+            <p className="text-sm text-muted-foreground">{row.original.content || t('noContent')}</p>
+          </div>
         </div>
 
         <div className="mt-auto pt-3 border-t">

@@ -2,13 +2,14 @@
 
 import { I18Link, Link } from '@/i18n/routing';
 import { type Table } from '@tanstack/react-table';
-import { Download, FileTextIcon, Plus, SheetIcon, TablePropertiesIcon } from 'lucide-react';
+import { Download, FileTextIcon, LayoutGridIcon, Plus, SheetIcon, TableIcon, TablePropertiesIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { exportTableToCSV, exportTableToExcel, exportTableToPDF } from '@/lib/export';
 import { Button } from '@/components/ui/button';
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
+import { useDataTable } from './data-table';
 import { DataTableDeleteDialog } from './data-table-delete-dialog';
 
 interface DataTableToolbarActionsProps<T> {
@@ -21,6 +22,7 @@ interface DataTableToolbarActionsProps<T> {
 
 export function DataTableToolbarActions<T>({ table, entityLabel, exportFilename, children, addLink }: DataTableToolbarActionsProps<T>) {
   const t = useTranslations('table');
+  const { listType, toggleListType } = useDataTable();
 
   return (
     <div className="flex items-center gap-2">
@@ -31,6 +33,19 @@ export function DataTableToolbarActions<T>({ table, entityLabel, exportFilename,
         <DataTableDeleteDialog entityLabel={entityLabel} items={table.getFilteredSelectedRowModel().rows.map((row) => row.original)} onDelete={async () => table.toggleAllRowsSelected(false)} />
       ) : null}
 
+      <Button type="button" variant="outline" size="sm" onClick={toggleListType}>
+        {listType === 'table' ? (
+          <>
+            <LayoutGridIcon className="h-4 w-4" />
+            <span className="sr-only">Card View</span>
+          </>
+        ) : (
+          <>
+            <TableIcon className="h-4 w-4" />
+            <span className="sr-only">Table View</span>
+          </>
+        )}
+      </Button>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm">

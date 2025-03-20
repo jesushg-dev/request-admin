@@ -20,10 +20,9 @@ export const config = {
 };
 
 export default async function middleware(req: NextRequest) {
-  //if (req.nextUrl.pathname === '/es/api/auth/get-session') {
-  //  return Response.redirect(new URL('/api/auth/get-session', req.nextUrl));
-  //}
-  console.log('🚀 ~ middleware ~ req.nextUrl.pathname:', req.nextUrl.pathname);
+  if (req.nextUrl.pathname.startsWith('/api/uploadthing')) {
+    return;
+  }
 
   if (isPublicPage(req.nextUrl.pathname, locales)) {
     return intlMiddleware(req);

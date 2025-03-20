@@ -387,7 +387,10 @@ export function useSuspenseCountAgreement<
 }
 
 export function useCheckAgreement<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; name?: string; content?: string; requireName?: boolean } },
+  args: {
+    operation: PolicyCrudKind;
+    where?: { id?: string; name?: string; description?: string; isActive?: boolean; createdBy?: string; updatedBy?: string; tenantId?: string; content?: string; requireName?: boolean };
+  },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();
