@@ -14,7 +14,6 @@ import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
 
@@ -52,7 +51,7 @@ export const DataroomForm: React.FC<DataroomFormProps> = ({ initialValues, tenan
     mode: 'onBlur',
   });
 
-  const onSubmitHandler = (result: DataroomFormValues) => {
+  const onSubmit = (result: DataroomFormValues) => {
     startTransition(async () => {
       const promise = upsert({
         create: {
@@ -82,10 +81,10 @@ export const DataroomForm: React.FC<DataroomFormProps> = ({ initialValues, tenan
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmitHandler)} className="flex flex-col flex-1 overflow-hidden gap-4 items-end w-full">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
         {error && <PrismaErrorAlert error={error} />}
-        <ScrollArea className="w-full flex-1 overflow-y-hidden">
-          <div className="flex-1 flex flex-col gap-4 ml-1 mr-3">
+        <div className="flex-1 overflow-auto">
+          <div className="flex flex-1 flex-col justify-between overflow-hidden px-1 gap-4">
             <FormField
               control={form.control}
               name="name"
@@ -129,10 +128,12 @@ export const DataroomForm: React.FC<DataroomFormProps> = ({ initialValues, tenan
               )}
             />
           </div>
-        </ScrollArea>
-        <Button type="submit" disabled={isPending}>
-          {initialValues ? t('saveChanges') : t('create')} {isPending && <LoaderCircleIcon className="animate-spin" />}
-        </Button>
+        </div>
+        <div className="mt-4 flex justify-end">
+          <Button type="submit" disabled={isPending}>
+            {initialValues ? t('saveChanges') : t('create')} {isPending && <LoaderCircleIcon className="animate-spin" />}
+          </Button>
+        </div>
       </form>
     </Form>
   );

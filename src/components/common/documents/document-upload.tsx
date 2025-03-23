@@ -91,34 +91,35 @@ export function DocumentUpload({ id, locale, tenantId, folderId, callbackUrl, da
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 items-end">
-        <div className="w-full flex flex-col gap-4">
-          <FormField
-            control={form.control}
-            name="files"
-            render={({ field }) => (
-              <div className="space-y-6">
-                <FormItem className="w-full">
-                  <FormLabel>Files</FormLabel>
-                  <FormControl>
-                    <FileUploader
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      maxFileCount={id ? 1 : 3}
-                      maxSize={4 * 1024 * 1024}
-                      progresses={progresses}
-                      disabled={pending}
-                      //onUpload={onUpload}
-                    />
-                  </FormControl>
-                  <FormDescription>Max file size: 4MB</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              </div>
-            )}
-          />
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 overflow-auto">
+          <div className="flex flex-1 flex-col justify-between overflow-hidden px-1 gap-4">
+            <FormField
+              control={form.control}
+              name="files"
+              render={({ field }) => (
+                <div className="space-y-6">
+                  <FormItem className="w-full">
+                    <FormLabel>Files</FormLabel>
+                    <FormControl>
+                      <FileUploader
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        maxFileCount={id ? 1 : 3}
+                        maxSize={4 * 1024 * 1024}
+                        progresses={progresses}
+                        disabled={pending}
+                        //onUpload={onUpload}
+                      />
+                    </FormControl>
+                    <FormDescription>Max file size: 4MB</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                </div>
+              )}
+            />
 
-          {/*<FormField
+            {/*<FormField
           control={form.control}
           name="storageType"
           render={({ field }) => (
@@ -140,9 +141,9 @@ export function DocumentUpload({ id, locale, tenantId, folderId, callbackUrl, da
             </FormItem>
           )}
         />*/}
+          </div>
         </div>
-
-        <div className="flex justify-between pt-6">
+        <div className="mt-4 flex justify-end">
           <ButtonLoading type="submit" isLoading={pending}>
             {pending ? 'Uploading...' : 'Upload Document'}
           </ButtonLoading>

@@ -54,7 +54,11 @@ export const PageDialogWrapper = ({ title, description, children, className }: P
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className={cn('max-h-[calc(100vh-2rem)]', 'flex flex-col overflow-hidden', className)}>
+      <DialogContent
+        onInteractOutside={(e) => {
+          e.preventDefault();
+        }}
+        className={cn('max-h-[calc(100vh-2rem)]', 'flex flex-col overflow-hidden', className)}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}

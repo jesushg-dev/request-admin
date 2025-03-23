@@ -3,7 +3,7 @@ import { getPathname } from '@/i18n/routing';
 import { Locale } from 'next-intl';
 import { SearchParams } from 'nuqs/server';
 
-import { loadSearchParams } from '@/lib/upload';
+import { loadSearchParams } from '@/lib/document';
 import { DocumentUpload } from '@/components/common/documents/document-upload';
 import { PageDialogWrapper } from '@/components/shared/page-container';
 

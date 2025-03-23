@@ -256,6 +256,10 @@ const dataRoomsPathnames = {
     en: '/admin/[tenantId]/links-and-documents/documents/[slug]',
     es: '/admin/[tenantId]/enlaces-y-documentos/documentos/[slug]',
   },
+  '/admin/[tenantId]/links-and-documents/documents/[slug]/edit': {
+    en: '/admin/[tenantId]/links-and-documents/documents/[slug]/edit',
+    es: '/admin/[tenantId]/enlaces-y-documentos/documentos/[slug]/editar',
+  },
   // agreements
   '/admin/[tenantId]/links-and-documents/agreements': {
     en: '/admin/[tenantId]/links-and-documents/agreements',

@@ -14,7 +14,6 @@ import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
 
 // Define the schema for form validation
@@ -34,7 +33,7 @@ interface FolderFormProps {
   tenantId: string;
   dataroomId: string;
   currentFolderId?: string;
-  initialValues?: FolderFormValues | null;
+  initialValues?: FolderFormValues;
   folders: { id: string; path: string }[];
 }
 
@@ -50,7 +49,7 @@ export const FolderForm: React.FC<FolderFormProps> = ({ initialValues, dataroomI
     mode: 'onBlur',
   });
 
-  const onSubmitHandler = (result: FolderFormValues) => {
+  const onSubmit = (result: FolderFormValues) => {
     startTransition(async () => {
       const location = currentFolderId ? folders.find((f) => f.id === currentFolderId)?.path || 'Root' : 'Root';
 
@@ -82,10 +81,10 @@ export const FolderForm: React.FC<FolderFormProps> = ({ initialValues, dataroomI
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmitHandler)} className="flex flex-col flex-1 overflow-hidden gap-4 items-end w-full">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
         {error && <PrismaErrorAlert error={error} />}
-        <ScrollArea className="w-full flex-1 overflow-y-hidden">
-          <div className="flex-1 flex flex-col gap-4 ml-1 mr-3">
+        <div className="flex-1 overflow-auto">
+          <div className="flex flex-1 flex-col justify-between overflow-hidden px-1 gap-4">
             <FormField
               control={form.control}
               name="name"
@@ -108,10 +107,12 @@ export const FolderForm: React.FC<FolderFormProps> = ({ initialValues, dataroomI
               <FormDescription>{t('locationDescription')}</FormDescription>
             </FormItem>
           </div>
-        </ScrollArea>
-        <Button type="submit" disabled={isPending}>
-          {initialValues ? t('saveChanges') : t('create')} {isPending && <LoaderCircleIcon className="animate-spin" />}
-        </Button>
+        </div>
+        <div className="mt-4 flex justify-end">
+          <Button type="submit" disabled={isPending}>
+            {initialValues ? t('saveChanges') : t('create')} {isPending && <LoaderCircleIcon className="animate-spin" />}
+          </Button>
+        </div>
       </form>
     </Form>
   );

@@ -78,11 +78,6 @@ export function AppSidebar({ tenantId, tenants, user, ...props }: AppSidebarProp
             icon: ListIcon,
           },
           {
-            title: t('documents'),
-            url: { pathname: '/admin/[tenantId]/requests-portal/documents', params: { tenantId } },
-            icon: FileTextIcon,
-          },
-          {
             title: t('areas'),
             url: { pathname: '/admin/[tenantId]/requests-portal/areas', params: { tenantId } },
             icon: LandPlotIcon,
