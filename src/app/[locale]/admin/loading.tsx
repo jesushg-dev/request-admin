@@ -1,10 +1,15 @@
 import React from 'react';
-import { LoaderCircleIcon } from 'lucide-react';
+
+import { Skeleton } from '@/components/ui/skeleton';
 
 function Loading() {
   return (
     <div className="flex h-full w-full items-center justify-center">
-      <LoaderCircleIcon className="h-12 w-12 animate-spin" />
+      <Skeleton className="flex-1 w-full rounded-xl" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-full" />
+      </div>
     </div>
   );
 }

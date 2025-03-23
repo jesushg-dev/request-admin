@@ -66,24 +66,27 @@ export function RelatedIncidentForm({ tenantId, requestId, initialValues }: Rela
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
         {error && <PrismaErrorAlert error={error} />}
-
-        <FormField
-          control={form.control}
-          name="relatedId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Related Id</FormLabel>
-              <FormControl>
-                <Input placeholder="00000000-0000-0000-0000-000000000000" {...field} />
-              </FormControl>
-              <FormDescription>Type the id of the related incident.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
+        <div className="flex-1 overflow-auto">
+          <div className="flex flex-1 flex-col justify-between overflow-hidden px-1 gap-4">
+            <FormField
+              control={form.control}
+              name="relatedId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Related Id</FormLabel>
+                  <FormControl>
+                    <Input placeholder="00000000-0000-0000-0000-000000000000" {...field} />
+                  </FormControl>
+                  <FormDescription>Type the id of the related incident.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+        <div className="mt-4 flex justify-end"></div>
         <Button type="submit" disabled={isPending}>
           {initialValues ? 'Save Changes' : 'Add Related Incident'}
           {isPending && <LoaderCircleIcon className="animate-spin" />}

@@ -14,7 +14,6 @@ import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
@@ -23,7 +22,7 @@ import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
 const formSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1, 'Name is required').max(200, 'Name must be 200 characters or less').default(''),
-  description: z.string().optional().max(500, 'Description must be 500 characters or less').default(''),
+  description: z.string().max(500, 'Description must be 500 characters or less').default(''),
   content: z.string().min(1, 'Content is required').max(500, 'Content must be 500 characters or less').default(''),
   requireName: z.boolean().default(true),
 });
@@ -55,7 +54,7 @@ export const AgreementForm: React.FC<AgreementFormProps> = ({ initialValues, ten
     mode: 'onBlur',
   });
 
-  const onSubmitHandler = (result: AgreementFormValues) => {
+  const onSubmit = (result: AgreementFormValues) => {
     startTransition(async () => {
       const promise = upsert({
         create: {
@@ -87,10 +86,10 @@ export const AgreementForm: React.FC<AgreementFormProps> = ({ initialValues, ten
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmitHandler)} className="flex flex-col flex-1 overflow-hidden gap-4 items-end w-full">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
         {error && <PrismaErrorAlert error={error} />}
-        <ScrollArea className="w-full flex-1 overflow-y-hidden">
-          <div className="flex-1 flex flex-col gap-4 ml-1 mr-3">
+        <div className="flex-1 overflow-auto">
+          <div className="flex flex-1 flex-col justify-between overflow-hidden px-1 gap-4">
             <FormField
               control={form.control}
               name="name"
@@ -149,10 +148,12 @@ export const AgreementForm: React.FC<AgreementFormProps> = ({ initialValues, ten
               )}
             />
           </div>
-        </ScrollArea>
-        <Button type="submit" disabled={isPending}>
-          {initialValues ? t('saveChanges') : t('create')} {isPending && <LoaderCircleIcon className="animate-spin" />}
-        </Button>
+        </div>
+        <div className="mt-4 flex justify-end">
+          <Button type="submit" disabled={isPending}>
+            {initialValues ? t('saveChanges') : t('create')} {isPending && <LoaderCircleIcon className="animate-spin" />}
+          </Button>
+        </div>
       </form>
     </Form>
   );

@@ -92,79 +92,84 @@ export default function AssignRequestsForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        {/* User Selection Field */}
-        <FormField
-          control={form.control}
-          name="userId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{'assignRequests.user'}</FormLabel>
-              <FormControl>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="assignRequests.userPlaceholder" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {users.map((user) => (
-                      <SelectItem key={user.id} value={user.id}>
-                        {user.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Request Fields */}
-        {fields.map((field, index) => (
-          <FormField
-            key={field.id}
-            control={form.control}
-            name={`requestIds.${index}.requestId`}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{index === 0 ? 'assignRequests.requests' : `assignRequests.request ${index + 1}`}</FormLabel>
-                <div className="flex items-center space-x-2">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
+        {/*error && <PrismaErrorAlert error={error} />*/}
+        <div className="flex-1 overflow-auto">
+          <div className="flex flex-1 flex-col justify-between overflow-hidden px-1 gap-4">
+            <FormField
+              control={form.control}
+              name="userId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{'assignRequests.user'}</FormLabel>
                   <FormControl>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger>
-                        <SelectValue placeholder="assignRequests.requestPlaceholder" />
+                        <SelectValue placeholder="assignRequests.userPlaceholder" />
                       </SelectTrigger>
                       <SelectContent>
-                        {requests.map((request) => (
-                          <SelectItem key={request.id} value={request.id}>
-                            {request.title}
+                        {users.map((user) => (
+                          <SelectItem key={user.id} value={user.id}>
+                            {user.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </FormControl>
-                  {index > 0 && (
-                    <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}>
-                      <X className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        ))}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        {/* Button to add another request */}
-        <Button type="button" variant="outline" size="sm" onClick={() => append({ requestId: '' })}>
-          <PlusCircle className="mr-2 h-4 w-4" />
-          {'assignRequests.addRequest'}
-        </Button>
+            {/* Request Fields */}
+            {fields.map((field, index) => (
+              <FormField
+                key={field.id}
+                control={form.control}
+                name={`requestIds.${index}.requestId`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{index === 0 ? 'assignRequests.requests' : `assignRequests.request ${index + 1}`}</FormLabel>
+                    <div className="flex items-center space-x-2">
+                      <FormControl>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="assignRequests.requestPlaceholder" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {requests.map((request) => (
+                              <SelectItem key={request.id} value={request.id}>
+                                {request.title}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      {index > 0 && (
+                        <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}>
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ))}
+          </div>
+        </div>
+        <div className="mt-4 flex justify-end">
+          {/* Button to add another request */}
+          <Button type="button" variant="outline" size="sm" onClick={() => append({ requestId: '' })}>
+            <PlusCircle className="mr-2 h-4 w-4" />
+            {'assignRequests.addRequest'}
+          </Button>
 
-        {/* Submit Button */}
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'assignRequests.saving' : 'assignRequests.submit'}
-        </Button>
+          {/* Submit Button */}
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'assignRequests.saving' : 'assignRequests.submit'}
+          </Button>
+        </div>
       </form>
     </Form>
   );

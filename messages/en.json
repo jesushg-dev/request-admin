@@ -679,19 +679,21 @@
     },
     "document": {
       "main": {
-        "entityLabel": "Documents",
-        "columns": {
+        "entityLabel": "Document",
+        "description": "Manage your documents efficiently.",
+        "table": {
+          "empty": "No documents found.",
           "name": "Name",
-          "status": "Status",
-          "priority": "Priority",
-          "createdAt": "Created At"
+          "type": "Type",
+          "pages": "Pages",
+          "views": "Views",
+          "links": "Links",
+          "versions": "Versions"
         },
-        "filters": {
-          "name": "Name",
-          "namePlaceholder": "Search by name",
-          "status": "Status",
-          "statusPlaceholder": "Search by status",
-          "createdAt": "Created At"
+        "actions": {
+          "view": "View",
+          "download": "Download",
+          "share": "Share"
         }
       }
     },
@@ -1315,6 +1317,141 @@
         "saveError": "Failed to save folder: {message}",
         "saveChanges": "Save Changes",
         "create": "Create"
+      }
+    },
+    "link": {
+      "form": {
+        "copy": {
+          "success": "Link copied to clipboard",
+          "error": "Error copying link"
+        },
+        "saving": {
+          "loading": "Saving configuration...",
+          "success": "Configuration saved. Link: {url}",
+          "successNoUrl": "Configuration saved.",
+          "error": "Error saving configuration"
+        },
+        "saved": {
+          "title": "Configuration saved",
+          "message": "The link has been successfully saved."
+        },
+        "buttons": {
+          "back": "Back",
+          "copy": "Copy Link",
+          "saving": "Saving...",
+          "save": "Save"
+        },
+        "basicInfo": {
+          "title": "Basic Information",
+          "name": {
+            "label": "Link Name",
+            "placeholder": "Enter a name for this link",
+            "description": "For your reference only"
+          },
+          "expirationDate": {
+            "label": "Expiration Date",
+            "select": "Select a date",
+            "description": "The link will stop working after this date"
+          }
+        },
+        "security": {
+          "title": "Security Options",
+          "invalidInput": "Please enter a valid email or domain",
+          "passwordProtection": {
+            "label": "Password Protection",
+            "tooltip": "Require a password to access the document"
+          },
+          "password": {
+            "label": "Password",
+            "placeholder": "Enter password",
+            "description": "Users will need this password to access the document"
+          },
+          "emailProtection": {
+            "label": "Email Protection",
+            "tooltip": "Require users to enter their email before viewing"
+          },
+          "emailVerification": {
+            "label": "Email Verification",
+            "tooltip": "Verify the user's email with a validation code"
+          },
+          "allowSpecificViewers": {
+            "label": "Allow Specific Viewers",
+            "tooltip": "Restrict access only to specific emails or domains",
+            "addLabel": "Add Allowed Viewer",
+            "addButton": "Add",
+            "listLabel": "Allowed Viewers",
+            "empty": "No allowed viewers added",
+            "emailPlaceholder": "user@example.com",
+            "domainPlaceholder": "example.com"
+          },
+          "blockSpecificViewers": {
+            "label": "Block Specific Viewers",
+            "tooltip": "Prevent access for specific emails or domains",
+            "addLabel": "Add Blocked Viewer",
+            "addButton": "Add",
+            "listLabel": "Blocked Viewers",
+            "empty": "No blocked viewers added",
+            "emailPlaceholder": "user@example.com",
+            "domainPlaceholder": "example.com"
+          },
+          "screenshotProtection": {
+            "label": "Screenshot Protection",
+            "tooltip": "Prevent screenshots and recordings"
+          },
+          "watermark": {
+            "label": "Watermark",
+            "tooltip": "Apply a watermark with the user's email on all pages"
+          },
+          "agreementRequirement": {
+            "label": "Require Agreement",
+            "tooltip": "Users must accept an agreement before accessing"
+          },
+          "agreement": {
+            "label": "Select Agreement",
+            "placeholder": "Select an agreement"
+          },
+          "viewerTypes": {
+            "email": "Email",
+            "domain": "Domain"
+          },
+          "remove": "Remove"
+        },
+        "customFields": {
+          "title": "Custom Fields",
+          "description": "These fields will be shown to users when they access your shared link. Use them to collect information from users.",
+          "emptyTitle": "No Custom Fields",
+          "emptyDescription": "No custom fields have been added yet. Add fields to collect information from users.",
+          "addButton": "Add Custom Field",
+          "row": {
+            "labelPlaceholder": "Label",
+            "requiredLabel": "Required",
+            "placeholder": "Placeholder",
+            "description": "Description",
+            "typeFallback": "Type"
+          }
+        },
+        "features": {
+          "additional": "Additional Features",
+          "allowDownload": {
+            "label": "Allow Download",
+            "tooltip": "Allow users to download the document"
+          },
+          "enableNotification": {
+            "label": "Enable Notifications",
+            "tooltip": "Receive notifications when the document is viewed"
+          },
+          "enableFeedback": {
+            "label": "Enable Feedback",
+            "tooltip": "Allow users to provide feedback"
+          },
+          "enableQuestion": {
+            "label": "Enable Questions",
+            "tooltip": "Allow users to ask questions about the document"
+          }
+        },
+        "titleCreate": "Create a new link",
+        "subtitleCreate": "You can share documents with your clients by creating links.",
+        "titleEdit": "Edit link"
       }
     }
   },

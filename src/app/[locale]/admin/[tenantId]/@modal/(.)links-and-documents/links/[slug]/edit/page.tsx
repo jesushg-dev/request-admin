@@ -20,7 +20,7 @@ const NewPage: FC<NewPageProps> = async ({ params, searchParams }) => {
   const finalCallbackUrl = callbackUrl ? callbackUrl : getPathname({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/documents', params: { tenantId } } });
 
   return (
-    <PageDialogWrapper title={t('titleCreate')} description={t('subtitleCreate')}>
+    <PageDialogWrapper title={t('titleEdit')} description={t('subtitleCreate')}>
       <LinkForm tenantId={tenantId} documentId={documentId} dataroomId={dataroomId} callbackUrl={finalCallbackUrl} linkType={linkType} />
     </PageDialogWrapper>
   );

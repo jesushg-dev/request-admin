@@ -674,19 +674,21 @@
     },
     "document": {
       "main": {
-        "entityLabel": "Documentos",
-        "columns": {
+        "entityLabel": "Documento",
+        "description": "Administre sus documentos de manera eficiente.",
+        "table": {
+          "empty": "No se encontraron documentos.",
           "name": "Nombre",
-          "status": "Estado",
-          "priority": "Prioridad",
-          "createdAt": "Creado En"
+          "type": "Tipo",
+          "pages": "Páginas",
+          "views": "Vistas",
+          "links": "Enlaces",
+          "versions": "Versiones"
         },
-        "filters": {
-          "name": "Nombre",
-          "namePlaceholder": "Buscar por nombre",
-          "status": "Estado",
-          "statusPlaceholder": "Buscar por estado",
-          "createdAt": "Creado En"
+        "actions": {
+          "view": "Ver",
+          "download": "Descargar",
+          "share": "Compartir"
         }
       }
     },
@@ -1308,6 +1310,141 @@
         "saveError": "Error al guardar la carpeta: {message}",
         "saveChanges": "Guardar Cambios",
         "create": "Crear"
+      }
+    },
+    "link": {
+      "form": {
+        "copy": {
+          "success": "Link copiado al portapapeles",
+          "error": "Error al copiar el link"
+        },
+        "saving": {
+          "loading": "Guardando configuración...",
+          "success": "Configuración guardada. Enlace: {url}",
+          "successNoUrl": "Configuración guardada.",
+          "error": "Error al guardar la configuración"
+        },
+        "saved": {
+          "title": "Configuración guardada",
+          "message": "El enlace ha sido guardado correctamente."
+        },
+        "buttons": {
+          "back": "Volver",
+          "copy": "Copiar Enlace",
+          "saving": "Guardando...",
+          "save": "Guardar"
+        },
+        "basicInfo": {
+          "title": "Información Básica",
+          "name": {
+            "label": "Nombre del Enlace",
+            "placeholder": "Ingresa un nombre para este enlace",
+            "description": "Solo para tu referencia"
+          },
+          "expirationDate": {
+            "label": "Fecha de Expiración",
+            "select": "Selecciona una fecha",
+            "description": "El enlace dejará de funcionar después de esta fecha"
+          }
+        },
+        "security": {
+          "title": "Security Options",
+          "invalidInput": "Please enter a valid email or domain",
+          "passwordProtection": {
+            "label": "Password Protection",
+            "tooltip": "Require a password to access the document"
+          },
+          "password": {
+            "label": "Password",
+            "placeholder": "Enter password",
+            "description": "Users will need this password to access the document"
+          },
+          "emailProtection": {
+            "label": "Email Protection",
+            "tooltip": "Require users to enter their email before viewing"
+          },
+          "emailVerification": {
+            "label": "Email Verification",
+            "tooltip": "Verify the user's email with a validation code"
+          },
+          "allowSpecificViewers": {
+            "label": "Allow Specific Viewers",
+            "tooltip": "Restrict access only to specific emails or domains",
+            "addLabel": "Add Allowed Viewer",
+            "addButton": "Add",
+            "listLabel": "Allowed Viewers",
+            "empty": "No allowed viewers added",
+            "emailPlaceholder": "user@example.com",
+            "domainPlaceholder": "example.com"
+          },
+          "blockSpecificViewers": {
+            "label": "Block Specific Viewers",
+            "tooltip": "Prevent access for specific emails or domains",
+            "addLabel": "Add Blocked Viewer",
+            "addButton": "Add",
+            "listLabel": "Blocked Viewers",
+            "empty": "No blocked viewers added",
+            "emailPlaceholder": "user@example.com",
+            "domainPlaceholder": "example.com"
+          },
+          "screenshotProtection": {
+            "label": "Screenshot Protection",
+            "tooltip": "Prevent screenshots and recordings"
+          },
+          "watermark": {
+            "label": "Watermark",
+            "tooltip": "Apply a watermark with the user's email on all pages"
+          },
+          "agreementRequirement": {
+            "label": "Require Agreement",
+            "tooltip": "Users must accept an agreement before accessing"
+          },
+          "agreement": {
+            "label": "Select Agreement",
+            "placeholder": "Select an agreement"
+          },
+          "viewerTypes": {
+            "email": "Email",
+            "domain": "Domain"
+          },
+          "remove": "Remove"
+        },
+        "customFields": {
+          "title": "Campos Personalizados",
+          "description": "Estos campos se presentarán a los usuarios cuando accedan a tu enlace compartido. Úsalos para recopilar información de los usuarios.",
+          "emptyTitle": "Sin Campos Personalizados",
+          "emptyDescription": "No hay campos personalizados añadidos aún. Añade campos para recopilar información de los usuarios.",
+          "addButton": "Añadir Campo Personalizado",
+          "row": {
+            "labelPlaceholder": "Etiqueta",
+            "requiredLabel": "Requerido",
+            "placeholder": "Placeholder",
+            "description": "Descripción",
+            "typeFallback": "Tipo"
+          }
+        },
+        "features": {
+          "additional": "Características Adicionales",
+          "allowDownload": {
+            "label": "Permitir Descarga",
+            "tooltip": "Permitir a los usuarios descargar el documento"
+          },
+          "enableNotification": {
+            "label": "Habilitar Notificaciones",
+            "tooltip": "Recibir notificaciones cuando el documento sea visto"
+          },
+          "enableFeedback": {
+            "label": "Habilitar Feedback",
+            "tooltip": "Permitir a los usuarios proporcionar feedback"
+          },
+          "enableQuestion": {
+            "label": "Habilitar Preguntas",
+            "tooltip": "Permitir a los usuarios hacer preguntas sobre el documento"
+          }
+        },
+        "titleCreate": "Crea un nuevo enlace",
+        "subtitleCreate": "Puede compartir documentos con sus clientes creando enlaces.",
+        "titleEdit": "Editar un enlace"
       }
     }
   },

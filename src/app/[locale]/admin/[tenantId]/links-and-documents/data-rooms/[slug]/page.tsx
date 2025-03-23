@@ -1,14 +1,13 @@
 import { getPathname, Link, redirect } from '@/i18n/routing';
 import { db } from '@/server/db-client';
-import { FileText, MoreHorizontal, Palette, Pencil, Trash2, Users } from 'lucide-react';
+import { format } from 'date-fns';
+import { ArrowLeft, Calendar, Clock, ExternalLink, FileText, MoreHorizontal, Palette, Pencil, Trash2, User, Users } from 'lucide-react';
 import { Locale } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { DataroomBranding } from '@/components/common/data-rooms/dataroom-branding';
 import { DataroomDocuments } from '@/components/common/data-rooms/dataroom-documents';
-import { DataroomViewerGroups } from '@/components/common/data-rooms/dataroom-viewer-groups';
 
 interface DataroomDetailPageProps {
   params: Promise<{ locale: Locale; tenantId: string; slug: string }>;
@@ -27,66 +26,94 @@ export default async function DataroomDetailPage({ params }: DataroomDetailPageP
   }
 
   return (
-    <div className="flex-1 space-y-4 p-8 pt-6">
-      <div className="flex flex-col space-y-4">
-        <Tabs defaultValue="documents" className="w-full">
-          <div className="flex justify-between items-start">
-            <div>
-              <h1 className="text-3xl font-bold">{dataroom.name}</h1>
-              <p className="text-lg text-muted-foreground mt-1">{dataroom.description || 'No description provided'}</p>
-            </div>
+    <div className="flex flex-col gap-4 p-4 flex-1">
+      <Card>
+        <CardHeader>
+          <div className="flex gap-2 w-full items-center justify-between">
             <div className="flex gap-2">
-              <TabsList>
-                <TabsTrigger value="documents">
-                  <FileText className="h-4 w-4 mr-2" />
-                  Documents
-                </TabsTrigger>
-                <TabsTrigger value="viewers">
-                  <Users className="h-4 w-4 mr-2" />
-                  Viewer Groups
-                </TabsTrigger>
-                <TabsTrigger value="branding">
-                  <Palette className="h-4 w-4 mr-2" />
-                  Branding
-                </TabsTrigger>
-              </TabsList>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <MoreHorizontal className="h-5 w-5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                  <DropdownMenuItem asChild>
-                    <Link href={{ pathname: '/admin/[tenantId]/links-and-documents/data-rooms/[slug]/edit', params: { tenantId, slug } }}>
-                      <Pencil className="mr-2 h-4 w-4" />
-                      Rename Dataroom
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="text-destructive focus:text-destructive">
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete Dataroom
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Link href={{ pathname: '/admin/[tenantId]/links-and-documents/data-rooms', params: { tenantId } }} className="text-sm text-muted-foreground hover:text-foreground p-1 flex items-center">
+                <ArrowLeft className="h-3.5 w-3.5 mr-1" />
+                <span className="sr-only">Back</span>
+              </Link>
+              <CardTitle className="text-2xl pb-0">{dataroom.name}</CardTitle>
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <MoreHorizontal className="h-5 w-5" />
+                  <span className="sr-only">Actions</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Dataroom Actions</DropdownMenuLabel>
+                <DropdownMenuItem>
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Edit Dataroom
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Users className="mr-2 h-4 w-4" />
+                  Manage Viewers
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Palette className="mr-2 h-4 w-4" />
+                  Customize Branding
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  Create Shareable Link
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="text-destructive focus:text-destructive">
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete Dataroom
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <CardDescription>{dataroom.description}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div className="flex flex-col space-y-1">
+              <span className="text-sm text-muted-foreground flex items-center">
+                <FileText className="h-4 w-4 mr-1" />
+                Documents
+              </span>
+              <span className="text-2xl font-bold">{dataroom.documentCount}</span>
+            </div>
+            <div className="flex flex-col space-y-1">
+              <span className="text-sm text-muted-foreground flex items-center">
+                <Users className="h-4 w-4 mr-1" />
+                Viewers
+              </span>
+              <span className="text-2xl font-bold">{dataroom.viewerCount}</span>
+            </div>
+            <div className="flex flex-col space-y-1">
+              <span className="text-sm text-muted-foreground flex items-center">
+                <User className="h-4 w-4 mr-1" />
+                Owner
+              </span>
+              <span className="text-sm font-medium">{dataroom.createdBy.name}</span>
+            </div>
+            <div className="flex flex-col space-y-1">
+              <span className="text-sm text-muted-foreground flex items-center">
+                <Calendar className="h-4 w-4 mr-1" />
+                Created
+              </span>
+              <span className="text-sm font-medium">{format(dataroom.createdAt, 'MMM d, yyyy')}</span>
+            </div>
+            <div className="flex flex-col space-y-1">
+              <span className="text-sm text-muted-foreground flex items-center">
+                <Clock className="h-4 w-4 mr-1" />
+                Updated
+              </span>
+              <span className="text-sm font-medium">{format(dataroom.updatedAt, 'MMM d, yyyy')}</span>
             </div>
           </div>
+        </CardContent>
+      </Card>
 
-          <TabsContent value="documents">
-            <DataroomDocuments dataroomId={dataroom.id} tenantId={tenantId} callbackUrl={callbackUrl} />
-          </TabsContent>
-
-          <TabsContent value="viewers">
-            <DataroomViewerGroups dataroomId={dataroom.id} />
-          </TabsContent>
-
-          <TabsContent value="branding">
-            <DataroomBranding dataroomId={dataroom.id} />
-          </TabsContent>
-        </Tabs>
-      </div>
+      <DataroomDocuments dataroomId={dataroom.id} tenantId={tenantId} callbackUrl={callbackUrl} />
     </div>
   );
 }

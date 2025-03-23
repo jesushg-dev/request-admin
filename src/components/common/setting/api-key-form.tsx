@@ -121,91 +121,19 @@ export function ApiKeyCreateForm({ defaultValues, tenantId }: ApiKeyCreateFormPr
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col flex-1 gap-4">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('name.label')}</FormLabel>
-              <FormControl>
-                <Input placeholder={t('name.placeholder')} {...field} />
-              </FormControl>
-              <FormDescription>{t('name.description')}</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="prefix"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('prefix.label')}</FormLabel>
-              <FormControl>
-                <Input placeholder={t('prefix.placeholder')} {...field} />
-              </FormControl>
-              <FormDescription>{t('prefix.description')}</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="expiresIn"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('expiration.label')}</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('expiration.placeholder')} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="7d">{t('expiration.options.7d')}</SelectItem>
-                  <SelectItem value="30d">{t('expiration.options.30d')}</SelectItem>
-                  <SelectItem value="90d">{t('expiration.options.90d')}</SelectItem>
-                  <SelectItem value="1y">{t('expiration.options.1y')}</SelectItem>
-                  <SelectItem value="never">{t('expiration.options.never')}</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormDescription>{t('expiration.description')}</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="rateLimitEnabled"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-              <div className="space-y-0.5">
-                <FormLabel className="text-base">{t('rateLimit.label')}</FormLabel>
-                <FormDescription>{t('rateLimit.description')}</FormDescription>
-              </div>
-              <FormControl>
-                <Switch checked={field.value} onCheckedChange={field.onChange} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-
-        {form.watch('rateLimitEnabled') && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 overflow-auto">
+          <div className="flex flex-1 flex-col justify-between overflow-hidden px-1 gap-4">
             <FormField
               control={form.control}
-              name="rateLimitMax"
+              name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('rateLimit.maxRequests')}</FormLabel>
+                  <FormLabel>{t('name.label')}</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="100" {...field} onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)} />
+                    <Input placeholder={t('name.placeholder')} {...field} />
                   </FormControl>
-                  <FormDescription>{t('rateLimit.maxRequestsDesc')}</FormDescription>
+                  <FormDescription>{t('name.description')}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -213,39 +141,116 @@ export function ApiKeyCreateForm({ defaultValues, tenantId }: ApiKeyCreateFormPr
 
             <FormField
               control={form.control}
-              name="rateLimitTimeWindow"
+              name="prefix"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('rateLimit.timeWindow')}</FormLabel>
+                  <FormLabel>{t('prefix.label')}</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="60000" {...field} onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)} />
+                    <Input placeholder={t('prefix.placeholder')} {...field} />
                   </FormControl>
-                  <FormDescription>{t('rateLimit.timeWindowDesc')}</FormDescription>
+                  <FormDescription>{t('prefix.description')}</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="expiresIn"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('expiration.label')}</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('expiration.placeholder')} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="7d">{t('expiration.options.7d')}</SelectItem>
+                      <SelectItem value="30d">{t('expiration.options.30d')}</SelectItem>
+                      <SelectItem value="90d">{t('expiration.options.90d')}</SelectItem>
+                      <SelectItem value="1y">{t('expiration.options.1y')}</SelectItem>
+                      <SelectItem value="never">{t('expiration.options.never')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>{t('expiration.description')}</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="rateLimitEnabled"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">{t('rateLimit.label')}</FormLabel>
+                    <FormDescription>{t('rateLimit.description')}</FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch checked={field.value} onCheckedChange={field.onChange} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {form.watch('rateLimitEnabled') && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="rateLimitMax"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('rateLimit.maxRequests')}</FormLabel>
+                      <FormControl>
+                        <Input type="number" placeholder="100" {...field} onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)} />
+                      </FormControl>
+                      <FormDescription>{t('rateLimit.maxRequestsDesc')}</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="rateLimitTimeWindow"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('rateLimit.timeWindow')}</FormLabel>
+                      <FormControl>
+                        <Input type="number" placeholder="60000" {...field} onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)} />
+                      </FormControl>
+                      <FormDescription>{t('rateLimit.timeWindowDesc')}</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
+
+            <FormField
+              control={form.control}
+              name="metadata"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('metadata.label')}</FormLabel>
+                  <FormControl>
+                    <JsonInput value={field.value} onChange={(value) => field.onChange(value)} />
+                  </FormControl>
+                  <FormDescription>{t('metadata.description')}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
-        )}
-
-        <FormField
-          control={form.control}
-          name="metadata"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('metadata.label')}</FormLabel>
-              <FormControl>
-                <JsonInput value={field.value} onChange={(value) => field.onChange(value)} />
-              </FormControl>
-              <FormDescription>{t('metadata.description')}</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button type="submit" disabled={pending}>
-          {pending ? t('creating') : t('createButton')}
-        </Button>
+        </div>
+        <div className="mt-4 flex justify-end">
+          <Button type="submit" disabled={pending}>
+            {pending ? t('creating') : t('createButton')}
+          </Button>
+        </div>
       </form>
     </Form>
   );

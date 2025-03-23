@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { getTranslations } from 'next-intl/server';
 import { SearchParams } from 'nuqs/server';
 
-import { folderReferencesLoader } from '@/lib/upload';
+import { folderReferencesLoader } from '@/lib/document';
 import { FolderForm } from '@/components/common/data-room/folder-form';
 import { PageCardWrapper } from '@/components/shared/page-container';
 
