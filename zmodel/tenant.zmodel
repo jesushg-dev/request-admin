@@ -144,7 +144,7 @@ model UserTenant extends TenantScoped, Auditable {
   userId                       String
   user                         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  personId                     String?          @db.UniqueIdentifier
+  personId                     String?          //@db.UniqueIdentifier
   person                       Person?
 
   userAreas                    UserTenantArea[]
@@ -176,11 +176,11 @@ model InvitationTenant extends TenantScoped, Auditable {
 }
 
 model Subscription {
-  id         String    @id @default(uuid()) @db.UniqueIdentifier
+  id         String    @id @default(uuid()) //@db.UniqueIdentifier
   tenant     Tenant    @relation(fields: [tenantId], references: [id])
   tenantId   String    
   plan       Plan      @relation(fields: [planId], references: [id])
-  planId     String    @db.UniqueIdentifier
+  planId     String    //@db.UniqueIdentifier
   startDate  DateTime
   endDate    DateTime
   status     String           // Replaces ENUM
@@ -191,7 +191,7 @@ model Subscription {
 }
 
 model Plan {
-  id             String         @id @default(uuid()) @db.UniqueIdentifier
+  id             String         @id @default(uuid()) //@db.UniqueIdentifier
   name           String
   description    String
   price          Float
@@ -203,11 +203,11 @@ model Plan {
 }
 
 model PlanFeature {
-  id            String   @id @default(uuid()) @db.UniqueIdentifier
+  id            String   @id @default(uuid()) //@db.UniqueIdentifier
   plan          Plan     @relation(fields: [planId], references: [id])
-  planId        String   @db.UniqueIdentifier
+  planId        String   //@db.UniqueIdentifier
   feature       Feature  @relation(fields: [featureId], references: [id])
-  featureId     String   @db.UniqueIdentifier
+  featureId     String   //@db.UniqueIdentifier
   dailyLimit    Int?
   totalLimit    Int?
   resetInterval String         // Replaces ENUM
@@ -216,7 +216,7 @@ model PlanFeature {
 }
 
 model UsageTracking {
-  id          String    @id @default(uuid()) @db.UniqueIdentifier
+  id          String    @id @default(uuid()) //@db.UniqueIdentifier
   tenant      Tenant    @relation(fields: [tenantId], references: [id])
   tenantId    String    
   featureName String
@@ -227,9 +227,9 @@ model UsageTracking {
 }
 
 model Payment {
-  id             String       @id @default(uuid()) @db.UniqueIdentifier
+  id             String       @id @default(uuid()) //@db.UniqueIdentifier
   subscription   Subscription @relation(fields: [subscriptionId], references: [id])
-  subscriptionId String       @db.UniqueIdentifier
+  subscriptionId String       //@db.UniqueIdentifier
   amount         Float
   paymentDate    DateTime
   paymentMethod  String

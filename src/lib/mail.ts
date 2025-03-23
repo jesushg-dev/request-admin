@@ -2,7 +2,7 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const domain = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+const domain = process.env.NEXT_PUBLIC_APP_URL || 'http://127.0.0.1:3000';
 const emailDomain = process.env.RESEND_EMAIL_DOMAIN || 'resend.dev';
 
 export const sendTwoFactorTokenEmail = async (email: string, token: string) => {

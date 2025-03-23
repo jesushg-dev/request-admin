@@ -4,11 +4,11 @@ import './tenant.zmodel'
 import './request.zmodel'
 
 model Channel extends TenantScoped, Auditable {
-  id        String    @id @default(uuid()) @db.UniqueIdentifier
+  id        String    @id @default(uuid()) //@db.UniqueIdentifier
   name      String
   messages  Message[]
 
-  requestId String?   @unique @db.UniqueIdentifier
+  requestId String?   @unique //@db.UniqueIdentifier
   request   Request?  @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([tenantId])
@@ -16,7 +16,7 @@ model Channel extends TenantScoped, Auditable {
 }
 
 model Conversation extends TenantScoped {
-  id              String     @id @default(uuid()) @db.UniqueIdentifier
+  id              String     @id @default(uuid()) //@db.UniqueIdentifier
   userTenantOneId String
   userTenantTwoId String
   userTenantOne   UserTenant @relation("UserTenantOne", fields: [userTenantOneId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -28,13 +28,13 @@ model Conversation extends TenantScoped {
 }
 
 model Message extends TenantScoped, Auditable {
-  id              String        @id @default(uuid()) @db.UniqueIdentifier
+  id              String        @id @default(uuid()) //@db.UniqueIdentifier
   body            String
   imageId         String?
   userTenantId    String
-  channelId       String?       @db.UniqueIdentifier
-  parentMessageId String?       @db.UniqueIdentifier
-  conversationId  String?       @db.UniqueIdentifier
+  channelId       String?       //@db.UniqueIdentifier
+  parentMessageId String?       //@db.UniqueIdentifier
+  conversationId  String?       //@db.UniqueIdentifier
   userTenant      UserTenant    @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   channel         Channel?      @relation(fields: [channelId], references: [id], onDelete: NoAction)
   parentMessage   Message?      @relation("ParentMessage", fields: [parentMessageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -49,9 +49,9 @@ model Message extends TenantScoped, Auditable {
 }
 
 model Reaction extends TenantScoped {
-  id           String     @id @default(uuid()) @db.UniqueIdentifier
+  id           String     @id @default(uuid()) //@db.UniqueIdentifier
   value        String
-  messageId    String     @db.UniqueIdentifier
+  messageId    String     //@db.UniqueIdentifier
   userTenantId String
   message      Message    @relation(fields: [messageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   userTenant   UserTenant @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)

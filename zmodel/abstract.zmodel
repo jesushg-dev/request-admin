@@ -25,14 +25,14 @@ abstract model Auditable {
   deletedAt  DateTime? // Timestamp when the entity was deleted (soft delete)
 
   // User tracking
-  createdBy  String?   @db.VarChar(50) @default(auth().id) // ID of the user who created the entity
-  updatedBy String?   @db.VarChar(50) @default(auth().id) // ID of the user who last modified the entity
+  createdBy  String?   //@db.VarChar(50) @default(auth().id) // ID of the user who created the entity
+  updatedBy String?   //@db.VarChar(50) @default(auth().id) // ID of the user who last modified the entity
 }
 
 /// Abstract model for base catalog fields.
 abstract model CatalogBase {
-  id          String  @id @default(uuid()) @db.UniqueIdentifier
-  name        String  @db.VarChar(100) // Name of the catalog item
-  description String? @db.VarChar(255) // Optional description
+  id          String  @id @default(uuid()) //@db.UniqueIdentifier
+  name        String  //@db.VarChar(100) // Name of the catalog item
+  description String? //@db.VarChar(255) // Optional description
   isActive    Boolean @default(true)
 }

@@ -5,20 +5,20 @@ import './tenant.zmodel'
 
 model Person extends TenantScoped, Auditable {
   // Primary identifier
-  id                    String     @id @default(uuid()) @db.UniqueIdentifier
+  id                    String     @id @default(uuid()) //@db.UniqueIdentifier
 
   // Personal details
-  firstName             String     @db.VarChar(100) // First name of the person
-  lastName              String     @db.VarChar(100) // Last name of the person
-  phone                 String?    @db.VarChar(50) // Optional phone number
-  identificationNumber  String     @default("") @db.VarChar(110) // Unique identification number
+  firstName             String     //@db.VarChar(100) // First name of the person
+  lastName              String     //@db.VarChar(100) // Last name of the person
+  phone                 String?    //@db.VarChar(50) // Optional phone number
+  identificationNumber  String     @default("") //@db.VarChar(110) // Unique identification number
   image                 String?    // User's profile image
 
   // Relationships
   userTenantId                String? @unique
   userTenant                  UserTenant?      @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked User entity
 
-  identificationTypeId  String     @db.UniqueIdentifier // Link to IdentificationType
+  identificationTypeId  String     //@db.UniqueIdentifier // Link to IdentificationType
   identificationType    IdentificationType @relation(fields: [identificationTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Type of identification
 
   @@unique([phone, tenantId])
@@ -28,7 +28,7 @@ model Person extends TenantScoped, Auditable {
 
 
 model IdentificationType extends TenantScoped, Auditable, CatalogBase {
-  regex           String?    @db.VarChar(500) // Optional regex to validate the identification number
+  regex           String?    //@db.VarChar(500) // Optional regex to validate the identification number
   
   // Relationships
   person          Person[]   // Persons linked to this identification type

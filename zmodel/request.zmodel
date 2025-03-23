@@ -9,15 +9,15 @@ import './messenger.zmodel' // messaging for requests
 /// Represents a request that includes categorization for both request and assignment with ITIL compliance tracking
 model Request extends TenantScoped, Auditable {
   // Primary identifier
-  id                   String                          @id @default(uuid()) @db.UniqueIdentifier // Request ID
+  id                   String                          @id @default(uuid()) //@db.UniqueIdentifier // Request ID
 
   // Request details
-  issueSubject         String                         @db.VarChar(255)    // Optional issue subject
-  description          String?                         @db.VarChar(5000)   // Detailed request description
+  issueSubject         String                         //@db.VarChar(255)    // Optional issue subject
+  description          String?                         //@db.VarChar(5000)   // Detailed request description
   closedAt             DateTime?
-  closedBy             String?                         @db.VarChar(50)     // User ID who closed the request
-  closedComment        String?                         @db.VarChar(500)    // Closure comment
-  comment              String?                         @db.VarChar(255)    // Optional comment
+  closedBy             String?                         //@db.VarChar(50)     // User ID who closed the request
+  closedComment        String?                         //@db.VarChar(500)    // Closure comment
+  comment              String?                         //@db.VarChar(255)    // Optional comment
 
   // Related documents
   documents            Document[]
@@ -39,11 +39,11 @@ model Request extends TenantScoped, Auditable {
   changeLog            RequestChangeLog[]
 
   // Satisfaction survey
-  satisfactionSurveyId String?                         @db.UniqueIdentifier
+  satisfactionSurveyId String?                         //@db.UniqueIdentifier
   satisfactionSurvey   CustomerSatisfactionSurvey?     @relation("RequestSurvey")
 
   // Channel
-  channelId            String?                         @db.UniqueIdentifier
+  channelId            String?                         //@db.UniqueIdentifier
   channel              Channel?
 
   @@index([closedAt], name: "idx_request_closed_at")
@@ -54,9 +54,9 @@ model Request extends TenantScoped, Auditable {
 
 /// Represents related incidents or problems for a request.
 model RelatedIncident extends TenantScoped, Auditable {
-  id        String  @id @default(uuid()) @db.UniqueIdentifier
-  requestId String  @db.UniqueIdentifier
-  relatedId String  @db.UniqueIdentifier
+  id        String  @id @default(uuid()) //@db.UniqueIdentifier
+  requestId String  //@db.UniqueIdentifier
+  relatedId String  //@db.UniqueIdentifier
   isActive  Boolean @default(true)
 
   request   Request @relation("RequestIncident", fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -68,11 +68,11 @@ model RelatedIncident extends TenantScoped, Auditable {
 
 /// Represents an assignment of a request to users or areas.
 model RequestAssignment extends TenantScoped, Auditable {
-  id                   String               @id @default(uuid()) @db.UniqueIdentifier
-  comment              String?              @db.VarChar(255)
+  id                   String               @id @default(uuid()) //@db.UniqueIdentifier
+  comment              String?              //@db.VarChar(255)
   assignmentDate       DateTime             @default(now())
   unAssignmentDate     DateTime? 
-  requestId            String               @db.UniqueIdentifier
+  requestId            String               //@db.UniqueIdentifier
   request              Request              @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   assignedUsers        AssignedUser[]       @relation("AssignedUsers")
@@ -84,26 +84,26 @@ model RequestAssignment extends TenantScoped, Auditable {
   slaEnd               DateTime?
 
   // ITIL mandatory fields
-  areaId               String              @db.UniqueIdentifier
+  areaId               String              //@db.UniqueIdentifier
   area                 Area                @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  statusId             String               @db.UniqueIdentifier
+  statusId             String               //@db.UniqueIdentifier
   status               RequestStatusType    @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  typeId               String               @db.UniqueIdentifier
+  typeId               String               //@db.UniqueIdentifier
   type                 AssignmentType       @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  priorityId           String              @db.UniqueIdentifier
+  priorityId           String              //@db.UniqueIdentifier
   priority             RequestPriorityType @relation(fields: [priorityId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   isActive             Boolean              @default(true)
 
  // Request categorization
-  requestCategoryId    String               @db.UniqueIdentifier
+  requestCategoryId    String               //@db.UniqueIdentifier
   requestCategory      RequestCategory      @relation("RequestCategory", fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   // Assignment categorization
-  assignmentCategoryId String               @db.UniqueIdentifier
+  assignmentCategoryId String               //@db.UniqueIdentifier
   assignmentCategory   AssignmentCategory   @relation("AssignmentCategory", fields: [assignmentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
  
   @@index([typeId], name: "idx_assignment_type_id")
@@ -118,20 +118,20 @@ model RequestAssignment extends TenantScoped, Auditable {
 
 /// Represents the users assigned to a request, including the coordinator.
 model AssignedUser extends TenantScoped, Auditable {
-  id                  String            @id @default(uuid()) @db.UniqueIdentifier
+  id                  String            @id @default(uuid()) //@db.UniqueIdentifier
   requestAssignment   RequestAssignment @relation("AssignedUsers", fields: [requestAssignmentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  requestAssignmentId String            @db.UniqueIdentifier
+  requestAssignmentId String            //@db.UniqueIdentifier
 
   userTenantId        String
   userTenant          UserTenant        @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  role                String            @db.VarChar(150) 
+  role                String            //@db.VarChar(150) 
   unAssignmentDate    DateTime?
 }
 
 // Represents a type of assignment for requests.
 model AssignmentType extends  TenantScoped, Auditable, CatalogBase {
-  systemName        String                   @db.VarChar(100)
+  systemName        String                   //@db.VarChar(100)
   
   assignments RequestAssignment[]
   @@unique([name, tenantId])
@@ -139,7 +139,7 @@ model AssignmentType extends  TenantScoped, Auditable, CatalogBase {
 
 /// Represents a catalog of possible priority levels for requests or assignments.
 model RequestPriorityType extends TenantScoped, Auditable, CatalogBase {
-  primaryColor        String                   @db.VarChar(10)
+  primaryColor        String                   //@db.VarChar(10)
   level               Int                       @gt(0) @lt(10) 
 
   assignments RequestAssignment[]
@@ -148,17 +148,17 @@ model RequestPriorityType extends TenantScoped, Auditable, CatalogBase {
 
 // Represents core ITIL request lifecycle states
 model RequestStatusType extends TenantScoped, Auditable {
-  id                  String                    @id @default(uuid()) @db.UniqueIdentifier
+  id                  String                    @id @default(uuid()) //@db.UniqueIdentifier
   // Human-readable state name
-  name                String                    @db.VarChar(50) @unique
+  name                String                     @unique //@db.VarChar(50)
   // Technical description for support teams
-  description         String?                   @db.VarChar(255) 
+  description         String?                   //@db.VarChar(255) 
   // Controls state availability in dropdowns
   isActive            Boolean                   @default(true)
   // Hierarchical position in ITIL workflow (1=initial, 5=final)
   level               Int                       @gt(0) @lt(5)
   // ITIL-compliant state identifier
-  itilCode            String?                   @db.VarChar(20) @unique // draft, cab_review, etc.
+  itilCode            String?                   @unique  //@db.VarChar(20)// draft, cab_review, etc.
   // Marks terminal states where no transitions are allowed
   isFinal             Boolean                   @default(false)
   // Requires managerial approval when transitioning to this state
@@ -180,7 +180,7 @@ model RequestStatusType extends TenantScoped, Auditable {
 
 // Manages state transitions with SLA rules
 model RequestStatusTransition extends TenantScoped, Auditable {
-  id           String            @id @default(uuid()) @db.UniqueIdentifier
+  id           String            @id @default(uuid()) //@db.UniqueIdentifier
   // Marks default transition path
   isDefault    Boolean           @default(false)
   // Determines display order in UI
@@ -190,11 +190,11 @@ model RequestStatusTransition extends TenantScoped, Auditable {
   // Notification threshold before SLA breach (minutes)
   notifyAfter  Int?
 
-  description  String?           @db.VarChar(255)           
+  description  String?           //@db.VarChar(255)           
 
   // Relationship fields
-  fromStatusId String            @db.UniqueIdentifier
-  toStatusId   String            @db.UniqueIdentifier
+  fromStatusId String            //@db.UniqueIdentifier
+  toStatusId   String            //@db.UniqueIdentifier
   fromStatus RequestStatusType @relation("FromStatus", fields: [fromStatusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   toStatus RequestStatusType @relation("ToStatus", fields: [toStatusId], references: [id])
 
@@ -207,10 +207,10 @@ model RequestStatusTransition extends TenantScoped, Auditable {
 
 /// Tracks compliance with requirements for a specific request.
 model RequirementComplianceTracking extends TenantScoped, Auditable {
-  id            String      @id @default(uuid()) @db.UniqueIdentifier
-  requestId     String      @db.UniqueIdentifier
+  id            String      @id @default(uuid()) //@db.UniqueIdentifier
+  requestId     String      //@db.UniqueIdentifier
   request       Request     @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  requirementId String      @db.UniqueIdentifier
+  requirementId String      //@db.UniqueIdentifier
   requirement   Requirement @relation(fields: [requirementId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   isFulfilled   Boolean     @default(false)
   isArchived    Boolean     @default(false) // Defines if the tracking is archived because the requirement is no longer relevant
@@ -225,12 +225,12 @@ model RequirementComplianceTracking extends TenantScoped, Auditable {
 
 /// Tracks customer satisfaction surveys for closed requests.
 model CustomerSatisfactionSurvey extends TenantScoped, Auditable {
-  id          String   @id @default(uuid()) @db.UniqueIdentifier
+  id          String   @id @default(uuid()) //@db.UniqueIdentifier
   rating      Int
-  feedback    String?  @db.VarChar(1000)
+  feedback    String?  //@db.VarChar(1000)
   submittedAt DateTime
 
-  requestId   String   @db.UniqueIdentifier @unique
+  requestId   String   @unique //@db.UniqueIdentifier 
   request     Request  @relation("RequestSurvey", fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([requestId], name: "idx_survey_request_id")
@@ -238,14 +238,14 @@ model CustomerSatisfactionSurvey extends TenantScoped, Auditable {
 
 /// Logs changes to requests for auditing purposes.
 model RequestChangeLog extends TenantScoped, Auditable {
-  id        String   @id @default(uuid()) @db.UniqueIdentifier
-  requestId String   @db.UniqueIdentifier
+  id        String   @id @default(uuid()) //@db.UniqueIdentifier
+  requestId String   //@db.UniqueIdentifier
   request   Request  @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   changedBy String   
-  fieldName String   @db.VarChar(100)
-  oldValue  String?  @db.VarChar(500)
-  newValue  String?  @db.VarChar(500)
+  fieldName String   //@db.VarChar(100)
+  oldValue  String?  //@db.VarChar(500)
+  newValue  String?  //@db.VarChar(500)
   changedAt DateTime
 
   @@index([requestId], name: "idx_change_log_request_id")

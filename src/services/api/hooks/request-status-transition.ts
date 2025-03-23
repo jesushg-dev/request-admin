@@ -5,9 +5,9 @@
 /* eslint-disable */
 // @ts-nocheck
 
+import type { Prisma, RequestStatusTransition } from '@prisma/client';
 import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
 import type { PolicyCrudKind } from '@zenstackhq/runtime';
-import type { Prisma, RequestStatusTransition } from '@zenstackhq/runtime/models';
 import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
 import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
 
