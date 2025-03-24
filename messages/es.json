@@ -1279,6 +1279,71 @@
           "manage": "Administrar"
         }
       },
+      "view": {
+        "breadcrumbs": {
+          "root": "Raíz"
+        },
+        "deleteDocument": {
+          "confirmMessage": "¿Estás seguro de que quieres eliminar este documento? Esta acción no se puede deshacer.",
+          "title": "Eliminar Documento",
+          "confirmText": "Eliminar",
+          "cancelText": "Cancelar",
+          "loading": "Eliminando documento...",
+          "success": "Documento eliminado con éxito",
+          "error": "Error al eliminar el documento: {error}"
+        },
+        "deleteFolder": {
+          "confirmMessage": "¿Estás seguro de que quieres eliminar esta carpeta? Esta acción no se puede deshacer.",
+          "title": "Eliminar Carpeta",
+          "confirmText": "Eliminar",
+          "cancelText": "Cancelar",
+          "loading": "Eliminando carpeta...",
+          "success": "Carpeta eliminada con éxito",
+          "error": "Error al eliminar la carpeta: {error}"
+        },
+        "clipboard": {
+          "documentCut": "Documento \"{name}\" listo para mover",
+          "folderCut": "Carpeta \"{name}\" lista para mover",
+          "documentCopied": "Documento \"{name}\" copiado al portapapeles"
+        },
+        "emptyState": {
+          "title": "Esta carpeta está vacía",
+          "description": "Agrega carpetas y documentos para organizar mejor tus archivos"
+        },
+        "sections": {
+          "folders": "Carpetas",
+          "documents": "Documentos",
+          "documents_count": "{count} documento | {count} documentos"
+        },
+        "actions": {
+          "newFolder": "Nueva Carpeta",
+          "uploadDocuments": "Subir documentos",
+          "rename": "Renombrar",
+          "cut": "Cortar",
+          "copy": "Copiar",
+          "delete": "Eliminar",
+          "deleting": "Eliminando...",
+          "view": "Ver",
+          "download": "Descargar",
+          "createLink": "Crear Enlace",
+          "moreOptions": "Más opciones",
+          "paste": "Pegar",
+          "dataroomActions": "Acciones del Dataroom",
+          "editDataroom": "Editar Dataroom",
+          "manageViewers": "Gestionar Espectadores",
+          "customizeBranding": "Personalizar Branding",
+          "createShareableLink": "Crear Enlace Compartible",
+          "deleteDataroom": "Eliminar Dataroom"
+        },
+        "metadata": {
+          "documents": "Documentos",
+          "viewers": "Espectadores",
+          "owner": "Propietario",
+          "created": "Creado",
+          "updated": "Actualizado",
+          "notAvailable": "N/A"
+        }
+      },
       "create": {
         "name": "Nombre",
         "namePlaceholder": "Ingrese el nombre",

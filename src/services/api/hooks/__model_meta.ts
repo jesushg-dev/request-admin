@@ -3416,12 +3416,10 @@ const metadata = {
         type: {
           name: 'type',
           type: 'String',
-          isOptional: true,
         },
         contentType: {
           name: 'contentType',
           type: 'String',
-          isOptional: true,
         },
         storageType: {
           name: 'storageType',
@@ -3734,12 +3732,10 @@ const metadata = {
         type: {
           name: 'type',
           type: 'String',
-          isOptional: true,
         },
         contentType: {
           name: 'contentType',
           type: 'String',
-          isOptional: true,
         },
         fileSize: {
           name: 'fileSize',

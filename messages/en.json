@@ -1284,6 +1284,72 @@
           "manage": "Manage"
         }
       },
+      "view": {
+        "breadcrumbs": {
+          "root": "Root"
+        },
+        "deleteDocument": {
+          "confirmMessage": "Are you sure you want to delete this document? This action cannot be undone.",
+          "title": "Delete Document",
+          "confirmText": "Delete",
+          "cancelText": "Cancel",
+          "loading": "Deleting document...",
+          "success": "Document deleted successfully",
+          "error": "Error deleting document: {error}"
+        },
+        "deleteFolder": {
+          "confirmMessage": "Are you sure you want to delete this folder? This action cannot be undone.",
+          "title": "Delete Folder",
+          "confirmText": "Delete",
+          "cancelText": "Cancel",
+          "loading": "Deleting folder...",
+          "success": "Folder deleted successfully",
+          "error": "Error deleting folder: {error}"
+        },
+        "clipboard": {
+          "documentCut": "Document \"{name}\" ready to move",
+          "folderCut": "Folder \"{name}\" ready to move",
+          "documentCopied": "Document \"{name}\" copied to clipboard"
+        },
+        "emptyState": {
+          "title": "This folder is empty",
+          "description": "Add folders and documents to organize your files better"
+        },
+        "sections": {
+          "folders": "Folders",
+          "documents": "Documents",
+          "documents_count": "{count} document | {count} documents"
+        },
+        "actions": {
+          "newFolder": "New Folder",
+          "uploadDocuments": "Upload documents",
+          "rename": "Rename",
+          "cut": "Cut",
+          "copy": "Copy",
+          "delete": "Delete",
+          "deleting": "Deleting...",
+          "view": "View",
+          "download": "Download",
+          "createLink": "Create Link",
+          "moreOptions": "More options",
+          "paste": "Paste",
+          "actions": "Actions",
+          "dataroomActions": "Dataroom Actions",
+          "editDataroom": "Edit Dataroom",
+          "manageViewers": "Manage Viewers",
+          "customizeBranding": "Customize Branding",
+          "createShareableLink": "Create Shareable Link",
+          "deleteDataroom": "Delete Dataroom"
+        },
+        "metadata": {
+          "documents": "Documents",
+          "viewers": "Viewers",
+          "owner": "Owner",
+          "created": "Created",
+          "updated": "Updated",
+          "notAvailable": "N/A"
+        }
+      },
       "create": {
         "title": "Create Data Room",
         "subtitle": "Manage your documents and links in one place.",

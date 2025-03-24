@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MetadataItem } from '@/components/metadata-item';
+import { MetadataItem } from '@/components/shared/metadata-item';
 
 import { RequestFormStepperType } from '.';
 import RequirementProgress from './requirement-progress';

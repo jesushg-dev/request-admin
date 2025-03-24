@@ -12,8 +12,8 @@ import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { SelectCombobox } from '@/components/custom-ui/linear-select';
 import { OptionType } from '@/components/custom-ui/select';
-import { ExpandableMetadata, MetadataItem, MetadataItemProps } from '@/components/metadata-item';
 import { ProgressCircle } from '@/components/progress-circle';
+import { ExpandableMetadata, MetadataItem, MetadataItemProps } from '@/components/shared/metadata-item';
 
 import { RequestFormStepperType } from '../request-form-stepper';
 

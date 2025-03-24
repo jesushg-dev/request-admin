@@ -21,8 +21,8 @@ model Document extends TenantScoped, Auditable {
   originalFile         String? // This should be a reference to the original file like pptx, xlsx, etc. (S3, Google Cloud Storage, etc.)
 
   // File type and content details
-  type         String?  // File type (e.g., pdf, docx)
-  contentType  String?  // MIME type of the document
+  type         String  // File type (e.g., pdf, docx)
+  contentType  String  // MIME type of the document
 
   // Storage details
   // Allowed values: "S3_PATH", "VERCEL_BLOB"
@@ -83,8 +83,8 @@ model DocumentVersion extends TenantScoped, Auditable {
   // File references for this version
   file         String   // Reference to stored file location
   originalFile String?  // Optional original file reference
-  type         String?  // File type (e.g., pdf, docx)
-  contentType  String?  // MIME type (e.g., application/pdf)
+  type         String  // File type (e.g., pdf, docx)
+  contentType  String  // MIME type (e.g., application/pdf)
   fileSize     Int?     // File size in bytes
   
   // Allowed values: "S3_PATH", "VERCEL_BLOB"

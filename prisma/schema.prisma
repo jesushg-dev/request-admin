@@ -712,8 +712,8 @@ model Document {
   description                     String?
   file                            String
   originalFile                    String?
-  type                            String?
-  contentType                     String?
+  type                            String
+  contentType                     String
   storageType                     String                         @default("UPLOADTHING")
   numPages                        Int?
   ownerId                         String?
@@ -769,8 +769,8 @@ model DocumentVersion {
   document      Document       @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   file          String
   originalFile  String?
-  type          String?
-  contentType   String?
+  type          String
+  contentType   String
   fileSize      Int?
   storageType   String         @default("VERCEL_BLOB")
   numPages      Int?

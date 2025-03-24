@@ -5,9 +5,12 @@ import { useState, useTransition } from 'react';
 import { Link } from '@/i18n/routing';
 import { useDeleteDataroomFolder, useDeleteDocument, useFindManyDataroomFolder, useFindManyDocument } from '@/services/api/hooks';
 import { format } from 'date-fns';
-import { ChevronRight, Clipboard, Copy, Download, Eye, FileText, FolderClosed, FolderPlus, Home, LinkIcon, MoreHorizontal, Pencil, Plus, Scissors, Trash2, X } from 'lucide-react';
+import { ChevronRight, Clipboard, Copy, Download, Eye, FileText, FolderClosed, FolderPlus, Home, LinkIcon, MoreHorizontal, Pencil, Plus, Scissors, Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
+import { DataroomFolderDefaultArgs, DataroomFolderWithRelations, DocumentDefaultArgs, DocumentWithRelations } from '@/types/prisma/document';
+import { getFileIcon } from '@/lib/document-utils';
 import useMessage from '@/lib/message';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -16,9 +19,9 @@ import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSeparator,
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useClipboard } from '@/components/hoc/clipboard-context';
 import EmptyState from '@/components/shared/empty-state';
+import { SearchDialog } from '@/components/shared/search-dialog';
 
-type Document = { id: string; name: string; type: string; folderId: string | null; createdAt: Date; size: number; status: string };
-type Folder = { id: string; name: string; parentId: string | null; documentCount: number; path: string };
+type BreadCrumbType = { id: string | null; name: string };
 
 interface DataroomDocumentsProps {
   dataroomId: string;
@@ -27,31 +30,35 @@ interface DataroomDocumentsProps {
 }
 
 export function DataroomDocuments({ dataroomId, tenantId, callbackUrl }: DataroomDocumentsProps) {
+  const t = useTranslations('admin.dataroom.view');
   const message = useMessage();
   const { addToClipboard, handlePaste } = useClipboard();
   const { mutateAsync: deleteDocument } = useDeleteDocument();
   const { mutateAsync: deleteFolder } = useDeleteDataroomFolder();
 
-  const { data: documents = [], isLoading: isDocumentsLoading } = useFindManyDocument({ where: { tenantId, dataroomId } });
-  const { data: folders = [], isLoading: isFoldersLoading } = useFindManyDataroomFolder({ where: { tenantId, dataroomId } });
+  const { data: documents = [], isLoading: isDocumentsLoading } = useFindManyDocument({
+    ...DocumentDefaultArgs,
+    where: { tenantId, dataroomId },
+  });
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
+  const { data: folders = [], isLoading: isFoldersLoading } = useFindManyDataroomFolder({
+    ...DataroomFolderDefaultArgs,
+    where: { tenantId, dataroomId },
+  });
+
   const [pending, startTransition] = useTransition();
+  const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
 
   // Helper functions
   const getCurrentFolders = () => folders.filter((folder) => folder.parentId === currentFolderId);
-  const getCurrentDocuments = () => {
-    const docs = documents.filter((doc) => doc.folderId === currentFolderId);
-    return searchQuery ? docs.filter((doc) => doc.name.toLowerCase().includes(searchQuery.toLowerCase())) : docs;
-  };
+  const getCurrentDocuments = () => documents.filter((doc) => doc.folderId === currentFolderId);
 
   const getBreadcrumbs = () => {
     if (currentFolderId === null) {
-      return [{ id: null, name: 'Root' }];
+      return [{ id: null, name: t('breadcrumbs.root') }];
     }
 
-    const breadcrumbs = [{ id: null, name: 'Root' }];
+    const breadcrumbs: Array<BreadCrumbType> = [{ id: null, name: t('breadcrumbs.root') }];
     let currentFolder = folders.find((folder) => folder.id === currentFolderId);
 
     while (currentFolder) {
@@ -63,79 +70,60 @@ export function DataroomDocuments({ dataroomId, tenantId, callbackUrl }: Dataroo
   };
 
   // Document actions
-  const handleDeleteDocument = (id: string) => {
-    const isConfirmed = message.confirm('Are you sure you want to delete this document? This action cannot be undone.', {
-      title: 'Delete Document',
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
+  const handleDeleteDocument = async (id: string) => {
+    const isConfirmed = await message.confirm(t('deleteDocument.confirmMessage'), {
+      title: t('deleteDocument.title'),
+      confirmText: t('deleteDocument.confirmText'),
+      cancelText: t('deleteDocument.cancelText'),
     });
 
     if (!isConfirmed) return;
 
     startTransition(() => {
       toast.promise(deleteDocument({ where: { id } }), {
-        loading: 'Deleting document...',
-        success: 'Document deleted successfully',
-        error: (err) => `Error deleting document: ${err.message}`,
+        loading: t('deleteDocument.loading'),
+        success: t('deleteDocument.success'),
+        error: (err) => t('deleteDocument.error', { error: err.message }),
       });
     });
   };
 
   // Folder actions
-  const handleDeleteFolder = (id: string) => {
-    const isConfirmed = message.confirm('Are you sure you want to delete this folder? This action cannot be undone.', {
-      title: 'Delete Folder',
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
+  const handleDeleteFolder = async (id: string) => {
+    const isConfirmed = await message.confirm(t('deleteFolder.confirmMessage'), {
+      title: t('deleteFolder.title'),
+      confirmText: t('deleteFolder.confirmText'),
+      cancelText: t('deleteFolder.cancelText'),
     });
     if (!isConfirmed) return;
 
     startTransition(() => {
       toast.promise(deleteFolder({ where: { id } }), {
-        loading: 'Deleting folder...',
-        success: 'Folder deleted successfully',
-        error: (err) => `Error deleting folder: ${err.message}`,
+        loading: t('deleteFolder.loading'),
+        success: t('deleteFolder.success'),
+        error: (err) => t('deleteFolder.error', { error: err.message }),
       });
     });
   };
 
   // Clipboard actions
-  const handleCutDocument = (doc: Document) => {
+  const handleCutDocument = (doc: DocumentWithRelations) => {
     addToClipboard({ id: doc.id, name: doc.name, type: doc.type, isFolder: false, action: 'cut' });
-    toast.success(`Document "${doc.name}" ready to move`);
+    toast.success(t('clipboard.documentCut', { name: doc.name }));
   };
 
-  const handleCutFolder = (folder: Folder) => {
+  const handleCutFolder = (folder: DataroomFolderWithRelations) => {
     addToClipboard({ id: folder.id, name: folder.name, type: 'folder', isFolder: true, action: 'cut' });
-    toast.success(`Folder "${folder.name}" ready to move`);
+    toast.success(t('clipboard.folderCut', { name: folder.name }));
   };
 
-  const handleCopyDocument = (doc: Document) => {
+  const handleCopyDocument = (doc: DocumentWithRelations) => {
     addToClipboard({ id: doc.id, name: doc.name, type: doc.type, isFolder: false, action: 'copy' });
-    toast.success(`Document "${doc.name}" copied to clipboard`);
+    toast.success(t('clipboard.documentCopied', { name: doc.name }));
   };
 
   const navigateToFolder = (folderId: string | null) => {
     setCurrentFolderId(folderId);
-  };
-
-  // UI helpers
-  const getFileIcon = (type: string) => {
-    const iconMap: { [key: string]: React.JSX.Element } = {
-      'application/pdf': <FileText className="h-6 w-6 text-red-500" />,
-      'text/plain': <FileText className="h-6 w-6 text-gray-500" />,
-      default: <FileText className="h-6 w-6 text-blue-500" />,
-    };
-    return iconMap[type] || iconMap.default;
-  };
-
-  const getStatusBadge = (status: string) => {
-    const statusMap: { [key: string]: string } = {
-      pending: 'bg-yellow-100 text-yellow-800',
-      uploaded: 'bg-green-100 text-green-800',
-      error: 'bg-red-100 text-red-800',
-    };
-    return <Badge className={`text-xs ${statusMap[status]}`}>{status}</Badge>;
   };
 
   const breadcrumbs = getBreadcrumbs();
@@ -157,25 +145,26 @@ export function DataroomDocuments({ dataroomId, tenantId, callbackUrl }: Dataroo
 
   return (
     <ContextMenu>
-      <ContextMenuTrigger className="w-full">
+      <ContextMenuTrigger className="w-full flex flex-col pb-4">
         <Card>
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
             <CardTitle className="flex items-center text-sm mt-1">
-              <Button variant="link" className="p-0 h-auto font-medium" onClick={() => navigateToFolder(null)}>
+              <Button variant="link" className="p-0 h-auto font-medium cursor-pointer" onClick={() => navigateToFolder(null)}>
                 <Home className="h-3.5 w-3.5 mr-1" />
-                Root
+                {t('breadcrumbs.root')}
               </Button>
               {breadcrumbs.slice(1).map((breadcrumb, index) => (
                 <div key={index} className="flex items-center">
                   <ChevronRight className="h-3.5 w-3.5 mx-1 text-muted-foreground" />
-                  <Button variant="link" className="p-0 h-auto font-medium" onClick={() => navigateToFolder(breadcrumb.id)}>
+                  <Button variant="link" className="p-0 h-auto font-medium cursor-pointer" onClick={() => navigateToFolder(breadcrumb.id)}>
                     {breadcrumb.name}
                   </Button>
                 </div>
               ))}
             </CardTitle>
             <div className="flex gap-2">
-              <Button variant="ghost" size="icon" asChild title="New Folder">
+              <SearchDialog />
+              <Button variant="ghost" size="icon" asChild title={t('actions.newFolder')}>
                 <Link
                   href={{
                     pathname: '/admin/[tenantId]/links-and-documents/folders/new',
@@ -183,10 +172,10 @@ export function DataroomDocuments({ dataroomId, tenantId, callbackUrl }: Dataroo
                     query: { currentFolderId, dataroomId },
                   }}>
                   <FolderPlus className="h-4 w-4" />
-                  <span className="sr-only">New Folder</span>
+                  <span className="sr-only">{t('actions.newFolder')}</span>
                 </Link>
               </Button>
-              <Button variant="ghost" size="icon" asChild title="Upload documents">
+              <Button variant="ghost" size="icon" asChild title={t('actions.uploadDocuments')}>
                 <Link
                   href={{
                     params: { tenantId },
@@ -194,7 +183,7 @@ export function DataroomDocuments({ dataroomId, tenantId, callbackUrl }: Dataroo
                     query: { folderId: currentFolderId, dataroomId, callbackUrl },
                   }}>
                   <Plus className="h-4 w-4" />
-                  <span className="sr-only">Upload documents</span>
+                  <span className="sr-only">{t('actions.uploadDocuments')}</span>
                 </Link>
               </Button>
             </div>
@@ -204,12 +193,12 @@ export function DataroomDocuments({ dataroomId, tenantId, callbackUrl }: Dataroo
             {getCurrentFolders().length === 0 && getCurrentDocuments().length === 0 ? (
               <EmptyState
                 icons={[FileText, LinkIcon, FolderClosed]}
-                title="This folder is empty"
-                description="Add folders and documents to organize your files better"
+                title={t('emptyState.title')}
+                description={t('emptyState.description')}
                 actions={[
                   {
                     icon: FolderPlus,
-                    label: 'New Folder',
+                    label: t('actions.newFolder'),
                     href: {
                       pathname: '/admin/[tenantId]/links-and-documents/folders/new',
                       params: { tenantId },
@@ -218,7 +207,7 @@ export function DataroomDocuments({ dataroomId, tenantId, callbackUrl }: Dataroo
                   },
                   {
                     icon: Plus,
-                    label: 'Upload documents',
+                    label: t('actions.uploadDocuments'),
                     href: {
                       params: { tenantId },
                       pathname: '/admin/[tenantId]/links-and-documents/documents/upload',
@@ -231,7 +220,7 @@ export function DataroomDocuments({ dataroomId, tenantId, callbackUrl }: Dataroo
               <div className="space-y-4">
                 {getCurrentFolders().length > 0 && (
                   <div>
-                    <h3 className="text-sm font-medium mb-2">Folders</h3>
+                    <h3 className="text-sm font-medium mb-2">{t('sections.folders')}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                       {getCurrentFolders().map((folder) => (
                         <ContextMenu key={folder.id}>
@@ -242,7 +231,7 @@ export function DataroomDocuments({ dataroomId, tenantId, callbackUrl }: Dataroo
                                 <div>
                                   <span className="font-medium">{folder.name}</span>
                                   <p className="text-xs text-muted-foreground">
-                                    {folder.documentCount} document{folder.documentCount !== 1 ? 's' : ''}
+                                    {folder._count.documents} {t('sections.documents', { count: folder._count.documents })}
                                   </p>
                                 </div>
                               </div>
@@ -250,7 +239,7 @@ export function DataroomDocuments({ dataroomId, tenantId, callbackUrl }: Dataroo
                                 <DropdownMenuTrigger asChild>
                                   <Button variant="ghost" size="icon">
                                     <MoreHorizontal className="h-4 w-4" />
-                                    <span className="sr-only">More options</span>
+                                    <span className="sr-only">{t('actions.moreOptions')}</span>
                                   </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
@@ -262,16 +251,16 @@ export function DataroomDocuments({ dataroomId, tenantId, callbackUrl }: Dataroo
                                         query: { dataroomId },
                                       }}>
                                       <Pencil className="mr-2 h-4 w-4" />
-                                      Rename
+                                      {t('actions.rename')}
                                     </Link>
                                   </DropdownMenuItem>
                                   <DropdownMenuItem onClick={() => handleCutFolder(folder)}>
                                     <Scissors className="mr-2 h-4 w-4" />
-                                    Cut
+                                    {t('actions.cut')}
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem onClick={() => handleDeleteFolder(folder.id)} className="text-destructive focus:text-destructive">
+                                  <DropdownMenuItem disabled={pending} onClick={() => handleDeleteFolder(folder.id)} className="text-destructive focus:text-destructive">
                                     <Trash2 className="mr-2 h-4 w-4" />
-                                    Delete
+                                    {pending ? t('actions.deleting') : t('actions.delete')}
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
@@ -285,7 +274,7 @@ export function DataroomDocuments({ dataroomId, tenantId, callbackUrl }: Dataroo
 
                 {getCurrentDocuments().length > 0 && (
                   <div>
-                    <h3 className="text-sm font-medium mb-2">Documents</h3>
+                    <h3 className="text-sm font-medium mb-2">{t('sections.documents')}</h3>
                     <div className="divide-y divide-border">
                       {getCurrentDocuments().map((doc) => (
                         <ContextMenu key={doc.id}>
@@ -297,20 +286,29 @@ export function DataroomDocuments({ dataroomId, tenantId, callbackUrl }: Dataroo
                                   <p className="font-medium hover:underline cursor-pointer">{doc.name}</p>
                                   <div className="flex items-center gap-2 mt-1">
                                     <span className="text-xs text-muted-foreground">
-                                      {doc.size} MB • {format(doc.createdAt, 'MMM d, yyyy')}
+                                      {doc.versions?.[0].fileSize ? (doc.versions[0].fileSize / (1024 * 1024)).toFixed(2) : 'N/A'} MB • {format(doc.createdAt, 'MMM d, yyyy')}
                                     </span>
-                                    {getStatusBadge(doc.status)}
+                                    <Badge className="text-xs" variant="outline">
+                                      {doc.type}
+                                    </Badge>
                                   </div>
                                 </div>
                               </div>
                               <div className="flex items-center gap-2">
-                                <Button variant="ghost" size="icon">
-                                  <Eye className="h-4 w-4" />
-                                  <span className="sr-only">View</span>
+                                <Button variant="ghost" size="icon" asChild>
+                                  <Link
+                                    href={{
+                                      pathname: '/admin/[tenantId]/links-and-documents/documents/[slug]',
+                                      query: { documentId: doc.id, dataroomId, callbackUrl },
+                                      params: { tenantId, slug: doc.id },
+                                    }}>
+                                    <Eye className="h-4 w-4" />
+                                    <span className="sr-only">{t('actions.view')}</span>
+                                  </Link>
                                 </Button>
                                 <Button variant="ghost" size="icon">
                                   <Download className="h-4 w-4" />
-                                  <span className="sr-only">Download</span>
+                                  <span className="sr-only">{t('actions.download')}</span>
                                 </Button>
                                 <Button variant="ghost" size="icon" asChild>
                                   <Link
@@ -320,28 +318,28 @@ export function DataroomDocuments({ dataroomId, tenantId, callbackUrl }: Dataroo
                                       params: { tenantId },
                                     }}>
                                     <LinkIcon className="h-4 w-4" />
-                                    <span className="sr-only">Create Link</span>
+                                    <span className="sr-only">{t('actions.createLink')}</span>
                                   </Link>
                                 </Button>
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" size="icon">
                                       <MoreHorizontal className="h-4 w-4" />
-                                      <span className="sr-only">More options</span>
+                                      <span className="sr-only">{t('actions.moreOptions')}</span>
                                     </Button>
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent align="end">
                                     <DropdownMenuItem onClick={() => handleCutDocument(doc)}>
                                       <Scissors className="mr-2 h-4 w-4" />
-                                      Cut
+                                      {t('actions.cut')}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem onClick={() => handleCopyDocument(doc)}>
                                       <Copy className="mr-2 h-4 w-4" />
-                                      Copy
+                                      {t('actions.copy')}
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => handleDeleteDocument(doc.id)} className="text-destructive focus:text-destructive">
+                                    <DropdownMenuItem disabled={pending} onClick={() => handleDeleteDocument(doc.id)} className="text-destructive focus:text-destructive">
                                       <Trash2 className="mr-2 h-4 w-4" />
-                                      Remove
+                                      {pending ? t('actions.deleting') : t('actions.delete')}
                                     </DropdownMenuItem>
                                   </DropdownMenuContent>
                                 </DropdownMenu>
@@ -362,7 +360,7 @@ export function DataroomDocuments({ dataroomId, tenantId, callbackUrl }: Dataroo
       <ContextMenuContent>
         <ContextMenuItem onClick={() => handlePaste(currentFolderId)}>
           <Clipboard className="mr-2 h-4 w-4" />
-          Paste
+          {t('actions.paste')}
         </ContextMenuItem>
         <ContextMenuSeparator />
         <ContextMenuItem asChild>
@@ -373,7 +371,7 @@ export function DataroomDocuments({ dataroomId, tenantId, callbackUrl }: Dataroo
               query: { currentFolderId, dataroomId },
             }}>
             <FolderPlus className="mr-2 h-4 w-4" />
-            New Folder
+            {t('actions.newFolder')}
           </Link>
         </ContextMenuItem>
         <ContextMenuItem asChild>
@@ -384,7 +382,7 @@ export function DataroomDocuments({ dataroomId, tenantId, callbackUrl }: Dataroo
               query: { folderId: currentFolderId, dataroomId, callbackUrl },
             }}>
             <Plus className="mr-2 h-4 w-4" />
-            Upload documents
+            {t('actions.uploadDocuments')}
           </Link>
         </ContextMenuItem>
       </ContextMenuContent>

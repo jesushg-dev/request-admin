@@ -243,6 +243,14 @@ const dataRoomsPathnames = {
     en: '/admin/[tenantId]/links-and-documents/data-rooms/[slug]/edit',
     es: '/admin/[tenantId]/enlaces-y-documentos/salas-de-datos/[slug]/editar',
   },
+  '/admin/[tenantId]/links-and-documents/data-rooms/[slug]/viewers': {
+    en: '/admin/[tenantId]/links-and-documents/data-rooms/[slug]/viewers',
+    es: '/admin/[tenantId]/enlaces-y-documentos/salas-de-datos/[slug]/visualizadores',
+  },
+  '/admin/[tenantId]/links-and-documents/data-rooms/[slug]/branding': {
+    en: '/admin/[tenantId]/links-and-documents/data-rooms/[slug]/branding',
+    es: '/admin/[tenantId]/enlaces-y-documentos/salas-de-datos/[slug]/marca',
+  },
   // documents
   '/admin/[tenantId]/links-and-documents/documents': {
     en: '/admin/[tenantId]/links-and-documents/documents',

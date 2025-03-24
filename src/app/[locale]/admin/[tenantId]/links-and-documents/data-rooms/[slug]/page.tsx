@@ -1,13 +1,15 @@
 import { getPathname, Link, redirect } from '@/i18n/routing';
 import { db } from '@/server/db-client';
 import { format } from 'date-fns';
-import { ArrowLeft, Calendar, Clock, ExternalLink, FileText, MoreHorizontal, Palette, Pencil, Trash2, User, Users } from 'lucide-react';
+import { Calendar, Clock, FileText, MoreHorizontal, Palette, Pencil, Trash2, User, Users } from 'lucide-react';
 import { Locale } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { DataroomDocuments } from '@/components/common/data-rooms/dataroom-documents';
+import { MetadataItem } from '@/components/shared/metadata-item';
 
 interface DataroomDetailPageProps {
   params: Promise<{ locale: Locale; tenantId: string; slug: string }>;
@@ -15,10 +17,13 @@ interface DataroomDetailPageProps {
 
 export default async function DataroomDetailPage({ params }: DataroomDetailPageProps) {
   const { locale, tenantId, slug } = await params;
+  const t = await getTranslations('admin.dataroom.view');
+
   const callbackUrl = getPathname({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/data-rooms/[slug]', params: { tenantId, slug } } });
 
   const dataroom = await db.dataroom.findFirst({
     where: { id: slug, tenantId },
+    select: { id: true, name: true, description: true, createdBy: true, createdAt: true, updatedAt: true, _count: { select: { documents: true, viewers: true } } },
   });
 
   if (!dataroom) {
@@ -30,42 +35,56 @@ export default async function DataroomDetailPage({ params }: DataroomDetailPageP
       <Card>
         <CardHeader>
           <div className="flex gap-2 w-full items-center justify-between">
-            <div className="flex gap-2">
-              <Link href={{ pathname: '/admin/[tenantId]/links-and-documents/data-rooms', params: { tenantId } }} className="text-sm text-muted-foreground hover:text-foreground p-1 flex items-center">
-                <ArrowLeft className="h-3.5 w-3.5 mr-1" />
-                <span className="sr-only">Back</span>
-              </Link>
-              <CardTitle className="text-2xl pb-0">{dataroom.name}</CardTitle>
-            </div>
+            <CardTitle className="text-2xl pb-0">{dataroom.name}</CardTitle>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <MoreHorizontal className="h-5 w-5" />
-                  <span className="sr-only">Actions</span>
+                  <span className="sr-only">{t('actions.actions')}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Dataroom Actions</DropdownMenuLabel>
+                <DropdownMenuLabel>{t('actions.dataroomActions')}</DropdownMenuLabel>
                 <DropdownMenuItem>
-                  <Pencil className="mr-2 h-4 w-4" />
-                  Edit Dataroom
+                  <Link
+                    className="flex items-center flex-1"
+                    href={{
+                      pathname: '/admin/[tenantId]/links-and-documents/data-rooms/[slug]/edit',
+                      query: { callbackUrl },
+                      params: { tenantId, slug },
+                    }}>
+                    <Pencil className="mr-2 h-4 w-4" />
+                    {t('actions.editDataroom')}
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Users className="mr-2 h-4 w-4" />
-                  Manage Viewers
+                  <Link
+                    className="flex items-center flex-1"
+                    href={{
+                      pathname: '/admin/[tenantId]/links-and-documents/data-rooms/[slug]/viewers',
+                      query: { callbackUrl },
+                      params: { tenantId, slug },
+                    }}>
+                    <Users className="mr-2 h-4 w-4" />
+                    {t('actions.manageViewers')}
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Palette className="mr-2 h-4 w-4" />
-                  Customize Branding
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <ExternalLink className="mr-2 h-4 w-4" />
-                  Create Shareable Link
+                  <Link
+                    className="flex items-center flex-1"
+                    href={{
+                      pathname: '/admin/[tenantId]/links-and-documents/data-rooms/[slug]/branding',
+                      query: { callbackUrl },
+                      params: { tenantId, slug },
+                    }}>
+                    <Palette className="mr-2 h-4 w-4" />
+                    {t('actions.customizeBranding')}
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="text-destructive focus:text-destructive">
                   <Trash2 className="mr-2 h-4 w-4" />
-                  Delete Dataroom
+                  {t('actions.deleteDataroom')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -73,42 +92,12 @@ export default async function DataroomDetailPage({ params }: DataroomDetailPageP
           <CardDescription>{dataroom.description}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            <div className="flex flex-col space-y-1">
-              <span className="text-sm text-muted-foreground flex items-center">
-                <FileText className="h-4 w-4 mr-1" />
-                Documents
-              </span>
-              <span className="text-2xl font-bold">{dataroom.documentCount}</span>
-            </div>
-            <div className="flex flex-col space-y-1">
-              <span className="text-sm text-muted-foreground flex items-center">
-                <Users className="h-4 w-4 mr-1" />
-                Viewers
-              </span>
-              <span className="text-2xl font-bold">{dataroom.viewerCount}</span>
-            </div>
-            <div className="flex flex-col space-y-1">
-              <span className="text-sm text-muted-foreground flex items-center">
-                <User className="h-4 w-4 mr-1" />
-                Owner
-              </span>
-              <span className="text-sm font-medium">{dataroom.createdBy.name}</span>
-            </div>
-            <div className="flex flex-col space-y-1">
-              <span className="text-sm text-muted-foreground flex items-center">
-                <Calendar className="h-4 w-4 mr-1" />
-                Created
-              </span>
-              <span className="text-sm font-medium">{format(dataroom.createdAt, 'MMM d, yyyy')}</span>
-            </div>
-            <div className="flex flex-col space-y-1">
-              <span className="text-sm text-muted-foreground flex items-center">
-                <Clock className="h-4 w-4 mr-1" />
-                Updated
-              </span>
-              <span className="text-sm font-medium">{format(dataroom.updatedAt, 'MMM d, yyyy')}</span>
-            </div>
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4">
+            <MetadataItem icon={<FileText className="h-4 w-4" />} label={t('metadata.documents')} value={dataroom._count.documents} />
+            <MetadataItem icon={<Users className="h-4 w-4" />} label={t('metadata.viewers')} value={dataroom._count.viewers} />
+            <MetadataItem icon={<User className="h-4 w-4" />} label={t('metadata.owner')} value={dataroom.createdBy} />
+            <MetadataItem icon={<Calendar className="h-4 w-4" />} label={t('metadata.created')} value={format(dataroom.createdAt, 'MMM d, yyyy')} />
+            <MetadataItem icon={<Clock className="h-4 w-4" />} label={t('metadata.updated')} value={dataroom.updatedAt ? format(dataroom.updatedAt, 'MMM d, yyyy') : t('metadata.notAvailable')} />
           </div>
         </CardContent>
       </Card>

@@ -22,7 +22,7 @@ import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
 const formSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1, 'Name is required').max(200, 'Name must be 200 characters or less').default(''),
-  description: z.string().max(500, 'Description must be 500 characters or less').default(''),
+  description: z.string().max(500, 'Description must be 500 characters or less').default('').optional(),
   content: z.string().min(1, 'Content is required').max(500, 'Content must be 500 characters or less').default(''),
   requireName: z.boolean().default(true),
 });
