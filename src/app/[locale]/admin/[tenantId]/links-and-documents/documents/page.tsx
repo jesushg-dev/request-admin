@@ -185,9 +185,9 @@ function getTableConfiguration({ t, tenantId }: TableConfigProps) {
             <Link
               href={{
                 pathname: '/admin/[tenantId]/links-and-documents/links/new',
+                query: { documentId: row.id },
                 params: { tenantId },
-              }}
-              className="flex gap-2">
+              }}>
               <Share2 className="h-4 w-4" />
               {t('actions.share')}
             </Link>
@@ -233,9 +233,9 @@ function getTableConfiguration({ t, tenantId }: TableConfigProps) {
               <Link
                 href={{
                   pathname: '/admin/[tenantId]/links-and-documents/links/new',
+                  query: { documentId: row.id },
                   params: { tenantId },
-                }}
-                className="flex gap-2">
+                }}>
                 <Share2 className="h-4 w-4" />
                 {t('actions.share')}
               </Link>

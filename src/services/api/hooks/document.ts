@@ -386,6 +386,7 @@ export function useCheckDocument<TError = DefaultError>(
       contentType?: string;
       storageType?: string;
       numPages?: number;
+      status?: string;
       ownerId?: string;
       assistantEnabled?: boolean;
       advancedExcelEnabled?: boolean;

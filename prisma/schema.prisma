@@ -716,6 +716,8 @@ model Document {
   contentType                     String
   storageType                     String                         @default("UPLOADTHING")
   numPages                        Int?
+  expirationDate                  DateTime?
+  status                          String                         @default("ACTIVE")
   ownerId                         String?
   owner                           UserTenant?                    @relation(fields: [ownerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   assistantEnabled                Boolean                        @default(false)

@@ -28,7 +28,9 @@ model Document extends TenantScoped, Auditable {
   // Allowed values: "S3_PATH", "VERCEL_BLOB"
   storageType  String   @default("UPLOADTHING")
   numPages     Int?     // Number of pages in the document
-
+  expirationDate DateTime? // Optional expiration date
+  status       String   @default("ACTIVE") // Document status (e.g., "ACTIVE", "INACTIVE", "ARCHIVED")
+  
   // Owner relationship
   ownerId      String? 
   owner        UserTenant? @relation(fields: [ownerId], references: [id], onUpdate: NoAction, onDelete: NoAction)

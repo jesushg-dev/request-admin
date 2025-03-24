@@ -387,6 +387,202 @@
         }
       }
     },
+    "agreement": {
+      "table": {
+        "empty": "No agreements found",
+        "name": "Name",
+        "description": "Description",
+        "content": "Content",
+        "createdAt": "Created At",
+        "updatedAt": "Updated At",
+        "links": "Links",
+        "responses": "Responses",
+        "requireName": "Require Name"
+      },
+      "form": {
+        "titleCreate": "Create Agreement",
+        "titleEdit": "Edit Agreement",
+        "subtitleCreate": "Create a new agreement. \nMake sure to include all necessary terms and conditions.",
+        "subtitleEdit": "Edit the agreement. \nMake sure to include all necessary terms and conditions.",
+        "name": "Nombre",
+        "namePlaceholder": "Ingrese nombre",
+        "content": "Content",
+        "contentPlaceholder": "Enter content",
+        "requireName": "Require Name",
+        "requireNameDescription": "Enable this option to make the name required.",
+        "savingChanges": "Saving changes...",
+        "saveSuccess": "Changes saved succesfully!",
+        "nameDescription": "The name of the agreement. This will be displayed to users.",
+        "contentDescription": "Detailed content of the agreement. Include all necessary terms and conditions.",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter a brief description",
+        "descriptionDescription": "Type a brief explanation about this agreement."
+      },
+      "cancel": "Cancelar",
+      "saveChanges": "Save Changes",
+      "create": "Create",
+      "description": "Manage and organize agreements efficiently.",
+      "entityLabel": "Agreement",
+      "status": {
+        "required": "Required",
+        "notRequired": "Not Required"
+      },
+      "saveError": "We couldn't save your changes: {error]",
+      "noContent": "No content"
+    },
+    "dataroom": {
+      "main": {
+        "table": {
+          "empty": "No data rooms found",
+          "name": "Name",
+          "slug": "Slug",
+          "documents": "Documents",
+          "viewers": "Viewers",
+          "links": "Links",
+          "views": "Views"
+        },
+        "description": "Manage and organize your data rooms.",
+        "entityLabel": "Data Room",
+        "actions": {
+          "manage": "Manage"
+        }
+      },
+      "view": {
+        "breadcrumbs": {
+          "root": "Root"
+        },
+        "deleteDocument": {
+          "confirmMessage": "Are you sure you want to delete this document? This action cannot be undone.",
+          "title": "Delete Document",
+          "confirmText": "Delete",
+          "cancelText": "Cancel",
+          "loading": "Deleting document...",
+          "success": "Document deleted successfully",
+          "error": "Error deleting document: {error}"
+        },
+        "deleteFolder": {
+          "confirmMessage": "Are you sure you want to delete this folder? This action cannot be undone.",
+          "title": "Delete Folder",
+          "confirmText": "Delete",
+          "cancelText": "Cancel",
+          "loading": "Deleting folder...",
+          "success": "Folder deleted successfully",
+          "error": "Error deleting folder: {error}"
+        },
+        "clipboard": {
+          "documentCut": "Document \"{name}\" ready to move",
+          "folderCut": "Folder \"{name}\" ready to move",
+          "documentCopied": "Document \"{name}\" copied to clipboard"
+        },
+        "emptyState": {
+          "title": "This folder is empty",
+          "description": "Add folders and documents to organize your files better"
+        },
+        "sections": {
+          "folders": "Folders",
+          "documents": "Documents",
+          "documents_count": "{count} document | {count} documents"
+        },
+        "actions": {
+          "newFolder": "New Folder",
+          "uploadDocuments": "Upload documents",
+          "rename": "Rename",
+          "cut": "Cut",
+          "copy": "Copy",
+          "delete": "Delete",
+          "deleting": "Deleting...",
+          "view": "View",
+          "download": "Download",
+          "createLink": "Create Link",
+          "moreOptions": "More options",
+          "paste": "Paste",
+          "actions": "Actions",
+          "dataroomActions": "Dataroom Actions",
+          "editDataroom": "Edit Dataroom",
+          "manageViewers": "Manage Viewers",
+          "customizeBranding": "Customize Branding",
+          "createShareableLink": "Create Shareable Link",
+          "deleteDataroom": "Delete Dataroom"
+        },
+        "metadata": {
+          "documents": "Documents",
+          "viewers": "Viewers",
+          "owner": "Owner",
+          "created": "Created",
+          "updated": "Updated",
+          "notAvailable": "N/A"
+        }
+      },
+      "create": {
+        "title": "Create Data Room",
+        "subtitle": "Manage your documents and links in one place.",
+        "name": "Name",
+        "namePlaceholder": "Enter the name",
+        "nameDescription": "The name of the data room.",
+        "slug": "Slug",
+        "slugPlaceholder": "Enter a slug",
+        "slugDescription": "A unique identifier for the data room.",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter a description",
+        "descriptionDescription": "Provide a brief description of the data room.",
+        "savingChanges": "Saving changes...",
+        "saveSuccess": "Data room saved successfully!",
+        "saveChanges": "Save changes",
+        "create": "Create",
+        "saveError": "An error occurred: {message}"
+      }
+    },
+    "document": {
+      "main": {
+        "entityLabel": "Document",
+        "description": "Manage your documents efficiently.",
+        "table": {
+          "empty": "No documents found.",
+          "name": "Name",
+          "type": "Type",
+          "pages": "Pages",
+          "views": "Views",
+          "links": "Links",
+          "versions": "Versions"
+        },
+        "actions": {
+          "view": "View",
+          "download": "Download",
+          "share": "Share"
+        }
+      },
+      "view": {},
+      "metaform": {
+        "title": "Document Metadata",
+        "subtitle": "Fill in the document metadata to organize your files better.",
+        "savingChanges": "Saving changes...",
+        "saveSuccess": "Document saved successfully!",
+        "saveError": "Error saving document: {message}",
+        "saveChanges": "Save changes",
+        "create": "Create",
+        "documentName": "Document Name",
+        "description": "Description",
+        "status": "Status",
+        "selectStatus": "Select status",
+        "statusOptions": {
+          "DRAFT": "Draft",
+          "PUBLISHED": "Published",
+          "ARCHIVED": "Archived"
+        },
+        "expirationDate": "Expiration Date (Optional)",
+        "pickDate": "Pick a date",
+        "aiAssistant": "AI Assistant",
+        "aiAssistantDescription": "Enable AI analysis of this document",
+        "advancedExcel": "Advanced Excel Features",
+        "advancedExcelDescription": "Enable advanced Excel processing",
+        "downloadOnly": "Download Only",
+        "downloadOnlyDescription": "Document can only be downloaded, not viewed",
+        "documentNamePlaceholder": "Enter the document name",
+        "documentNameDescription": "Provide a clear and concise name for the document.",
+        "descriptionPlaceholder": "Enter a brief description",
+        "descriptionDescription": "Add additional context or details about the document."
+      }
+    },
     "client": {
       "main": {
         "entityLabel": "Cliente",
@@ -674,26 +870,6 @@
         "error": {
           "usernameRequired": "Username is required.",
           "invalidEmail": "Please enter a valid email address."
-        }
-      }
-    },
-    "document": {
-      "main": {
-        "entityLabel": "Document",
-        "description": "Manage your documents efficiently.",
-        "table": {
-          "empty": "No documents found.",
-          "name": "Name",
-          "type": "Type",
-          "pages": "Pages",
-          "views": "Views",
-          "links": "Links",
-          "versions": "Versions"
-        },
-        "actions": {
-          "view": "View",
-          "download": "Download",
-          "share": "Share"
         }
       }
     },
@@ -1224,151 +1400,6 @@
         }
       }
     },
-    "agreement": {
-      "table": {
-        "empty": "No agreements found",
-        "name": "Name",
-        "description": "Description",
-        "content": "Content",
-        "createdAt": "Created At",
-        "updatedAt": "Updated At",
-        "links": "Links",
-        "responses": "Responses",
-        "requireName": "Require Name"
-      },
-      "form": {
-        "titleCreate": "Create Agreement",
-        "titleEdit": "Edit Agreement",
-        "subtitleCreate": "Create a new agreement. \nMake sure to include all necessary terms and conditions.",
-        "subtitleEdit": "Edit the agreement. \nMake sure to include all necessary terms and conditions.",
-        "name": "Nombre",
-        "namePlaceholder": "Ingrese nombre",
-        "content": "Content",
-        "contentPlaceholder": "Enter content",
-        "requireName": "Require Name",
-        "requireNameDescription": "Enable this option to make the name required.",
-        "savingChanges": "Saving changes...",
-        "saveSuccess": "Changes saved succesfully!",
-        "nameDescription": "The name of the agreement. This will be displayed to users.",
-        "contentDescription": "Detailed content of the agreement. Include all necessary terms and conditions.",
-        "description": "Description",
-        "descriptionPlaceholder": "Enter a brief description",
-        "descriptionDescription": "Type a brief explanation about this agreement."
-      },
-      "cancel": "Cancelar",
-      "saveChanges": "Save Changes",
-      "create": "Create",
-      "description": "Manage and organize agreements efficiently.",
-      "entityLabel": "Agreement",
-      "status": {
-        "required": "Required",
-        "notRequired": "Not Required"
-      },
-      "saveError": "We couldn't save your changes: {error]",
-      "noContent": "No content"
-    },
-    "dataroom": {
-      "main": {
-        "table": {
-          "empty": "No data rooms found",
-          "name": "Name",
-          "slug": "Slug",
-          "documents": "Documents",
-          "viewers": "Viewers",
-          "links": "Links",
-          "views": "Views"
-        },
-        "description": "Manage and organize your data rooms.",
-        "entityLabel": "Data Room",
-        "actions": {
-          "manage": "Manage"
-        }
-      },
-      "view": {
-        "breadcrumbs": {
-          "root": "Root"
-        },
-        "deleteDocument": {
-          "confirmMessage": "Are you sure you want to delete this document? This action cannot be undone.",
-          "title": "Delete Document",
-          "confirmText": "Delete",
-          "cancelText": "Cancel",
-          "loading": "Deleting document...",
-          "success": "Document deleted successfully",
-          "error": "Error deleting document: {error}"
-        },
-        "deleteFolder": {
-          "confirmMessage": "Are you sure you want to delete this folder? This action cannot be undone.",
-          "title": "Delete Folder",
-          "confirmText": "Delete",
-          "cancelText": "Cancel",
-          "loading": "Deleting folder...",
-          "success": "Folder deleted successfully",
-          "error": "Error deleting folder: {error}"
-        },
-        "clipboard": {
-          "documentCut": "Document \"{name}\" ready to move",
-          "folderCut": "Folder \"{name}\" ready to move",
-          "documentCopied": "Document \"{name}\" copied to clipboard"
-        },
-        "emptyState": {
-          "title": "This folder is empty",
-          "description": "Add folders and documents to organize your files better"
-        },
-        "sections": {
-          "folders": "Folders",
-          "documents": "Documents",
-          "documents_count": "{count} document | {count} documents"
-        },
-        "actions": {
-          "newFolder": "New Folder",
-          "uploadDocuments": "Upload documents",
-          "rename": "Rename",
-          "cut": "Cut",
-          "copy": "Copy",
-          "delete": "Delete",
-          "deleting": "Deleting...",
-          "view": "View",
-          "download": "Download",
-          "createLink": "Create Link",
-          "moreOptions": "More options",
-          "paste": "Paste",
-          "actions": "Actions",
-          "dataroomActions": "Dataroom Actions",
-          "editDataroom": "Edit Dataroom",
-          "manageViewers": "Manage Viewers",
-          "customizeBranding": "Customize Branding",
-          "createShareableLink": "Create Shareable Link",
-          "deleteDataroom": "Delete Dataroom"
-        },
-        "metadata": {
-          "documents": "Documents",
-          "viewers": "Viewers",
-          "owner": "Owner",
-          "created": "Created",
-          "updated": "Updated",
-          "notAvailable": "N/A"
-        }
-      },
-      "create": {
-        "title": "Create Data Room",
-        "subtitle": "Manage your documents and links in one place.",
-        "name": "Name",
-        "namePlaceholder": "Enter the name",
-        "nameDescription": "The name of the data room.",
-        "slug": "Slug",
-        "slugPlaceholder": "Enter a slug",
-        "slugDescription": "A unique identifier for the data room.",
-        "description": "Description",
-        "descriptionPlaceholder": "Enter a description",
-        "descriptionDescription": "Provide a brief description of the data room.",
-        "savingChanges": "Saving changes...",
-        "saveSuccess": "Data room saved successfully!",
-        "saveChanges": "Save changes",
-        "create": "Create",
-        "saveError": "An error occurred: {message}"
-      }
-    },
     "folder": {
       "create": {
         "title": "Create Folder",
@@ -1386,6 +1417,29 @@
       }
     },
     "link": {
+      "main": {
+        "table": {
+          "empty": "No links available.",
+          "name": "Name",
+          "document": "Document",
+          "views": "Views",
+          "security": "Security",
+          "status": "Status",
+          "expires": "Expires"
+        },
+        "description": "Manage and track your links.",
+        "entityLabel": "Link",
+        "unnamed": "Unnamed",
+        "security": {
+          "password": "Password Protected",
+          "emailProtected": "Email Verification Required",
+          "agreement": "Requires Agreement"
+        },
+        "status": {
+          "archived": "Archived",
+          "active": "Active"
+        }
+      },
       "form": {
         "copy": {
           "success": "Link copied to clipboard",

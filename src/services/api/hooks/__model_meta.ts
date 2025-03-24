@@ -3431,6 +3431,16 @@ const metadata = {
           type: 'Int',
           isOptional: true,
         },
+        expirationDate: {
+          name: 'expirationDate',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        status: {
+          name: 'status',
+          type: 'String',
+          attributes: [{ name: '@default', args: [{ value: 'ACTIVE' }] }],
+        },
         ownerId: {
           name: 'ownerId',
           type: 'String',

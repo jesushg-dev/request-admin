@@ -5,7 +5,7 @@ import { useState, useTransition } from 'react';
 import { Link } from '@/i18n/routing';
 import { useDeleteDataroomFolder, useDeleteDocument, useFindManyDataroomFolder, useFindManyDocument } from '@/services/api/hooks';
 import { format } from 'date-fns';
-import { ChevronRight, Clipboard, Copy, Download, Eye, FileText, FolderClosed, FolderPlus, Home, LinkIcon, MoreHorizontal, Pencil, Plus, Scissors, Trash2 } from 'lucide-react';
+import { ChevronRight, Clipboard, Copy, Eye, FileText, FolderClosed, FolderPlus, Home, LinkIcon, MoreHorizontal, Pencil, Plus, Scissors, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
@@ -20,6 +20,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useClipboard } from '@/components/hoc/clipboard-context';
 import EmptyState from '@/components/shared/empty-state';
 import { SearchDialog } from '@/components/shared/search-dialog';
+
+import { DocumentDownloadButton } from '../documents/document-viewer';
 
 type BreadCrumbType = { id: string | null; name: string };
 
@@ -50,6 +52,7 @@ export function DataroomDocuments({ dataroomId, tenantId, callbackUrl }: Dataroo
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
 
   // Helper functions
+  // todo: this could be improve if w
   const getCurrentFolders = () => folders.filter((folder) => folder.parentId === currentFolderId);
   const getCurrentDocuments = () => documents.filter((doc) => doc.folderId === currentFolderId);
 
@@ -306,10 +309,7 @@ export function DataroomDocuments({ dataroomId, tenantId, callbackUrl }: Dataroo
                                     <span className="sr-only">{t('actions.view')}</span>
                                   </Link>
                                 </Button>
-                                <Button variant="ghost" size="icon">
-                                  <Download className="h-4 w-4" />
-                                  <span className="sr-only">{t('actions.download')}</span>
-                                </Button>
+                                <DocumentDownloadButton fileUrl={doc.file} title={`${doc.name}.${doc.type}`} />
                                 <Button variant="ghost" size="icon" asChild>
                                   <Link
                                     href={{

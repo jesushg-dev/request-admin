@@ -8,7 +8,7 @@ import { getTranslations } from 'next-intl/server';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { DataroomDocuments } from '@/components/common/data-rooms/dataroom-documents';
+import { DataroomDocuments } from '@/components/common/data-room/dataroom-documents';
 import { MetadataItem } from '@/components/shared/metadata-item';
 
 interface DataroomDetailPageProps {

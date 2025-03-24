@@ -4,13 +4,35 @@ export const DocumentDefaultArgs = Prisma.validator<Prisma.DocumentDefaultArgs>(
   select: {
     id: true,
     name: true,
+    file: true,
+    status: true,
+    contentType: true,
+    description: true,
+    expirationDate: true,
     type: true,
     folderId: true,
     createdAt: true,
+    createdBy: true,
+    numPages: true,
+    assistantEnabled: true,
+    advancedExcelEnabled: true,
+    downloadOnly: true,
+    updatedAt: true,
+    storageType: true,
     versions: {
-      select: { fileSize: true },
+      select: { file: true, fileSize: true },
       where: { isPrimary: true },
       take: 1,
+    },
+    folder: {
+      select: {
+        path: true,
+      },
+    },
+    _count: {
+      select: {
+        views: true,
+      },
     },
   },
 });

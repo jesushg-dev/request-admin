@@ -17,3 +17,14 @@ export const getFileIcon = (type: string | null | undefined) => {
       return <FileText className="h-10 w-10 text-gray-500" />;
   }
 };
+
+export const downloadFile = async (url: string, filename: string) => {
+  const response = await fetch(url);
+  const blob = await response.blob();
+  const urlObject = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = urlObject;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(urlObject);
+};

@@ -386,6 +386,199 @@
         }
       }
     },
+    "agreement": {
+      "table": {
+        "empty": "No se encontraron acuerdos",
+        "name": "Nombre",
+        "description": "Descripción",
+        "content": "Contenido",
+        "createdAt": "Creado el",
+        "updatedAt": "Actualizado el",
+        "links": "Enlaces",
+        "responses": "Respuestas",
+        "requireName": "Requiere Nombre"
+      },
+      "form": {
+        "titleCreate": "Crear Acuerdo",
+        "titleEdit": "Editar Acuerdo",
+        "subtitleCreate": "Crea un nuevo acuerdo para tus usuarios. \nIncluye todos los términos y condiciones necesarios.",
+        "subtitleEdit": "Edita el acuerdo existente. \nAsegúrate de que todos los términos y condiciones estén actualizados.",
+        "name": "Name",
+        "namePlaceholder": "Enter name",
+        "content": "Contenido",
+        "contentPlaceholder": "Ingrese el contenido",
+        "requireName": "Requerir nombre",
+        "requireNameDescription": "Habilite esta opción para hacer el nombre requerido.",
+        "savingChanges": "Guardar cambios ...",
+        "saveSuccess": "Cambios Guardados Con Exito!",
+        "contentDescription": "Contenido detallado del acuerdo. \nIncluya todos los términos y condiciones necesarios.",
+        "nameDescription": "El nombre del acuerdo. \nEsto se mostrará a los usuarios.",
+        "description": "Descripción",
+        "descriptionDescription": "Escriba una breve explicación sobre este Acuerdo.",
+        "descriptionPlaceholder": "Ingrese una breve descripción"
+      },
+      "cancel": "Cancel",
+      "saveChanges": "Guardar cambios",
+      "create": "Crear",
+      "description": "Administra y organiza acuerdos de manera eficiente.",
+      "entityLabel": "Acuerdo",
+      "status": {
+        "required": "Requerido",
+        "notRequired": "No Requerido"
+      },
+      "saveError": "No pudimos guardar sus cambios: {error]",
+      "noContent": "Sin contenido"
+    },
+    "dataroom": {
+      "main": {
+        "table": {
+          "empty": "No se encontraron salas de datos",
+          "name": "Nombre",
+          "slug": "Slug",
+          "documents": "Documentos",
+          "viewers": "Visualizadores",
+          "links": "Enlaces",
+          "views": "Vistas"
+        },
+        "description": "Administra y organiza tus salas de datos.",
+        "entityLabel": "Sala de Datos",
+        "actions": {
+          "manage": "Administrar"
+        }
+      },
+      "view": {
+        "breadcrumbs": {
+          "root": "Raíz"
+        },
+        "deleteDocument": {
+          "confirmMessage": "¿Estás seguro de que quieres eliminar este documento? Esta acción no se puede deshacer.",
+          "title": "Eliminar Documento",
+          "confirmText": "Eliminar",
+          "cancelText": "Cancelar",
+          "loading": "Eliminando documento...",
+          "success": "Documento eliminado con éxito",
+          "error": "Error al eliminar el documento: {error}"
+        },
+        "deleteFolder": {
+          "confirmMessage": "¿Estás seguro de que quieres eliminar esta carpeta? Esta acción no se puede deshacer.",
+          "title": "Eliminar Carpeta",
+          "confirmText": "Eliminar",
+          "cancelText": "Cancelar",
+          "loading": "Eliminando carpeta...",
+          "success": "Carpeta eliminada con éxito",
+          "error": "Error al eliminar la carpeta: {error}"
+        },
+        "clipboard": {
+          "documentCut": "Documento \"{name}\" listo para mover",
+          "folderCut": "Carpeta \"{name}\" lista para mover",
+          "documentCopied": "Documento \"{name}\" copiado al portapapeles"
+        },
+        "emptyState": {
+          "title": "Esta carpeta está vacía",
+          "description": "Agrega carpetas y documentos para organizar mejor tus archivos"
+        },
+        "sections": {
+          "folders": "Carpetas",
+          "documents": "Documentos",
+          "documents_count": "{count} documento | {count} documentos"
+        },
+        "actions": {
+          "newFolder": "Nueva Carpeta",
+          "uploadDocuments": "Subir documentos",
+          "rename": "Renombrar",
+          "cut": "Cortar",
+          "copy": "Copiar",
+          "delete": "Eliminar",
+          "deleting": "Eliminando...",
+          "view": "Ver",
+          "download": "Descargar",
+          "createLink": "Crear Enlace",
+          "moreOptions": "Más opciones",
+          "paste": "Pegar",
+          "dataroomActions": "Acciones del Dataroom",
+          "editDataroom": "Editar Dataroom",
+          "manageViewers": "Gestionar Espectadores",
+          "customizeBranding": "Personalizar Branding",
+          "createShareableLink": "Crear Enlace Compartible",
+          "deleteDataroom": "Eliminar Dataroom"
+        },
+        "metadata": {
+          "documents": "Documentos",
+          "viewers": "Espectadores",
+          "owner": "Propietario",
+          "created": "Creado",
+          "updated": "Actualizado",
+          "notAvailable": "N/A"
+        }
+      },
+      "create": {
+        "name": "Nombre",
+        "namePlaceholder": "Ingrese el nombre",
+        "nameDescription": "El nombre de la sala de datos.",
+        "slug": "Slug",
+        "slugPlaceholder": "Ingrese el slug",
+        "slugDescription": "El slug es una versión simplificada del nombre, utilizada para la URL.",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Ingrese una descripción",
+        "descriptionDescription": "Proporcione una breve descripción de la sala de datos.",
+        "savingChanges": "Guardando cambios...",
+        "saveSuccess": "¡Sala de datos guardada con éxito!",
+        "saveChanges": "Guardar cambios",
+        "create": "Crear",
+        "saveError": "Ocurrió un error: {message}"
+      }
+    },
+    "document": {
+      "main": {
+        "entityLabel": "Documento",
+        "description": "Administre sus documentos de manera eficiente.",
+        "table": {
+          "empty": "No se encontraron documentos.",
+          "name": "Nombre",
+          "type": "Tipo",
+          "pages": "Páginas",
+          "views": "Vistas",
+          "links": "Enlaces",
+          "versions": "Versiones"
+        },
+        "actions": {
+          "view": "Ver",
+          "download": "Descargar",
+          "share": "Compartir"
+        }
+      },
+      "view": {},
+      "metaform": {
+        "title": "Metadatos del Documento",
+        "subtitle": "Complete los metadatos del documento para una mejor organización.",
+        "savingChanges": "Guardando cambios...",
+        "saveSuccess": "¡Documento guardado con éxito!",
+        "saveError": "Error al guardar el documento: {message}",
+        "saveChanges": "Guardar cambios",
+        "create": "Crear",
+        "documentName": "Nombre del Documento",
+        "description": "Descripción",
+        "status": "Estado",
+        "selectStatus": "Seleccionar estado",
+        "statusOptions": {
+          "DRAFT": "Borrador",
+          "PUBLISHED": "Publicado",
+          "ARCHIVED": "Archivado"
+        },
+        "expirationDate": "Fecha de Expiración (Opcional)",
+        "pickDate": "Selecciona una fecha",
+        "aiAssistant": "Asistente de IA",
+        "aiAssistantDescription": "Habilitar análisis de IA para este documento",
+        "advancedExcel": "Funciones avanzadas de Excel",
+        "advancedExcelDescription": "Habilitar procesamiento avanzado de Excel",
+        "downloadOnly": "Solo Descarga",
+        "downloadOnlyDescription": "El documento solo puede ser descargado, no visualizado",
+        "documentNamePlaceholder": "Ingrese el nombre del documento",
+        "documentNameDescription": "Proporcione un nombre claro y conciso para el documento.",
+        "descriptionPlaceholder": "Ingrese una breve descripción",
+        "descriptionDescription": "Agregue contexto o detalles adicionales sobre el documento."
+      }
+    },
     "client": {
       "main": {
         "entityLabel": "Client",
@@ -670,26 +863,6 @@
         "activeDesc": "Marcar como activo o inactivo.",
         "enableTwoFactor": "Habilitar autenticación de dos factores",
         "enableTwoFactorDesc": "Requiere autenticación de dos factores para mayor seguridad."
-      }
-    },
-    "document": {
-      "main": {
-        "entityLabel": "Documento",
-        "description": "Administre sus documentos de manera eficiente.",
-        "table": {
-          "empty": "No se encontraron documentos.",
-          "name": "Nombre",
-          "type": "Tipo",
-          "pages": "Páginas",
-          "views": "Vistas",
-          "links": "Enlaces",
-          "versions": "Versiones"
-        },
-        "actions": {
-          "view": "Ver",
-          "download": "Descargar",
-          "share": "Compartir"
-        }
       }
     },
     "role": {
@@ -1219,148 +1392,6 @@
         }
       }
     },
-    "agreement": {
-      "table": {
-        "empty": "No se encontraron acuerdos",
-        "name": "Nombre",
-        "description": "Descripción",
-        "content": "Contenido",
-        "createdAt": "Creado el",
-        "updatedAt": "Actualizado el",
-        "links": "Enlaces",
-        "responses": "Respuestas",
-        "requireName": "Requiere Nombre"
-      },
-      "form": {
-        "titleCreate": "Crear Acuerdo",
-        "titleEdit": "Editar Acuerdo",
-        "subtitleCreate": "Crea un nuevo acuerdo para tus usuarios. \nIncluye todos los términos y condiciones necesarios.",
-        "subtitleEdit": "Edita el acuerdo existente. \nAsegúrate de que todos los términos y condiciones estén actualizados.",
-        "name": "Name",
-        "namePlaceholder": "Enter name",
-        "content": "Contenido",
-        "contentPlaceholder": "Ingrese el contenido",
-        "requireName": "Requerir nombre",
-        "requireNameDescription": "Habilite esta opción para hacer el nombre requerido.",
-        "savingChanges": "Guardar cambios ...",
-        "saveSuccess": "Cambios Guardados Con Exito!",
-        "contentDescription": "Contenido detallado del acuerdo. \nIncluya todos los términos y condiciones necesarios.",
-        "nameDescription": "El nombre del acuerdo. \nEsto se mostrará a los usuarios.",
-        "description": "Descripción",
-        "descriptionDescription": "Escriba una breve explicación sobre este Acuerdo.",
-        "descriptionPlaceholder": "Ingrese una breve descripción"
-      },
-      "cancel": "Cancel",
-      "saveChanges": "Guardar cambios",
-      "create": "Crear",
-      "description": "Administra y organiza acuerdos de manera eficiente.",
-      "entityLabel": "Acuerdo",
-      "status": {
-        "required": "Requerido",
-        "notRequired": "No Requerido"
-      },
-      "saveError": "No pudimos guardar sus cambios: {error]",
-      "noContent": "Sin contenido"
-    },
-    "dataroom": {
-      "main": {
-        "table": {
-          "empty": "No se encontraron salas de datos",
-          "name": "Nombre",
-          "slug": "Slug",
-          "documents": "Documentos",
-          "viewers": "Visualizadores",
-          "links": "Enlaces",
-          "views": "Vistas"
-        },
-        "description": "Administra y organiza tus salas de datos.",
-        "entityLabel": "Sala de Datos",
-        "actions": {
-          "manage": "Administrar"
-        }
-      },
-      "view": {
-        "breadcrumbs": {
-          "root": "Raíz"
-        },
-        "deleteDocument": {
-          "confirmMessage": "¿Estás seguro de que quieres eliminar este documento? Esta acción no se puede deshacer.",
-          "title": "Eliminar Documento",
-          "confirmText": "Eliminar",
-          "cancelText": "Cancelar",
-          "loading": "Eliminando documento...",
-          "success": "Documento eliminado con éxito",
-          "error": "Error al eliminar el documento: {error}"
-        },
-        "deleteFolder": {
-          "confirmMessage": "¿Estás seguro de que quieres eliminar esta carpeta? Esta acción no se puede deshacer.",
-          "title": "Eliminar Carpeta",
-          "confirmText": "Eliminar",
-          "cancelText": "Cancelar",
-          "loading": "Eliminando carpeta...",
-          "success": "Carpeta eliminada con éxito",
-          "error": "Error al eliminar la carpeta: {error}"
-        },
-        "clipboard": {
-          "documentCut": "Documento \"{name}\" listo para mover",
-          "folderCut": "Carpeta \"{name}\" lista para mover",
-          "documentCopied": "Documento \"{name}\" copiado al portapapeles"
-        },
-        "emptyState": {
-          "title": "Esta carpeta está vacía",
-          "description": "Agrega carpetas y documentos para organizar mejor tus archivos"
-        },
-        "sections": {
-          "folders": "Carpetas",
-          "documents": "Documentos",
-          "documents_count": "{count} documento | {count} documentos"
-        },
-        "actions": {
-          "newFolder": "Nueva Carpeta",
-          "uploadDocuments": "Subir documentos",
-          "rename": "Renombrar",
-          "cut": "Cortar",
-          "copy": "Copiar",
-          "delete": "Eliminar",
-          "deleting": "Eliminando...",
-          "view": "Ver",
-          "download": "Descargar",
-          "createLink": "Crear Enlace",
-          "moreOptions": "Más opciones",
-          "paste": "Pegar",
-          "dataroomActions": "Acciones del Dataroom",
-          "editDataroom": "Editar Dataroom",
-          "manageViewers": "Gestionar Espectadores",
-          "customizeBranding": "Personalizar Branding",
-          "createShareableLink": "Crear Enlace Compartible",
-          "deleteDataroom": "Eliminar Dataroom"
-        },
-        "metadata": {
-          "documents": "Documentos",
-          "viewers": "Espectadores",
-          "owner": "Propietario",
-          "created": "Creado",
-          "updated": "Actualizado",
-          "notAvailable": "N/A"
-        }
-      },
-      "create": {
-        "name": "Nombre",
-        "namePlaceholder": "Ingrese el nombre",
-        "nameDescription": "El nombre de la sala de datos.",
-        "slug": "Slug",
-        "slugPlaceholder": "Ingrese el slug",
-        "slugDescription": "El slug es una versión simplificada del nombre, utilizada para la URL.",
-        "description": "Descripción",
-        "descriptionPlaceholder": "Ingrese una descripción",
-        "descriptionDescription": "Proporcione una breve descripción de la sala de datos.",
-        "savingChanges": "Guardando cambios...",
-        "saveSuccess": "¡Sala de datos guardada con éxito!",
-        "saveChanges": "Guardar cambios",
-        "create": "Crear",
-        "saveError": "Ocurrió un error: {message}"
-      }
-    },
     "folder": {
       "create": {
         "title": "Crear Carpeta",
@@ -1378,6 +1409,29 @@
       }
     },
     "link": {
+      "main": {
+        "table": {
+          "empty": "No hay enlaces disponibles.",
+          "name": "Nombre",
+          "document": "Documento",
+          "views": "Vistas",
+          "security": "Seguridad",
+          "status": "Estado",
+          "expires": "Expira"
+        },
+        "description": "Administra y rastrea tus enlaces.",
+        "entityLabel": "Enlace",
+        "unnamed": "Sin nombre",
+        "security": {
+          "password": "Protegido con contraseña",
+          "emailProtected": "Verificación de correo requerida",
+          "agreement": "Requiere acuerdo"
+        },
+        "status": {
+          "archived": "Archivado",
+          "active": "Activo"
+        }
+      },
       "form": {
         "copy": {
           "success": "Link copiado al portapapeles",
