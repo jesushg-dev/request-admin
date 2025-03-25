@@ -526,6 +526,115 @@
         "saveChanges": "Guardar cambios",
         "create": "Crear",
         "saveError": "Ocurrió un error: {message}"
+      },
+      "branding": {
+        "title": "Personalización del Dataroom",
+        "description": "Configura la apariencia y marca de tu dataroom",
+        "form": {
+          "logo": {
+            "label": "Logo",
+            "uploadLabel": "Subir logo",
+            "requirements": "Formatos: PNG, JPG, SVG (máx. 5MB)",
+            "recommended": "Tamaño recomendado: 200x50px"
+          },
+          "banner": {
+            "label": "Banner",
+            "uploadLabel": "Subir banner",
+            "requirements": "Formatos: PNG, JPG (máx. 10MB)",
+            "recommended": "Tamaño recomendado: 1200x300px"
+          },
+          "brandColor": {
+            "label": "Color principal",
+            "description": "Color primario para encabezados y elementos clave"
+          },
+          "accentColor": {
+            "label": "Color secundario",
+            "description": "Color para elementos secundarios y destacados"
+          },
+          "saveButton": "Guardar cambios",
+          "saving": "Guardando...",
+          "saveSuccess": "¡Configuración guardada exitosamente!",
+          "saveError": "Error al guardar: {message}",
+          "uploadError": "Error al subir archivo",
+          "remove": "Eliminar"
+        },
+        "preview": {
+          "title": "Vista Previa en Vivo",
+          "description": "Previsualización interactiva de tu dataroom",
+          "logoAlt": "Logo de la marca",
+          "logoPlaceholder": "Tu logotipo aquí",
+          "navDocuments": "Documentos",
+          "navTeam": "Equipo",
+          "navActivity": "Actividad",
+          "breadcrumb1": "Inicio",
+          "breadcrumb2": "Carpeta",
+          "breadcrumb3": "Documentos importantes",
+          "updated": "Actualizado hoy",
+          "tableTitle": "Actividad Reciente",
+          "tableAction": "Ver historial completo",
+          "ctaTitle": "¡Impulsa tu colaboración!",
+          "ctaDescription": "Comienza a compartir documentos o invita a miembros de tu equipo",
+          "ctaButton": "Comenzar ahora",
+          "validation": {
+            "invalidHex": "Color hexadecimal inválido",
+            "logoRequired": "Se requiere un logo",
+            "bannerSize": "El banner debe ser menor a 10MB",
+            "colorContrast": "Los colores deben tener suficiente contraste"
+          },
+          "states": {
+            "loading": "Cargando vista previa...",
+            "error": "Error al generar previsualización"
+          },
+          "tooltips": {
+            "hoverLogo": "Haz clic para actualizar el logo",
+            "colorPicker": "Haz clic para seleccionar color"
+          }
+        },
+        "notifications": {
+          "resetConfirm": "¿Restablecer colores predeterminados?",
+          "unsavedChanges": "¡Tienes cambios sin guardar!",
+          "uploadProgress": "Subiendo {percentage}%"
+        },
+        "meta": {
+          "title": "Vista Previa | Dataroom",
+          "description": "Vista previa interactiva del dataroom personalizado"
+        },
+        "interactions": {
+          "dragDrop": "Arrastra archivos aquí",
+          "clickUpload": "o haz clic para seleccionar",
+          "hoverEffects": "Pasa el cursor para ver efectos",
+          "colorWarning": "Asegúrate de mantener la legibilidad"
+        },
+        "accessibility": {
+          "colorLabel": "Selector de color {type}",
+          "uploadLabel": "Subir archivo de {type}",
+          "previewAlt": "Vista previa del elemento {name}",
+          "keyboardNav": "Usa teclas de dirección para navegar"
+        },
+        "errorMessages": {
+          "bannerTooLarge": "El banner excede el tamaño máximo permitido",
+          "invalidImageType": "Formato de imagen no soportado",
+          "colorCombination": "Combinación de colores no accesible",
+          "saveFailed": "Error al guardar configuración: {errorCode}",
+          "networkError": "Error de conexión, intenta nuevamente"
+        },
+        "successMessages": {
+          "uploadSuccess": "Archivo subido exitosamente",
+          "resetSuccess": "Configuración restablecida",
+          "colorUpdated": "Paleta actualizada",
+          "autoSaved": "Cambios guardados automáticamente"
+        },
+        "documentation": {
+          "colorGuide": "Guía de combinación de colores",
+          "bestPractices": "Mejores prácticas de branding",
+          "support": "Soporte técnico 24/7"
+        },
+        "controls": {
+          "resetColors": "Restablecer colores",
+          "saveDraft": "Guardar borrador",
+          "downloadConfig": "Descargar configuración",
+          "copyLink": "Copiar enlace de vista previa"
+        }
       }
     },
     "document": {

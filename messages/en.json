@@ -530,6 +530,115 @@
         "saveChanges": "Save changes",
         "create": "Create",
         "saveError": "An error occurred: {message}"
+      },
+      "branding": {
+        "title": "Dataroom Branding",
+        "description": "Customize your dataroom's appearance and branding",
+        "form": {
+          "logo": {
+            "label": "Logo",
+            "uploadLabel": "Upload logo",
+            "requirements": "Formats: PNG, JPG, SVG (max 5MB)",
+            "recommended": "Recommended size: 200x50px"
+          },
+          "banner": {
+            "label": "Banner",
+            "uploadLabel": "Upload banner",
+            "requirements": "Formats: PNG, JPG (max 10MB)",
+            "recommended": "Recommended size: 1200x300px"
+          },
+          "brandColor": {
+            "label": "Primary Color",
+            "description": "Main color for headers and key elements"
+          },
+          "accentColor": {
+            "label": "Secondary Color",
+            "description": "Color for secondary elements and highlights"
+          },
+          "saveButton": "Save Changes",
+          "saving": "Saving...",
+          "saveSuccess": "Settings saved successfully!",
+          "saveError": "Save error: {message}",
+          "uploadError": "File upload failed",
+          "remove": "Remove"
+        },
+        "preview": {
+          "title": "Live Preview",
+          "description": "Interactive dataroom preview",
+          "logoAlt": "Brand logo",
+          "logoPlaceholder": "Your logo here",
+          "navDocuments": "Documents",
+          "navTeam": "Team",
+          "navActivity": "Activity",
+          "breadcrumb1": "Home",
+          "breadcrumb2": "Folder",
+          "breadcrumb3": "Important Documents",
+          "updated": "Updated today",
+          "tableTitle": "Recent Activity",
+          "tableAction": "View full history",
+          "ctaTitle": "Boost Collaboration!",
+          "ctaDescription": "Start sharing documents or invite team members",
+          "ctaButton": "Get Started",
+          "validation": {
+            "invalidHex": "Invalid hex color",
+            "logoRequired": "Logo is required",
+            "bannerSize": "Banner must be under 10MB",
+            "colorContrast": "Colors must have sufficient contrast"
+          },
+          "states": {
+            "loading": "Loading preview...",
+            "error": "Preview generation error"
+          },
+          "tooltips": {
+            "hoverLogo": "Click to update logo",
+            "colorPicker": "Click to pick color"
+          }
+        },
+        "notifications": {
+          "resetConfirm": "Reset to default colors?",
+          "unsavedChanges": "You have unsaved changes!",
+          "uploadProgress": "Uploading {percentage}%"
+        },
+        "meta": {
+          "title": "Preview | Dataroom",
+          "description": "Interactive preview of customized dataroom"
+        },
+        "interactions": {
+          "dragDrop": "Drag files here",
+          "clickUpload": "or click to select",
+          "hoverEffects": "Hover to see interactions",
+          "colorWarning": "Ensure text remains readable"
+        },
+        "accessibility": {
+          "colorLabel": "{type} color picker",
+          "uploadLabel": "Upload {type} file",
+          "previewAlt": "{name} element preview",
+          "keyboardNav": "Use arrow keys to navigate"
+        },
+        "errorMessages": {
+          "bannerTooLarge": "Banner exceeds maximum size",
+          "invalidImageType": "Unsupported image format",
+          "colorCombination": "Invalid color combination",
+          "saveFailed": "Failed to save settings: {errorCode}",
+          "networkError": "Connection error, please retry"
+        },
+        "successMessages": {
+          "uploadSuccess": "File uploaded successfully",
+          "resetSuccess": "Settings reset",
+          "colorUpdated": "Color palette updated",
+          "autoSaved": "Changes auto-saved"
+        },
+        "documentation": {
+          "colorGuide": "Color Combination Guide",
+          "bestPractices": "Branding Best Practices",
+          "support": "24/7 Technical Support"
+        },
+        "controls": {
+          "resetColors": "Reset Colors",
+          "saveDraft": "Save Draft",
+          "downloadConfig": "Download Configuration",
+          "copyLink": "Copy Preview Link"
+        }
       }
     },
     "document": {

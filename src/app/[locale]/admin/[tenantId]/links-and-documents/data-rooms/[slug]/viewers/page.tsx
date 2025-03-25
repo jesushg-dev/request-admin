@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { DataroomViewerGroups } from '@/components/common/data-rooms/dataroom-viewer-groups';
+import { DataroomViewerGroups } from '@/components/common/data-room/dataroom-viewer-groups';
 
 interface DataroomViewersPageProps {
   params: {
