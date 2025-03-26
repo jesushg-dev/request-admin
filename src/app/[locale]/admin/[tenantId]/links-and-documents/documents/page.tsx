@@ -9,7 +9,7 @@ import { Download, Share2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 
-import { getFileIcon } from '@/lib/document-utils';
+import { downloadFile, getFileIcon } from '@/lib/document-utils';
 import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { formatDate } from '@/lib/utils';
 import { useDataTable } from '@/hooks/use-data-table';
@@ -29,6 +29,7 @@ export const DocumentDefaultArgs = Prisma.validator<Prisma.DocumentDefaultArgs>(
     name: true,
     description: true,
     type: true,
+    file: true,
     contentType: true,
     numPages: true,
     createdAt: true,
@@ -170,16 +171,9 @@ function getTableConfiguration({ t, tenantId }: TableConfigProps) {
             pathname: '/admin/[tenantId]/links-and-documents/documents/[slug]/edit',
             params: { tenantId, slug: row.original.id },
           }}>
-          <DropdownMenuItem asChild>
-            <Link
-              href={{
-                pathname: '/admin/[tenantId]/links-and-documents/documents/[slug]',
-                params: { tenantId, slug: row.original.id },
-              }}
-              className="flex gap-2">
-              <Download className="h-4 w-4" />
-              {t('actions.download')}
-            </Link>
+          <DropdownMenuItem onClick={() => downloadFile(row.original.file, `${row.original.name}.${row.original.type}`)}>
+            <Download className="h-4 w-4" />
+            {t('actions.download')}
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link
@@ -218,22 +212,15 @@ function getTableConfiguration({ t, tenantId }: TableConfigProps) {
               pathname: '/admin/[tenantId]/links-and-documents/documents/[slug]/edit',
               params: { tenantId, slug: row.original.id },
             }}>
-            <DropdownMenuItem asChild>
-              <Link
-                href={{
-                  pathname: '/admin/[tenantId]/links-and-documents/documents/[slug]',
-                  params: { tenantId, slug: row.original.id },
-                }}
-                className="flex gap-2">
-                <Download className="h-4 w-4" />
-                {t('actions.download')}
-              </Link>
+            <DropdownMenuItem onClick={() => downloadFile(row.original.file, `${row.original.name}.${row.original.type}`)}>
+              <Download className="h-4 w-4" />
+              {t('actions.download')}
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link
                 href={{
                   pathname: '/admin/[tenantId]/links-and-documents/links/new',
-                  query: { documentId: row.id },
+                  query: { documentId: row.original.id },
                   params: { tenantId },
                 }}>
                 <Share2 className="h-4 w-4" />

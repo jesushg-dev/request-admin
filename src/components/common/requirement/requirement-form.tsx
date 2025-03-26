@@ -4,19 +4,18 @@ import { useTransition } from 'react';
 import { useRouter } from '@/i18n/routing';
 import { useFindManyRequirementType, useUpsertRequirement } from '@/services/api/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LoaderCircleIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { generateUuid } from '@/lib/id';
-import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import Select from '@/components/custom-ui/select';
-import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
+import { FormActions, FormCheckboxItem, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
 
 const formSchema = z.object({
   id: z.string().uuid(),
@@ -47,6 +46,7 @@ interface RequirementFormProps {
 }
 
 export function RequirementForm({ tenantId, initialValues }: RequirementFormProps) {
+  const t = useTranslations('admin.requirement.form');
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const { data: requirementTypes, isLoading: isLoadingTypes } = useFindManyRequirementType();
@@ -86,102 +86,75 @@ export function RequirementForm({ tenantId, initialValues }: RequirementFormProp
       });
 
       toast.promise(promise, {
-        loading: 'Saving changes...',
+        loading: t('savingChanges'),
         success: (response) => {
           router.push({ pathname: '/admin/[tenantId]/requests-portal/requirements', params: { tenantId } });
-          return `Requirement "${response?.name}" saved successfully.`;
+          return t('successSave', { name: response?.name ?? '-' });
         },
-        error: (error) => `Failed to save requirement: ${error.message}`,
+        error: (error) => t('errorSave', { message: error.message }),
       });
     });
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-auto">
-          <div className="flex flex-1 flex-col justify-between overflow-hidden px-1 gap-4">
-            {error && <PrismaErrorAlert error={error} />}
+      <FormRoot onSubmit={form.handleSubmit(onSubmit)}>
+        <FormContent error={error}>
+          <FormSection>
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Requirement name" {...field} />
-                  </FormControl>
-                  <FormDescription>The name of the requirement.</FormDescription>
-                  <FormMessage />
+                <FormItem label={t('name')} description={t('nameDescription')}>
+                  <Input placeholder={t('name')} {...field} />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="description"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Requirement description" {...field} />
-                  </FormControl>
-                  <FormDescription>Clear instructions that will be shown to users fulfilling this requirement.</FormDescription>
-                  <FormMessage />
+                <FormItem label={t('description')} description={t('descriptionDescription')}>
+                  <Textarea placeholder={t('description')} {...field} />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="requirementType"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Requirement Type</FormLabel>
-                  <FormControl>
-                    <Select menuPortalTarget={null} isLoading={isLoadingTypes} isSearchable isClearable options={requirementTypeOptions} onChange={field.onChange} value={field.value} />
-                  </FormControl>
-                  <FormDescription>The type of the requirement.</FormDescription>
-                  <FormMessage />
+                <FormItem label={t('requirementType')} description={t('requirementTypeDescription')}>
+                  <Select menuPortalTarget={null} isLoading={isLoadingTypes} isSearchable isClearable options={requirementTypeOptions} {...field} />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="isActive"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 rounded-md border p-4">
-                  <FormControl>
-                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                  </FormControl>
-                  <div className="leading-none space-y-1">
-                    <FormLabel>Active</FormLabel>
-                    <FormDescription>Enable this option to make the requirement active.</FormDescription>
-                  </div>
-                </FormItem>
+                <FormCheckboxItem label={t('isActive')} description={t('isActiveDescription')}>
+                  <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                </FormCheckboxItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="isRequiredOnlyOnce"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 rounded-md border p-4">
-                  <FormControl>
-                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                  </FormControl>
-                  <div className="leading-none space-y-1">
-                    <FormLabel>Mark as one-time required requirement</FormLabel>
-                    <FormDescription>Enable this when the requirement should only be validated once.</FormDescription>
-                  </div>
-                </FormItem>
+                <FormCheckboxItem label={t('isRequiredOnlyOnce')} description={t('isRequiredOnlyOnceDescription')}>
+                  <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                </FormCheckboxItem>
               )}
             />
-          </div>
-        </div>
-        <div className="mt-4 flex justify-end">
-          <Button type="submit" disabled={isPending}>
-            {initialValues ? 'Update' : 'Create'} {isPending && <LoaderCircleIcon className="animate-spin" />}
-          </Button>
-        </div>
-      </form>
+          </FormSection>
+        </FormContent>
+
+        <FormActions isPending={isPending} title={initialValues ? t('update') : t('create')} className="px-4" />
+      </FormRoot>
     </Form>
   );
 }

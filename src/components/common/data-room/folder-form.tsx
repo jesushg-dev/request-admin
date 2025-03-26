@@ -5,17 +5,15 @@ import { useRouter } from 'next/navigation';
 import { getPathname } from '@/i18n/routing';
 import { useUpsertDataroomFolder } from '@/services/api/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LoaderCircleIcon } from 'lucide-react';
 import { Locale, useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { generateUuid } from '@/lib/id';
-import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
+import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
 
 // Define the schema for form validation
 const formSchema = z.object({
@@ -88,39 +86,27 @@ export const FolderForm: React.FC<FolderFormProps> = ({ locale, initialValues, c
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
-        {error && <PrismaErrorAlert error={error} />}
-        <div className="flex-1 overflow-auto">
-          <div className="flex flex-1 flex-col justify-between overflow-hidden px-1 gap-4">
+      <FormRoot onSubmit={form.handleSubmit(onSubmit)}>
+        <FormContent error={error}>
+          <FormSection>
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('name')}</FormLabel>
-                  <FormControl>
-                    <Input id="folder-name" placeholder={t('namePlaceholder')} {...field} />
-                  </FormControl>
-                  <FormDescription>{t('nameDescription')}</FormDescription>
-                  <FormMessage />
+                <FormItem label={t('name')} description={t('nameDescription')}>
+                  <Input id="folder-name" placeholder={t('namePlaceholder')} {...field} />
                 </FormItem>
               )}
             />
-            <FormItem>
-              <FormLabel>{t('location')}</FormLabel>
-              <FormControl>
-                <div className="text-sm">{currentFolderId ? folders.find((f) => f.id === currentFolderId)?.path || 'Root' : 'Root'}</div>
-              </FormControl>
-              <FormDescription>{t('locationDescription')}</FormDescription>
+
+            <FormItem label={t('location')} description={t('locationDescription')}>
+              <div className="text-sm">{currentFolderId ? folders.find((f) => f.id === currentFolderId)?.path || t('root') : t('root')}</div>
             </FormItem>
-          </div>
-        </div>
-        <div className="mt-4 flex justify-end">
-          <Button type="submit" disabled={isPending}>
-            {initialValues ? t('saveChanges') : t('create')} {isPending && <LoaderCircleIcon className="animate-spin" />}
-          </Button>
-        </div>
-      </form>
+          </FormSection>
+        </FormContent>
+
+        <FormActions isPending={isPending} title={initialValues ? t('saveChanges') : t('create')} />
+      </FormRoot>
     </Form>
   );
 };

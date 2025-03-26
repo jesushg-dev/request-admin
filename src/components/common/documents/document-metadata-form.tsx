@@ -5,7 +5,7 @@ import { useRouter } from '@/i18n/routing';
 import { useUpsertDocument } from '@/services/api/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
-import { CalendarIcon, LoaderCircleIcon } from 'lucide-react';
+import { CalendarIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -14,13 +14,13 @@ import * as z from 'zod';
 import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
+import { FormActions, FormCheckboxItem, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
 
 export const formSchema = z.object({
   id: z.string(),
@@ -88,21 +88,15 @@ export default function DocumentMetadataForm({ tenantId, initialValues }: Docume
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
-        {error && <PrismaErrorAlert error={error} />}
-        <div className="flex-1 overflow-auto">
-          <div className="flex flex-1 flex-col justify-between overflow-hidden px-1 gap-4">
+      <FormRoot onSubmit={form.handleSubmit(onSubmit)}>
+        <FormContent error={error}>
+          <FormSection>
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('documentName')}</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder={t('documentNamePlaceholder')} />
-                  </FormControl>
-                  <FormDescription>{t('documentNameDescription')}</FormDescription>
-                  <FormMessage />
+                <FormItem label={t('documentName')} description={t('documentNameDescription')}>
+                  <Input placeholder={t('documentNamePlaceholder')} {...field} />
                 </FormItem>
               )}
             />
@@ -111,13 +105,8 @@ export default function DocumentMetadataForm({ tenantId, initialValues }: Docume
               control={form.control}
               name="description"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('description')}</FormLabel>
-                  <FormControl>
-                    <Textarea {...field} placeholder={t('descriptionPlaceholder')} value={field.value ?? ''} rows={3} />
-                  </FormControl>
-                  <FormDescription>{t('descriptionDescription')}</FormDescription>
-                  <FormMessage />
+                <FormItem label={t('description')} description={t('descriptionDescription')}>
+                  <Textarea placeholder={t('descriptionPlaceholder')} rows={3} {...field} value={field.value ?? ''} />
                 </FormItem>
               )}
             />
@@ -126,21 +115,17 @@ export default function DocumentMetadataForm({ tenantId, initialValues }: Docume
               control={form.control}
               name="status"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('status')}</FormLabel>
+                <FormItem label={t('status')} description={t('statusDescription')}>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('selectStatus')} />
-                      </SelectTrigger>
-                    </FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('selectStatus')} />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="DRAFT">{t('statusOptions.DRAFT')}</SelectItem>
                       <SelectItem value="PUBLISHED">{t('statusOptions.PUBLISHED')}</SelectItem>
                       <SelectItem value="ARCHIVED">{t('statusOptions.ARCHIVED')}</SelectItem>
                     </SelectContent>
                   </Select>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -149,8 +134,7 @@ export default function DocumentMetadataForm({ tenantId, initialValues }: Docume
               control={form.control}
               name="expirationDate"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('expirationDate')}</FormLabel>
+                <FormItem label={t('expirationDate')} description={t('expirationDateDescription')}>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button variant="outline" className="w-full justify-start text-left font-normal">
@@ -162,7 +146,6 @@ export default function DocumentMetadataForm({ tenantId, initialValues }: Docume
                       <Calendar mode="single" selected={field.value ?? undefined} onSelect={field.onChange} autoFocus />
                     </PopoverContent>
                   </Popover>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -171,15 +154,9 @@ export default function DocumentMetadataForm({ tenantId, initialValues }: Docume
               control={form.control}
               name="assistantEnabled"
               render={({ field }) => (
-                <FormItem className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <FormLabel>AI Assistant</FormLabel>
-                    <FormDescription>Enable AI analysis of this document</FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch checked={field.value} onCheckedChange={field.onChange} />
-                  </FormControl>
-                </FormItem>
+                <FormCheckboxItem label={t('assistantEnabled')} description={t('assistantEnabledDescription')}>
+                  <Switch checked={field.value} onCheckedChange={field.onChange} />
+                </FormCheckboxItem>
               )}
             />
 
@@ -187,15 +164,9 @@ export default function DocumentMetadataForm({ tenantId, initialValues }: Docume
               control={form.control}
               name="advancedExcelEnabled"
               render={({ field }) => (
-                <FormItem className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <FormLabel>Advanced Excel Features</FormLabel>
-                    <FormDescription>Enable advanced Excel processing</FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch checked={field.value} onCheckedChange={field.onChange} />
-                  </FormControl>
-                </FormItem>
+                <FormCheckboxItem label={t('advancedExcelEnabled')} description={t('advancedExcelEnabledDescription')}>
+                  <Switch checked={field.value} onCheckedChange={field.onChange} />
+                </FormCheckboxItem>
               )}
             />
 
@@ -203,25 +174,16 @@ export default function DocumentMetadataForm({ tenantId, initialValues }: Docume
               control={form.control}
               name="downloadOnly"
               render={({ field }) => (
-                <FormItem className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <FormLabel>Download Only</FormLabel>
-                    <FormDescription>Document can only be downloaded, not viewed</FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch checked={field.value} onCheckedChange={field.onChange} />
-                  </FormControl>
-                </FormItem>
+                <FormCheckboxItem label={t('downloadOnly')} description={t('downloadOnlyDescription')}>
+                  <Switch checked={field.value} onCheckedChange={field.onChange} />
+                </FormCheckboxItem>
               )}
             />
-          </div>
-        </div>
-        <div className="mt-4 flex justify-end">
-          <Button type="submit" disabled={isPending}>
-            {initialValues ? t('saveChanges') : t('create')} {isPending && <LoaderCircleIcon className="animate-spin" />}
-          </Button>
-        </div>
-      </form>
+          </FormSection>
+        </FormContent>
+
+        <FormActions isPending={isPending} title={initialValues ? t('saveChanges') : t('create')} className="px-4" />
+      </FormRoot>
     </Form>
   );
 }

@@ -16,14 +16,15 @@ import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
+import { Switch } from '@/components/ui/switch';
+import { FormActions, FormContent, FormItem, FormRoot, FormSection, FormSwitchItem } from '@/components/shared/form-root';
 
+import { AccordionSection } from '../../../shared/accordion-section';
 import { CustomField } from './custom-field';
 import { Security } from './security';
-import { CompactSwitch, Section } from './shared';
 
 const linkFormSchema = z
   .object({
@@ -117,20 +118,20 @@ interface LinkFormProps {
   dataroomId: string;
   callbackUrl: string;
   linkType: 'DOCUMENT_LINK' | 'DATAROOM_LINK';
-  defaultValues?: LinkFormValues;
+  initialValues?: LinkFormValues;
 }
 
-export const LinkForm: FC<LinkFormProps> = ({ tenantId, defaultValues, linkType, documentId, dataroomId, callbackUrl }) => {
+export const LinkForm: FC<LinkFormProps> = ({ tenantId, initialValues, linkType, documentId, dataroomId, callbackUrl }) => {
   const router = useRouter();
   const t = useTranslations('admin.link.form');
 
   const form = useForm<LinkFormValues>({
     mode: 'onBlur',
     resolver: zodResolver(linkFormSchema),
-    defaultValues: defaultValues ?? getDefaultLinkValues(),
+    defaultValues: initialValues ?? getDefaultLinkValues(),
   });
 
-  const [pending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const { mutateAsync: upsertLink, error, data } = useUpsertLink();
 
   const handleCopyLink = (url: string) => {
@@ -206,24 +207,18 @@ export const LinkForm: FC<LinkFormProps> = ({ tenantId, defaultValues, linkType,
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
-        {error && <PrismaErrorAlert error={error} />}
-        <div className="flex-1 overflow-auto">
-          <div className="flex flex-1 flex-col justify-between overflow-hidden px-1 gap-4">
-            {/* Basic Information Section */}
-            <Section title={t('basicInfo.title')} icon={<LinkIcon className="h-4 w-4 text-primary" />} defaultOpen={true}>
+      <FormRoot onSubmit={form.handleSubmit(onSubmit)}>
+        <FormContent error={error}>
+          <FormSection>
+            {/* Basic Information AccordionSection */}
+            <AccordionSection title={t('basicInfo.title')} icon={<LinkIcon className="h-4 w-4 text-primary" />} defaultOpen={true}>
               <div className="grid gap-4">
                 <FormField
                   control={form.control}
                   name="name"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('basicInfo.name.label')}</FormLabel>
-                      <FormControl>
-                        <Input placeholder={t('basicInfo.name.placeholder')} {...field} autoComplete="off" />
-                      </FormControl>
-                      <FormDescription>{t('basicInfo.name.description')}</FormDescription>
-                      <FormMessage />
+                    <FormItem label={t('basicInfo.name.label')} description={t('basicInfo.name.description')}>
+                      <Input placeholder={t('basicInfo.name.placeholder')} autoComplete="off" {...field} />
                     </FormItem>
                   )}
                 />
@@ -232,40 +227,37 @@ export const LinkForm: FC<LinkFormProps> = ({ tenantId, defaultValues, linkType,
                   control={form.control}
                   name="expirationDate"
                   render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>{t('basicInfo.expirationDate.label')}</FormLabel>
+                    <FormItem label={t('basicInfo.expirationDate.label')} description={t('basicInfo.expirationDate.description')} className="flex flex-col">
                       <Popover>
                         <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button variant="outline" className={`w-full justify-start text-left font-normal ${!field.value && 'text-muted-foreground'}`}>
-                              <Calendar className="mr-2 h-4 w-4" />
-                              {field.value ? format(field.value, 'PPP', { locale: es }) : <span>{t('basicInfo.expirationDate.select')}</span>}
-                            </Button>
-                          </FormControl>
+                          <Button variant="outline" className={`w-full justify-start text-left font-normal ${!field.value && 'text-muted-foreground'}`}>
+                            <Calendar className="mr-2 h-4 w-4" />
+                            {field.value ? format(field.value, 'PPP', { locale: es }) : <span>{t('basicInfo.expirationDate.select')}</span>}
+                          </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
                           <CalendarComponent mode="single" selected={field.value} onSelect={field.onChange} autoFocus disabled={(date) => date < new Date()} />
                         </PopoverContent>
                       </Popover>
-                      <FormDescription>{t('basicInfo.expirationDate.description')}</FormDescription>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-            </Section>
+            </AccordionSection>
 
-            {/* Security Section */}
+            {/* Security AccordionSection */}
             <Security tenantId={tenantId} />
 
-            {/* Features Section */}
-            <Section title={t('features.additional')} icon={<FileText className="h-4 w-4 text-primary" />} defaultOpen={false}>
+            {/* Features AccordionSection */}
+            <AccordionSection title={t('features.additional')} icon={<FileText className="h-4 w-4 text-primary" />} defaultOpen={false}>
               <div className="grid gap-4">
                 <FormField
                   control={form.control}
                   name="allowDownload"
                   render={({ field }) => (
-                    <CompactSwitch label={t('features.allowDownload.label')} icon={<Download className="h-4 w-4" />} tooltip={t('features.allowDownload.tooltip')} field={field} />
+                    <FormSwitchItem label={t('features.allowDownload.label')} icon={<Download className="h-4 w-4" />} tooltip={t('features.allowDownload.tooltip')}>
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
+                    </FormSwitchItem>
                   )}
                 />
 
@@ -273,7 +265,9 @@ export const LinkForm: FC<LinkFormProps> = ({ tenantId, defaultValues, linkType,
                   control={form.control}
                   name="enableNotification"
                   render={({ field }) => (
-                    <CompactSwitch label={t('features.enableNotification.label')} icon={<Bell className="h-4 w-4" />} tooltip={t('features.enableNotification.tooltip')} field={field} />
+                    <FormSwitchItem label={t('features.enableNotification.label')} icon={<Bell className="h-4 w-4" />} tooltip={t('features.enableNotification.tooltip')}>
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
+                    </FormSwitchItem>
                   )}
                 />
 
@@ -281,7 +275,9 @@ export const LinkForm: FC<LinkFormProps> = ({ tenantId, defaultValues, linkType,
                   control={form.control}
                   name="enableFeedback"
                   render={({ field }) => (
-                    <CompactSwitch label={t('features.enableFeedback.label')} icon={<MessageSquare className="h-4 w-4" />} tooltip={t('features.enableFeedback.tooltip')} field={field} />
+                    <FormSwitchItem label={t('features.enableFeedback.label')} icon={<MessageSquare className="h-4 w-4" />} tooltip={t('features.enableFeedback.tooltip')}>
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
+                    </FormSwitchItem>
                   )}
                 />
 
@@ -289,22 +285,20 @@ export const LinkForm: FC<LinkFormProps> = ({ tenantId, defaultValues, linkType,
                   control={form.control}
                   name="enableQuestion"
                   render={({ field }) => (
-                    <CompactSwitch label={t('features.enableQuestion.label')} icon={<MessageSquare className="h-4 w-4" />} tooltip={t('features.enableQuestion.tooltip')} field={field} />
+                    <FormSwitchItem label={t('features.enableQuestion.label')} icon={<MessageSquare className="h-4 w-4" />} tooltip={t('features.enableQuestion.tooltip')}>
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
+                    </FormSwitchItem>
                   )}
                 />
               </div>
-            </Section>
+            </AccordionSection>
 
-            {/* Custom Fields Section */}
+            {/* Custom Fields AccordionSection */}
             <CustomField />
-          </div>
-        </div>
-        <div className="mt-4 flex justify-end">
-          <Button type="submit" disabled={pending} className="w-full sm:w-auto">
-            {pending ? t('buttons.saving') : t('buttons.save')}
-          </Button>
-        </div>
-      </form>
+          </FormSection>
+        </FormContent>
+        <FormActions isPending={isPending} title={initialValues ? t('saveChanges') : t('create')} className="px-4" />
+      </FormRoot>
     </Form>
   );
 };

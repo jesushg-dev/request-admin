@@ -832,8 +832,13 @@
         "saveChanges": "Save changes",
         "create": "Create",
         "documentName": "Document Name",
+        "documentNameDescription": "The name of the document. This will be displayed to users.",
+        "documentNamePlaceholder": "Enter the document name",
         "description": "Description",
+        "descriptionDescription": "A brief description of the document.",
+        "descriptionPlaceholder": "Enter a description",
         "status": "Status",
+        "statusDescription": "This helps to categorize the document.",
         "selectStatus": "Select status",
         "statusOptions": {
           "DRAFT": "Draft",
@@ -841,17 +846,14 @@
           "ARCHIVED": "Archived"
         },
         "expirationDate": "Expiration Date (Optional)",
+        "expirationDateDescription": "Set an expiration date for the document.",
         "pickDate": "Pick a date",
-        "aiAssistant": "AI Assistant",
-        "aiAssistantDescription": "Enable AI analysis of this document",
-        "advancedExcel": "Advanced Excel Features",
-        "advancedExcelDescription": "Enable advanced Excel processing",
+        "assistantEnabled": "AI Assistant",
+        "assistantEnabledDescription": "Enable AI analysis of this document",
+        "advancedExcelEnabled": "Advanced Excel Features",
+        "advancedExcelEnabledDescription": "Enable advanced Excel processing",
         "downloadOnly": "Download Only",
-        "downloadOnlyDescription": "Document can only be downloaded, not viewed",
-        "documentNamePlaceholder": "Enter the document name",
-        "documentNameDescription": "Provide a clear and concise name for the document.",
-        "descriptionPlaceholder": "Enter a brief description",
-        "descriptionDescription": "Add additional context or details about the document."
+        "downloadOnlyDescription": "Document can only be downloaded, not viewed"
       }
     },
     "client": {
@@ -890,6 +892,22 @@
           "descriptionPlaceholder": "Search by description",
           "createdAt": "Created At"
         }
+      },
+      "form": {
+        "name": "Name",
+        "nameDescription": "The name of the identification type (e.g., \"Passport\")",
+        "description": "Description",
+        "descriptionDescription": "Optional description of the identification type",
+        "regexValidation": "Regex Validation",
+        "regexValidationDescription": "Optional regex to validate the identification number",
+        "testInput": "Test Input",
+        "testInputDescription": "Enter a test input to validate against the regex",
+        "regexValid": "Regex Valid",
+        "regexInvalid": "Regex Invalid",
+        "saving": "Saving...",
+        "save": "Save",
+        "successSave": "Identification type saved successfully",
+        "errorSave": "Error saving identification type: {message}"
       }
     },
     "request": {
@@ -987,6 +1005,15 @@
           "areaLabel": "Area",
           "areaDescription": "Select the area where the request is assigned."
         }
+      },
+      "relatedIncidentForm": {
+        "relatedId": "Related Id",
+        "relatedIdDescription": "Type the id of the related incident.",
+        "savingChanges": "Saving changes...",
+        "successSave": "Related incident ({id}) has been saved successfully.",
+        "errorSave": "Failed to save related incident: {message}",
+        "saveChanges": "Save Changes",
+        "addRelatedIncident": "Add Related Incident"
       }
     },
     "requestType": {
@@ -1036,6 +1063,23 @@
           "namePlaceholder": "Enter name",
           "createdAt": "Created At"
         }
+      },
+      "form": {
+        "name": "Name",
+        "nameDescription": "The name of the requirement",
+        "description": "Description",
+        "descriptionDescription": "Clear instructions that will be shown to users fulfilling this requirement",
+        "requirementType": "Requirement Type",
+        "requirementTypeDescription": "The type of the requirement",
+        "isActive": "Active",
+        "isActiveDescription": "Enable this option to make the requirement active",
+        "isRequiredOnlyOnce": "Mark as one-time required requirement",
+        "isRequiredOnlyOnceDescription": "Enable this when the requirement should only be validated once",
+        "update": "Update",
+        "create": "Create",
+        "savingChanges": "Saving changes...",
+        "successSave": "Requirement '{name}' saved successfully.",
+        "errorSave": "Failed to save requirement: {error}"
       }
     },
     "security": {
@@ -1684,7 +1728,8 @@
         "saveSuccess": "Folder saved successfully.",
         "saveError": "Failed to save folder: {message}",
         "saveChanges": "Save Changes",
-        "create": "Create"
+        "create": "Create",
+        "root": "root"
       }
     },
     "link": {
@@ -1799,6 +1844,7 @@
           },
           "agreement": {
             "label": "Select Agreement",
+            "description": "Select the agreement that users must accept",
             "placeholder": "Select an agreement"
           },
           "viewerTypes": {
@@ -1842,7 +1888,9 @@
         },
         "titleCreate": "Create a new link",
         "subtitleCreate": "You can share documents with your clients by creating links.",
-        "titleEdit": "Edit link"
+        "titleEdit": "Edit link",
+        "saveChanges": "Save changes",
+        "create": "Create"
       }
     }
   },

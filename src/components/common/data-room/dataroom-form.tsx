@@ -4,18 +4,16 @@ import React, { useTransition } from 'react';
 import { useRouter } from '@/i18n/routing';
 import { useUpsertDataroom } from '@/services/api/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LoaderCircleIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { generateUuid } from '@/lib/id';
-import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
+import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
 
 // Define the schema for form validation
 const formSchema = z.object({
@@ -81,60 +79,43 @@ export const DataroomForm: React.FC<DataroomFormProps> = ({ initialValues, tenan
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
-        {error && <PrismaErrorAlert error={error} />}
-        <div className="flex-1 overflow-auto">
-          <div className="flex flex-1 flex-col justify-between overflow-hidden px-1 gap-4">
+      <FormRoot onSubmit={form.handleSubmit(onSubmit)}>
+        <FormContent error={error}>
+          <FormSection>
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('name')}</FormLabel>
-                  <FormControl>
-                    <Input id="name" placeholder={t('namePlaceholder')} {...field} />
-                  </FormControl>
-                  <FormDescription>{t('nameDescription')}</FormDescription>
-                  <FormMessage />
+                <FormItem label={t('name')} description={t('nameDescription')}>
+                  <Input id="name" placeholder={t('namePlaceholder')} {...field} />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="slug"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('slug')}</FormLabel>
-                  <FormControl>
-                    <Input id="slug" placeholder={t('slugPlaceholder')} {...field} />
-                  </FormControl>
-                  <FormDescription>{t('slugDescription')}</FormDescription>
-                  <FormMessage />
+                <FormItem label={t('slug')} description={t('slugDescription')}>
+                  <Input id="slug" placeholder={t('slugPlaceholder')} {...field} />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="description"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('description')}</FormLabel>
-                  <FormControl>
-                    <Textarea id="description" placeholder={t('descriptionPlaceholder')} {...field} />
-                  </FormControl>
-                  <FormDescription>{t('descriptionDescription')}</FormDescription>
-                  <FormMessage />
+                <FormItem label={t('description')} description={t('descriptionDescription')}>
+                  <Textarea id="description" placeholder={t('descriptionPlaceholder')} {...field} />
                 </FormItem>
               )}
             />
-          </div>
-        </div>
-        <div className="mt-4 flex justify-end">
-          <Button type="submit" disabled={isPending}>
-            {initialValues ? t('saveChanges') : t('create')} {isPending && <LoaderCircleIcon className="animate-spin" />}
-          </Button>
-        </div>
-      </form>
+          </FormSection>
+        </FormContent>
+
+        <FormActions isPending={isPending} title={initialValues ? t('saveChanges') : t('create')} />
+      </FormRoot>
     </Form>
   );
 };

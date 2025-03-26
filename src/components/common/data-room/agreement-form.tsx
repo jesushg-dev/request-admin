@@ -4,19 +4,17 @@ import React, { useTransition } from 'react';
 import { useRouter } from '@/i18n/routing';
 import { useUpsertAgreement } from '@/services/api/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LoaderCircleIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { generateUuid } from '@/lib/id';
-import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
+import { FormActions, FormCheckboxItem, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
 
 // Define the schema for form validation
 const formSchema = z.object({
@@ -86,75 +84,53 @@ export const AgreementForm: React.FC<AgreementFormProps> = ({ initialValues, ten
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
-        {error && <PrismaErrorAlert error={error} />}
-        <div className="flex-1 overflow-auto">
-          <div className="flex flex-1 flex-col justify-between overflow-hidden px-1 gap-4">
+      <FormRoot onSubmit={form.handleSubmit(onSubmit)}>
+        <FormContent error={error}>
+          <FormSection>
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('form.name')}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t('form.namePlaceholder')} {...field} />
-                  </FormControl>
-                  <FormDescription>{t('form.nameDescription')}</FormDescription>
-                  <FormMessage />
+                <FormItem label={t('form.name')} description={t('form.nameDescription')}>
+                  <Input placeholder={t('form.namePlaceholder')} {...field} />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="description"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('form.description')}</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder={t('form.descriptionPlaceholder')} {...field} value={field.value ?? ''} />
-                  </FormControl>
-                  <FormDescription>{t('form.descriptionDescription')}</FormDescription>
-                  <FormMessage />
+                <FormItem label={t('form.description')} description={t('form.descriptionDescription')}>
+                  <Textarea placeholder={t('form.descriptionPlaceholder')} {...field} value={field.value ?? ''} />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="content"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('form.content')}</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder={t('form.contentPlaceholder')} {...field} />
-                  </FormControl>
-                  <FormDescription>{t('form.contentDescription')}</FormDescription>
-                  <FormMessage />
+                <FormItem label={t('form.content')} description={t('form.contentDescription')}>
+                  <Textarea placeholder={t('form.contentPlaceholder')} {...field} />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="requireName"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 rounded-md border p-4">
-                  <FormControl>
-                    <Switch checked={field.value} onCheckedChange={field.onChange} />
-                  </FormControl>
-                  <div className="leading-none space-y-1">
-                    <FormLabel>{t('form.requireName')}</FormLabel>
-                    <FormDescription>{t('form.requireNameDescription')}</FormDescription>
-                  </div>
-                </FormItem>
+                <FormCheckboxItem label={t('form.requireName')} description={t('form.requireNameDescription')}>
+                  <Switch checked={field.value} onCheckedChange={field.onChange} />
+                </FormCheckboxItem>
               )}
             />
-          </div>
-        </div>
-        <div className="mt-4 flex justify-end">
-          <Button type="submit" disabled={isPending}>
-            {initialValues ? t('saveChanges') : t('create')} {isPending && <LoaderCircleIcon className="animate-spin" />}
-          </Button>
-        </div>
-      </form>
+          </FormSection>
+        </FormContent>
+
+        <FormActions isPending={isPending} title={initialValues ? t('saveChanges') : t('create')} />
+      </FormRoot>
     </Form>
   );
 };

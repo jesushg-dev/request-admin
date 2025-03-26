@@ -834,8 +834,13 @@
         "saveChanges": "Guardar cambios",
         "create": "Crear",
         "documentName": "Nombre del Documento",
+        "documentNameDescription": "El nombre del documento. Esto se mostrará a los usuarios.",
+        "documentNamePlaceholder": "Ingrese el nombre del documento",
         "description": "Descripción",
+        "descriptionDescription": "Descripción opcional del documento.",
+        "descriptionPlaceholder": "Ingrese una breve descripción",
         "status": "Estado",
+        "statusDescription": "Esto ayuda a organizar y clasificar los documentos.",
         "selectStatus": "Seleccionar estado",
         "statusOptions": {
           "DRAFT": "Borrador",
@@ -843,17 +848,14 @@
           "ARCHIVED": "Archivado"
         },
         "expirationDate": "Fecha de Expiración (Opcional)",
+        "expirationDateDescription": "Seleccione una fecha de vencimiento para el documento.",
         "pickDate": "Selecciona una fecha",
-        "aiAssistant": "Asistente de IA",
-        "aiAssistantDescription": "Habilitar análisis de IA para este documento",
-        "advancedExcel": "Funciones avanzadas de Excel",
-        "advancedExcelDescription": "Habilitar procesamiento avanzado de Excel",
+        "assistantEnabled": "Asistente de IA",
+        "assistantEnabledDescription": "Habilitar análisis de IA para este documento",
+        "advancedExcelEnabled": "Funciones Avanzadas de Excel",
+        "advancedExcelEnabledDescription": "Habilitar procesamiento avanzado de Excel",
         "downloadOnly": "Solo Descarga",
-        "downloadOnlyDescription": "El documento solo puede ser descargado, no visualizado",
-        "documentNamePlaceholder": "Ingrese el nombre del documento",
-        "documentNameDescription": "Proporcione un nombre claro y conciso para el documento.",
-        "descriptionPlaceholder": "Ingrese una breve descripción",
-        "descriptionDescription": "Agregue contexto o detalles adicionales sobre el documento."
+        "downloadOnlyDescription": "El documento solo puede ser descargado, no visualizado"
       }
     },
     "client": {
@@ -892,6 +894,22 @@
           "descriptionPlaceholder": "Buscar por descripción",
           "createdAt": "Creado En"
         }
+      },
+      "form": {
+        "name": "Nombre",
+        "nameDescription": "El nombre del tipo de identificación (e.g., \"Pasaporte\")",
+        "description": "Descripción",
+        "descriptionDescription": "Descripción opcional del tipo de identificación",
+        "regexValidation": "Validación Regex",
+        "regexValidationDescription": "Regex opcional para validar el número de identificación",
+        "testInput": "Entrada de Prueba",
+        "testInputDescription": "Ingrese una entrada de prueba para validar contra el regex",
+        "regexValid": "Regex válido",
+        "regexInvalid": "Regex inválido",
+        "saving": "Guardando...",
+        "save": "Guardar",
+        "successSave": "Tipo de identificación guardado exitosamente",
+        "errorSave": "Error al guardar el tipo de identificación: {message}"
       }
     },
     "request": {
@@ -989,6 +1007,15 @@
           "areaLabel": "Área",
           "areaDescription": "Seleccione el área donde se asigna la solicitud."
         }
+      },
+      "relatedIncidentForm": {
+        "relatedId": "ID Relacionado",
+        "relatedIdDescription": "Escriba el ID del incidente relacionado.",
+        "savingChanges": "Guardando cambios...",
+        "successSave": "Incidente relacionado ({id}) ha sido guardado exitosamente.",
+        "errorSave": "Error al guardar el incidente relacionado: {message}",
+        "saveChanges": "Guardar Cambios",
+        "addRelatedIncident": "Agregar Incidente Relacionado"
       }
     },
     "requestType": {
@@ -1038,6 +1065,23 @@
           "namePlaceholder": "Ingresar nombre",
           "createdAt": "Creado En"
         }
+      },
+      "form": {
+        "name": "Nombre",
+        "nameDescription": "El nombre del requisito",
+        "description": "Descripción",
+        "descriptionDescription": "Instrucciones claras que se mostrarán a los usuarios que cumplen con este requisito",
+        "requirementType": "Tipo de Requisito",
+        "requirementTypeDescription": "El tipo del requisito",
+        "isActive": "Activo",
+        "isActiveDescription": "Habilite esta opción para hacer que el requisito esté activo",
+        "isRequiredOnlyOnce": "Marcar como requisito requerido una sola vez",
+        "isRequiredOnlyOnceDescription": "Habilite esta opción cuando el requisito deba validarse solo una vez",
+        "update": "Actualizar",
+        "create": "Crear",
+        "savingChanges": "Guardando cambios...",
+        "successSave": "Requisito '{name}' guardado exitosamente.",
+        "errorSave": "Error al guardar el requisito: {message}"
       }
     },
     "security": {
@@ -1682,7 +1726,8 @@
         "saveSuccess": "Carpeta guardada exitosamente.",
         "saveError": "Error al guardar la carpeta: {message}",
         "saveChanges": "Guardar Cambios",
-        "create": "Crear"
+        "create": "Crear",
+        "root": "raíz"
       }
     },
     "link": {
@@ -1797,7 +1842,8 @@
           },
           "agreement": {
             "label": "Select Agreement",
-            "placeholder": "Select an agreement"
+            "placeholder": "Select an agreement",
+            "description": "Seleccione el acuerdo que los usuarios deben aceptar"
           },
           "viewerTypes": {
             "email": "Email",
@@ -1840,7 +1886,9 @@
         },
         "titleCreate": "Crea un nuevo enlace",
         "subtitleCreate": "Puede compartir documentos con sus clientes creando enlaces.",
-        "titleEdit": "Editar un enlace"
+        "titleEdit": "Editar un enlace",
+        "create": "Crear",
+        "saveChanges": "Guardar cambios"
       }
     }
   },

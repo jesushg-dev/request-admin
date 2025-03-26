@@ -41,9 +41,9 @@ const RequestSubcategoryFormDialog: React.FC<RequestSubcategoryFormDialogProps> 
       <div className="flex flex-col flex-1 overflow-hidden relative max-h-[calc(100vh-12rem)]">
         <Tabs defaultValue="details" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="details">Details</TabsTrigger>
-            <TabsTrigger value="sla">SLA</TabsTrigger>
-            <TabsTrigger value="guide-documents">Guide Documents</TabsTrigger>
+            <TabsTrigger value="details">{t('tabs.details')}</TabsTrigger>
+            <TabsTrigger value="sla">{t('tabs.sla')}</TabsTrigger>
+            <TabsTrigger value="guide-documents">{t('tabs.guideDocuments')}</TabsTrigger>
           </TabsList>
           <TabsContent value="details">
             <ScrollArea className="h-[calc(100vh-15rem)]">
@@ -138,11 +138,11 @@ const RequestSubcategoryFormDialog: React.FC<RequestSubcategoryFormDialogProps> 
                   name={`${currentPath}.sla.resolutionTime` as `categories.${number}.sla.resolutionTime`}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Resolution Time (hours)</FormLabel>
+                      <FormLabel>{t('sla.resolutionTimeLabel')}</FormLabel>
                       <FormControl>
                         <Input type="number" {...field} />
                       </FormControl>
-                      <FormDescription>The time in hours to resolve the request ( 0 means no SLA )</FormDescription>
+                      <FormDescription>{t('sla.resolutionTimeDescription')}</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -153,11 +153,11 @@ const RequestSubcategoryFormDialog: React.FC<RequestSubcategoryFormDialogProps> 
                   name={`${currentPath}.sla.escalationTime` as `categories.${number}.sla.escalationTime`}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Escalation Time (hours)</FormLabel>
+                      <FormLabel>{t('sla.escalationTimeLabel')}</FormLabel>
                       <FormControl>
                         <Input type="number" {...field} />
                       </FormControl>
-                      <FormDescription>The time in hours before escalation ( 0 means no escalation )</FormDescription>
+                      <FormDescription>{t('sla.escalationTimeDescription')}</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}

@@ -4,17 +4,17 @@ import { useTransition, type FC } from 'react';
 import { useRouter } from '@/i18n/routing';
 import { useUpsertIdentificationType } from '@/services/api/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertCircle, CheckCircle2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
+import { FormActions, FormContent, FormItem, FormRoot, FormSection, FormValidationStatus } from '@/components/shared/form-root';
 
 const identificationTypeFormSchema = z.object({
   id: z.string().optional(),
@@ -41,6 +41,7 @@ interface IdentificationTypeFormProps {
 
 export const IdentificationTypeForm: FC<IdentificationTypeFormProps> = ({ tenantId, defaultValues }) => {
   const router = useRouter();
+  const t = useTranslations('admin.identificationType.form');
   const form = useForm<identificationTypeFormValues>({
     resolver: zodResolver(identificationTypeFormSchema),
     defaultValues: defaultValues ?? getDefaultValues(),
@@ -51,9 +52,7 @@ export const IdentificationTypeForm: FC<IdentificationTypeFormProps> = ({ tenant
   const { mutateAsync: upsert, error } = useUpsertIdentificationType();
 
   const validateRegex = (regex: string | undefined, testInput: string | undefined) => {
-    if (!regex || !testInput) {
-      return null;
-    }
+    if (!regex || !testInput) return false;
 
     try {
       const regexObj = new RegExp(regex);
@@ -72,13 +71,13 @@ export const IdentificationTypeForm: FC<IdentificationTypeFormProps> = ({ tenant
       });
 
       toast.promise(promise, {
-        loading: 'Saving...',
+        loading: t('saving'),
         success: () => {
           router.push({ pathname: '/admin/[tenantId]/security/identification-types', params: { tenantId } });
-          return 'Identification type saved successfully';
+          return t('successSave');
         },
         error: (err) => {
-          return `Error saving identification type: ${err.message}`;
+          return t('errorSave', { message: err.message });
         },
       });
     });
@@ -86,101 +85,76 @@ export const IdentificationTypeForm: FC<IdentificationTypeFormProps> = ({ tenant
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
-        {error && <PrismaErrorAlert error={error} />}
-        <div className="flex-1 overflow-auto">
-          <div className="flex flex-1 flex-col justify-between overflow-hidden px-1 gap-4">
+      <FormRoot onSubmit={form.handleSubmit(onSubmit)}>
+        <FormContent error={error}>
+          <FormSection>
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter identification type name" {...field} />
-                  </FormControl>
-                  <FormDescription>The name of the identification type (e.g., &quot;Passport&quot;)</FormDescription>
-                  <FormMessage />
+                <FormItem label={t('name')} description={t('nameDescription')}>
+                  <Input placeholder={t('name')} {...field} />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="description"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Enter description (optional)" className="resize-none" {...field} />
-                  </FormControl>
-                  <FormDescription>Optional description of the identification type</FormDescription>
-                  <FormMessage />
+                <FormItem label={t('description')} description={t('descriptionDescription')}>
+                  <Textarea placeholder={t('descriptionDescription')} className="resize-none" {...field} />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="regex"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Regex Validation</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter regex for validation (optional)" {...field} />
-                  </FormControl>
-                  <FormDescription>Optional regex to validate the identification number</FormDescription>
-                  <FormMessage />
+                <FormItem label={t('regexValidation')} description={t('regexValidationDescription')}>
+                  <Input placeholder={t('regexValidationDescription')} {...field} />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="testInput"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Test Input</FormLabel>
+                <FormItem label={t('testInput')} description={t('testInputDescription')}>
                   <div className="flex space-x-2">
                     <FormControl>
-                      <Input placeholder="Enter test input for regex" {...field} />
+                      <Input placeholder={t('testInputDescription')} {...field} />
                     </FormControl>
                     <Button
                       type="button"
                       onClick={() => {
                         const regex = form.getValues('regex');
                         const testInput = form.getValues('testInput');
-                        if (!regex || !testInput) {
-                          return;
-                        }
+                        if (!regex || !testInput) return;
 
                         const isValid = validateRegex(regex, testInput);
-                        if (isValid !== null) {
-                          toast(isValid ? 'Regex Valid' : 'Regex Invalid', {
-                            description: isValid ? 'The regex matches the test input.' : 'The regex does not match the test input.',
-                          });
-                        }
+                        toast(isValid ? t('regexValid') : t('regexInvalid'), {
+                          description: isValid ? t('regexValid') : t('regexInvalid'),
+                        });
                       }}
                       disabled={!form.getValues('regex') || !form.getValues('testInput')}>
-                      Test
+                      {t('testInput')}
                     </Button>
                   </div>
-                  <FormDescription>Enter a test input to validate against the regex</FormDescription>
-                  <FormMessage />
                 </FormItem>
               )}
             />
+
             {form.getValues('regex') && form.getValues('testInput') && (
-              <div className={`flex items-center space-x-2 ${validateRegex(form.getValues('regex'), form.getValues('testInput')) ? 'text-green-600' : 'text-red-600'}`}>
-                {validateRegex(form.getValues('regex'), form.getValues('testInput')) ? <CheckCircle2 className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
-                <span>{validateRegex(form.getValues('regex'), form.getValues('testInput')) ? 'Regex is valid' : 'Regex is invalid'}</span>
-              </div>
+              <FormValidationStatus isValid={validateRegex(form.getValues('regex'), form.getValues('testInput'))} validText={t('regexValid')} invalidText={t('regexInvalid')} />
             )}
-          </div>
-        </div>
-        <div className="mt-4 flex justify-end">
-          <Button type="submit" className="w-full" disabled={pending}>
-            {pending ? 'Saving...' : 'Save'}
-          </Button>
-        </div>
-      </form>
+          </FormSection>
+        </FormContent>
+
+        <FormActions isPending={pending} title={pending ? t('saving') : t('save')} className="w-full" />
+      </FormRoot>
     </Form>
   );
 };

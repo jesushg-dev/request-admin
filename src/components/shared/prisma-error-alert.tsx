@@ -1,10 +1,7 @@
+import { FC } from 'react';
 import { AlertCircle } from 'lucide-react';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-
-type PrismaErrorAlertProps = {
-  error: unknown;
-};
 
 // Shape of the embedded Prisma error
 interface PrismaErrorShape {
@@ -87,7 +84,11 @@ function getErrorMessage(error: unknown): { title: string; description: string }
   };
 }
 
-export function PrismaErrorAlert({ error }: PrismaErrorAlertProps) {
+interface PrismaErrorAlertProps {
+  error: unknown;
+}
+
+export const PrismaErrorAlert: FC<PrismaErrorAlertProps> = ({ error }) => {
   const { title, description } = getErrorMessage(error);
 
   return (
@@ -97,4 +98,4 @@ export function PrismaErrorAlert({ error }: PrismaErrorAlertProps) {
       <AlertDescription>{description}</AlertDescription>
     </Alert>
   );
-}
+};
