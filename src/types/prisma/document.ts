@@ -49,6 +49,7 @@ export const DataroomFolderDefaultArgs = Prisma.validator<Prisma.DataroomFolderD
     _count: {
       select: {
         documents: true,
+        childFolders: true,
       },
     },
   },

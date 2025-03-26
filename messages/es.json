@@ -656,7 +656,175 @@
           "share": "Compartir"
         }
       },
-      "view": {},
+      "view": {
+        "view": {
+          "document_not_found": "Documento no encontrado",
+          "created": "Creado el {date}",
+          "tabs": {
+            "preview": "Vista previa",
+            "metadata": "Metadatos",
+            "versions": "Versiones",
+            "links": "Enlaces compartidos",
+            "analytics": "Analíticas"
+          },
+          "dropdown": {
+            "actions": "Acciones",
+            "edit_document": "Editar documento",
+            "upload_new_version": "Subir nueva versión",
+            "delete_document": "Eliminar documento"
+          },
+          "actions": {
+            "share": "Compartir",
+            "open_new_tab": "Abrir en nueva pestaña"
+          },
+          "file_info": {
+            "mb": "MB",
+            "na": "N/D"
+          },
+          "documentViewer": {
+            "preview_not_available": "Vista previa no disponible para este tipo de archivo.",
+            "download_file": "Descargar archivo",
+            "no_file_url": "No se proporcionó la URL del archivo.",
+            "default_document_name": "documento",
+            "aria": {
+              "document_preview": "Vista previa de {title}",
+              "pdf_document": "Documento PDF",
+              "video_player": "Reproductor de video",
+              "audio_player": "Reproductor de audio",
+              "text_content": "Contenido del archivo de texto"
+            },
+            "browser_no_support": {
+              "video": "Tu navegador no es compatible con la etiqueta de video.",
+              "audio": "Tu navegador no es compatible con el elemento de audio."
+            },
+            "actions": {
+              "download": "Descargar"
+            }
+          },
+          "metadata": {
+            "document_details": "Detalles del documento",
+            "edit": "Editar",
+            "metadata": {
+              "name": "Nombre",
+              "description": "Descripción",
+              "status": "Estado",
+              "file_type": "Tipo de archivo",
+              "size": "Tamaño",
+              "pages": "Páginas",
+              "folder": "Carpeta",
+              "expires": "Expira",
+              "created_by": "Creado por",
+              "created_date": "Fecha de creación",
+              "last_modified": "Última modificación",
+              "storage_type": "Tipo de almacenamiento",
+              "content_type": "Tipo de contenido",
+              "file_url": "URL del archivo",
+              "total_views": "Visualizaciones totales"
+            },
+            "file_information": "Información del archivo",
+            "features": {
+              "features_settings": "Características y configuraciones",
+              "features_description": "Funcionalidades especiales habilitadas para este documento",
+              "ai_assistant": "Asistente IA",
+              "ai_description": "La IA puede analizar y extraer datos de este documento",
+              "advanced_excel": "Excel avanzado",
+              "excel_description": "Funciones avanzadas de procesamiento de Excel",
+              "download_only": "Solo descarga",
+              "download_description": "El documento solo se puede descargar, no ver en el navegador"
+            },
+            "badges": {
+              "enabled": "Habilitado",
+              "disabled": "Deshabilitado"
+            },
+            "file_info": {
+              "mb": "MB"
+            },
+            "common": {
+              "na": "N/D"
+            }
+          },
+          "versionHistory": {
+            "empty_state": {
+              "title": "No se encontraron versiones",
+              "description": "Aún no hay versiones de este documento. Sube una nueva versión para comenzar."
+            },
+            "badges": {
+              "current": "Actual"
+            },
+            "version_number": "Versión {number}",
+            "pages": "{count} páginas",
+            "created_by": "Por {user}",
+            "n_a": "N/A",
+            "processed_status": "Procesado",
+            "datetime_format": "d 'de' MMM, yyyy 'a las' h:mm a",
+            "file_info": {
+              "mb": "MB"
+            },
+            "actions": {
+              "view": "Ver",
+              "download": "Descargar"
+            },
+            "dropdown": {
+              "actions": "Acciones",
+              "restore": "Establecer como versión principal",
+              "delete": "Eliminar"
+            },
+            "toast": {
+              "restore_success": "Versión restaurada correctamente"
+            },
+            "version_label": "Versión"
+          },
+          "sharedLinks": {
+            "empty_state": {
+              "title": "Sin enlaces compartidos",
+              "description": "Crea enlaces compartibles para este documento"
+            },
+            "badges": {
+              "archived": "Archivado"
+            },
+            "audience": {
+              "general": "General",
+              "specific": "Grupo específico"
+            },
+            "tooltips": {
+              "password": "Protegido con contraseña",
+              "email": "Correo electrónico requerido",
+              "email_verified": "Verificación de correo requerida",
+              "screenshot": "Protección contra capturas",
+              "watermark": "Con marca de agua",
+              "agreement": "Acuerdo requerido: {agreement}",
+              "download": "Descargable"
+            },
+            "created": "Creado el {date}",
+            "expires": "Expira el {date}",
+            "views": "{count} visualizaciones",
+            "actions": {
+              "open": "Abrir",
+              "edit": "Editar"
+            },
+            "dropdown": {
+              "actions": "Acciones",
+              "copy": "Copiar enlace",
+              "settings": "Configuración",
+              "archive": "Archivar",
+              "unarchive": "Desarchivar",
+              "saving": "Guardando...",
+              "delete": "Eliminar"
+            },
+            "toast": {
+              "progress": "Actualizando...",
+              "success": "Cambios guardados",
+              "error": "Error: {error}",
+              "copy_success": "Enlace copiado"
+            }
+          }
+        },
+        "sharedLinks": {
+          "tooltips": {
+            "verified": "Verificado"
+          }
+        }
+      },
       "metaform": {
         "title": "Metadatos del Documento",
         "subtitle": "Complete los metadatos del documento para una mejor organización.",
@@ -1699,6 +1867,11 @@
       }
     },
     "categoryForm": {
+      "tabs": {
+        "details": "Detalles",
+        "sla": "SLA",
+        "guideDocuments": "Documentos guía"
+      },
       "categoryNameLabel": "Nombre de la {categoryName} #{index}",
       "categoryNamePlaceholder": "Ingrese el nombre de la {categoryName}",
       "editSubcategoryButton": "Editar detalles de la {categoryName}",
@@ -1724,7 +1897,13 @@
       "descriptionDescription": "Este es un campo opcional para proporcionar una breve descripción de la {categoryName}.",
       "requirementsDescription": "Seleccione los requisitos aplicables para la {categoryName}.",
       "eligibleForNewClientsDescription": "Marque si esta {categoryName} está disponible para nuevos clientes.",
-      "exitButton": "Salir"
+      "exitButton": "Salir",
+      "sla": {
+        "resolutionTimeLabel": "Tiempo de resolución (horas)",
+        "resolutionTimeDescription": "Tiempo en horas para resolver la solicitud (0 significa sin SLA)",
+        "escalationTimeLabel": "Tiempo de escalamiento (horas)",
+        "escalationTimeDescription": "Tiempo en horas antes de escalar (0 significa sin escalamiento)"
+      }
     },
     "areaForm": {
       "nameLabel": "Nombre",

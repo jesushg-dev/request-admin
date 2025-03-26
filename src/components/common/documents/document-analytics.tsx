@@ -5,6 +5,7 @@ import { Calendar, Clock, Download, Eye, FileText, Globe, Map, Users } from 'luc
 import { Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { toast } from 'sonner';
 
+import { DocumentWithRelations } from '@/types/prisma/document';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,7 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface DocumentAnalyticsProps {
   documentId: string;
-  document: any;
+  document: DocumentWithRelations;
 }
 
 export function DocumentAnalytics({ documentId, document }: DocumentAnalyticsProps) {
@@ -33,7 +34,7 @@ export function DocumentAnalytics({ documentId, document }: DocumentAnalyticsPro
         // Mock analytics data
         setAnalyticsData({
           views: {
-            total: document.viewCount || 68,
+            total: document._count.views,
             trend: '+12% from last period',
             byDay: [
               { day: 'Mon', views: 12, downloads: 3 },
@@ -58,7 +59,7 @@ export function DocumentAnalytics({ documentId, document }: DocumentAnalyticsPro
             ],
           },
           downloads: {
-            total: document.downloadCount || 23,
+            total: 23, //document.downloadCount ||
             trend: '+8% from last period',
           },
           viewers: {
@@ -83,7 +84,7 @@ export function DocumentAnalytics({ documentId, document }: DocumentAnalyticsPro
             ],
           },
         });
-      } catch (error) {
+      } catch {
         toast.error('Failed to fetch analytics data');
       } finally {
         setIsLoading(false);

@@ -381,6 +381,7 @@ export function useCheckRequest<TError = DefaultError>(
       closedBy?: string;
       closedComment?: string;
       comment?: string;
+      dataroomId?: string;
       satisfactionSurveyId?: string;
       channelId?: string;
     };

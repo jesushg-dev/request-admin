@@ -17,7 +17,7 @@ export const requirementComplianceSchema = z.object({
 
 export type RequirementComplianceValues = z.infer<typeof requirementComplianceSchema>;
 
-export const getDefaultCommplianceValues = (): RequirementComplianceValues => ({
+export const getDefaultComplianceValues = (): RequirementComplianceValues => ({
   requirementCompliances: {},
 });
 

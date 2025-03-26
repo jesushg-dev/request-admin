@@ -79,7 +79,6 @@ model Tenant {
   subscriptions                  Subscription[]
   usageTracking                  UsageTracking[]
   documents                      Document[]
-  documentAssignments            DocumentAssignment[]
   documentPages                  DocumentPage[]
   documentVersions               DocumentVersion[]
   links                          Link[]
@@ -448,13 +447,14 @@ model Request {
   closedBy             String?
   closedComment        String?
   comment              String?
-  documents            Document[]
   formSubmission       FormSubmission[]
   complianceTrackings  RequirementComplianceTracking[]
   requestAssignments   RequestAssignment[]
   relatedIncidents     RelatedIncident[]               @relation("RequestIncident")
   relatedTo            RelatedIncident[]               @relation("RequestRelated")
   changeLog            RequestChangeLog[]
+  dataroomId           String?
+  dataroom             Dataroom?
   satisfactionSurveyId String?
   satisfactionSurvey   CustomerSatisfactionSurvey?     @relation("RequestSurvey")
   channelId            String?
@@ -488,37 +488,36 @@ model RelatedIncident {
 
 /// Represents an assignment of a request to users or areas.
 model RequestAssignment {
-  createdAt            DateTime             @default(now())
-  updatedAt            DateTime?            @updatedAt()
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime?           @updatedAt()
   deletedAt            DateTime?
   createdBy            String?
   updatedBy            String?
   tenantId             String
-  tenant               Tenant               @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                   String               @id() @default(uuid())
+  tenant               Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                   String              @id() @default(uuid())
   comment              String?
-  assignmentDate       DateTime             @default(now())
+  assignmentDate       DateTime            @default(now())
   unAssignmentDate     DateTime?
   requestId            String
-  request              Request              @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  assignedUsers        AssignedUser[]       @relation("AssignedUsers")
-  documentAssignment   DocumentAssignment[]
+  request              Request             @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  assignedUsers        AssignedUser[]      @relation("AssignedUsers")
   slaStart             DateTime?
   slaDeadline          DateTime?
   slaEnd               DateTime?
   areaId               String
-  area                 Area                 @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  area                 Area                @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   statusId             String
-  status               RequestStatusType    @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  status               RequestStatusType   @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   typeId               String
-  type                 AssignmentType       @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  type                 AssignmentType      @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   priorityId           String
-  priority             RequestPriorityType  @relation(fields: [priorityId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  isActive             Boolean              @default(true)
+  priority             RequestPriorityType @relation(fields: [priorityId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  isActive             Boolean             @default(true)
   requestCategoryId    String
-  requestCategory      RequestCategory      @relation("RequestCategory", fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  requestCategory      RequestCategory     @relation("RequestCategory", fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   assignmentCategoryId String
-  assignmentCategory   AssignmentCategory   @relation("AssignmentCategory", fields: [assignmentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  assignmentCategory   AssignmentCategory  @relation("AssignmentCategory", fields: [assignmentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([typeId], name: "idx_assignment_type_id")
   @@index([requestId], name: "idx_assignment_request_id")
@@ -728,8 +727,6 @@ model Document {
   dataroomId                      String?
   dataroom                        Dataroom?                      @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   orderIndex                      Int?
-  requestId                       String?
-  request                         Request?                       @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   requirementComplianceTrackingId String?
   requirementComplianceTracking   RequirementComplianceTracking? @relation(fields: [requirementComplianceTrackingId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   links                           Link[]
@@ -739,22 +736,6 @@ model Document {
 
   @@index([ownerId])
   @@index([folderId])
-}
-
-model DocumentAssignment {
-  id                  String            @id() @default(uuid())
-  name                String
-  description         String?
-  isActive            Boolean           @default(true)
-  createdAt           DateTime          @default(now())
-  updatedAt           DateTime?         @updatedAt()
-  deletedAt           DateTime?
-  createdBy           String?
-  updatedBy           String?
-  tenantId            String
-  tenant              Tenant            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  requestAssignmentId String
-  requestAssignment   RequestAssignment @relation(fields: [requestAssignmentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model DocumentVersion {
@@ -1054,6 +1035,8 @@ model Dataroom {
   viewers      Viewer[]
   viewerGroups ViewerGroup[]
   brand        DataroomBrand?
+  requestId    String?          @unique()
+  request      Request?         @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([tenantId])
 }

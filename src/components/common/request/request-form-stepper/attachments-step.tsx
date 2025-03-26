@@ -1,12 +1,12 @@
 'use client';
 
+import { CloudUploadIcon } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
-import { useUploadFile } from '@/hooks/use-upload-file';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { AlertBanner } from '@/components/custom-ui/alert-banner';
 import { FileUploader } from '@/components/uploader/file-uploader';
-import { UploadedFilesCard } from '@/components/uploader/uploaded-files-card';
 
 export const attachmentSchema = z.object({
   additionalDocuments: z.array(z.instanceof(File)).optional(),
@@ -21,35 +21,39 @@ export const getDefaultAttachmentsValues = (): AttachmentsValues => ({
 export default function AttachmentsStep() {
   const { control } = useFormContext<AttachmentsValues>();
 
-  const { /* uploadFiles, */ progresses, uploadedFiles, isUploading } = useUploadFile('imageUploader', { defaultUploadedFiles: [] });
-
   return (
-    <div className="flex flex-col gap-2 mx-1 flex-1 overflow-hidden">
+    <>
+      <AlertBanner
+        variant="warning"
+        title="Subir archivos"
+        description={
+          <div className="space-y-2">
+            <p>
+              Solo podrá subir <span className="font-semibold">nuevos archivos</span> en esta sección y estos serán <span className="font-semibold">guardados con la solicitud</span>.
+            </p>
+            <p>
+              Si desea <span className="font-semibold">modificar archivos ya existentes</span>, podrá hacerlo en la sección de <span className="text-blue-500">archivos adjuntos</span> o en el{' '}
+              <span className="text-blue-500">dataroom generado con la solicitud</span>.
+            </p>
+          </div>
+        }
+        icon={<CloudUploadIcon className="h-5 w-5 text-yellow-500" />}
+      />
+
       <FormField
         control={control}
         name="additionalDocuments"
         render={({ field }) => (
-          <div className="space-y-6">
-            <FormItem className="w-full">
-              <FormLabel>Images</FormLabel>
-              <FormControl>
-                <FileUploader
-                  value={field.value}
-                  onValueChange={field.onChange}
-                  maxFileCount={4}
-                  maxSize={4 * 1024 * 1024}
-                  progresses={progresses}
-                  // pass the onUpload function here for direct upload
-                  // onUpload={uploadFiles}
-                  disabled={isUploading}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-            {uploadedFiles.length > 0 ? <UploadedFilesCard uploadedFiles={uploadedFiles} /> : null}
-          </div>
+          <FormItem className="flex-1 flex flex-col">
+            <FormLabel>Images</FormLabel>
+            <FormControl className="flex-1">
+              <FileUploader horizontal value={field.value} onValueChange={field.onChange} maxFileCount={4} maxSize={4 * 1024 * 1024} />
+            </FormControl>
+            <FormDescription>Max file size: 4MB</FormDescription>
+            <FormMessage />
+          </FormItem>
         )}
       />
-    </div>
+    </>
   );
 }

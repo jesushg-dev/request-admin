@@ -1,8 +1,9 @@
 'use client';
 
+import { FC } from 'react';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useViewToggle, ViewToggle } from '@/components/custom-ui/view-toggle';
 import EmptyState from '@/components/shared/empty-state';
 
@@ -31,40 +32,31 @@ export interface Document {
   requestName: string;
 }
 
-export default function AssociatedFilesViewer({ guideDocuments, documents }: { guideDocuments: GuideDocument[]; documents: Document[] }) {
+interface AssociatedFilesViewerProps {
+  tenantId: string;
+  documents: Document[];
+}
+
+const AssociatedFilesViewer: FC<AssociatedFilesViewerProps> = ({ documents, tenantId }) => {
   const [viewMode] = useViewToggle(VIEW_QUERY_KEY);
 
   return (
-    <Tabs className="flex-1 flex flex-col" defaultValue="document">
-      <Card className="flex-1 flex flex-col">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Associated Files</CardTitle>
-            <div className="flex items-center gap-2">
-              <TabsList className="h-8">
-                <TabsTrigger value="document" className="h-7 text-xs">
-                  Documents
-                </TabsTrigger>
-                <TabsTrigger value="guide" className="h-7 text-xs">
-                  Guides
-                </TabsTrigger>
-              </TabsList>
-
-              <ViewToggle queryKey={VIEW_QUERY_KEY} />
-            </div>
+    <Card className="flex-1 flex flex-col">
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle>Associated Files</CardTitle>
+          <div className="flex items-center gap-2">
+            <ViewToggle queryKey={VIEW_QUERY_KEY} />
           </div>
-        </CardHeader>
-        <CardContent className="flex-1 flex-col flex">
-          <TabsContent value="document">{viewMode === 'table' ? <GuideDocumentTableView guideDocuments={guideDocuments} /> : <Attachments type="document" />}</TabsContent>
-          <TabsContent value="guide">{viewMode === 'table' ? <DocumentTableView documents={documents} /> : <Attachments type="guide" />}</TabsContent>
-        </CardContent>
-      </Card>
-    </Tabs>
+        </div>
+      </CardHeader>
+      <CardContent className="flex-1 flex-col flex">{viewMode === 'table' ? <DocumentTableView documents={documents} /> : <Attachments type="guide" />}</CardContent>
+    </Card>
   );
-}
+};
 
 function GuideDocumentTableView({ guideDocuments }: { guideDocuments: GuideDocument[] }) {
-  if (!guideDocuments.length) return <EmptyState title="No guide documents found" />;
+  if (!guideDocuments.length) return <EmptyState title="No guide documents found" description="Please check back later or contact support if you need immediate assistance." />;
 
   return (
     <Table>
@@ -93,7 +85,7 @@ function GuideDocumentTableView({ guideDocuments }: { guideDocuments: GuideDocum
 }
 
 function DocumentTableView({ documents }: { documents: Document[] }) {
-  if (!documents.length) return <EmptyState title="No documents found" />;
+  if (!documents.length) return <EmptyState title="No documents found" description="Please check back later or contact support if you need immediate assistance." />;
 
   return (
     <Table>
@@ -118,3 +110,5 @@ function DocumentTableView({ documents }: { documents: Document[] }) {
     </Table>
   );
 }
+
+export default AssociatedFilesViewer;

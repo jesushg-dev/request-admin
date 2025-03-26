@@ -37,7 +37,6 @@ export * from './requirement-compliance-tracking';
 export * from './customer-satisfaction-survey';
 export * from './request-change-log';
 export * from './document';
-export * from './document-assignment';
 export * from './document-version';
 export * from './document-page';
 export * from './link';

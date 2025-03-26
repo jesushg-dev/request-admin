@@ -5,6 +5,7 @@ import { useTransition } from 'react';
 import { useFindManyDocumentVersion, useUpdateManyDocumentVersion } from '@/services/api/hooks';
 import { format } from 'date-fns';
 import { CheckCircle, Clock, Download, Eye, FileText, Layers, MoreHorizontal, RotateCcw, Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 import { downloadFile, getFileIcon } from '@/lib/document-utils';
@@ -20,6 +21,8 @@ interface DocumentVersionHistoryProps {
 }
 
 export function DocumentVersionHistory({ documentId, documentName }: DocumentVersionHistoryProps) {
+  const t = useTranslations('admin.document.view.versionHistory');
+
   const { data: versions = [], isLoading } = useFindManyDocumentVersion({
     where: { documentId },
     orderBy: { versionNumber: 'desc' },
@@ -33,7 +36,7 @@ export function DocumentVersionHistory({ documentId, documentName }: DocumentVer
     startTransition(() => {
       mutateAsync({ where: { documentId }, data: { isPrimary: false } });
       mutateAsync({ where: { id: versionId }, data: { isPrimary: true } });
-      toast.success('Version restored successfully');
+      toast.success(t('toast.restore_success'));
     });
   };
 
@@ -57,7 +60,7 @@ export function DocumentVersionHistory({ documentId, documentName }: DocumentVer
   return (
     <div className="flex-1 flex flex-col gap-4 overflow-y-auto">
       {versions?.length === 0 ? (
-        <EmptyCard title="No versions found" description="There are no versions of this document yet. Upload a new version to get started." />
+        <EmptyCard title={t('empty_state.title')} description={t('empty_state.description')} />
       ) : (
         <>
           {versions.map((version) => (
@@ -65,54 +68,60 @@ export function DocumentVersionHistory({ documentId, documentName }: DocumentVer
               <div className="h-12 w-12 flex items-center justify-center rounded-lg bg-muted/50">{getFileIcon(version.type)}</div>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-medium">Version {version.versionNumber}</span>
+                  <span className="font-medium">{t('version_number', { number: version.versionNumber })}</span>
                   {version.isPrimary && (
                     <Badge variant="success" className="ml-2">
-                      Current
+                      {t('badges.current')}
                     </Badge>
                   )}
                 </div>
                 <div className="flex flex-wrap items-center mt-2 text-xs text-muted-foreground gap-2">
                   <div className="flex items-center">
                     <Clock className="mr-1 h-3 w-3" />
-                    <span>{format(version.createdAt, "MMM d, yyyy 'at' h:mm a")}</span>
+                    <span>{format(version.createdAt, t('datetime_format'))}</span>
                   </div>
                   <span>•</span>
                   <div className="flex items-center">
                     <FileText className="mr-1 h-3 w-3" />
-                    <span>{formatBytes(version.fileSize || 0)}</span>
+                    <span>
+                      {formatBytes(version.fileSize || 0)} {t('file_info.mb')}
+                    </span>
                   </div>
                   {version.numPages && (
                     <>
                       <span>•</span>
                       <div className="flex items-center">
                         <Layers className="mr-1 h-3 w-3" />
-                        <span>{version.numPages} pages</span>
+                        <span>{t('pages', { count: version.numPages })}</span>
                       </div>
                     </>
                   )}
                   <span>•</span>
                   <div className="flex items-center">
-                    <span>By {version.createdBy}</span>
+                    <span>{t('created_by', { user: version.createdBy ?? t('n_a') })}</span>
                   </div>
                   {version.hasPages && (
                     <>
                       <span>•</span>
                       <div className="flex items-center">
                         <CheckCircle className="mr-1 h-3 w-3 text-green-500" />
-                        <span>Processed</span>
+                        <span>{t('processed_status')}</span>
                       </div>
                     </>
                   )}
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <Button variant="outline" size="icon" title="View" asChild>
+                <Button variant="outline" size="icon" title={t('actions.view')} asChild>
                   <a href={version.file} target="_blank" rel="noopener noreferrer">
                     <Eye className="h-4 w-4" />
                   </a>
                 </Button>
-                <Button variant="outline" size="icon" title="Download" onClick={() => downloadFile(version.file, `${documentName} - Version ${version.versionNumber}.${version.type}`)}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  title={t('actions.download')}
+                  onClick={() => downloadFile(version.file, `${documentName} - ${t('version_label')} ${version.versionNumber}.${version.type}`)}>
                   <Download className="h-4 w-4" />
                 </Button>
                 <DropdownMenu>
@@ -122,17 +131,17 @@ export function DocumentVersionHistory({ documentId, documentName }: DocumentVer
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuLabel>{t('dropdown.actions')}</DropdownMenuLabel>
                     {!version.isPrimary && (
                       <DropdownMenuItem disabled={pending} onClick={() => handleRestoreVersion(version.id)}>
                         <RotateCcw className="mr-2 h-4 w-4" />
-                        Set as Primary Version
+                        {t('dropdown.restore')}
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className="text-destructive">
                       <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
+                      {t('dropdown.delete')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

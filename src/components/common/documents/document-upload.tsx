@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { getPathname, Locale } from '@/i18n/routing';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -54,7 +54,7 @@ interface DocumentUploadProps {
 export function DocumentUpload({ id, locale, tenantId, folderId, callbackUrl, dataroomId }: DocumentUploadProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
-  const [progresses, setProgresses] = useState<Record<string, number>>({});
+  //const [progresses, setProgresses] = useState<Record<string, number>>({});
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -71,9 +71,9 @@ export function DocumentUpload({ id, locale, tenantId, folderId, callbackUrl, da
         await uploadFiles('imageUploader', {
           files: newData.files,
           input: { tenantId, folderId, dataroomId },
-          onUploadProgress: ({ file, progress }) => {
+          /*onUploadProgress: ({ file, progress }) => {
             setProgresses((prev) => ({ ...prev, [file.name]: progress }));
-          },
+          },*/
         });
 
         const pathname = callbackUrl ? callbackUrl : getPathname({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/documents', params: { tenantId } } });
@@ -107,7 +107,7 @@ export function DocumentUpload({ id, locale, tenantId, folderId, callbackUrl, da
                         onValueChange={field.onChange}
                         maxFileCount={id ? 1 : 3}
                         maxSize={4 * 1024 * 1024}
-                        progresses={progresses}
+                        //progresses={progresses}
                         disabled={pending}
                         //onUpload={onUpload}
                       />

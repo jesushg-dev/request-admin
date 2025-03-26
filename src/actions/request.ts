@@ -16,11 +16,11 @@ export const upsertRequest = async (tenantId: string, data: RequestFormStepperTy
   const session = await currentSession();
   if (!session?.user?.id) throw new UserNotFoundErr('User not found');
 
-  // Validación de categorías
+  // Validate categories
   if (data.requestCategory.length === 0) throw new Error('Request category is required');
   if (data.assignmentCategory.length === 0) throw new Error('Assignment category is required');
 
-  // Obtener request existente con relaciones
+  // Get existing request with relations
   const existingRequest = await db.request.findUnique({
     ...RequestDefaultArgs,
     where: { id: data.id, tenantId },
@@ -30,7 +30,7 @@ export const upsertRequest = async (tenantId: string, data: RequestFormStepperTy
 };
 
 // ========================
-// CREACIÓN DE REQUEST
+// CREATE REQUEST
 // ========================
 const handleCreate = async (tenantId: string, data: RequestFormStepperType, userId: string) => {
   const [userAreas, requirementCompliances, assignmentType] = await Promise.all([
@@ -46,6 +46,20 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
   ]);
 
   return db.$transaction(async (tx) => {
+    // Create Dataroom
+    const newDataroom = await tx.dataroom.create({
+      data: {
+        tenantId,
+        pId: `request-${data.id}`,
+        name: `Request ${data.id}`,
+        description: data.description,
+        createdBy: userId,
+      },
+    });
+
+    console.log('🚀 ~ handleCreate ~ newDataroom:', newDataroom);
+
+    // Create Request and associate with Dataroom
     const newRequest = await tx.request.create({
       data: {
         id: data.id,
@@ -73,11 +87,17 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
             name: `Request ${data.id}`,
           },
         },
+        dataroom: {
+          connect: {
+            id: newDataroom.id,
+          },
+        },
       },
     });
 
     console.log('🚀 ~ handleCreate ~ newRequest:', newRequest);
-    // Registrar creación
+
+    // Log the change in request creation
     await tx.requestChangeLog.create({
       data: {
         tenantId,
@@ -90,7 +110,8 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
       },
     });
 
-    return newRequest;
+    // Return the request with the dataroomId
+    return { ...newRequest, dataroomId: newDataroom.id };
   });
 };
 
@@ -441,6 +462,10 @@ export const getRequestDetailsByRequest = async (tenantId: string, request: Requ
     select: { id: true, name: true, createdAt: true },
     where: { requestId: request.id },
   });
+  const dataroom = await db.dataroom.findFirst({
+    where: { requestId: request.id },
+    select: { id: true, name: true, createdAt: true },
+  });
 
   return {
     submissions: {
@@ -453,6 +478,7 @@ export const getRequestDetailsByRequest = async (tenantId: string, request: Requ
     },
     satisfactionSurvey: satisfactionSurvey ?? undefined,
     channel: channel ?? undefined,
+    dataroom: dataroom ?? undefined,
   };
 };
 

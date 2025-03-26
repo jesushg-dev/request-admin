@@ -43,4 +43,9 @@ export type RequestDetailsType = {
     name: string;
     createdAt: Date;
   };
+  dataroom?: {
+    id: string;
+    name: string;
+    createdAt: Date;
+  };
 };

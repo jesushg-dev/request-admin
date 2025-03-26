@@ -6,6 +6,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const normalizeValue = (value: string | null | undefined) => {
+  // Normalize the value to be undefined if it's an empty string or null
+  return value === '' || value == null ? undefined : value;
+};
+
 export function formatDate(date: Date | string | number, opts: Intl.DateTimeFormatOptions = {}) {
   return new Intl.DateTimeFormat('en-US', {
     month: opts.month ?? 'long',

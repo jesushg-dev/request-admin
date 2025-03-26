@@ -4,6 +4,7 @@ import { useTransition } from 'react';
 import { useFindManyLink, useUpdateLink } from '@/services/api/hooks';
 import { format } from 'date-fns';
 import { Copy, Download, ExternalLink, FileText, Image, LinkIcon, Lock, Mail, MoreHorizontal, Settings, Shield, Trash2, Users } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 import { Badge } from '@/components/ui/badge';
@@ -33,21 +34,22 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
 
   const { mutateAsync: update } = useUpdateLink();
   const [pending, startTransition] = useTransition();
+  const t = useTranslations('admin.document.view.sharedLinks');
 
   const handleArchiveLink = (id: string, archive: boolean) => {
     startTransition(async () => {
       const promise = update({ data: { isArchived: archive }, where: { id } });
       toast.promise(promise, {
-        loading: 'Updating...',
-        success: 'Changes saved successfully',
-        error: (error) => 'Failed to update: ' + error.message,
+        loading: t('toast.progress'),
+        success: t('toast.success'),
+        error: (error) => t('toast.error', { error: error.message }),
       });
     });
   };
 
   const handleCopyLink = (url: string) => {
     navigator.clipboard.writeText(url);
-    toast.success('Link copied to clipboard');
+    toast.success(t('toast.copy_success'));
   };
 
   if (isLoading) {
@@ -70,7 +72,7 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
   return (
     <>
       {links.length === 0 ? (
-        <EmptyCard title="No shared links yet" description="Create shareable links for this document to share with others" />
+        <EmptyCard title={t('empty_state.title')} description={t('empty_state.description')} />
       ) : (
         <div className="flex flex-col gap-4 overflow-y-auto">
           {links.map((link) => (
@@ -78,10 +80,11 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <span className="font-medium">{link.name}</span>
-                  {link.isArchived && <Badge variant="outline">Archived</Badge>}
+                  {link.isArchived && <Badge variant="outline">{t('badges.archived')}</Badge>}
                   {link.audienceType !== 'GENERAL' && (
                     <Badge variant="outline" className="flex items-center gap-1">
-                      <Users className="h-3 w-3" /> {link.group?.name || link.audienceType}
+                      <Users className="h-3 w-3" />
+                      {link.group?.name || t(`audience.${link.audienceType.toLowerCase() as 'general' | 'specific'}`)}
                     </Badge>
                   )}
                 </div>
@@ -100,7 +103,7 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
                             <Lock className="h-3 w-3" />
                           </Badge>
                         </TooltipTrigger>
-                        <TooltipContent>Password Protected</TooltipContent>
+                        <TooltipContent>{t('tooltips.password')}</TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   )}
@@ -112,7 +115,7 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
                             <Mail className="h-3 w-3" />
                           </Badge>
                         </TooltipTrigger>
-                        <TooltipContent>Email Required</TooltipContent>
+                        <TooltipContent>{t('tooltips.email')}</TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   )}
@@ -121,10 +124,10 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Badge variant="outline" className="flex items-center gap-1">
-                            <Mail className="h-3 w-3" /> Verified
+                            <Mail className="h-3 w-3" /> {t('tooltips.verified')}
                           </Badge>
                         </TooltipTrigger>
-                        <TooltipContent>Email Verification Required</TooltipContent>
+                        <TooltipContent>{t('tooltips.email_verified')}</TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   )}
@@ -136,7 +139,7 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
                             <Shield className="h-3 w-3" />
                           </Badge>
                         </TooltipTrigger>
-                        <TooltipContent>Screenshot Protection</TooltipContent>
+                        <TooltipContent>{t('tooltips.screenshot')}</TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   )}
@@ -148,7 +151,7 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
                             <Image className="h-3 w-3" />
                           </Badge>
                         </TooltipTrigger>
-                        <TooltipContent>Watermarked</TooltipContent>
+                        <TooltipContent>{t('tooltips.watermark')}</TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   )}
@@ -160,7 +163,7 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
                             <FileText className="h-3 w-3" />
                           </Badge>
                         </TooltipTrigger>
-                        <TooltipContent>Agreement Required: {link.agreement?.name}</TooltipContent>
+                        <TooltipContent>{t('tooltips.agreement', { agreement: link.agreement?.name ?? '' })}</TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   )}
@@ -172,27 +175,27 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
                             <Download className="h-3 w-3" />
                           </Badge>
                         </TooltipTrigger>
-                        <TooltipContent>Downloadable</TooltipContent>
+                        <TooltipContent>{t('tooltips.download')}</TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   )}
                 </div>
                 <div className="text-xs text-muted-foreground mt-2 flex flex-wrap gap-x-4">
-                  <span>Created {format(link.createdAt, 'MMM d, yyyy')}</span>
-                  {link.expiresAt && <span>Expires {format(link.expiresAt, 'MMM d, yyyy')}</span>}
-                  <span>{link._count.views} views</span>
+                  <span>{t('created', { date: format(link.createdAt, 'MMM d, yyyy') })}</span>
+                  {link.expiresAt && <span>{t('expires', { date: format(link.expiresAt, 'MMM d, yyyy') })}</span>}
+                  <span>{t('views', { count: link._count.views })}</span>
                 </div>
               </div>
               <div className="flex items-center gap-2 mt-3 md:mt-0">
                 <Button variant="outline" size="sm" asChild>
                   <a href={link.url ?? ''} target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="mr-2 h-3 w-3" />
-                    Open
+                    {t('actions.open')}
                   </a>
                 </Button>
                 <Button variant="outline" size="sm">
                   <Settings className="mr-2 h-3 w-3" />
-                  Edit
+                  {t('actions.edit')}
                 </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -201,24 +204,24 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuLabel>{t('dropdown.actions')}</DropdownMenuLabel>
                     <DropdownMenuItem onClick={() => handleCopyLink(link.url ?? '')}>
                       <Copy className="mr-2 h-4 w-4" />
-                      Copy Link
+                      {t('dropdown.copy')}
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                       <Settings className="mr-2 h-4 w-4" />
-                      Edit Settings
+                      {t('dropdown.settings')}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem disabled={pending} onClick={() => handleArchiveLink(link.id, !link.isArchived)}>
                       <LinkIcon className="mr-2 h-4 w-4" />
-                      {pending ? 'Saving' : link.isArchived ? 'Unarchive' : 'Archive'}
+                      {pending ? t('dropdown.saving') : link.isArchived ? t('dropdown.unarchive') : t('dropdown.archive')}
                     </DropdownMenuItem>
 
                     <DropdownMenuItem className="text-destructive">
                       <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
+                      {t('dropdown.delete')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

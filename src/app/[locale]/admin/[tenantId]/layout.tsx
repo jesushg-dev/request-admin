@@ -6,6 +6,7 @@ import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
 import { SidebarProvider } from '@/components/ui/sidebar';
+import { ClipboardProvider } from '@/components/hoc/clipboard-context';
 import { AppSidebar } from '@/components/layouts/admin/app-sidebar';
 import { DndSubmissionProvider } from '@/components/layouts/admin/dnd-submission-provider';
 import { Navbar } from '@/components/layouts/admin/nav-bar';
@@ -59,14 +60,16 @@ export default async function RootLayout({
   return (
     <SidebarProvider>
       <DndSubmissionProvider tenantId={tenantId} data={menuItems}>
-        <AppSidebar tenants={tenants} user={session.user} tenantId={tenantId} />
-        <main className="flex h-screen w-full flex-1 flex-col overflow-hidden">
-          <Navbar tenants={tenants} />
-          <div className="flex flex-1 overflow-hidden">
-            {children}
-            {modal}
-          </div>
-        </main>
+        <ClipboardProvider>
+          <AppSidebar tenants={tenants} user={session.user} tenantId={tenantId} />
+          <main className="flex h-screen w-full flex-1 flex-col overflow-hidden">
+            <Navbar tenants={tenants} />
+            <div className="flex flex-1 overflow-hidden">
+              {children}
+              {modal}
+            </div>
+          </main>
+        </ClipboardProvider>
       </DndSubmissionProvider>
     </SidebarProvider>
   );

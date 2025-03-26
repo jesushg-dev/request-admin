@@ -13,6 +13,7 @@ export const folderReferencesParams = {
   dataroomId: parseAsString.withDefault(''),
   dataroomName: parseAsString.withDefault(''),
   currentFolderId: parseAsString.withDefault(''),
+  callbackUrl: parseAsString,
 };
 
 export const folderReferencesLoader = createLoader(folderReferencesParams);

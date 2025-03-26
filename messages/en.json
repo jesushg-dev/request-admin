@@ -660,7 +660,169 @@
           "share": "Share"
         }
       },
-      "view": {},
+      "view": {
+        "document_not_found": "Document not found",
+        "created": "Created {date}",
+        "tabs": {
+          "preview": "Preview",
+          "metadata": "Metadata",
+          "versions": "Versions",
+          "links": "Shared Links",
+          "analytics": "Analytics"
+        },
+        "dropdown": {
+          "actions": "Actions",
+          "edit_document": "Edit Document",
+          "upload_new_version": "Upload New Version",
+          "delete_document": "Delete Document"
+        },
+        "actions": {
+          "share": "Share",
+          "open_new_tab": "Open in New Tab"
+        },
+        "file_info": {
+          "mb": "MB",
+          "na": "N/A"
+        },
+        "documentViewer": {
+          "preview_not_available": "No preview available for this file type.",
+          "download_file": "Download File",
+          "no_file_url": "No file URL provided.",
+          "default_document_name": "document",
+          "aria": {
+            "document_preview": "{title} preview",
+            "pdf_document": "PDF document",
+            "video_player": "Video player",
+            "audio_player": "Audio player",
+            "text_content": "Text file content"
+          },
+          "browser_no_support": {
+            "video": "Your browser does not support the video tag.",
+            "audio": "Your browser does not support the audio element."
+          },
+          "actions": {
+            "download": "Download"
+          }
+        },
+        "metadata": {
+          "document_details": "Document Details",
+          "edit": "Edit",
+          "metadata": {
+            "name": "Name",
+            "description": "Description",
+            "status": "Status",
+            "file_type": "File Type",
+            "size": "Size",
+            "pages": "Pages",
+            "folder": "Folder",
+            "expires": "Expires",
+            "created_by": "Created By",
+            "created_date": "Created Date",
+            "last_modified": "Last Modified",
+            "storage_type": "Storage Type",
+            "content_type": "Content Type",
+            "file_url": "File URL",
+            "total_views": "Total Views"
+          },
+          "file_information": "File Information",
+          "features": {
+            "features_settings": "Features & Settings",
+            "features_description": "Special features enabled for this document",
+            "ai_assistant": "AI Assistant",
+            "ai_description": "AI can analyze and extract data from this document",
+            "advanced_excel": "Advanced Excel",
+            "excel_description": "Advanced Excel processing features",
+            "download_only": "Download Only",
+            "download_description": "Document can only be downloaded, not viewed in browser"
+          },
+          "badges": {
+            "enabled": "Enabled",
+            "disabled": "Disabled"
+          },
+          "file_info": {
+            "mb": "MB"
+          },
+          "common": {
+            "na": "N/A"
+          }
+        },
+        "versionHistory": {
+          "empty_state": {
+            "title": "No versions found",
+            "description": "There are no versions of this document yet. Upload a new version to get started."
+          },
+          "badges": {
+            "current": "Current"
+          },
+          "version_number": "Version {number}",
+          "pages": "{count} pages",
+          "created_by": "By {user}",
+          "n_a": "N/A",
+          "processed_status": "Processed",
+          "datetime_format": "MMM d, yyyy 'at' h:mm a",
+          "file_info": {
+            "mb": "MB"
+          },
+          "actions": {
+            "view": "View",
+            "download": "Download"
+          },
+          "dropdown": {
+            "actions": "Actions",
+            "restore": "Set as Primary Version",
+            "delete": "Delete"
+          },
+          "toast": {
+            "restore_success": "Version restored successfully"
+          },
+          "version_label": "Version"
+        },
+        "sharedLinks": {
+          "empty_state": {
+            "title": "No shared links yet",
+            "description": "Create shareable links for this document to share with others"
+          },
+          "badges": {
+            "archived": "Archived"
+          },
+          "audience": {
+            "general": "General",
+            "specific": "Specific Group"
+          },
+          "tooltips": {
+            "password": "Password Protected",
+            "email": "Email Required",
+            "email_verified": "Email Verification Required",
+            "screenshot": "Screenshot Protection",
+            "watermark": "Watermarked",
+            "agreement": "Agreement Required: {agreement}",
+            "download": "Downloadable",
+            "verified": "Verified"
+          },
+          "created": "Created {date}",
+          "expires": "Expires {date}",
+          "views": "{count} views",
+          "actions": {
+            "open": "Open",
+            "edit": "Edit"
+          },
+          "dropdown": {
+            "actions": "Actions",
+            "copy": "Copy Link",
+            "settings": "Edit Settings",
+            "archive": "Archive",
+            "unarchive": "Unarchive",
+            "saving": "Saving...",
+            "delete": "Delete"
+          },
+          "toast": {
+            "progress": "Updating...",
+            "success": "Changes saved successfully",
+            "error": "Failed to update: {error}",
+            "copy_success": "Link copied to clipboard"
+          }
+        }
+      },
       "metaform": {
         "title": "Document Metadata",
         "subtitle": "Fill in the document metadata to organize your files better.",
@@ -1707,6 +1869,11 @@
       }
     },
     "categoryForm": {
+      "tabs": {
+        "details": "Details",
+        "sla": "SLA",
+        "guideDocuments": "Guide Documents"
+      },
       "categoryNameLabel": "Name of the {categoryName} #{index}",
       "categoryNamePlaceholder": "Enter the name of the {categoryName}",
       "editSubcategoryButton": "Edit details of the {categoryName}",
@@ -1732,7 +1899,13 @@
       "descriptionDescription": "This is an optional field to provide a brief description of the {categoryName}.",
       "requirementsDescription": "Select the requirements associated with this {categoryName}.",
       "eligibleForNewClientsDescription": "Mark this {categoryName} as available to new clients.",
-      "exitButton": "Exit"
+      "exitButton": "Exit",
+      "sla": {
+        "resolutionTimeLabel": "Resolution Time (hours)",
+        "resolutionTimeDescription": "The time in hours to resolve the request (0 means no SLA)",
+        "escalationTimeLabel": "Escalation Time (hours)",
+        "escalationTimeDescription": "The time in hours before escalation (0 means no escalation)"
+      }
     },
     "areaForm": {
       "nameLabel": "Name",

@@ -54,9 +54,17 @@ const RequestDefaultArgs = Prisma.validator<Prisma.RequestDefaultArgs>()({
         createdAt: 'desc',
       },
     },
+    dataroom: {
+      select: {
+        _count: {
+          select: {
+            documents: true,
+          },
+        },
+      },
+    },
     _count: {
       select: {
-        documents: true,
         requestAssignments: true,
         complianceTrackings: true,
       },
@@ -143,22 +151,22 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
       cell: ({ cell }) => cell.getValue() ?? 'N/A',
     },
     {
-      accessorKey: 'priority',
+      accessorKey: 'requestAssignments.0.priority.name',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.priority')} />,
       cell: ({ cell }) => cell.getValue(),
     },
     {
-      accessorKey: 'status.name',
+      accessorKey: 'requestAssignments.0.status.name',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.status')} />,
       cell: ({ cell }) => cell.getValue(),
     },
     {
-      accessorKey: 'requestCategory.name',
+      accessorKey: 'requestAssignments.0.requestCategory.name',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.requestCategory')} />,
       cell: ({ cell }) => cell.getValue(),
     },
     {
-      accessorKey: 'assignmentCategory.name',
+      accessorKey: 'requestAssignments.0.assignmentCategory.name',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.assignmentCategory')} />,
       cell: ({ cell }) => cell.getValue(),
     },
@@ -171,7 +179,7 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
       },
     },*/
     {
-      accessorKey: '_count.documents',
+      accessorKey: 'dataroom._count.documents',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.documents')} />,
       cell: ({ cell }) => cell.getValue(),
     },

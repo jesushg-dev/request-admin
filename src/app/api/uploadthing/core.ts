@@ -1,9 +1,11 @@
 import { STORAGE_SERVICE } from '@/constants/storage';
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-server';
+import { db } from '@/server/db-client';
 import { createUploadthing, type FileRouter } from 'uploadthing/next';
 import { UploadThingError } from 'uploadthing/server';
 import { z } from 'zod';
+
+import { normalizeValue } from '@/lib/utils';
 
 const input = z.object({
   tenantId: z.string(),
@@ -37,35 +39,28 @@ export const ourFileRouter = {
       return { userId: session.user.id, ...input };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      const type = file.name.split('.').pop()?.toLowerCase(); // Extensión del archivo
+      console.log('🚀 ~ .onUploadComplete ~ metadata:', metadata);
+      const type = file.name.split('.').pop()?.toLowerCase();
       const contentType = file.type;
 
-      await db.document.create({
-        data: {
-          tenantId: metadata.tenantId,
-          name: file.name,
-          file: file.ufsUrl,
-          type: type,
-          contentType: contentType,
-          storageType: STORAGE_SERVICE.UPLOADTHING,
-          versions: {
-            create: [
-              {
-                tenantId: metadata.tenantId,
-                versionNumber: 1,
-                file: file.ufsUrl,
-                type: type,
-                contentType: contentType,
-                fileSize: file.size,
-                storageType: STORAGE_SERVICE.UPLOADTHING,
-                isPrimary: true,
-              },
-            ],
+      try {
+        await db.document.create({
+          data: {
+            tenantId: metadata.tenantId,
+            name: file.name,
+            file: file.ufsUrl,
+            type: type ?? '',
+            contentType: contentType,
+            storageType: STORAGE_SERVICE.UPLOADTHING,
+            dataroomId: normalizeValue(metadata.dataroomId),
+            folderId: normalizeValue(metadata.folderId),
           },
-          dataroomId: metadata.dataroomId ? metadata.dataroomId : undefined,
-          folderId: metadata.folderId ? metadata.folderId : undefined,
-        },
-      });
+        });
+      } catch (error) {
+        console.error('Error creating document in database:', JSON.stringify(error));
+        throw new UploadThingError('Failed to create document in database');
+      }
+      console.log('2🚀 ~ .onUploadComplete ~ metadata:');
 
       // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
       return { uploadedBy: metadata.userId };

@@ -98,7 +98,6 @@ model Tenant extends Auditable {
 
   // --- Documents and Files models ---
   documents                     Document[]
-  documentAssignments           DocumentAssignment[]
   documentPages                 DocumentPage[]
   documentVersions              DocumentVersion[]
   links                         Link[]

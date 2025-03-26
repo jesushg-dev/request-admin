@@ -1,10 +1,12 @@
 import { getAssignmentHierarchyAndLevelsByTenantId, getRequestHierarchyAndLevelsByTenantId } from '@/actions/hierarchy';
 import { getPrioritiesAsOptions, getRequestById, getRequestDetailsByRequest } from '@/actions/request';
 import { getCurrentUserTenant } from '@/actions/user';
+import { getPathname } from '@/i18n/routing';
 import { type Locale } from 'next-intl';
 
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { DataroomDocuments } from '@/components/common/data-room/dataroom-documents';
 import AssignmentHistory from '@/components/common/request/detail/assignments-viewer';
 import AssociatedFilesViewer from '@/components/common/request/detail/associated-files-viewer';
 import Messages from '@/components/common/request/detail/messages';
@@ -13,8 +15,7 @@ import RequestActivities from '@/components/common/request/detail/request-activi
 import ProjectDetails from '@/components/common/request/detail/request-details';
 import RequirementProgress from '@/components/common/request/detail/requirement-progress';
 import FormSubmissionsViewer from '@/components/common/request/detail/submissions-viewer';
-
-import { documents, guideDocuments } from './mockData';
+import EmptyState from '@/components/shared/empty-state';
 
 interface CaseDetailPageProps {
   params: Promise<{ locale: Locale; tenantId: string; slug: string }>;
@@ -24,11 +25,12 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
   const { locale, tenantId, slug } = await params;
 
   const request = await getRequestById(tenantId, slug);
+  const currentUser = await getCurrentUserTenant(tenantId);
   const priorities = await getPrioritiesAsOptions(tenantId);
   const requestDetails = await getRequestDetailsByRequest(tenantId, request);
   const requestHierarchy = await getRequestHierarchyAndLevelsByTenantId(locale, tenantId);
   const assignmentHierarchy = await getAssignmentHierarchyAndLevelsByTenantId(locale, tenantId);
-  const currentUser = await getCurrentUserTenant(tenantId);
+  const callbackUrl = getPathname({ locale, href: { pathname: '/admin/[tenantId]/requests-portal/requests/[slug]', params: { tenantId, slug } } });
 
   return (
     <ResizablePanelGroup direction="horizontal" className="flex-1">
@@ -54,7 +56,8 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
               <TabsTrigger value="assignments">Assignments</TabsTrigger>
               <TabsTrigger value="chat">Chat</TabsTrigger>
               <TabsTrigger value="submissions">Submissions</TabsTrigger>
-              <TabsTrigger value="files">Files</TabsTrigger>
+              <TabsTrigger value="guides">Guides</TabsTrigger>
+              <TabsTrigger value="attachments">Attachments</TabsTrigger>
               <TabsTrigger value="related">Related</TabsTrigger>
               <TabsTrigger value="history">History</TabsTrigger>
             </TabsList>
@@ -68,10 +71,19 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
               <Messages currentUserTenantId={currentUser.userTenantId} channel={requestDetails.channel} tenantId={tenantId} />
             </TabsContent>
             <TabsContent value="submissions" className="flex-1 flex flex-col overflow-hidden">
-              <FormSubmissionsViewer requestId={slug} />
+              <FormSubmissionsViewer tenantId={tenantId} requestId={slug} />
             </TabsContent>
-            <TabsContent value="files" className="flex-1 flex flex-col overflow-hidden">
-              <AssociatedFilesViewer guideDocuments={guideDocuments} documents={documents} />
+            <TabsContent value="attachments" className="flex-1 flex flex-col overflow-hidden">
+              {requestDetails.dataroom?.id ? (
+                <DataroomDocuments dataroomId={requestDetails.dataroom?.id} tenantId={tenantId} callbackUrl={callbackUrl} />
+              ) : (
+                <div className="flex-1 flex items-center justify-center">
+                  <EmptyState title="No documents found" description="Please check back later or contact support if you need immediate assistance." />
+                </div>
+              )}
+            </TabsContent>
+            <TabsContent value="guides" className="flex-1 flex flex-col overflow-hidden">
+              <AssociatedFilesViewer tenantId={tenantId} documents={[]} />
             </TabsContent>
             <TabsContent value="related" className="flex-1 flex flex-col overflow-hidden">
               <RelatedViewer requestId={slug} tenantId={tenantId} />

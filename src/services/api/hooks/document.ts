@@ -394,7 +394,6 @@ export function useCheckDocument<TError = DefaultError>(
       folderId?: string;
       dataroomId?: string;
       orderIndex?: number;
-      requestId?: string;
       requirementComplianceTrackingId?: string;
     };
   },

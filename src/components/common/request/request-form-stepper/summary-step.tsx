@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MetadataItem } from '@/components/shared/metadata-item';
 
 import { RequestFormStepperType } from '.';
+import AttachmentsViewer from './attachments-viewer';
 import RequirementProgress from './requirement-progress';
 import FormSubmissionsViewer from './submissions-viewer';
 
@@ -135,7 +136,7 @@ const SummaryStep: FC<SummaryStepProps> = ({ tenantId, requestLevelTypes, assign
             <FormSubmissionsViewer submissions={formData.submissions} />
           </TabsContent>
           <TabsContent value="attachments">
-            <p>Attachments</p>
+            <AttachmentsViewer files={formData.additionalDocuments ?? []} />
           </TabsContent>
         </Tabs>
       </div>

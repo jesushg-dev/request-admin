@@ -87,6 +87,14 @@ interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
    * @example disabled
    */
   disabled?: boolean;
+
+  /**
+   * Show the uploader in a horizontal layout.
+   * @type boolean
+   * @default false
+   * @example horizontal
+   */
+  horizontal?: boolean;
 }
 
 export function FileUploader(props: FileUploaderProps) {
@@ -102,6 +110,7 @@ export function FileUploader(props: FileUploaderProps) {
     maxFileCount = 1,
     multiple = false,
     disabled = false,
+    horizontal = false,
     className,
     ...dropzoneProps
   } = props;
@@ -179,13 +188,13 @@ export function FileUploader(props: FileUploaderProps) {
   const isDisabled = disabled || (files?.length ?? 0) >= maxFileCount;
 
   return (
-    <div className="relative flex flex-col gap-6 overflow-hidden">
+    <div className={cn('flex-1 w-full grid gap-2.5 grid-cols-1', horizontal && files?.length && 'md:grid-cols-2', className)}>
       <Dropzone onDrop={onDrop} accept={accept} maxSize={maxSize} maxFiles={maxFileCount} multiple={maxFileCount > 1 || multiple} disabled={isDisabled}>
         {({ getRootProps, getInputProps, isDragActive }) => (
           <div
             {...getRootProps()}
             className={cn(
-              'group relative grid h-52 w-full cursor-pointer place-items-center rounded-lg border-2 border-dashed border-muted-foreground/25 px-5 py-2.5 text-center transition hover:bg-muted/25',
+              'group relative grid flex-1 min-h-52 w-full cursor-pointer place-items-center rounded-lg border-2 border-dashed border-muted-foreground/25 px-5 py-2.5 text-center transition hover:bg-muted/25',
               'ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
               isDragActive && 'border-muted-foreground/50',
               isDisabled && 'pointer-events-none opacity-60',
@@ -221,7 +230,7 @@ export function FileUploader(props: FileUploaderProps) {
         )}
       </Dropzone>
       {files?.length ? (
-        <ScrollArea className="h-fit w-full px-3">
+        <ScrollArea className="flex-1 px-3">
           <div className="flex max-h-48 flex-col gap-4">{files?.map((file, index) => <FileCard key={index} file={file} onRemove={() => onRemove(index)} progress={progresses?.[file.name]} />)}</div>
         </ScrollArea>
       ) : null}

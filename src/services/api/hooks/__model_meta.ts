@@ -436,13 +436,6 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
-        documentAssignments: {
-          name: 'documentAssignments',
-          type: 'DocumentAssignment',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
         documentPages: {
           name: 'documentPages',
           type: 'DocumentPage',
@@ -2177,13 +2170,6 @@ const metadata = {
           type: 'String',
           isOptional: true,
         },
-        documents: {
-          name: 'documents',
-          type: 'Document',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'request',
-        },
         formSubmission: {
           name: 'formSubmission',
           type: 'FormSubmission',
@@ -2224,6 +2210,18 @@ const metadata = {
           type: 'RequestChangeLog',
           isDataModel: true,
           isArray: true,
+          backLink: 'request',
+        },
+        dataroomId: {
+          name: 'dataroomId',
+          type: 'String',
+          isOptional: true,
+        },
+        dataroom: {
+          name: 'dataroom',
+          type: 'Dataroom',
+          isDataModel: true,
+          isOptional: true,
           backLink: 'request',
         },
         satisfactionSurveyId: {
@@ -2429,13 +2427,6 @@ const metadata = {
         assignedUsers: {
           name: 'assignedUsers',
           type: 'AssignedUser',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'requestAssignment',
-        },
-        documentAssignment: {
-          name: 'documentAssignment',
-          type: 'DocumentAssignment',
           isDataModel: true,
           isArray: true,
           backLink: 'requestAssignment',
@@ -3509,22 +3500,6 @@ const metadata = {
           type: 'Int',
           isOptional: true,
         },
-        requestId: {
-          name: 'requestId',
-          type: 'String',
-          isOptional: true,
-          isForeignKey: true,
-          relationField: 'request',
-        },
-        request: {
-          name: 'request',
-          type: 'Request',
-          isDataModel: true,
-          isOptional: true,
-          backLink: 'documents',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'requestId' },
-        },
         requirementComplianceTrackingId: {
           name: 'requirementComplianceTrackingId',
           type: 'String',
@@ -3568,91 +3543,6 @@ const metadata = {
           isDataModel: true,
           isArray: true,
           backLink: 'document',
-        },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
-        },
-      },
-    },
-    documentAssignment: {
-      name: 'DocumentAssignment',
-      fields: {
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
-        },
-        name: {
-          name: 'name',
-          type: 'String',
-        },
-        description: {
-          name: 'description',
-          type: 'String',
-          isOptional: true,
-        },
-        isActive: {
-          name: 'isActive',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: true }] }],
-        },
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
-        },
-        deletedAt: {
-          name: 'deletedAt',
-          type: 'DateTime',
-          isOptional: true,
-        },
-        createdBy: {
-          name: 'createdBy',
-          type: 'String',
-          isOptional: true,
-        },
-        updatedBy: {
-          name: 'updatedBy',
-          type: 'String',
-          isOptional: true,
-        },
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'documentAssignments',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
-        requestAssignmentId: {
-          name: 'requestAssignmentId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'requestAssignment',
-        },
-        requestAssignment: {
-          name: 'requestAssignment',
-          type: 'RequestAssignment',
-          isDataModel: true,
-          backLink: 'documentAssignment',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'requestAssignmentId' },
         },
       },
       uniqueConstraints: {
@@ -5148,6 +5038,22 @@ const metadata = {
           isOptional: true,
           backLink: 'dataroom',
         },
+        requestId: {
+          name: 'requestId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'request',
+        },
+        request: {
+          name: 'request',
+          type: 'Request',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'dataroom',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'requestId' },
+        },
       },
       uniqueConstraints: {
         id: {
@@ -5157,6 +5063,10 @@ const metadata = {
         pId: {
           name: 'pId',
           fields: ['pId'],
+        },
+        requestId: {
+          name: 'requestId',
+          fields: ['requestId'],
         },
       },
     },

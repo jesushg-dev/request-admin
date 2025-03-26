@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { AssignmentLevelType, RequestLevelType } from '@/types/prisma/hierarchy';
+import { uploadFiles } from '@/lib/uploadthing';
 import { Card } from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
 import { OptionType } from '@/components/custom-ui/select';
@@ -22,7 +23,7 @@ import AttachmentsStep, { attachmentSchema, AttachmentsValues, getDefaultAttachm
 import CategoryStep, { combinedCategoriesSchema, CombinedCategoriesValues, getDefaultCombinedCategoriesValues } from './category-step';
 import DynamicFormStep, { formResponseSchema, FormResponsesValues, getDefaultFormResponsesValues } from './dynamic-form-step';
 import RequestDetailsStep, { getDefaultDetailsValues, requestDetailSchema, RequestDetailValues } from './request-details-step';
-import RequirementComplianceStep, { getDefaultCommplianceValues, requirementComplianceSchema, RequirementComplianceValues } from './requirement-compliance-step';
+import RequirementComplianceStep, { getDefaultComplianceValues, requirementComplianceSchema, RequirementComplianceValues } from './requirement-compliance-step';
 import SummaryStep from './summary-step';
 
 const { useStepper, utils } = defineStepper(
@@ -46,24 +47,22 @@ type CombinedFormProps = {
 };
 
 const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, requestLevelTypes, assignmentLevelTypes, statusesOptions, prioritiesOptions }) => {
-  console.log('🚀 ~ defaultValues:', defaultValues);
   const router = useRouter();
   const stepper = useStepper();
   const [isPending, startTransition] = useTransition();
+  const [requestCategoryIds, setRequestCategoryIds] = useState<string[]>([]);
 
   const form = useForm({
     mode: 'onTouched',
     resolver: zodResolver(stepper.current.schema),
     defaultValues: defaultValues ?? {
       ...getDefaultCombinedCategoriesValues(),
-      ...getDefaultCommplianceValues(),
+      ...getDefaultComplianceValues(),
       ...getDefaultDetailsValues(),
       ...getDefaultAttachmentsValues(),
       ...getDefaultFormResponsesValues(),
     },
   });
-
-  const [requestCategoryIds, setRequestCategoryIds] = useState<string[]>([]);
 
   const onSubmit = (values: z.infer<typeof stepper.current.schema>) => {
     if (stepper.current.id === 'categories') {
@@ -79,17 +78,29 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, re
     }
 
     startTransition(async () => {
-      const data = form.getValues() as RequestFormStepperType;
-      const promise = upsertRequest(tenantId, data);
+      const toastId = toast.loading('Saving request...');
+      try {
+        const data = form.getValues() as RequestFormStepperType;
+        const response = await upsertRequest(tenantId, data);
+        console.log('🚀 ~ startTransition ~ response:', response);
 
-      toast.promise(promise, {
-        loading: 'Saving request...',
-        success: (response) => {
-          router.push({ pathname: '/admin/[tenantId]/requests-portal/requests/[slug]', params: { tenantId, slug: response.id } });
-          return `Request saved: ${response?.id}`;
-        },
-        error: (error) => `Failed to save request: ${error.message}`,
-      });
+        if (data.additionalDocuments) {
+          toast.loading('Uploading files to storage service', { id: toastId });
+          await uploadFiles('imageUploader', {
+            files: data.additionalDocuments,
+            input: { tenantId, dataroomId: response.dataroomId },
+            /*onUploadProgress: ({ file, progress }) => {
+              //setProgresses((prev) => ({ ...prev, [file.name]: progress }));
+            },*/
+          });
+        }
+
+        router.push({ pathname: '/admin/[tenantId]/requests-portal/requests/[slug]', params: { tenantId, slug: response.id } });
+        toast.success('Request created successfully', { id: toastId });
+      } catch (error) {
+        toast.error('Error creating request', { id: toastId });
+        console.error(error);
+      }
     });
   };
 

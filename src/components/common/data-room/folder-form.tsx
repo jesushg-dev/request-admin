@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useTransition } from 'react';
-import { useRouter } from '@/i18n/routing';
+import { useRouter } from 'next/navigation';
+import { getPathname } from '@/i18n/routing';
 import { useUpsertDataroomFolder } from '@/services/api/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LoaderCircleIcon } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { Locale, useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
@@ -33,11 +34,13 @@ interface FolderFormProps {
   tenantId: string;
   dataroomId: string;
   currentFolderId?: string;
+  callbackUrl?: string | null;
   initialValues?: FolderFormValues;
   folders: { id: string; path: string }[];
+  locale: Locale;
 }
 
-export const FolderForm: React.FC<FolderFormProps> = ({ initialValues, dataroomId, tenantId, currentFolderId, folders }) => {
+export const FolderForm: React.FC<FolderFormProps> = ({ locale, initialValues, callbackUrl, dataroomId, tenantId, currentFolderId, folders }) => {
   const t = useTranslations('admin.folder.create');
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -58,11 +61,13 @@ export const FolderForm: React.FC<FolderFormProps> = ({ initialValues, dataroomI
           tenantId,
           dataroomId,
           name: result.name,
+          parentId: currentFolderId,
           path: location + `/${result.name}`,
         },
         update: {
           dataroomId,
           name: result.name,
+          parentId: currentFolderId,
           path: location + `/${result.name}`,
         },
         where: { id: result.id },
@@ -71,7 +76,9 @@ export const FolderForm: React.FC<FolderFormProps> = ({ initialValues, dataroomI
       toast.promise(promise, {
         loading: t('savingChanges'),
         success: () => {
-          router.push({ pathname: '/admin/[tenantId]/links-and-documents/data-rooms/[slug]', params: { tenantId, slug: dataroomId } });
+          const pathname = callbackUrl ? callbackUrl : getPathname({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/data-rooms/[slug]', params: { tenantId, slug: dataroomId } } });
+          router.push(pathname);
+
           return t('saveSuccess');
         },
         error: (error) => t('saveError', { message: error.message }),

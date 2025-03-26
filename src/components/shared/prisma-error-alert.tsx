@@ -20,7 +20,7 @@ function isObject(value: unknown): value is Record<string, unknown> {
 }
 
 // Extract a Prisma error from either `error` directly or `error.info`
-function extractPrismaError(error: unknown): PrismaErrorShape | null {
+export function extractPrismaError(error: unknown): PrismaErrorShape | null {
   if (!isObject(error)) {
     return null;
   }

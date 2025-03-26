@@ -31,14 +31,14 @@ model Document extends TenantScoped, Auditable {
   expirationDate DateTime? // Optional expiration date
   status       String   @default("ACTIVE") // Document status (e.g., "ACTIVE", "INACTIVE", "ARCHIVED")
   
-  // Owner relationship
-  ownerId      String? 
-  owner        UserTenant? @relation(fields: [ownerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-
   // Feature toggles
   assistantEnabled     Boolean @default(false) // Indicates if assistant is enabled
   advancedExcelEnabled Boolean @default(false) // Indicates if advanced Excel features are enabled
   downloadOnly         Boolean @default(false) // Indicates if the document is download-only
+
+  // Owner relationship
+  ownerId      String? 
+  owner        UserTenant? @relation(fields: [ownerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   // Folder relationship (optional)
   folderId String? //@db.UniqueIdentifier // Optional Folder ID (SQL Server GUID)
@@ -48,10 +48,6 @@ model Document extends TenantScoped, Auditable {
   dataroomId String? //@db.UniqueIdentifier
   dataroom   Dataroom? @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   orderIndex Int?
-
-  // Request relationship (optional, merged from legacy model)
-  requestId  String?  //@db.UniqueIdentifier // Associated request ID
-  request    Request? @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   // Compliance tracking (optional)
   requirementComplianceTrackingId String? //@db.UniqueIdentifier // Associated compliance tracking ID
@@ -66,12 +62,6 @@ model Document extends TenantScoped, Auditable {
 
   @@index([ownerId])
   @@index([folderId])
-}
-
-model DocumentAssignment extends TenantScoped, Auditable, CatalogBase {
-  // Links a document assignment to a request assignment.
-  requestAssignmentId String            //@db.UniqueIdentifier // Associated request assignment ID
-  requestAssignment   RequestAssignment @relation(fields: [requestAssignmentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model DocumentVersion extends TenantScoped, Auditable {
@@ -336,6 +326,10 @@ model Dataroom extends TenantScoped, Auditable, CatalogBase {
   viewers      Viewer[]
   viewerGroups ViewerGroup[]
   brand        DataroomBrand?
+  
+  // Request relationship (optional, merged from legacy model)
+  requestId  String?  @unique //@db.UniqueIdentifier // Associated request ID
+  request    Request? @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([tenantId])
 }

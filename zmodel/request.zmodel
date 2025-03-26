@@ -19,9 +19,6 @@ model Request extends TenantScoped, Auditable {
   closedComment        String?                         //@db.VarChar(500)    // Closure comment
   comment              String?                         //@db.VarChar(255)    // Optional comment
 
-  // Related documents
-  documents            Document[]
-
   // Form submissions
   formSubmission       FormSubmission[]
 
@@ -37,6 +34,10 @@ model Request extends TenantScoped, Auditable {
 
   // Change log
   changeLog            RequestChangeLog[]
+
+  // Dataroom
+  dataroomId           String?                         //@db.UniqueIdentifier
+  dataroom             Dataroom?                       
 
   // Satisfaction survey
   satisfactionSurveyId String?                         //@db.UniqueIdentifier
@@ -76,7 +77,6 @@ model RequestAssignment extends TenantScoped, Auditable {
   request              Request              @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   assignedUsers        AssignedUser[]       @relation("AssignedUsers")
-  documentAssignment   DocumentAssignment[]
 
   // SLA
   slaStart             DateTime?

@@ -32,7 +32,7 @@ export default async function DocumentDetailPage({ params }: DocumentDetailPageP
   });
 
   if (!document) {
-    return <div>Document not found</div>;
+    return <div>{t('document_not_found')}</div>;
   }
 
   return (
@@ -44,12 +44,12 @@ export default async function DocumentDetailPage({ params }: DocumentDetailPageP
             <div className="flex gap-1 text-sm text-muted-foreground">
               <div className="flex items-center">
                 <File className="mr-1 h-4 w-4" />
-                <span>{document.versions?.[0].fileSize ? (document.versions[0].fileSize / (1024 * 1024)).toFixed(2) : 'N/A'} MB</span>
+                <span>{document.versions?.[0]?.fileSize ? `${(document.versions[0].fileSize / (1024 * 1024)).toFixed(2)} ${t('file_info.mb')}` : t('file_info.na')}</span>
               </div>
               <span className="mx-2">•</span>
               <div className="flex items-center">
                 <Calendar className="mr-1 h-4 w-4" />
-                <span>Created {format(new Date(document.createdAt), 'MMM d, yyyy')}</span>
+                <span>{t('created', { date: format(new Date(document.createdAt), 'MMM d, yyyy') })}</span>
               </div>
               {document.createdBy && (
                 <>
@@ -72,13 +72,13 @@ export default async function DocumentDetailPage({ params }: DocumentDetailPageP
                     params: { tenantId },
                   }}>
                   <LinkIcon className="h-4 w-4" />
-                  <span className="sr-only">Share</span>
+                  <span className="sr-only">{t('actions.share')}</span>
                 </Link>
               </Button>
               <Button variant="ghost" asChild size="icon">
                 <a href={document.file} target="_blank" rel="noopener noreferrer">
                   <ExternalLink className="h-4 w-4" />
-                  <span className="sr-only">Open in New Tab</span>
+                  <span className="sr-only">{t('actions.open_new_tab')}</span>
                 </a>
               </Button>
               <DropdownMenu>
@@ -88,7 +88,7 @@ export default async function DocumentDetailPage({ params }: DocumentDetailPageP
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                  <DropdownMenuLabel>{t('dropdown.actions')}</DropdownMenuLabel>
                   <DropdownMenuItem asChild>
                     <Link
                       href={{
@@ -96,17 +96,17 @@ export default async function DocumentDetailPage({ params }: DocumentDetailPageP
                         params: { tenantId, slug: document.id },
                       }}>
                       <Edit className="mr-2 h-4 w-4" />
-                      Edit Document
+                      {t('dropdown.edit_document')}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
                     <Upload className="mr-2 h-4 w-4" />
-                    Upload New Version
+                    {t('dropdown.upload_new_version')}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
                     <Trash2 className="mr-2 h-4 w-4 text-destructive" />
-                    <span className="text-destructive">Delete Document</span>
+                    <span className="text-destructive">{t('dropdown.delete_document')}</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -117,11 +117,11 @@ export default async function DocumentDetailPage({ params }: DocumentDetailPageP
         <CardContent className="flex flex-col flex-1 overflow-hidden">
           <Tabs defaultValue="preview" className="overflow-hidden w-full flex flex-col flex-1 gap-2">
             <TabsList>
-              <TabsTrigger value="preview">Preview</TabsTrigger>
-              <TabsTrigger value="metadata">Metadata</TabsTrigger>
-              <TabsTrigger value="versions">Versions</TabsTrigger>
-              <TabsTrigger value="links">Shared Links</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
+              <TabsTrigger value="preview">{t('tabs.preview')}</TabsTrigger>
+              <TabsTrigger value="metadata">{t('tabs.metadata')}</TabsTrigger>
+              <TabsTrigger value="versions">{t('tabs.versions')}</TabsTrigger>
+              <TabsTrigger value="links">{t('tabs.links')}</TabsTrigger>
+              <TabsTrigger value="analytics">{t('tabs.analytics')}</TabsTrigger>
               {/* todo: implement comments and reactions after MVP
               <TabsTrigger value="comments">Comments</TabsTrigger>
               <TabsTrigger value="reactions">Reactions</TabsTrigger>
