@@ -700,11 +700,6 @@ const metadata = {
           type: 'DateTime',
           attributes: [{ name: '@default', args: [] }],
         },
-        isSuperAdmin: {
-          name: 'isSuperAdmin',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: false }] }],
-        },
         isTwoFactorRequired: {
           name: 'isTwoFactorRequired',
           type: 'Boolean',
@@ -3432,6 +3427,21 @@ const metadata = {
           type: 'String',
           attributes: [{ name: '@default', args: [{ value: 'ACTIVE' }] }],
         },
+        assistantEnabled: {
+          name: 'assistantEnabled',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        advancedExcelEnabled: {
+          name: 'advancedExcelEnabled',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        downloadOnly: {
+          name: 'downloadOnly',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
         ownerId: {
           name: 'ownerId',
           type: 'String',
@@ -3447,21 +3457,6 @@ const metadata = {
           backLink: 'documents',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'ownerId' },
-        },
-        assistantEnabled: {
-          name: 'assistantEnabled',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: false }] }],
-        },
-        advancedExcelEnabled: {
-          name: 'advancedExcelEnabled',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: false }] }],
-        },
-        downloadOnly: {
-          name: 'downloadOnly',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: false }] }],
         },
         folderId: {
           name: 'folderId',

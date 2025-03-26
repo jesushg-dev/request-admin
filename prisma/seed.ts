@@ -95,7 +95,6 @@ async function main() {
           isActive: true,
           role: 'admin',
           joinedAt: new Date(),
-          isSuperAdmin: true,
           person: {
             create: {
               firstName: 'Jesus',
@@ -140,7 +139,6 @@ async function main() {
           isActive: true,
           role: 'admin',
           joinedAt: new Date(),
-          isSuperAdmin: true,
           person: {
             create: {
               firstName: 'Danilo',

@@ -907,7 +907,11 @@
         "saving": "Saving...",
         "save": "Save",
         "successSave": "Identification type saved successfully",
-        "errorSave": "Error saving identification type: {message}"
+        "errorSave": "Error saving identification type: {message}",
+        "newIdentificationType": "New Identification Type",
+        "editIdentificationType": "Edit Identification Type",
+        "newIdentificationTypeDescription": "This will be used to identify users.",
+        "editIdentificationTypeDescription": "This will be used to identify users."
       }
     },
     "request": {

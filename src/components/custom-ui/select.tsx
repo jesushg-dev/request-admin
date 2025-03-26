@@ -16,6 +16,7 @@ import SelectComponent, {
   StylesConfig,
 } from 'react-select';
 import { FixedSizeList as List } from 'react-window';
+import { z } from 'zod';
 
 import { cn } from '@/lib/utils';
 
@@ -23,6 +24,11 @@ import { Skeleton } from '../ui/skeleton';
 
 /** select option type */
 export type OptionType = { label: string; value: string | number };
+
+export const optionSchema = z.object({
+  label: z.string(),
+  value: z.union([z.string(), z.number()]),
+});
 
 /**
  * styles that aligns with shadcn/ui

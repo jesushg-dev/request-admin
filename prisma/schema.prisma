@@ -122,7 +122,6 @@ model UserTenant {
   isActive                     Boolean                @default(true)
   isTermAccepted               Boolean                @default(false)
   joinedAt                     DateTime               @default(now())
-  isSuperAdmin                 Boolean                @default(false)
   isTwoFactorRequired          Boolean                @default(false)
   role                         String
   userId                       String
@@ -717,11 +716,11 @@ model Document {
   numPages                        Int?
   expirationDate                  DateTime?
   status                          String                         @default("ACTIVE")
-  ownerId                         String?
-  owner                           UserTenant?                    @relation(fields: [ownerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   assistantEnabled                Boolean                        @default(false)
   advancedExcelEnabled            Boolean                        @default(false)
   downloadOnly                    Boolean                        @default(false)
+  ownerId                         String?
+  owner                           UserTenant?                    @relation(fields: [ownerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   folderId                        String?
   folder                          DataroomFolder?                @relation(fields: [folderId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   dataroomId                      String?

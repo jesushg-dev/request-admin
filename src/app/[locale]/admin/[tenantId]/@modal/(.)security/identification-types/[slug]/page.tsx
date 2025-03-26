@@ -2,8 +2,9 @@ import { FC } from 'react';
 import { redirect } from '@/i18n/routing';
 import { db } from '@/server/db-server';
 import { Locale } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
-import { IdentificationTypeForm } from '@/components/common/identification-type/Identification-type-form';
+import { IdentificationTypeForm } from '@/components/common/identification-type/identification-type-form';
 import { PageDialogWrapper } from '@/components/shared/page-container';
 
 interface EditIdentificationTypePageProps {
@@ -12,6 +13,7 @@ interface EditIdentificationTypePageProps {
 
 const EditIdentificationTypePage: FC<EditIdentificationTypePageProps> = async ({ params }) => {
   const { locale, tenantId, slug } = await params;
+  const t = await getTranslations('admin.identificationType.form');
 
   const defaultValues = await db.identificationType.findFirst({
     where: { id: slug, tenantId },
@@ -23,7 +25,7 @@ const EditIdentificationTypePage: FC<EditIdentificationTypePageProps> = async ({
   }
 
   return (
-    <PageDialogWrapper title="Edit Identification Type">
+    <PageDialogWrapper title={t('editIdentificationType')} description={t('editIdentificationTypeDescription')}>
       <IdentificationTypeForm tenantId={tenantId} />
     </PageDialogWrapper>
   );

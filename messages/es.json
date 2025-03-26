@@ -909,7 +909,11 @@
         "saving": "Guardando...",
         "save": "Guardar",
         "successSave": "Tipo de identificación guardado exitosamente",
-        "errorSave": "Error al guardar el tipo de identificación: {message}"
+        "errorSave": "Error al guardar el tipo de identificación: {message}",
+        "newIdentificationType": "Nuevo Tipo de Identificación",
+        "editIdentificationType": "Editar Tipo de Identificación",
+        "newIdentificationTypeDescription": "Este tipo de identificación se utilizará para identificar a sus usuarios.",
+        "editIdentificationTypeDescription": "Este tipo de identificación se utilizará para identificar a sus usuarios."
       }
     },
     "request": {

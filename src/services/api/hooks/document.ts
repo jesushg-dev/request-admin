@@ -387,10 +387,10 @@ export function useCheckDocument<TError = DefaultError>(
       storageType?: string;
       numPages?: number;
       status?: string;
-      ownerId?: string;
       assistantEnabled?: boolean;
       advancedExcelEnabled?: boolean;
       downloadOnly?: boolean;
+      ownerId?: string;
       folderId?: string;
       dataroomId?: string;
       orderIndex?: number;

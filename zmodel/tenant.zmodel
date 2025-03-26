@@ -136,7 +136,6 @@ model UserTenant extends TenantScoped, Auditable {
   isActive                     Boolean          @default(true) // Indicates if the user is active in the tenant
   isTermAccepted               Boolean          @default(false) // Indicates if the user has accepted the terms of the tenant
   joinedAt                     DateTime         @default(now()) // Timestamp of when the user joined the tenant
-  isSuperAdmin                 Boolean          @default(false) // Flag for super admin status
   isTwoFactorRequired          Boolean          @default(false)
   role                         String       // It's a dummy field required for better auth
 
