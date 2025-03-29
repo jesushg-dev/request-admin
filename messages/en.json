@@ -639,6 +639,38 @@
           "downloadConfig": "Download Configuration",
           "copyLink": "Copy Preview Link"
         }
+      },
+      "viewerGroup": {
+        "new": {
+          "title": "New Viewer Group",
+          "subtitle": "Create a new viewer group to manage access to your data room."
+        },
+        "savingChanges": "Saving changes...",
+        "saveSuccess": "Changes saved successfully!",
+        "saveError": "Error saving changes: {message}",
+        "name": "Name",
+        "nameDescription": "Enter the name of the group.",
+        "namePlaceholder": "Group name",
+        "create": "Create",
+        "saveChanges": "Save Changes"
+      },
+      "groups": {
+        "settings": {
+          "accessSettings": "Access Settings",
+          "allowedDomains": "Allowed Email Domains",
+          "allowedDomainsDescription": "Users with these email domains can automatically join this group",
+          "domainsPlaceholder": "e.g., company.com, example.org (comma separated)",
+          "allowAllAccess": "Allow access to all documents",
+          "allowAllAccessDescription": "Gives this group access to all documents in the dataroom",
+          "settingsExplanation": "Domain Settings Explanation",
+          "explanationPoint1": "When you add domains, users with email addresses from those domains can automatically join this group",
+          "explanationPoint2": "For example, if you add 'company.com', anyone with an email ending in '@company.com' can access this group's documents",
+          "explanationPoint3": "The 'Allow access to all documents' setting gives this group access to all documents in the dataroom",
+          "saveSettings": "Save Settings",
+          "savingSettings": "Saving settings...",
+          "saveSuccess": "Settings updated successfully!",
+          "saveError": "Error saving settings: {{message}}"
+        }
       }
     },
     "document": {
@@ -1716,6 +1748,66 @@
             "confirm": "Verify",
             "cancel": "Cancel"
           }
+        }
+      },
+      "roleAndAccess": {
+        "rolesAndAccess": {
+          "title": "Roles & Access",
+          "description": "Manage your roles, permissions, and access within the organization."
+        },
+        "accountStatus": {
+          "title": "Account Status",
+          "description": "Configure your account status within this organization."
+        },
+        "activeAccount": {
+          "label": "Active Account",
+          "description": "Your account is active in this organization."
+        },
+        "termsAccepted": {
+          "label": "Terms Accepted",
+          "description": "You have accepted the organization's terms and conditions."
+        },
+        "rolePermissions": {
+          "title": "Role & Permissions",
+          "description": "Set your role and permissions within the organization."
+        },
+        "superAdminAlert": {
+          "title": "Super Admin Access",
+          "description": "Super admins have full access to all features and settings within the organization."
+        },
+        "role": {
+          "label": "Role",
+          "description": "Your role determines your permissions within the organization."
+        },
+        "saveButton": "Save changes",
+        "savingButton": "Saving...",
+        "leaveOrganization": {
+          "title": "Leave Organization",
+          "description": "Permanently remove yourself from this organization.",
+          "alert": {
+            "title": "Warning",
+            "point1": "You are about to leave this organization.",
+            "point2": "This action <strong>cannot be undone</strong>.",
+            "point3": "You will lose access to all resources, including projects, documents, and settings.",
+            "point4": "Your account will remain active, but you will be removed from this organization.",
+            "point5": "Please confirm your decision."
+          },
+          "button": "Leave Organization",
+          "leavingButton": "Leaving..."
+        },
+        "leaveConfirmation": {
+          "message": "Are you sure you want to leave this organization? This action cannot be undone.",
+          "title": "Confirm Leave",
+          "confirm": "Leave",
+          "cancel": "Cancel"
+        },
+        "toast": {
+          "updating": "Updating user information...",
+          "updateSuccess": "User information updated successfully.",
+          "updateError": "Failed to update user information: {error}",
+          "leaving": "Leaving organization...",
+          "leaveSuccess": "Successfully left the organization.",
+          "leaveError": "Failed to leave organization: {error}"
         }
       }
     },

@@ -360,7 +360,7 @@ export function DataroomDocuments({ dataroomId, tenantId, callbackUrl }: Dataroo
       </ContextMenuTrigger>
 
       <ContextMenuContent>
-        <ContextMenuItem onClick={() => handlePaste(currentFolderId)}>
+        <ContextMenuItem onClick={() => handlePaste(dataroomId, currentFolderId)}>
           <Clipboard className="mr-2 h-4 w-4" />
           {t('actions.paste')}
         </ContextMenuItem>

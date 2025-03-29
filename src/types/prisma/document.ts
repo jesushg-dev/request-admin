@@ -56,3 +56,39 @@ export const DataroomFolderDefaultArgs = Prisma.validator<Prisma.DataroomFolderD
 });
 
 export type DataroomFolderWithRelations = Prisma.DataroomFolderGetPayload<typeof DataroomFolderDefaultArgs>;
+
+export const DataroomViewerDetailDefaultArgs = Prisma.validator<Prisma.DataroomDefaultArgs>()({
+  select: {
+    requestId: true,
+    folders: {
+      select: { id: true, name: true },
+    },
+    documents: {
+      select: { id: true, name: true },
+    },
+    viewerGroups: {
+      select: {
+        id: true,
+        name: true,
+        domains: true,
+        allowAll: true,
+        accessControls: {
+          select: {
+            id: true,
+            itemId: true,
+            itemType: true,
+            canView: true,
+            canDownload: true,
+          },
+        },
+        _count: {
+          select: {
+            members: true,
+          },
+        },
+      },
+    },
+  },
+});
+
+export type DataroomViewerDetail = Prisma.DataroomGetPayload<typeof DataroomViewerDetailDefaultArgs>;

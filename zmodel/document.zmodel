@@ -167,7 +167,7 @@ model Link extends TenantScoped, Auditable {
   // Allowed values: "GENERAL", "GROUP", "TEAM"
   audienceType String  @default("GENERAL")
   groupId      String? //@db.UniqueIdentifier // Optional group ID for audience segmentation
-  group        ViewerGroup? @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  group        DataroomViewerGroup? @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   // Watermark configuration
   enableWatermark    Boolean? @default(false) // Toggle watermark
@@ -231,7 +231,7 @@ model DocumentView extends TenantScoped, Auditable {
   viewerId      String? //@db.UniqueIdentifier // Foreign key to Viewer
   viewer        Viewer?  @relation(fields: [viewerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   groupId       String? //@db.UniqueIdentifier // Group ID from dataroom
-  group         ViewerGroup? @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  group         DataroomViewerGroup? @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   feedbackResponse      FeedbackResponse?
   agreementResponse     AgreementResponse?
   customFieldResponse   CustomFieldResponse?
@@ -259,7 +259,7 @@ model Viewer extends TenantScoped, Auditable {
   dataroom   Dataroom? @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   views   DocumentView[]
-  groups  ViewerGroupMembership[]
+  groups  DataroomViewerGroupMembership[]
 
   @@unique([tenantId, email])
   @@index([tenantId])
@@ -324,7 +324,7 @@ model Dataroom extends TenantScoped, Auditable, CatalogBase {
   links        Link[]
   views        DocumentView[]
   viewers      Viewer[]
-  viewerGroups ViewerGroup[]
+  viewerGroups DataroomViewerGroup[]
   brand        DataroomBrand?
   
   // Request relationship (optional, merged from legacy model)
@@ -414,14 +414,14 @@ model AgreementResponse extends TenantScoped, Auditable {
 // ----------------------
 // Viewer Group and Access Control Models
 // ----------------------
-model ViewerGroup extends TenantScoped, Auditable {
+model DataroomViewerGroup extends TenantScoped, Auditable {
   id         String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for viewer group
   name       String
-  members    ViewerGroupMembership[]
+  members    DataroomViewerGroupMembership[]
   // Stored as NVARCHAR(Max) containing JSON text (an array of strings)
   domains    String   //@db.NVarChar(Max)
   links      Link[]
-  accessControls ViewerGroupAccessControls[]
+  accessControls DataroomViewerGroupAccessControls[]
   allowAll   Boolean @default(false)
 
   dataroomId String //@db.UniqueIdentifier
@@ -432,25 +432,25 @@ model ViewerGroup extends TenantScoped, Auditable {
   @@index([tenantId])
 }
 
-model ViewerGroupMembership extends TenantScoped, Auditable {
+model DataroomViewerGroupMembership extends TenantScoped, Auditable {
   id       String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for membership
   viewerId String //@db.UniqueIdentifier
   viewer   Viewer @relation(fields: [viewerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   groupId  String //@db.UniqueIdentifier
-  group    ViewerGroup @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  group    DataroomViewerGroup @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   @@unique([viewerId, groupId])
   @@index([viewerId])
   @@index([groupId])
 }
 
-model ViewerGroupAccessControls extends TenantScoped, Auditable {
+model DataroomViewerGroupAccessControls extends TenantScoped, Auditable {
   id      String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for access control
   groupId String //@db.UniqueIdentifier
-  group   ViewerGroup @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  group   DataroomViewerGroup @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   // Access control for items (documents or dataroom items)
-  itemId   String // This can be a document ID or a dataroom item ID
+  itemId   String // This can be a document ID or a dataroom item ID 
   // Allowed values: "DATAROOM_DOCUMENT", "DATAROOM_FOLDER"
   itemType String
   canView     Boolean @default(true)  // Permission to view

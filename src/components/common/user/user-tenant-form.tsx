@@ -1,5 +1,6 @@
 'use client';
 
+import { FC } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -8,15 +9,16 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { optionSchema } from '@/components/custom-ui/select';
 
 import { personalInfoSchema, PersonForm } from './user-tenant-scoped-form/person-form';
 
 export const tenantSchema = z.object({
-  tenantId: z.string().nonempty({ message: 'error.tenantRequired' }),
   isActive: z.boolean(),
   isTermAccepted: z.boolean(),
-  isSuperAdmin: z.boolean(),
+  role: z.array(optionSchema).default([]),
   personalInfo: personalInfoSchema.optional(),
+  tenantId: z.string().nonempty({ message: 'error.tenantRequired' }),
 });
 
 // Schema for the entire form
@@ -38,7 +40,11 @@ const tenants = [
   { id: '3', name: 'Tenant 3' },
 ];
 
-export function UserTenantForm() {
+interface UserTenantFormProps {
+  defaultValues?: UserTenantFormValues;
+}
+
+export const UserTenantForm: FC<UserTenantFormProps> = ({}) => {
   const { control } = useFormContext<UserTenantFormValues>();
 
   const { fields, append, remove } = useFieldArray({
@@ -106,20 +112,6 @@ export function UserTenantForm() {
             )}
           />
 
-          {/* Super Admin Checkbox */}
-          <FormField
-            control={control}
-            name={`tenants.${index}.isSuperAdmin`}
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Checkbox id={`tenants.${index}.isSuperAdmin`} checked={field.value} onCheckedChange={field.onChange} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
           {/* Dialog to edit personal information */}
           <Dialog>
             <DialogTrigger asChild>
@@ -147,7 +139,7 @@ export function UserTenantForm() {
             tenantId: '', // tenantId must be selected by the user
             isActive: true,
             isTermAccepted: false,
-            isSuperAdmin: false,
+            role: [],
             personalInfo: {
               firstName: '',
               lastName: '',
@@ -163,4 +155,4 @@ export function UserTenantForm() {
       <Button type="button">{'tenant.associateInformation'}</Button>
     </div>
   );
-}
+};

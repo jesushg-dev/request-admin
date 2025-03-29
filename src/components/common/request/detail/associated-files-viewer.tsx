@@ -37,7 +37,7 @@ interface AssociatedFilesViewerProps {
   documents: Document[];
 }
 
-const AssociatedFilesViewer: FC<AssociatedFilesViewerProps> = ({ documents, tenantId }) => {
+const AssociatedFilesViewer: FC<AssociatedFilesViewerProps> = ({ documents }) => {
   const [viewMode] = useViewToggle(VIEW_QUERY_KEY);
 
   return (
@@ -54,35 +54,6 @@ const AssociatedFilesViewer: FC<AssociatedFilesViewerProps> = ({ documents, tena
     </Card>
   );
 };
-
-function GuideDocumentTableView({ guideDocuments }: { guideDocuments: GuideDocument[] }) {
-  if (!guideDocuments.length) return <EmptyState title="No guide documents found" description="Please check back later or contact support if you need immediate assistance." />;
-
-  return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead>Category</TableHead>
-          <TableHead>Version</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Expiration Date</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {guideDocuments.map((doc) => (
-          <TableRow key={doc.id}>
-            <TableCell>{doc.name}</TableCell>
-            <TableCell>{doc.requestCategoryName}</TableCell>
-            <TableCell>{doc.version}</TableCell>
-            <TableCell>{doc.status}</TableCell>
-            <TableCell>{doc.expirationDate || 'N/A'}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  );
-}
 
 function DocumentTableView({ documents }: { documents: Document[] }) {
   if (!documents.length) return <EmptyState title="No documents found" description="Please check back later or contact support if you need immediate assistance." />;

@@ -13,12 +13,12 @@ generator client {
 }
 
 model Tenant {
-  createdAt                      DateTime                        @default(now())
-  updatedAt                      DateTime?                       @updatedAt()
+  createdAt                      DateTime                            @default(now())
+  updatedAt                      DateTime?                           @updatedAt()
   deletedAt                      DateTime?
   createdBy                      String?
   updatedBy                      String?
-  id                             String                          @id()
+  id                             String                              @id()
   name                           String
   slug                           String?
   logo                           String?
@@ -97,9 +97,9 @@ model Tenant {
   feedbackResponses              FeedbackResponse[]
   agreements                     Agreement[]
   agreementResponses             AgreementResponse[]
-  viewerGroup                    ViewerGroup[]
-  viewerGroupMemberships         ViewerGroupMembership[]
-  viewerGroupAccessControls      ViewerGroupAccessControls[]
+  viewerGroup                    DataroomViewerGroup[]
+  viewerGroupMemberships         DataroomViewerGroupMembership[]
+  viewerGroupAccessControls      DataroomViewerGroupAccessControls[]
   incomingWeebhooks              IncomingWebhook[]
   restrictedTokens               RestrictedToken[]
   webhooks                       Webhook[]
@@ -790,51 +790,51 @@ model DocumentPage {
 }
 
 model Link {
-  createdAt                  DateTime          @default(now())
-  updatedAt                  DateTime?         @updatedAt()
+  createdAt                  DateTime             @default(now())
+  updatedAt                  DateTime?            @updatedAt()
   deletedAt                  DateTime?
   createdBy                  String?
   updatedBy                  String?
   tenantId                   String
-  tenant                     Tenant            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                         String            @id() @default(uuid())
+  tenant                     Tenant               @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                         String               @id() @default(uuid())
   documentId                 String?
-  document                   Document?         @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  document                   Document?            @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   dataroomId                 String?
-  dataroom                   Dataroom?         @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  linkType                   String            @default("DOCUMENT_LINK")
-  url                        String?           @unique()
+  dataroom                   Dataroom?            @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  linkType                   String               @default("DOCUMENT_LINK")
+  url                        String?              @unique()
   name                       String?
   slug                       String?
   expiresAt                  DateTime?
   password                   String?
   allowList                  String
   denyList                   String
-  emailProtected             Boolean           @default(true)
-  emailAuthenticated         Boolean           @default(false)
-  allowDownload              Boolean?          @default(false)
-  isArchived                 Boolean           @default(false)
-  enableNotification         Boolean?          @default(true)
-  enableFeedback             Boolean?          @default(false)
-  enableQuestion             Boolean?          @default(false)
-  enableScreenshotProtection Boolean?          @default(false)
-  enableAgreement            Boolean?          @default(false)
+  emailProtected             Boolean              @default(true)
+  emailAuthenticated         Boolean              @default(false)
+  allowDownload              Boolean?             @default(false)
+  isArchived                 Boolean              @default(false)
+  enableNotification         Boolean?             @default(true)
+  enableFeedback             Boolean?             @default(false)
+  enableQuestion             Boolean?             @default(false)
+  enableScreenshotProtection Boolean?             @default(false)
+  enableAgreement            Boolean?             @default(false)
   views                      DocumentView[]
   feedback                   DocumentFeedback?
   agreementId                String?
-  agreement                  Agreement?        @relation(fields: [agreementId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  agreement                  Agreement?           @relation(fields: [agreementId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   domainId                   String?
-  domain                     Domain?           @relation(fields: [domainId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  domain                     Domain?              @relation(fields: [domainId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   domainSlug                 String?
   metaTitle                  String?
   metaDescription            String?
   metaImage                  String?
   metaFavicon                String?
-  enableCustomMetatag        Boolean?          @default(false)
-  audienceType               String            @default("GENERAL")
+  enableCustomMetatag        Boolean?             @default(false)
+  audienceType               String               @default("GENERAL")
   groupId                    String?
-  group                      ViewerGroup?      @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  enableWatermark            Boolean?          @default(false)
+  group                      DataroomViewerGroup? @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  enableWatermark            Boolean?             @default(false)
   watermarkConfig            String
   customField                CustomField[]
 
@@ -909,7 +909,7 @@ model DocumentView {
   viewerId            String?
   viewer              Viewer?              @relation(fields: [viewerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   groupId             String?
-  group               ViewerGroup?         @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  group               DataroomViewerGroup? @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   feedbackResponse    FeedbackResponse?
   agreementResponse   AgreementResponse?
   customFieldResponse CustomFieldResponse?
@@ -923,22 +923,22 @@ model DocumentView {
 }
 
 model Viewer {
-  createdAt               DateTime                @default(now())
-  updatedAt               DateTime?               @updatedAt()
+  createdAt               DateTime                        @default(now())
+  updatedAt               DateTime?                       @updatedAt()
   deletedAt               DateTime?
   createdBy               String?
   updatedBy               String?
   tenantId                String
-  tenant                  Tenant                  @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                      String                  @id() @default(uuid())
+  tenant                  Tenant                          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                      String                          @id() @default(uuid())
   email                   String
-  verified                Boolean                 @default(false)
+  verified                Boolean                         @default(false)
   invitedAt               DateTime?
   notificationPreferences String
   dataroomId              String?
-  dataroom                Dataroom?               @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  dataroom                Dataroom?                       @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   views                   DocumentView[]
-  groups                  ViewerGroupMembership[]
+  groups                  DataroomViewerGroupMembership[]
 
   @@unique([tenantId, email])
   @@index([tenantId])
@@ -1015,27 +1015,27 @@ model DocumentConversation {
 }
 
 model Dataroom {
-  id           String           @id() @default(uuid())
+  id           String                @id() @default(uuid())
   name         String
   description  String?
-  isActive     Boolean          @default(true)
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime?        @updatedAt()
+  isActive     Boolean               @default(true)
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime?             @updatedAt()
   deletedAt    DateTime?
   createdBy    String?
   updatedBy    String?
   tenantId     String
-  tenant       Tenant           @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  pId          String           @unique()
+  tenant       Tenant                @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  pId          String                @unique()
   documents    Document[]
   folders      DataroomFolder[]
   links        Link[]
   views        DocumentView[]
   viewers      Viewer[]
-  viewerGroups ViewerGroup[]
+  viewerGroups DataroomViewerGroup[]
   brand        DataroomBrand?
-  requestId    String?          @unique()
-  request      Request?         @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  requestId    String?               @unique()
+  request      Request?              @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([tenantId])
 }
@@ -1157,63 +1157,63 @@ model AgreementResponse {
   @@index([viewId])
 }
 
-model ViewerGroup {
-  createdAt      DateTime                    @default(now())
-  updatedAt      DateTime?                   @updatedAt()
+model DataroomViewerGroup {
+  createdAt      DateTime                            @default(now())
+  updatedAt      DateTime?                           @updatedAt()
   deletedAt      DateTime?
   createdBy      String?
   updatedBy      String?
   tenantId       String
-  tenant         Tenant                      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id             String                      @id() @default(uuid())
+  tenant         Tenant                              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id             String                              @id() @default(uuid())
   name           String
-  members        ViewerGroupMembership[]
+  members        DataroomViewerGroupMembership[]
   domains        String
   links          Link[]
-  accessControls ViewerGroupAccessControls[]
-  allowAll       Boolean                     @default(false)
+  accessControls DataroomViewerGroupAccessControls[]
+  allowAll       Boolean                             @default(false)
   dataroomId     String
-  dataroom       Dataroom                    @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  dataroom       Dataroom                            @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   views          DocumentView[]
 
   @@index([dataroomId])
   @@index([tenantId])
 }
 
-model ViewerGroupMembership {
-  createdAt DateTime    @default(now())
-  updatedAt DateTime?   @updatedAt()
+model DataroomViewerGroupMembership {
+  createdAt DateTime            @default(now())
+  updatedAt DateTime?           @updatedAt()
   deletedAt DateTime?
   createdBy String?
   updatedBy String?
   tenantId  String
-  tenant    Tenant      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id        String      @id() @default(uuid())
+  tenant    Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id        String              @id() @default(uuid())
   viewerId  String
-  viewer    Viewer      @relation(fields: [viewerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  viewer    Viewer              @relation(fields: [viewerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   groupId   String
-  group     ViewerGroup @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  group     DataroomViewerGroup @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   @@unique([viewerId, groupId])
   @@index([viewerId])
   @@index([groupId])
 }
 
-model ViewerGroupAccessControls {
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime?   @updatedAt()
+model DataroomViewerGroupAccessControls {
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime?           @updatedAt()
   deletedAt   DateTime?
   createdBy   String?
   updatedBy   String?
   tenantId    String
-  tenant      Tenant      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id          String      @id() @default(uuid())
+  tenant      Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id          String              @id() @default(uuid())
   groupId     String
-  group       ViewerGroup @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  group       DataroomViewerGroup @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   itemId      String
   itemType    String
-  canView     Boolean     @default(true)
-  canDownload Boolean     @default(false)
+  canView     Boolean             @default(true)
+  canDownload Boolean             @default(false)
 
   @@unique([groupId, itemId])
   @@index([groupId])

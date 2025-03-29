@@ -247,6 +247,11 @@ const dataRoomsPathnames = {
     en: '/admin/[tenantId]/links-and-documents/data-rooms/[slug]/viewers',
     es: '/admin/[tenantId]/enlaces-y-documentos/salas-de-datos/[slug]/visualizadores',
   },
+
+  '/admin/[tenantId]/links-and-documents/data-rooms/[slug]/viewers/new': {
+    en: '/admin/[tenantId]/links-and-documents/data-rooms/[slug]/viewers/new',
+    es: '/admin/[tenantId]/enlaces-y-documentos/salas-de-datos/[slug]/visualizadores/nuevo',
+  },
   '/admin/[tenantId]/links-and-documents/data-rooms/[slug]/branding': {
     en: '/admin/[tenantId]/links-and-documents/data-rooms/[slug]/branding',
     es: '/admin/[tenantId]/enlaces-y-documentos/salas-de-datos/[slug]/marca',
@@ -364,10 +369,6 @@ const settingsPathnames = {
   '/admin/[tenantId]/settings/preferences/appearance': {
     en: '/admin/[tenantId]/settings/preferences/appearance',
     es: '/admin/[tenantId]/configuracion/preferencias/apariencia',
-  },
-  '/admin/[tenantId]/settings/preferences/display': {
-    en: '/admin/[tenantId]/settings/preferences/display',
-    es: '/admin/[tenantId]/configuracion/preferencias/pantalla',
   },
   '/admin/[tenantId]/settings/preferences/notifications': {
     en: '/admin/[tenantId]/settings/preferences/notifications',

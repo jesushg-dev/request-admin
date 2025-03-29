@@ -564,21 +564,21 @@ const metadata = {
         },
         viewerGroup: {
           name: 'viewerGroup',
-          type: 'ViewerGroup',
+          type: 'DataroomViewerGroup',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
         },
         viewerGroupMemberships: {
           name: 'viewerGroupMemberships',
-          type: 'ViewerGroupMembership',
+          type: 'DataroomViewerGroupMembership',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
         },
         viewerGroupAccessControls: {
           name: 'viewerGroupAccessControls',
-          type: 'ViewerGroupAccessControls',
+          type: 'DataroomViewerGroupAccessControls',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
@@ -4052,7 +4052,7 @@ const metadata = {
         },
         group: {
           name: 'group',
-          type: 'ViewerGroup',
+          type: 'DataroomViewerGroup',
           isDataModel: true,
           isOptional: true,
           backLink: 'links',
@@ -4444,7 +4444,7 @@ const metadata = {
         },
         group: {
           name: 'group',
-          type: 'ViewerGroup',
+          type: 'DataroomViewerGroup',
           isDataModel: true,
           isOptional: true,
           backLink: 'views',
@@ -4577,7 +4577,7 @@ const metadata = {
         },
         groups: {
           name: 'groups',
-          type: 'ViewerGroupMembership',
+          type: 'DataroomViewerGroupMembership',
           isDataModel: true,
           isArray: true,
           backLink: 'viewer',
@@ -5021,7 +5021,7 @@ const metadata = {
         },
         viewerGroups: {
           name: 'viewerGroups',
-          type: 'ViewerGroup',
+          type: 'DataroomViewerGroup',
           isDataModel: true,
           isArray: true,
           backLink: 'dataroom',
@@ -5640,8 +5640,8 @@ const metadata = {
         },
       },
     },
-    viewerGroup: {
-      name: 'ViewerGroup',
+    dataroomViewerGroup: {
+      name: 'DataroomViewerGroup',
       fields: {
         createdAt: {
           name: 'createdAt',
@@ -5695,7 +5695,7 @@ const metadata = {
         },
         members: {
           name: 'members',
-          type: 'ViewerGroupMembership',
+          type: 'DataroomViewerGroupMembership',
           isDataModel: true,
           isArray: true,
           backLink: 'group',
@@ -5713,7 +5713,7 @@ const metadata = {
         },
         accessControls: {
           name: 'accessControls',
-          type: 'ViewerGroupAccessControls',
+          type: 'DataroomViewerGroupAccessControls',
           isDataModel: true,
           isArray: true,
           backLink: 'group',
@@ -5752,8 +5752,8 @@ const metadata = {
         },
       },
     },
-    viewerGroupMembership: {
-      name: 'ViewerGroupMembership',
+    dataroomViewerGroupMembership: {
+      name: 'DataroomViewerGroupMembership',
       fields: {
         createdAt: {
           name: 'createdAt',
@@ -5823,7 +5823,7 @@ const metadata = {
         },
         group: {
           name: 'group',
-          type: 'ViewerGroup',
+          type: 'DataroomViewerGroup',
           isDataModel: true,
           backLink: 'members',
           isRelationOwner: true,
@@ -5841,8 +5841,8 @@ const metadata = {
         },
       },
     },
-    viewerGroupAccessControls: {
-      name: 'ViewerGroupAccessControls',
+    dataroomViewerGroupAccessControls: {
+      name: 'DataroomViewerGroupAccessControls',
       fields: {
         createdAt: {
           name: 'createdAt',
@@ -5898,7 +5898,7 @@ const metadata = {
         },
         group: {
           name: 'group',
-          type: 'ViewerGroup',
+          type: 'DataroomViewerGroup',
           isDataModel: true,
           backLink: 'accessControls',
           isRelationOwner: true,

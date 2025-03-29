@@ -635,6 +635,38 @@
           "downloadConfig": "Descargar configuración",
           "copyLink": "Copiar enlace de vista previa"
         }
+      },
+      "viewerGroup": {
+        "new": {
+          "title": "Crear Grupo de Visualizadores",
+          "subtitle": "Crea un nuevo grupo de visualizadores para gestionar el acceso a tus documentos y salas de datos."
+        },
+        "savingChanges": "Guardando cambios...",
+        "saveSuccess": "¡Cambios guardados exitosamente!",
+        "saveError": "Error al guardar los cambios: {message}",
+        "name": "Nombre",
+        "nameDescription": "Ingrese el nombre del grupo.",
+        "namePlaceholder": "Nombre del grupo",
+        "create": "Crear",
+        "saveChanges": "Guardar Cambios"
+      },
+      "groups": {
+        "settings": {
+          "accessSettings": "Configuración de Acceso",
+          "allowedDomains": "Dominios de Email Permitidos",
+          "allowedDomainsDescription": "Usuarios con estos dominios de email pueden unirse automáticamente al grupo",
+          "domainsPlaceholder": "ej. empresa.com, ejemplo.org (separados por comas)",
+          "allowAllAccess": "Permitir acceso a todos los documentos",
+          "allowAllAccessDescription": "Otorga a este grupo acceso a todos los documentos del dataroom",
+          "settingsExplanation": "Explicación de Configuración de Dominios",
+          "explanationPoint1": "Al agregar dominios, usuarios con emails de esos dominios pueden unirse automáticamente al grupo",
+          "explanationPoint2": "Por ejemplo, si agregas 'empresa.com', cualquier persona con email terminado en '@empresa.com' podrá acceder a los documentos del grupo",
+          "explanationPoint3": "La opción 'Permitir acceso a todos los documentos' da acceso completo a todos los documentos del dataroom",
+          "saveSettings": "Guardar Configuración",
+          "savingSettings": "Guardando configuración...",
+          "saveSuccess": "¡Configuración actualizada exitosamente!",
+          "saveError": "Error guardando configuración: {{message}}"
+        }
       }
     },
     "document": {
@@ -1714,6 +1746,66 @@
             "confirm": "Verificar",
             "cancel": "Cancelar"
           }
+        }
+      },
+      "roleAndAccess": {
+        "rolesAndAccess": {
+          "title": "Roles y Accesos",
+          "description": "Administra tus roles, permisos y accesos dentro de la organización."
+        },
+        "accountStatus": {
+          "title": "Estado de la Cuenta",
+          "description": "Configura el estado de tu cuenta dentro de esta organización."
+        },
+        "activeAccount": {
+          "label": "Cuenta Activa",
+          "description": "Tu cuenta está activa en esta organización."
+        },
+        "termsAccepted": {
+          "label": "Términos Aceptados",
+          "description": "Has aceptado los términos y condiciones de la organización."
+        },
+        "rolePermissions": {
+          "title": "Roles y Permisos",
+          "description": "Establece tu rol y permisos dentro de la organización."
+        },
+        "superAdminAlert": {
+          "title": "Acceso de Super Administrador",
+          "description": "Los super administradores tienen acceso completo a todas las funciones y configuraciones de la organización."
+        },
+        "role": {
+          "label": "Rol",
+          "description": "Tu rol determina tus permisos dentro de la organización."
+        },
+        "saveButton": "Guardar cambios",
+        "savingButton": "Guardando...",
+        "leaveOrganization": {
+          "title": "Abandonar Organización",
+          "description": "Eliminarte permanentemente de esta organización.",
+          "alert": {
+            "title": "Advertencia",
+            "point1": "Estás a punto de abandonar esta organización.",
+            "point2": "Esta acción <strong>no se puede deshacer</strong>.",
+            "point3": "Perderás acceso a todos los recursos, incluyendo proyectos, documentos y configuraciones.",
+            "point4": "Tu cuenta permanecerá activa, pero serás eliminado de esta organización.",
+            "point5": "Por favor confirma tu decisión."
+          },
+          "button": "Abandonar Organización",
+          "leavingButton": "Abandonando..."
+        },
+        "leaveConfirmation": {
+          "message": "¿Estás seguro de que quieres abandonar esta organización? Esta acción no se puede deshacer.",
+          "title": "Confirmar Abandono",
+          "confirm": "Abandonar",
+          "cancel": "Cancelar"
+        },
+        "toast": {
+          "updating": "Actualizando información del usuario...",
+          "updateSuccess": "Información del usuario actualizada exitosamente.",
+          "updateError": "Error al actualizar información: {error}",
+          "leaving": "Abandonando organización...",
+          "leaveSuccess": "Has abandonado la organización exitosamente.",
+          "leaveError": "Error al abandonar la organización: {error}"
         }
       }
     },

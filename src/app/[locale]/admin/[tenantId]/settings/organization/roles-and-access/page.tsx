@@ -1,314 +1,230 @@
 'use client';
 
-import { useState } from 'react';
+import { useTransition } from 'react';
+import { getRoles } from '@/constants/system-role';
+import { authClient } from '@/server/auth-client';
+import { useUpdateUserTenant } from '@/services/api/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, LogOut, ShieldCheck } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import * as z from 'zod';
 
+import useMessage from '@/lib/message';
+import { PERMISSION, useAuthorization } from '@/hooks/use-authorization';
+import useTenantId from '@/hooks/use-tenant-id';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
+import { AlertBanner } from '@/components/custom-ui/alert-banner';
+import Select, { optionSchema } from '@/components/custom-ui/select';
 
 const userTenantFormSchema = z.object({
   isActive: z.boolean().default(true),
   isTermAccepted: z.boolean().default(false),
-  isSuperAdmin: z.boolean().default(false),
-  isTwoFactorRequired: z.boolean().default(false),
-  role: z.string().min(1, {
-    message: 'Please select a role.',
-  }),
-  areas: z.array(z.string()).default([]),
+  role: z.array(optionSchema).default([]),
 });
+
+const defaultValues: Partial<UserTenantFormValues> = {
+  isActive: true,
+  isTermAccepted: false,
+  role: [],
+};
 
 type UserTenantFormValues = z.infer<typeof userTenantFormSchema>;
 
-// Mock data for roles and areas
-const roles = [
-  { id: 'admin', name: 'Administrator' },
-  { id: 'manager', name: 'Manager' },
-  { id: 'user', name: 'Regular User' },
-  { id: 'guest', name: 'Guest' },
-];
-
-const areas = [
-  { id: 'sales', name: 'Sales' },
-  { id: 'marketing', name: 'Marketing' },
-  { id: 'support', name: 'Customer Support' },
-  { id: 'development', name: 'Development' },
-  { id: 'finance', name: 'Finance' },
-];
-
 export default function UserTenantForm() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLeavingOrg, setIsLeavingOrg] = useState(false);
+  const t = useTranslations('admin.setting.roleAndAccess');
+  const locale = useLocale();
+  const roles = getRoles(locale);
+  const organizationId = useTenantId();
+  const { mutateAsync: update } = useUpdateUserTenant();
+  const { session, userTenant, hasPermission } = useAuthorization(organizationId);
 
-  // Default values for the form
-  const defaultValues: Partial<UserTenantFormValues> = {
-    isActive: true,
-    isTermAccepted: false,
-    isSuperAdmin: false,
-    isTwoFactorRequired: false,
-    role: 'user',
-    areas: ['sales', 'support'],
-  };
+  const message = useMessage();
+  const [isUpdating, startUpdating] = useTransition();
+  const [isLeavingOrg, startLeavingOrg] = useTransition();
 
   const form = useForm<UserTenantFormValues>({
     resolver: zodResolver(userTenantFormSchema),
-    defaultValues,
+    defaultValues: userTenant ? { ...userTenant, role: [] } : defaultValues,
     mode: 'onChange',
   });
 
   function onSubmit(data: UserTenantFormValues) {
-    setIsLoading(true);
+    const { isActive, isTermAccepted, role } = data;
+    const selectedRoles = role.map((r) => r.value);
 
-    // Simplemente usar console.log
-    console.log('Actualizando configuración de roles:', data);
+    startUpdating(async () => {
+      if (!session.data?.user.id || !organizationId) return;
 
-    setTimeout(() => {
-      console.log('Configuración de roles actualizada');
-      setIsLoading(false);
-    }, 1000);
+      const toastId = toast.loading(t('toast.updating'));
+      await update(
+        {
+          data: { isActive, isTermAccepted, role: selectedRoles.join(',') },
+          where: { userId_tenantId: { userId: session.data?.user.id, tenantId: organizationId } },
+        },
+        {
+          onError(error) {
+            toast.error(t('toast.updateError', { error: error.message }), { id: toastId });
+          },
+          onSuccess() {
+            toast.success(t('toast.updateSuccess'), { id: toastId });
+          },
+        }
+      );
+    });
   }
 
-  function handleLeaveOrganization() {
-    setIsLeavingOrg(true);
+  const onLeaveOrganization = async () => {
+    const confirmLeave = await message.confirm(t('leaveConfirmation.message'), {
+      title: t('leaveConfirmation.title'),
+      confirmText: t('leaveConfirmation.confirm'),
+      cancelText: t('leaveConfirmation.cancel'),
+    });
 
-    // Simplemente usar console.log
-    console.log('Abandonando organización');
-
-    setTimeout(() => {
-      console.log('Has abandonado la organización');
-      setIsLeavingOrg(false);
-    }, 1500);
-  }
+    if (!confirmLeave) return;
+    startLeavingOrg(async () => {
+      const toastId = toast.loading(t('toast.leaving'));
+      await authClient.organization.leave(
+        { organizationId },
+        {
+          onError({ error }) {
+            toast.error(t('toast.leaveError', { error: error.message }), { id: toastId });
+          },
+          onSuccess() {
+            toast.success(t('toast.leaveSuccess'), { id: toastId });
+          },
+        }
+      );
+    });
+  };
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Roles & Access</CardTitle>
-          <CardDescription>Manage your roles, permissions, and access within the organization.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <div>
-                <h3 className="text-lg font-medium">Account Status</h3>
-                <p className="text-sm text-muted-foreground">Configure your account status within this organization.</p>
-              </div>
+      {hasPermission(PERMISSION.ROLE_MANAGEMENT.ASSIGN) && (
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('rolesAndAccess.title')}</CardTitle>
+            <CardDescription>{t('rolesAndAccess.description')}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <div>
+                  <h3 className="text-lg font-medium">{t('accountStatus.title')}</h3>
+                  <p className="text-sm text-muted-foreground">{t('accountStatus.description')}</p>
+                </div>
 
-              <div className="grid grid-cols-1 gap-4">
-                <FormField
-                  control={form.control}
-                  name="isActive"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <div className="space-y-0.5">
-                        <FormLabel className="text-base">Active Account</FormLabel>
-                        <FormDescription>Your account is active in this organization.</FormDescription>
-                      </div>
-                      <FormControl>
-                        <Switch checked={field.value} onCheckedChange={field.onChange} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
+                <div className="grid grid-cols-1 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="isActive"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-base">{t('activeAccount.label')}</FormLabel>
+                          <FormDescription>{t('activeAccount.description')}</FormDescription>
+                        </div>
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={form.control}
-                  name="isTermAccepted"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <div className="space-y-0.5">
-                        <FormLabel className="text-base">Terms Accepted</FormLabel>
-                        <FormDescription>You have accepted the organization's terms and conditions.</FormDescription>
-                      </div>
-                      <FormControl>
-                        <Switch checked={field.value} onCheckedChange={field.onChange} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
+                  <FormField
+                    control={form.control}
+                    name="isTermAccepted"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-base">{t('termsAccepted.label')}</FormLabel>
+                          <FormDescription>{t('termsAccepted.description')}</FormDescription>
+                        </div>
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-                <FormField
-                  control={form.control}
-                  name="isTwoFactorRequired"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <div className="space-y-0.5">
-                        <FormLabel className="text-base">Two-Factor Required</FormLabel>
-                        <FormDescription>Two-factor authentication is required for this organization.</FormDescription>
-                      </div>
-                      <FormControl>
-                        <Switch checked={field.value} onCheckedChange={field.onChange} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
+                <Separator className="my-6" />
 
-              <Separator className="my-6" />
+                <div>
+                  <h3 className="text-lg font-medium">{t('rolePermissions.title')}</h3>
+                  <p className="text-sm text-muted-foreground">{t('rolePermissions.description')}</p>
+                </div>
 
-              <div>
-                <h3 className="text-lg font-medium">Role & Permissions</h3>
-                <p className="text-sm text-muted-foreground">Set your role and permissions within the organization.</p>
-              </div>
-
-              <Alert variant="default" className="mb-6">
-                <ShieldCheck className="h-4 w-4" />
-                <AlertTitle>Super Admin Access</AlertTitle>
-                <AlertDescription>Super admins have full access to all features and settings within the organization.</AlertDescription>
-              </Alert>
-
-              <FormField
-                control={form.control}
-                name="isSuperAdmin"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 mb-6">
-                    <div className="space-y-0.5">
-                      <div className="flex items-center gap-2">
-                        <FormLabel className="text-base">Super Admin</FormLabel>
-                        <Badge variant="destructive">Powerful</Badge>
-                      </div>
-                      <FormDescription>Grant super admin privileges to this account.</FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch checked={field.value} onCheckedChange={field.onChange} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Role</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a role" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {roles.map((role) => (
-                          <SelectItem key={role.id} value={role.id}>
-                            {role.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>Your role determines your permissions within the organization.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Separator className="my-6" />
-
-              <div>
-                <h3 className="text-lg font-medium">Area Access</h3>
-                <p className="text-sm text-muted-foreground mb-4">Select the areas you have access to within the organization.</p>
+                <Alert variant="default" className="mb-6">
+                  <ShieldCheck className="h-4 w-4" />
+                  <AlertTitle>{t('superAdminAlert.title')}</AlertTitle>
+                  <AlertDescription>{t('superAdminAlert.description')}</AlertDescription>
+                </Alert>
 
                 <FormField
                   control={form.control}
-                  name="areas"
+                  name="role"
                   render={({ field }) => (
                     <FormItem>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        {areas.map((area) => (
-                          <div key={area.id} className="flex items-start space-x-2 rounded-md border p-4">
-                            <Checkbox
-                              id={`area-${area.id}`}
-                              checked={field.value?.includes(area.id)}
-                              onCheckedChange={(checked) => {
-                                const updatedAreas = checked ? [...field.value, area.id] : field.value?.filter((value) => value !== area.id);
-                                field.onChange(updatedAreas);
-                              }}
-                            />
-                            <div className="grid gap-1.5 leading-none">
-                              <label htmlFor={`area-${area.id}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                {area.name}
-                              </label>
-                              <p className="text-sm text-muted-foreground">Access to {area.name.toLowerCase()} area and its features.</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                      <FormLabel>{t('role.label')}</FormLabel>
+                      <Select isSearchable isMulti isClearable options={roles} onChange={field.onChange} value={field.value} />
+                      <FormDescription>{t('role.description')}</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-              </div>
 
-              <div className="flex justify-end">
-                <Button type="submit" disabled={isLoading}>
-                  {isLoading ? 'Saving...' : 'Save changes'}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+                <Separator className="my-6" />
+
+                <div className="flex justify-end">
+                  <Button type="submit" disabled={isUpdating}>
+                    {isUpdating ? t('savingButton') : t('saveButton')}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      )}
 
       <Card className="border-destructive">
         <CardHeader>
-          <CardTitle className="text-destructive">Leave Organization</CardTitle>
-          <CardDescription>Permanently remove yourself from this organization.</CardDescription>
+          <CardTitle className="text-destructive">{t('leaveOrganization.title')}</CardTitle>
+          <CardDescription>{t('leaveOrganization.description')}</CardDescription>
         </CardHeader>
+
         <CardContent>
-          <Alert variant="destructive" className="mb-4">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Warning</AlertTitle>
-            <AlertDescription>This action cannot be undone. You will lose access to all resources in this organization.</AlertDescription>
-          </Alert>
-          <p className="text-sm text-muted-foreground">
-            When you leave an organization, you will no longer have access to any of the organization's resources, including projects, documents, and settings. Your account will remain active, but you
-            will be removed from this organization.
-          </p>
+          <AlertBanner
+            className="mb-4"
+            title={t('leaveOrganization.alert.title')}
+            variant="error"
+            icon={<AlertCircle className="h-4 w-4 text-red-600" />}
+            description={
+              <ul className="list-disc pl-5 space-y-2 text-sm">
+                <li>{t('leaveOrganization.alert.point1')}</li>
+                <li>
+                  {t.rich('leaveOrganization.alert.point2', {
+                    strong: (chunks) => <span className="font-semibold">{chunks}</span>,
+                  })}
+                </li>
+                <li>{t('leaveOrganization.alert.point3')}</li>
+                <li>{t('leaveOrganization.alert.point4')}</li>
+                <li>{t('leaveOrganization.alert.point5')}</li>
+              </ul>
+            }
+          />
         </CardContent>
         <CardFooter>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="destructive" className="w-full">
-                <LogOut className="h-4 w-4 mr-2" />
-                Leave Organization
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently remove your account from this organization and remove your access to all of its resources.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleLeaveOrganization} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={isLeavingOrg}>
-                  {isLeavingOrg ? 'Leaving...' : 'Yes, leave organization'}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <Button variant="destructive" disabled={isLeavingOrg} className="w-full" onClick={onLeaveOrganization}>
+            <LogOut className="h-4 w-4 mr-2" />
+            {isLeavingOrg ? t('leaveOrganization.leavingButton') : t('leaveOrganization.button')}
+          </Button>
         </CardFooter>
       </Card>
     </div>

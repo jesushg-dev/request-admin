@@ -9,7 +9,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { useClipboard } from '@/components/hoc/clipboard-context';
 
 export function ClipboardBar() {
-  const { clipboard, isClipboardExpanded: isExpanded, toggleClipboardExpanded: toggleExpanded, clearClipboard, removeFromClipboard, handlePaste } = useClipboard();
+  const { clipboard, isClipboardExpanded: isExpanded, toggleClipboardExpanded: toggleExpanded, clearClipboard, removeFromClipboard } = useClipboard();
 
   if (clipboard.length === 0) return null;
 
@@ -30,9 +30,7 @@ export function ClipboardBar() {
                 {isExpanded ? 'Hide Details' : 'Show Details'}
               </Button>
             </CollapsibleTrigger>
-            <Button size="sm" onClick={() => handlePaste(null)}>
-              Paste Here
-            </Button>
+
             <Button size="sm" variant="outline" onClick={clearClipboard}>
               <X className="h-4 w-4 mr-1" />
               Clear

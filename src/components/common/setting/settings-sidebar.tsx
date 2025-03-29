@@ -3,7 +3,7 @@
 
 import { useMemo, useState } from 'react';
 import { Link, usePathname } from '@/i18n/routing';
-import { Bell, Building2, ChevronDown, ChevronRight, CreditCard, FolderOpen, FolderOpenDot, Key, Lock, LogOut, Mail, Monitor, Palette, Settings, Shield, ShieldCheck, User, Users } from 'lucide-react';
+import { Bell, Building2, ChevronDown, ChevronRight, CreditCard, FolderOpen, FolderOpenDot, Key, Lock, LogOut, Mail, Palette, Settings, Shield, ShieldCheck, User, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { cn } from '@/lib/utils';
@@ -148,14 +148,6 @@ export function SettingsSidebar({ tenantId }: SettingsSidebarProps) {
               params: { tenantId },
             },
             icon: Palette,
-          },
-          {
-            title: t('display'),
-            url: {
-              pathname: '/admin/[tenantId]/settings/preferences/display',
-              params: { tenantId },
-            },
-            icon: Monitor,
           },
           {
             title: t('notifications'),

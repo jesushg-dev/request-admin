@@ -6,8 +6,8 @@ import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 import { extractTenantId } from '@/lib/utils';
 
 const useTenantId = (redirectOnMissing: boolean = true): string => {
-  const pathname = usePathname();
   const router = useRouter();
+  const pathname = usePathname();
 
   const tenantId = pathname ? extractTenantId(pathname, locales) : undefined;
 
