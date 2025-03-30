@@ -23,7 +23,7 @@ import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
 import { Hint } from '@/components/hint';
 
-export const SessionDefaultArgs = Prisma.validator<Prisma.SessionDefaultArgs>()({
+const SessionDefaultArgs = Prisma.validator<Prisma.SessionDefaultArgs>()({
   select: {
     id: true,
     token: true,

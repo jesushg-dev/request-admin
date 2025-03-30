@@ -23,7 +23,7 @@ import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
 
-export const DocumentDefaultArgs = Prisma.validator<Prisma.DocumentDefaultArgs>()({
+const DocumentDefaultArgs = Prisma.validator<Prisma.DocumentDefaultArgs>()({
   select: {
     id: true,
     name: true,
@@ -45,7 +45,7 @@ export const DocumentDefaultArgs = Prisma.validator<Prisma.DocumentDefaultArgs>(
   },
 });
 
-export type DocumentWithRelations = Prisma.DocumentGetPayload<typeof DocumentDefaultArgs>;
+type DocumentWithRelations = Prisma.DocumentGetPayload<typeof DocumentDefaultArgs>;
 
 const searchParamsParsers = {
   page: parseAsInteger.withDefault(1),

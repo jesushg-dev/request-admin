@@ -20,7 +20,29 @@ interface DocumentAnalyticsProps {
 
 export function DocumentAnalytics({ documentId, document }: DocumentAnalyticsProps) {
   const [isLoading, setIsLoading] = useState(true);
-  const [analyticsData, setAnalyticsData] = useState<any>(null);
+  const [analyticsData, setAnalyticsData] = useState<{
+    views: {
+      total: number;
+      trend: string;
+      byDay: { day: string; views: number; downloads: number }[];
+      byDevice: { name: string; value: number }[];
+      byLocation: { name: string; value: number }[];
+    };
+    downloads: {
+      total: number;
+      trend: string;
+    };
+    viewers: {
+      total: number;
+      trend: string;
+      byRole: { name: string; value: number }[];
+    };
+    timeSpent: {
+      average: string;
+      trend: string;
+      bySection: { name: string; value: number }[];
+    };
+  } | null>(null);
   const [timeRange, setTimeRange] = useState('30days');
 
   useEffect(() => {
@@ -219,9 +241,17 @@ export function DocumentAnalytics({ documentId, document }: DocumentAnalyticsPro
                       outerRadius={80}
                       fill="#8884d8"
                       dataKey="value">
-                      {analyticsData.views.byDevice.map((entry: any, index: number) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
+                      {analyticsData.views.byDevice.map(
+                        (
+                          entry: {
+                            name: string;
+                            value: number;
+                          },
+                          index: number
+                        ) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        )
+                      )}
                     </Pie>
                     <Tooltip />
                   </PieChart>
@@ -236,17 +266,25 @@ export function DocumentAnalytics({ documentId, document }: DocumentAnalyticsPro
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {analyticsData.timeSpent.bySection.map((section: any, index: number) => (
-                    <div key={index} className="space-y-1">
-                      <div className="flex justify-between text-sm">
-                        <span>{section.name}</span>
-                        <span className="font-medium">
-                          {Math.floor(section.value / 60)}m {section.value % 60}s
-                        </span>
+                  {analyticsData.timeSpent.bySection.map(
+                    (
+                      section: {
+                        name: string;
+                        value: number;
+                      },
+                      index: number
+                    ) => (
+                      <div key={index} className="space-y-1">
+                        <div className="flex justify-between text-sm">
+                          <span>{section.name}</span>
+                          <span className="font-medium">
+                            {Math.floor(section.value / 60)}m {section.value % 60}s
+                          </span>
+                        </div>
+                        <Progress value={(section.value / analyticsData.timeSpent.bySection[0].value) * 100} />
                       </div>
-                      <Progress value={(section.value / analyticsData.timeSpent.bySection[0].value) * 100} />
-                    </div>
-                  ))}
+                    )
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -271,9 +309,17 @@ export function DocumentAnalytics({ documentId, document }: DocumentAnalyticsPro
                     outerRadius={100}
                     fill="#8884d8"
                     dataKey="value">
-                    {analyticsData.viewers.byRole.map((entry: any, index: number) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
+                    {analyticsData.viewers.byRole.map(
+                      (
+                        entry: {
+                          name: string;
+                          value: number;
+                        },
+                        index: number
+                      ) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      )
+                    )}
                   </Pie>
                   <Tooltip />
                   <Legend />
@@ -405,18 +451,26 @@ export function DocumentAnalytics({ documentId, document }: DocumentAnalyticsPro
                 <Globe className="h-48 w-48 text-muted-foreground" />
               </div>
               <div className="space-y-4 mt-4">
-                {analyticsData.views.byLocation.map((location: any, index: number) => (
-                  <div key={index} className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
-                      <span>{location.name}</span>
+                {analyticsData.views.byLocation.map(
+                  (
+                    location: {
+                      name: string;
+                      value: number;
+                    },
+                    index: number
+                  ) => (
+                    <div key={index} className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
+                        <span>{location.name}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <span className="font-medium mr-2">{location.value}</span>
+                        <span className="text-xs text-muted-foreground">({((location.value / analyticsData.views.total) * 100).toFixed(1)}%)</span>
+                      </div>
                     </div>
-                    <div className="flex items-center">
-                      <span className="font-medium mr-2">{location.value}</span>
-                      <span className="text-xs text-muted-foreground">({((location.value / analyticsData.views.total) * 100).toFixed(1)}%)</span>
-                    </div>
-                  </div>
-                ))}
+                  )
+                )}
               </div>
             </CardContent>
           </Card>

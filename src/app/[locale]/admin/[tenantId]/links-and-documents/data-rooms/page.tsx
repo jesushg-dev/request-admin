@@ -20,7 +20,7 @@ import { ActionCell } from '@/components/data-table/data-table-action-menu';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
 import { Hint } from '@/components/hint';
 
-export const DataroomDefaultArgs = Prisma.validator<Prisma.DataroomDefaultArgs>()({
+const DataroomDefaultArgs = Prisma.validator<Prisma.DataroomDefaultArgs>()({
   select: {
     id: true,
     pId: true,
@@ -37,7 +37,7 @@ export const DataroomDefaultArgs = Prisma.validator<Prisma.DataroomDefaultArgs>(
   },
 });
 
-export type DataroomWithRelations = Prisma.DataroomGetPayload<typeof DataroomDefaultArgs>;
+type DataroomWithRelations = Prisma.DataroomGetPayload<typeof DataroomDefaultArgs>;
 
 const searchParamsParsers = {
   page: parseAsInteger.withDefault(1),

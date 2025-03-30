@@ -24,7 +24,7 @@ import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
 
-export const ApiKeyDefaultArgs = Prisma.validator<Prisma.ApikeyDefaultArgs>()({
+const ApiKeyDefaultArgs = Prisma.validator<Prisma.ApikeyDefaultArgs>()({
   select: {
     id: true,
     name: true,

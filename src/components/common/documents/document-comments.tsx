@@ -73,7 +73,7 @@ export function DocumentComments({ documentId }: DocumentCommentsProps) {
             },
           },
         ]);
-      } catch (error) {
+      } catch {
         toast.error('Failed to fetch comments');
       } finally {
         setIsLoading(false);

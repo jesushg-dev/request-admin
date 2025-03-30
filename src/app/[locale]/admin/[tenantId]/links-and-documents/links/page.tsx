@@ -47,7 +47,7 @@ const LinkDefaultArgs = Prisma.validator<Prisma.LinkDefaultArgs>()({
   },
 });
 
-export type LinkWithRelations = Prisma.LinkGetPayload<typeof LinkDefaultArgs>;
+type LinkWithRelations = Prisma.LinkGetPayload<typeof LinkDefaultArgs>;
 
 const searchParamsParsers = {
   page: parseAsInteger.withDefault(1),
@@ -57,7 +57,7 @@ const searchParamsParsers = {
   joinOperator: parseAsStringEnum(['and', 'or']).withDefault('and'),
 };
 
-export function LinkList() {
+export default function LinkList() {
   const tenantId = useTenantId();
   const t = useTranslations('admin.link.main');
   const [search] = useQueryStates(searchParamsParsers);
@@ -216,5 +216,3 @@ const StatBadge = ({ label, value }: { label: string; value: string | number }) 
     </Badge>
   </div>
 );
-
-export default LinkList;

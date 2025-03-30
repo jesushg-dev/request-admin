@@ -22,7 +22,7 @@ import { DataTableToolbarActions } from '@/components/data-table/data-table-tool
 import { Hint } from '@/components/hint';
 import { TruncatedText } from '@/components/shared/table-util';
 
-export const AgreementDefaultArgs = Prisma.validator<Prisma.AgreementDefaultArgs>()({
+const AgreementDefaultArgs = Prisma.validator<Prisma.AgreementDefaultArgs>()({
   select: {
     id: true,
     name: true,
@@ -36,7 +36,7 @@ export const AgreementDefaultArgs = Prisma.validator<Prisma.AgreementDefaultArgs
   },
 });
 
-export type AgreementWithRelations = Prisma.AgreementGetPayload<typeof AgreementDefaultArgs>;
+type AgreementWithRelations = Prisma.AgreementGetPayload<typeof AgreementDefaultArgs>;
 
 const searchParamsParsers = {
   page: parseAsInteger.withDefault(1),

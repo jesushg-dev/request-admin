@@ -97,7 +97,7 @@ export function DocumentReactionWidget({ documentId, pageNumber = 1, viewOnly = 
         ];
 
         setReactions(mockReactions);
-      } catch (error) {
+      } catch {
         toast.error('Error', {
           description: 'Failed to load reactions',
         });
