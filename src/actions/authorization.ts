@@ -1,4 +1,3 @@
-// authorization.ts (Server Utilities)
 'use server';
 
 import { PermissionAction } from '@/constants/permissions';
@@ -7,56 +6,87 @@ import { db } from '@/server/db-client';
 
 import { UserTenantDefaultArgs } from '@/types/prisma/authorization';
 
-export { PermissionActions as PERMISSION } from '@/constants/permissions';
-
 class AuthorizationError extends Error {}
 
-export const checkAuthorization = async (tenantId: string, requiredPermission: PermissionAction): Promise<boolean> => {
+type AuthResult = {
+  hasPermissions: (required: PermissionAction | PermissionAction[], options?: { requireAll?: boolean }) => boolean;
+  hasAreaPermissions: (areaId: string, required: PermissionAction | PermissionAction[], options?: { requireAll?: boolean }) => boolean;
+};
+
+export const getAuthContext = async (tenantId: string): Promise<AuthResult> => {
   const session = await currentSession();
   if (!session?.user) throw new AuthorizationError('Unauthorized');
 
-  // Admin/Owner bypass
-  if (session.user.isGlobalAdmin || ['owner', 'admin'].includes(session.user.role || '')) {
-    return true;
-  }
+  // Local cache is used to avoid multiple database calls for the same user in the same request
+  let permissionsCache: Set<string> | null = null;
+  const areaPermissionsCache = new Map<string, Set<string>>();
 
-  const userTenant = await db.userTenant.findUnique({
-    ...UserTenantDefaultArgs,
-    where: { userId_tenantId: { userId: session.user.id, tenantId } },
-  });
+  const isAdmin = session.user.isGlobalAdmin || ['owner', 'admin'].includes(session.user.role || '');
 
-  if (!userTenant) return false;
+  const loadPermissions = async () => {
+    if (permissionsCache) return;
 
-  // Check role-based permissions
-  const rolePermissions = userTenant.userRoles.flatMap((ur) => ur.role.roleFeature.map((rf) => rf.feature.key));
+    const userTenant = await db.userTenant.findUnique({
+      ...UserTenantDefaultArgs,
+      where: { userId_tenantId: { userId: session!.user!.id, tenantId } },
+    });
 
-  // Check area-based permissions (all areas)
-  const areaPermissions = userTenant.userAreas.flatMap((ua) => ua.area.areaRole.flatMap((ar) => ar.areaRoleFeatures.map((arf) => arf.feature.key)));
+    if (!userTenant) {
+      permissionsCache = new Set();
+      return;
+    }
 
-  return [...rolePermissions, ...areaPermissions].includes(requiredPermission);
+    // Global permissions are loaded from user roles and areas
+    const rolePerms = userTenant.userRoles.flatMap((ur) => ur.role.roleFeature.map((rf) => rf.feature.key));
+    const areaPerms = userTenant.userAreas.flatMap((ua) => ua.area.areaRole.flatMap((ar) => ar.areaRoleFeatures.map((arf) => arf.feature.key)));
+
+    permissionsCache = new Set([...rolePerms, ...areaPerms]);
+
+    // area cache
+    userTenant.userAreas.forEach((ua) => {
+      const areaPerms = ua.area.areaRole.flatMap((ar) => ar.areaRoleFeatures.map((arf) => arf.feature.key));
+      areaPermissionsCache.set(ua.area.id, new Set(areaPerms));
+    });
+  };
+
+  await loadPermissions();
+
+  return {
+    hasPermissions: (required, options = {}) => {
+      if (isAdmin) return true;
+
+      const checkPermissions = Array.isArray(required) ? required : [required];
+      return options.requireAll ? checkPermissions.every((p) => permissionsCache?.has(p)) : checkPermissions.some((p) => permissionsCache?.has(p));
+    },
+
+    hasAreaPermissions: (areaId, required, options = {}) => {
+      if (isAdmin) return true;
+
+      const areaPerms = areaPermissionsCache.get(areaId);
+      if (!areaPerms) return false;
+
+      const checkPermissions = Array.isArray(required) ? required : [required];
+      return options.requireAll ? checkPermissions.every((p) => areaPerms.has(p)) : checkPermissions.some((p) => areaPerms.has(p));
+    },
+  };
 };
 
-export const checkAreaAuthorization = async (tenantId: string, areaId: string, requiredPermission: PermissionAction): Promise<boolean> => {
-  const session = await currentSession();
-  if (!session?.user) throw new AuthorizationError('Unauthorized');
+// how to use getAuthContext in a server component
+/*
+import { getAuthContext } from '@/lib/auth';
 
-  // Admin/Owner bypass
-  if (session.user.isGlobalAdmin || ['owner', 'admin'].includes(session.user.role || '')) {
-    return true;
+async function ProtectedComponent({ tenantId }) {
+  const auth = await getAuthContext(tenantId);
+  
+  if (!auth.hasPermissions(['VIEW_DASHBOARD'])) {
+    return <Unauthorized />;
   }
 
-  const userTenant = await db.userTenant.findUnique({
-    ...UserTenantDefaultArgs,
-    where: { userId_tenantId: { userId: session.user.id, tenantId } },
-  });
-
-  if (!userTenant) return false;
-
-  // Find specific area permissions
-  const targetArea = userTenant.userAreas.find((ua) => ua.area.id === areaId);
-  if (!targetArea) return false;
-
-  const areaPermissions = targetArea.area.areaRole.flatMap((ar) => ar.areaRoleFeatures.map((arf) => arf.feature.key));
-
-  return areaPermissions.includes(requiredPermission);
-};
+  return (
+    <div>
+      {auth.hasPermissions(['EDIT_CONTENT']) && <Editor />}
+      {auth.hasAreaPermissions('projects-area', ['MANAGE_TASKS']) && <ProjectManager />}
+    </div>
+  );
+}
+*/

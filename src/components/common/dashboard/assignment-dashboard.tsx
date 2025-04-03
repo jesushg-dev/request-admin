@@ -5,6 +5,7 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import ClientOnly from '@/components/client-only';
 
 // Datos específicos para cada pestaña
 const data = {
@@ -105,15 +106,17 @@ function AssignmentDashboard() {
         </div>
       </CardHeader>
       <CardContent className="px-2 sm:p-6">
-        <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
-          <BarChart data={data[activeTab]} margin={{ top: 5, right: 30, left: 20, bottom: 5 }} barCategoryGap="20%">
-            <CartesianGrid vertical={false} strokeDasharray="3 3" />
-            <XAxis dataKey="name" tickLine={false} axisLine={false} />
-            <YAxis allowDecimals={false} />
-            <ChartTooltip content={<ChartTooltipContent className="w-[150px]" nameKey="name" labelFormatter={(value) => value} />} />
-            <Bar dataKey="count" fill={chartConfig[activeTab].color} />
-          </BarChart>
-        </ChartContainer>
+        <ClientOnly>
+          <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
+            <BarChart data={data[activeTab]} margin={{ top: 5, right: 30, left: 20, bottom: 5 }} barCategoryGap="20%">
+              <CartesianGrid vertical={false} strokeDasharray="3 3" />
+              <XAxis dataKey="name" tickLine={false} axisLine={false} />
+              <YAxis allowDecimals={false} />
+              <ChartTooltip content={<ChartTooltipContent className="w-[150px]" nameKey="name" labelFormatter={(value) => value} />} />
+              <Bar dataKey="count" fill={chartConfig[activeTab].color} />
+            </BarChart>
+          </ChartContainer>
+        </ClientOnly>
       </CardContent>
     </Card>
   );

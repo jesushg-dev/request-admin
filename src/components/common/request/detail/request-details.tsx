@@ -3,6 +3,7 @@
 import { useState, type FC } from 'react';
 import { Link } from '@/i18n/routing';
 import { AlertTriangle, ArrowDown, ArrowRight, ArrowUp, CalendarIcon, Circle, Edit3Icon, FlagIcon, FolderIcon, StarIcon, TagIcon, UserIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { AssignmentLevelType, RequestLevelType } from '@/types/prisma/hierarchy';
 import { RequestDetailsType } from '@/types/prisma/request';
@@ -36,6 +37,7 @@ interface ProjectDetailsProps {
 }
 
 const ProjectDetails: FC<ProjectDetailsProps> = ({ tenantId, slug, request, requestDetails, priorities, requestLevelTypes, assignmentLevelTypes }) => {
+  const t = useTranslations('admin.request.view.projectDetails');
   const [priority, setPriority] = useState<string | number>(request.priorityId.value);
 
   const priorityOptions = priorities.map((priority, index) => ({ value: priority.value, label: priority.label, icon: icons[index] ?? Circle }));
@@ -64,7 +66,7 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({ tenantId, slug, request, requ
                 params: { tenantId, slug },
               }}>
               <Edit3Icon className="h-4 w-4" />
-              <span className="sr-only">Edit</span>
+              <span className="sr-only">{t('edit')}</span>
             </Link>
           </Button>
         </CardTitle>
@@ -77,16 +79,20 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({ tenantId, slug, request, requ
               <div className="space-y-4">
                 {/* Progress Indicators */}
                 <div className="grid grid-cols-[repeat(auto-fit,minmax(5rem,1fr))] gap-4">
-                  <ProgressCircle value={requestDetails.submissions.count} total={requestDetails.submissions.total} label="Submissions" />
-                  <ProgressCircle value={requestDetails.requirements.count} total={requestDetails.requirements.total} label="Requirements" />
+                  <ProgressCircle value={requestDetails.submissions.count} total={requestDetails.submissions.total} label={t('submissions')} />
+                  <ProgressCircle value={requestDetails.requirements.count} total={requestDetails.requirements.total} label={t('requirements')} />
 
                   {requestDetails.sla && (
                     <div className="w-full p-4 sm:col-span-2">
-                      <h4 className="mb-2 text-sm font-medium">Current SLA</h4>
+                      <h4 className="mb-2 text-sm font-medium">{t('currentSla')}</h4>
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
-                          <span>Resolution: {requestDetails.sla.resolutionTime}h</span>
-                          <span>Remaining: {requestDetails.sla.timeRemaining}h</span>
+                          <span>
+                            {t('resolution')}: {requestDetails.sla.resolutionTime}h
+                          </span>
+                          <span>
+                            {t('remaining')}: {requestDetails.sla.timeRemaining}h
+                          </span>
                         </div>
                         <Progress value={requestDetails.sla.progress} />
                       </div>
@@ -96,10 +102,10 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({ tenantId, slug, request, requ
                 <Separator />
                 {/* Metadata */}
                 <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4">
-                  <MetadataItem icon={<UserIcon className="h-4 w-4" />} label="Issue Subject" value={request.issueSubject ?? 'N/A'} />
+                  <MetadataItem icon={<UserIcon className="h-4 w-4" />} label={t('issueSubject')} value={request.issueSubject ?? 'N/A'} />
                   <MetadataItem
                     icon={<FlagIcon className="h-4 w-4" />}
-                    label="Priority"
+                    label={t('priority')}
                     value={
                       <SelectCombobox
                         options={priorityOptions}
@@ -107,16 +113,16 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({ tenantId, slug, request, requ
                         value={priority}
                         onChange={(value) => setPriority(value)}
                         hotkey="p"
-                        buttonText="Set priority"
-                        placeholder="Search..."
+                        buttonText={t('setPriority')}
+                        placeholder={t('search')}
                         onSelectOption={(option) => console.log(option)}
                       />
                     }
                   />
                   <ExpandableMetadata items={assignmentCategories} />
                   <ExpandableMetadata items={requestCategories} />
-                  <MetadataItem icon={<TagIcon className="h-4 w-4" />} label="Status" value={request.statusId.label} />
-                  <MetadataItem icon={<CalendarIcon className="h-4 w-4" />} label="Created" value={new Date().toLocaleDateString()} />
+                  <MetadataItem icon={<TagIcon className="h-4 w-4" />} label={t('status')} value={request.statusId.label} />
+                  <MetadataItem icon={<CalendarIcon className="h-4 w-4" />} label={t('created')} value={new Date().toLocaleDateString()} />
                 </div>
                 {/* Satisfaction Survey */}
                 {requestDetails.satisfactionSurvey && (
@@ -128,7 +134,9 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({ tenantId, slug, request, requ
                     </div>
                     <div className="flex-1">
                       <p className="text-sm">{requestDetails.satisfactionSurvey.feedback}</p>
-                      <p className="text-muted-foreground text-xs">Submitted {new Date(requestDetails.satisfactionSurvey.submittedAt).toLocaleDateString()}</p>
+                      <p className="text-muted-foreground text-xs">
+                        {t('submittedOn')} {new Date(requestDetails.satisfactionSurvey.submittedAt).toLocaleDateString()}
+                      </p>
                     </div>
                   </div>
                 )}

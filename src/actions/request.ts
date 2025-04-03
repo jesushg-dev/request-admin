@@ -467,7 +467,13 @@ export const getRequestDetailsByRequest = async (tenantId: string, request: Requ
     select: { id: true, name: true, createdAt: true },
   });
 
+  const requestAssignments = await db.requestAssignment.findFirstOrThrow({
+    where: { requestId: request.id, tenantId },
+    orderBy: { createdAt: 'desc' },
+  });
+
   return {
+    areaId: requestAssignments?.areaId,
     submissions: {
       count: submissions,
       total: forms,

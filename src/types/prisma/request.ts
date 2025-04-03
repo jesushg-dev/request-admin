@@ -20,6 +20,7 @@ export const RequestDefaultArgs = Prisma.validator<Prisma.RequestDefaultArgs>()(
 export type RequestType = Prisma.RequestGetPayload<typeof RequestDefaultArgs>;
 
 export type RequestDetailsType = {
+  areaId: string;
   submissions: {
     count: number;
     total: number;

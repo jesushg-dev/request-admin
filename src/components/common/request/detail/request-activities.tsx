@@ -7,6 +7,7 @@ import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { ChevronDown } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import { useTranslations } from 'next-intl';
 
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -35,6 +36,7 @@ interface TimelineProps {
 }
 
 function RequestActivities({ requestId, tenantId }: TimelineProps) {
+  const t = useTranslations('admin.request.view.history');
   const { data, isLoading, isError, error, refetch } = useFindManyRequestChangeLog({
     select: { id: true, changedAt: true, fieldName: true, requestId: true, changedBy: true, tenantId: true, oldValue: true, newValue: true, createdAt: true },
     where: { requestId, tenantId },
@@ -48,20 +50,20 @@ function RequestActivities({ requestId, tenantId }: TimelineProps) {
     if (isNaN(date.getTime())) {
       console.error('Invalid date:', item.changedAt);
       return {
-        dayOfWeek: 'N/A',
+        dayOfWeek: t('nA'),
         dayNumber: '00',
         title: item.fieldName,
         time: '00:00',
-        fullDate: 'Invalid date',
-        userId: item.changedBy?.substring(0, 8) || 'Usuario desconocido',
+        fullDate: t('invalidDate'),
+        userId: item.changedBy?.substring(0, 8) || t('unknownUser'),
       };
     }
 
     const titleMap: Record<string, string> = {
-      request_created: 'Solicitud creada',
-      request_updated: 'Solicitud actualizada',
-      request_approved: 'Solicitud aprobada',
-      request_rejected: 'Solicitud rechazada',
+      request_created: t('requestCreated'),
+      request_updated: t('requestUpdated'),
+      request_approved: t('requestApproved'),
+      request_rejected: t('requestRejected'),
     };
 
     return {
@@ -70,7 +72,7 @@ function RequestActivities({ requestId, tenantId }: TimelineProps) {
       title: titleMap[item.fieldName] || item.fieldName,
       time: format(date, 'HH:mm'),
       fullDate: format(date, 'PPP', { locale: es }),
-      userId: item.changedBy || 'Usuario desconocido',
+      userId: item.changedBy || t('unknownUser'),
     };
   };
 
@@ -132,26 +134,26 @@ function RequestActivities({ requestId, tenantId }: TimelineProps) {
                       className="border-t border-muted-foreground/20 px-4 py-3 bg-background/80">
                       <div className="grid gap-2 text-sm">
                         <div className="grid grid-cols-[120px_1fr] gap-2">
-                          <span className="font-medium">ID Solicitud:</span>
+                          <span className="font-medium">{t('requestId')}:</span>
                           <span>{item.requestId}</span>
                         </div>
                         <div className="grid grid-cols-[120px_1fr] gap-2">
-                          <span className="font-medium">Fecha completa:</span>
+                          <span className="font-medium">{t('fullDate')}:</span>
                           <span>{fullDate}</span>
                         </div>
                         <div className="grid grid-cols-[120px_1fr] gap-2">
-                          <span className="font-medium">Modificado por:</span>
+                          <span className="font-medium">{t('modifiedBy')}:</span>
                           <span>{userId}</span>
                         </div>
                         {item.tenantId && (
                           <div className="grid grid-cols-[120px_1fr] gap-2">
-                            <span className="font-medium">ID Tenant:</span>
+                            <span className="font-medium">{t('tenantId')}:</span>
                             <span>{item.tenantId}</span>
                           </div>
                         )}
                         {(item.oldValue !== undefined || item.newValue !== undefined) && (
                           <div className="grid grid-cols-[120px_1fr] gap-2">
-                            <span className="font-medium">Cambio:</span>
+                            <span className="font-medium">{t('change')}:</span>
                             <span>
                               {item.oldValue !== null ? `"${item.oldValue}"` : '—'} → {item.newValue !== null ? `"${item.newValue}"` : '—'}
                             </span>
@@ -159,7 +161,7 @@ function RequestActivities({ requestId, tenantId }: TimelineProps) {
                         )}
                         {item.createdAt && (
                           <div className="grid grid-cols-[120px_1fr] gap-2">
-                            <span className="font-medium">Creado:</span>
+                            <span className="font-medium">{t('created')}:</span>
                             <span>{format(parseISO(item.createdAt.toISOString()), 'Pp', { locale: es })}</span>
                           </div>
                         )}
@@ -172,7 +174,7 @@ function RequestActivities({ requestId, tenantId }: TimelineProps) {
           })}
         </>
       ) : (
-        <p>Loading...</p>
+        <p>{t('loading')}</p>
       )}
     </div>
   );

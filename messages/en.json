@@ -323,6 +323,8 @@
       "security": "Security",
       "roles": "Roles",
       "users": "Users",
+      "agreements": "Agreements",
+      "linksAndDocuments": "Link and Documents",
       "errors": {
         "changeTenantError": "Error changing tenant!"
       },
@@ -334,9 +336,7 @@
           "tenants": "Tenants"
         },
         "addTenant": "Add tenant"
-      },
-      "agreements": "Agreements",
-      "linksAndDocuments": "Link and Documents"
+      }
     },
     "dashboard": {
       "totalRequests": "Solicitudes Totales",
@@ -987,6 +987,49 @@
         }
       },
       "view": {
+        "no_documents_found": "No documents found",
+        "contact_support": "Please check back later or contact support if you need immediate assistance.",
+        "projectDetails": {
+          "edit": "Edit",
+          "submissions": "Submissions",
+          "requirements": "Requirements",
+          "currentSla": "Current SLA",
+          "resolution": "Resolution",
+          "remaining": "Remaining",
+          "issueSubject": "Issue Subject",
+          "priority": "Priority",
+          "setPriority": "Set priority",
+          "search": "Search...",
+          "status": "Status",
+          "created": "Created",
+          "submittedOn": "Submitted on"
+        },
+        "tabs": {
+          "requirements": "Requirements",
+          "assignments": "Assignments",
+          "chat": "Chat",
+          "submissions": "Submissions",
+          "guides": "Guides",
+          "attachments": "Attachments",
+          "related": "Related",
+          "history": "History"
+        },
+        "requirements": {
+          "noChangesToSave": "No changes to save",
+          "savingChanges": "Saving changes...",
+          "changesSavedSuccessfully": "Changes saved successfully",
+          "failedToSaveChanges": "Failed to save changes",
+          "noRequirementsAvailable": "No requirements available",
+          "noRequirementsFoundForThisRequest": "No requirements found for this request",
+          "totalRequirements": "Total Requirements",
+          "trackProgress": "Track progress",
+          "completed": "Completed",
+          "pending": "Pending",
+          "deselectAll": "Deselect All",
+          "selectAll": "Select All",
+          "saveAllChanges": "Save all changes",
+          "remaining": "Remaining"
+        },
         "assignments": {
           "columns": {
             "area": "Area",
@@ -1046,6 +1089,22 @@
             "createdAt": "Creation Date",
             "noSubject": "No subject"
           }
+        },
+        "history": {
+          "requestId": "Request ID",
+          "fullDate": "Full Date",
+          "modifiedBy": "Modified By",
+          "tenantId": "Tenant ID",
+          "change": "Change",
+          "created": "Created",
+          "loading": "Loading...",
+          "nA": "N/A",
+          "invalidDate": "Invalid date",
+          "unknownUser": "Unknown user",
+          "requestCreated": "Request Created",
+          "requestUpdated": "Request Updated",
+          "requestApproved": "Request Approved",
+          "requestRejected": "Request Rejected"
         }
       },
       "form": {

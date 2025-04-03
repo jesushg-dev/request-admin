@@ -3,6 +3,7 @@
 import { useEffect, useState, useTransition } from 'react';
 import { useFindManyRequirementComplianceTracking, useUpdateManyRequirementComplianceTracking } from '@/services/api/hooks';
 import { Filter, SaveAllIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -27,7 +28,9 @@ interface RequirementProgressProps {
 }
 
 export default function RequirementProgress({ tenantId, requestId }: RequirementProgressProps) {
-  const [filter, setFilter] = useState(filterOptions[0]);
+  const t = useTranslations('admin.request.view.requirements');
+
+  const [filterOption, setFilterOption] = useState(filterOptions[0]);
   const [isPending, startTransition] = useTransition();
   const [localCompliances, setLocalCompliances] = useState<Record<string, boolean>>({});
   const [originalCompliances, setOriginalCompliances] = useState<Record<string, boolean>>({});
@@ -71,7 +74,7 @@ export default function RequirementProgress({ tenantId, requestId }: Requirement
         const changes = Object.entries(localCompliances).filter(([key, val]) => val !== originalCompliances[key]);
 
         if (changes.length === 0) {
-          toast.info('No changes to save');
+          toast.info(t('noChangesToSave'));
           return;
         }
 
@@ -92,15 +95,15 @@ export default function RequirementProgress({ tenantId, requestId }: Requirement
         ]);
 
         toast.promise(promises, {
-          loading: 'Saving changes...',
+          loading: t('savingChanges'),
           success: () => {
             setOriginalCompliances(localCompliances);
-            return 'Changes saved successfully';
+            return t('changesSavedSuccessfully');
           },
-          error: 'Failed to save changes',
+          error: t('failedToSaveChanges'),
         });
       } catch (error) {
-        toast.error('Failed to save changes');
+        toast.error(t('failedToSaveChanges'));
         console.error('Error saving compliances:', error);
         setLocalCompliances(originalCompliances);
       }
@@ -115,8 +118,8 @@ export default function RequirementProgress({ tenantId, requestId }: Requirement
 
   const filteredRequirements = requirementsData
     ?.filter((req) => {
-      if (filter.value === 'selected') return localCompliances[req.requirement.id];
-      if (filter.value === 'unselected') return !localCompliances[req.requirement.id];
+      if (filterOption.value === 'selected') return localCompliances[req.requirement.id];
+      if (filterOption.value === 'unselected') return !localCompliances[req.requirement.id];
       return true;
     })
     ?.map((req) => ({
@@ -141,7 +144,7 @@ export default function RequirementProgress({ tenantId, requestId }: Requirement
 
   if (isLoading) return <RequirementProgressPlaceholder />;
   if (!requirementsData || requirementsData.length === 0) {
-    return <EmptyState title="No requirements available" description="No requirements found for this request." />;
+    return <EmptyState title={t('noRequirementsAvailable')} description={t('noRequirementsFoundForThisRequest')} />;
   }
 
   return (
@@ -150,33 +153,37 @@ export default function RequirementProgress({ tenantId, requestId }: Requirement
         <div className="flex justify-between items-start gap-4 flex-wrap">
           <div className="space-y-1">
             <CardTitle>
-              Total Requirements ({completionStats.completed}/{requirementsData.length})
+              {t('totalRequirements')} ({completionStats.completed}/{requirementsData.length})
             </CardTitle>
             <CardDescription className="flex gap-2 items-center">
-              <span>Track progress</span>
+              <span>{t('trackProgress')}</span>
               <span className="text-primary">·</span>
-              <span className="text-emerald-600">{completionStats.completed} completed</span>
+              <span className="text-emerald-600">
+                {completionStats.completed} {t('completed')}
+              </span>
               <span className="text-primary">·</span>
-              <span className="text-amber-600">{completionStats.pending} pending</span>
+              <span className="text-amber-600">
+                {completionStats.pending} {t('pending')}
+              </span>
             </CardDescription>
           </div>
 
           <div className="flex gap-2 items-center flex-shrink-0">
             <div className="w-40">
               <Select
-                value={filter}
+                value={filterOption}
                 isSearchable={false}
                 options={filterOptions}
-                onChange={(newValue) => setFilter(newValue as (typeof filterOptions)[number])}
+                onChange={(newValue) => setFilterOption(newValue as (typeof filterOptions)[number])}
                 components={{ DropdownIndicator: () => <Filter className="w-4 h-4" /> }}
               />
             </div>
 
             <Button onClick={handleSelectAll} variant="outline" size="sm" disabled={isPending}>
-              {Object.values(localCompliances).every(Boolean) ? 'Deselect All' : 'Select All'}
+              {Object.values(localCompliances).every(Boolean) ? t('deselectAll') : t('selectAll')}
             </Button>
 
-            <Hint label="Save all changes">
+            <Hint label={t('saveAllChanges')}>
               <Button onClick={handleSave} variant="outline" size="sm" disabled={isPending || JSON.stringify(localCompliances) === JSON.stringify(originalCompliances)}>
                 <SaveAllIcon className={`w-4 h-4 ${isPending ? 'animate-pulse' : ''}`} />
               </Button>
@@ -189,8 +196,12 @@ export default function RequirementProgress({ tenantId, requestId }: Requirement
         <div className="mb-4 space-y-2">
           <Progress value={progress} />
           <div className="flex justify-between text-sm text-muted-foreground">
-            <span>{progress.toFixed(1)}% Completed</span>
-            <span>{completionStats.pending} remaining</span>
+            <span>
+              {progress.toFixed(1)}% {t('completed')}
+            </span>
+            <span>
+              {completionStats.pending} {t('remaining')}
+            </span>
           </div>
         </div>
 

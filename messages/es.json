@@ -323,6 +323,8 @@
       "security": "Seguridad y Acceso",
       "roles": "Roles",
       "users": "Usuarios",
+      "agreements": "Acuerdos",
+      "linksAndDocuments": "Enlaces y documentos",
       "errors": {
         "changeTenantError": "Error al cambiar de workspace"
       },
@@ -334,8 +336,7 @@
           "tenants": "Inquilinos"
         },
         "addTenant": "Agregar inquilino"
-      },
-      "linksAndDocuments": "Enlaces y documentos"
+      }
     },
     "dashboard": {
       "totalRequests": "Total Requests",
@@ -989,6 +990,49 @@
         }
       },
       "view": {
+        "no_documents_found": "No se encontraron documentos",
+        "contact_support": "Por favor, vuelva más tarde o contacte al soporte si necesita asistencia inmediata.",
+        "projectDetails": {
+          "edit": "Editar",
+          "submissions": "Envíos",
+          "requirements": "Requisitos",
+          "currentSla": "SLA Actual",
+          "resolution": "Resolución",
+          "remaining": "Restante",
+          "issueSubject": "Asunto del Problema",
+          "priority": "Prioridad",
+          "setPriority": "Establecer prioridad",
+          "search": "Buscar...",
+          "status": "Estado",
+          "created": "Creado",
+          "submittedOn": "Enviado el"
+        },
+        "tabs": {
+          "requirements": "Requerimientos",
+          "assignments": "Asignaciones",
+          "chat": "Chat",
+          "submissions": "Envíos",
+          "guides": "Guías",
+          "attachments": "Archivos Adjuntos",
+          "related": "Relacionado",
+          "history": "Historial"
+        },
+        "requirements": {
+          "noChangesToSave": "No hay cambios para guardar",
+          "savingChanges": "Guardando cambios...",
+          "changesSavedSuccessfully": "Cambios guardados exitosamente",
+          "failedToSaveChanges": "Error al guardar los cambios",
+          "noRequirementsAvailable": "No hay requisitos disponibles",
+          "noRequirementsFoundForThisRequest": "No se encontraron requisitos para esta solicitud",
+          "totalRequirements": "Requisitos totales",
+          "trackProgress": "Seguimiento del progreso",
+          "completed": "Completado",
+          "pending": "Pendiente",
+          "deselectAll": "Deseleccionar todo",
+          "selectAll": "Seleccionar todo",
+          "saveAllChanges": "Guardar todos los cambios",
+          "remaining": "Restantes"
+        },
         "assignments": {
           "columns": {
             "area": "Área",
@@ -1048,6 +1092,22 @@
             "createdAt": "Fecha de Creación",
             "noSubject": "Sin asunto"
           }
+        },
+        "history": {
+          "requestId": "ID de Solicitud",
+          "fullDate": "Fecha Completa",
+          "modifiedBy": "Modificado Por",
+          "tenantId": "ID de Tenant",
+          "change": "Cambio",
+          "created": "Creado",
+          "loading": "Cargando...",
+          "nA": "N/D",
+          "invalidDate": "Fecha Inválida",
+          "unknownUser": "Usuario Desconocido",
+          "requestCreated": "Solicitud Creada",
+          "requestUpdated": "Solicitud Actualizada",
+          "requestApproved": "Solicitud Aprobada",
+          "requestRejected": "Solicitud Rechazada"
         }
       },
       "form": {

@@ -1,8 +1,11 @@
+import { getAuthContext } from '@/actions/authorization';
 import { getAssignmentHierarchyAndLevelsByTenantId, getRequestHierarchyAndLevelsByTenantId } from '@/actions/hierarchy';
 import { getPrioritiesAsOptions, getRequestById, getRequestDetailsByRequest } from '@/actions/request';
 import { getCurrentUserTenant } from '@/actions/user';
-import { getPathname } from '@/i18n/routing';
+import { PermissionActions } from '@/constants/permissions';
+import { getPathname, redirect } from '@/i18n/routing';
 import { type Locale } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -23,13 +26,34 @@ interface CaseDetailPageProps {
 
 export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
   const { locale, tenantId, slug } = await params;
+  const { hasAreaPermissions, hasPermissions } = await getAuthContext(tenantId);
+  const t = await getTranslations('admin.request.view');
 
+  // --- Request Data Fetching ---
   const request = await getRequestById(tenantId, slug);
-  const currentUser = await getCurrentUserTenant(tenantId);
-  const priorities = await getPrioritiesAsOptions(tenantId);
-  const requestDetails = await getRequestDetailsByRequest(tenantId, request);
-  const requestHierarchy = await getRequestHierarchyAndLevelsByTenantId(locale, tenantId);
-  const assignmentHierarchy = await getAssignmentHierarchyAndLevelsByTenantId(locale, tenantId);
+
+  // --- Authorization Checks ---
+  const hasGlobalViewPermission = hasPermissions([PermissionActions.REQUEST_MANAGEMENT.VIEW]);
+
+  const hasScopedViewAccess = hasAreaPermissions(request.areaId.value, [
+    PermissionActions.REQUEST_MANAGEMENT.SCOPED_VIEW,
+    PermissionActions.REQUEST_MANAGEMENT.SCOPED_EDIT,
+    PermissionActions.REQUEST_MANAGEMENT.SCOPED_ASSIGN_USER,
+  ]);
+
+  if (!hasGlobalViewPermission && !hasScopedViewAccess) {
+    return redirect({ locale, href: { pathname: '/admin/[tenantId]/requests-portal/requests', params: { tenantId } } });
+  }
+
+  // --- Data Preparation ---
+  const [requestDetails, currentUser, priorities, requestHierarchy, assignmentHierarchy] = await Promise.all([
+    getRequestDetailsByRequest(tenantId, request),
+    getCurrentUserTenant(tenantId),
+    getPrioritiesAsOptions(tenantId),
+    getRequestHierarchyAndLevelsByTenantId(locale, tenantId),
+    getAssignmentHierarchyAndLevelsByTenantId(locale, tenantId),
+  ]);
+
   const callbackUrl = getPathname({ locale, href: { pathname: '/admin/[tenantId]/requests-portal/requests/[slug]', params: { tenantId, slug } } });
 
   return (
@@ -52,14 +76,14 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
         <div className="h-full p-4 overflow-hidden">
           <Tabs defaultValue="requirements" className="w-full h-full overflow-hidden flex flex-col">
             <TabsList className="flex gap-2">
-              <TabsTrigger value="requirements">Requirements</TabsTrigger>
-              <TabsTrigger value="assignments">Assignments</TabsTrigger>
-              <TabsTrigger value="chat">Chat</TabsTrigger>
-              <TabsTrigger value="submissions">Submissions</TabsTrigger>
-              <TabsTrigger value="guides">Guides</TabsTrigger>
-              <TabsTrigger value="attachments">Attachments</TabsTrigger>
-              <TabsTrigger value="related">Related</TabsTrigger>
-              <TabsTrigger value="history">History</TabsTrigger>
+              <TabsTrigger value="requirements">{t('tabs.requirements')}</TabsTrigger>
+              <TabsTrigger value="assignments">{t('tabs.assignments')}</TabsTrigger>
+              <TabsTrigger value="chat">{t('tabs.chat')}</TabsTrigger>
+              <TabsTrigger value="submissions">{t('tabs.submissions')}</TabsTrigger>
+              <TabsTrigger value="guides">{t('tabs.guides')}</TabsTrigger>
+              <TabsTrigger value="attachments">{t('tabs.attachments')}</TabsTrigger>
+              <TabsTrigger value="related">{t('tabs.related')}</TabsTrigger>
+              <TabsTrigger value="history">{t('tabs.history')}</TabsTrigger>
             </TabsList>
             <TabsContent value="requirements" className="flex-1 flex flex-col overflow-hidden">
               <RequirementProgress tenantId={tenantId} requestId={slug} />
@@ -78,7 +102,7 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
                 <DataroomDocuments dataroomId={requestDetails.dataroom?.id} tenantId={tenantId} callbackUrl={callbackUrl} />
               ) : (
                 <div className="flex-1 flex items-center justify-center">
-                  <EmptyState title="No documents found" description="Please check back later or contact support if you need immediate assistance." />
+                  <EmptyState title={t('no_documents_found')} description={t('contact_support')} />
                 </div>
               )}
             </TabsContent>
