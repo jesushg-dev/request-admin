@@ -20,14 +20,14 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 
-function PublishFormBtn({ id }: { id: string }) {
+function PublishFormBtn({ id, tenantId }: { id: string; tenantId: string }) {
   const t = useTranslations('component.form');
   const [loading, startTransition] = useTransition();
   const router = useRouter();
 
   async function publishForm() {
     try {
-      await PublishForm(id);
+      await PublishForm(id, tenantId);
       toast(t('success'), { description: t('publishSuccess') });
       router.refresh();
     } catch {

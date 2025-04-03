@@ -30,7 +30,7 @@ const NewPage: FC<NewPageProps> = async ({ params, searchParams }) => {
 
   return (
     <PageCardWrapper title={t('title')} description={t('subtitle')}>
-      <FolderForm tenantId={tenantId} folders={[]} currentFolderId={slug} dataroomId={dataroomId} />
+      <FolderForm locale={locale} tenantId={tenantId} folders={[]} currentFolderId={slug} dataroomId={dataroomId} />
     </PageCardWrapper>
   );
 };

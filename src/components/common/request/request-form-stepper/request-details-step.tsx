@@ -1,6 +1,7 @@
 'use client';
 
 import { type FC } from 'react';
+import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -16,8 +17,8 @@ export const requestDetailSchema = z.object({
   issueSubject: z.string(),
   description: z.string().max(5000).optional(),
   comment: z.string().max(255).optional(),
-  priorityId: z.object({ value: z.string(), label: z.string() }),
-  statusId: z.object({ value: z.string(), label: z.string() }),
+  priorityId: z.object({ value: z.string().min(1), label: z.string() }),
+  statusId: z.object({ value: z.string().min(1), label: z.string() }),
 });
 
 export type RequestDetailValues = z.infer<typeof requestDetailSchema>;
@@ -37,6 +38,7 @@ interface RequestDetailsStepProps {
 }
 
 const RequestDetailsStep: FC<RequestDetailsStepProps> = ({ statusesOptions, prioritiesOptions }) => {
+  const t = useTranslations('admin.request.form.detailsStep');
   const { control } = useFormContext<RequestDetailValues>();
 
   return (
@@ -47,11 +49,11 @@ const RequestDetailsStep: FC<RequestDetailsStepProps> = ({ statusesOptions, prio
           name="issueSubject"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Issue Subject</FormLabel>
+              <FormLabel>{t('issueSubject')}</FormLabel>
               <FormControl>
-                <Input id="issueSubject" placeholder="Enter issue subject" {...field} />
+                <Input id="issueSubject" placeholder={t('issueSubjectPlaceholder')} {...field} />
               </FormControl>
-              <FormDescription>Issue Subject is used to describe the main issue of the request.</FormDescription>
+              <FormDescription>{t('issueSubjectDescription')}</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -62,11 +64,11 @@ const RequestDetailsStep: FC<RequestDetailsStepProps> = ({ statusesOptions, prio
             name="statusId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Status</FormLabel>
+                <FormLabel>{t('status')}</FormLabel>
                 <FormControl>
                   <Select menuPortalTarget={null} value={field.value} defaultValue={field.value} onChange={field.onChange} options={statusesOptions} />
                 </FormControl>
-                <FormDescription>Status is used to determine the current state of the request.</FormDescription>
+                <FormDescription>{t('statusDescription')}</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -77,11 +79,11 @@ const RequestDetailsStep: FC<RequestDetailsStepProps> = ({ statusesOptions, prio
             name="priorityId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Priority</FormLabel>
+                <FormLabel>{t('priority')}</FormLabel>
                 <FormControl>
                   <Select menuPortalTarget={null} value={field.value} defaultValue={field.value} onChange={field.onChange} options={prioritiesOptions} />
                 </FormControl>
-                <FormDescription>Priority is used to determine the order in which requests are handled.</FormDescription>
+                <FormDescription>{t('priorityDescription')}</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -93,11 +95,11 @@ const RequestDetailsStep: FC<RequestDetailsStepProps> = ({ statusesOptions, prio
           control={control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Comment</FormLabel>
+              <FormLabel>{t('comment')}</FormLabel>
               <FormControl>
-                <Input id="comment" placeholder="Enter comment" {...field} />
+                <Input id="comment" placeholder={t('commentPlaceholder')} {...field} />
               </FormControl>
-              <FormDescription>Comment is used to provide even more information about the request.</FormDescription>
+              <FormDescription>{t('commentDescription')}</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -108,11 +110,11 @@ const RequestDetailsStep: FC<RequestDetailsStepProps> = ({ statusesOptions, prio
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>{t('description')}</FormLabel>
               <FormControl>
                 <ReactEditor onContentChange={field.onChange} contentMinHeight={256} contentMaxHeight={640} initialContent={field.value} />
               </FormControl>
-              <FormDescription>Description is used to provide more information about the request.</FormDescription>
+              <FormDescription>{t('descriptionDescription')}</FormDescription>
               <FormMessage />
             </FormItem>
           )}

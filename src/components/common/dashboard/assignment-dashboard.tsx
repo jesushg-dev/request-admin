@@ -69,7 +69,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function AssignmentDashboard() {
+function AssignmentDashboard() {
   const [activeTab, setActiveTab] = React.useState<keyof typeof data>('categories');
 
   // Calcular el total para cada pestaña
@@ -118,3 +118,5 @@ export function AssignmentDashboard() {
     </Card>
   );
 }
+
+export default AssignmentDashboard;

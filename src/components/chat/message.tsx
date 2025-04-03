@@ -100,7 +100,11 @@ export const Message = ({
   };
 
   const handleRemove = async () => {
-    const ok = await message.showConfirm('Are you sure you want to delete this message? This action cannot be undone.', 'Delete message');
+    const ok = await message.confirm('Are you sure you want to delete this message? This action cannot be undone.', {
+      title: 'Delete Message',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+    });
 
     if (!ok) return;
 

@@ -2,9 +2,10 @@
 
 import { useTransition } from 'react';
 import { useParams } from 'next/navigation';
-import { Locale, locales, usePathname, useRouter } from '@/i18n/routing';
+import { locales, usePathname, useRouter } from '@/i18n/routing';
 import clsx from 'clsx';
 import { Globe } from 'lucide-react';
+import type { Locale } from 'next-intl';
 import { useLocale, useTranslations } from 'next-intl';
 
 import { Button } from './ui/button';

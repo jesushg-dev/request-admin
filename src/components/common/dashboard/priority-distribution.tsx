@@ -27,7 +27,7 @@ const priorityData = [
   { priority: 'Low', count: 25, fill: chartConfig.Low.color },
 ];
 
-export function PriorityDistribution() {
+function PriorityDistribution() {
   const totalRequests = React.useMemo(() => {
     return priorityData.reduce((acc, curr) => acc + curr.count, 0);
   }, []);
@@ -64,3 +64,5 @@ export function PriorityDistribution() {
     </Card>
   );
 }
+
+export default PriorityDistribution;

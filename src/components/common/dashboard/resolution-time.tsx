@@ -19,7 +19,7 @@ const resolutionData = [
   { category: 'Incident', avgTime: 4 },
 ];
 
-export function ResolutionTime() {
+function ResolutionTime() {
   return (
     <Card>
       <CardHeader className="flex flex-col items-center">
@@ -38,3 +38,5 @@ export function ResolutionTime() {
     </Card>
   );
 }
+
+export default ResolutionTime;

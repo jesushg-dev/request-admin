@@ -15,7 +15,7 @@ interface NewPageProps {
 
 const NewPage: FC<NewPageProps> = async ({ params, searchParams }) => {
   const { locale, tenantId } = await params;
-  const t = await getTranslations('admin.links.create');
+  const t = await getTranslations('admin.link.form');
   const { documentId, dataroomId, callbackUrl, linkType } = await documentReferencesLoader(searchParams);
   const finalCallbackUrl = callbackUrl ? callbackUrl : getPathname({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/documents', params: { tenantId } } });
 

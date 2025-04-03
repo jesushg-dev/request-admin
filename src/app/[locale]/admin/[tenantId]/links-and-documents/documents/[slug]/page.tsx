@@ -1,7 +1,8 @@
-import { getPathname, Link, Locale } from '@/i18n/routing';
+import { getPathname, Link } from '@/i18n/routing';
 import { db } from '@/server/db-server';
 import { format } from 'date-fns';
 import { Calendar, Edit, ExternalLink, File, LinkIcon, MoreHorizontal, Trash2, Upload } from 'lucide-react';
+import type { Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
 import { DocumentDefaultArgs } from '@/types/prisma/document';

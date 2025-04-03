@@ -3,6 +3,7 @@
 import { Fragment, useState, type FC } from 'react';
 import { ChevronDown, ChevronRight, FlagIcon, MapPin, TagIcon, TagsIcon, UserIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 
 import type { AssignmentLevelType, RequestLevelType } from '@/types/prisma/hierarchy';
@@ -109,7 +110,8 @@ interface SummaryStepProps {
   assignmentLevelTypes: AssignmentLevelType[];
 }
 
-const SummaryStep: FC<SummaryStepProps> = ({ tenantId, requestLevelTypes, assignmentLevelTypes }) => {
+export const SummaryStep: FC<SummaryStepProps> = ({ tenantId, requestLevelTypes, assignmentLevelTypes }) => {
+  const t = useTranslations('admin.request.form.summaryStep');
   const { watch } = useFormContext<RequestFormStepperType>();
   const formData = watch();
 
@@ -119,15 +121,15 @@ const SummaryStep: FC<SummaryStepProps> = ({ tenantId, requestLevelTypes, assign
         <DetailsSection {...formData} />
 
         <div className="grid md:grid-cols-2 gap-4">
-          <CategorySection title="Service Category" data={formData.requestCategory} levelTypes={requestLevelTypes} />
-          <CategorySection title="Assignment Category" data={formData.assignmentCategory} levelTypes={assignmentLevelTypes} />
+          <CategorySection title={t('service_category')} data={formData.requestCategory} levelTypes={requestLevelTypes} />
+          <CategorySection title={t('assignment_category')} data={formData.assignmentCategory} levelTypes={assignmentLevelTypes} />
         </div>
 
         <Tabs defaultValue="compliances" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="compliances">Compliances</TabsTrigger>
-            <TabsTrigger value="submissions">Submissions</TabsTrigger>
-            <TabsTrigger value="attachments">Attachments</TabsTrigger>
+            <TabsTrigger value="compliances">{t('tabs.compliances')}</TabsTrigger>
+            <TabsTrigger value="submissions">{t('tabs.submissions')}</TabsTrigger>
+            <TabsTrigger value="attachments">{t('tabs.attachments')}</TabsTrigger>
           </TabsList>
           <TabsContent value="compliances">
             <RequirementProgress tenantId={tenantId} requirementCompliances={formData.requirementCompliances} />

@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RolesTable } from '@/components/common/security/roles-table';
 import { UsersTable } from '@/components/common/security/users-table';
-import { StatCard } from '@/components/stat-card';
+import StatCard from '@/components/stat-card';
 
 export const metadata: Metadata = {
   title: 'Security Dashboard',

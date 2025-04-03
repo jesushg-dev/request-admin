@@ -1,6 +1,7 @@
 import { FC } from 'react';
-import { Locale, redirect } from '@/i18n/routing';
+import { redirect } from '@/i18n/routing';
 import { db } from '@/server/db-client';
+import type { Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
 import DocumentMetadataForm from '@/components/common/documents/document-metadata-form';

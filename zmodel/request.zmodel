@@ -53,20 +53,6 @@ model Request extends TenantScoped, Auditable {
   @@index([issueSubject], name: "idx_request_issue_subject")
 }
 
-/// Represents related incidents or problems for a request.
-model RelatedIncident extends TenantScoped, Auditable {
-  id        String  @id @default(uuid()) //@db.UniqueIdentifier
-  requestId String  //@db.UniqueIdentifier
-  relatedId String  //@db.UniqueIdentifier
-  isActive  Boolean @default(true)
-
-  request   Request @relation("RequestIncident", fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  related   Request @relation("RequestRelated", fields: [relatedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@index([requestId], name: "idx_related_incident_request_id")
-  @@index([relatedId], name: "idx_related_incident_related_id")
-}
-
 /// Represents an assignment of a request to users or areas.
 model RequestAssignment extends TenantScoped, Auditable {
   id                   String               @id @default(uuid()) //@db.UniqueIdentifier
@@ -129,12 +115,18 @@ model AssignedUser extends TenantScoped, Auditable {
   unAssignmentDate    DateTime?
 }
 
-// Represents a type of assignment for requests.
-model AssignmentType extends  TenantScoped, Auditable, CatalogBase {
-  systemName        String                   //@db.VarChar(100)
-  
-  assignments RequestAssignment[]
-  @@unique([name, tenantId])
+/// Represents related incidents or problems for a request.
+model RelatedIncident extends TenantScoped, Auditable {
+  id        String  @id @default(uuid()) //@db.UniqueIdentifier
+  requestId String  //@db.UniqueIdentifier
+  relatedId String  //@db.UniqueIdentifier
+  isActive  Boolean @default(true)
+
+  request   Request @relation("RequestIncident", fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  related   Request @relation("RequestRelated", fields: [relatedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([requestId], name: "idx_related_incident_request_id")
+  @@index([relatedId], name: "idx_related_incident_related_id")
 }
 
 /// Represents a catalog of possible priority levels for requests or assignments.
@@ -145,6 +137,15 @@ model RequestPriorityType extends TenantScoped, Auditable, CatalogBase {
   assignments RequestAssignment[]
   @@unique([name, tenantId])
 }
+
+// Represents a type of assignment for requests.
+model AssignmentType extends  TenantScoped, Auditable, CatalogBase {
+  systemName        String                   //@db.VarChar(100)
+  
+  assignments RequestAssignment[]
+  @@unique([name, tenantId])
+}
+
 
 // Represents core ITIL request lifecycle states
 model RequestStatusType extends TenantScoped, Auditable {

@@ -31,7 +31,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function RequestStatusDistribution() {
+function RequestStatusDistribution() {
   const totalRequests = React.useMemo(() => {
     return chartData.reduce((acc, curr) => acc + curr.count, 0);
   }, []);
@@ -73,3 +73,5 @@ export function RequestStatusDistribution() {
     </Card>
   );
 }
+
+export default RequestStatusDistribution;

@@ -1,6 +1,7 @@
 'use client';
 
 import { CloudUploadIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -19,21 +20,26 @@ export const getDefaultAttachmentsValues = (): AttachmentsValues => ({
 });
 
 export default function AttachmentsStep() {
+  const t = useTranslations('admin.request.form.attachmentsStep');
   const { control } = useFormContext<AttachmentsValues>();
 
   return (
     <>
       <AlertBanner
         variant="warning"
-        title="Subir archivos"
+        title={t('uploadFiles')}
         description={
           <div className="space-y-2">
             <p>
-              Solo podrá subir <span className="font-semibold">nuevos archivos</span> en esta sección y estos serán <span className="font-semibold">guardados con la solicitud</span>.
+              {t.rich('uploadNewFiles', {
+                strong: (chunks) => <span className="font-semibold">{chunks}</span>,
+              })}
             </p>
             <p>
-              Si desea <span className="font-semibold">modificar archivos ya existentes</span>, podrá hacerlo en la sección de <span className="text-blue-500">archivos adjuntos</span> o en el{' '}
-              <span className="text-blue-500">dataroom generado con la solicitud</span>.
+              {t.rich('modifyExistingFiles', {
+                strong: (chunks) => <span className="font-semibold">{chunks}</span>,
+                link: (chunks) => <span className="text-blue-500">{chunks}</span>,
+              })}
             </p>
           </div>
         }
@@ -45,11 +51,11 @@ export default function AttachmentsStep() {
         name="additionalDocuments"
         render={({ field }) => (
           <FormItem className="flex-1 flex flex-col">
-            <FormLabel>Images</FormLabel>
+            <FormLabel>{t('images')}</FormLabel>
             <FormControl className="flex-1">
               <FileUploader horizontal value={field.value} onValueChange={field.onChange} maxFileCount={4} maxSize={4 * 1024 * 1024} />
             </FormControl>
-            <FormDescription>Max file size: 4MB</FormDescription>
+            <FormDescription>{t('maxFileSize')}</FormDescription>
             <FormMessage />
           </FormItem>
         )}

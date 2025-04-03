@@ -110,6 +110,7 @@ export const upsertUser = async (tenantId: string, data: UserTenantScopedFormVal
             where: { userId_tenantId: { userId: existingUser.id, tenantId } },
             create: {
               tenantId,
+              id: data.user.id,
               isActive: data.user.isActive,
               isTwoFactorRequired: data.user.isTwoFactorRequired,
               userRoles: data.roles
@@ -131,6 +132,7 @@ export const upsertUser = async (tenantId: string, data: UserTenantScopedFormVal
                     })),
                   }
                 : undefined,
+              role: 'user',
             },
             update: {
               isTwoFactorRequired: data.user.isTwoFactorRequired,

@@ -1,26 +1,46 @@
+import dynamic from 'next/dynamic';
+import { getDashboardAssignmentTrends, getDashboardRequestCounts, getDashboardRequestTrends } from '@/actions/dashboard';
 import { Calendar, Clock, FileWarningIcon } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { AssignmentDashboard } from '@/components/common/dashboard/assignment-dashboard';
-import { AssignmentTrends } from '@/components/common/dashboard/assignment-trends';
-import { PriorityDistribution } from '@/components/common/dashboard/priority-distribution';
-import { RequestStatusDistribution } from '@/components/common/dashboard/request-status-distribution';
-import { RequestTrends } from '@/components/common/dashboard/request-trends';
-import { ResolutionTime } from '@/components/common/dashboard/resolution-time';
-import { SlaCompliance } from '@/components/common/dashboard/sla-compliance';
-import { StatCard } from '@/components/stat-card';
 
-const DashboardPage = () => {
+const StatCard = dynamic(() => import('@/components/stat-card'));
+const RequestTrends = dynamic(() => import('@/components/common/dashboard/request-trends'));
+const SlaCompliance = dynamic(() => import('@/components/common/dashboard/sla-compliance'));
+const ResolutionTime = dynamic(() => import('@/components/common/dashboard/resolution-time'));
+const AssignmentTrends = dynamic(() => import('@/components/common/dashboard/assignment-trends'));
+const AssignmentDashboard = dynamic(() => import('@/components/common/dashboard/assignment-dashboard'));
+const PriorityDistribution = dynamic(() => import('@/components/common/dashboard/priority-distribution'));
+const RequestStatusDistribution = dynamic(() => import('@/components/common/dashboard/request-status-distribution'));
+
+interface DashboardPageProps {
+  params: Promise<{
+    locale: string;
+    tenantId: string;
+  }>;
+}
+
+const DashboardPage = async ({ params }: DashboardPageProps) => {
+  const { tenantId } = await params;
+  const t = await getTranslations('admin.dashboard');
+  const timeRange = /*searchParams.timeRange ||*/ '90d';
+
+  const trends = await getDashboardRequestTrends(tenantId);
+  console.log('🚀 ~ DashboardPage ~ trends:', trends);
+  const assignmentTrends = await getDashboardAssignmentTrends(tenantId, timeRange);
+
+  const { totalRequests, openRequests, overdueRequests, avgResolutionTime } = await getDashboardRequestCounts(tenantId);
   return (
     <ScrollArea className="w-full">
       <div className="flex flex-1 flex-col gap-4 p-4">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <StatCard title="Total Requests" value="50" icon={<Calendar className="h-5 w-5" />} />
-          <StatCard title="Open Requests" value="18" icon={<Clock className="h-5 w-5" />} />
-          <StatCard title="Overdue" value="4" icon={<FileWarningIcon className="h-5 w-5" />} />
-          <StatCard title="Avg. Resolution Time" value="344h" icon={<Clock className="h-5 w-5" />} />
+          <StatCard title={t('totalRequests')} value={totalRequests} icon={<Calendar className="h-5 w-5" />} />
+          <StatCard title={t('openRequests')} value={openRequests} icon={<Clock className="h-5 w-5" />} />
+          <StatCard title={t('overdue')} value={overdueRequests} icon={<FileWarningIcon className="h-5 w-5" />} />
+          <StatCard title={t('avgResolutionTime')} value={`${avgResolutionTime}h`} icon={<Clock className="h-5 w-5" />} />
         </div>
-        <AssignmentTrends />
+        <AssignmentTrends initialData={assignmentTrends} initialRange={timeRange} />
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <SlaCompliance />
           <RequestStatusDistribution />

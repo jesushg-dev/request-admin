@@ -8,7 +8,7 @@ import { Skeleton } from './ui/skeleton';
 
 interface StatsCardProps {
   title: string;
-  value: string;
+  value: string | number;
   description?: string;
   addLink?: string;
   viewLink?: string;
@@ -16,7 +16,7 @@ interface StatsCardProps {
   loading?: boolean;
 }
 
-export function StatCard({ loading, title, value, description, icon, addLink, viewLink }: StatsCardProps) {
+function StatCard({ loading, title, value, description, icon, addLink, viewLink }: StatsCardProps) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 pb-0">
@@ -56,3 +56,5 @@ export function StatCard({ loading, title, value, description, icon, addLink, vi
     </Card>
   );
 }
+
+export default StatCard;

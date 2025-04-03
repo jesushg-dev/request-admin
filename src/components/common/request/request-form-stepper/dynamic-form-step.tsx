@@ -4,6 +4,7 @@ import { FC, useEffect, useRef } from 'react';
 import { useFindManyForm } from '@/services/api/hooks';
 import { ScrollArea } from '@radix-ui/react-scroll-area';
 import { FileText } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -32,10 +33,11 @@ interface DynamicFormStepProps {
   requestCategoryIds: string[];
 }
 
-const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds, onPrev, onNext }) => {
+export const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds, onPrev, onNext }) => {
+  const t = useTranslations('admin.request.form.dynamicFormStep');
   const formRef = useRef<FormRendererRef>(null);
-
   const { control, formState } = useFormContext<FormResponsesValues>();
+
   const { steps, currentChildStepIndex, setChildrenSteps, updateChildStepStatus, setCurrentChildStepIndex } = useChildSteps();
 
   const { data, isLoading } = useFindManyForm({
@@ -75,7 +77,6 @@ const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds, onPrev,
   };
 
   const onSubmit = () => {
-    console.log('fantastic');
     if (formRef.current) {
       formRef.current.submit();
     }
@@ -95,8 +96,8 @@ const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds, onPrev,
   if (!data || data.length === 0) {
     return (
       <>
-        <EmptyState title="No forms available" icons={[FileText]} description="As a result of the selected categories, there are no forms to fill out. Press the next button to continue." />
-        <StepperNavigationButtons isLastStep={false} isFirstStep={false} onPrev={onBack} onReset={console.log} nextText="Next" submitText="Finish" onNext={onNext} />
+        <EmptyState title={t('emptyState.title')} icons={[FileText]} description={t('emptyState.description')} />
+        <StepperNavigationButtons isLastStep={false} isFirstStep={false} onPrev={onBack} onReset={console.log} nextText={t('next')} submitText={t('finish')} onNext={onNext} />
       </>
     );
   }
@@ -109,10 +110,7 @@ const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds, onPrev,
           <CardDescription>{data[currentChildStepIndex]?.description}</CardDescription>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">
-            Step {currentChildStepIndex + 1} of {data.length}
-          </span>
-          <div />
+          <span className="text-sm text-muted-foreground">{t('stepCounter', { current: currentChildStepIndex + 1, total: data.length })}</span>
         </div>
       </div>
       <div className="flex flex-col gap-4 flex-1 overflow-y-hidden">
@@ -157,8 +155,8 @@ const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds, onPrev,
         isFirstStep={false}
         onPrev={onBack}
         onReset={console.log}
-        nextText="Next"
-        submitText="Finish"
+        nextText={t('next')}
+        submitText={t('finish')}
         onNext={currentChildStepIndex !== data.length ? onSubmit : undefined}
       />
     </>

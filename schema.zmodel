@@ -8,15 +8,15 @@ plugin hooks {
   operations = ["get"]
 }
 
-datasource db {
+/*datasource db {
   provider = "sqlite"
   url      = "file:./dev.db"
-}
+}*/
 
-/*datasource db {
+datasource db {
   provider = "sqlserver"
   url      = env("DATABASE_URL")
-}*/
+}
 
 generator client {
   provider = "prisma-client-js"

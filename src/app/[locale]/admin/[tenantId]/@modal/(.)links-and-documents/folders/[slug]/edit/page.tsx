@@ -30,7 +30,7 @@ const NewPage: FC<NewPageProps> = async ({ params, searchParams }) => {
 
   return (
     <PageDialogWrapper title={t('title')} description={t('subtitle')}>
-      <FolderForm tenantId={tenantId} folders={[]} currentFolderId={slug} dataroomId={dataroomId} />
+      <FolderForm tenantId={tenantId} folders={[]} locale={locale} currentFolderId={slug} dataroomId={dataroomId} />
     </PageDialogWrapper>
   );
 };

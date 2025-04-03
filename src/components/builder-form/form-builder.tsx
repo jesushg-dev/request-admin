@@ -114,7 +114,7 @@ function FormBuilder({ form }: { form: Form }) {
             {!form.published && (
               <>
                 <SaveFormBtn id={form.id} />
-                <PublishFormBtn id={form.id} />
+                <PublishFormBtn id={form.id} tenantId={form.tenantId} />
               </>
             )}
           </div>

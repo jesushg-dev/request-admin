@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { defaultLocale, getSiblingRoutes, IsExistingRoute, Locale } from '@/i18n/routing';
+import { defaultLocale, getSiblingRoutes, IsExistingRoute } from '@/i18n/routing';
 import { ChevronDown, ChevronsRight } from 'lucide-react';
+import type { Locale } from 'next-intl';
 import { useLocale } from 'next-intl';
 
 import { useResolvedUrl } from '@/hooks/use-resolved-url';

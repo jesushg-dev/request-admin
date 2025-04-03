@@ -2,8 +2,9 @@
 
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { getPathname, Locale } from '@/i18n/routing';
+import { getPathname } from '@/i18n/routing';
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { Locale } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';

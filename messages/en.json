@@ -20,12 +20,12 @@
     },
     "delete": {
       "title": "Are you absolutely sure?",
-      "description": "This action cannot be undone. This will permanently delete your {count} {entity}{count, plural, one {} other {s}} from our servers.",
-      "trigger": "Delete ({count} {entity}{count, plural, one {} other {s}})",
+      "description": "This action cannot be undone. This will permanently delete your {count} {entity}{count, plural, one {} other {s} from our servers.",
+      "trigger": "Delete ({count} {entity}{count, plural, one {} other {s})",
       "confirm": "Delete",
       "cancel": "Cancel",
-      "success": "Successfully deleted {count} {entity}{count, plural, one {} other {s}}.",
-      "error": "Failed to delete {entity}{count, plural, one {} other {s}}."
+      "success": "Successfully deleted {count} {entity}{count, plural, one {} other {s}.",
+      "error": "Failed to delete {entity}{count, plural, one {} other {s}."
     },
     "floating": {
       "selected": "selected",
@@ -337,6 +337,20 @@
       },
       "agreements": "Agreements",
       "linksAndDocuments": "Link and Documents"
+    },
+    "dashboard": {
+      "totalRequests": "Solicitudes Totales",
+      "openRequests": "Solicitudes Abiertas",
+      "overdue": "Vencidas",
+      "avgResolutionTime": "Tiempo Promedio de Resolución",
+      "assignmentTrends": {
+        "assignmentTrends": "Tendencias de Asignaciones",
+        "last3Months": "Últimos 3 meses",
+        "last30Days": "Últimos 30 días",
+        "last7Days": "Últimos 7 días",
+        "cardDescription": "Un resumen de la cantidad de asignaciones realizadas a lo largo del tiempo por usuarios y áreas.",
+        "selectTimeRange": "Selecciona un rango de tiempo"
+      }
     },
     "area": {
       "main": {
@@ -669,7 +683,7 @@
           "saveSettings": "Save Settings",
           "savingSettings": "Saving settings...",
           "saveSuccess": "Settings updated successfully!",
-          "saveError": "Error saving settings: {{message}}"
+          "saveError": "Error saving settings: {message}"
         }
       }
     },
@@ -1040,6 +1054,57 @@
           "titleAssignment": "Assignment Category",
           "areaLabel": "Area",
           "areaDescription": "Select the area where the request is assigned."
+        },
+        "requirementsStep": {
+          "emptyTitle": "No requirements found",
+          "emptyDescription": "No requirements available for the selected categories.",
+          "title": "Requirements ({completed}/{total})",
+          "total": "{total} total requirements",
+          "completed": "{completed} completed",
+          "pending": "{pending} pending",
+          "deselectAll": "Deselect All",
+          "selectAll": "Select All",
+          "progress": "{progress}% Completed",
+          "remaining": "{pending} remaining"
+        },
+        "detailsStep": {
+          "issueSubject": "Issue Subject",
+          "issueSubjectPlaceholder": "Enter issue subject",
+          "issueSubjectDescription": "Issue Subject is used to describe the main issue of the request.",
+          "status": "Status",
+          "statusDescription": "Status is used to determine the current state of the request.",
+          "priority": "Priority",
+          "priorityDescription": "Priority is used to determine the order in which requests are handled.",
+          "comment": "Comment",
+          "commentPlaceholder": "Enter comment",
+          "commentDescription": "Comment is used to provide even more information about the request.",
+          "description": "Description",
+          "descriptionDescription": "Description is used to provide more information about the request."
+        },
+        "attachmentsStep": {
+          "uploadFiles": "Upload Files",
+          "uploadNewFiles": "You can only upload <strong>new files</strong> in this section, and they will be <strong>saved with the request</strong>.",
+          "modifyExistingFiles": "If you want to <strong>modify existing files</strong>, you can do so in the <link>attachments section</link> or in the <link>data room generated with the request</link>.",
+          "images": "Images",
+          "maxFileSize": "Max file size: 4MB"
+        },
+        "dynamicFormStep": {
+          "emptyState": {
+            "title": "No forms available",
+            "description": "As a result of the selected categories, there are no forms to fill out. Press the next button to continue."
+          },
+          "stepCounter": "Step {current} of {total}",
+          "next": "Next",
+          "finish": "Finish"
+        },
+        "summaryStep": {
+          "service_category": "Service Category",
+          "assignment_category": "Assignment Category",
+          "tabs": {
+            "compliances": "Compliances",
+            "submissions": "Submissions",
+            "attachments": "Attachments"
+          }
         }
       },
       "relatedIncidentForm": {
@@ -1116,6 +1181,25 @@
         "savingChanges": "Saving changes...",
         "successSave": "Requirement '{name}' saved successfully.",
         "errorSave": "Failed to save requirement: {error}"
+      }
+    },
+    "role": {
+      "main": {
+        "entityLabel": "Roles",
+        "columns": {
+          "name": "Name",
+          "description": "Description",
+          "userCount": "Number of Users",
+          "featureCount": "Number of Features",
+          "createdAt": "Created At"
+        },
+        "filters": {
+          "name": "Name",
+          "namePlaceholder": "Search by name",
+          "description": "Description",
+          "descriptionPlaceholder": "Search by description",
+          "createdAt": "Created At"
+        }
       }
     },
     "security": {
@@ -1221,25 +1305,6 @@
         "error": {
           "usernameRequired": "Username is required.",
           "invalidEmail": "Please enter a valid email address."
-        }
-      }
-    },
-    "role": {
-      "main": {
-        "entityLabel": "Roles",
-        "columns": {
-          "name": "Name",
-          "description": "Description",
-          "userCount": "Number of Users",
-          "featureCount": "Number of Features",
-          "createdAt": "Created At"
-        },
-        "filters": {
-          "name": "Name",
-          "namePlaceholder": "Search by name",
-          "description": "Description",
-          "descriptionPlaceholder": "Search by description",
-          "createdAt": "Created At"
         }
       }
     },
@@ -1632,7 +1697,7 @@
           "qrGenerated": "QR code generated!",
           "generatingBackup": "Generating backup codes...",
           "backupGenerated": "Backup codes generated!",
-          "error": "Error: {{message}}"
+          "error": "Error: {message}"
         },
         "errors": {
           "invalidCode": "Please enter a valid 6-digit code"

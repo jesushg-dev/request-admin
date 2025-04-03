@@ -5,7 +5,7 @@ import { getTranslations } from 'next-intl/server';
 
 import { DynamicColumn } from '@/types/prisma/form';
 import { FormElementInstance } from '@/components/builder-form/form-elements';
-import { StatCard } from '@/components/stat-card';
+import StatCard from '@/components/stat-card';
 
 import DynamicDataTable from './table';
 

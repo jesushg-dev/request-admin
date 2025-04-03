@@ -21,7 +21,7 @@ const trendData = [
   { date: '2024-01-05', requests: 18 },
 ];
 
-export function RequestTrends() {
+function RequestTrends() {
   return (
     <Card>
       <CardHeader className="flex flex-col items-center">
@@ -41,3 +41,5 @@ export function RequestTrends() {
     </Card>
   );
 }
+
+export default RequestTrends;

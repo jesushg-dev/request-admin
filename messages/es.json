@@ -337,6 +337,20 @@
       },
       "linksAndDocuments": "Enlaces y documentos"
     },
+    "dashboard": {
+      "totalRequests": "Total Requests",
+      "openRequests": "Open Requests",
+      "overdue": "Overdue",
+      "avgResolutionTime": "Avg. Resolution Time",
+      "assignmentTrends": {
+        "assignmentTrends": "Assignment Trends",
+        "last3Months": "Last 3 months",
+        "last30Days": "Last 30 days",
+        "last7Days": "Last 7 days",
+        "cardDescription": "A summary of the number of assignments made over time by users and areas.",
+        "selectTimeRange": "Select a time range"
+      }
+    },
     "area": {
       "main": {
         "entityLabel": "área",
@@ -1042,6 +1056,57 @@
           "titleAssignment": "Categoría de Asignación",
           "areaLabel": "Área",
           "areaDescription": "Seleccione el área donde se asigna la solicitud."
+        },
+        "requirementsStep": {
+          "emptyTitle": "No se encontraron requisitos",
+          "emptyDescription": "No hay requisitos disponibles para las categorías seleccionadas.",
+          "title": "Requisitos ({{completed}}/{{total}})",
+          "total": "{{total}} requisitos en total",
+          "completed": "{{completed}} completados",
+          "pending": "{{pending}} pendientes",
+          "deselectAll": "Deseleccionar todo",
+          "selectAll": "Seleccionar todo",
+          "progress": "{{progress}}% Completado",
+          "remaining": "{{pending}} restantes"
+        },
+        "detailsStep": {
+          "issueSubject": "Asunto del problema",
+          "issueSubjectPlaceholder": "Ingrese el asunto del problema",
+          "issueSubjectDescription": "El asunto del problema se usa para describir el problema principal de la solicitud.",
+          "status": "Estado",
+          "statusDescription": "El estado se usa para determinar el estado actual de la solicitud.",
+          "priority": "Prioridad",
+          "priorityDescription": "La prioridad se usa para determinar el orden en que se manejan las solicitudes.",
+          "comment": "Comentario",
+          "commentPlaceholder": "Ingrese un comentario",
+          "commentDescription": "El comentario se usa para proporcionar más información sobre la solicitud.",
+          "description": "Descripción",
+          "descriptionDescription": "La descripción se usa para proporcionar más información sobre la solicitud."
+        },
+        "attachmentsStep": {
+          "uploadFiles": "Subir archivos",
+          "uploadNewFiles": "Solo podrá subir <strong>nuevos archivos</strong> en esta sección y estos serán <strong>guardados con la solicitud</strong>.",
+          "modifyExistingFiles": "Si desea <strong>modificar archivos ya existentes</strong>, podrá hacerlo en la <link>sección de archivos adjuntos</link> o en el <link>dataroom generado con la solicitud</link>.",
+          "images": "Imágenes",
+          "maxFileSize": "Tamaño máximo del archivo: 4MB"
+        },
+        "dynamicFormStep": {
+          "emptyState": {
+            "title": "No hay formularios disponibles",
+            "description": "Como resultado de las categorías seleccionadas, no hay formularios para completar. Presione el botón siguiente para continuar."
+          },
+          "stepCounter": "Paso {current} de {total}",
+          "next": "Siguiente",
+          "finish": "Finalizar"
+        },
+        "summaryStep": {
+          "service_category": "Categoría de Servicio",
+          "assignment_category": "Categoría de Asignación",
+          "tabs": {
+            "compliances": "Cumplimientos",
+            "submissions": "Envíos",
+            "attachments": "Adjuntos"
+          }
         }
       },
       "relatedIncidentForm": {
@@ -1084,6 +1149,25 @@
       "create": {
         "title": "Categoría de Solicitud",
         "subtitle": "Crea una nueva categoría de solicitud. Una categoría puede tener múltiples subcategorías recursivas según las necesidades de tu negocio."
+      }
+    },
+    "role": {
+      "main": {
+        "entityLabel": "Roles",
+        "columns": {
+          "name": "Nombre",
+          "description": "Descripción",
+          "userCount": "Número de Usuarios",
+          "featureCount": "Número de Funcionalidades",
+          "createdAt": "Creado En"
+        },
+        "filters": {
+          "name": "Nombre",
+          "namePlaceholder": "Buscar por nombre",
+          "description": "Descripción",
+          "descriptionPlaceholder": "Buscar por descripción",
+          "createdAt": "Creado En"
+        }
       }
     },
     "requirement": {
@@ -1220,25 +1304,6 @@
         "activeDesc": "Marcar como activo o inactivo.",
         "enableTwoFactor": "Habilitar autenticación de dos factores",
         "enableTwoFactorDesc": "Requiere autenticación de dos factores para mayor seguridad."
-      }
-    },
-    "role": {
-      "main": {
-        "entityLabel": "Roles",
-        "columns": {
-          "name": "Nombre",
-          "description": "Descripción",
-          "userCount": "Número de Usuarios",
-          "featureCount": "Número de Funcionalidades",
-          "createdAt": "Creado En"
-        },
-        "filters": {
-          "name": "Nombre",
-          "namePlaceholder": "Buscar por nombre",
-          "description": "Descripción",
-          "descriptionPlaceholder": "Buscar por descripción",
-          "createdAt": "Creado En"
-        }
       }
     },
     "form": {
