@@ -12,6 +12,15 @@ import { RequestFormStepperType } from '@/components/common/request/request-form
 
 class UserNotFoundErr extends Error {}
 
+type AssignmentWithRelations = {
+  status: { id: string; name: string };
+  priority: { id: string; name: string };
+  area: { id: string; name: string };
+  requestCategory: { id: string; name: string };
+  assignmentCategory: { id: string; name: string };
+  isActive: boolean;
+};
+
 export const upsertRequest = async (tenantId: string, data: RequestFormStepperType) => {
   const session = await currentSession();
   if (!session?.user?.id) throw new UserNotFoundErr('User not found');
@@ -116,7 +125,7 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
 };
 
 // ========================
-// ACTUALIZACIÓN DE REQUEST
+// UPDATE REQUEST
 // ========================
 const handleUpdate = async (existingRequest: RequestType, tenantId: string, data: RequestFormStepperType, userId: string) => {
   const [area, requirementCompliances, assignmentType] = await Promise.all([
@@ -132,7 +141,7 @@ const handleUpdate = async (existingRequest: RequestType, tenantId: string, data
   ]);
 
   return db.$transaction(async (tx) => {
-    // Actualizar request principal
+    // Update main request
     const updatedRequest = await tx.request.update({
       where: { id: existingRequest.id, tenantId },
       data: {
@@ -201,7 +210,7 @@ const handleUpdate = async (existingRequest: RequestType, tenantId: string, data
       },
     });
 
-    // Detectar y registrar cambios
+    // Detect and log changes
     const changes = detectChanges(existingRequest, updatedRequest);
 
     for (const change of changes) {
@@ -211,7 +220,7 @@ const handleUpdate = async (existingRequest: RequestType, tenantId: string, data
           requestId: updatedRequest.id,
           changedBy: userId,
           fieldName: change.fieldName,
-          oldValue: change.oldValue?.toString().substring(0, 500), // Asegurar límite de campo
+          oldValue: change.oldValue?.toString().substring(0, 500), // Limit to 500 characters
           newValue: change.newValue?.toString().substring(0, 500),
           changedAt: new Date(),
         },
@@ -223,7 +232,7 @@ const handleUpdate = async (existingRequest: RequestType, tenantId: string, data
 };
 
 // ========================
-// FUNCIONES AUXILIARES
+// HELPER FUNCTIONS
 // ========================
 const getAreaWithSupervisors = async (tenantId: string, areaId: string) => {
   return db.userTenant.findMany({
@@ -231,7 +240,7 @@ const getAreaWithSupervisors = async (tenantId: string, areaId: string) => {
     where: {
       tenantId,
       OR: [
-        // Usuarios con permiso GLOBAL (en cualquier área)
+        // User has global permission to assign users
         {
           userAreas: {
             some: {
@@ -247,7 +256,7 @@ const getAreaWithSupervisors = async (tenantId: string, areaId: string) => {
             },
           },
         },
-        // Usuarios con permiso en el ÁREA ACTUAL
+        // User has scoped permission to assign users in the current area
         {
           userAreas: {
             some: {
@@ -318,15 +327,6 @@ const processFormSubmissions = (submissions: RequestFormStepperType['submissions
   });
 };
 
-type AssignmentWithRelations = {
-  status: { id: string; name: string };
-  priority: { id: string; name: string };
-  area: { id: string; name: string };
-  requestCategory: { id: string; name: string };
-  assignmentCategory: { id: string; name: string };
-  isActive: boolean;
-};
-
 const detectChanges = (oldRequest: RequestType, newRequest: RequestType) => {
   const changes: Array<{
     fieldName: string;
@@ -334,10 +334,10 @@ const detectChanges = (oldRequest: RequestType, newRequest: RequestType) => {
     newValue?: string | null;
   }> = [];
 
-  // Campos directos del Request
+  // Direct properties of the Request object
   const mainFields: Array<keyof typeof oldRequest> = ['issueSubject', 'description', 'comment'];
 
-  // Comparar campos principales
+  // Compare the main fields of the request object
   for (const field of mainFields) {
     if (oldRequest[field] !== newRequest[field]) {
       changes.push({
@@ -349,11 +349,12 @@ const detectChanges = (oldRequest: RequestType, newRequest: RequestType) => {
   }
 
   // Campos del Assignment
+  // Fields of the assignment object
   const oldAssignment = oldRequest.requestAssignments[0];
   const newAssignment = newRequest.requestAssignments[0];
 
   if (oldAssignment && newAssignment) {
-    // Tipo seguro para las propiedades del assignment
+    // Safe type for assignment properties
     type AssignmentField = keyof Pick<AssignmentWithRelations, 'status' | 'priority' | 'area' | 'requestCategory' | 'assignmentCategory'>;
 
     const assignmentFields: { name: string; prop: AssignmentField }[] = [
@@ -364,7 +365,7 @@ const detectChanges = (oldRequest: RequestType, newRequest: RequestType) => {
       { name: 'assignmentCategory', prop: 'assignmentCategory' },
     ];
 
-    // Comparar campos anidados
+    // Compare nested fields
     for (const { name, prop } of assignmentFields) {
       const oldVal = oldAssignment[prop]?.name;
       const newVal = newAssignment[prop]?.name;
@@ -467,13 +468,7 @@ export const getRequestDetailsByRequest = async (tenantId: string, request: Requ
     select: { id: true, name: true, createdAt: true },
   });
 
-  const requestAssignments = await db.requestAssignment.findFirstOrThrow({
-    where: { requestId: request.id, tenantId },
-    orderBy: { createdAt: 'desc' },
-  });
-
   return {
-    areaId: requestAssignments?.areaId,
     submissions: {
       count: submissions,
       total: forms,

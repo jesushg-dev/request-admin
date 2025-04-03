@@ -482,13 +482,13 @@
 }
 :root {
   --richtext-background: 0 0% 100%;
-  --richtext-foreground: 240 10% 3.9%;
+  --richtext-foreground: 40 10% 3.9%;
   --richtext-muted: 240 4.8% 95.9%;
   --richtext-muted-foreground: 240 3.8% 46.1%;
   --richtext-popover: 0 0% 100%;
-  --richtext-popover-foreground: 240 10% 3.9%;
+  --richtext-popover-foreground: 40 10% 3.9%;
   --richtext-card: 0 0% 100%;
-  --richtext-card-foreground: 240 10% 3.9%;
+  --richtext-card-foreground: 40 10% 3.9%;
   --richtext-border: 240 5.9% 90%;
   --richtext-input: 240 5.9% 90%;
   --richtext-primary: 240 5.9% 10%;
@@ -499,18 +499,18 @@
   --richtext-accent-foreground: 240 5.9% 10%;
   --richtext-destructive: 0 84.2% 60.2%;
   --richtext-destructive-foreground: 0 0% 98%;
-  --richtext-ring: 240 10% 3.9%;
+  --richtext-ring: 40 10% 3.9%;
   --richtext-radius: 0.5rem;
   --red: #ff5c33;
 }
 .dark {
-  --richtext-background: 240 10% 3.9%;
+  --richtext-background: 40 10% 3.9%;
   --richtext-foreground: 0 0% 98%;
   --richtext-muted: 240 3.7% 15.9%;
   --richtext-muted-foreground: 240 5% 64.9%;
-  --richtext-popover: 240 10% 3.9%;
+  --richtext-popover: 40 10% 3.9%;
   --richtext-popover-foreground: 0 0% 98%;
-  --richtext-card: 240 10% 3.9%;
+  --richtext-card: 40 10% 3.9%;
   --richtext-card-foreground: 0 0% 98%;
   --richtext-border: 240 3.7% 15.9%;
   --richtext-input: 240 3.7% 15.9%;

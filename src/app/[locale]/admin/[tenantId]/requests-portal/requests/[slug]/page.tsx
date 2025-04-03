@@ -1,6 +1,6 @@
 import { getAuthContext } from '@/actions/authorization';
 import { getAssignmentHierarchyAndLevelsByTenantId, getRequestHierarchyAndLevelsByTenantId } from '@/actions/hierarchy';
-import { getPrioritiesAsOptions, getRequestById, getRequestDetailsByRequest } from '@/actions/request';
+import { getPrioritiesAsOptions, getRequestById, getRequestDetailsByRequest, getStatusesAsOptions } from '@/actions/request';
 import { getCurrentUserTenant } from '@/actions/user';
 import { PermissionActions } from '@/constants/permissions';
 import { getPathname, redirect } from '@/i18n/routing';
@@ -46,10 +46,11 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
   }
 
   // --- Data Preparation ---
-  const [requestDetails, currentUser, priorities, requestHierarchy, assignmentHierarchy] = await Promise.all([
+  const [requestDetails, currentUser, priorities, statuses, requestHierarchy, assignmentHierarchy] = await Promise.all([
     getRequestDetailsByRequest(tenantId, request),
     getCurrentUserTenant(tenantId),
     getPrioritiesAsOptions(tenantId),
+    getStatusesAsOptions(tenantId),
     getRequestHierarchyAndLevelsByTenantId(locale, tenantId),
     getAssignmentHierarchyAndLevelsByTenantId(locale, tenantId),
   ]);
@@ -64,10 +65,13 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
             tenantId={tenantId}
             slug={slug}
             request={request}
-            requestDetails={requestDetails}
+            statuses={statuses}
             priorities={priorities}
+            requestDetails={requestDetails}
             requestLevelTypes={requestHierarchy.levels}
             assignmentLevelTypes={assignmentHierarchy.levels}
+            enableStatusChange={hasAreaPermissions(request.areaId.value, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_STATUS])}
+            enablePriorityChange={hasAreaPermissions(request.areaId.value, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_PRIORITY])}
           />
         </div>
       </ResizablePanel>

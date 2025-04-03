@@ -89,6 +89,7 @@ Develop a web system for managing service requests efficiently while adhering to
 ## Useful Commands
 
 - Seed database: npx prisma db seed
+- All types error: npx tsc --noEmit --pretty
 
 ## Useful Links
 

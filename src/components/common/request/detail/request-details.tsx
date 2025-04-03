@@ -1,12 +1,33 @@
 'use client';
 
-import { useState, type FC } from 'react';
+import { useState, useTransition, type FC } from 'react';
+import { updateCurrentPriority, updateCurrentStatus } from '@/actions/request-detail';
 import { Link } from '@/i18n/routing';
-import { AlertTriangle, ArrowDown, ArrowRight, ArrowUp, CalendarIcon, Circle, Edit3Icon, FlagIcon, FolderIcon, StarIcon, TagIcon, UserIcon } from 'lucide-react';
+import {
+  AlertTriangle,
+  ArrowDown,
+  ArrowRight,
+  ArrowUp,
+  CalendarIcon,
+  Circle,
+  CircleCheckBig,
+  CircleDashed,
+  Edit3Icon,
+  FlagIcon,
+  FolderIcon,
+  MonitorCog,
+  ScanSearch,
+  Signature,
+  StarIcon,
+  TagIcon,
+  UserIcon,
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 import { AssignmentLevelType, RequestLevelType } from '@/types/prisma/hierarchy';
 import { RequestDetailsType } from '@/types/prisma/request';
+import useMessage from '@/lib/message';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -26,20 +47,47 @@ const icons: { [key: number]: typeof Circle } = {
   4: ArrowDown,
 };
 
+const icons2: { [key: number]: typeof Circle } = {
+  0: Signature,
+  1: MonitorCog,
+  2: ScanSearch,
+  3: CircleDashed,
+  4: CircleCheckBig,
+};
+
 interface ProjectDetailsProps {
   slug: string;
   tenantId: string;
-  request: RequestFormStepperType;
+  statuses: OptionType[];
   priorities: OptionType[];
+  request: RequestFormStepperType;
   requestLevelTypes: RequestLevelType[];
   assignmentLevelTypes: AssignmentLevelType[];
   requestDetails: RequestDetailsType;
+  enableStatusChange: boolean;
+  enablePriorityChange: boolean;
 }
 
-const ProjectDetails: FC<ProjectDetailsProps> = ({ tenantId, slug, request, requestDetails, priorities, requestLevelTypes, assignmentLevelTypes }) => {
+const ProjectDetails: FC<ProjectDetailsProps> = ({
+  enableStatusChange,
+  enablePriorityChange,
+  tenantId,
+  slug,
+  request,
+  requestDetails,
+  statuses,
+  priorities,
+  requestLevelTypes,
+  assignmentLevelTypes,
+}) => {
   const t = useTranslations('admin.request.view.projectDetails');
+
+  const message = useMessage();
+  const [isPending, startTransition] = useTransition();
+  const [status, setStatus] = useState<string | number>(request.statusId.value);
   const [priority, setPriority] = useState<string | number>(request.priorityId.value);
 
+  const statusesOptions = statuses.map((status, index) => ({ value: status.value, label: status.label, icon: icons2[index] ?? Circle }));
   const priorityOptions = priorities.map((priority, index) => ({ value: priority.value, label: priority.label, icon: icons[index] ?? Circle }));
 
   const assignmentCategories: MetadataItemProps[] = request.assignmentCategory.map((category, index) => ({
@@ -53,6 +101,48 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({ tenantId, slug, request, requ
     label: requestLevelTypes[index].name,
     value: category.label,
   }));
+
+  const onStatusChange = async (value: string | number) => {
+    const confirm = await message.confirm(t('confirmStatusChange'), {
+      title: t('statusChange'),
+    });
+    if (!confirm) return;
+
+    startTransition(async () => {
+      toast.promise(updateCurrentStatus(tenantId, slug, String(value)), {
+        loading: t('updatingStatus'),
+        success: () => {
+          setStatus(value);
+          return t('statusUpdated');
+        },
+        error: (err) => {
+          if (err instanceof Error) return t('statusUpdateError', { error: err.message });
+          return t('statusUpdateError', { error: t('unknownError') });
+        },
+      });
+    });
+  };
+
+  const onPriorityChange = async (value: string | number) => {
+    const confirm = await message.confirm(t('confirmPriorityChange'), {
+      title: t('priorityChange'),
+    });
+    if (!confirm) return;
+
+    startTransition(async () => {
+      toast.promise(updateCurrentPriority(tenantId, slug, String(value)), {
+        loading: t('updatingPriority'),
+        success: () => {
+          setPriority(value);
+          return t('priorityUpdated');
+        },
+        error: (err) => {
+          if (err instanceof Error) return t('priorityUpdateError', { error: err.message });
+          return t('priorityUpdateError', { error: t('unknownError') });
+        },
+      });
+    });
+  };
 
   return (
     <Card className="flex flex-1 flex-col">
@@ -103,25 +193,49 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({ tenantId, slug, request, requ
                 {/* Metadata */}
                 <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4">
                   <MetadataItem icon={<UserIcon className="h-4 w-4" />} label={t('issueSubject')} value={request.issueSubject ?? 'N/A'} />
-                  <MetadataItem
-                    icon={<FlagIcon className="h-4 w-4" />}
-                    label={t('priority')}
-                    value={
-                      <SelectCombobox
-                        options={priorityOptions}
-                        defaultIcon={Circle}
-                        value={priority}
-                        onChange={(value) => setPriority(value)}
-                        hotkey="p"
-                        buttonText={t('setPriority')}
-                        placeholder={t('search')}
-                        onSelectOption={(option) => console.log(option)}
-                      />
-                    }
-                  />
+                  {enablePriorityChange ? (
+                    <MetadataItem
+                      icon={<FlagIcon className="h-4 w-4" />}
+                      label={t('priority')}
+                      value={
+                        <SelectCombobox
+                          hotkey="p"
+                          value={priority}
+                          defaultIcon={Circle}
+                          onChange={onPriorityChange}
+                          options={priorityOptions}
+                          buttonText={t('setPriority')}
+                          placeholder={t('search')}
+                          disabled={isPending}
+                        />
+                      }
+                    />
+                  ) : (
+                    <MetadataItem icon={<FlagIcon className="h-4 w-4" />} label={t('priority')} value={request.priorityId.label} />
+                  )}
+
                   <ExpandableMetadata items={assignmentCategories} />
                   <ExpandableMetadata items={requestCategories} />
-                  <MetadataItem icon={<TagIcon className="h-4 w-4" />} label={t('status')} value={request.statusId.label} />
+                  {enableStatusChange ? (
+                    <MetadataItem
+                      icon={<TagIcon className="h-4 w-4" />}
+                      label={t('status')}
+                      value={
+                        <SelectCombobox
+                          hotkey="s"
+                          value={status}
+                          defaultIcon={Circle}
+                          onChange={onStatusChange}
+                          options={statusesOptions}
+                          buttonText={t('setStatus')}
+                          placeholder={t('search')}
+                          disabled={isPending}
+                        />
+                      }
+                    />
+                  ) : (
+                    <MetadataItem icon={<TagIcon className="h-4 w-4" />} label={t('status')} value={request.statusId.label} />
+                  )}
                   <MetadataItem icon={<CalendarIcon className="h-4 w-4" />} label={t('created')} value={new Date().toLocaleDateString()} />
                 </div>
                 {/* Satisfaction Survey */}

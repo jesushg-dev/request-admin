@@ -1005,7 +1005,19 @@
           "search": "Buscar...",
           "status": "Estado",
           "created": "Creado",
-          "submittedOn": "Enviado el"
+          "submittedOn": "Enviado el",
+          "setStatus": "Establecer el estado",
+          "confirmStatusChange": "¿Estás seguro de que quieres cambiar el estado?",
+          "statusChange": "Cambio de Estado",
+          "updatingStatus": "Actualizando estado...",
+          "statusUpdated": "El estado ha sido actualizado.",
+          "statusUpdateError": "Error al actualizar el estado: {error}",
+          "unknownError": "Ocurrió un error desconocido.",
+          "confirmPriorityChange": "¿Estás seguro de que quieres cambiar la prioridad?",
+          "priorityChange": "Cambio de Prioridad",
+          "updatingPriority": "Actualizando prioridad...",
+          "priorityUpdated": "La prioridad ha sido actualizada.",
+          "priorityUpdateError": "Error al actualizar la prioridad: {error}"
         },
         "tabs": {
           "requirements": "Requerimientos",

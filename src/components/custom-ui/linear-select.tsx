@@ -19,6 +19,7 @@ interface Option {
 
 interface SelectComboboxProps {
   options: Option[];
+  disabled?: boolean;
   value?: string | number;
   defaultValue?: string;
   defaultIcon?: React.ComponentType<{ className?: string; title?: string }>;
@@ -30,6 +31,7 @@ interface SelectComboboxProps {
 }
 
 export const SelectCombobox: React.FC<SelectComboboxProps> = ({
+  disabled,
   options,
   value,
   defaultValue,
@@ -78,7 +80,7 @@ export const SelectCombobox: React.FC<SelectComboboxProps> = ({
       <Tooltip delayDuration={500} open={openTooltip} onOpenChange={setOpenTooltip}>
         <TooltipTrigger asChild>
           <PopoverTrigger asChild>
-            <Button aria-label="Select option" variant="ghost" size="sm" className="text-primary h-8 w-fit px-2 text-[0.8125rem] leading-normal font-medium">
+            <Button disabled={disabled} aria-label="Select option" variant="ghost" size="sm" className="text-primary h-8 w-fit px-2 text-[0.8125rem] leading-normal font-medium">
               {selectedOption ? (
                 <>
                   {selectedOption.icon && <selectedOption.icon className="mr-2 size-4 stroke-current" aria-hidden="true" />}

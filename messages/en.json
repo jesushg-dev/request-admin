@@ -1002,7 +1002,19 @@
           "search": "Search...",
           "status": "Status",
           "created": "Created",
-          "submittedOn": "Submitted on"
+          "submittedOn": "Submitted on",
+          "setStatus": "Set Status",
+          "confirmStatusChange": "Are you sure you want to change the status?",
+          "statusChange": "Status Change",
+          "updatingStatus": "Updating status...",
+          "statusUpdated": "Status has been updated.",
+          "statusUpdateError": "Error updating status: {error}",
+          "unknownError": "An unknown error occurred.",
+          "confirmPriorityChange": "Are you sure you want to change the priority?",
+          "priorityChange": "Priority Change",
+          "updatingPriority": "Updating priority...",
+          "priorityUpdated": "Priority has been updated.",
+          "priorityUpdateError": "Error updating priority: {error}"
         },
         "tabs": {
           "requirements": "Requirements",
