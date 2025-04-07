@@ -60,11 +60,10 @@ type UpdateRequestFieldParams = {
 // ========================
 // Validation Utilities
 // ========================
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-const validateUUID = (id: string, fieldName: string): void => {
-  if (!UUID_REGEX.test(id)) {
-    throw new ValidationError(`Invalid UUID format for ${fieldName}`);
+const IsNotEmpy = (id: string, fieldName: string): void => {
+  if (!id) {
+    throw new ValidationError(`Invalid ${fieldName}: ${id}`);
   }
 };
 
@@ -73,11 +72,11 @@ const validateUUID = (id: string, fieldName: string): void => {
 // ========================
 const updateRequestField = async ({ tenantId, requestId, userId, fieldName, dbField, newValue }: UpdateRequestFieldParams): Promise<Record<DBField, UUID>> => {
   try {
-    // Validate UUID formats
-    validateUUID(tenantId, 'tenantId');
-    validateUUID(requestId, 'requestId');
-    validateUUID(newValue, `${fieldName}Id`);
-    validateUUID(userId, 'userId');
+    // Validate input parameters
+    IsNotEmpy(tenantId, 'tenantId');
+    IsNotEmpy(requestId, 'requestId');
+    IsNotEmpy(newValue, `${fieldName}Id`);
+    IsNotEmpy(userId, 'userId');
 
     // Fetch current request state
     const request = await db.request.findUnique({
