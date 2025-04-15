@@ -5,7 +5,6 @@ plugin hooks {
   target = 'react'
   version = 'v5'
   output = "./src/services/api/hooks"
-  operations = ["get"]
 }
 
 datasource db {

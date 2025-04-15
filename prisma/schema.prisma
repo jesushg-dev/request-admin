@@ -4,8 +4,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 datasource db {
-  provider = "sqlserver"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 generator client {
@@ -465,26 +465,6 @@ model Request {
   @@index([issueSubject], name: "idx_request_issue_subject")
 }
 
-/// Represents related incidents or problems for a request.
-model RelatedIncident {
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt()
-  deletedAt DateTime?
-  createdBy String?
-  updatedBy String?
-  tenantId  String
-  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id        String    @id() @default(uuid())
-  requestId String
-  relatedId String
-  isActive  Boolean   @default(true)
-  request   Request   @relation("RequestIncident", fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  related   Request   @relation("RequestRelated", fields: [relatedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@index([requestId], name: "idx_related_incident_request_id")
-  @@index([relatedId], name: "idx_related_incident_related_id")
-}
-
 /// Represents an assignment of a request to users or areas.
 model RequestAssignment {
   createdAt            DateTime            @default(now())
@@ -546,22 +526,24 @@ model AssignedUser {
   unAssignmentDate    DateTime?
 }
 
-model AssignmentType {
-  id          String              @id() @default(uuid())
-  name        String
-  description String?
-  isActive    Boolean             @default(true)
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime?           @updatedAt()
-  deletedAt   DateTime?
-  createdBy   String?
-  updatedBy   String?
-  tenantId    String
-  tenant      Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  systemName  String
-  assignments RequestAssignment[]
+/// Represents related incidents or problems for a request.
+model RelatedIncident {
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt()
+  deletedAt DateTime?
+  createdBy String?
+  updatedBy String?
+  tenantId  String
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id        String    @id() @default(uuid())
+  requestId String
+  relatedId String
+  isActive  Boolean   @default(true)
+  request   Request   @relation("RequestIncident", fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  related   Request   @relation("RequestRelated", fields: [relatedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([name, tenantId])
+  @@index([requestId], name: "idx_related_incident_request_id")
+  @@index([relatedId], name: "idx_related_incident_related_id")
 }
 
 /// Represents a catalog of possible priority levels for requests or assignments.
@@ -580,6 +562,24 @@ model RequestPriorityType {
   primaryColor String
   level        Int
   assignments  RequestAssignment[]
+
+  @@unique([name, tenantId])
+}
+
+model AssignmentType {
+  id          String              @id() @default(uuid())
+  name        String
+  description String?
+  isActive    Boolean             @default(true)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime?           @updatedAt()
+  deletedAt   DateTime?
+  createdBy   String?
+  updatedBy   String?
+  tenantId    String
+  tenant      Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  systemName  String
+  assignments RequestAssignment[]
 
   @@unique([name, tenantId])
 }

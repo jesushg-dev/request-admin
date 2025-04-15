@@ -24,9 +24,9 @@ import { AlertBanner } from '@/components/custom-ui/alert-banner';
 import Select, { optionSchema } from '@/components/custom-ui/select';
 
 const userTenantFormSchema = z.object({
-  isActive: z.boolean().default(true),
-  isTermAccepted: z.boolean().default(false),
-  role: z.array(optionSchema).default([]),
+  isActive: z.boolean(),
+  isTermAccepted: z.boolean(),
+  role: z.array(optionSchema),
 });
 
 const defaultValues: Partial<UserTenantFormValues> = {
