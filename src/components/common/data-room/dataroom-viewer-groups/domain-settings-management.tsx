@@ -37,7 +37,7 @@ export function DomainSettingsManagement({ tenantId, dataroomId, selectedGroupId
   const t = useTranslations('admin.dataroom.groups.settings');
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<DomainSettingsFormValues>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: initialValues ?? getDefaultValues(),
     mode: 'onBlur',

@@ -39,7 +39,7 @@ export const DataroomViewerGroupForm: React.FC<DataroomViewerGroupFormProps> = (
   const [isPending, startTransition] = useTransition();
   const { mutateAsync: upsert, error } = useUpsertDataroomViewerGroup();
 
-  const form = useForm<DataroomViewerGroupFormValues>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: initialValues ?? getDefaultValues(),
     mode: 'onBlur',

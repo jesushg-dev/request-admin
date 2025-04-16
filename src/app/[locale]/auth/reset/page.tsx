@@ -18,7 +18,7 @@ const ResetForm = () => {
   const t = useTranslations('auth.resetForm'); // Namespace for translations
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof ResetSchema>>({
+  const form = useForm({
     resolver: zodResolver(ResetSchema),
     defaultValues: {
       email: '',

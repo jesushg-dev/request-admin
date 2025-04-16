@@ -23,7 +23,7 @@ const CreateNewForm: FC = () => {
   const router = useRouter();
   const tenantId = useTenantId();
 
-  const form = useForm<formSchemaType>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: getDefaultFormValues(),
   });

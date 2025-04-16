@@ -45,7 +45,7 @@ const profileFormSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 // Default values for the form
-const defaultValues: Partial<ProfileFormValues> = {
+const defaultValues: ProfileFormValues = {
   name: '',
   email: '',
   username: '',
@@ -65,7 +65,7 @@ export default function UserProfileForm() {
   const [emailVerified, setEmailVerified] = useState(false);
   const [phoneVerified, setPhoneVerified] = useState(false);
 
-  const form = useForm<ProfileFormValues>({
+  const form = useForm({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
     mode: 'onChange',

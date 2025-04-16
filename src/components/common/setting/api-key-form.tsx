@@ -57,7 +57,7 @@ export function ApiKeyCreateForm({ defaultValues, tenantId }: ApiKeyCreateFormPr
   const [newApiKey, setNewApiKey] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
-  const form = useForm<ApiKeyFormValues>({
+  const form = useForm({
     mode: 'onChange',
     resolver: zodResolver(apiKeyFormSchema),
     defaultValues: defaultValues || getApiKeyDefaultValues(),

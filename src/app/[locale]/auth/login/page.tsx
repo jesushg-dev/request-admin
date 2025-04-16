@@ -30,7 +30,7 @@ const LoginForm = () => {
 
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof LoginSchema>>({
+  const form = useForm({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
       email: '',

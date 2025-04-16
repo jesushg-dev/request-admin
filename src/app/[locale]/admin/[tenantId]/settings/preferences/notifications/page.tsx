@@ -32,7 +32,7 @@ export default function NotificationsForm() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Default values for the form
-  const defaultValues: Partial<NotificationsFormValues> = {
+  const defaultValues: NotificationsFormValues = {
     notifyType: 'all',
     communicationEmails: true,
     marketingEmails: false,
@@ -41,7 +41,7 @@ export default function NotificationsForm() {
     mobileDifferent: false,
   };
 
-  const form = useForm<NotificationsFormValues>({
+  const form = useForm({
     resolver: zodResolver(notificationsFormSchema),
     defaultValues,
     mode: 'onChange',

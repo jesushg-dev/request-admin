@@ -47,7 +47,7 @@ export default function PersonForm() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Default values for the form
-  const defaultValues: Partial<PersonFormValues> = {
+  const defaultValues: PersonFormValues = {
     firstName: 'John',
     lastName: 'Doe',
     phone: '+1 (555) 123-4567',
@@ -56,10 +56,10 @@ export default function PersonForm() {
     image: '',
   };
 
-  const form = useForm<PersonFormValues>({
+  const form = useForm({
     resolver: zodResolver(personFormSchema),
-    defaultValues,
     mode: 'onChange',
+    defaultValues,
   });
 
   // Eliminar todas las notificaciones y alertas

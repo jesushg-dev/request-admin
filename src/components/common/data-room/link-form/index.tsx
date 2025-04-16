@@ -125,7 +125,7 @@ export const LinkForm: FC<LinkFormProps> = ({ tenantId, initialValues, linkType,
   const router = useRouter();
   const t = useTranslations('admin.link.form');
 
-  const form = useForm<LinkFormValues>({
+  const form = useForm({
     mode: 'onBlur',
     resolver: zodResolver(linkFormSchema),
     defaultValues: initialValues ?? getDefaultLinkValues(),

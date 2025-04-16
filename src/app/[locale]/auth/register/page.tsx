@@ -19,7 +19,7 @@ const RegisterForm = () => {
   const t = useTranslations('auth.registerForm');
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof RegisterSchema>>({
+  const form = useForm({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
       email: '',

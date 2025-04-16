@@ -25,7 +25,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function RequestPriorityTypeForm() {
-  const form = useForm<FormValues>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       priorityTypes: [{ name: '', description: '', isActive: true, primaryColor: '#000000' }],

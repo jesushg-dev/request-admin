@@ -30,7 +30,7 @@ export default function SecurityForm() {
   const t = useTranslations('admin.setting.email');
   const [isPending, startTransition] = useTransition();
 
-  const emailForm = useForm<EmailFormValues>({
+  const emailForm = useForm({
     resolver: zodResolver(emailFormSchema),
     defaultValues: {
       newEmail: '',

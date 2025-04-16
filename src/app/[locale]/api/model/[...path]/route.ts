@@ -1,7 +1,7 @@
 import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-client';
+import { User } from '@prisma/client';
 import { enhance } from '@zenstackhq/runtime';
-import { User } from '@zenstackhq/runtime/models';
 import { NextRequestHandler } from '@zenstackhq/server/next';
 
 // create an enhanced Prisma client with user context

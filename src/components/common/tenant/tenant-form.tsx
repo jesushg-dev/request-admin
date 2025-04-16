@@ -80,7 +80,7 @@ const TenantForm: FC<TenantFormProps> = ({ defaultValues }) => {
   const t = useTranslations('tenants.organization');
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<TenantFormValues>({
+  const form = useForm({
     mode: 'onChange',
     resolver: zodResolver(tenantFormSchema),
     defaultValues: defaultValues?.values ?? getTenantFormDefaultValues(),

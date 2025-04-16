@@ -22,7 +22,7 @@ const NewPasswordForm = () => {
 
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof NewPasswordSchema>>({
+  const form = useForm({
     resolver: zodResolver(NewPasswordSchema),
     defaultValues: {
       password: '',

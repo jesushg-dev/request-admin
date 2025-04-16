@@ -42,7 +42,7 @@ interface IdentificationTypeFormProps {
 export const IdentificationTypeForm: FC<IdentificationTypeFormProps> = ({ tenantId, defaultValues }) => {
   const router = useRouter();
   const t = useTranslations('admin.identificationType.form');
-  const form = useForm<identificationTypeFormValues>({
+  const form = useForm({
     resolver: zodResolver(identificationTypeFormSchema),
     defaultValues: defaultValues ?? getDefaultValues(),
     mode: 'onBlur',

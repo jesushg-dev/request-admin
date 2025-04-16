@@ -30,7 +30,7 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ hierarchyId, requirements, 
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
-  const form = useForm<RequestCategoryFormValues>({
+  const form = useForm({
     mode: 'onTouched',
     resolver: zodResolver(categoriesSchema),
     defaultValues: initialValues ?? { categories: [getDefaultSubcategory(levels[0].id)] },

@@ -29,7 +29,7 @@ const userTenantFormSchema = z.object({
   role: z.array(optionSchema),
 });
 
-const defaultValues: Partial<UserTenantFormValues> = {
+const defaultValues: UserTenantFormValues = {
   isActive: true,
   isTermAccepted: false,
   role: [],
@@ -49,9 +49,9 @@ export default function UserTenantForm() {
   const [isUpdating, startUpdating] = useTransition();
   const [isLeavingOrg, startLeavingOrg] = useTransition();
 
-  const form = useForm<UserTenantFormValues>({
+  const form = useForm({
     resolver: zodResolver(userTenantFormSchema),
-    defaultValues: userTenant ? { ...userTenant, role: [] } : defaultValues,
+    defaultValues: userTenant ? { ...userTenant, role: [], isActive: false } : defaultValues,
     mode: 'onChange',
   });
 

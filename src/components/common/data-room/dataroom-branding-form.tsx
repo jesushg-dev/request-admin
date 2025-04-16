@@ -55,7 +55,7 @@ export function DataroomBrandingForm({ tenantId, initialValues }: DataroomBrandi
   const [isPending, startTransition] = useTransition();
   const { mutateAsync: upsert, error } = useUpsertDataroomBrand();
 
-  const form = useForm<BrandingFormValues>({
+  const form = useForm({
     resolver: zodResolver(brandingSchema),
     defaultValues: initialValues ?? getInitialValues(),
     mode: 'onChange',

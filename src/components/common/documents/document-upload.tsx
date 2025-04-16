@@ -57,7 +57,7 @@ export function DocumentUpload({ id, locale, tenantId, folderId, callbackUrl, da
   const [pending, startTransition] = useTransition();
   //const [progresses, setProgresses] = useState<Record<string, number>>({});
 
-  const form = useForm<FormValues>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       files: [],

@@ -43,13 +43,13 @@ export default function AppearanceForm() {
   const [mounted, setMounted] = useState(false);
 
   // Default values for the form
-  const defaultValues: Partial<AppearanceFormValues> = {
+  const defaultValues: AppearanceFormValues = {
     font: 'inter',
     theme: 'light',
     language: 'en',
   };
 
-  const form = useForm<AppearanceFormValues>({
+  const form = useForm({
     resolver: zodResolver(appearanceFormSchema),
     defaultValues,
     mode: 'onChange',

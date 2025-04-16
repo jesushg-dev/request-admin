@@ -45,7 +45,7 @@ export default function SecurityForm() {
 
   type PasswordFormValues = z.infer<typeof passwordFormSchema>;
 
-  const passwordForm = useForm<PasswordFormValues>({
+  const passwordForm = useForm({
     resolver: zodResolver(passwordFormSchema),
     defaultValues: passwordDefaultValues,
     mode: 'onChange',

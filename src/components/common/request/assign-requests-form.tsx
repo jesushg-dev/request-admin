@@ -69,7 +69,7 @@ export default function AssignRequestsForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Initialize the form with the Zod schema resolver and default values
-  const form = useForm<AssignRequestsFormValues>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       userId: '',

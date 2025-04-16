@@ -83,14 +83,14 @@ export default function SubscriptionForm() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Default values for the form
-  const defaultValues: Partial<SubscriptionFormValues> = {
+  const defaultValues: SubscriptionFormValues = {
     planId: 'pro',
     isLifetime: false,
     startDate: new Date(2023, 9, 15),
     endDate: new Date(2024, 9, 15),
   };
 
-  const form = useForm<SubscriptionFormValues>({
+  const form = useForm({
     resolver: zodResolver(subscriptionFormSchema),
     defaultValues,
     mode: 'onChange',

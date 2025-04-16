@@ -44,7 +44,7 @@ export const FolderForm: React.FC<FolderFormProps> = ({ locale, initialValues, c
   const [isPending, startTransition] = useTransition();
   const { mutateAsync: upsertDataRoom, error } = useUpsertDataroomFolder();
 
-  const form = useForm<FolderFormValues>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: initialValues ?? getDefaultValues(),
     mode: 'onBlur',

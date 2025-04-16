@@ -52,7 +52,7 @@ export function RequirementForm({ tenantId, initialValues }: RequirementFormProp
   const { data: requirementTypes, isLoading: isLoadingTypes } = useFindManyRequirementType();
   const { mutateAsync: upsert, error } = useUpsertRequirement();
 
-  const form = useForm<RequirementFormValues>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: initialValues ?? getDefaultValues(),
   });

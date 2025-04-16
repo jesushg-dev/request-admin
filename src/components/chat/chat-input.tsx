@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useCreateMessage } from '@/services/api/hooks';
-import { Prisma } from '@zenstackhq/runtime/models';
+import { Prisma } from '@prisma/client';
 import { toast } from 'sonner';
 
 const Editor = dynamic(() => import('@/components/chat/editor'), { ssr: false });

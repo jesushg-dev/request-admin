@@ -43,7 +43,7 @@ export const DataroomForm: React.FC<DataroomFormProps> = ({ initialValues, tenan
   const [isPending, startTransition] = useTransition();
   const { mutateAsync: upsert, error } = useUpsertDataroom();
 
-  const form = useForm<DataroomFormValues>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: initialValues ?? getDefaultValues(),
     mode: 'onBlur',

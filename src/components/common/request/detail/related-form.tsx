@@ -40,7 +40,7 @@ export function RelatedIncidentForm({ tenantId, requestId, initialValues }: Rela
   const [isPending, startTransition] = useTransition();
   const { mutateAsync: upsert, error } = useUpsertRelatedIncident();
 
-  const form = useForm<RelatedIncident>({
+  const form = useForm({
     resolver: zodResolver(RelatedIncidentSchema),
     defaultValues: initialValues ?? getDefaultValues(),
   });

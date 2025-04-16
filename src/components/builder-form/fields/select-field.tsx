@@ -130,7 +130,7 @@ type propertiesFormSchemaType = z.infer<typeof propertiesSchema>;
 function PropertiesComponent({ elementInstance }: { elementInstance: FormElementInstance }) {
   const element = elementInstance as CustomInstance;
   const { updateElement, setSelectedElement } = useDesigner();
-  const form = useForm<propertiesFormSchemaType>({
+  const form = useForm({
     resolver: zodResolver(propertiesSchema),
     mode: 'onSubmit',
     defaultValues: {
@@ -242,6 +242,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                   className="gap-2"
                   onClick={(e) => {
                     e.preventDefault(); // avoid submit
+                    if (!field.value) return;
                     form.setValue('options', field.value.concat('New option'));
                   }}>
                   <PlusIcon />
@@ -249,12 +250,13 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                 </Button>
               </div>
               <div className="flex flex-col gap-2">
-                {form.watch('options').map((option, index) => (
+                {form.watch('options')?.map((option, index) => (
                   <div key={index} className="flex items-center justify-between gap-1">
                     <Input
                       placeholder=""
                       value={option}
                       onChange={(e) => {
+                        if (!field.value) return;
                         field.value[index] = e.target.value;
                         field.onChange(field.value);
                       }}
@@ -264,6 +266,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                       size={'icon'}
                       onClick={(e) => {
                         e.preventDefault();
+                        if (!field.value) return;
                         const newOptions = [...field.value];
                         newOptions.splice(index, 1);
                         field.onChange(newOptions);
