@@ -1,23 +1,24 @@
-import { Check } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Check } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
 
 const plans = [
   {
-    name: "Basic",
-    price: "$9",
-    features: ["5 team members", "10 projects", "Basic analytics", "Email support"],
+    name: 'Basic',
+    price: '$9',
+    features: ['5 team members', '10 projects', 'Basic analytics', 'Email support'],
   },
   {
-    name: "Pro",
-    price: "$29",
-    features: ["Unlimited team members", "Unlimited projects", "Advanced analytics", "Priority support"],
+    name: 'Pro',
+    price: '$29',
+    features: ['Unlimited team members', 'Unlimited projects', 'Advanced analytics', 'Priority support'],
   },
   {
-    name: "Enterprise",
-    price: "Custom",
-    features: ["Custom features", "Dedicated account manager", "On-premise deployment", "24/7 phone support"],
+    name: 'Enterprise',
+    price: 'Custom',
+    features: ['Custom features', 'Dedicated account manager', 'On-premise deployment', '24/7 phone support'],
   },
-]
+];
 
 export default function Pricing() {
   return (
@@ -40,13 +41,13 @@ export default function Pricing() {
                   </li>
                 ))}
               </ul>
-              <Button className="w-full" variant={index === 1 ? "default" : "outline"}>
-                {index === 2 ? "Contact Sales" : "Get Started"}
+              <Button className="w-full" variant={index === 1 ? 'default' : 'outline'}>
+                {index === 2 ? 'Contact Sales' : 'Get Started'}
               </Button>
             </div>
           ))}
         </div>
       </div>
     </section>
-  )
+  );
 }

@@ -359,13 +359,14 @@
       "dashboard": "Dashboard",
       "requests": "Requests",
       "request": "Request",
+      "configuration": "Configuration",
       "dataRooms": "Data Rooms",
       "documents": "Documents",
       "links": "Shared Links",
-      "requestsPortal": "Requests Management",
       "requestTypes": "Request Types",
       "requestTypesHierarchy": "Request Types Hierarchy",
       "requirements": "Requirements",
+      "requirementTypes": "Requirement Types",
       "formDesigner": "Form Designer",
       "settings": "Settings",
       "management": "Management",
@@ -376,7 +377,14 @@
       "roles": "Roles",
       "users": "Users",
       "agreements": "Agreements",
-      "linksAndDocuments": "Link and Documents",
+      "linksAndDocuments": "Links and Documents",
+      "requestHierarchy": "Request Hierarchy",
+      "assignmentHierarchy": "Assignment Hierarchy",
+      "priorities": "Priorities",
+      "workflows": "Workflows",
+      "reports": "Reports",
+      "messages": "Messages",
+      "help": "Help",
       "errors": {
         "changeTenantError": "Error changing tenant!"
       },
@@ -1505,9 +1513,7 @@
         "preferences": "Preferences",
         "appearance": "Appearance",
         "display": "Display",
-        "notifications": "Notifications",
-        "requestHierarchy": "Request Hierarchy",
-        "assignementHierarchy": "Assignement Hierarchy"
+        "notifications": "Notifications"
       },
       "apiKeys": {
         "title": "API Keys",

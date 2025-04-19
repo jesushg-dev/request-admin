@@ -359,13 +359,14 @@
       "dashboard": "Panel",
       "requests": "Solicitudes",
       "request": "Solicitud",
+      "configuration": "Configuración",
       "dataRooms": "Salas de Datos",
       "documents": "Documentos",
       "links": "Enlaces compartidos",
-      "requestsPortal": "Gestor de Solicitudes",
       "requestTypes": "Tipos de Solicitud",
       "requestTypesHierarchy": "Jerarquía de Tipos de Solicitud",
       "requirements": "Requisitos",
+      "requirementTypes": "Tipos de Requisitos",
       "formDesigner": "Diseñador de Formularios",
       "settings": "Configuraciones",
       "management": "Gestión y Organización",
@@ -377,6 +378,13 @@
       "users": "Usuarios",
       "agreements": "Acuerdos",
       "linksAndDocuments": "Enlaces y documentos",
+      "requestHierarchy": "Jerarquía de solicitud",
+      "assignmentHierarchy": "Jerarquía de asignación",
+      "priorities": "Prioridades",
+      "workflows": "Flujos de trabajo",
+      "reports": "Reportes",
+      "messages": "Mensajes",
+      "help": "Ayuda",
       "errors": {
         "changeTenantError": "Error al cambiar de workspace"
       },
@@ -1504,9 +1512,7 @@
         "preferences": "Preferencias",
         "appearance": "Apariencia",
         "display": "Pantalla",
-        "notifications": "Notificaciones",
-        "requestHierarchy": "Jerarquía de solicitud",
-        "assignementHierarchy": "Jerarquía de asignación"
+        "notifications": "Notificaciones"
       },
       "apiKeys": {
         "title": "Claves API",

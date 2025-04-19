@@ -42,7 +42,185 @@ const basePathnames = {
   },
 } satisfies Pathnames<Locale[]>;
 
+const requestsPathnames = {
+  '/admin/[tenantId]/requests': {
+    en: '/admin/[tenantId]/requests',
+    es: '/admin/[tenantId]/solicitudes',
+  },
+  '/admin/[tenantId]/requests/new': {
+    en: '/admin/[tenantId]/requests/new',
+    es: '/admin/[tenantId]/solicitudes/nuevo',
+  },
+  '/admin/[tenantId]/requests/assign-massively': {
+    en: '/admin/[tenantId]/requests/assign-massively',
+    es: '/admin/[tenantId]/solicitudes/asignar-masivamente',
+  },
+  '/admin/[tenantId]/requests/[slug]': {
+    en: '/admin/[tenantId]/requests/[slug]',
+    es: '/admin/[tenantId]/solicitudes/[slug]',
+  },
+  '/admin/[tenantId]/requests/[slug]/edit': {
+    en: '/admin/[tenantId]/requests/[slug]/edit',
+    es: '/admin/[tenantId]/solicitudes/[slug]/editar',
+  },
+  '/admin/[tenantId]/requests/[slug]/relate': {
+    en: '/admin/[tenantId]/requests/[slug]/relate',
+    es: '/admin/[tenantId]/solicitudes/[slug]/relacionar',
+  },
+  //messages
+  '/admin/[tenantId]/messages': {
+    en: '/admin/[tenantId]/messages',
+    es: '/admin/[tenantId]/mensajes',
+  },
+  //reports
+  '/admin/[tenantId]/reports': {
+    en: '/admin/[tenantId]/reports',
+    es: '/admin/[tenantId]/reportes',
+  },
+  // areas
+  '/admin/[tenantId]/configurations/areas': {
+    en: '/admin/[tenantId]/configurations/areas',
+    es: '/admin/[tenantId]/configuraciones/areas',
+  },
+  '/admin/[tenantId]/configurations/areas/new': {
+    en: '/admin/[tenantId]/configurations/areas/new',
+    es: '/admin/[tenantId]/configuraciones/areas/nuevo',
+  },
+  '/admin/[tenantId]/configurations/areas/[slug]': {
+    en: '/admin/[tenantId]/configurations/areas/[slug]',
+    es: '/admin/[tenantId]/configuraciones/areas/[slug]',
+  },
+  '/admin/[tenantId]/configurations/areas/[slug]/edit': {
+    en: '/admin/[tenantId]/configurations/areas/[slug]/edit',
+    es: '/admin/[tenantId]/configuraciones/areas/[slug]/editar',
+  },
+  // assignment hierarchies
+  '/admin/[tenantId]/configurations/assignment-hierarchies': {
+    en: '/admin/[tenantId]/configurations/assignment-hierarchies',
+    es: '/admin/[tenantId]/configuraciones/jerarquias-de-asignacion',
+  },
+  '/admin/[tenantId]/configurations/assignment-hierarchies/new': {
+    en: '/admin/[tenantId]/configurations/assignment-hierarchies/new',
+    es: '/admin/[tenantId]/configuraciones/jerarquias-de-asignacion/nuevo',
+  },
+  '/admin/[tenantId]/configurations/assignment-hierarchies/[slug]': {
+    en: '/admin/[tenantId]/configurations/assignment-hierarchies/[slug]',
+    es: '/admin/[tenantId]/configuraciones/jerarquias-de-asignacion/[slug]',
+  },
+  '/admin/[tenantId]/configurations/assignment-hierarchies/[slug]/edit': {
+    en: '/admin/[tenantId]/configurations/assignment-hierarchies/[slug]/edit',
+    es: '/admin/[tenantId]/configuraciones/jerarquias-de-asignacion/[slug]/editar',
+  },
+  // Request types
+  '/admin/[tenantId]/configurations/request-types': {
+    en: '/admin/[tenantId]/configurations/request-types',
+    es: '/admin/[tenantId]/configuraciones/tipo-de-solicitudes',
+  },
+  '/admin/[tenantId]/configurations/request-types/new': {
+    en: '/admin/[tenantId]/configurations/request-types/new',
+    es: '/admin/[tenantId]/configuraciones/tipo-de-solicitudes/nuevo',
+  },
+  '/admin/[tenantId]/configurations/request-types/[slug]': {
+    en: '/admin/[tenantId]/configurations/request-types/[slug]',
+    es: '/admin/[tenantId]/configuraciones/tipo-de-solicitudes/[slug]',
+  },
+  '/admin/[tenantId]/configurations/request-types/[slug]/edit': {
+    en: '/admin/[tenantId]/configurations/request-types/[slug]/edit',
+    es: '/admin/[tenantId]/configuraciones/tipo-de-solicitudes/[slug]/editar',
+  },
+  // request hierarchies
+  '/admin/[tenantId]/configurations/request-hierarchies': {
+    en: '/admin/[tenantId]/configurations/request-hierarchies',
+    es: '/admin/[tenantId]/configuraciones/jerarquias-de-solicitudes',
+  },
+  '/admin/[tenantId]/configurations/request-hierarchies/new': {
+    en: '/admin/[tenantId]/configurations/request-hierarchies/new',
+    es: '/admin/[tenantId]/configuraciones/jerarquias-de-solicitudes/nuevo',
+  },
+  '/admin/[tenantId]/configurations/request-hierarchies/[slug]': {
+    en: '/admin/[tenantId]/configurations/request-hierarchies/[slug]',
+    es: '/admin/[tenantId]/configuraciones/jerarquias-de-solicitudes/[slug]',
+  },
+  '/admin/[tenantId]/configurations/request-hierarchies/[slug]/edit': {
+    en: '/admin/[tenantId]/configurations/request-hierarchies/[slug]/edit',
+    es: '/admin/[tenantId]/configuraciones/jerarquias-de-solicitudes/[slug]/editar',
+  },
+  // Requirements
+  '/admin/[tenantId]/configurations/requirements': {
+    en: '/admin/[tenantId]/configurations/requirements',
+    es: '/admin/[tenantId]/configuraciones/requisitos',
+  },
+  '/admin/[tenantId]/configurations/requirements/new': {
+    en: '/admin/[tenantId]/configurations/requirements/new',
+    es: '/admin/[tenantId]/configuraciones/requisitos/nuevo',
+  },
+  '/admin/[tenantId]/configurations/requirements/[slug]': {
+    en: '/admin/[tenantId]/configurations/requirements/[slug]',
+    es: '/admin/[tenantId]/configuraciones/requisitos/[slug]',
+  },
+  '/admin/[tenantId]/configurations/requirements/[slug]/edit': {
+    en: '/admin/[tenantId]/configurations/requirements/[slug]/edit',
+    es: '/admin/[tenantId]/configuraciones/requisitos/[slug]/editar',
+  },
+  // Requirement types
+  '/admin/[tenantId]/configurations/requirement-types': {
+    en: '/admin/[tenantId]/configurations/requirement-types',
+    es: '/admin/[tenantId]/configuraciones/tipos-de-requisitos',
+  },
+  '/admin/[tenantId]/configurations/requirement-types/new': {
+    en: '/admin/[tenantId]/configurations/requirement-types/new',
+    es: '/admin/[tenantId]/configuraciones/tipos-de-requisitos/nuevo',
+  },
+  '/admin/[tenantId]/configurations/requirement-types/[slug]': {
+    en: '/admin/[tenantId]/configurations/requirement-types/[slug]',
+    es: '/admin/[tenantId]/configuraciones/tipos-de-requisitos/[slug]',
+  },
+  '/admin/[tenantId]/configurations/requirement-types/[slug]/edit': {
+    en: '/admin/[tenantId]/configurations/requirement-types/[slug]/edit',
+    es: '/admin/[tenantId]/configuraciones/tipos-de-requisitos/[slug]/editar',
+  },
+  // priorities
+  '/admin/[tenantId]/configurations/priorities': {
+    en: '/admin/[tenantId]/configurations/priorities',
+    es: '/admin/[tenantId]/configuraciones/prioridades',
+  },
+  '/admin/[tenantId]/configurations/priorities/new': {
+    en: '/admin/[tenantId]/configurations/priorities/new',
+    es: '/admin/[tenantId]/configuraciones/prioridades/nuevo',
+  },
+  '/admin/[tenantId]/configurations/priorities/[slug]': {
+    en: '/admin/[tenantId]/configurations/priorities/[slug]',
+    es: '/admin/[tenantId]/configuraciones/prioridades/[slug]',
+  },
+  '/admin/[tenantId]/configurations/priorities/[slug]/edit': {
+    en: '/admin/[tenantId]/configurations/priorities/[slug]/edit',
+    es: '/admin/[tenantId]/configuraciones/prioridades/[slug]/editar',
+  },
+  // workflows
+  '/admin/[tenantId]/configurations/workflows': {
+    en: '/admin/[tenantId]/configurations/workflows',
+    es: '/admin/[tenantId]/configuraciones/workflows',
+  },
+  '/admin/[tenantId]/configurations/workflows/new': {
+    en: '/admin/[tenantId]/configurations/workflows/new',
+    es: '/admin/[tenantId]/configuraciones/workflows/nuevo',
+  },
+  '/admin/[tenantId]/configurations/workflows/[slug]': {
+    en: '/admin/[tenantId]/configurations/workflows/[slug]',
+    es: '/admin/[tenantId]/configuraciones/workflows/[slug]',
+  },
+  '/admin/[tenantId]/configurations/workflows/[slug]/edit': {
+    en: '/admin/[tenantId]/configurations/workflows/[slug]/edit',
+    es: '/admin/[tenantId]/configuraciones/workflows/[slug]/editar',
+  },
+} satisfies Pathnames<Locale[]>;
+
 const securityPathnames = {
+  // help
+  '/admin/[tenantId]/help': {
+    en: '/admin/[tenantId]/help',
+    es: '/admin/[tenantId]/ayuda',
+  },
   // security
   '/admin/[tenantId]/security': {
     en: '/admin/[tenantId]/security',
@@ -94,110 +272,6 @@ const securityPathnames = {
   '/admin/[tenantId]/security/identification-types/[slug]': {
     en: '/admin/[tenantId]/security/identification-types/[slug]',
     es: '/admin/[tenantId]/seguridad/tipos-de-identificacion/[slug]',
-  },
-} satisfies Pathnames<Locale[]>;
-
-const requestsPathnames = {
-  '/admin/[tenantId]/requests-portal/requests': {
-    en: '/admin/[tenantId]/requests-portal/requests',
-    es: '/admin/[tenantId]/solicitudes-portal/solicitudes',
-  },
-  '/admin/[tenantId]/requests-portal/requests/new': {
-    en: '/admin/[tenantId]/requests-portal/requests/new',
-    es: '/admin/[tenantId]/solicitudes-portal/solicitudes/nuevo',
-  },
-  '/admin/[tenantId]/requests-portal/requests/assign-massively': {
-    en: '/admin/[tenantId]/requests-portal/requests/assign-massively',
-    es: '/admin/[tenantId]/solicitudes-portal/solicitudes/asignar-masivamente',
-  },
-  '/admin/[tenantId]/requests-portal/requests/[slug]': {
-    en: '/admin/[tenantId]/requests-portal/requests/[slug]',
-    es: '/admin/[tenantId]/solicitudes-portal/solicitudes/[slug]',
-  },
-  '/admin/[tenantId]/requests-portal/requests/[slug]/edit': {
-    en: '/admin/[tenantId]/requests-portal/requests/[slug]/edit',
-    es: '/admin/[tenantId]/solicitudes-portal/solicitudes/[slug]/editar',
-  },
-  '/admin/[tenantId]/requests-portal/requests/[slug]/relate': {
-    en: '/admin/[tenantId]/requests-portal/requests/[slug]/relate',
-    es: '/admin/[tenantId]/solicitudes-portal/solicitudes/[slug]/relacionar',
-  },
-  // Request types
-  '/admin/[tenantId]/requests-portal/request-types': {
-    en: '/admin/[tenantId]/requests-portal/request-types',
-    es: '/admin/[tenantId]/solicitudes-portal/tipo-de-solicitudes',
-  },
-  '/admin/[tenantId]/requests-portal/request-types/new': {
-    en: '/admin/[tenantId]/requests-portal/request-types/new',
-    es: '/admin/[tenantId]/solicitudes-portal/tipo-de-solicitudes/nuevo',
-  },
-  '/admin/[tenantId]/requests-portal/request-types/[slug]': {
-    en: '/admin/[tenantId]/requests-portal/request-types/[slug]',
-    es: '/admin/[tenantId]/solicitudes-portal/tipo-de-solicitudes/[slug]',
-  },
-  '/admin/[tenantId]/requests-portal/request-types/[slug]/edit': {
-    en: '/admin/[tenantId]/requests-portal/request-types/[slug]/edit',
-    es: '/admin/[tenantId]/solicitudes-portal/tipo-de-solicitudes/[slug]/editar',
-  },
-  // hierarchies
-  '/admin/[tenantId]/settings/hierarchies/assignment': {
-    en: '/admin/[tenantId]/settings/hierarchies/assignment',
-    es: '/admin/[tenantId]/configuraciones/jerarquias/asignacion',
-  },
-  '/admin/[tenantId]/settings/hierarchies/request': {
-    en: '/admin/[tenantId]/settings/hierarchies/request',
-    es: '/admin/[tenantId]/configuraciones/jerarquias/solicitud',
-  },
-  // Requirements
-  '/admin/[tenantId]/requests-portal/requirements': {
-    en: '/admin/[tenantId]/requests-portal/requirements',
-    es: '/admin/[tenantId]/solicitudes-portal/requisitos',
-  },
-  '/admin/[tenantId]/requests-portal/requirements/new': {
-    en: '/admin/[tenantId]/requests-portal/requirements/new',
-    es: '/admin/[tenantId]/solicitudes-portal/requisitos/nuevo',
-  },
-  '/admin/[tenantId]/requests-portal/requirements/[slug]': {
-    en: '/admin/[tenantId]/requests-portal/requirements/[slug]',
-    es: '/admin/[tenantId]/solicitudes-portal/requisitos/[slug]',
-  },
-  '/admin/[tenantId]/requests-portal/requirements/[slug]/edit': {
-    en: '/admin/[tenantId]/requests-portal/requirements/[slug]/edit',
-    es: '/admin/[tenantId]/solicitudes-portal/requisitos/[slug]/editar',
-  },
-  // Documents
-  '/admin/[tenantId]/requests-portal/documents': {
-    en: '/admin/[tenantId]/requests-portal/documents',
-    es: '/admin/[tenantId]/solicitudes-portal/documentos',
-  },
-  '/admin/[tenantId]/requests-portal/documents/new': {
-    en: '/admin/[tenantId]/requests-portal/documents/new',
-    es: '/admin/[tenantId]/solicitudes-portal/documentos/nuevo',
-  },
-  '/admin/[tenantId]/requests-portal/documents/[slug]': {
-    en: '/admin/[tenantId]/requests-portal/documents/[slug]',
-    es: '/admin/[tenantId]/solicitudes-portal/documentos/[slug]',
-  },
-  '/admin/[tenantId]/requests-portal/documents/[slug]/edit': {
-    en: '/admin/[tenantId]/requests-portal/documents/[slug]/edit',
-    es: '/admin/[tenantId]/solicitudes-portal/documentos/[slug]/editar',
-  },
-  // areas
-  '/admin/[tenantId]/requests-portal/areas': {
-    en: '/admin/[tenantId]/requests-portal/areas',
-    es: '/admin/[tenantId]/solicitudes-portal/areas',
-  },
-  '/admin/[tenantId]/requests-portal/areas/new': {
-    en: '/admin/[tenantId]/requests-portal/areas/new',
-    es: '/admin/[tenantId]/solicitudes-portal/areas/nuevo',
-  },
-  '/admin/[tenantId]/requests-portal/areas/[slug]': {
-    en: '/admin/[tenantId]/requests-portal/areas/[slug]',
-    es: '/admin/[tenantId]/solicitudes-portal/areas/[slug]',
-  },
-  '/admin/[tenantId]/requests-portal/areas/[slug]/edit': {
-    en: '/admin/[tenantId]/requests-portal/areas/[slug]/edit',
-    es: '/admin/[tenantId]/solicitudes-portal/areas/[slug]/editar',
   },
 } satisfies Pathnames<Locale[]>;
 
@@ -351,14 +425,6 @@ const settingsPathnames = {
   '/admin/[tenantId]/settings/organization/subscription': {
     en: '/admin/[tenantId]/settings/organization/subscription',
     es: '/admin/[tenantId]/configuracion/organizacion/suscripcion',
-  },
-  '/admin/[tenantId]/settings/organization/request-hierarchy': {
-    en: '/admin/[tenantId]/settings/organization/request-hierarchy',
-    es: '/admin/[tenantId]/configuracion/organizacion/jerarquia-solicitud',
-  },
-  '/admin/[tenantId]/settings/organization/assignment-hierarchy': {
-    en: '/admin/[tenantId]/settings/organization/assignment-hierarchy',
-    es: '/admin/[tenantId]/configuracion/organizacion/jerarquia-asignacion',
   },
 
   // preferences

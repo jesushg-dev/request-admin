@@ -3,7 +3,7 @@
 
 import { useMemo, useState } from 'react';
 import { Link, usePathname } from '@/i18n/routing';
-import { Bell, Building2, ChevronDown, ChevronRight, CreditCard, FolderOpen, FolderOpenDot, Key, Lock, LogOut, Mail, Palette, Settings, Shield, ShieldCheck, User, Users } from 'lucide-react';
+import { Bell, Building2, ChevronDown, ChevronRight, CreditCard, Key, Lock, LogOut, Mail, Palette, Settings, Shield, ShieldCheck, User, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { cn } from '@/lib/utils';
@@ -118,22 +118,6 @@ export function SettingsSidebar({ tenantId }: SettingsSidebarProps) {
               params: { tenantId },
             },
             icon: User,
-          },
-          {
-            title: t('requestHierarchy'),
-            url: {
-              pathname: '/admin/[tenantId]/settings/organization/request-hierarchy',
-              params: { tenantId },
-            },
-            icon: FolderOpen,
-          },
-          {
-            title: t('assignementHierarchy'),
-            url: {
-              pathname: '/admin/[tenantId]/settings/organization/assignment-hierarchy',
-              params: { tenantId },
-            },
-            icon: FolderOpenDot,
           },
         ],
       },

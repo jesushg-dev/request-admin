@@ -19,11 +19,11 @@ export type MenuItem = {
   }[];
 };
 
-export function NavMain({ items, currentPath }: { items: MenuItem[]; currentPath: string }) {
+export function NavMain({ title, items, currentPath }: { title: string; items: MenuItem[]; currentPath: string }) {
   const activeKey = useMemo(() => items.find((item) => item.items?.some((subItem) => currentPath === (subItem.url as { pathname: string }).pathname))?.title, [items, currentPath]);
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarGroupLabel>{title}</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible key={item.title} asChild defaultOpen={item.isActive || item.title === activeKey}>

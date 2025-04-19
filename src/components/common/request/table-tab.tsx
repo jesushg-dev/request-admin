@@ -200,7 +200,7 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
           row={row}
           onDelete={() => console.log('Delete', row.original)}
           viewLink={{
-            pathname: '/admin/[tenantId]/requests-portal/requests/[slug]',
+            pathname: '/admin/[tenantId]/requests/[slug]',
             params: { tenantId: row.original.tenantId, slug: row.original.id },
           }}
         />

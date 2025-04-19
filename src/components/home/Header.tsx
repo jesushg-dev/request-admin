@@ -1,5 +1,6 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import Link from 'next/link';
+
+import { Button } from '@/components/ui/button';
 
 export default function Header() {
   return (
@@ -22,5 +23,5 @@ export default function Header() {
         <Button>Get Started</Button>
       </div>
     </header>
-  )
+  );
 }

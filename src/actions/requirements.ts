@@ -26,7 +26,7 @@ export async function updateRequirementCompliance(requestId: string, tenantId: s
       }
     });
 
-    revalidatePath('/[locale]/admin/[tenantId]/requests-portal/requests/[slug]');
+    revalidatePath('/[locale]/admin/[tenantId]/requests/[slug]');
     return { success: true };
   } catch (error) {
     console.error('Update failed:', error);

@@ -56,7 +56,7 @@ export function RelatedIncidentForm({ tenantId, requestId, initialValues }: Rela
       toast.promise(promise, {
         loading: t('savingChanges'),
         success: (response) => {
-          router.push({ pathname: '/admin/[tenantId]/requests-portal/requests/[slug]', params: { tenantId, slug: requestId } });
+          router.push({ pathname: '/admin/[tenantId]/requests/[slug]', params: { tenantId, slug: requestId } });
           return t('successSave', { id: response?.id ?? '' });
         },
         error: (error) => t('errorSave', { message: error.message }),

@@ -152,7 +152,7 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({
           <Button variant="outline" size="sm" asChild>
             <Link
               href={{
-                pathname: '/admin/[tenantId]/requests-portal/requests/[slug]/edit',
+                pathname: '/admin/[tenantId]/requests/[slug]/edit',
                 params: { tenantId, slug },
               }}>
               <Edit3Icon className="h-4 w-4" />

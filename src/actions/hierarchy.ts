@@ -107,7 +107,7 @@ export const getRequestHierarchyAndLevelsByTenantId = async (locale: Locale, ten
   });
 
   if (!hierarchy) {
-    return redirect({ locale, href: { pathname: '/admin/[tenantId]/settings/hierarchies/request', params: { tenantId } } });
+    return redirect({ locale, href: { pathname: '/admin/[tenantId]/configurations/request-hierarchies', params: { tenantId } } });
   }
 
   const levels = hierarchy.levels.sort((a, b) => a.position - b.position);
@@ -130,7 +130,7 @@ export const getAssignmentHierarchyAndLevelsByTenantId = async (locale: Locale, 
   });
 
   if (!hierarchy) {
-    return redirect({ locale, href: { pathname: '/admin/[tenantId]/settings/hierarchies/assignment', params: { tenantId } } });
+    return redirect({ locale, href: { pathname: '/admin/[tenantId]/configurations/assignment-hierarchies', params: { tenantId } } });
   }
 
   const levels = hierarchy.levels.sort((a, b) => a.position - b.position);
