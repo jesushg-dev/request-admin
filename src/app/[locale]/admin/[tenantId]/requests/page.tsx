@@ -37,7 +37,7 @@ const RequestMainPage: React.FC = () => {
           <Button variant="outline" size="sm" asChild>
             <Link
               href={{
-                pathname: '/admin/[tenantId]/requests-portal/requests/assign-massively',
+                pathname: '/admin/[tenantId]/requests/assign-massively',
                 params: { tenantId },
               }}>
               <CircleFadingArrowUpIcon className="size-4" aria-hidden="true" />
@@ -47,7 +47,7 @@ const RequestMainPage: React.FC = () => {
           <Button variant="outline" size="sm" asChild>
             <Link
               href={{
-                pathname: '/admin/[tenantId]/requests-portal/requests/new',
+                pathname: '/admin/[tenantId]/requests/new',
                 params: { tenantId },
               }}>
               <Plus className="size-4" aria-hidden="true" />

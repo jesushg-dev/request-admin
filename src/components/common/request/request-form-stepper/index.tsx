@@ -95,7 +95,7 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, re
           });
         }
 
-        router.push({ pathname: '/admin/[tenantId]/requests-portal/requests/[slug]', params: { tenantId, slug: response.id } });
+        router.push({ pathname: '/admin/[tenantId]/requests/[slug]', params: { tenantId, slug: response.id } });
         toast.success('Request created successfully', { id: toastId });
       } catch (error) {
         toast.error('Error creating request', { id: toastId });

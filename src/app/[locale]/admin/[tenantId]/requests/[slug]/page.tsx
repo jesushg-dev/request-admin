@@ -42,7 +42,7 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
   ]);
 
   if (!hasGlobalViewPermission && !hasScopedViewAccess) {
-    return redirect({ locale, href: { pathname: '/admin/[tenantId]/requests-portal/requests', params: { tenantId } } });
+    return redirect({ locale, href: { pathname: '/admin/[tenantId]/requests', params: { tenantId } } });
   }
 
   // --- Data Preparation ---
@@ -55,7 +55,7 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
     getAssignmentHierarchyAndLevelsByTenantId(locale, tenantId),
   ]);
 
-  const callbackUrl = getPathname({ locale, href: { pathname: '/admin/[tenantId]/requests-portal/requests/[slug]', params: { tenantId, slug } } });
+  const callbackUrl = getPathname({ locale, href: { pathname: '/admin/[tenantId]/requests/[slug]', params: { tenantId, slug } } });
 
   return (
     <ResizablePanelGroup direction="horizontal" className="flex-1">

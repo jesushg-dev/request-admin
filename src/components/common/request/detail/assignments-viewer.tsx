@@ -110,7 +110,7 @@ const AssignmentHistoryDataTable: React.FC<AssignmentHistoryDataTableProps> = ({
             <Button variant="outline" size="sm" asChild>
               <Link
                 href={{
-                  pathname: '/admin/[tenantId]/requests-portal/requests/[slug]/edit',
+                  pathname: '/admin/[tenantId]/requests/[slug]/edit',
                   query: { reassign: 'true' },
                   params: { tenantId, slug: requestId },
                 }}>

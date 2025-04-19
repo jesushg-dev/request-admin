@@ -88,7 +88,7 @@ export function RequirementForm({ tenantId, initialValues }: RequirementFormProp
       toast.promise(promise, {
         loading: t('savingChanges'),
         success: (response) => {
-          router.push({ pathname: '/admin/[tenantId]/requests-portal/requirements', params: { tenantId } });
+          router.push({ pathname: '/admin/[tenantId]/configurations/requirements', params: { tenantId } });
           return t('successSave', { name: response?.name ?? '-' });
         },
         error: (error) => t('errorSave', { message: error.message }),

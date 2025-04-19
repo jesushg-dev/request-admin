@@ -42,7 +42,7 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ hierarchyId, requirements, 
       toast.promise(operation, {
         loading: 'Saving...',
         success: () => {
-          router.push({ pathname: '/admin/[tenantId]/requests-portal/request-types', params: { tenantId } });
+          router.push({ pathname: '/admin/[tenantId]/configurations/request-types', params: { tenantId } });
           return 'Saved successfully.';
         },
         error: (err) => {

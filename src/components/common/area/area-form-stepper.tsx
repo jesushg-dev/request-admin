@@ -164,7 +164,7 @@ const AreaFormStepper: FC<AreaFormStepperProps> = ({ tenantId, hierarchyId, assi
       toast.promise(Promise.all([promise, upsertCategoriesPromise]), {
         loading: 'Saving area...',
         success: ([upsertResponse]) => {
-          router.push({ pathname: '/admin/[tenantId]/requests-portal/areas', params: { tenantId } });
+          router.push({ pathname: '/admin/[tenantId]/configurations/areas', params: { tenantId } });
           return `Area ${upsertResponse?.name} created successfully`;
         },
         error: (error) => {

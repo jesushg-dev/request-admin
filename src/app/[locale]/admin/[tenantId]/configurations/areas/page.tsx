@@ -1,7 +1,7 @@
 'use client';
 
 import React, { memo, useMemo } from 'react';
-import { useCountRequestCategory, useFindManyRequestCategory } from '@/services/api/hooks';
+import { useCountArea, useFindManyArea } from '@/services/api/hooks';
 import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
 import { Prisma } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
@@ -15,9 +15,8 @@ import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
 import useTenantId from '@/hooks/use-tenant-id';
 import { Checkbox } from '@/components/ui/checkbox';
-import { RequestCategoryTable, useRequestCategoryTableConfiguration } from '@/components/common/category/request-category-table';
+import { AssignmentCategoryTable, useAssignmentCategoryTableConfiguration } from '@/components/common/category/assignment-category-table';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
-import RequirementDialogCell from '@/components/common/requirement/requirement-dialog-cell';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
 import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-advanced-toolbar';
@@ -25,58 +24,49 @@ import { DataTableColumnHeader } from '@/components/data-table/data-table-column
 import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
 
-const RequestCategoryDefaultArgs = Prisma.validator<Prisma.RequestCategoryDefaultArgs>()({
+const AreaDefaultArgs = Prisma.validator<Prisma.AreaDefaultArgs>()({
   select: {
     id: true,
-    name: true,
     tenantId: true,
-    description: true,
+    name: true,
+    isActive: true,
     createdAt: true,
-    _count: {
-      select: {
-        requestCategoryRequirements: true,
-        subcategories: true,
-        categoryForms: true,
-      },
-    },
+    _count: { select: { userAreas: true, assignmentCategories: true } },
   },
 });
 
-type CategoryWithRelations = Prisma.RequestCategoryGetPayload<typeof RequestCategoryDefaultArgs>;
+type AreaWithRelations = Prisma.AreaGetPayload<typeof AreaDefaultArgs>;
 
 const searchParamsParsers = {
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(10),
-  sort: getSortingStateParser<CategoryWithRelations>().withDefault([{ id: 'createdAt', desc: true }]),
-  filters: getFiltersStateParser<CategoryWithRelations>().withDefault([]),
+  sort: getSortingStateParser<AreaWithRelations>().withDefault([{ id: 'createdAt', desc: true }]),
+  filters: getFiltersStateParser<AreaWithRelations>().withDefault([]),
   joinOperator: parseAsStringEnum(['and', 'or']).withDefault('and'),
   from: parseAsString.withDefault(''),
   to: parseAsString.withDefault(''),
 };
 
-const CategoryMainPage: React.FC = () => {
+const AreaMainPage: React.FC = () => {
   const tenantId = useTenantId();
-  const t = useTranslations('admin.requestType.main');
+  const t = useTranslations('admin.area.main');
   const [search] = useQueryStates(searchParamsParsers);
 
-  const { data, isLoading, isError, error, refetch, pageCount } = useFetchTableData<CategoryWithRelations, Prisma.RequestCategoryFindManyArgs, Prisma.RequestCategoryCountArgs>({
+  const { data, isError, error, refetch, isLoading, pageCount } = useFetchTableData<AreaWithRelations, Prisma.AreaFindManyArgs, Prisma.AreaCountArgs>({
     search,
-    useCountHook: useCountRequestCategory,
-    useFindManyHook: useFindManyRequestCategory,
+    useCountHook: useCountArea,
+    useFindManyHook: useFindManyArea,
     defaultArgs: {
-      ...RequestCategoryDefaultArgs,
-      where: {
-        tenantId,
-        hierarchyLevel: { is: { position: 1 } },
-      },
+      ...AreaDefaultArgs,
+      where: { tenantId },
     },
   });
 
   const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t }), [t]);
 
-  // Grab the category columns from our new, fixed hook so we can pass them to the subcomponent.
-  const { columns: categoryColumns } = useRequestCategoryTableConfiguration({
-    entity: 'requestType',
+  // Grab the category columns from our new, fixed hook so we can pass them to the subComponent.
+  const { columns: categoryColumns } = useAssignmentCategoryTableConfiguration({
+    entity: 'area',
   });
 
   const { table } = useDataTable({
@@ -91,7 +81,7 @@ const CategoryMainPage: React.FC = () => {
     },
     shallow: false,
     clearOnDefault: true,
-    getRowCanExpand: (row) => row.original._count.subcategories > 0,
+    getRowCanExpand: (row) => row.original._count.assignmentCategories > 0,
     getRowId: (originalRow) => originalRow.id,
   });
 
@@ -106,15 +96,15 @@ const CategoryMainPage: React.FC = () => {
         isLoading={isLoading}
         subComponent={{
           columns: categoryColumns,
-          render: (props) => RequestCategoryTable(props),
+          render: (props) => <AssignmentCategoryTable {...props} parentType="area" />,
         }}>
         <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
           <DataTableToolbarActions
             table={table}
-            exportFilename="categories"
+            exportFilename="areas"
             entityLabel={t('entityLabel')}
             addLink={{
-              pathname: '/admin/[tenantId]/requests-portal/request-types/new',
+              pathname: '/admin/[tenantId]/configurations/areas/new',
               params: { tenantId },
             }}
           />
@@ -129,7 +119,7 @@ interface GetTableConfigurationProps {
 }
 
 function getTableConfiguration({ t }: GetTableConfigurationProps) {
-  const columns: ColumnDef<CategoryWithRelations>[] = [
+  const columns: ColumnDef<AreaWithRelations>[] = [
     {
       id: 'name',
       header: ({ table }) => (
@@ -163,32 +153,22 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
       },
     },
     {
-      accessorKey: 'description',
-      header: () => t('columns.description'),
-      cell: ({ cell }) => cell.getValue() ?? '-', // Fallback to a dash if there is no description.
+      accessorKey: 'isActive',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.isActive')} />,
+      cell: ({ cell }) => <Checkbox checked={cell.getValue() as boolean} aria-label={t('columns.isActive')} disabled />,
+      size: 20,
     },
     {
-      accessorKey: 'isEligibleForNewClients',
-      header: () => t('columns.isEligibleForNewClients'),
-      cell: ({ cell }) => <Checkbox checked={cell.getValue() as boolean} aria-label={(cell.getValue() as boolean) ? t('common.yes') : t('common.no')} disabled />,
-    },
-    {
-      accessorKey: '_count.subcategories',
+      accessorKey: '_count.assignmentCategories',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.categories')} />,
       cell: ({ cell }) => cell.getValue(),
       size: 30,
     },
     {
-      accessorKey: '_count.categoryForms',
-      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.forms')} />,
+      accessorKey: '_count.userAreas',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.users')} />,
       cell: ({ cell }) => cell.getValue(),
       size: 30,
-    },
-    {
-      accessorKey: '_count.requestCategoryRequirements',
-      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.requirements')} />,
-      cell: ({ cell }) => <RequirementDialogCell count={cell.getValue() as number} entity={t('entityLabel')} categoryId={cell.row.original.id} />,
-      size: 20,
     },
     {
       accessorKey: 'createdAt',
@@ -202,7 +182,7 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
           row={row}
           onDelete={() => console.log('Delete', row.original)}
           updateLink={{
-            pathname: '/admin/[tenantId]/requests-portal/request-types/[slug]/edit',
+            pathname: '/admin/[tenantId]/configurations/areas/[slug]/edit',
             params: { tenantId: row.original.tenantId, slug: row.original.id },
           }}
         />
@@ -211,14 +191,18 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
     },
   ];
 
-  const filterFields: DataTableFilterField<CategoryWithRelations>[] = [{ id: 'name', label: t('filters.name'), placeholder: t('filters.namePlaceholder') }];
+  const filterFields: DataTableFilterField<AreaWithRelations>[] = [
+    { id: 'name', label: t('filters.name'), placeholder: t('filters.namePlaceholder') },
+    { id: 'isActive', label: t('filters.isActive') },
+  ];
 
-  const advancedFilterFields: DataTableAdvancedFilterField<CategoryWithRelations>[] = [
+  const advancedFilterFields: DataTableAdvancedFilterField<AreaWithRelations>[] = [
     { id: 'name', label: t('filters.name'), type: 'text' },
+    { id: 'isActive', label: t('filters.isActive'), type: 'boolean' },
     { id: 'createdAt', label: t('filters.createdAt'), type: 'date' },
   ];
 
   return { columns, filterFields, advancedFilterFields };
 }
 
-export default memo(CategoryMainPage);
+export default memo(AreaMainPage);

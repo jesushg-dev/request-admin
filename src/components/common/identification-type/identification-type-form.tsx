@@ -62,7 +62,8 @@ export const IdentificationTypeForm: FC<IdentificationTypeFormProps> = ({ tenant
     }
   };
 
-  const onSubmit = (data: identificationTypeFormValues) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const onSubmit = ({ testInput, ...data }: identificationTypeFormValues) => {
     startTransition(async () => {
       const promise = upsert({
         create: { ...data, tenantId },

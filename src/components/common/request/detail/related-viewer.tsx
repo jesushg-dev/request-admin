@@ -78,7 +78,7 @@ const RelatedViewer: React.FC<RelatedViewerProps> = ({ tenantId, requestId }) =>
             <Button variant="outline" size="sm" asChild>
               <Link
                 href={{
-                  pathname: '/admin/[tenantId]/requests-portal/requests/[slug]/relate',
+                  pathname: '/admin/[tenantId]/requests/[slug]/relate',
                   params: { tenantId, slug: requestId },
                 }}>
                 <FileSymlinkIcon className="h-4 w-4 mr-2" />

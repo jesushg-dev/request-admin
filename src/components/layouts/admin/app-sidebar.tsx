@@ -3,29 +3,37 @@
 import { useMemo } from 'react';
 import { usePathname } from '@/i18n/routing';
 import {
+  BookIcon,
+  BookTypeIcon,
   BuildingIcon,
+  ChartColumnIncreasingIcon,
   ClipboardIcon,
   FileKey2Icon,
   FileTextIcon,
-  FolderIcon,
+  FolderOpen,
+  FolderOpenDot,
   GridIcon,
   HomeIcon,
   IdCardIcon,
   LandPlotIcon,
   LayersIcon,
-  ListIcon,
+  MessageCircleQuestionIcon,
+  MessagesSquareIcon,
   RadarIcon,
   RadioTowerIcon,
   ScaleIcon,
   SettingsIcon,
   ShieldIcon,
+  SlidersHorizontalIcon,
+  TagsIcon,
   UsersIcon,
+  WorkflowIcon,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '@/components/ui/sidebar';
 
-import { NavFormSubmissions } from './nav-form-submissions';
+//import { NavFormSubmissions } from './nav-form-submissions';
 import { MenuItem, NavMain } from './nav-main';
 import { NavUser } from './nav-user';
 import { TenantSwitcher } from './tenant-switcher';
@@ -59,30 +67,28 @@ export function AppSidebar({ tenantId, tenants, user, ...props }: AppSidebarProp
         items: [],
       },
       {
-        title: t('requestsPortal'),
-        icon: FolderIcon,
-        items: [
-          {
-            title: t('requests'),
-            url: { pathname: '/admin/[tenantId]/requests-portal/requests', params: { tenantId } },
-            icon: ClipboardIcon,
-          },
-          {
-            title: t('requestTypes'),
-            url: { pathname: '/admin/[tenantId]/requests-portal/request-types', params: { tenantId } },
-            icon: LayersIcon,
-          },
-          {
-            title: t('requirements'),
-            url: { pathname: '/admin/[tenantId]/requests-portal/requirements', params: { tenantId } },
-            icon: ListIcon,
-          },
-          {
-            title: t('areas'),
-            url: { pathname: '/admin/[tenantId]/requests-portal/areas', params: { tenantId } },
-            icon: LandPlotIcon,
-          },
-        ],
+        title: t('requests'),
+        icon: ClipboardIcon,
+        url: { pathname: '/admin/[tenantId]/requests', params: { tenantId } },
+        items: [],
+      },
+      {
+        title: t('reports'),
+        icon: ChartColumnIncreasingIcon,
+        url: { pathname: '/admin/[tenantId]/reports', params: { tenantId } },
+        items: [],
+      },
+      {
+        title: t('messages'),
+        icon: MessagesSquareIcon,
+        url: { pathname: '/admin/[tenantId]/messages', params: { tenantId } },
+        items: [],
+      },
+      {
+        title: t('formDesigner'),
+        url: { pathname: '/admin/[tenantId]/form-designer', params: { tenantId } },
+        icon: GridIcon,
+        items: [],
       },
       {
         title: t('linksAndDocuments'),
@@ -110,19 +116,68 @@ export function AppSidebar({ tenantId, tenants, user, ...props }: AppSidebarProp
           },
         ],
       },
-
       {
-        title: t('formDesigner'),
-        url: { pathname: '/admin/[tenantId]/form-designer', params: { tenantId } },
-        icon: GridIcon,
-        items: [],
+        title: t('configuration'),
+        icon: SlidersHorizontalIcon,
+        items: [
+          {
+            title: t('areas'),
+            url: { pathname: '/admin/[tenantId]/configurations/areas', params: { tenantId } },
+            icon: LandPlotIcon,
+          },
+          {
+            title: t('assignmentHierarchy'),
+            url: {
+              pathname: '/admin/[tenantId]/configurations/assignment-hierarchies',
+              params: { tenantId },
+            },
+            icon: FolderOpenDot,
+          },
+          {
+            title: t('requestTypes'),
+            url: { pathname: '/admin/[tenantId]/configurations/request-types', params: { tenantId } },
+            icon: LayersIcon,
+          },
+          {
+            title: t('requestHierarchy'),
+            url: {
+              pathname: '/admin/[tenantId]/configurations/request-hierarchies',
+              params: { tenantId },
+            },
+            icon: FolderOpen,
+          },
+          {
+            title: t('requirements'),
+            url: { pathname: '/admin/[tenantId]/configurations/requirements', params: { tenantId } },
+            icon: BookIcon,
+          },
+          {
+            title: t('requirementTypes'),
+            url: { pathname: '/admin/[tenantId]/configurations/requirement-types', params: { tenantId } },
+            icon: BookTypeIcon,
+          },
+          {
+            title: t('priorities'),
+            url: { pathname: '/admin/[tenantId]/configurations/priorities', params: { tenantId } },
+            icon: TagsIcon,
+          },
+          {
+            title: t('workflows'),
+            url: { pathname: '/admin/[tenantId]/configurations/workflows', params: { tenantId } },
+            icon: WorkflowIcon,
+          },
+        ],
       },
+    ];
+  }, [t, tenantId]);
+
+  const systemMain = useMemo<MenuItem[]>(() => {
+    return [
       {
         title: t('security'),
         icon: ShieldIcon,
         items: [
           {
-            //dashboard
             title: t('dashboard'),
             url: { pathname: '/admin/[tenantId]/security', params: { tenantId } },
             icon: RadarIcon,
@@ -150,6 +205,12 @@ export function AppSidebar({ tenantId, tenants, user, ...props }: AppSidebarProp
         icon: SettingsIcon,
         items: [],
       },
+      {
+        title: t('help'),
+        url: { pathname: '/admin/[tenantId]/help', params: { tenantId } },
+        icon: MessageCircleQuestionIcon,
+        items: [],
+      },
     ];
   }, [t, tenantId]);
 
@@ -159,8 +220,9 @@ export function AppSidebar({ tenantId, tenants, user, ...props }: AppSidebarProp
         <TenantSwitcher isGlobalAdmin={user.isGlobalAdmin} tenants={tenants} tenantId={tenantId} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={navMain} currentPath={pathname} />
-        <NavFormSubmissions tenantId={tenantId} currentPath={pathname} />
+        <NavMain title="Request" items={navMain} currentPath={pathname} />
+        {/*<NavFormSubmissions tenantId={tenantId} currentPath={pathname} /> */}
+        <NavMain title="System" items={systemMain} currentPath={pathname} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { memo, useMemo } from 'react';
-import { useCountArea, useFindManyArea } from '@/services/api/hooks';
+import { useCountRequirement, useFindManyRequirement } from '@/services/api/hooks';
 import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
 import { Prisma } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
@@ -15,7 +15,6 @@ import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
 import useTenantId from '@/hooks/use-tenant-id';
 import { Checkbox } from '@/components/ui/checkbox';
-import { AssignmentCategoryTable, useAssignmentCategoryTableConfiguration } from '@/components/common/category/assignment-category-table';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
@@ -24,50 +23,46 @@ import { DataTableColumnHeader } from '@/components/data-table/data-table-column
 import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
 
-const AreaDefaultArgs = Prisma.validator<Prisma.AreaDefaultArgs>()({
+const RequirementDefaultArgs = Prisma.validator<Prisma.RequirementDefaultArgs>()({
   select: {
     id: true,
-    tenantId: true,
     name: true,
-    isActive: true,
+    tenantId: true,
+    description: true,
     createdAt: true,
-    _count: { select: { userAreas: true, assignmentCategories: true } },
+    requirementType: { select: { name: true } },
   },
 });
 
-type AreaWithRelations = Prisma.AreaGetPayload<typeof AreaDefaultArgs>;
+type RequirementWithRelations = Prisma.RequirementGetPayload<typeof RequirementDefaultArgs>;
 
 const searchParamsParsers = {
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(10),
-  sort: getSortingStateParser<AreaWithRelations>().withDefault([{ id: 'createdAt', desc: true }]),
-  filters: getFiltersStateParser<AreaWithRelations>().withDefault([]),
+  sort: getSortingStateParser<RequirementWithRelations>().withDefault([{ id: 'createdAt', desc: true }]),
+  filters: getFiltersStateParser<RequirementWithRelations>().withDefault([]),
   joinOperator: parseAsStringEnum(['and', 'or']).withDefault('and'),
   from: parseAsString.withDefault(''),
   to: parseAsString.withDefault(''),
 };
 
-const AreaMainPage: React.FC = () => {
+const RequirementMainPage: React.FC = () => {
   const tenantId = useTenantId();
-  const t = useTranslations('admin.area.main');
+
+  const t = useTranslations('admin.requirement.main');
   const [search] = useQueryStates(searchParamsParsers);
 
-  const { data, isError, error, refetch, isLoading, pageCount } = useFetchTableData<AreaWithRelations, Prisma.AreaFindManyArgs, Prisma.AreaCountArgs>({
+  const { data, isLoading, isError, error, refetch, pageCount } = useFetchTableData<RequirementWithRelations, Prisma.RequirementFindManyArgs, Prisma.RequirementCountArgs>({
     search,
-    useCountHook: useCountArea,
-    useFindManyHook: useFindManyArea,
+    useCountHook: useCountRequirement,
+    useFindManyHook: useFindManyRequirement,
     defaultArgs: {
-      ...AreaDefaultArgs,
+      ...RequirementDefaultArgs,
       where: { tenantId },
     },
   });
 
   const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t }), [t]);
-
-  // Grab the category columns from our new, fixed hook so we can pass them to the subComponent.
-  const { columns: categoryColumns } = useAssignmentCategoryTableConfiguration({
-    entity: 'area',
-  });
 
   const { table } = useDataTable({
     data: data ?? [],
@@ -81,30 +76,22 @@ const AreaMainPage: React.FC = () => {
     },
     shallow: false,
     clearOnDefault: true,
-    getRowCanExpand: (row) => row.original._count.assignmentCategories > 0,
+    getRowCanExpand: () => false,
     getRowId: (originalRow) => originalRow.id,
   });
 
-  if (isError && error) {
-    return <ErrorRetryFallback error={error} onRetry={refetch} />;
-  }
+  if (isError && error) return <ErrorRetryFallback error={error} onRetry={refetch} />;
 
   return (
     <DataTableShell table={table} floatingBar={<DataTableFloatingBar table={table} />}>
-      <DataTable
-        table={table}
-        isLoading={isLoading}
-        subComponent={{
-          columns: categoryColumns,
-          render: (props) => <AssignmentCategoryTable {...props} parentType="area" />,
-        }}>
+      <DataTable table={table} isLoading={isLoading}>
         <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
           <DataTableToolbarActions
             table={table}
-            exportFilename="areas"
+            exportFilename="categories"
             entityLabel={t('entityLabel')}
             addLink={{
-              pathname: '/admin/[tenantId]/requests-portal/areas/new',
+              pathname: '/admin/[tenantId]/configurations/requirements/new',
               params: { tenantId },
             }}
           />
@@ -119,17 +106,17 @@ interface GetTableConfigurationProps {
 }
 
 function getTableConfiguration({ t }: GetTableConfigurationProps) {
-  const columns: ColumnDef<AreaWithRelations>[] = [
+  const columns: ColumnDef<RequirementWithRelations>[] = [
     {
       id: 'name',
-      header: ({ table }) => (
+      header: ({ table, column }) => (
         <div className="flex items-center">
           <Checkbox
             checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
             onCheckedChange={(value) => table.toggleAllRowsSelected(!!value)}
             className="mr-2"
           />
-          <span>{t('columns.name')}</span>
+          <DataTableColumnHeader column={column} title={t('columns.name')} />
         </div>
       ),
       cell: ({ row }) => {
@@ -153,22 +140,14 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
       },
     },
     {
-      accessorKey: 'isActive',
-      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.isActive')} />,
-      cell: ({ cell }) => <Checkbox checked={cell.getValue() as boolean} aria-label={t('columns.isActive')} disabled />,
-      size: 20,
+      accessorKey: 'description',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.description')} />,
+      cell: ({ cell }) => cell.getValue(),
     },
     {
-      accessorKey: '_count.assignmentCategories',
-      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.categories')} />,
+      accessorKey: 'requirementType.name',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.requirementType')} />,
       cell: ({ cell }) => cell.getValue(),
-      size: 30,
-    },
-    {
-      accessorKey: '_count.userAreas',
-      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.users')} />,
-      cell: ({ cell }) => cell.getValue(),
-      size: 30,
     },
     {
       accessorKey: 'createdAt',
@@ -182,7 +161,7 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
           row={row}
           onDelete={() => console.log('Delete', row.original)}
           updateLink={{
-            pathname: '/admin/[tenantId]/requests-portal/areas/[slug]/edit',
+            pathname: '/admin/[tenantId]/configurations/requirements/[slug]/edit',
             params: { tenantId: row.original.tenantId, slug: row.original.id },
           }}
         />
@@ -191,18 +170,14 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
     },
   ];
 
-  const filterFields: DataTableFilterField<AreaWithRelations>[] = [
-    { id: 'name', label: t('filters.name'), placeholder: t('filters.namePlaceholder') },
-    { id: 'isActive', label: t('filters.isActive') },
-  ];
+  const filterFields: DataTableFilterField<RequirementWithRelations>[] = [{ id: 'name', label: t('filters.name'), placeholder: t('filters.namePlaceholder') }];
 
-  const advancedFilterFields: DataTableAdvancedFilterField<AreaWithRelations>[] = [
+  const advancedFilterFields: DataTableAdvancedFilterField<RequirementWithRelations>[] = [
     { id: 'name', label: t('filters.name'), type: 'text' },
-    { id: 'isActive', label: t('filters.isActive'), type: 'boolean' },
     { id: 'createdAt', label: t('filters.createdAt'), type: 'date' },
   ];
 
   return { columns, filterFields, advancedFilterFields };
 }
 
-export default memo(AreaMainPage);
+export default memo(RequirementMainPage);
