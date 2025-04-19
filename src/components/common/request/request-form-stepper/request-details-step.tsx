@@ -9,7 +9,6 @@ import { generateUuid } from '@/lib/id';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import ReactEditor from '@/components/custom-ui/react-editor';
 import Select, { OptionType } from '@/components/custom-ui/select';
 
 export const requestDetailSchema = z.object({
@@ -108,12 +107,10 @@ const RequestDetailsStep: FC<RequestDetailsStepProps> = ({ statusesOptions, prio
         <FormField
           control={control}
           name="description"
-          render={({ field }) => (
+          render={({}) => (
             <FormItem>
               <FormLabel>{t('description')}</FormLabel>
-              <FormControl>
-                <ReactEditor onContentChange={field.onChange} contentMinHeight={256} contentMaxHeight={640} initialContent={field.value} />
-              </FormControl>
+              <FormControl></FormControl>
               <FormDescription>{t('descriptionDescription')}</FormDescription>
               <FormMessage />
             </FormItem>

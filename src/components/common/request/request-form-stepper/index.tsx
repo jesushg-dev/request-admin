@@ -27,7 +27,7 @@ import RequirementComplianceStep, { getDefaultComplianceValues, requirementCompl
 import SummaryStep from './summary-step';
 
 const { useStepper, utils } = defineStepper(
-  { id: 'clasification', label: 'Clasification', schema: combinedCategoriesSchema },
+  { id: 'classification', label: 'Classification', schema: combinedCategoriesSchema },
   { id: 'requirementCompliance', label: 'Compliance', schema: requirementComplianceSchema },
   { id: 'requestDetails', label: 'Details', schema: requestDetailSchema },
   { id: 'attachments', label: 'Attachments', schema: attachmentSchema },
@@ -65,7 +65,7 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, re
   });
 
   const onSubmit = (values: z.infer<typeof stepper.current.schema>) => {
-    if (stepper.current.id === 'clasification') {
+    if (stepper.current.id === 'classification') {
       const data = values as CombinedCategoriesValues;
       if (data.requestCategory) {
         setRequestCategoryIds(data.requestCategory.map((category) => category.value));
@@ -114,7 +114,7 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, re
                 {(index, currentIndex) => <ChildSteps index={index} currentIndex={currentIndex} currentId={stepper.current.id} />}
               </StepNavigation>
               {stepper.switch({
-                clasification: () => <CategoryStep requestLevelTypes={requestLevelTypes} assignmentLevelTypes={assignmentLevelTypes} />,
+                classification: () => <CategoryStep requestLevelTypes={requestLevelTypes} assignmentLevelTypes={assignmentLevelTypes} />,
                 requirementCompliance: () => <RequirementComplianceStep requestCategoryIds={requestCategoryIds} />,
                 requestDetails: () => <RequestDetailsStep statusesOptions={statusesOptions} prioritiesOptions={prioritiesOptions} />,
                 attachments: () => <AttachmentsStep />,

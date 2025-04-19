@@ -71,7 +71,7 @@ export default async function RootLayout({ children, params }: Props) {
   }
 
   return (
-    <html lang={locale} suppressHydrationWarning className="overflow-hidden">
+    <html lang={locale} suppressHydrationWarning>
       <body id="body" className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <NextIntlClientProvider locale={locale}>

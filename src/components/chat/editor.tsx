@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Toggle } from '@/components/ui/toggle';
-import TiptapEditor, { type TiptapEditorRef } from '@/components/custom-ui/react-editor';
 
 import { Hint } from '../hint';
 import { EmojiPopover } from './emoji-popover';
@@ -30,15 +29,14 @@ interface EditorProps {
   variant?: 'create' | 'update';
 }
 
-const Editor = ({ onCancel, onSubmit, disabled = false, defaultValue = '', placeholder, variant = 'create' }: EditorProps) => {
-  const [text, setText] = useState<string>(defaultValue);
+const Editor = ({ onCancel, onSubmit, disabled = false, defaultValue = '', variant = 'create' }: EditorProps) => {
+  const [text] = useState<string>(defaultValue);
   const [image, setImage] = useState<File | null>(null);
   const [sendEmail, setSendEmail] = useState(false);
   const [sendWhatsApp, setSendWhatsApp] = useState(false);
   const [isToolbarHidden, setIsToolbarHidden] = useState(true);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  const editorRef = useRef<TiptapEditorRef>(null);
   const imageElementRef = useRef<HTMLInputElement>(null);
 
   const toggleToolbar = () => setIsToolbarHidden((prev) => !prev);
@@ -56,8 +54,7 @@ const Editor = ({ onCancel, onSubmit, disabled = false, defaultValue = '', place
   };
 
   const isEmptyContent = () => {
-    const editor = editorRef.current?.editor;
-    return !editor || editor.isEmpty;
+    return false;
   };
 
   return (
@@ -65,20 +62,6 @@ const Editor = ({ onCancel, onSubmit, disabled = false, defaultValue = '', place
       <input type="file" accept="image/*" ref={imageElementRef} onChange={(e) => setImage(e.target.files?.[0] || null)} className="hidden" aria-label="Upload image" />
 
       <div className={cn('flex flex-col overflow-hidden gap-2', disabled && 'opacity-50')}>
-        <TiptapEditor
-          ref={editorRef}
-          ssr={false}
-          output="html"
-          onContentChange={setText}
-          hideMenuBar={isToolbarHidden}
-          hideStatusBar
-          initialContent={defaultValue}
-          contentMinHeight={50}
-          contentMaxHeight={100}
-          isBordered={false}
-          placeholder={placeholder}
-        />
-
         {imagePreview && (
           <div className="p-2">
             <div className="group/image relative flex size-[62px] justify-center">
@@ -107,7 +90,7 @@ const Editor = ({ onCancel, onSubmit, disabled = false, defaultValue = '', place
               </Button>
             </Hint>
 
-            <EmojiPopover onEmojiSelect={(emoji) => editorRef.current?.editor?.commands.insertContent(emoji.emoji)}>
+            <EmojiPopover onEmojiSelect={console.log}>
               <Button disabled={disabled} size="sm" variant="ghost">
                 <Smile className="size-4" />
                 <span className="sr-only">Add emoji</span>

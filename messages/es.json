@@ -45,7 +45,59 @@
     "headerAuthLabel": "Regístrate para acceder a la plataforma",
     "brandName": "Request Engine – Acciones más rápidas, mejores resultados.",
     "pricingTitle": "Elige el plan que mejor se adapte a tus necesidades",
-    "pricingDescription": "Nuestros planes están diseñados para adaptarse a las necesidades de tu negocio. Comienza con nuestro plan gratuito y actualiza a medida que crece tu organización."
+    "pricingDescription": "Nuestros planes están diseñados para adaptarse a las necesidades de tu negocio. Comienza con nuestro plan gratuito y actualiza a medida que crece tu organización.",
+    "features": {
+      "title": "Gestión Inteligente de Solicitudes",
+      "subtitle": "Descubre cómo nuestra plataforma simplifica el soporte y mejora la experiencia del usuario.",
+      "requestManagement": {
+        "title": "Gestión Centralizada de Solicitudes",
+        "description": "Gestiona, prioriza y resuelve solicitudes desde una sola interfaz."
+      },
+      "multichannelSupport": {
+        "title": "Comunicación Multicanal",
+        "description": "Conéctate por correo, chat o notas internas — todo desde un solo lugar."
+      },
+      "dataProtection": {
+        "title": "Seguro y Cumple Normativas",
+        "description": "Protegemos tus datos con cifrado avanzado y controles de acceso por roles."
+      },
+      "quickResponse": {
+        "title": "Flujos de Trabajo Automatizados",
+        "description": "Responde más rápido con automatizaciones y notificaciones inteligentes."
+      }
+    },
+    "cta": {
+      "title": "¿Listo para optimizar tu proceso de soporte?",
+      "description": "Únete a organizaciones que confían en nuestra plataforma para gestionar solicitudes, automatizar flujos de trabajo y ofrecer un soporte rápido y eficiente.",
+      "button": "Comenzar ahora"
+    },
+    "footer": {
+      "description": "Herramientas inteligentes para gestionar solicitudes de servicio y operaciones internas en organizaciones modernas.",
+      "solutions": {
+        "title": "Soluciones",
+        "ticketing": "Gestión de Solicitudes",
+        "automation": "Automatización de Flujos"
+      },
+      "company": {
+        "title": "Compañía",
+        "about": "Sobre Nosotros",
+        "careers": "Trabaja con Nosotros"
+      },
+      "connect": {
+        "title": "Conecta"
+      },
+      "copyright": "Todos los derechos reservados."
+    },
+    "navbar": {
+      "brand": "Request Engine",
+      "menu": {
+        "requests": "Solicitudes",
+        "services": "Catálogo de Servicios",
+        "knowledge": "Base de Conocimiento",
+        "contact": "Contacto",
+        "getDemo": "Solicita una Demo"
+      }
+    }
   },
   "auth": {
     "loginForm": {

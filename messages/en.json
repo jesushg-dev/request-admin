@@ -43,7 +43,59 @@
     "signInButton": "Access System",
     "brandName": "Request Engine – Faster actions, better outcomes",
     "pricingTitle": "Choose a plan that works for you",
-    "pricingDescription": "Our pricing plans are designed to meet the needs of businesses of all sizes. Compare features and find the plan that's right for you."
+    "pricingDescription": "Our pricing plans are designed to meet the needs of businesses of all sizes. Compare features and find the plan that's right for you.",
+    "features": {
+      "title": "Smart Service Management",
+      "subtitle": "Explore how our platform simplifies support operations and improves customer satisfaction.",
+      "requestManagement": {
+        "title": "Centralized Request Management",
+        "description": "Track, prioritize, and resolve service requests efficiently from a single interface."
+      },
+      "multichannelSupport": {
+        "title": "Multichannel Communication",
+        "description": "Connect with users via email, chat, or internal notes — all in one place."
+      },
+      "dataProtection": {
+        "title": "Secure & Compliant",
+        "description": "We safeguard your data with top-tier encryption and role-based access controls."
+      },
+      "quickResponse": {
+        "title": "Automated Workflows",
+        "description": "Respond faster with automation rules and smart notifications."
+      }
+    },
+    "cta": {
+      "title": "Ready to streamline your support process?",
+      "description": "Join organizations that rely on our platform to manage service requests, automate workflows, and deliver fast, efficient support.",
+      "button": "Start Now"
+    },
+    "footer": {
+      "description": "Smart tools for managing service requests and internal operations in modern organizations.",
+      "solutions": {
+        "title": "Solutions",
+        "ticketing": "Service Request Management",
+        "automation": "Workflow Automation"
+      },
+      "company": {
+        "title": "Company",
+        "about": "About Us",
+        "careers": "Careers"
+      },
+      "connect": {
+        "title": "Connect"
+      },
+      "copyright": "All rights reserved."
+    },
+    "navbar": {
+      "brand": "Request Engine",
+      "menu": {
+        "requests": "Requests",
+        "services": "Service Catalog",
+        "knowledge": "Knowledge Base",
+        "contact": "Contact",
+        "getDemo": "Get a Demo"
+      }
+    }
   },
   "auth": {
     "loginForm": {
