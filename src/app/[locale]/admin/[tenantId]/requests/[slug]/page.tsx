@@ -1,5 +1,5 @@
 import { getAuthContext } from '@/actions/authorization';
-import { getAssignmentHierarchyAndLevelsByTenantId, getRequestHierarchyAndLevelsByTenantId } from '@/actions/hierarchy';
+import { getAssignmentHierarchiesAndLevelsByTenantId, getRequestHierarchiesAndLevelsByTenantId } from '@/actions/hierarchy';
 import { getPrioritiesAsOptions, getRequestById, getRequestDetailsByRequest, getStatusesAsOptions } from '@/actions/request';
 import { getCurrentUserTenant } from '@/actions/user';
 import { PermissionActions } from '@/constants/permissions';
@@ -51,8 +51,8 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
     getCurrentUserTenant(tenantId),
     getPrioritiesAsOptions(tenantId),
     getStatusesAsOptions(tenantId),
-    getRequestHierarchyAndLevelsByTenantId(locale, tenantId),
-    getAssignmentHierarchyAndLevelsByTenantId(locale, tenantId),
+    getRequestHierarchiesAndLevelsByTenantId(locale, tenantId),
+    getAssignmentHierarchiesAndLevelsByTenantId(locale, tenantId),
   ]);
 
   const callbackUrl = getPathname({ locale, href: { pathname: '/admin/[tenantId]/requests/[slug]', params: { tenantId, slug } } });

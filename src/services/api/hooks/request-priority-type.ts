@@ -452,7 +452,18 @@ export function useSuspenseCountRequestPriorityType<
 export function useCheckRequestPriorityType<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
-    where?: { id?: string; name?: string; description?: string; isActive?: boolean; createdBy?: string; updatedBy?: string; tenantId?: string; primaryColor?: string; level?: number };
+    where?: {
+      id?: string;
+      name?: string;
+      description?: string;
+      isActive?: boolean;
+      createdBy?: string;
+      updatedBy?: string;
+      tenantId?: string;
+      primaryColor?: string;
+      level?: number;
+      isDefault?: boolean;
+    };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {

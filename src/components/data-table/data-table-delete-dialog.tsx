@@ -43,6 +43,7 @@ export function DataTableDeleteDialog<T>({ items, entityLabel, showTrigger = tru
           {t('delete.description', {
             count: items.length,
             entity: entityLabel,
+            entityPlural: entityLabel + 's',
           })}
         </DialogDescription>
       </DialogHeader>
@@ -65,7 +66,7 @@ export function DataTableDeleteDialog<T>({ items, entityLabel, showTrigger = tru
           <DialogTrigger asChild>
             <Button variant="outline" size="sm">
               <Trash className="mr-2 size-4" aria-hidden="true" />
-              {t('delete.trigger', { count: items.length, entity: entityLabel })}
+              {t('delete.trigger', { count: items.length, entity: entityLabel, entityPlural: entityLabel + 's' })}
             </Button>
           </DialogTrigger>
         )}

@@ -73,7 +73,7 @@ function EmptyState({ title, description, icons = [], actions, className }: Empt
             }
 
             return (
-              <Button key={action.label} onClick={action.onClick} variant={action.variant ?? 'outline'}>
+              <Button key={action.label} type="button" onClick={action.onClick} variant={action.variant ?? 'outline'}>
                 {action.icon && <action.icon className="ml-2 h-4 w-4" />}
                 {action.label}
               </Button>

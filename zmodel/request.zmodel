@@ -74,7 +74,7 @@ model RequestAssignment extends TenantScoped, Auditable {
   area                 Area                @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   statusId             String               //@db.UniqueIdentifier
-  status               RequestStatusType    @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  status               RequestWorkflowStatus    @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   typeId               String               //@db.UniqueIdentifier
   type                 AssignmentType       @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -132,7 +132,8 @@ model RelatedIncident extends TenantScoped, Auditable {
 /// Represents a catalog of possible priority levels for requests or assignments.
 model RequestPriorityType extends TenantScoped, Auditable, CatalogBase {
   primaryColor        String                   //@db.VarChar(10)
-  level               Int                       @gt(0) @lt(10) 
+  level               Int                       @gt(0) @lt(10)
+  isDefault           Boolean                  @default(false)
 
   assignments RequestAssignment[]
   @@unique([name, tenantId])
@@ -146,9 +147,17 @@ model AssignmentType extends  TenantScoped, Auditable, CatalogBase {
   @@unique([name, tenantId])
 }
 
+model RequestWorkflow extends TenantScoped, Auditable, CatalogBase {
+  isDefault           Boolean                   @default(false)
+
+  // RequestWorkflowStatus
+	requestCategory RequestCategory[]
+  requestWorkflowStatus RequestWorkflowStatus[] @relation("RequestWorkflowStatus")
+  requestWorkflowTransition RequestWorkflowTransition[] @relation("RequestWorkflowTransition")
+}
 
 // Represents core ITIL request lifecycle states
-model RequestStatusType extends TenantScoped, Auditable {
+model RequestWorkflowStatus extends TenantScoped, Auditable {
   id                  String                    @id @default(uuid()) //@db.UniqueIdentifier
   // Human-readable state name
   name                String                     @unique //@db.VarChar(50)
@@ -156,8 +165,8 @@ model RequestStatusType extends TenantScoped, Auditable {
   description         String?                   //@db.VarChar(255) 
   // Controls state availability in dropdowns
   isActive            Boolean                   @default(true)
-  // Hierarchical position in ITIL workflow (1=initial, 5=final)
-  level               Int                       @gt(0) @lt(5)
+  // Hierarchical position in ITIL workflow
+  level               Int
   // ITIL-compliant state identifier
   itilCode            String?                   @unique  //@db.VarChar(20)// draft, cab_review, etc.
   // Marks terminal states where no transitions are allowed
@@ -166,9 +175,11 @@ model RequestStatusType extends TenantScoped, Auditable {
   requiresApproval    Boolean                   @default(false)
 
   // Relationship fields
+  workflowId          String                    //@db.UniqueIdentifier
+  workflow            RequestWorkflow           @relation("RequestWorkflowStatus", fields: [workflowId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   assignments         RequestAssignment[]
-  fromTransitions     RequestStatusTransition[] @relation("FromStatus")
-  toTransitions       RequestStatusTransition[] @relation("ToStatus")
+  fromTransitions     RequestWorkflowTransition[] @relation("FromStatus")
+  toTransitions       RequestWorkflowTransition[] @relation("ToStatus")
 
   // Ensures unique ITIL codes per tenant
   @@unique([tenantId, itilCode], name: "unique_itil_code_per_tenant")
@@ -178,9 +189,8 @@ model RequestStatusType extends TenantScoped, Auditable {
   @@index([isFinal], name: "idx_status_final")
 }
 
-
 // Manages state transitions with SLA rules
-model RequestStatusTransition extends TenantScoped, Auditable {
+model RequestWorkflowTransition extends TenantScoped, Auditable {
   id           String            @id @default(uuid()) //@db.UniqueIdentifier
   // Marks default transition path
   isDefault    Boolean           @default(false)
@@ -194,10 +204,12 @@ model RequestStatusTransition extends TenantScoped, Auditable {
   description  String?           //@db.VarChar(255)           
 
   // Relationship fields
-  fromStatusId String            //@db.UniqueIdentifier
-  toStatusId   String            //@db.UniqueIdentifier
-  fromStatus RequestStatusType @relation("FromStatus", fields: [fromStatusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  toStatus RequestStatusType @relation("ToStatus", fields: [toStatusId], references: [id])
+  workflowId          String                    //@db.UniqueIdentifier
+  workflow            RequestWorkflow           @relation("RequestWorkflowTransition", fields: [workflowId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  fromStatusId String?            //@db.UniqueIdentifier
+  toStatusId   String?            //@db.UniqueIdentifier
+  fromStatus RequestWorkflowStatus? @relation("FromStatus", fields: [fromStatusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  toStatus RequestWorkflowStatus? @relation("ToStatus", fields: [toStatusId], references: [id])
 
   // Indexes for common query patterns
   @@index([fromStatusId], name: "idx_transition_source")

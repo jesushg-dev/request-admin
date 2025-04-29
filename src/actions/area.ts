@@ -7,7 +7,7 @@ import { AreaFormStepperType } from '@/components/common/area/area-form-stepper'
 
 import { getAssignmentCategoriesByIds } from './assignment-type';
 
-export async function getAreaByTenandIdAndAreaId(tenantId: string, areaId: string): Promise<AreaFormStepperType> {
+export async function getAreaByTenantIdAndAreaId(tenantId: string, areaId: string): Promise<AreaFormStepperType> {
   const area = await db.area.findFirstOrThrow({
     where: {
       tenantId,
@@ -81,6 +81,12 @@ export async function getAreaByTenandIdAndAreaId(tenantId: string, areaId: strin
       assignmentCategories: {
         select: {
           id: true,
+          hierarchy: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
         },
         where: {
           isActive: true,
@@ -93,7 +99,6 @@ export async function getAreaByTenandIdAndAreaId(tenantId: string, areaId: strin
   });
 
   const categoryIds = area.assignmentCategories.map((category) => category.id);
-  console.log('🚀 ~ getAreaByTenandIdAndAreaId ~ categoryIds:', categoryIds);
   const { categories } = await getAssignmentCategoriesByIds(categoryIds, tenantId);
 
   return {
@@ -101,6 +106,10 @@ export async function getAreaByTenandIdAndAreaId(tenantId: string, areaId: strin
     name: area.name,
     description: area.description ?? '',
     isActive: area.isActive,
+    hierarchyId: {
+      value: area.assignmentCategories[0].hierarchy.id,
+      label: area.assignmentCategories[0].hierarchy.name,
+    },
     roles: area.areaRole.map((role) => ({
       id: role.id,
       name: role.name,

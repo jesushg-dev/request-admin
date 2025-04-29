@@ -1,0 +1,24 @@
+import { FC } from 'react';
+import { getRequestPriorityTypeAsFormById } from '@/actions/priority';
+import { type Locale } from 'next-intl';
+
+import PriorityForm from '@/components/common/priority/priority-form';
+import { PageDialogWrapper } from '@/components/shared/page-container';
+
+interface UpdatePriorityPageProps {
+  params: Promise<{ locale: Locale; slug: string; tenantId: string }>;
+}
+
+const UpdatePriorityPage: FC<UpdatePriorityPageProps> = async ({ params }) => {
+  const { tenantId, slug } = await params;
+
+  const priority = await getRequestPriorityTypeAsFormById(slug, tenantId);
+
+  return (
+    <PageDialogWrapper title="Priority Information" description="Please fill in the required fields to update the priority.">
+      <PriorityForm tenantId={tenantId} initialValues={{ ...priority, id: slug }} />
+    </PageDialogWrapper>
+  );
+};
+
+export default UpdatePriorityPage;

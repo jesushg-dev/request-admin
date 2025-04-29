@@ -34,9 +34,11 @@ model Tenant {
   assignmentHierarchies          AssignmentHierarchy[]
   assignmentHierarchyLevels      AssignmentHierarchyLevel[]
   assignmentCategories           AssignmentCategory[]
+  assignmentCategoryForms        AssignmentCategoryForm[]
   requestHierarchies             RequestHierarchy[]
   requestHierarchyLevels         RequestHierarchyLevel[]
   requestCategories              RequestCategory[]
+  requestCategoryForms           RequestCategoryForm[]
   requirements                   Requirement[]
   requirementTypes               RequirementType[]
   categoryRequirements           RequestCategoryRequirement[]
@@ -46,8 +48,9 @@ model Tenant {
   requests                       Request[]
   requestAssignments             RequestAssignment[]
   assignedUsers                  AssignedUser[]
-  requestStatusTypes             RequestStatusType[]
-  requestStatusTransitions       RequestStatusTransition[]
+  requestWorkflows               RequestWorkflow[]
+  requestWorkflowStatuses        RequestWorkflowStatus[]
+  requestWorkflowTransitions     RequestWorkflowTransition[]
   requirementComplianceTrackings RequirementComplianceTracking[]
   relatedIncidents               RelatedIncident[]
   requestChangeLogs              RequestChangeLog[]
@@ -57,7 +60,6 @@ model Tenant {
   forms                          Form[]
   formSubmissions                FormSubmission[]
   formSubmissionKeys             FormSubmissionKey[]
-  categoryForms                  CategoryForm[]
   menuItems                      MenuItem[]
   areas                          Area[]
   userAreas                      UserTenantArea[]
@@ -467,36 +469,36 @@ model Request {
 
 /// Represents an assignment of a request to users or areas.
 model RequestAssignment {
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime?           @updatedAt()
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime?             @updatedAt()
   deletedAt            DateTime?
   createdBy            String?
   updatedBy            String?
   tenantId             String
-  tenant               Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                   String              @id() @default(uuid())
+  tenant               Tenant                @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                   String                @id() @default(uuid())
   comment              String?
-  assignmentDate       DateTime            @default(now())
+  assignmentDate       DateTime              @default(now())
   unAssignmentDate     DateTime?
   requestId            String
-  request              Request             @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  assignedUsers        AssignedUser[]      @relation("AssignedUsers")
+  request              Request               @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  assignedUsers        AssignedUser[]        @relation("AssignedUsers")
   slaStart             DateTime?
   slaDeadline          DateTime?
   slaEnd               DateTime?
   areaId               String
-  area                 Area                @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  area                 Area                  @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   statusId             String
-  status               RequestStatusType   @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  status               RequestWorkflowStatus @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   typeId               String
-  type                 AssignmentType      @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  type                 AssignmentType        @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   priorityId           String
-  priority             RequestPriorityType @relation(fields: [priorityId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  isActive             Boolean             @default(true)
+  priority             RequestPriorityType   @relation(fields: [priorityId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  isActive             Boolean               @default(true)
   requestCategoryId    String
-  requestCategory      RequestCategory     @relation("RequestCategory", fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  requestCategory      RequestCategory       @relation("RequestCategory", fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   assignmentCategoryId String
-  assignmentCategory   AssignmentCategory  @relation("AssignmentCategory", fields: [assignmentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  assignmentCategory   AssignmentCategory    @relation("AssignmentCategory", fields: [assignmentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([typeId], name: "idx_assignment_type_id")
   @@index([requestId], name: "idx_assignment_request_id")
@@ -561,6 +563,7 @@ model RequestPriorityType {
   tenant       Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   primaryColor String
   level        Int
+  isDefault    Boolean             @default(false)
   assignments  RequestAssignment[]
 
   @@unique([name, tenantId])
@@ -584,49 +587,71 @@ model AssignmentType {
   @@unique([name, tenantId])
 }
 
-model RequestStatusType {
-  createdAt        DateTime                  @default(now())
-  updatedAt        DateTime?                 @updatedAt()
+model RequestWorkflow {
+  id                        String                      @id() @default(uuid())
+  name                      String
+  description               String?
+  isActive                  Boolean                     @default(true)
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime?                   @updatedAt()
+  deletedAt                 DateTime?
+  createdBy                 String?
+  updatedBy                 String?
+  tenantId                  String
+  tenant                    Tenant                      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  isDefault                 Boolean                     @default(false)
+  requestCategory           RequestCategory[]
+  requestWorkflowStatus     RequestWorkflowStatus[]     @relation("RequestWorkflowStatus")
+  requestWorkflowTransition RequestWorkflowTransition[] @relation("RequestWorkflowTransition")
+}
+
+model RequestWorkflowStatus {
+  createdAt        DateTime                    @default(now())
+  updatedAt        DateTime?                   @updatedAt()
   deletedAt        DateTime?
   createdBy        String?
   updatedBy        String?
   tenantId         String
-  tenant           Tenant                    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id               String                    @id() @default(uuid())
-  name             String                    @unique()
+  tenant           Tenant                      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id               String                      @id() @default(uuid())
+  name             String                      @unique()
   description      String?
-  isActive         Boolean                   @default(true)
+  isActive         Boolean                     @default(true)
   level            Int
-  itilCode         String?                   @unique()
-  isFinal          Boolean                   @default(false)
-  requiresApproval Boolean                   @default(false)
+  itilCode         String?                     @unique()
+  isFinal          Boolean                     @default(false)
+  requiresApproval Boolean                     @default(false)
+  workflowId       String
+  workflow         RequestWorkflow             @relation("RequestWorkflowStatus", fields: [workflowId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   assignments      RequestAssignment[]
-  fromTransitions  RequestStatusTransition[] @relation("FromStatus")
-  toTransitions    RequestStatusTransition[] @relation("ToStatus")
+  fromTransitions  RequestWorkflowTransition[] @relation("FromStatus")
+  toTransitions    RequestWorkflowTransition[] @relation("ToStatus")
 
   @@unique([tenantId, itilCode], name: "unique_itil_code_per_tenant")
   @@index([level], name: "idx_status_level")
   @@index([isFinal], name: "idx_status_final")
 }
 
-model RequestStatusTransition {
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime?         @updatedAt()
+model RequestWorkflowTransition {
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime?              @updatedAt()
   deletedAt    DateTime?
   createdBy    String?
   updatedBy    String?
   tenantId     String
-  tenant       Tenant            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id           String            @id() @default(uuid())
-  isDefault    Boolean           @default(false)
-  priority     Int               @default(0)
+  tenant       Tenant                 @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id           String                 @id() @default(uuid())
+  isDefault    Boolean                @default(false)
+  priority     Int                    @default(0)
   maxDuration  Int?
   notifyAfter  Int?
   description  String?
-  fromStatusId String
-  toStatusId   String
-  fromStatus   RequestStatusType @relation("FromStatus", fields: [fromStatusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  toStatus     RequestStatusType @relation("ToStatus", fields: [toStatusId], references: [id])
+  workflowId   String
+  workflow     RequestWorkflow        @relation("RequestWorkflowTransition", fields: [workflowId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  fromStatusId String?
+  toStatusId   String?
+  fromStatus   RequestWorkflowStatus? @relation("FromStatus", fields: [fromStatusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  toStatus     RequestWorkflowStatus? @relation("ToStatus", fields: [toStatusId], references: [id])
 
   @@unique([tenantId, fromStatusId, toStatusId], name: "unique_transition_path")
   @@index([fromStatusId], name: "idx_transition_source")
@@ -1483,18 +1508,20 @@ model RequestCategory {
   updatedBy                   String?
   tenantId                    String
   tenant                      Tenant                       @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  parentCategoryId            String?
-  parentCategory              RequestCategory?             @relation("ParentRequestCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  subcategories               RequestCategory[]            @relation("ParentRequestCategory")
+  sla                         SLA?
+  isEligibleForNewClients     Boolean                      @default(true)
   hierarchyLevelId            String
   hierarchyLevel              RequestHierarchyLevel        @relation(fields: [hierarchyLevelId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   hierarchyId                 String
   hierarchy                   RequestHierarchy             @relation(fields: [hierarchyId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  sla                         SLA?
-  guideDocuments              GuideDocument[]
-  isEligibleForNewClients     Boolean                      @default(true)
-  categoryForms               CategoryForm[]
+  parentCategoryId            String?
+  parentCategory              RequestCategory?             @relation("ParentRequestCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  requestWorkflow             RequestWorkflow?             @relation(fields: [requestWorkflowId], references: [id])
+  requestWorkflowId           String?
+  subcategories               RequestCategory[]            @relation("ParentRequestCategory")
   requestCategoryRequirements RequestCategoryRequirement[]
+  guideDocuments              GuideDocument[]
+  categoryForms               RequestCategoryForm[]
   requests                    RequestAssignment[]          @relation("RequestCategory")
 
   @@unique([name, hierarchyLevelId, parentCategoryId, tenantId])
@@ -1502,7 +1529,7 @@ model RequestCategory {
   @@index([hierarchyId], name: "idx_request_category_hierarchy_id")
 }
 
-model CategoryForm {
+model RequestCategoryForm {
   createdAt         DateTime        @default(now())
   updatedAt         DateTime?       @updatedAt()
   deletedAt         DateTime?
@@ -1692,27 +1719,28 @@ model AssignmentHierarchyLevel {
 /// Represents an assignment category, linked to specific rules and an area.
 /// Represents an assignment category, linked to specific rules and an area.
 model AssignmentCategory {
-  id                 String                   @id() @default(uuid())
-  name               String
-  description        String?
-  isActive           Boolean                  @default(true)
-  createdAt          DateTime                 @default(now())
-  updatedAt          DateTime?                @updatedAt()
-  deletedAt          DateTime?
-  createdBy          String?
-  updatedBy          String?
-  tenantId           String
-  tenant             Tenant                   @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  parentCategoryId   String?
-  parentCategory     AssignmentCategory?      @relation("ParentAssignmentCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  subcategories      AssignmentCategory[]     @relation("ParentAssignmentCategory")
-  hierarchyLevelId   String
-  hierarchyLevel     AssignmentHierarchyLevel @relation(fields: [hierarchyLevelId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  hierarchyId        String
-  hierarchy          AssignmentHierarchy      @relation(fields: [hierarchyId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  areaId             String
-  area               Area                     @relation(fields: [areaId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  assignmentRequests RequestAssignment[]      @relation("AssignmentCategory")
+  id                      String                   @id() @default(uuid())
+  name                    String
+  description             String?
+  isActive                Boolean                  @default(true)
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime?                @updatedAt()
+  deletedAt               DateTime?
+  createdBy               String?
+  updatedBy               String?
+  tenantId                String
+  tenant                  Tenant                   @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parentCategoryId        String?
+  parentCategory          AssignmentCategory?      @relation("ParentAssignmentCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subcategories           AssignmentCategory[]     @relation("ParentAssignmentCategory")
+  hierarchyLevelId        String
+  hierarchyLevel          AssignmentHierarchyLevel @relation(fields: [hierarchyLevelId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  hierarchyId             String
+  hierarchy               AssignmentHierarchy      @relation(fields: [hierarchyId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  areaId                  String
+  area                    Area                     @relation(fields: [areaId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  assignmentRequests      RequestAssignment[]      @relation("AssignmentCategory")
+  assignmentCategoryForms AssignmentCategoryForm[]
 
   @@unique([name, hierarchyLevelId, areaId, parentCategoryId, tenantId])
   @@index([name, tenantId], name: "idx_assignment_category_name_tenant")
@@ -1720,26 +1748,45 @@ model AssignmentCategory {
   @@index([areaId, tenantId], name: "idx_assignment_category_area_tenant")
 }
 
+model AssignmentCategoryForm {
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime?          @updatedAt()
+  deletedAt          DateTime?
+  createdBy          String?
+  updatedBy          String?
+  tenantId           String
+  tenant             Tenant             @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                 String             @id() @default(uuid())
+  isActive           Boolean            @default(true)
+  categoryId         String
+  formId             String
+  assignmentCategory AssignmentCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  form               Form               @relation(fields: [formId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([categoryId, formId, tenantId])
+}
+
 model Form {
-  id              String           @id() @default(uuid())
-  name            String
-  description     String?
-  isActive        Boolean          @default(true)
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime?        @updatedAt()
-  deletedAt       DateTime?
-  createdBy       String?
-  updatedBy       String?
-  tenantId        String
-  tenant          Tenant           @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  content         String           @default("[]")
-  published       Boolean          @default(false)
-  isPublic        Boolean          @default(false)
-  visits          Int              @default(0)
-  submissions     Int              @default(0)
-  shareURL        String           @unique() @default(uuid())
-  categoryForms   CategoryForm[]
-  formSubmissions FormSubmission[]
+  id                      String                   @id() @default(uuid())
+  name                    String
+  description             String?
+  isActive                Boolean                  @default(true)
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime?                @updatedAt()
+  deletedAt               DateTime?
+  createdBy               String?
+  updatedBy               String?
+  tenantId                String
+  tenant                  Tenant                   @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  content                 String                   @default("[]")
+  published               Boolean                  @default(false)
+  isPublic                Boolean                  @default(false)
+  visits                  Int                      @default(0)
+  submissions             Int                      @default(0)
+  shareURL                String                   @unique() @default(uuid())
+  requestCategoryForms    RequestCategoryForm[]
+  assignmentCategoryForms AssignmentCategoryForm[]
+  formSubmissions         FormSubmission[]
 
   @@unique([name, tenantId])
 }

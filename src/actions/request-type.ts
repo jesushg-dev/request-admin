@@ -3,14 +3,14 @@
 import { db } from '@/server/db-client';
 
 import { generateUuid } from '@/lib/id';
-import { RequestCategory, RequestCategoryFormValues } from '@/components/common/category/request-category-form';
+import { RequestCategory } from '@/components/common/request-type/request-type-form';
 
 type FlatCategory = RequestCategory & {
   _parentId?: string;
   depth: number;
 };
 
-export async function getRequestCategoriesByIds(rootIds: string[], tenantId: string): Promise<RequestCategoryFormValues> {
+export async function getRequestCategoriesByIds(rootIds: string[], tenantId: string): Promise<RequestTypeFormValues> {
   const categoriesToFetch = new Set(rootIds);
   const categoryMap = new Map<string, RequestCategory & { parentCategoryId?: string | null }>();
 
@@ -108,7 +108,23 @@ export async function getRequestCategoriesByIds(rootIds: string[], tenantId: str
   // Retrieve only the root categories
   const categories = rootIds.map((rootId) => categoryMap.get(rootId)).filter((cat): cat is RequestCategory => cat !== undefined);
 
-  return { categories };
+  const hierarchy = await db.requestHierarchy.findFirstOrThrow({
+    select: { id: true, name: true },
+    where: {
+      tenantId,
+      categories: {
+        some: { id: { in: rootIds } },
+      },
+    },
+  });
+
+  return {
+    categories,
+    hierarchyId: {
+      value: hierarchy.id,
+      label: hierarchy.name,
+    },
+  };
 }
 
 /**
@@ -142,7 +158,7 @@ export async function upsertCategoriesFlat(categories: RequestCategory[], tenant
             name: cat.name,
             description: cat.description,
             // For creation, isActive is derived from isSubCategoryVisible (as in the original logic)
-            isActive: cat.isSubCategoryVisible,
+            isActive: cat.isActive,
             isEligibleForNewClients: cat.isEligibleForNewClients,
             tenantId,
             // Set parentCategoryId to the provided _parentId or null if there is none
@@ -180,7 +196,7 @@ export async function upsertCategoriesFlat(categories: RequestCategory[], tenant
           update: {
             name: cat.name,
             description: cat.description,
-            isActive: cat.isSubCategoryVisible,
+            isActive: cat.isActive,
             isEligibleForNewClients: cat.isEligibleForNewClients,
             tenantId,
             hierarchyId,

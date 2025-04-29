@@ -121,6 +121,13 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
+        assignmentCategoryForms: {
+          name: 'assignmentCategoryForms',
+          type: 'AssignmentCategoryForm',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
         requestHierarchies: {
           name: 'requestHierarchies',
           type: 'RequestHierarchy',
@@ -138,6 +145,13 @@ const metadata = {
         requestCategories: {
           name: 'requestCategories',
           type: 'RequestCategory',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        requestCategoryForms: {
+          name: 'requestCategoryForms',
+          type: 'RequestCategoryForm',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
@@ -205,16 +219,23 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
-        requestStatusTypes: {
-          name: 'requestStatusTypes',
-          type: 'RequestStatusType',
+        requestWorkflows: {
+          name: 'requestWorkflows',
+          type: 'RequestWorkflow',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
         },
-        requestStatusTransitions: {
-          name: 'requestStatusTransitions',
-          type: 'RequestStatusTransition',
+        requestWorkflowStatuses: {
+          name: 'requestWorkflowStatuses',
+          type: 'RequestWorkflowStatus',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        requestWorkflowTransitions: {
+          name: 'requestWorkflowTransitions',
+          type: 'RequestWorkflowTransition',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
@@ -278,13 +299,6 @@ const metadata = {
         formSubmissionKeys: {
           name: 'formSubmissionKeys',
           type: 'FormSubmissionKey',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
-        categoryForms: {
-          name: 'categoryForms',
-          type: 'CategoryForm',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
@@ -2373,7 +2387,7 @@ const metadata = {
         },
         status: {
           name: 'status',
-          type: 'RequestStatusType',
+          type: 'RequestWorkflowStatus',
           isDataModel: true,
           backLink: 'assignments',
           isRelationOwner: true,
@@ -2703,6 +2717,11 @@ const metadata = {
           name: 'level',
           type: 'Int',
         },
+        isDefault: {
+          name: 'isDefault',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
         assignments: {
           name: 'assignments',
           type: 'RequestAssignment',
@@ -2808,8 +2827,105 @@ const metadata = {
         },
       },
     },
-    requestStatusType: {
-      name: 'RequestStatusType',
+    requestWorkflow: {
+      name: 'RequestWorkflow',
+      fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        description: {
+          name: 'description',
+          type: 'String',
+          isOptional: true,
+        },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'requestWorkflows',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        isDefault: {
+          name: 'isDefault',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        requestCategory: {
+          name: 'requestCategory',
+          type: 'RequestCategory',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'requestWorkflow',
+        },
+        requestWorkflowStatus: {
+          name: 'requestWorkflowStatus',
+          type: 'RequestWorkflowStatus',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'workflow',
+        },
+        requestWorkflowTransition: {
+          name: 'requestWorkflowTransition',
+          type: 'RequestWorkflowTransition',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'workflow',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    requestWorkflowStatus: {
+      name: 'RequestWorkflowStatus',
       fields: {
         createdAt: {
           name: 'createdAt',
@@ -2847,7 +2963,7 @@ const metadata = {
           name: 'tenant',
           type: 'Tenant',
           isDataModel: true,
-          backLink: 'requestStatusTypes',
+          backLink: 'requestWorkflowStatuses',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
@@ -2890,6 +3006,20 @@ const metadata = {
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: false }] }],
         },
+        workflowId: {
+          name: 'workflowId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'workflow',
+        },
+        workflow: {
+          name: 'workflow',
+          type: 'RequestWorkflow',
+          isDataModel: true,
+          backLink: 'requestWorkflowStatus',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'workflowId' },
+        },
         assignments: {
           name: 'assignments',
           type: 'RequestAssignment',
@@ -2899,14 +3029,14 @@ const metadata = {
         },
         fromTransitions: {
           name: 'fromTransitions',
-          type: 'RequestStatusTransition',
+          type: 'RequestWorkflowTransition',
           isDataModel: true,
           isArray: true,
           backLink: 'fromStatus',
         },
         toTransitions: {
           name: 'toTransitions',
-          type: 'RequestStatusTransition',
+          type: 'RequestWorkflowTransition',
           isDataModel: true,
           isArray: true,
           backLink: 'toStatus',
@@ -2931,8 +3061,8 @@ const metadata = {
         },
       },
     },
-    requestStatusTransition: {
-      name: 'RequestStatusTransition',
+    requestWorkflowTransition: {
+      name: 'RequestWorkflowTransition',
       fields: {
         createdAt: {
           name: 'createdAt',
@@ -2970,7 +3100,7 @@ const metadata = {
           name: 'tenant',
           type: 'Tenant',
           isDataModel: true,
-          backLink: 'requestStatusTransitions',
+          backLink: 'requestWorkflowTransitions',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
@@ -3005,30 +3135,48 @@ const metadata = {
           type: 'String',
           isOptional: true,
         },
+        workflowId: {
+          name: 'workflowId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'workflow',
+        },
+        workflow: {
+          name: 'workflow',
+          type: 'RequestWorkflow',
+          isDataModel: true,
+          backLink: 'requestWorkflowTransition',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'workflowId' },
+        },
         fromStatusId: {
           name: 'fromStatusId',
           type: 'String',
+          isOptional: true,
           isForeignKey: true,
           relationField: 'fromStatus',
         },
         toStatusId: {
           name: 'toStatusId',
           type: 'String',
+          isOptional: true,
           isForeignKey: true,
           relationField: 'toStatus',
         },
         fromStatus: {
           name: 'fromStatus',
-          type: 'RequestStatusType',
+          type: 'RequestWorkflowStatus',
           isDataModel: true,
+          isOptional: true,
           backLink: 'fromTransitions',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'fromStatusId' },
         },
         toStatus: {
           name: 'toStatus',
-          type: 'RequestStatusType',
+          type: 'RequestWorkflowStatus',
           isDataModel: true,
+          isOptional: true,
           backLink: 'toTransitions',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'toStatusId' },
@@ -7159,28 +7307,17 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
-        parentCategoryId: {
-          name: 'parentCategoryId',
-          type: 'String',
-          isOptional: true,
-          isForeignKey: true,
-          relationField: 'parentCategory',
-        },
-        parentCategory: {
-          name: 'parentCategory',
-          type: 'RequestCategory',
+        sla: {
+          name: 'sla',
+          type: 'SLA',
           isDataModel: true,
           isOptional: true,
-          backLink: 'subcategories',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'parentCategoryId' },
+          backLink: 'requestCategory',
         },
-        subcategories: {
-          name: 'subcategories',
-          type: 'RequestCategory',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'parentCategory',
+        isEligibleForNewClients: {
+          name: 'isEligibleForNewClients',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
         },
         hierarchyLevelId: {
           name: 'hierarchyLevelId',
@@ -7210,11 +7347,50 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'hierarchyId' },
         },
-        sla: {
-          name: 'sla',
-          type: 'SLA',
+        parentCategoryId: {
+          name: 'parentCategoryId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'parentCategory',
+        },
+        parentCategory: {
+          name: 'parentCategory',
+          type: 'RequestCategory',
           isDataModel: true,
           isOptional: true,
+          backLink: 'subcategories',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'parentCategoryId' },
+        },
+        requestWorkflow: {
+          name: 'requestWorkflow',
+          type: 'RequestWorkflow',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'requestCategory',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'requestWorkflowId' },
+        },
+        requestWorkflowId: {
+          name: 'requestWorkflowId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'requestWorkflow',
+        },
+        subcategories: {
+          name: 'subcategories',
+          type: 'RequestCategory',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'parentCategory',
+        },
+        requestCategoryRequirements: {
+          name: 'requestCategoryRequirements',
+          type: 'RequestCategoryRequirement',
+          isDataModel: true,
+          isArray: true,
           backLink: 'requestCategory',
         },
         guideDocuments: {
@@ -7224,24 +7400,12 @@ const metadata = {
           isArray: true,
           backLink: 'requestCategory',
         },
-        isEligibleForNewClients: {
-          name: 'isEligibleForNewClients',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: true }] }],
-        },
         categoryForms: {
           name: 'categoryForms',
-          type: 'CategoryForm',
+          type: 'RequestCategoryForm',
           isDataModel: true,
           isArray: true,
           backLink: 'requestCategories',
-        },
-        requestCategoryRequirements: {
-          name: 'requestCategoryRequirements',
-          type: 'RequestCategoryRequirement',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'requestCategory',
         },
         requests: {
           name: 'requests',
@@ -7262,8 +7426,8 @@ const metadata = {
         },
       },
     },
-    categoryForm: {
-      name: 'CategoryForm',
+    requestCategoryForm: {
+      name: 'RequestCategoryForm',
       fields: {
         createdAt: {
           name: 'createdAt',
@@ -7301,7 +7465,7 @@ const metadata = {
           name: 'tenant',
           type: 'Tenant',
           isDataModel: true,
-          backLink: 'categoryForms',
+          backLink: 'requestCategoryForms',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
@@ -7340,7 +7504,7 @@ const metadata = {
           name: 'form',
           type: 'Form',
           isDataModel: true,
-          backLink: 'categoryForms',
+          backLink: 'requestCategoryForms',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'formId' },
         },
@@ -8269,6 +8433,13 @@ const metadata = {
           isArray: true,
           backLink: 'assignmentCategory',
         },
+        assignmentCategoryForms: {
+          name: 'assignmentCategoryForms',
+          type: 'AssignmentCategoryForm',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'assignmentCategory',
+        },
       },
       uniqueConstraints: {
         id: {
@@ -8278,6 +8449,100 @@ const metadata = {
         name_hierarchyLevelId_areaId_parentCategoryId_tenantId: {
           name: 'name_hierarchyLevelId_areaId_parentCategoryId_tenantId',
           fields: ['name', 'hierarchyLevelId', 'areaId', 'parentCategoryId', 'tenantId'],
+        },
+      },
+    },
+    assignmentCategoryForm: {
+      name: 'AssignmentCategoryForm',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'assignmentCategoryForms',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
+        categoryId: {
+          name: 'categoryId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'assignmentCategory',
+        },
+        formId: {
+          name: 'formId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'form',
+        },
+        assignmentCategory: {
+          name: 'assignmentCategory',
+          type: 'AssignmentCategory',
+          isDataModel: true,
+          backLink: 'assignmentCategoryForms',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'categoryId' },
+        },
+        form: {
+          name: 'form',
+          type: 'Form',
+          isDataModel: true,
+          backLink: 'assignmentCategoryForms',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'formId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        categoryId_formId_tenantId: {
+          name: 'categoryId_formId_tenantId',
+          fields: ['categoryId', 'formId', 'tenantId'],
         },
       },
     },
@@ -8374,9 +8639,16 @@ const metadata = {
           type: 'String',
           attributes: [{ name: '@default', args: [] }],
         },
-        categoryForms: {
-          name: 'categoryForms',
-          type: 'CategoryForm',
+        requestCategoryForms: {
+          name: 'requestCategoryForms',
+          type: 'RequestCategoryForm',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'form',
+        },
+        assignmentCategoryForms: {
+          name: 'assignmentCategoryForms',
+          type: 'AssignmentCategoryForm',
           isDataModel: true,
           isArray: true,
           backLink: 'form',
@@ -9755,10 +10027,11 @@ const metadata = {
     user: ['UserTenant', 'InvitationTenant', 'Session', 'Account', 'TwoFactor', 'SsoProvider', 'Apikey', 'Passkey'],
     requestAssignment: ['AssignedUser'],
     area: ['AssignmentCategory'],
-    requestCategory: ['CategoryForm'],
+    requestCategory: ['RequestCategoryForm'],
     assignmentHierarchy: ['AssignmentCategory'],
     assignmentHierarchyLevel: ['AssignmentCategory'],
-    form: ['CategoryForm'],
+    assignmentCategory: ['AssignmentCategoryForm'],
+    form: ['RequestCategoryForm', 'AssignmentCategoryForm'],
     formSubmission: ['FormSubmissionKey'],
   },
   authModel: 'User',

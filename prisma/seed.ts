@@ -183,57 +183,7 @@ async function main() {
   }
 
   // Create ITIL states
-  const itilStates = getITILStatuses();
-  for (const state of itilStates) {
-    await prisma.requestStatusType.create({
-      data: {
-        ...state,
-        tenant: { connect: { id: UNSTABLE_TENANT_ID } },
-        createdBy: 'system-seed',
-        updatedBy: 'system-seed',
-      },
-    });
-  }
-
-  // Create ITIL transitions
-  const itilTransitions = getITILTransitions();
-  for (const transition of itilTransitions) {
-    // Get status IDs from ITIL codes
-    const fromStatus = await prisma.requestStatusType.findUnique({
-      where: {
-        unique_itil_code_per_tenant: {
-          tenantId: UNSTABLE_TENANT_ID,
-          itilCode: transition.fromCode,
-        },
-      },
-    });
-
-    const toStatus = await prisma.requestStatusType.findUnique({
-      where: {
-        unique_itil_code_per_tenant: {
-          tenantId: UNSTABLE_TENANT_ID,
-          itilCode: transition.toCode,
-        },
-      },
-    });
-
-    if (!fromStatus || !toStatus) {
-      throw new Error(`Missing status for transition: ${transition.fromCode}->${transition.toCode}`);
-    }
-
-    await prisma.requestStatusTransition.create({
-      data: {
-        maxDuration: transition.maxDuration,
-        isDefault: transition.isDefault || false,
-        priority: transition.priority || 0,
-        description: transition.description || '',
-        fromStatus: { connect: { id: fromStatus.id } },
-        toStatus: { connect: { id: toStatus.id } },
-        tenant: { connect: { id: UNSTABLE_TENANT_ID } },
-        createdBy: 'system-seed',
-      },
-    });
-  }
+  await seedITILWorkflow();
 
   // Create ITIL Assignment Types
   const assignmentTypes = getITILAssignmentTypes();
@@ -2555,6 +2505,78 @@ async function createModuleAndFeature() {
       },
     });
   }
+}
+
+export async function seedITILWorkflow() {
+  // 1. Crear el workflow principal
+  const workflow = await prisma.requestWorkflow.create({
+    data: {
+      tenantId: UNSTABLE_TENANT_ID,
+      name: 'ITIL Default Workflow',
+      description: 'Standard ITIL workflow for request management',
+      isActive: true,
+      isDefault: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  });
+
+  // 2. Mapear estados
+  const statuses = getITILStatuses().map((status) => ({
+    ...status,
+    name: JSON.stringify(status.name),
+    description: JSON.stringify(status.description),
+  }));
+
+  // 3. Crear estados en la base de datos
+  const createdStatuses = await Promise.all(
+    statuses.map(async (status) => {
+      return prisma.requestWorkflowStatus.create({
+        data: {
+          tenantId: UNSTABLE_TENANT_ID,
+          workflowId: workflow.id,
+          itilCode: status.itilCode,
+          level: status.level,
+          name: status.name,
+          description: status.description,
+          isActive: status.isActive,
+          isFinal: status.isFinal,
+          requiresApproval: status.requiresApproval,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+    })
+  );
+
+  // 4. Mapear IDs de estados por itilCode
+  const statusMap = new Map(createdStatuses.map((status) => [status.itilCode, status.id]));
+
+  // 5. Procesar transiciones
+  const transitions = getITILTransitions().map((transition) => ({
+    ...transition,
+    description: JSON.stringify(transition.description),
+  }));
+
+  // 6. Crear transiciones en la base de datos
+  await Promise.all(
+    transitions.map(async (transition) => {
+      return prisma.requestWorkflowTransition.create({
+        data: {
+          workflowId: workflow.id,
+          tenantId: UNSTABLE_TENANT_ID,
+          fromStatusId: statusMap.get(transition.fromCode),
+          toStatusId: statusMap.get(transition.toCode),
+          maxDuration: transition.maxDuration,
+          isDefault: transition.isDefault || false,
+          priority: transition.priority || 0,
+          description: transition.description,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+    })
+  );
 }
 
 // Definir permisos comunes para reutilizar

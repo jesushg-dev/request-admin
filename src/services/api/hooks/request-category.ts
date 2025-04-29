@@ -449,10 +449,11 @@ export function useCheckRequestCategory<TError = DefaultError>(
       createdBy?: string;
       updatedBy?: string;
       tenantId?: string;
-      parentCategoryId?: string;
+      isEligibleForNewClients?: boolean;
       hierarchyLevelId?: string;
       hierarchyId?: string;
-      isEligibleForNewClients?: boolean;
+      parentCategoryId?: string;
+      requestWorkflowId?: string;
     };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions

@@ -28,28 +28,32 @@ model RequestHierarchyLevel extends TenantScoped, Auditable, CatalogBase {
 
 /// Represents a request category, with SLA and required documents.
 model RequestCategory extends TenantScoped, Auditable, CatalogBase {
-  parentCategoryId           String?                      //@db.UniqueIdentifier // ID of the parent category
-  parentCategory             RequestCategory?             @relation("ParentRequestCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Handle self-relation correctly
-  subcategories              RequestCategory[]            @relation("ParentRequestCategory") // Subcategories under this category
+  sla                        SLA?                  // SLA specific to this category
+  isEligibleForNewClients    Boolean                      @default(true) // Indicates if the category accepts new clients
   hierarchyLevelId           String                       //@db.UniqueIdentifier
   hierarchyLevel             RequestHierarchyLevel        @relation(fields: [hierarchyLevelId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
   hierarchyId                String                       //@db.UniqueIdentifier
   hierarchy                  RequestHierarchy             @relation(fields: [hierarchyId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
-  sla                        SLA?                  // SLA specific to this category
-  guideDocuments             GuideDocument[]       // Documents guiding the resolution of requests
-  isEligibleForNewClients    Boolean                      @default(true) // Indicates if the category accepts new clients
-  categoryForms              CategoryForm[]        // Links the category to multiple forms
-  requestCategoryRequirements RequestCategoryRequirement[] // Requirement mappings
+  parentCategoryId           String?                      //@db.UniqueIdentifier // ID of the parent category
+  parentCategory             RequestCategory?             @relation("ParentRequestCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Handle self-relation correctly
+ 
+	requestWorkflow RequestWorkflow? @relation(fields: [requestWorkflowId], references: [id])
+	requestWorkflowId String? //@db.UniqueIdentifier // ID of the associated request workflow
 
+  subcategories              RequestCategory[]            @relation("ParentRequestCategory") // Subcategories under this category
+  requestCategoryRequirements RequestCategoryRequirement[] // Requirement mappings
+  guideDocuments             GuideDocument[]       // Documents guiding the resolution of requests
+  categoryForms              RequestCategoryForm[]        // Links the category to multiple forms
   requests                   RequestAssignment[]          @relation("RequestCategory") // Requests where this category is the request category
 
   @@index([name], name: "idx_request_category_name")
   @@index([hierarchyId], name: "idx_request_category_hierarchy_id")
 
   @@unique([name, hierarchyLevelId, parentCategoryId, tenantId])
+
 }
 
-model CategoryForm extends TenantScoped, Auditable {
+model RequestCategoryForm extends TenantScoped, Auditable {
   // Primary identifier
   id                String          @id @default(uuid()) //@db.UniqueIdentifier
   isActive          Boolean         @default(true) // Indicates if the link is active
@@ -180,10 +184,27 @@ model AssignmentCategory extends TenantScoped, Auditable, CatalogBase {
   area               Area                     @relation(fields: [areaId], references: [id], onDelete: Cascade, onUpdate: NoAction) // Maintain referential integrity
 
   assignmentRequests RequestAssignment[]      @relation("AssignmentCategory") // Requests where this category is the assignment category
+  assignmentCategoryForms AssignmentCategoryForm[] // Forms linked to this category
 
   @@index([name, tenantId], name: "idx_assignment_category_name_tenant")
   @@index([hierarchyId, tenantId], name: "idx_assignment_category_hierarchy_tenant")
   @@index([areaId, tenantId], name: "idx_assignment_category_area_tenant")
 
   @@unique([name, hierarchyLevelId, areaId, parentCategoryId, tenantId])
+}
+
+model AssignmentCategoryForm extends TenantScoped, Auditable {
+  // Primary identifier
+  id                String          @id @default(uuid()) //@db.UniqueIdentifier
+  isActive          Boolean         @default(true) // Indicates if the link is active
+
+  // Relationships
+  categoryId        String          //@db.UniqueIdentifier // ID of the associated category
+  formId            String          //@db.UniqueIdentifier // ID of the associated form
+
+  assignmentCategory AssignmentCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  form              Form            @relation(fields: [formId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  // Constraints
+  @@unique([categoryId, formId, tenantId]) // Ensures no duplicate links between the same category and form
 }

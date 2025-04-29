@@ -20,8 +20,8 @@
     },
     "delete": {
       "title": "¿Estás completamente seguro?",
-      "description": "Esta acción no se puede deshacer. Esto eliminará permanentemente tus {count} {entity}{count, plural, one {} other {s}} de nuestros servidores.",
-      "trigger": "Eliminar ({count} {entity}{count, plural, one {} other {s}})",
+      "description": "{count, plural, one {Esta acción no se puede deshacer. Esto eliminará permanentemente tu {entity} de nuestros servidores.} other {Esta acción no se puede deshacer. Esto eliminará permanentemente tus {entityPlural} de nuestros servidores.}}",
+      "trigger": "{count, plural, one {Eliminar 1 {entity}} other {Eliminar # {entityPlural}}}",
       "confirm": "Eliminar",
       "cancel": "Cancelar",
       "success": "Se eliminaron correctamente {count} {entity}{count, plural, one {} other {s}}.",
@@ -128,7 +128,9 @@
       },
       "loading": "Cargando...",
       "success": "¡Bienvenido de nuevo",
-      "error": "Ha ocurrido un error: {error}"
+      "error": "Ha ocurrido un error: {error}",
+      "headerTitle": "Iniciar sesión",
+      "headerLabel": "Accede a tu cuenta para continuar"
     },
     "twoFactor": {
       "headerTitle": "Autenticación de dos factores",
@@ -1280,7 +1282,134 @@
       },
       "create": {
         "title": "Categoría de Solicitud",
-        "subtitle": "Crea una nueva categoría de solicitud. Una categoría puede tener múltiples subcategorías recursivas según las necesidades de tu negocio."
+        "subtitle": "Crea una nueva categoría de solicitud. Una categoría puede tener múltiples subcategorías recursivas según las necesidades de tu negocio.",
+        "hierarchyLabel": "Jerarquía asociada",
+        "hierarchyDescription": "Selecciona la estructura organizacional relacionada",
+        "saveButton": "Guardar",
+        "savingChanges": "Guardando cambios...",
+        "changeHierarchyWarning": "¡Al cambiar de jerarquía se reiniciarán las categorías! ¿Deseas continuar?",
+        "saveSuccess": "Configuración guardada exitosamente",
+        "saveError": "Error al guardar: {error}",
+        "unknownError": "Error desconocido",
+        "editTitle": "Editar Categoría",
+        "createTitle": "Crear Nueva Categoría",
+        "cancel": "Cancelar",
+        "update": "Actualizar Categoría",
+        "create": "Crear Categoría",
+        "tabs": {
+          "basic": "Información Básica",
+          "requirements": "Requisitos",
+          "forms": "Formularios",
+          "sla": "SLA",
+          "executionSteps": "Pasos de Ejecución",
+          "guides": "Guías"
+        },
+        "basicTab": {
+          "name": "Nombre",
+          "namePlaceholder": "Nombre de la categoría",
+          "description": "Descripción",
+          "descriptionPlaceholder": "Descripción breve de esta categoría",
+          "active": "Activo",
+          "activeDescription": "¿Esta categoría está activa y disponible?",
+          "newClients": "Nuevos Clientes",
+          "newClientsDescription": "¿Disponible para nuevos clientes?"
+        },
+        "requirementsTab": {
+          "title": "Requisitos",
+          "empty": "No hay requisitos seleccionados",
+          "addTitle": "Agregar Requisitos"
+        },
+        "formsTab": {
+          "title": "Formularios",
+          "empty": "No hay formularios seleccionados",
+          "addTitle": "Agregar Formularios"
+        },
+        "slaTab": {
+          "resolutionTime": "Tiempo de Resolución (horas)",
+          "resolutionDescription": "Tiempo máximo para resolver solicitudes en esta categoría",
+          "escalationTime": "Tiempo de Escalación (horas)",
+          "escalationDescription": "Tiempo antes de que la solicitud sea escalada"
+        },
+        "executionTab": {
+          "executionModel": "Modelo de Ejecución",
+          "executionModelDescription": "Configura los pasos necesarios para ejecutar este tipo de solicitud",
+          "noStepsConfigured": "No hay pasos configurados",
+          "totalEstimatedTime": "Tiempo Total Estimado",
+          "minutes": "minutos",
+          "linkedGuides": "Guías Vinculadas",
+          "noLinkedGuides": "No hay guías vinculadas",
+          "guideNotFound": "Guía no encontrada",
+          "updateSuccess": "Paso actualizado",
+          "updateSuccessDescription": "El paso ha sido actualizado correctamente",
+          "createSuccess": "Paso agregado",
+          "createSuccessDescription": "El paso ha sido agregado correctamente",
+          "deleteSuccess": "Paso eliminado",
+          "deleteSuccessDescription": "El paso ha sido eliminado correctamente",
+          "linkSuccess": "Guías vinculadas",
+          "linkSuccessDescription": "Las guías han sido vinculadas correctamente",
+          "moveUp": "Mover arriba",
+          "moveDown": "Mover abajo",
+          "deleteStep": "Eliminar paso",
+          "editStep": "Editar paso",
+          "addStep": "Agregar paso",
+          "stepName": "Nombre del paso",
+          "stepNameDescription": "Nombre descriptivo para identificar el paso en el proceso",
+          "stepNamePlaceholder": "Ej: Verificación de documentos",
+          "description": "Descripción",
+          "stepDescriptionDescription": "Detalles adicionales sobre el propósito del paso",
+          "stepDescriptionPlaceholder": "Ej: Revisar documentos de identidad válidos",
+          "estimatedTime": "Tiempo estimado",
+          "estimatedTimeDescription": "Tiempo aproximado que toma completar este paso",
+          "minutesPlaceholder": "Minutos",
+          "responsible": "Responsable",
+          "responsibleDescription": "Rol o área encargada de ejecutar este paso",
+          "responsiblePlaceholder": "Ej: Agente de servicio",
+          "cancel": "Cancelar",
+          "saveChanges": "Guardar cambios",
+          "createStep": "Crear paso",
+          "linkGuides": "Vincular guías",
+          "linkGuidesDescription": "Selecciona las guías relacionadas con este paso",
+          "selectGuides": "Guías disponibles",
+          "selectGuidesDescription": "Selecciona una o más guías para vincular",
+          "save": "Guardar"
+        },
+        "guidesTab": {
+          "guidesTitle": "Guías y Documentación",
+          "guidesDescription": "Administra las guías y documentos relacionados",
+          "addGuide": "Agregar Guía",
+          "noGuides": "No hay guías registradas",
+          "fileType": "Tipo de Archivo",
+          "version": "Versión",
+          "lastUpdated": "Actualizado",
+          "view": "Ver",
+          "download": "Descargar",
+          "editGuide": "Editar Guía",
+          "deleteGuide": "Eliminar Guía",
+          "newGuide": "Nueva Guía",
+          "editGuideDescription": "Modifica los detalles de la guía",
+          "newGuideDescription": "Completa los campos para agregar una nueva guía",
+          "title": "Título",
+          "titleDescription": "Nombre principal de la guía",
+          "titlePlaceholder": "Ej: Manual de usuario",
+          "guideDescriptionDescription": "Descripción detallada del contenido",
+          "descriptionPlaceholder": "Ej: Instrucciones de uso del sistema",
+          "fileTypeDescription": "Tipo de documento o recurso",
+          "selectFileType": "Selecciona un tipo",
+          "versionDescription": "Versión actual del documento",
+          "versionPlaceholder": "Ej: 1.0.1",
+          "fileUrl": "URL del Archivo",
+          "fileUrlDescription": "Enlace público al documento",
+          "fileUrlPlaceholder": "https://ejemplo.com/manual.pdf",
+          "lastUpdatedDescription": "Fecha de última actualización",
+          "createGuide": "Crear Guía",
+          "updateSuccess": "Guía actualizada",
+          "createSuccess": "Guía creada",
+          "deleteSuccess": "Guía eliminada",
+          "cancel": "Cancelar",
+          "saveChanges": "Guardar cambios",
+          "description": "Descripción",
+          "locale": "Locale"
+        }
       }
     },
     "role": {
@@ -1334,6 +1463,36 @@
         "savingChanges": "Guardando cambios...",
         "successSave": "Requisito '{name}' guardado exitosamente.",
         "errorSave": "Error al guardar el requisito: {message}"
+      }
+    },
+    "requirementType": {
+      "entityLabel": "Tipo de Requisito",
+      "columns": {
+        "name": "Nombre",
+        "description": "Descripción",
+        "createdAt": "Fecha de Creación"
+      },
+      "filters": {
+        "name": "Nombre",
+        "namePlaceholder": "Buscar por nombre",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Buscar por descripción",
+        "createdAt": "Fecha de Creación"
+      },
+      "form": {
+        "savingChanges": "Guardando cambios...",
+        "successSave": "{name} se ha guardado correctamente.",
+        "errorSave": "Error al guardar: {message}",
+        "name": "Nombre",
+        "namePlaceholder": "Introduce el nombre",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Introduce la descripción",
+        "isActive": "Activo",
+        "isActivePlaceholder": "Marca si está activo",
+        "isDefault": "Predeterminado",
+        "isDefaultPlaceholder": "Marca si es predeterminado",
+        "update": "Actualizar",
+        "create": "Crear"
       }
     },
     "security": {
@@ -2181,6 +2340,202 @@
         "create": "Crear",
         "saveChanges": "Guardar cambios"
       }
+    },
+    "requestPriorityType": {
+      "entityLabel": "Tipos de Prioridad de Solicitud",
+      "newRequestPriorityType": "Nuevo Tipo de Prioridad de Solicitud",
+      "dialog": {
+        "title": "Crear Nuevo Tipo de Prioridad de Solicitud",
+        "description": "Rellene los detalles para crear un nuevo tipo de prioridad de solicitud."
+      },
+      "form": {
+        "name": "Nombre",
+        "namePlaceholder": "Ingrese el nombre de la prioridad",
+        "color": "Color",
+        "colorPlaceholder": "Seleccione un color primario",
+        "preview": "Vista previa",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Ingrese la descripción",
+        "level": "Nivel",
+        "levelPlaceholder": "Ingrese el nivel de prioridad (0–100)",
+        "isActive": "Activo",
+        "isActivePlaceholder": "Alternar para activar o desactivar",
+        "isDefault": "Predeterminado",
+        "isDefaultPlaceholder": "Alternar para establecer como predeterminado",
+        "create": "Crear",
+        "update": "Actualizar",
+        "savingChanges": "Guardando cambios…",
+        "successSave": "Guardado exitosamente \"{name}\"",
+        "errorSave": "Error al guardar: {message}"
+      },
+      "actions": {
+        "cancel": "Cancelar",
+        "create": "Crear"
+      },
+      "columns": {
+        "name": "Nombre",
+        "selectRow": "Seleccionar fila",
+        "description": "Descripción",
+        "requests": "Solicitudes",
+        "requestsCount": "Cantidad de Solicitudes",
+        "createdAt": "Creado el"
+      },
+      "filters": {
+        "name": "Nombre",
+        "namePlaceholder": "Filtrar por nombre",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Filtrar por descripción",
+        "createdAt": "Creado el"
+      }
+    },
+    "workflow": {
+      "main": {
+        "entityLabel": "Flujos de trabajo",
+        "columns": {
+          "name": "Nombre",
+          "description": "Descripción",
+          "requestTypes": "Tipos de solicitud",
+          "states": "Estados",
+          "lastModified": "Última modificación",
+          "actions": "Acciones",
+          "default": "Es predeterminado"
+        },
+        "badges": {
+          "default": "Predeterminado",
+          "categories": "categorías",
+          "states": "estados",
+          "transitions": "transiciones",
+          "yes": "Sí",
+          "no": "No"
+        },
+        "filters": {
+          "name": "Nombre",
+          "createdAt": "Fecha de creación",
+          "default": "Predeterminado",
+          "namePlaceholder": "Filtrar por nombre...",
+          "createdAtPlaceholder": "Seleccionar fecha"
+        },
+        "actions": {
+          "view": "Ver",
+          "edit": "Editar",
+          "duplicate": "Duplicar",
+          "delete": "Eliminar"
+        }
+      },
+      "form": {
+        "workflowName": "Nombre del Flujo de Trabajo",
+        "workflowNameDescription": "El nombre de tu flujo de trabajo",
+        "workflowNamePlaceholder": "Ingrese nombre del flujo",
+        "description": "Descripción",
+        "descriptionDescription": "Detalles adicionales sobre el flujo de trabajo",
+        "descriptionPlaceholder": "Ingrese descripción del flujo",
+        "defaultWorkflow": "Flujo Predeterminado",
+        "defaultWorkflowDesc": "Establecer como flujo predeterminado para nuevas solicitudes",
+        "requireComments": "Requerir Comentarios",
+        "requireCommentsDesc": "Comentarios obligatorios para cambios de estado",
+        "notifyChanges": "Notificar Cambios",
+        "notifyChangesDesc": "Enviar notificaciones cuando el flujo cambie",
+        "editorTab": "Editor visual",
+        "statesTab": "Estados",
+        "transitionsTab": "Transiciones",
+        "validationErrors": "Errores de validación",
+        "states": "estados",
+        "transitions": "transiciones",
+        "initialState": "Estado inicial",
+        "finalState": "Estado final",
+        "requiresJustification": "Requiere justificación",
+        "requiresApproval": "Requiere aprobación",
+        "workflowTransitions": "Transiciones entre estados",
+        "newState": "Nuevo estado",
+        "newTransition": "Nueva transición",
+        "statesTabTitle": "Estados del flujo de trabajo",
+        "errors": {
+          "initialState": "El flujo de trabajo debe tener al menos un estado inicial",
+          "finalState": "El flujo de trabajo debe tener al menos un estado final",
+          "disconnectedStates": "Hay estados desconectados: {states}",
+          "statesWithoutPathToFinal": "Hay estados sin un camino hacia un estado final: {states}"
+        },
+        "validationErrorsTitle": "Errores de validación",
+        "validationErrorsMessage": "Hay errores en el flujo de trabajo. Por favor, corríjalos antes de guardar.",
+        "savedTitle": "Flujo de trabajo guardado",
+        "savedMessage": "El flujo de trabajo ha sido guardado exitosamente.",
+        "state": {
+          "updatedTitle": "Estado actualizado",
+          "updatedMessage": "El estado \"{stateName}\" ha sido actualizado exitosamente.",
+          "addedTitle": "Estado agregado",
+          "addedMessage": "El estado \"{stateName}\" ha sido agregado exitosamente.",
+          "deleteErrorTitle": "No se puede eliminar",
+          "deleteErrorMessage": "Este estado tiene transiciones asociadas. Elimine las transiciones primero.",
+          "deletedTitle": "Estado eliminado",
+          "deletedMessage": "El estado ha sido eliminado exitosamente."
+        },
+        "transition": {
+          "updatedTitle": "Transición actualizada",
+          "updatedMessage": "La transición \"{transitionName}\" ha sido actualizada exitosamente.",
+          "addedTitle": "Transición agregada",
+          "addedMessage": "La transición \"{transitionName}\" ha sido agregada exitosamente.",
+          "deletedTitle": "Transición eliminada",
+          "deletedMessage": "La transición ha sido eliminada exitosamente."
+        },
+        "validateWorkflow": "Validar el flujo de trabajo",
+        "noTransitions": "Sin transiciones",
+        "noTransitionsDescription": "Cree una transición para conectar estados.",
+        "noStates": "No hay estados",
+        "noStatesDescription": "Cree un estado para comenzar el flujo de trabajo."
+      },
+      "transition": {
+        "addTitle": "Agregar Transición",
+        "editTitle": "Editar Transición",
+        "addDescription": "Agregar nueva transición de flujo de trabajo",
+        "editDescription": "Modificar transición de flujo de trabajo",
+        "nameLabel": "Nombre de la Transición",
+        "nameDescription": "Identificador único para la transición",
+        "namePlaceholder": "Ingrese el nombre de la transición",
+        "descriptionLabel": "Descripción",
+        "descriptionDescription": "Detalles adicionales sobre la transición",
+        "descriptionPlaceholder": "Ingrese la descripción",
+        "sourceLabel": "Estado de Origen",
+        "sourcePlaceholder": "Seleccione el estado de origen",
+        "sourceDescription": "Estado actual de la solicitud antes de la transición",
+        "targetLabel": "Estado de Destino",
+        "targetPlaceholder": "Seleccione el estado de destino",
+        "targetDescription": "Estado al que se moverá la solicitud después de la transición",
+        "justificationLabel": "Requiere Justificación",
+        "justificationDescription": "Justificación obligatoria para la transición",
+        "approvalLabel": "Requiere Aprobación",
+        "approvalDescription": "Necesita aprobación del supervisor",
+        "cancel": "Cancelar",
+        "save": "Guardar",
+        "localeKey": "es"
+      },
+      "state": {
+        "addTitle": "Agregar Estado",
+        "editTitle": "Editar Estado",
+        "addDescription": "Agregar nuevo estado de flujo de trabajo",
+        "editDescription": "Modificar estado de flujo de trabajo",
+        "nameLabel": "Nombre del Estado",
+        "nameDescription": "Identificador único para el estado",
+        "namePlaceholder": "Ingrese el nombre del estado",
+        "descriptionLabel": "Descripción",
+        "descriptionDescription": "Detalles adicionales sobre el estado",
+        "descriptionPlaceholder": "Ingrese la descripción",
+        "colorLabel": "Color",
+        "colorDescription": "Color del estado en el flujo de trabajo",
+        "colors": {
+          "gray": "Gris",
+          "blue": "Azul",
+          "indigo": "Índigo",
+          "green": "Verde",
+          "red": "Rojo",
+          "yellow": "Amarillo"
+        },
+        "initialStateLabel": "Estado Inicial",
+        "initialStateDescription": "Primer estado en el flujo de trabajo",
+        "finalStateLabel": "Estado Final",
+        "finalStateDescription": "Estado de finalización del flujo de trabajo",
+        "cancel": "Cancelar",
+        "save": "Guardar"
+      }
     }
   },
   "component": {
@@ -2251,6 +2606,9 @@
       "descriptionLabel": "Descripción",
       "descriptionPlaceholder": "Ingresa una descripción",
       "descriptionDescription": "Agrega detalles adicionales o una descripción aquí.",
+      "hierarchyLabel": "Jerarquía",
+      "hierarchyDescription": "Selecciona la jerarquía que regirá esta área.",
+      "hierarchyPlaceholder": "Selecciona una jerarquía",
       "isActiveLabel": "Activo",
       "isActiveDescription": "Marcar como activo o inactivo.",
       "submitButton": "Enviar",
@@ -2328,6 +2686,67 @@
       "dragDropElements": "Arrastra y suelta elementos",
       "formElements": "Elementos del formulario",
       "layoutElements": "Elementos de diseño"
+    },
+    "hierarchyForm": {
+      "hierarchyDetails": "Detalles de la Jerarquía",
+      "hierarchyDetailsDescription": "Proporcione un nombre y una descripción para su jerarquía.",
+      "hierarchyName": "Nombre de la Jerarquía",
+      "hierarchyNameDescription": "El nombre de su jerarquía (por ejemplo, 'Jerarquía del Canal de Ventas')",
+      "hierarchyNamePlaceholder": "Ingrese el nombre de la jerarquía",
+      "description": "Descripción",
+      "descriptionDescription": "Opcional: Proporcione una breve descripción de la jerarquía",
+      "descriptionPlaceholder": "Ingrese una descripción para esta jerarquía",
+      "isActive": "Está Activo",
+      "isActiveDescription": "Si la jerarquía está activa, estará disponible para su uso en la aplicación.",
+      "saveChanges": "Guardar Cambios",
+      "create": "Crear"
+    },
+    "rolesForm": {
+      "roleName": "Nombre del Rol",
+      "roleNamePlaceholder": "Nombre del Rol",
+      "roleNameDescription": "El nombre del rol debe tener al menos 3 caracteres y no exceder los 100 caracteres",
+      "addRole": "Agregar Rol",
+      "featureCountTooltip": "Número total de funcionalidades para este rol: {count}",
+      "roleStatusTooltip": "El rol está activo",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "featureRoleFormDialog": {
+        "close": "Cerrar",
+        "dialogTitle": "Funciones del Rol: #{number}",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Descripción del Rol",
+        "descriptionHelp": "Proporciona una descripción para el rol",
+        "featuresTitle": "Funciones del Rol",
+        "module": "Módulo",
+        "features": "Funciones",
+        "featuresHelp": "Selecciona las funciones a las que los usuarios con este rol deben tener acceso. Si una función no está seleccionada, los usuarios con este rol no tendrán acceso a ella.",
+        "activeLabel": "Activo",
+        "activeHelp": "Si el rol está activo, los usuarios asignados a este rol tendrán acceso a las funciones seleccionadas."
+      }
+    },
+    "userRoleAssignmentForm": {
+      "user": {
+        "label": "Usuario",
+        "description": {
+          "none": "No hay usuarios disponibles",
+          "select": "Selecciona un usuario para el rol"
+        },
+        "toast": {
+          "noRoles": "No hay roles disponibles"
+        },
+        "active": {
+          "label": "Activo",
+          "description": {
+            "true": "El usuario tendrá acceso al sistema con el rol seleccionado",
+            "false": "El usuario no tendrá acceso al sistema"
+          }
+        },
+        "add": "Agregar usuario"
+      },
+      "role": {
+        "label": "Rol",
+        "description": "Selecciona un rol para el usuario"
+      }
     },
     "LocaleSwitcher": {
       "label": "Seleccionar idioma",

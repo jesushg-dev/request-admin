@@ -2,6 +2,7 @@
 
 import React, { FC } from 'react';
 import { CombineIcon, Plus, Trash } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -74,6 +75,7 @@ interface RolesFormProps {
 // todo: Add Role Template to allow for pre-defined roles to be added to the form in a batch or individually
 
 const RolesForm: FC<RolesFormProps> = ({ moduleWithFeatures, isBatch }) => {
+  const t = useTranslations('component.rolesForm');
   const { control } = useFormContext<RoleFormBatchValues>();
   const { fields: roles, append: appendRole, remove: removeRole } = useFieldArray({ control, name: 'roles' });
 
@@ -89,14 +91,14 @@ const RolesForm: FC<RolesFormProps> = ({ moduleWithFeatures, isBatch }) => {
             name={`roles.${roleIndex}.name` as const}
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Role Name</FormLabel>
+                <FormLabel>{t('roleName')}</FormLabel>
                 <FormControl>
-                  <Input className="h-8 w-full rounded" placeholder="Role Name" {...field} />
+                  <Input className="h-8 w-full rounded" placeholder={t('roleNamePlaceholder')} {...field} />
                 </FormControl>
                 <div className="flex w-full justify-between gap-4 items-center">
                   <div>
                     <FormMessage />
-                    <FormDescription>Role Name must be at least 3 characters and not exceed 100 characters</FormDescription>
+                    <FormDescription>{t('roleNameDescription')}</FormDescription>
                   </div>
                   <RoleCategoryBadges roleIndex={roleIndex} />
                 </div>
@@ -116,7 +118,7 @@ const RolesForm: FC<RolesFormProps> = ({ moduleWithFeatures, isBatch }) => {
       {isBatch && (
         <Button type="button" variant="outline" role="combobox" size="sm" className="border-2 border-dashed" onClick={addRole}>
           <Plus className="mr-2 size-4" />
-          Add Role
+          {t('addRole')}
         </Button>
       )}
     </div>
@@ -124,6 +126,7 @@ const RolesForm: FC<RolesFormProps> = ({ moduleWithFeatures, isBatch }) => {
 };
 
 const RoleCategoryBadges: FC<{ roleIndex: number }> = ({ roleIndex }) => {
+  const t = useTranslations('component.rolesForm');
   const { watch } = useFormContext<RoleFormBatchValues>();
   const forms = watch(`roles.${roleIndex}.features`);
   const formsActiveCount = forms.filter((form) => form.isActive).length;
@@ -131,15 +134,15 @@ const RoleCategoryBadges: FC<{ roleIndex: number }> = ({ roleIndex }) => {
 
   return (
     <div className="flex gap-2">
-      <Hint label={`Total number of features for this role: ${forms.length}`}>
+      <Hint label={t('featureCountTooltip', { count: forms.length })}>
         <Badge className="flex gap-1" variant="outline">
           <CombineIcon className="size-3" />
           {formsActiveCount}
         </Badge>
       </Hint>
-      <Hint label="Role is active">
+      <Hint label={t('roleStatusTooltip')}>
         <Badge className="flex gap-1" variant={isActive ? 'outline' : 'destructive'}>
-          {isActive ? 'Active' : 'Inactive'}
+          {isActive ? t('active') : t('inactive')}
         </Badge>
       </Hint>
     </div>

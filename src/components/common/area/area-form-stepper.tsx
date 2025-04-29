@@ -10,7 +10,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { RequestLevelType } from '@/types/prisma/hierarchy';
+import { AssignmentHierarchyWithLevelsType } from '@/types/prisma/hierarchy';
 import { ModuleWithFeaturesType } from '@/types/prisma/module';
 import { RequirementOptionType } from '@/types/prisma/requirement';
 import { Card } from '@/components/ui/card';
@@ -41,20 +41,20 @@ export type AreaFormStepperType = z.infer<typeof areaFormSchema> & z.infer<typeo
 
 interface AreaFormStepperProps {
   tenantId: string;
-  hierarchyId: string;
-  userOptions: OptionType[];
-  assignmentLevels: RequestLevelType[];
+  defaultValues?: AreaFormStepperType;
   requirements: RequirementOptionType[];
   moduleWithFeatures: ModuleWithFeaturesType[];
-  defaultValues?: AreaFormStepperType;
+  assignmentHierarchies: AssignmentHierarchyWithLevelsType[];
+  userOptions: OptionType[];
 }
 
 // AreaFormStepper: Renders stepper and step content
-const AreaFormStepper: FC<AreaFormStepperProps> = ({ tenantId, hierarchyId, assignmentLevels, userOptions, moduleWithFeatures, defaultValues }) => {
+const AreaFormStepper: FC<AreaFormStepperProps> = ({ tenantId, assignmentHierarchies, userOptions, moduleWithFeatures, defaultValues }) => {
   const router = useRouter();
   const stepper = useStepper();
   const [isPending, startTransition] = useTransition();
   const { mutateAsync: upsert, error } = useUpsertArea();
+  const [selectedHierarchy, setSelectedHierarchy] = useState<AssignmentHierarchyWithLevelsType | null>(null);
 
   // Initialize React Hook Form with current step schema
   const form = useForm({
@@ -67,6 +67,15 @@ const AreaFormStepper: FC<AreaFormStepperProps> = ({ tenantId, hierarchyId, assi
 
   // Handle form submission
   const onSubmit = (values: z.infer<typeof stepper.current.schema>) => {
+    if (stepper.current.id === 'description' && 'hierarchyId' in values) {
+      const hierarchy = assignmentHierarchies.find((h) => h.id === values.hierarchyId.value);
+      if (!hierarchy) {
+        form.setError('root.description.hierarchyId', { message: 'Invalid hierarchy' });
+        return;
+      }
+      setSelectedHierarchy(hierarchy);
+    }
+
     if (stepper.current.id === 'role' && 'roles' in values) {
       const roles = values.roles.map((role) => ({ value: role.id, label: role.name }));
       setRoleOptions(roles);
@@ -74,6 +83,12 @@ const AreaFormStepper: FC<AreaFormStepperProps> = ({ tenantId, hierarchyId, assi
 
     if (!stepper.isLast) {
       stepper.next();
+      return;
+    }
+
+    //check there is a valid hierarchy
+    if (!selectedHierarchy) {
+      form.setError('root.description.hierarchyId', { message: 'Invalid hierarchy' });
       return;
     }
 
@@ -158,7 +173,7 @@ const AreaFormStepper: FC<AreaFormStepperProps> = ({ tenantId, hierarchyId, assi
         if (!upsertResponse) {
           throw new Error('Failed to save area');
         }
-        return upsertCategoriesFlat(data.categories, tenantId, hierarchyId, upsertResponse.id);
+        return upsertCategoriesFlat(data.categories, tenantId, selectedHierarchy.id, upsertResponse.id);
       });
 
       toast.promise(Promise.all([promise, upsertCategoriesPromise]), {
@@ -168,6 +183,7 @@ const AreaFormStepper: FC<AreaFormStepperProps> = ({ tenantId, hierarchyId, assi
           return `Area ${upsertResponse?.name} created successfully`;
         },
         error: (error) => {
+          console.log('🚀 ~ toast.promise ~ error:', error);
           return `Failed to save area: ${error.message}`;
         },
       });
@@ -187,12 +203,8 @@ const AreaFormStepper: FC<AreaFormStepperProps> = ({ tenantId, hierarchyId, assi
             <div className="flex flex-1 overflow-y-hidden">
               <ScrollArea className="w-full flex-1 overflow-y-hidden">
                 {stepper.switch({
-                  description: () => <AreaForm />,
-                  assignmentCategory: () => (
-                    <div className="m-1 mr-4 flex flex-1 flex-col gap-2">
-                      <AssignmentCategoryForm levels={assignmentLevels} />
-                    </div>
-                  ),
+                  description: () => <AreaForm assignmentHierarchies={assignmentHierarchies} />,
+                  assignmentCategory: () => <div className="m-1 mr-4 flex flex-1 flex-col gap-2">{selectedHierarchy && <AssignmentCategoryForm levels={selectedHierarchy.levels} />}</div>,
                   role: () => <RolesForm moduleWithFeatures={moduleWithFeatures} isBatch={true} />,
                   user: () => <UserRoleAssignmentForm userOptions={userOptions} roleOptions={roleOptions} />,
                   finish: () => (

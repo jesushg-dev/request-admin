@@ -15,7 +15,8 @@ model Form extends TenantScoped, Auditable, CatalogBase {
   shareURL        String           @unique @default(uuid()) // Unique shareable URL
 
   // Relationships
-  categoryForms   CategoryForm[] // Links the form to multiple categories
+  requestCategoryForms   RequestCategoryForm[] // Links the form to multiple categories
+  assignmentCategoryForms AssignmentCategoryForm[] // Links the form to multiple assignments
   formSubmissions FormSubmission[] // Submissions made to this form
 
   // Constraints
