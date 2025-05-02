@@ -102,7 +102,7 @@ export const AnimatedVisibility = ({
 
 type FormItemProps = {
   label: string;
-  description: string;
+  description?: string;
   children: ReactNode;
   className?: string;
 };
@@ -111,14 +111,14 @@ export const FormItem = ({ label, description, children, className }: FormItemPr
   <ShadcnFormItem className={className}>
     <FormLabel>{label}</FormLabel>
     <FormControl>{children}</FormControl>
-    <FormDescription>{description}</FormDescription>
+    {description && <FormDescription>{description}</FormDescription>}
     <FormMessage />
   </ShadcnFormItem>
 );
 
 type FormCheckboxItemProps = {
   label: string;
-  description: string;
+  description?: string;
   children: ReactNode;
   className?: string;
 };
@@ -128,7 +128,7 @@ export const FormCheckboxItem = ({ label, description, children, className }: Fo
     <FormControl>{children}</FormControl>
     <div className="leading-none space-y-1">
       <FormLabel>{label}</FormLabel>
-      <FormDescription>{description}</FormDescription>
+      {description && <FormDescription>{description}</FormDescription>}
     </div>
     <FormMessage />
   </ShadcnFormItem>

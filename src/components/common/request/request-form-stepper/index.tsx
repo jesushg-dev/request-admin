@@ -82,8 +82,6 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, re
       try {
         const data = form.getValues() as RequestFormStepperType;
         const response = await upsertRequest(tenantId, data);
-        console.log('🚀 ~ startTransition ~ response:', response);
-
         if (data.additionalDocuments) {
           toast.loading('Uploading files to storage service', { id: toastId });
           await uploadFiles('imageUploader', {

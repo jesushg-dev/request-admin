@@ -183,7 +183,6 @@ const AreaFormStepper: FC<AreaFormStepperProps> = ({ tenantId, assignmentHierarc
           return `Area ${upsertResponse?.name} created successfully`;
         },
         error: (error) => {
-          console.log('🚀 ~ toast.promise ~ error:', error);
           return `Failed to save area: ${error.message}`;
         },
       });

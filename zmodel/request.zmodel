@@ -149,73 +149,52 @@ model AssignmentType extends  TenantScoped, Auditable, CatalogBase {
 
 model RequestWorkflow extends TenantScoped, Auditable, CatalogBase {
   isDefault           Boolean                   @default(false)
+  requireComments     Boolean                   @default(false) // Requires comments for transitions
+  notifyChanges       Boolean                   @default(false) // Notify changes to the requester
 
-  // RequestWorkflowStatus
-	requestCategory RequestCategory[]
+  // Relationships
+  requestCategory     RequestCategory[]
   requestWorkflowStatus RequestWorkflowStatus[] @relation("RequestWorkflowStatus")
   requestWorkflowTransition RequestWorkflowTransition[] @relation("RequestWorkflowTransition")
 }
 
-// Represents core ITIL request lifecycle states
-model RequestWorkflowStatus extends TenantScoped, Auditable {
-  id                  String                    @id @default(uuid()) //@db.UniqueIdentifier
-  // Human-readable state name
-  name                String                     @unique //@db.VarChar(50)
-  // Technical description for support teams
-  description         String?                   //@db.VarChar(255) 
-  // Controls state availability in dropdowns
-  isActive            Boolean                   @default(true)
-  // Hierarchical position in ITIL workflow
-  level               Int
-  // ITIL-compliant state identifier
-  itilCode            String?                   @unique  //@db.VarChar(20)// draft, cab_review, etc.
-  // Marks terminal states where no transitions are allowed
-  isFinal             Boolean                   @default(false)
-  // Requires managerial approval when transitioning to this state
-  requiresApproval    Boolean                   @default(false)
+model RequestWorkflowStatus extends TenantScoped, Auditable, CatalogBase {
+  // New diagram fields
+  color               String                    // Stores color.value
+  type                String                    // Stores type.value (initial/default/final)
+  positionX           Float                     // X coordinate of the node
+  positionY           Float                     // Y coordinate of the node
 
-  // Relationship fields
-  workflowId          String                    //@db.UniqueIdentifier
+  // Relationships
+  workflowId          String
   workflow            RequestWorkflow           @relation("RequestWorkflowStatus", fields: [workflowId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   assignments         RequestAssignment[]
   fromTransitions     RequestWorkflowTransition[] @relation("FromStatus")
   toTransitions       RequestWorkflowTransition[] @relation("ToStatus")
 
-  // Ensures unique ITIL codes per tenant
-  @@unique([tenantId, itilCode], name: "unique_itil_code_per_tenant")
-  // Optimized querying by state hierarchy
-  @@index([level], name: "idx_status_level")
-  // Quick lookup of terminal states
-  @@index([isFinal], name: "idx_status_final")
+  // Constraints
+  @@index([type], name: "idx_status_type")
 }
 
-// Manages state transitions with SLA rules
-model RequestWorkflowTransition extends TenantScoped, Auditable {
-  id           String            @id @default(uuid()) //@db.UniqueIdentifier
-  // Marks default transition path
-  isDefault    Boolean           @default(false)
-  // Determines display order in UI
-  priority     Int               @default(0)
-  // Maximum allowed duration in minutes (SLA tracking)
-  maxDuration  Int?              
-  // Notification threshold before SLA breach (minutes)
-  notifyAfter  Int?
+model RequestWorkflowTransition extends TenantScoped, Auditable, CatalogBase {
+  priority            Int                       @default(0)
+  maxDuration         Int?                      // SLA in minutes
+  notifyAfter         Int?                      // Pre-SLA notification
+  requiresApproval    Boolean                   @default(false) // Requires approval
+  requiresJustification Boolean                 @default(false) // Requires justification
 
-  description  String?           //@db.VarChar(255)           
-
-  // Relationship fields
-  workflowId          String                    //@db.UniqueIdentifier
+  // Relationships
+  workflowId          String
   workflow            RequestWorkflow           @relation("RequestWorkflowTransition", fields: [workflowId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  fromStatusId String?            //@db.UniqueIdentifier
-  toStatusId   String?            //@db.UniqueIdentifier
-  fromStatus RequestWorkflowStatus? @relation("FromStatus", fields: [fromStatusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  toStatus RequestWorkflowStatus? @relation("ToStatus", fields: [toStatusId], references: [id])
+  fromStatusId        String                    // Source status ID (required)
+  toStatusId          String                    // Target status ID (required)
+  fromStatus          RequestWorkflowStatus     @relation("FromStatus", fields: [fromStatusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  toStatus            RequestWorkflowStatus     @relation("ToStatus", fields: [toStatusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  // Indexes for common query patterns
+  // Constraints
+  @@unique([tenantId, fromStatusId, toStatusId], name: "unique_transition_path_per_tenant")
   @@index([fromStatusId], name: "idx_transition_source")
   @@index([toStatusId], name: "idx_transition_target")
-  // Ensures unique transition paths per tenant
-  @@unique([tenantId, fromStatusId, toStatusId], name: "unique_transition_path")
 }
 
 /// Tracks compliance with requirements for a specific request.

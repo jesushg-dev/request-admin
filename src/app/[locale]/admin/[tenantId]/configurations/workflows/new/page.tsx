@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { type Locale } from 'next-intl';
 
-import WorkflowFormStepper from '@/components/common/workflow/workflow-stepper.tsx';
+import WorkflowFormStepper from '@/components/common/workflow/workflow-stepper';
 
 interface NewPageProps {
   params: Promise<{ locale: Locale; tenantId: string }>;

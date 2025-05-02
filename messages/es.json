@@ -2459,6 +2459,31 @@
         "validationErrorsMessage": "Hay errores en el flujo de trabajo. Por favor, corríjalos antes de guardar.",
         "savedTitle": "Flujo de trabajo guardado",
         "savedMessage": "El flujo de trabajo ha sido guardado exitosamente.",
+        "diagramEditor": {
+          "statesCounter": "Estados: {count}",
+          "transitionsCounter": "Transiciones: {count}",
+          "actions": {
+            "deleteState": "Eliminar estado",
+            "deleteTransition": "Eliminar transición"
+          },
+          "validation": {
+            "error": "Error de validación",
+            "success": "Validación exitosa",
+            "successDescription": "El flujo de trabajo es válido y cumple con todas las reglas de negocio.",
+            "disconnectedNodes": "Hay {count} estados sin conexiones. Todos los estados deben estar conectados.",
+            "initialNodes": "Debe haber exactamente un estado inicial en el flujo.",
+            "finalNodes": "Debe haber al menos un estado final en el flujo.",
+            "nonFinalNodesWithoutExits": "Hay {count} estados no finales sin salidas. Todos deben tener al menos una transición de salida."
+          },
+          "transitions": {
+            "new": "Nueva transición",
+            "edit": "Editar transición"
+          },
+          "states": {
+            "add": "Agregar estado",
+            "edit": "Editar estado"
+          }
+        },
         "state": {
           "updatedTitle": "Estado actualizado",
           "updatedMessage": "El estado \"{stateName}\" ha sido actualizado exitosamente.",
@@ -2476,6 +2501,39 @@
           "addedMessage": "La transición \"{transitionName}\" ha sido agregada exitosamente.",
           "deletedTitle": "Transición eliminada",
           "deletedMessage": "La transición ha sido eliminada exitosamente."
+        },
+        "review": {
+          "noName": "Sin nombre",
+          "noDescription": "Sin descripción",
+          "isDefault": "Predeterminado",
+          "requiresComments": "Requiere comentarios",
+          "notifyChanges": "Notificar cambios",
+          "tabs": {
+            "diagram": "Diagrama",
+            "states": "Estados",
+            "transitions": "Transiciones"
+          },
+          "table": {
+            "name": "Nombre",
+            "type": "Tipo",
+            "color": "Color",
+            "from": "Desde",
+            "to": "Hacia",
+            "approval": "Aprobación",
+            "justification": "Justificación"
+          },
+          "types": {
+            "initial": "Inicial",
+            "final": "Final",
+            "default": "Intermedio"
+          },
+          "colors": {
+            "gray": "Gris",
+            "blue": "Azul",
+            "indigo": "Índigo",
+            "green": "Verde",
+            "red": "Rojo"
+          }
         },
         "validateWorkflow": "Validar el flujo de trabajo",
         "noTransitions": "Sin transiciones",
@@ -2534,7 +2592,9 @@
         "finalStateLabel": "Estado Final",
         "finalStateDescription": "Estado de finalización del flujo de trabajo",
         "cancel": "Cancelar",
-        "save": "Guardar"
+        "save": "Guardar",
+        "typeLabel": "Tipo",
+        "typeDescription": "Tipo de estado"
       }
     }
   },

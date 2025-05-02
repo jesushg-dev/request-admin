@@ -478,15 +478,19 @@ export function useCheckRequestWorkflowTransition<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
     where?: {
+      id?: string;
+      name?: string;
+      description?: string;
+      isActive?: boolean;
       createdBy?: string;
       updatedBy?: string;
       tenantId?: string;
-      id?: string;
       isDefault?: boolean;
       priority?: number;
       maxDuration?: number;
       notifyAfter?: number;
-      description?: string;
+      requiresApproval?: boolean;
+      requiresJustification?: boolean;
       workflowId?: string;
       fromStatusId?: string;
       toStatusId?: string;

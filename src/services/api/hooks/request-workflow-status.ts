@@ -458,20 +458,7 @@ export function useSuspenseCountRequestWorkflowStatus<
 export function useCheckRequestWorkflowStatus<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
-    where?: {
-      createdBy?: string;
-      updatedBy?: string;
-      tenantId?: string;
-      id?: string;
-      name?: string;
-      description?: string;
-      isActive?: boolean;
-      level?: number;
-      itilCode?: string;
-      isFinal?: boolean;
-      requiresApproval?: boolean;
-      workflowId?: string;
-    };
+    where?: { id?: string; name?: string; description?: string; isActive?: boolean; createdBy?: string; updatedBy?: string; tenantId?: string; color?: string; type?: string; workflowId?: string };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {

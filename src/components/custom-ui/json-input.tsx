@@ -3,7 +3,6 @@ import { JsonData, JsonEditor } from 'json-edit-react';
 import { Card } from '../ui/card';
 
 export const JsonInput = ({ value, onChange }: { value: JsonData; onChange: (value: JsonData) => void }) => {
-  console.log('🚀 ~ value:', value);
   return (
     <Card className="p-4">
       <JsonEditor

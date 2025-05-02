@@ -39,7 +39,6 @@ export const ourFileRouter = {
       return { userId: session.user.id, ...input };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.log('🚀 ~ .onUploadComplete ~ metadata:', metadata);
       const type = file.name.split('.').pop()?.toLowerCase();
       const contentType = file.type;
 

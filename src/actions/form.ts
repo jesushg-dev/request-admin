@@ -124,7 +124,6 @@ export async function SubmitForm(tenantId: string, formId: string, content: Reco
   if (!session) throw new UserNotFoundErr();
 
   const keys = keysSchema.safeParse(content);
-  console.log('🚀 ~ SubmitForm ~ keys:', keys);
   if (!keys.success) throw new Error('invalid keys provided');
 
   const keysData = Object.entries(keys.data).map(([key, value]) => ({ key, value, tenantId }));

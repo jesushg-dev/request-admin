@@ -2895,6 +2895,16 @@ const metadata = {
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: false }] }],
         },
+        requireComments: {
+          name: 'requireComments',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        notifyChanges: {
+          name: 'notifyChanges',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
         requestCategory: {
           name: 'requestCategory',
           type: 'RequestCategory',
@@ -2927,6 +2937,26 @@ const metadata = {
     requestWorkflowStatus: {
       name: 'RequestWorkflowStatus',
       fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        description: {
+          name: 'description',
+          type: 'String',
+          isOptional: true,
+        },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
         createdAt: {
           name: 'createdAt',
           type: 'DateTime',
@@ -2967,44 +2997,21 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
-        },
-        name: {
-          name: 'name',
+        color: {
+          name: 'color',
           type: 'String',
         },
-        description: {
-          name: 'description',
+        type: {
+          name: 'type',
           type: 'String',
-          isOptional: true,
         },
-        isActive: {
-          name: 'isActive',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: true }] }],
+        positionX: {
+          name: 'positionX',
+          type: 'Float',
         },
-        level: {
-          name: 'level',
-          type: 'Int',
-        },
-        itilCode: {
-          name: 'itilCode',
-          type: 'String',
-          isOptional: true,
-        },
-        isFinal: {
-          name: 'isFinal',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: false }] }],
-        },
-        requiresApproval: {
-          name: 'requiresApproval',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: false }] }],
+        positionY: {
+          name: 'positionY',
+          type: 'Float',
         },
         workflowId: {
           name: 'workflowId',
@@ -3047,23 +3054,31 @@ const metadata = {
           name: 'id',
           fields: ['id'],
         },
-        name: {
-          name: 'name',
-          fields: ['name'],
-        },
-        itilCode: {
-          name: 'itilCode',
-          fields: ['itilCode'],
-        },
-        unique_itil_code_per_tenant: {
-          name: 'unique_itil_code_per_tenant',
-          fields: ['tenantId', 'itilCode'],
-        },
       },
     },
     requestWorkflowTransition: {
       name: 'RequestWorkflowTransition',
       fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        description: {
+          name: 'description',
+          type: 'String',
+          isOptional: true,
+        },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
         createdAt: {
           name: 'createdAt',
           type: 'DateTime',
@@ -3104,12 +3119,6 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
-        },
         isDefault: {
           name: 'isDefault',
           type: 'Boolean',
@@ -3130,10 +3139,15 @@ const metadata = {
           type: 'Int',
           isOptional: true,
         },
-        description: {
-          name: 'description',
-          type: 'String',
-          isOptional: true,
+        requiresApproval: {
+          name: 'requiresApproval',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        requiresJustification: {
+          name: 'requiresJustification',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
         },
         workflowId: {
           name: 'workflowId',
@@ -3152,14 +3166,12 @@ const metadata = {
         fromStatusId: {
           name: 'fromStatusId',
           type: 'String',
-          isOptional: true,
           isForeignKey: true,
           relationField: 'fromStatus',
         },
         toStatusId: {
           name: 'toStatusId',
           type: 'String',
-          isOptional: true,
           isForeignKey: true,
           relationField: 'toStatus',
         },
@@ -3167,7 +3179,6 @@ const metadata = {
           name: 'fromStatus',
           type: 'RequestWorkflowStatus',
           isDataModel: true,
-          isOptional: true,
           backLink: 'fromTransitions',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'fromStatusId' },
@@ -3176,7 +3187,6 @@ const metadata = {
           name: 'toStatus',
           type: 'RequestWorkflowStatus',
           isDataModel: true,
-          isOptional: true,
           backLink: 'toTransitions',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'toStatusId' },
@@ -3187,8 +3197,8 @@ const metadata = {
           name: 'id',
           fields: ['id'],
         },
-        unique_transition_path: {
-          name: 'unique_transition_path',
+        unique_transition_path_per_tenant: {
+          name: 'unique_transition_path_per_tenant',
           fields: ['tenantId', 'fromStatusId', 'toStatusId'],
         },
       },

@@ -2458,14 +2458,30 @@
         "validationErrorsMessage": "There are errors in the workflow. Please correct them before saving.",
         "savedTitle": "Workflow saved",
         "savedMessage": "The workflow has been successfully saved.",
-        "transition": {
-          "localeKey": "en",
-          "updatedTitle": "Transition updated",
-          "updatedMessage": "The transition \"{transitionName}\" has been successfully updated.",
-          "addedTitle": "Transition added",
-          "addedMessage": "The transition \"{transitionName}\" has been successfully added.",
-          "deletedTitle": "Transition deleted",
-          "deletedMessage": "The transition has been successfully deleted."
+        "diagramEditor": {
+          "statesCounter": "States: {count}",
+          "transitionsCounter": "Transitions: {count}",
+          "actions": {
+            "deleteState": "Delete state",
+            "deleteTransition": "Delete transition"
+          },
+          "validation": {
+            "error": "Validation error",
+            "success": "Successful validation",
+            "successDescription": "The workflow is valid and meets all business rules.",
+            "disconnectedNodes": "There are {count} states without connections. All states must be connected.",
+            "initialNodes": "There must be exactly one initial state in the flow.",
+            "finalNodes": "There must be at least one final state in the flow.",
+            "nonFinalNodesWithoutExits": "There are {count} non-final states without exits. All must have at least one outgoing transition."
+          },
+          "transitions": {
+            "new": "New transition",
+            "edit": "Edit transition"
+          },
+          "states": {
+            "add": "Add state",
+            "edit": "Edit state"
+          }
         },
         "state": {
           "updatedTitle": "State updated",
@@ -2476,6 +2492,48 @@
           "deleteErrorMessage": "This state has associated transitions. Delete the transitions first.",
           "deletedTitle": "State deleted",
           "deletedMessage": "The state has been successfully deleted."
+        },
+        "transition": {
+          "localeKey": "en",
+          "updatedTitle": "Transition updated",
+          "updatedMessage": "The transition \"{transitionName}\" has been successfully updated.",
+          "addedTitle": "Transition added",
+          "addedMessage": "The transition \"{transitionName}\" has been successfully added.",
+          "deletedTitle": "Transition deleted",
+          "deletedMessage": "The transition has been successfully deleted."
+        },
+        "review": {
+          "noName": "Unnamed",
+          "noDescription": "No description",
+          "isDefault": "Default",
+          "requiresComments": "Requires comments",
+          "notifyChanges": "Notify changes",
+          "tabs": {
+            "diagram": "Diagram",
+            "states": "States",
+            "transitions": "Transitions"
+          },
+          "table": {
+            "name": "Name",
+            "type": "Type",
+            "color": "Color",
+            "from": "From",
+            "to": "To",
+            "approval": "Approval",
+            "justification": "Justification"
+          },
+          "types": {
+            "initial": "Initial",
+            "final": "Final",
+            "default": "Intermediate"
+          },
+          "colors": {
+            "gray": "Gray",
+            "blue": "Blue",
+            "indigo": "Indigo",
+            "green": "Green",
+            "red": "Red"
+          }
         },
         "validateWorkflow": "Validate Workflow",
         "noTransitions": "No transitions",
@@ -2528,10 +2586,8 @@
           "red": "Red",
           "yellow": "Yellow"
         },
-        "initialStateLabel": "Initial State",
-        "initialStateDescription": "First state in the workflow",
-        "finalStateLabel": "Final State",
-        "finalStateDescription": "Workflow completion state",
+        "typeLabel": "Type",
+        "typeDescription": "Type of state",
         "cancel": "Cancel",
         "save": "Save"
       }

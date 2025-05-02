@@ -600,60 +600,64 @@ model RequestWorkflow {
   tenantId                  String
   tenant                    Tenant                      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   isDefault                 Boolean                     @default(false)
+  requireComments           Boolean                     @default(false)
+  notifyChanges             Boolean                     @default(false)
   requestCategory           RequestCategory[]
   requestWorkflowStatus     RequestWorkflowStatus[]     @relation("RequestWorkflowStatus")
   requestWorkflowTransition RequestWorkflowTransition[] @relation("RequestWorkflowTransition")
 }
 
 model RequestWorkflowStatus {
-  createdAt        DateTime                    @default(now())
-  updatedAt        DateTime?                   @updatedAt()
-  deletedAt        DateTime?
-  createdBy        String?
-  updatedBy        String?
-  tenantId         String
-  tenant           Tenant                      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id               String                      @id() @default(uuid())
-  name             String                      @unique()
-  description      String?
-  isActive         Boolean                     @default(true)
-  level            Int
-  itilCode         String?                     @unique()
-  isFinal          Boolean                     @default(false)
-  requiresApproval Boolean                     @default(false)
-  workflowId       String
-  workflow         RequestWorkflow             @relation("RequestWorkflowStatus", fields: [workflowId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  assignments      RequestAssignment[]
-  fromTransitions  RequestWorkflowTransition[] @relation("FromStatus")
-  toTransitions    RequestWorkflowTransition[] @relation("ToStatus")
+  id              String                      @id() @default(uuid())
+  name            String
+  description     String?
+  isActive        Boolean                     @default(true)
+  createdAt       DateTime                    @default(now())
+  updatedAt       DateTime?                   @updatedAt()
+  deletedAt       DateTime?
+  createdBy       String?
+  updatedBy       String?
+  tenantId        String
+  tenant          Tenant                      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  color           String
+  type            String
+  positionX       Float
+  positionY       Float
+  workflowId      String
+  workflow        RequestWorkflow             @relation("RequestWorkflowStatus", fields: [workflowId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  assignments     RequestAssignment[]
+  fromTransitions RequestWorkflowTransition[] @relation("FromStatus")
+  toTransitions   RequestWorkflowTransition[] @relation("ToStatus")
 
-  @@unique([tenantId, itilCode], name: "unique_itil_code_per_tenant")
-  @@index([level], name: "idx_status_level")
-  @@index([isFinal], name: "idx_status_final")
+  @@index([type], name: "idx_status_type")
 }
 
 model RequestWorkflowTransition {
-  createdAt    DateTime               @default(now())
-  updatedAt    DateTime?              @updatedAt()
-  deletedAt    DateTime?
-  createdBy    String?
-  updatedBy    String?
-  tenantId     String
-  tenant       Tenant                 @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id           String                 @id() @default(uuid())
-  isDefault    Boolean                @default(false)
-  priority     Int                    @default(0)
-  maxDuration  Int?
-  notifyAfter  Int?
-  description  String?
-  workflowId   String
-  workflow     RequestWorkflow        @relation("RequestWorkflowTransition", fields: [workflowId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  fromStatusId String?
-  toStatusId   String?
-  fromStatus   RequestWorkflowStatus? @relation("FromStatus", fields: [fromStatusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  toStatus     RequestWorkflowStatus? @relation("ToStatus", fields: [toStatusId], references: [id])
+  id                    String                @id() @default(uuid())
+  name                  String
+  description           String?
+  isActive              Boolean               @default(true)
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime?             @updatedAt()
+  deletedAt             DateTime?
+  createdBy             String?
+  updatedBy             String?
+  tenantId              String
+  tenant                Tenant                @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  isDefault             Boolean               @default(false)
+  priority              Int                   @default(0)
+  maxDuration           Int?
+  notifyAfter           Int?
+  requiresApproval      Boolean               @default(false)
+  requiresJustification Boolean               @default(false)
+  workflowId            String
+  workflow              RequestWorkflow       @relation("RequestWorkflowTransition", fields: [workflowId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  fromStatusId          String
+  toStatusId            String
+  fromStatus            RequestWorkflowStatus @relation("FromStatus", fields: [fromStatusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  toStatus              RequestWorkflowStatus @relation("ToStatus", fields: [toStatusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([tenantId, fromStatusId, toStatusId], name: "unique_transition_path")
+  @@unique([tenantId, fromStatusId, toStatusId], name: "unique_transition_path_per_tenant")
   @@index([fromStatusId], name: "idx_transition_source")
   @@index([toStatusId], name: "idx_transition_target")
 }

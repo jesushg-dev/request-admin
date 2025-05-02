@@ -30,6 +30,7 @@ import { getPriorities } from './priority';
 import { getITILStatuses, getITILTransitions } from './status';
 import { UNSTABLE_TENANT_ID } from './util';
 
+const LANGUAGE = 'es';
 const prisma = new PrismaClient();
 const USER_TENANT_JESUS_ID = '98c74680-9b23-473d-a105-b2591e2cd187';
 const USER_TENANT_DANILO_ID = 'fb420cf8-8820-4fb7-9fe5-bfe7b2f83894';
@@ -2508,74 +2509,58 @@ async function createModuleAndFeature() {
 }
 
 export async function seedITILWorkflow() {
-  // 1. Crear el workflow principal
+  // 1. Create main workflow
   const workflow = await prisma.requestWorkflow.create({
     data: {
       tenantId: UNSTABLE_TENANT_ID,
-      name: 'ITIL Default Workflow',
-      description: 'Standard ITIL workflow for request management',
+      name: 'Flujo ITIL Predeterminado',
+      description: 'Flujo de trabajo estándar ITIL para gestión de solicitudes',
       isActive: true,
       isDefault: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
     },
   });
 
-  // 2. Mapear estados
-  const statuses = getITILStatuses().map((status) => ({
-    ...status,
-    name: JSON.stringify(status.name),
-    description: JSON.stringify(status.description),
-  }));
-
-  // 3. Crear estados en la base de datos
-  const createdStatuses = await Promise.all(
-    statuses.map(async (status) => {
-      return prisma.requestWorkflowStatus.create({
+  // 2. Create statuses
+  const statuses = getITILStatuses();
+  await Promise.all(
+    statuses.map((status) =>
+      prisma.requestWorkflowStatus.create({
         data: {
+          id: status.id,
           tenantId: UNSTABLE_TENANT_ID,
           workflowId: workflow.id,
-          itilCode: status.itilCode,
-          level: status.level,
-          name: status.name,
-          description: status.description,
-          isActive: status.isActive,
-          isFinal: status.isFinal,
-          requiresApproval: status.requiresApproval,
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          name: status.name[LANGUAGE],
+          description: status.description?.[LANGUAGE] || '',
+          color: status.color,
+          type: status.type,
+          positionX: status.positionX,
+          positionY: status.positionY,
+          isActive: status.isActive ?? true,
         },
-      });
-    })
+      })
+    )
   );
 
-  // 4. Mapear IDs de estados por itilCode
-  const statusMap = new Map(createdStatuses.map((status) => [status.itilCode, status.id]));
-
-  // 5. Procesar transiciones
-  const transitions = getITILTransitions().map((transition) => ({
-    ...transition,
-    description: JSON.stringify(transition.description),
-  }));
-
-  // 6. Crear transiciones en la base de datos
+  // 3. Create transitions
+  const transitions = getITILTransitions();
   await Promise.all(
-    transitions.map(async (transition) => {
-      return prisma.requestWorkflowTransition.create({
+    transitions.map((transition) =>
+      prisma.requestWorkflowTransition.create({
         data: {
-          workflowId: workflow.id,
+          id: transition.id,
           tenantId: UNSTABLE_TENANT_ID,
-          fromStatusId: statusMap.get(transition.fromCode),
-          toStatusId: statusMap.get(transition.toCode),
+          workflowId: workflow.id,
+          fromStatusId: transition.fromStatusId,
+          toStatusId: transition.toStatusId,
+          name: transition.label[LANGUAGE],
           maxDuration: transition.maxDuration,
-          isDefault: transition.isDefault || false,
-          priority: transition.priority || 0,
-          description: transition.description,
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          isDefault: transition.isDefault ?? false,
+          priority: transition.priority ?? 0,
+          requiresApproval: transition.requiresApproval ?? false,
+          requiresJustification: transition.requiresJustification ?? false,
         },
-      });
-    })
+      })
+    )
   );
 }
 

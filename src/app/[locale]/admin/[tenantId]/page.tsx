@@ -27,7 +27,6 @@ const DashboardPage = async ({ params }: DashboardPageProps) => {
   const timeRange = /*searchParams.timeRange ||*/ '90d';
 
   const trends = await getDashboardRequestTrends(tenantId);
-  console.log('🚀 ~ DashboardPage ~ trends:', trends);
   const assignmentTrends = await getDashboardAssignmentTrends(tenantId, timeRange);
 
   const { totalRequests, openRequests, overdueRequests, avgResolutionTime } = await getDashboardRequestCounts(tenantId);
@@ -49,7 +48,7 @@ const DashboardPage = async ({ params }: DashboardPageProps) => {
         <AssignmentDashboard />
         <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
           <ResolutionTime />
-          <RequestTrends />
+          <RequestTrends trends={trends} />
         </div>
       </div>
     </ScrollArea>

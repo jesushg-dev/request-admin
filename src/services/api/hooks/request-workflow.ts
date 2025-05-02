@@ -439,7 +439,21 @@ export function useSuspenseCountRequestWorkflow<
 }
 
 export function useCheckRequestWorkflow<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { id?: string; name?: string; description?: string; isActive?: boolean; createdBy?: string; updatedBy?: string; tenantId?: string; isDefault?: boolean } },
+  args: {
+    operation: PolicyCrudKind;
+    where?: {
+      id?: string;
+      name?: string;
+      description?: string;
+      isActive?: boolean;
+      createdBy?: string;
+      updatedBy?: string;
+      tenantId?: string;
+      isDefault?: boolean;
+      requireComments?: boolean;
+      notifyChanges?: boolean;
+    };
+  },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();
