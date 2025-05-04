@@ -66,9 +66,7 @@ export async function getRequestCategoriesByIds(rootIds: string[], tenantId: str
           description: cat.description || undefined,
           isActive: cat.isActive,
           hierarchyLevelId: cat.hierarchyLevelId,
-          subcategories: [],
           isEligibleForNewClients: cat.isEligibleForNewClients,
-          isSubCategoryVisible: true,
           requirements: cat.requestCategoryRequirements.map((r) => ({
             value: r.requirementId,
             label: r.requirement.name || '',
@@ -85,6 +83,9 @@ export async function getRequestCategoriesByIds(rootIds: string[], tenantId: str
               }
             : { id: generateUuid(), resolutionTime: 0, escalationTime: 0 },
           parentCategoryId: cat.parentCategoryId,
+          guides: [],
+          subcategories: [],
+          executionSteps: [],
         });
       }
 

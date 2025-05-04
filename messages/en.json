@@ -1307,7 +1307,9 @@
           "active": "Active",
           "activeDescription": "Is this category active and available?",
           "newClients": "New Clients",
-          "newClientsDescription": "Available for new clients?"
+          "newClientsDescription": "Available for new clients?",
+          "nameDescription": "This name will be used to identify the category throughout the system.",
+          "descriptionDescription": "This description will help other users understand the purpose and scope of the category."
         },
         "requirementsTab": {
           "title": "Requirements",
@@ -1404,6 +1406,11 @@
           "saveChanges": "Save Changes",
           "description": "Description",
           "locale": "Locale"
+        },
+        "category": {
+          "loading": "Guardando cambios...",
+          "success": "Cambios guardados con éxito",
+          "error": "Error al guardar los cambios: {error}"
         }
       }
     },
@@ -2802,6 +2809,13 @@
         "label": "Role",
         "description": "Select a role for the user"
       }
+    },
+    "categoryTreeView": {
+      "searchPlaceholder": "Search...",
+      "matches": "matches",
+      "categories": "Categories",
+      "rename": "Rename",
+      "delete": "Delete"
     },
     "LocaleSwitcher": {
       "label": "Select language",

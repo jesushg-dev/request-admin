@@ -4,10 +4,11 @@
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Checkbox } from '@/components/ui/checkbox';
+import { FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { FormCheckboxItem, FormItem, FormSection } from '@/components/shared/form-root';
 
 import { RequestCategoryValues } from '.';
 
@@ -16,17 +17,13 @@ export function BasicInfoTab() {
   const t = useTranslations('admin.requestType.create.basicTab');
 
   return (
-    <div className="space-y-4">
+    <FormSection>
       <FormField
         control={control}
         name="name"
         render={({ field }) => (
-          <FormItem>
-            <FormLabel>{t('name')}</FormLabel>
-            <FormControl>
-              <Input placeholder={t('namePlaceholder')} {...field} />
-            </FormControl>
-            <FormMessage />
+          <FormItem label={t('name')} description={t('nameDescription')}>
+            <Input placeholder={t('namePlaceholder')} {...field} />
           </FormItem>
         )}
       />
@@ -35,49 +32,31 @@ export function BasicInfoTab() {
         control={control}
         name="description"
         render={({ field }) => (
-          <FormItem>
-            <FormLabel>{t('description')}</FormLabel>
-            <FormControl>
-              <Textarea placeholder={t('descriptionPlaceholder')} {...field} value={field.value || ''} />
-            </FormControl>
-            <FormMessage />
+          <FormItem label={t('description')} description={t('descriptionDescription')}>
+            <Textarea placeholder={t('descriptionPlaceholder')} {...field} value={field.value || ''} />
           </FormItem>
         )}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <FormField
-          control={control}
-          name="isActive"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-              <div className="space-y-0.5">
-                <FormLabel>{t('active')}</FormLabel>
-                <FormDescription>{t('activeDescription')}</FormDescription>
-              </div>
-              <FormControl>
-                <Switch checked={field.value} onCheckedChange={field.onChange} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
+      <FormField
+        control={control}
+        name="isActive"
+        render={({ field }) => (
+          <FormCheckboxItem label={t('active')} description={t('activeDescription')}>
+            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+          </FormCheckboxItem>
+        )}
+      />
 
-        <FormField
-          control={control}
-          name="isEligibleForNewClients"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-              <div className="space-y-0.5">
-                <FormLabel>{t('newClients')}</FormLabel>
-                <FormDescription>{t('newClientsDescription')}</FormDescription>
-              </div>
-              <FormControl>
-                <Switch checked={field.value} onCheckedChange={field.onChange} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-      </div>
-    </div>
+      <FormField
+        control={control}
+        name="isEligibleForNewClients"
+        render={({ field }) => (
+          <FormCheckboxItem label={t('newClients')} description={t('newClientsDescription')}>
+            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+          </FormCheckboxItem>
+        )}
+      />
+    </FormSection>
   );
 }
