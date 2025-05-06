@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useEffect, useMemo, useState, useTransition } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState, useTransition } from 'react';
 import { useUpsertRequestCategory } from '@/services/api/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { BookCopyIcon, BookIcon, ContainerIcon, FileCogIcon, FileStackIcon, PackageOpenIcon, X } from 'lucide-react';
@@ -10,6 +10,7 @@ import { SingleValue } from 'react-select';
 import { toast } from 'sonner';
 
 import { RequestHierarchyWithLevelsType } from '@/types/prisma/hierarchy';
+import { buildRequestCategoryUpsertArgs } from '@/lib/request-type';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
@@ -20,14 +21,11 @@ import { FormActions, FormError, FormRoot } from '@/components/shared/form-root'
 import { CategoryForm, getDefaultCategory, requestCategorySchema, RequestCategoryValues } from './category-form';
 import { CategoryTreeView } from './category-tree-view';
 
-export type RequestCategory = RequestCategoryValues & {
-  parentCategoryId: string | null;
-  subcategories: RequestCategory[];
-};
+type Mode = 'add' | 'edit' | 'none';
 
-interface RequestTypeFormValues {
+export interface RequestTypeFormValues {
   hierarchyId: OptionType;
-  categories: RequestCategory[];
+  categories: RequestCategoryValues[];
 }
 
 interface RequestTypeFormProps {
@@ -42,246 +40,160 @@ interface RequestTypeFormProps {
 const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements, forms, requestHierarchies, tenantId, disableHierarchyChange = false }) => {
   const t = useTranslations('admin.requestType.create');
   const [isPending, startTransition] = useTransition();
-  const [isAddingCategory, setIsAddingCategory] = useState(false);
-  const [isEditingCategory, setIsEditingCategory] = useState(false);
-  const [currentState, setCurrentState] = useState<RequestTypeFormValues>();
+  const [mode, setMode] = useState<Mode>('none');
+  const { mutateAsync: upsert, error, reset: resetError } = useUpsertRequestCategory();
   const [selectedHierarchy, setSelectedHierarchy] = useState<SingleValue<OptionType>>();
-  const [selectedHierarchyData, setSelectedHierarchyData] = useState<RequestHierarchyWithLevelsType>();
-  const { mutateAsync: upsert, error } = useUpsertRequestCategory();
+  const [currentState, setCurrentState] = useState<RequestTypeFormValues['categories']>([]);
 
   const form = useForm({
     resolver: zodResolver(requestCategorySchema),
-    defaultValues: getDefaultCategory(),
   });
 
-  const hierarchyOptions = useMemo(() => {
-    return requestHierarchies.map((hierarchy) => ({
-      label: hierarchy.name,
-      value: hierarchy.id,
-    }));
-  }, [requestHierarchies]);
+  const hierarchyOptions = useMemo(() => requestHierarchies.map((h) => ({ label: h.name, value: h.id })), [requestHierarchies]);
 
-  const handleAddCategory = () => {
-    setIsAddingCategory(true);
-    setIsEditingCategory(false);
-    form.reset(getDefaultCategory());
-  };
+  const selectedHierarchyData = useMemo(() => requestHierarchies.find((h) => h.id === selectedHierarchy?.value), [requestHierarchies, selectedHierarchy]);
 
-  const handleEditCategory = (category: RequestCategoryValues) => {
-    setIsAddingCategory(false);
-    setIsEditingCategory(true);
-    form.reset(category);
-  };
+  const formsOptions = useMemo(() => forms, [forms]);
+  const requirementsOptions = useMemo(() => requirements, [requirements]);
 
-  const handleCancelForm = () => {
-    setIsAddingCategory(false);
-    setIsEditingCategory(false);
-    form.reset(getDefaultCategory());
-  };
+  const handleAddCategory = useCallback(
+    (hierarchyLevelId: string, parentCategoryId?: string | null) => {
+      setMode('add');
+      form.reset(getDefaultCategory(hierarchyLevelId, parentCategoryId));
+    },
+    [form]
+  );
 
-  const handleHierarchyChange = (newValue: SingleValue<OptionType>) => {
-    setSelectedHierarchy(newValue);
-    const selectedHierarchyData = requestHierarchies.find((h) => h.id === newValue?.value);
-    setSelectedHierarchyData(selectedHierarchyData);
-  };
+  const handleEditCategory = useCallback(
+    (category: RequestCategoryValues) => {
+      setMode('edit');
+      form.reset(category);
+    },
+    [form]
+  );
 
-  useEffect(() => {
-    if (initialValues) {
-      setCurrentState(initialValues);
-      setSelectedHierarchy(initialValues.hierarchyId);
-      const selectedHierarchyData = requestHierarchies.find((h) => h.id === initialValues.hierarchyId?.value);
-      setSelectedHierarchyData(selectedHierarchyData);
-    }
-  }, [initialValues, requestHierarchies]);
+  const handleCancelForm = useCallback(() => {
+    setMode('none');
+    const defaultLevelId = selectedHierarchyData?.levels[0].id ?? '';
+    form.reset(getDefaultCategory(defaultLevelId));
+    resetError();
+  }, [form, resetError, selectedHierarchyData]);
+
+  const handleHierarchyChange = useCallback((newValue: SingleValue<OptionType>) => setSelectedHierarchy(newValue), []);
 
   const onSubmit = (cat: RequestCategoryValues) => {
-    if (!selectedHierarchy) return;
+    if (!selectedHierarchy?.value) return;
 
     startTransition(() => {
-      const promise = upsert({
-        where: { id: cat.id },
-        create: {
-          id: cat.id,
-          name: cat.name,
-          description: cat.description,
-          // For creation, isActive is derived from isSubCategoryVisible (as in the original logic)
-          isActive: cat.isActive,
-          isEligibleForNewClients: cat.isEligibleForNewClients,
-          tenantId,
-          // Set parentCategoryId to the provided _parentId or null if there is none
-          parentCategoryId: cat._parentId ? cat._parentId : null,
-          hierarchyId: String(selectedHierarchy.value),
-          hierarchyLevelId: cat.hierarchyLevelId,
-          // Create nested CategoryForms records from the provided forms array
-          categoryForms: {
-            create:
-              cat.forms?.map((f) => ({
-                tenantId,
-                formId: String(f.value),
-              })) ?? [],
-          },
-          // Create nested RequestCategoryRequirements records from the provided requirements array
-          requestCategoryRequirements: {
-            create:
-              cat.requirements?.map((r) => ({
-                tenantId,
-                requirementId: String(r.value),
-              })) ?? [],
-          },
-          // Create nested SLA record if provided
-          sla: cat.sla
-            ? {
-                create: {
-                  tenantId,
-                  resolutionTime: cat.sla.resolutionTime ?? 0,
-                  escalationTime: cat.sla.escalationTime ?? 0,
-                  id: cat.sla.id,
-                },
-              }
-            : undefined,
-        },
-        update: {
-          name: cat.name,
-          description: cat.description,
-          isActive: cat.isActive,
-          isEligibleForNewClients: cat.isEligibleForNewClients,
-          tenantId,
-          hierarchyId: String(selectedHierarchy.value),
-          parentCategoryId: cat._parentId ? cat._parentId : null,
-          hierarchyLevelId: cat.hierarchyLevelId,
-          // For nested CategoryForms, first delete any forms that are not present in the incoming data,
-          // then upsert each provided form.
-          categoryForms: {
-            deleteMany: {
-              formId: { notIn: formIds },
-            },
-            upsert:
-              cat.forms?.map((f) => ({
-                where: {
-                  // The unique index is assumed to be based on (categoryId, formId, tenantId)
-                  categoryId_formId_tenantId: {
-                    categoryId: cat.id,
-                    formId: String(f.value),
-                    tenantId,
-                  },
-                },
-                create: {
-                  tenantId,
-                  formId: String(f.value),
-                },
-                update: {
-                  tenantId,
-                  formId: String(f.value),
-                },
-              })) ?? [],
-          },
-          // For nested RequestCategoryRequirements, delete any requirements not present in the incoming data,
-          // then upsert each provided requirement.
-          requestCategoryRequirements: {
-            deleteMany: {
-              requirementId: { notIn: requirementIds },
-            },
-            upsert:
-              cat.requirements?.map((r) => ({
-                where: {
-                  // The unique index is assumed to be based on (categoryId, requirementId, tenantId)
-                  categoryId_requirementId_tenantId: {
-                    categoryId: cat.id,
-                    requirementId: String(r.value),
-                    tenantId,
-                  },
-                },
-                create: {
-                  tenantId,
-                  requirementId: String(r.value),
-                },
-                update: {
-                  tenantId,
-                  requirementId: String(r.value),
-                },
-              })) ?? [],
-          },
-          // For the nested SLA record, use upsert to create or update it as needed.
-          sla: cat.sla
-            ? {
-                upsert: {
-                  where: {
-                    id: cat.sla.id,
-                    tenantId,
-                  },
-                  create: {
-                    tenantId,
-                    resolutionTime: cat.sla.resolutionTime ?? 0,
-                    escalationTime: cat.sla.escalationTime ?? 0,
-                    id: cat.sla.id,
-                  },
-                  update: {
-                    tenantId,
-                    resolutionTime: cat.sla.resolutionTime ?? 0,
-                    escalationTime: cat.sla.escalationTime ?? 0,
-                    id: cat.sla.id,
-                  },
-                },
-              }
-            : undefined,
-        },
+      const previousState = currentState?.find((c) => c.id === cat.id);
+
+      setCurrentState((prev) => {
+        const prevCategories = [...prev];
+        if (previousState) {
+          const previousParent = prevCategories.find((c) => c.id === previousState.parentCategoryId);
+          if (previousParent) {
+            previousParent.children = previousParent.children.filter((id) => id !== cat.id);
+          }
+        }
+
+        const categoryIndex = prevCategories.findIndex((c) => c.id === cat.id);
+        const isNewCategory = categoryIndex === -1;
+
+        if (isNewCategory) {
+          prevCategories.push({
+            ...cat,
+            children: [],
+          });
+        } else {
+          prevCategories[categoryIndex] = {
+            ...prevCategories[categoryIndex],
+            ...cat,
+          };
+        }
+
+        if (cat.parentCategoryId) {
+          const newParent = prevCategories.find((c) => c.id === cat.parentCategoryId);
+          if (newParent && !newParent.children.includes(cat.id)) {
+            newParent.children = [...newParent.children, cat.id];
+          }
+        }
+
+        return prevCategories;
       });
+
+      const promise = upsert(buildRequestCategoryUpsertArgs(cat, tenantId, String(selectedHierarchy.value)));
+
       toast.promise(promise, {
         loading: t('category.loading'),
-        success: () => {
-          setIsAddingCategory(false);
-          setIsEditingCategory(false);
-          form.reset(getDefaultCategory());
+        success: (response) => {
+          if (response) {
+            setCurrentState((prev) => prev.map((c) => (c.id === response.id ? { ...c, ...response } : c)));
+          }
+          setMode('none');
           return t('category.success');
         },
         error: (error) => {
+          setCurrentState((prev) => [...prev]);
           return t('category.error', { error: error.message });
         },
       });
     });
   };
 
+  useEffect(() => {
+    if (initialValues) {
+      setCurrentState(initialValues.categories);
+      setSelectedHierarchy(initialValues.hierarchyId);
+    } else if (requestHierarchies.length === 1) {
+      const defaultHierarchy = hierarchyOptions[0];
+      setSelectedHierarchy(defaultHierarchy);
+    }
+  }, [initialValues, requestHierarchies, hierarchyOptions]);
+
+  const isFormActive = mode !== 'none';
+  const firstLevelId = selectedHierarchyData?.levels[0].id ?? '';
+
   return (
     <ResizablePanelGroup direction="horizontal" className="flex-1">
       <ResizablePanel defaultSize={30}>
         {!initialValues && (
-          <div className="mb-6">
-            <h2 className="text-sm font-medium text-gray-500 mb-2">{t('hierarchyLabel')}</h2>
+          <div className="flex flex-col border-b bg-background/50 px-4 py-2">
+            <h2 className="text-sm font-medium mb-2">{t('hierarchyLabel')}</h2>
             <Select
-              menuPortalTarget={null}
               isSearchable
+              menuPortalTarget={null}
               isClearable={!disableHierarchyChange && hierarchyOptions.length > 1}
               options={hierarchyOptions}
               isDisabled={disableHierarchyChange || hierarchyOptions.length === 1}
               onChange={handleHierarchyChange}
               value={selectedHierarchy}
             />
-            <span className="text-xs text-gray-500">{t('hierarchyDescription')}</span>
+            <span className="text-xs text-muted-foreground">{t('hierarchyDescription')}</span>
           </div>
         )}
 
-        {selectedHierarchy && selectedHierarchyData && (
-          <CategoryTreeView categories={currentState?.categories ?? []} onAddCategory={console.log} onEditCategory={handleEditCategory} hierarchy={selectedHierarchyData} />
-        )}
+        {selectedHierarchyData && <CategoryTreeView categories={currentState} onAddCategory={handleAddCategory} onEditCategory={handleEditCategory} hierarchy={selectedHierarchyData} />}
       </ResizablePanel>
+
       <ResizableHandle />
+
       <ResizablePanel className="flex-1" defaultSize={70}>
         <div className="flex items-center justify-center h-full p-4 overflow-hidden">
-          {selectedHierarchy ? (
-            isEditingCategory || isAddingCategory ? (
+          {selectedHierarchy && selectedHierarchyData ? (
+            isFormActive ? (
               <div className="rounded-lg border h-full p-6 flex-1 flex flex-col overflow-hidden">
                 <Form {...form}>
                   <FormRoot onSubmit={form.handleSubmit(onSubmit)}>
                     <div className="flex justify-between items-center">
-                      <h2 className="text-xl font-bold">{isAddingCategory ? t('createTitle') : t('editTitle')}</h2>
+                      <h2 className="text-xl font-bold">{mode === 'add' ? t('createTitle') : t('editTitle')}</h2>
                       <Button variant="ghost" size="sm" type="button" onClick={handleCancelForm} disabled={isPending}>
                         <X className="h-4 w-4 mr-2" />
                         {t('cancel')}
                       </Button>
                     </div>
                     <FormError error={error} />
-                    <CategoryForm formsOptions={forms} requirementsOptions={requirements} />
-                    <FormActions isPending={isPending} title={isAddingCategory ? t('create') : t('update')} />
+                    <CategoryForm formsOptions={formsOptions} requirementsOptions={requirementsOptions} />
+                    <FormActions isPending={isPending} title={mode === 'add' ? t('create') : t('update')} />
                   </FormRoot>
                 </Form>
               </div>
@@ -293,7 +205,7 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
                 actions={[
                   {
                     label: 'Create New Category',
-                    onClick: handleAddCategory,
+                    onClick: () => handleAddCategory(firstLevelId),
                   },
                 ]}
               />

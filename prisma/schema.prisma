@@ -10,6 +10,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
 
 model Tenant {
@@ -644,7 +645,6 @@ model RequestWorkflowTransition {
   updatedBy             String?
   tenantId              String
   tenant                Tenant                @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  isDefault             Boolean               @default(false)
   priority              Int                   @default(0)
   maxDuration           Int?
   notifyAfter           Int?

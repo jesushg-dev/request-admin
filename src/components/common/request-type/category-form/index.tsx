@@ -17,10 +17,11 @@ import { SlaTab } from './sla-tab';
 
 export const requestCategorySchema = z.object({
   id: z.string(),
-  name: z.string().min(2, { message: 'Name must be at least 2 characters' }).max(100, { message: 'Name must be less than 100 characters' }),
-  description: z.string().optional(),
-  isActive: z.boolean().default(true),
   hierarchyLevelId: z.string(),
+  parentCategoryId: z.string().nullish(),
+  name: z.string().min(2, { message: 'Name must be at least 2 characters' }).max(100, { message: 'Name must be less than 100 characters' }),
+  description: z.string().nullish(),
+  isActive: z.boolean().default(true),
   isEligibleForNewClients: z.boolean().default(true),
   requirements: z.array(optionSchema).optional(),
   forms: z.array(optionSchema).optional(),
@@ -31,13 +32,15 @@ export const requestCategorySchema = z.object({
   }),
   executionSteps: z.array(stepFormSchema),
   guides: z.array(guideSchema),
+  children: z.array(z.string()),
 });
 
 export type RequestCategoryValues = z.infer<typeof requestCategorySchema>;
 
-export const getDefaultCategory = (hierarchyLevelId: string): RequestCategoryValues => ({
+export const getDefaultCategory = (hierarchyLevelId: string, parentCategoryId?: string | null): RequestCategoryValues => ({
   id: generateUuid(),
   hierarchyLevelId,
+  parentCategoryId,
   name: '',
   description: '',
   isActive: true,
@@ -51,6 +54,7 @@ export const getDefaultCategory = (hierarchyLevelId: string): RequestCategoryVal
   forms: [],
   executionSteps: [],
   guides: [],
+  children: [],
 });
 
 interface CategoryFormProps {

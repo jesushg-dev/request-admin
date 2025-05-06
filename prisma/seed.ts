@@ -2554,7 +2554,6 @@ export async function seedITILWorkflow() {
           toStatusId: transition.toStatusId,
           name: transition.label[LANGUAGE],
           maxDuration: transition.maxDuration,
-          isDefault: transition.isDefault ?? false,
           priority: transition.priority ?? 0,
           requiresApproval: transition.requiresApproval ?? false,
           requiresJustification: transition.requiresJustification ?? false,

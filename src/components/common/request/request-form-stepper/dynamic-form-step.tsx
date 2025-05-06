@@ -31,9 +31,10 @@ interface DynamicFormStepProps {
   onPrev: () => void;
   onNext: () => void;
   requestCategoryIds: string[];
+  assignmentCategoryIds: string[];
 }
 
-export const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds, onPrev, onNext }) => {
+export const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds, assignmentCategoryIds, onPrev, onNext }) => {
   const t = useTranslations('admin.request.form.dynamicFormStep');
   const formRef = useRef<FormRendererRef>(null);
   const { control, formState } = useFormContext<FormResponsesValues>();
@@ -44,7 +45,8 @@ export const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds, 
     orderBy: { name: 'asc' },
     select: { id: true, name: true, description: true, content: true },
     where: {
-      categoryForms: { some: { categoryId: { in: requestCategoryIds } } },
+      requestCategoryForms: { some: { categoryId: { in: requestCategoryIds } } },
+      assignmentCategoryForms: { some: { categoryId: { in: assignmentCategoryIds } } },
     },
   });
 

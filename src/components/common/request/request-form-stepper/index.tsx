@@ -37,20 +37,25 @@ const { useStepper, utils } = defineStepper(
 
 export type RequestFormStepperType = CombinedCategoriesValues & RequirementComplianceValues & RequestDetailValues & AttachmentsValues & FormResponsesValues;
 
-type CombinedFormProps = {
+type CategoryIds = {
+  requestCategory: string[];
+  assignmentCategory: string[];
+};
+
+interface CombinedFormProps {
   tenantId: string;
   requestLevelTypes: RequestLevelType[];
   assignmentLevelTypes: AssignmentLevelType[];
   statusesOptions: OptionType[];
   prioritiesOptions: OptionType[];
   defaultValues?: RequestFormStepperType;
-};
+}
 
 const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, requestLevelTypes, assignmentLevelTypes, statusesOptions, prioritiesOptions }) => {
   const router = useRouter();
   const stepper = useStepper();
   const [isPending, startTransition] = useTransition();
-  const [requestCategoryIds, setRequestCategoryIds] = useState<string[]>([]);
+  const [categoryIds, setCategoryIds] = useState<CategoryIds>({ requestCategory: [], assignmentCategory: [] });
 
   const form = useForm({
     mode: 'onTouched',
@@ -67,8 +72,11 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, re
   const onSubmit = (values: z.infer<typeof stepper.current.schema>) => {
     if (stepper.current.id === 'classification') {
       const data = values as CombinedCategoriesValues;
-      if (data.requestCategory) {
-        setRequestCategoryIds(data.requestCategory.map((category) => category.value));
+      if (data.requestCategory && data.assignmentCategory) {
+        setCategoryIds({
+          requestCategory: data.requestCategory.map((category) => category.value),
+          assignmentCategory: data.assignmentCategory.map((category) => category.value),
+        });
       }
     }
 
@@ -113,10 +121,12 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, re
               </StepNavigation>
               {stepper.switch({
                 classification: () => <CategoryStep requestLevelTypes={requestLevelTypes} assignmentLevelTypes={assignmentLevelTypes} />,
-                requirementCompliance: () => <RequirementComplianceStep requestCategoryIds={requestCategoryIds} />,
+                requirementCompliance: () => <RequirementComplianceStep requestCategoryIds={categoryIds.requestCategory} />,
                 requestDetails: () => <RequestDetailsStep statusesOptions={statusesOptions} prioritiesOptions={prioritiesOptions} />,
                 attachments: () => <AttachmentsStep />,
-                dynamicForm: () => <DynamicFormStep requestCategoryIds={requestCategoryIds} onNext={stepper.next} onPrev={stepper.prev} />,
+                dynamicForm: () => (
+                  <DynamicFormStep assignmentCategoryIds={categoryIds.assignmentCategory} requestCategoryIds={categoryIds.requestCategory} onNext={stepper.next} onPrev={stepper.prev} />
+                ),
                 summary: () => <SummaryStep tenantId={tenantId} requestLevelTypes={requestLevelTypes} assignmentLevelTypes={assignmentLevelTypes} />,
               })}
             </ChildStepsProvider>

@@ -66,8 +66,6 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
       },
     });
 
-    console.log('🚀 ~ handleCreate ~ newDataroom:', newDataroom);
-
     // Create Request and associate with Dataroom
     const newRequest = await tx.request.create({
       data: {
@@ -103,8 +101,6 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
         },
       },
     });
-
-    console.log('🚀 ~ handleCreate ~ newRequest:', newRequest);
 
     // Log the change in request creation
     await tx.requestChangeLog.create({
@@ -454,7 +450,7 @@ export const getRequestDetailsByRequest = async (tenantId: string, request: Requ
   // Get total submissions count
   const submissions = await db.formSubmission.count({ where: { requestId: request.id, tenantId } });
   const requestCategoryIds = request.requestCategory.map((rc) => rc.value);
-  const forms = await db.categoryForm.count({ where: { categoryId: { in: requestCategoryIds }, tenantId } });
+  const forms = await db.requestCategoryForm.count({ where: { categoryId: { in: requestCategoryIds }, tenantId } });
   const satisfactionSurvey = await db.customerSatisfactionSurvey.findFirst({
     where: { requestId: request.id },
     select: { rating: true, feedback: true, submittedAt: true },

@@ -154,7 +154,7 @@ export function GuideTab() {
         </div>
       )}
 
-      <Button onClick={handleAddGuide} variant="dashed" className="w-full" size="sm">
+      <Button onClick={handleAddGuide} type="button" variant="dashed" className="w-full" size="sm">
         <Plus className="mr-2 h-4 w-4" />
         {t('addGuide')}
       </Button>

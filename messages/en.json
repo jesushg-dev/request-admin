@@ -2815,7 +2815,9 @@
       "matches": "matches",
       "categories": "Categories",
       "rename": "Rename",
-      "delete": "Delete"
+      "edit": "Edit",
+      "delete": "Delete",
+      "addSubcategory": "Add \"{levelName}\""
     },
     "LocaleSwitcher": {
       "label": "Select language",

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
   createOnDropHandler,
   dragAndDropFeature,
@@ -16,45 +16,38 @@ import {
   syncDataLoaderFeature,
 } from '@headless-tree/core';
 import { AssistiveTreeDescription, useTree } from '@headless-tree/react';
-import { ChevronDown, ChevronRight, FileIcon, FilePlus2, FileSearch } from 'lucide-react';
+import { ChevronDown, ChevronRight, Edit, File, FilePlus2, FileSearch, Folder, FolderPlus, MoreHorizontal, Trash } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { RequestHierarchyWithLevelsType } from '@/types/prisma/hierarchy';
+import { generateUuid } from '@/lib/id';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuShortcut, ContextMenuTrigger } from '@/components/ui/context-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Hint } from '@/components/hint';
 
-import type { RequestCategory } from './request-type-form';
+import { RequestCategoryValues } from './category-form';
 
-interface TreeRequestCategory extends RequestCategory {
-  children: string[];
-}
-
-function createCategoryTreeData(categories: RequestCategory[]) {
-  const data: Record<string, TreeRequestCategory> = {};
-
-  function flatten(cats: RequestCategory[]) {
-    cats.forEach((cat) => {
-      const childrenIds = cat.subcategories.map((sub) => sub.id);
-      data[cat.id] = {
-        ...cat,
-        children: childrenIds,
-        parentCategoryId: cat.parentCategoryId || null,
-      } as TreeRequestCategory;
-      if (childrenIds.length > 0) flatten(cat.subcategories);
-    });
-  }
-  flatten(categories);
-
-  const rootIds = categories.filter((c) => !c.parentCategoryId).map((c) => c.id);
+const createCategoryTreeData = (categories: RequestCategoryValues[]) => {
+  const data: Record<string, RequestCategoryValues> = {};
   const rootId = 'root';
 
+  // First pass: Create all nodes with parent/child relationships
+  categories.forEach((cat) => {
+    data[cat.id] = {
+      ...cat,
+    } as RequestCategoryValues;
+  });
+
+  // Find root-level categories (no parent)
+  const rootCategoryIds = categories.filter((c) => !c.parentCategoryId).map((c) => c.id);
+
+  // Create root node
   data[rootId] = {
     id: rootId,
     name: 'root',
-    subcategories: rootIds.map((id) => data[id]),
-    children: rootIds,
+    children: rootCategoryIds,
+    parentCategoryId: null,
     isActive: true,
     isEligibleForNewClients: false,
     isSubCategoryVisible: true,
@@ -63,74 +56,82 @@ function createCategoryTreeData(categories: RequestCategory[]) {
     guides: [],
     requirements: [],
     forms: [],
-    parentCategoryId: null,
     hierarchyLevelId: '',
     description: '',
-  } as TreeRequestCategory;
+  } as RequestCategoryValues;
 
-  const syncDataLoader = {
-    getItem: (id: string) => data[id],
-    getChildren: (id: string) => data[id]?.children ?? [],
+  return {
+    data,
+    syncDataLoader: {
+      getItem: (id: string) => data[id],
+      getChildren: (id: string) => data[id]?.children ?? [],
+    },
+    rootId,
   };
-
-  return { data, syncDataLoader, rootId };
-}
+};
 
 export interface CategoryTreeViewProps {
-  onAddCategory: () => void;
-  onEditCategory: (category: RequestCategory) => void;
-  categories: RequestCategory[];
+  categories: RequestCategoryValues[];
   hierarchy: RequestHierarchyWithLevelsType;
+  onEditCategory: (category: RequestCategoryValues) => void;
+  onAddCategory: (hierarchyLevelId: string, parentCategoryId?: string | null) => void;
 }
 
 export const CategoryTreeView: React.FC<CategoryTreeViewProps> = ({ onAddCategory, onEditCategory, categories, hierarchy }) => {
   const t = useTranslations('component.categoryTreeView');
-  const { data, syncDataLoader, rootId } = createCategoryTreeData(categories);
+  const { data, syncDataLoader, rootId } = useMemo(() => createCategoryTreeData(categories), [categories]);
 
-  let newItemId = 0;
-  const insertNewItem = (dt: DataTransfer) => {
-    const newId = `new-${newItemId++}`;
-    const base = JSON.parse(dt.getData('application/json'));
+  const insertNewItem = useCallback(
+    (dt: DataTransfer) => {
+      const newId = generateUuid();
+      const base = JSON.parse(dt.getData('application/json'));
 
-    data[newId] = {
-      ...base,
-      id: newId,
-      subcategories: [],
-      children: [],
-      isActive: true,
-      isEligibleForNewClients: false,
-      isSubCategoryVisible: true,
-      sla: { id: '', resolutionTime: 0, escalationTime: 0 },
-      executionSteps: [],
-      guides: [],
-      requirements: [],
-      forms: [],
-      parentCategoryId: null,
-      hierarchyLevelId: '',
-      description: '',
-    } as TreeRequestCategory;
+      data[newId] = {
+        ...base,
+        id: newId,
+        children: [],
+        isActive: true,
+        isEligibleForNewClients: false,
+        isSubCategoryVisible: true,
+        sla: { id: '', resolutionTime: 0, escalationTime: 0 },
+        executionSteps: [],
+        guides: [],
+        requirements: [],
+        forms: [],
+        parentCategoryId: null,
+        hierarchyLevelId: '',
+        description: '',
+      } as RequestCategoryValues;
 
-    return newId;
-  };
+      return newId;
+    },
+    [data]
+  );
 
-  const handleDrop = (dt: DataTransfer, target: DragTarget<TreeRequestCategory>) => {
-    const newId = insertNewItem(dt);
-    insertItemsAtTarget([newId], target, (item, newChildren) => {
-      data[item.getId()].children = newChildren;
-    });
-  };
+  const handleDrop = useCallback(
+    (dt: DataTransfer, target: DragTarget<RequestCategoryValues>) => {
+      const newId = insertNewItem(dt);
+      insertItemsAtTarget([newId], target, (item, newChildren) => {
+        data[item.getId()].children = newChildren;
+      });
+    },
+    [data, insertNewItem]
+  );
 
-  const handleForeignDrop = (items: ItemInstance<TreeRequestCategory>[]) => {
+  const handleForeignDrop = useCallback((items: ItemInstance<RequestCategoryValues>[]) => {
     removeItemsFromParents(items, (item, newChildren) => {
       item.getItemData().children = newChildren;
     });
-  };
+  }, []);
 
-  const handleRename = (item: ItemInstance<TreeRequestCategory>, value: string) => {
-    data[item.getId()].name = value;
-  };
+  const handleRename = useCallback(
+    (item: ItemInstance<RequestCategoryValues>, value: string) => {
+      data[item.getId()].name = value;
+    },
+    [data]
+  );
 
-  const tree = useTree<TreeRequestCategory>({
+  const tree = useTree<RequestCategoryValues>({
     indent: 20,
     rootItemId: rootId,
     dataLoader: syncDataLoader,
@@ -166,7 +167,7 @@ export const CategoryTreeView: React.FC<CategoryTreeViewProps> = ({ onAddCategor
           <>
             <h2 className="text-lg font-semibold tracking-tight">{t('categories')}</h2>
             <div className="flex items-center gap-2">
-              <Button type="button" variant="ghost" size="icon" onClick={onAddCategory}>
+              <Button type="button" variant="ghost" size="icon" onClick={() => onAddCategory(hierarchy.levels[0].id)}>
                 <FilePlus2 />
               </Button>
               <Button type="button" variant="ghost" size="icon" onClick={() => tree.openSearch()}>
@@ -182,50 +183,83 @@ export const CategoryTreeView: React.FC<CategoryTreeViewProps> = ({ onAddCategor
         <div {...tree.getContainerProps()} className="space-y-1">
           {tree.getItems().map((item) => {
             const id = item.getId();
-            const isFolder = item.isFolder();
+            const levelName = hierarchy.levels[item.getItemMeta().level];
+            const nextLevel = hierarchy.levels[item.getItemMeta().level + 1];
 
             return (
-              <ContextMenu key={id}>
-                <ContextMenuTrigger asChild>
-                  <div style={{ paddingLeft: item.getItemMeta().level * 16 }}>
+              <div style={{ paddingLeft: item.getItemMeta().level * 25 }} key={id} {...item.getProps()} onClick={() => {}}>
+                <Hint label={levelName.name} side="right">
+                  <div
+                    /*className="flex items-center py-1 px-1 rounded-md group relative" */
+                    className={cn(
+                      'group cursor-pointer flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium ' + 'min-w-[100px] flex-shrink-0',
+                      item.isSelected() ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'
+                    )}>
+                    {item.isFolder() && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (item.isExpanded()) {
+                            item.collapse();
+                          } else {
+                            item.expand();
+                          }
+                        }}>
+                        {item.isExpanded() ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                      </Button>
+                    )}
+
                     {item.isRenaming() ? (
                       <div className="flex items-center px-3 py-2 rounded-md bg-muted/50 w-full gap-2">
-                        <FileIcon className="w-4 h-4 opacity-50" />
+                        {item.isFolder() ? <Folder className="h-4 w-4 mr-2 text-muted-foreground" /> : <File className="h-4 w-4 mr-2 text-muted-foreground" />}
                         <input {...item.getRenameInputProps()} className="w-full bg-transparent outline-none" />
                       </div>
                     ) : (
-                      <Hint side="right" label={hierarchy.levels[item.getItemMeta().level]?.name ?? ''}>
+                      <>
                         <button
-                          {...item.getProps()}
-                          type="button"
-                          className="w-full"
+                          className="text-sm flex-1 cursor-pointer flex items-center"
                           onClick={(e) => {
+                            e.stopPropagation();
+                            tree.setSelectedItems([id]);
                             onEditCategory(item.getItemData());
-                            item.getProps().onClick(e);
                           }}>
-                          <div
-                            className={cn(
-                              'cursor-pointer flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium ' + 'min-w-[100px] flex-shrink-0',
-                              item.isSelected() ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'
-                            )}>
-                            <span className="flex items-center gap-2 flex-1 text-left text-xs">
-                              <FileIcon className="w-4 h-4 flex-shrink-0 opacity-50" />
-                              {item.getItemName()}
-                            </span>
-                            {isFolder && (item.isExpanded() ? <ChevronDown className="w-4 h-4 flex-shrink-0" /> : <ChevronRight className="w-4 h-4 flex-shrink-0" />)}
-                          </div>
+                          {item.isFolder() ? <Folder className="h-4 w-4 mr-2 text-muted-foreground" /> : <File className="h-4 w-4 mr-2 text-muted-foreground" />}
+                          {item.getItemName()}
                         </button>
-                      </Hint>
+                      </>
                     )}
+
+                    <div className={cn('absolute right-1 flex items-center gap-1 transition-opacity group-hover:opacity-100 opacity-0')}>
+                      {nextLevel && (
+                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => onAddCategory(nextLevel.id, item.getId())} title={t('addSubcategory', { levelName: nextLevel.name })}>
+                          <FolderPlus className="h-3.5 w-3.5" />
+                        </Button>
+                      )}
+
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-6 w-6">
+                            <MoreHorizontal className="h-3.5 w-3.5" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => tree.getItemInstance(id).startRenaming()}>
+                            <Edit className="h-4 w-4 mr-2" />
+                            {t('rename')}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="text-destructive">
+                            <Trash className="h-4 w-4 mr-2" />
+                            {t('delete')}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </div>
-                </ContextMenuTrigger>
-                <ContextMenuContent>
-                  <ContextMenuItem onClick={() => tree.getItemInstance(id).startRenaming()}>
-                    {t('rename')} <ContextMenuShortcut>⌘R</ContextMenuShortcut>
-                  </ContextMenuItem>
-                  <ContextMenuItem>{t('delete')}</ContextMenuItem>
-                </ContextMenuContent>
-              </ContextMenu>
+                </Hint>
+              </div>
             );
           })}
         </div>

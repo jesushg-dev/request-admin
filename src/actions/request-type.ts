@@ -3,22 +3,19 @@
 import { db } from '@/server/db-client';
 
 import { generateUuid } from '@/lib/id';
-import { RequestCategory } from '@/components/common/request-type/request-type-form';
-
-type FlatCategory = RequestCategory & {
-  _parentId?: string;
-  depth: number;
-};
+import { buildRequestCategoryUpsertArgs } from '@/lib/request-type';
+import { RequestCategoryValues } from '@/components/common/request-type/category-form';
+import { RequestTypeFormValues } from '@/components/common/request-type/request-type-form';
 
 export async function getRequestCategoriesByIds(rootIds: string[], tenantId: string): Promise<RequestTypeFormValues> {
-  const categoriesToFetch = new Set(rootIds);
-  const categoryMap = new Map<string, RequestCategory & { parentCategoryId?: string | null }>();
+  const categoriesToFetch = new Set<string>(rootIds);
+  const categoryMap = new Map<string, RequestCategoryValues>();
 
+  // Fetch categories in BFS batches to handle deep hierarchies
   while (categoriesToFetch.size > 0) {
     const batchIds = Array.from(categoriesToFetch);
     categoriesToFetch.clear();
 
-    // Get categories from the current batch and their direct children
     const dbCategories = await db.requestCategory.findMany({
       select: {
         id: true,
@@ -50,77 +47,75 @@ export async function getRequestCategoriesByIds(rootIds: string[], tenantId: str
       },
       where: {
         tenantId,
-        OR: [
-          { id: { in: batchIds } }, // Categories from the current batch
-          { parentCategoryId: { in: batchIds } }, // Direct children of the current batch
-        ],
+        OR: [{ id: { in: batchIds } }, { parentCategoryId: { in: batchIds } }],
       },
     });
 
-    // Register categories and prepare the next iteration
-    dbCategories.forEach((cat) => {
-      if (!categoryMap.has(cat.id)) {
-        categoryMap.set(cat.id, {
-          id: cat.id,
-          name: cat.name,
-          description: cat.description || undefined,
-          isActive: cat.isActive,
-          hierarchyLevelId: cat.hierarchyLevelId,
-          isEligibleForNewClients: cat.isEligibleForNewClients,
-          requirements: cat.requestCategoryRequirements.map((r) => ({
+    // Store categories and track children to fetch
+    dbCategories.forEach((dbCat) => {
+      if (!categoryMap.has(dbCat.id)) {
+        const category: RequestCategoryValues = {
+          id: dbCat.id,
+          name: dbCat.name,
+          description: dbCat.description || undefined,
+          isActive: dbCat.isActive,
+          hierarchyLevelId: dbCat.hierarchyLevelId,
+          isEligibleForNewClients: dbCat.isEligibleForNewClients,
+          requirements: dbCat.requestCategoryRequirements.map((r) => ({
             value: r.requirementId,
             label: r.requirement.name || '',
           })),
-          forms: cat.categoryForms.map((f) => ({
+          forms: dbCat.categoryForms.map((f) => ({
             value: f.formId,
             label: f.form.name || '',
           })),
-          sla: cat.sla
+          sla: dbCat.sla
             ? {
-                id: cat.sla.id,
-                resolutionTime: cat.sla.resolutionTime ?? 0,
-                escalationTime: cat.sla.escalationTime ?? 0,
+                id: dbCat.sla.id,
+                resolutionTime: dbCat.sla.resolutionTime ?? 0,
+                escalationTime: dbCat.sla.escalationTime ?? 0,
               }
-            : { id: generateUuid(), resolutionTime: 0, escalationTime: 0 },
-          parentCategoryId: cat.parentCategoryId,
+            : {
+                id: generateUuid(),
+                resolutionTime: 0,
+                escalationTime: 0,
+              },
+          parentCategoryId: dbCat.parentCategoryId,
+          children: [],
           guides: [],
-          subcategories: [],
           executionSteps: [],
-        });
+        };
+
+        categoryMap.set(dbCat.id, category);
       }
 
-      // If the category is a direct child of the current batch, add its ID to search for its children
-      if (cat.parentCategoryId && batchIds.includes(cat.parentCategoryId)) {
-        categoriesToFetch.add(cat.id);
+      // Schedule children for fetching
+      if (dbCat.parentCategoryId && batchIds.includes(dbCat.parentCategoryId)) {
+        categoriesToFetch.add(dbCat.id);
       }
     });
   }
 
-  // Build the hierarchical tree
-  categoryMap.forEach((cat) => {
-    if (cat.parentCategoryId && categoryMap.has(cat.parentCategoryId)) {
-      const parent = categoryMap.get(cat.parentCategoryId);
+  // Build parent-child relationships
+  categoryMap.forEach((category) => {
+    if (category.parentCategoryId) {
+      const parent = categoryMap.get(category.parentCategoryId);
       if (parent) {
-        parent.subcategories.push(cat);
+        parent.children.push(category.id);
       }
     }
   });
-
-  // Retrieve only the root categories
-  const categories = rootIds.map((rootId) => categoryMap.get(rootId)).filter((cat): cat is RequestCategory => cat !== undefined);
 
   const hierarchy = await db.requestHierarchy.findFirstOrThrow({
     select: { id: true, name: true },
     where: {
       tenantId,
-      categories: {
-        some: { id: { in: rootIds } },
-      },
+      categories: { some: { id: { in: rootIds } } },
     },
   });
 
   return {
-    categories,
+    categories: Array.from(categoryMap.values()),
     hierarchyId: {
       value: hierarchy.id,
       label: hierarchy.name,
@@ -129,174 +124,77 @@ export async function getRequestCategoriesByIds(rootIds: string[], tenantId: str
 }
 
 /**
- * Upserts a flat array of RequestCategory objects into the database.
- * This function processes categories from parents to children (using the depth property)
- * and performs nested upserts for categoryForms and requestCategoryRequirements.
- *
- * It also handles deletion of orphaned nested records: if a form or requirement is not
- * present in the current category data, it is deleted.
- *
- * @param categories - An array of RequestCategory objects arranged in a tree structure
- * @param tenantId - The tenant identifier
- * @param hierarchyId - The hierarchy identifier
+ * Upsert a flat array of RequestCategory objects into the database.
+ * Uses BFS traversal to ensure parent-first processing.
  */
-export async function upsertCategoriesFlat(categories: RequestCategory[], tenantId: string, hierarchyId: string) {
-  // Flatten the category tree and sort by depth (parents first)
-  const flatCategories = flattenCategories(categories).sort((a, b) => a.depth - b.depth);
+export async function upsertCategoriesFlat(categories: RequestCategoryValues[], tenantId: string, hierarchyId: string) {
+  const { sortedCategories } = prepareCategoryUpsert(categories);
 
   await db.$transaction(
     async (tx) => {
-      for (const cat of flatCategories) {
-        // Extract form and requirement IDs from the incoming data.
-        // If the arrays are undefined, treat them as empty arrays (which will delete existing nested records).
-        const formIds: string[] = cat.forms ? cat.forms.map((f) => String(f.value)) : [];
-        const requirementIds: string[] = cat.requirements ? cat.requirements.map((r) => String(r.value)) : [];
-
-        await tx.requestCategory.upsert({
-          where: { id: cat.id },
-          create: {
-            id: cat.id,
-            name: cat.name,
-            description: cat.description,
-            // For creation, isActive is derived from isSubCategoryVisible (as in the original logic)
-            isActive: cat.isActive,
-            isEligibleForNewClients: cat.isEligibleForNewClients,
-            tenantId,
-            // Set parentCategoryId to the provided _parentId or null if there is none
-            parentCategoryId: cat._parentId ? cat._parentId : null,
-            hierarchyId,
-            hierarchyLevelId: cat.hierarchyLevelId,
-            // Create nested CategoryForms records from the provided forms array
-            categoryForms: {
-              create:
-                cat.forms?.map((f) => ({
-                  tenantId,
-                  formId: String(f.value),
-                })) ?? [],
-            },
-            // Create nested RequestCategoryRequirements records from the provided requirements array
-            requestCategoryRequirements: {
-              create:
-                cat.requirements?.map((r) => ({
-                  tenantId,
-                  requirementId: String(r.value),
-                })) ?? [],
-            },
-            // Create nested SLA record if provided
-            sla: cat.sla
-              ? {
-                  create: {
-                    tenantId,
-                    resolutionTime: cat.sla.resolutionTime ?? 0,
-                    escalationTime: cat.sla.escalationTime ?? 0,
-                    id: cat.sla.id,
-                  },
-                }
-              : undefined,
-          },
-          update: {
-            name: cat.name,
-            description: cat.description,
-            isActive: cat.isActive,
-            isEligibleForNewClients: cat.isEligibleForNewClients,
-            tenantId,
-            hierarchyId,
-            parentCategoryId: cat._parentId ? cat._parentId : null,
-            hierarchyLevelId: cat.hierarchyLevelId,
-            // For nested CategoryForms, first delete any forms that are not present in the incoming data,
-            // then upsert each provided form.
-            categoryForms: {
-              deleteMany: {
-                formId: { notIn: formIds },
-              },
-              upsert:
-                cat.forms?.map((f) => ({
-                  where: {
-                    // The unique index is assumed to be based on (categoryId, formId, tenantId)
-                    categoryId_formId_tenantId: {
-                      categoryId: cat.id,
-                      formId: String(f.value),
-                      tenantId,
-                    },
-                  },
-                  create: {
-                    tenantId,
-                    formId: String(f.value),
-                  },
-                  update: {
-                    tenantId,
-                    formId: String(f.value),
-                  },
-                })) ?? [],
-            },
-            // For nested RequestCategoryRequirements, delete any requirements not present in the incoming data,
-            // then upsert each provided requirement.
-            requestCategoryRequirements: {
-              deleteMany: {
-                requirementId: { notIn: requirementIds },
-              },
-              upsert:
-                cat.requirements?.map((r) => ({
-                  where: {
-                    // The unique index is assumed to be based on (categoryId, requirementId, tenantId)
-                    categoryId_requirementId_tenantId: {
-                      categoryId: cat.id,
-                      requirementId: String(r.value),
-                      tenantId,
-                    },
-                  },
-                  create: {
-                    tenantId,
-                    requirementId: String(r.value),
-                  },
-                  update: {
-                    tenantId,
-                    requirementId: String(r.value),
-                  },
-                })) ?? [],
-            },
-            // For the nested SLA record, use upsert to create or update it as needed.
-            sla: cat.sla
-              ? {
-                  upsert: {
-                    where: {
-                      id: cat.sla.id,
-                      tenantId,
-                    },
-                    create: {
-                      tenantId,
-                      resolutionTime: cat.sla.resolutionTime ?? 0,
-                      escalationTime: cat.sla.escalationTime ?? 0,
-                      id: cat.sla.id,
-                    },
-                    update: {
-                      tenantId,
-                      resolutionTime: cat.sla.resolutionTime ?? 0,
-                      escalationTime: cat.sla.escalationTime ?? 0,
-                      id: cat.sla.id,
-                    },
-                  },
-                }
-              : undefined,
-          },
-        });
+      for (const cat of sortedCategories) {
+        await tx.requestCategory.upsert(buildRequestCategoryUpsertArgs(cat, tenantId, hierarchyId));
       }
     },
     {
-      maxWait: 5000, // 5 seconds max wait to connect to prisma
-      timeout: 20000, // 20 seconds
+      maxWait: 5000,
+      timeout: 20000,
     }
   );
 }
 
-function flattenCategories(categories: RequestCategory[], parentId?: string, depth: number = 0): FlatCategory[] {
-  let flat: FlatCategory[] = [];
-  for (const cat of categories) {
-    const flatCat: FlatCategory = { ...cat, _parentId: parentId, depth };
-    flat.push(flatCat);
-    if (cat.subcategories && cat.subcategories.length > 0) {
-      flat = flat.concat(flattenCategories(cat.subcategories, cat.id, depth + 1));
+/**
+ * Prepares categories for upsert by:
+ * 1. Creating a parent-child map
+ * 2. Sorting in parent-first order using BFS
+ */
+function prepareCategoryUpsert(categories: RequestCategoryValues[]) {
+  const categoryMap = new Map<string, RequestCategoryValues>(
+    categories.map((cat) => [
+      cat.id,
+      {
+        ...cat,
+        parentCategoryId: cat.parentCategoryId || undefined,
+        children: cat.children,
+      },
+    ])
+  );
+
+  // Find root nodes and build adjacency list
+  const adjacencyList = new Map<string, string[]>();
+  const reverseList = new Map<string, string>();
+  const roots: string[] = [];
+
+  for (const [id, cat] of categoryMap) {
+    reverseList.set(id, cat.parentCategoryId || 'root');
+    if (!cat.parentCategoryId) {
+      roots.push(id);
+    }
+    adjacencyList.set(id, [...cat.children]);
+  }
+
+  // BFS sorting (parents before children)
+  const sortedIds: string[] = [];
+  const queue = [...roots];
+
+  while (queue.length > 0) {
+    const currentId = queue.shift()!;
+    sortedIds.push(currentId);
+
+    const children = adjacencyList.get(currentId) || [];
+    for (const childId of children) {
+      if (categoryMap.has(childId)) {
+        queue.push(childId);
+      }
     }
   }
-  return flat;
+
+  // Handle orphaned nodes (optional)
+  const orphaned = Array.from(categoryMap.keys()).filter((id) => !sortedIds.includes(id));
+  sortedIds.push(...orphaned);
+
+  return {
+    sortedCategories: sortedIds.map((id) => categoryMap.get(id)).filter((cat): cat is RequestCategoryValues => !!cat),
+    parentChildMap: reverseList,
+  };
 }

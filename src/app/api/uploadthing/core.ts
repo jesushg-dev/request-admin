@@ -59,7 +59,6 @@ export const ourFileRouter = {
         console.error('Error creating document in database:', JSON.stringify(error));
         throw new UploadThingError('Failed to create document in database');
       }
-      console.log('2🚀 ~ .onUploadComplete ~ metadata:');
 
       // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
       return { uploadedBy: metadata.userId };
