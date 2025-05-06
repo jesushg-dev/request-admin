@@ -3119,11 +3119,6 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
-        isDefault: {
-          name: 'isDefault',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: false }] }],
-        },
         priority: {
           name: 'priority',
           type: 'Int',
