@@ -42,7 +42,7 @@ interface RequirementTypeFormProps {
 }
 
 // Main component for creating or editing a request priority type
-export default function PriorityForm({ tenantId, initialValues }: RequirementTypeFormProps) {
+export default function RequirementTypeForm({ tenantId, initialValues }: RequirementTypeFormProps) {
   const t = useTranslations('admin.requirementType.form');
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -94,7 +94,7 @@ export default function PriorityForm({ tenantId, initialValues }: RequirementTyp
               control={form.control}
               name="name"
               render={({ field }) => (
-                <FormItem label={t('name')} description={t('namePlaceholder')} className="flex-1">
+                <FormItem label={t('name')} description={t('namePlaceholder')} className="flex-1" data-testid="name">
                   <Input placeholder={t('namePlaceholder')} {...field} />
                 </FormItem>
               )}
@@ -105,7 +105,7 @@ export default function PriorityForm({ tenantId, initialValues }: RequirementTyp
               control={form.control}
               name="description"
               render={({ field }) => (
-                <FormItem label={t('description')} description={t('descriptionPlaceholder')}>
+                <FormItem label={t('description')} description={t('descriptionPlaceholder')} data-testid="description">
                   <Textarea placeholder={t('descriptionPlaceholder')} {...field} />
                 </FormItem>
               )}
@@ -116,7 +116,7 @@ export default function PriorityForm({ tenantId, initialValues }: RequirementTyp
               control={form.control}
               name="isActive"
               render={({ field }) => (
-                <FormCheckboxItem label={t('isActive')} description={t('isActivePlaceholder')}>
+                <FormCheckboxItem label={t('isActive')} description={t('isActivePlaceholder')} data-testid="isActive">
                   <Switch checked={field.value} onCheckedChange={field.onChange} />
                 </FormCheckboxItem>
               )}
@@ -127,7 +127,7 @@ export default function PriorityForm({ tenantId, initialValues }: RequirementTyp
               control={form.control}
               name="isDefault"
               render={({ field }) => (
-                <FormCheckboxItem label={t('isDefault')} description={t('isDefaultPlaceholder')}>
+                <FormCheckboxItem label={t('isDefault')} description={t('isDefaultPlaceholder')} data-testid="isDefault">
                   <Switch checked={field.value} onCheckedChange={field.onChange} />
                 </FormCheckboxItem>
               )}

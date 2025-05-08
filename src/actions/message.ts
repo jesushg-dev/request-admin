@@ -3,7 +3,7 @@
 import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-client';
 
-class UserNotFoundErr extends Error {}
+export class UserNotFoundErr extends Error {}
 
 export async function findOrCreateConversation({ tenantId, userId }: { tenantId: string; userId: string }) {
   const session = await currentSession();

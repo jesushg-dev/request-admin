@@ -5,7 +5,7 @@ import { db } from '@/server/db-server';
 
 import { generateUuid } from '@/lib/id';
 
-class UserNotFoundErr extends Error {}
+export class UserNotFoundErr extends Error {}
 
 export async function cloneDocumentsAndFolders(documentIds: string[], folderIds: string[], dataroomId: string, currentFolderId: string | null) {
   const session = await currentSession();
