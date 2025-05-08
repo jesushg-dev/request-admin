@@ -20,6 +20,15 @@ export const RequestDefaultArgs = Prisma.validator<Prisma.RequestDefaultArgs>()(
 export type RequestType = Prisma.RequestGetPayload<typeof RequestDefaultArgs>;
 
 export type RequestDetailsType = {
+  guides: {
+    id: string;
+    name: string;
+    description?: string | null;
+    fileType: string;
+    fileUrl: string;
+    version: string;
+    updatedAt: Date | null;
+  }[];
   submissions: {
     count: number;
     total: number;

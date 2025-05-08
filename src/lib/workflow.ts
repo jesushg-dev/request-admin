@@ -1,8 +1,13 @@
 import { colorOptions, nodeColors, typeOptions } from '@/constants/workflow';
 import { MarkerType } from '@xyflow/react';
 
-import type { RequestWorkflowStatusType, RequestWorkflowTransitionType } from '@/types/prisma/workflow';
+import type { RequestWorkflowStatusType, RequestWorkflowTransitionType, RequestWorkflowType } from '@/types/prisma/workflow';
 import { WorkflowEdge, WorkflowNode } from '@/components/common/workflow/workflow-stepper/flow-diagram-editor';
+
+type StatusWithTransitions = {
+  current: RequestWorkflowStatusType;
+  allowedTransitions: RequestWorkflowStatusType[];
+};
 
 export const transformStatusToNode = (status: RequestWorkflowStatusType): WorkflowNode => ({
   id: status.id,
@@ -44,3 +49,99 @@ export const transformTransitionToEdge = (transition: RequestWorkflowTransitionT
     requiresJustification: transition.requiresJustification,
   },
 });
+
+// Get allowed transitions
+export const getStatusTransitions = (workflow: RequestWorkflowType, currentStatusId?: string): StatusWithTransitions => {
+  // If there is no current status, return initial
+  if (!currentStatusId) {
+    const initialStatus = getInitialStatus(workflow);
+    return {
+      current: initialStatus,
+      allowedTransitions: getNextStatuses(workflow, initialStatus.id),
+    };
+  }
+
+  const currentStatus = workflow.requestWorkflowStatus.find((s) => s.id === currentStatusId);
+  if (!currentStatus) throw new Error('Current status not found');
+
+  // If it is a final status, there are no transitions
+  if (currentStatus.type === 'final') {
+    return {
+      current: currentStatus,
+      allowedTransitions: [],
+    };
+  }
+
+  // Get valid transitions
+  const transitions = workflow.requestWorkflowTransition.filter((t) => t.fromStatusId === currentStatusId).map((t) => t.toStatusId);
+
+  const allowedStatuses = workflow.requestWorkflowStatus.filter((s) => transitions.includes(s.id));
+
+  return {
+    current: currentStatus,
+    allowedTransitions: allowedStatuses,
+  };
+};
+
+// Get unique initial status
+export const getInitialStatus = (workflow: RequestWorkflowType) => {
+  const initialStatuses = workflow.requestWorkflowStatus.filter((s) => s.type === 'initial');
+
+  if (initialStatuses.length === 0) {
+    throw new Error('No initial status found in workflow');
+  }
+
+  if (initialStatuses.length > 1) {
+    throw new Error('Multiple initial statuses found in workflow');
+  }
+
+  return initialStatuses[0];
+};
+
+// Validate a transition
+export const validateTransition = (workflow: RequestWorkflowType, fromStatusId: string | null, toStatusId: string): boolean => {
+  // Initial transition
+  if (!fromStatusId) {
+    return getInitialStatus(workflow).id === toStatusId;
+  }
+
+  const fromStatus = workflow.requestWorkflowStatus.find((s) => s.id === fromStatusId);
+  const toStatus = workflow.requestWorkflowStatus.find((s) => s.id === toStatusId);
+
+  // Validate existence of statuses
+  if (!fromStatus || !toStatus) return false;
+
+  // Cannot transition from final status
+  if (fromStatus.type === 'final') return false;
+
+  // Validate transition in the workflow
+  return workflow.requestWorkflowTransition.some((t) => t.fromStatusId === fromStatusId && t.toStatusId === toStatusId);
+};
+
+// Helper function to get next statuses
+const getNextStatuses = (workflow: RequestWorkflowType, fromStatusId: string) => {
+  return workflow.requestWorkflowTransition
+    .filter((t) => t.fromStatusId === fromStatusId)
+    .map((t) => workflow.requestWorkflowStatus.find((s) => s.id === t.toStatusId)!)
+    .filter(Boolean);
+};
+
+// Get complete state machine with type constraints
+export const getWorkflowStateMachine = (workflow: RequestWorkflowType) => {
+  return workflow.requestWorkflowStatus.map((status) => {
+    const transitions =
+      status.type === 'final'
+        ? []
+        : workflow.requestWorkflowTransition
+            .filter((t) => t.fromStatusId === status.id)
+            .map((t) => ({
+              id: t.id,
+              toStatus: workflow.requestWorkflowStatus.find((s) => s.id === t.toStatusId)!,
+            }));
+
+    return {
+      ...status,
+      transitions,
+    };
+  });
+};

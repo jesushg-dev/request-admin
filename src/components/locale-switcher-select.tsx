@@ -12,7 +12,7 @@ import { Button } from './ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 
 export default function LocaleSwitcherSelect() {
-  const t = useTranslations('component.LocaleSwitcher');
+  const t = useTranslations('component.localeSwitcher');
   const router = useRouter();
   const params = useParams();
   const pathname = usePathname();

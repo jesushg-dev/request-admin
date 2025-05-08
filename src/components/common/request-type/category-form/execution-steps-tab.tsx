@@ -219,7 +219,7 @@ export function ExecutionStepsTab() {
         </div>
       )}
 
-      <Button onClick={handleAddStep} variant="dashed" className="w-full" size="sm">
+      <Button onClick={handleAddStep} type="button" variant="dashed" className="w-full" size="sm">
         <Plus className="mr-2 h-4 w-4" />
         {t('addStep')}
       </Button>
@@ -372,7 +372,7 @@ function LinkGuidesModal({ open, onClose, guides, initialSelectedGuides }: { ope
               <Button variant="outline" type="button" onClick={() => onClose()}>
                 {t('cancel')}
               </Button>
-              <Button type="submit">{t('save')}</Button>
+              <Button type="button">{t('save')}</Button>
             </DialogFooter>
           </form>
         </Form>

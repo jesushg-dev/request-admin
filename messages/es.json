@@ -97,7 +97,8 @@
         "contact": "Contacto",
         "getDemo": "Solicita una Demo"
       }
-    }
+    },
+    "scheduleDemoButton": "Programe una demostración"
   },
   "auth": {
     "loginForm": {
@@ -1054,7 +1055,7 @@
       "view": {
         "no_documents_found": "No se encontraron documentos",
         "contact_support": "Por favor, vuelva más tarde o contacte al soporte si necesita asistencia inmediata.",
-        "projectDetails": {
+        "requestDetails": {
           "edit": "Editar",
           "submissions": "Envíos",
           "requirements": "Requisitos",
@@ -1082,14 +1083,22 @@
           "priorityUpdateError": "Error al actualizar la prioridad: {error}"
         },
         "tabs": {
-          "requirements": "Requerimientos",
-          "assignments": "Asignaciones",
-          "chat": "Chat",
-          "submissions": "Envíos",
-          "guides": "Guías",
-          "attachments": "Archivos Adjuntos",
-          "related": "Relacionado",
-          "history": "Historial"
+          "main": {
+            "execution": "Ejecución",
+            "comments": "Comentarios",
+            "reference": "Referencia"
+          },
+          "execution": {
+            "requirements": "Requerimientos",
+            "executionModel": "Modelo de Ejecución",
+            "guides": "Guías",
+            "submissions": "Submisiones",
+            "attachments": "Adjuntos"
+          },
+          "reference": {
+            "assignments": "Asignaciones",
+            "history": "Historial"
+          }
         },
         "requirements": {
           "noChangesToSave": "No hay cambios para guardar",
@@ -1156,17 +1165,6 @@
             "content": "Contenido"
           }
         },
-        "related": {
-          "title": "Incidentes Relacionados",
-          "entityLabel": "Incidentes",
-          "relateRequest": "Relacionar Solicitud",
-          "columns": {
-            "relatedId": "ID Incidente",
-            "issueSubject": "Asunto",
-            "createdAt": "Fecha de Creación",
-            "noSubject": "Sin asunto"
-          }
-        },
         "history": {
           "requestId": "ID de Solicitud",
           "fullDate": "Fecha Completa",
@@ -1182,26 +1180,76 @@
           "requestUpdated": "Solicitud Actualizada",
           "requestApproved": "Solicitud Aprobada",
           "requestRejected": "Solicitud Rechazada"
+        },
+        "guidesViewer": {
+          "guides": "Guías y documentación",
+          "guidesDescription": "Documentación de referencia para resolver este tipo de solicitud",
+          "fileType": "Tipo de archivo",
+          "version": "Versión",
+          "lastUpdated": "Última actualización",
+          "viewGuide": "Ver guía",
+          "noGuidesFound": "No hay guías disponibles",
+          "noGuidesDescription": "Actualmente no hay guías disponibles para completar esta solicitud de servicio. Si tiene alguna duda o cree que falta un manual, por favor contacte con su supervisor o administrador."
         }
       },
       "form": {
-        "categoryStep": {
-          "titleRequest": "Categoría de Solicitud",
-          "titleAssignment": "Categoría de Asignación",
-          "areaLabel": "Área",
-          "areaDescription": "Seleccione el área donde se asigna la solicitud."
+        "classification": "Clasificación",
+        "compliance": "Cumplimiento",
+        "details": "Detalles",
+        "attachments": "Adjuntos",
+        "forms": "Formularios",
+        "summary": "Resumen",
+        "savingRequest": "Guardando solicitud...",
+        "uploadingFiles": "Subiendo archivos al servicio de almacenamiento",
+        "requestCreatedSuccessfully": "Solicitud creada con éxito",
+        "errorCreatingRequest": "Error al crear la solicitud",
+        "classificationStep": {
+          "reassign": {
+            "alertTitle": "Cambiar de área",
+            "alertDescription": "Al cambiar el área, se mantendrá el historial de la solicitud pero puede que debas volver a completar algunos campos requeridos en la nueva asignación."
+          },
+          "requestCategory": {
+            "title": "Categoría de Solicitud",
+            "description": "Identifica la categoría de la solicitud brindando la información necesaria para su correcta gestión.",
+            "defaultLabel": "Categoría de Solicitud",
+            "defaultDescription": "Selecciona la categoría de la solicitud.",
+            "dynamicDescription": "Seleccionar \"{category}\"",
+            "selectDescription": "Seleccionar {level}.",
+            "selectPlaceholder": "Seleccionar"
+          },
+          "assignmentCategory": {
+            "title": "Categoría de Asignación",
+            "description": "Esto permitirá una correcta asignación de recursos y la distribución adecuada de la solicitud.",
+            "areaLabel": "Área",
+            "areaDescription": "Selecciona el área donde se asignará la solicitud.",
+            "defaultLabel": "Categoría de Asignación",
+            "defaultDescription": "Selecciona la categoría de asignación.",
+            "dynamicDescription": "Seleccionar {category}",
+            "selectPlaceholder": "Selecciona la categoría de asignación.",
+            "areaFirstPlaceholder": "Selecciona el área primero",
+            "selectDescription": "Seleccionar {level}",
+            "areaPlaceholder": "Área seleccionada"
+          },
+          "common": {
+            "loading": "Cargando..."
+          }
         },
         "requirementsStep": {
           "emptyTitle": "No se encontraron requisitos",
           "emptyDescription": "No hay requisitos disponibles para las categorías seleccionadas.",
-          "title": "Requisitos ({{completed}}/{{total}})",
-          "total": "{{total}} requisitos en total",
-          "completed": "{{completed}} completados",
-          "pending": "{{pending}} pendientes",
+          "title": "Requisitos ({completed}/{total})",
+          "total": "{total} requisitos en total",
+          "completed": "{completed} completados",
+          "pending": "{pending} pendientes",
           "deselectAll": "Deseleccionar todo",
           "selectAll": "Seleccionar todo",
-          "progress": "{{progress}}% Completado",
-          "remaining": "{{pending}} restantes"
+          "progress": "{progress}% Completado",
+          "remaining": "{pending} restantes",
+          "filterOptions": {
+            "all": "Todos",
+            "selected": "Seleccionados",
+            "unselected": "No seleccionados"
+          }
         },
         "detailsStep": {
           "issueSubject": "Asunto del problema",
@@ -1210,19 +1258,26 @@
           "status": "Estado",
           "statusDescription": "El estado se usa para determinar el estado actual de la solicitud.",
           "priority": "Prioridad",
-          "priorityDescription": "La prioridad se usa para determinar el orden en que se manejan las solicitudes.",
+          "priorityDescription": "Determine cuán urgente es esta solicitud.",
           "comment": "Comentario",
           "commentPlaceholder": "Ingrese un comentario",
           "commentDescription": "El comentario se usa para proporcionar más información sobre la solicitud.",
           "description": "Descripción",
-          "descriptionDescription": "La descripción se usa para proporcionar más información sobre la solicitud."
+          "descriptionDescription": "La descripción se usa para proporcionar más información sobre la solicitud.",
+          "descriptionPlaceholder": "Escribe un texto descriptivo aquí ...",
+          "isDraft": "Es borrador",
+          "isDraftDescription": "Esta opción le permite guardar esta solicitud sin enviarla al área asignada, para deshabilitar esta opción, debe cumplir con los requisitos requeridos.",
+          "detailsStep": "Solicitar información",
+          "detailsStepDescription": "Ingrese los detalles necesarios para iniciar su solicitud de servicio"
         },
         "attachmentsStep": {
           "uploadFiles": "Subir archivos",
           "uploadNewFiles": "Solo podrá subir <strong>nuevos archivos</strong> en esta sección y estos serán <strong>guardados con la solicitud</strong>.",
           "modifyExistingFiles": "Si desea <strong>modificar archivos ya existentes</strong>, podrá hacerlo en la <link>sección de archivos adjuntos</link> o en el <link>dataroom generado con la solicitud</link>.",
           "images": "Imágenes",
-          "maxFileSize": "Tamaño máximo del archivo: 4MB"
+          "maxFileSize": "Tamaño máximo del archivo: 4MB",
+          "attachmentStep": "Adjuntar documentos",
+          "attachmentStepDescription": "Puede adjuntar cualquier documento adicional que considere apropiado."
         },
         "dynamicFormStep": {
           "emptyState": {
@@ -2824,12 +2879,33 @@
       "delete": "Eliminar",
       "addSubcategory": "Agregar \"{levelName}\""
     },
-    "LocaleSwitcher": {
+    "localeSwitcher": {
       "label": "Seleccionar idioma",
       "locale": {
         "en": "Inglés",
         "es": "Español"
       }
+    },
+    "stepper": {
+      "navigationButtons": {
+        "next": "Siguiente",
+        "back": "Anterior",
+        "finish": "Finalizar",
+        "reset": "Reiniciar",
+        "cancel": "Cancelar"
+      }
+    },
+    "fileUploader": {
+      "singleFileLimit": "No se puede subir más de 1 archivo a la vez",
+      "maxFilesExceeded": "No se pueden subir más de {maxFileCount} archivos",
+      "fileRejected": "Archivo {fileName} rechazado",
+      "uploading": "Subiendo {count} archivo(s)...",
+      "uploadSuccess": "{count} archivo(s) subido(s) correctamente",
+      "uploadError": "Error al subir {count} archivo(s)",
+      "dropHere": "Suelta los archivos aquí",
+      "dragAndDrop": "Arrastra y suelta archivos aquí, o haz clic para seleccionarlos",
+      "uploadInstructions": "Puedes subir {count, select, 1 {un archivo de hasta {maxSize}} other {{count} archivos (hasta {maxSize} cada uno)}}",
+      "removeFile": "Eliminar archivo"
     }
   }
 }

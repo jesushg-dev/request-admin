@@ -2,13 +2,15 @@
 
 import { AssignmentTypeEnum } from '@/constants/assignment-type';
 import { PermissionActions } from '@/constants/permissions';
-import { STATUS } from '@/constants/requests';
 import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-server';
 
 import { RequestDefaultArgs, RequestDetailsType, RequestType } from '@/types/prisma/request';
 import { UserAreaWithRoleType, UserTenantWithAreaDefaultArgs } from '@/types/prisma/user';
+import { normalizeValue } from '@/lib/utils';
 import { RequestFormStepperType } from '@/components/common/request/request-form-stepper';
+
+import { getInitialStatusFromDatabase } from './workflow';
 
 class UserNotFoundErr extends Error {}
 
@@ -73,9 +75,9 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
         tenantId,
         issueSubject: data.issueSubject,
         description: data.description,
-        comment: data.comment,
+        isDraft: data.isDraft,
         requestAssignments: {
-          create: createAssignmentData(tenantId, data, assignmentType.id, userAreas),
+          create: await createAssignmentData(tenantId, data, assignmentType.id, userAreas),
         },
         complianceTrackings: {
           create: requirementCompliances.map((rc) => ({
@@ -143,13 +145,14 @@ const handleUpdate = async (existingRequest: RequestType, tenantId: string, data
       data: {
         issueSubject: data.issueSubject,
         description: data.description,
-        comment: data.comment,
+
+        isDraft: data.isDraft,
         requestAssignments: {
           updateMany: {
             where: { isActive: true },
             data: { isActive: false },
           },
-          create: createAssignmentData(tenantId, data, assignmentType.id, area),
+          create: await createAssignmentData(tenantId, data, assignmentType.id, area),
         },
         complianceTrackings: {
           upsert: requirementCompliances.map((rc) => ({
@@ -274,23 +277,26 @@ const getAreaWithSupervisors = async (tenantId: string, areaId: string) => {
   });
 };
 
-const createAssignmentData = (tenantId: string, data: RequestFormStepperType, assignmentTypeId: string, userAreas: UserAreaWithRoleType[]) => ({
-  tenantId,
-  typeId: assignmentTypeId,
-  areaId: data.areaId.value,
-  statusId: data.statusId.value,
-  priorityId: data.priorityId.value,
-  requestCategoryId: data.requestCategory.slice(-1)[0].value,
-  assignmentCategoryId: data.assignmentCategory.slice(-1)[0].value,
-  assignmentDate: new Date(),
-  assignedUsers: {
-    create: userAreas.map((ua) => ({
-      tenantId,
-      userTenantId: ua.id,
-      role: ua.userAreas.find((ua) => ua.areaId === data.areaId.value)?.role.name ?? 'User',
-    })),
-  },
-});
+const createAssignmentData = async (tenantId: string, data: RequestFormStepperType, assignmentTypeId: string, userAreas: UserAreaWithRoleType[]) => {
+  const statusId = normalizeValue(data.statusId?.value) ?? (await getInitialStatusFromDatabase(tenantId, data.requestCategory.slice(-1)[0].value)).id;
+  return {
+    tenantId,
+    typeId: assignmentTypeId,
+    areaId: data.areaId.value,
+    statusId: statusId,
+    priorityId: data.priorityId.value,
+    requestCategoryId: data.requestCategory.slice(-1)[0].value,
+    assignmentCategoryId: data.assignmentCategory.slice(-1)[0].value,
+    assignmentDate: new Date(),
+    assignedUsers: {
+      create: userAreas.map((ua) => ({
+        tenantId,
+        userTenantId: ua.id,
+        role: ua.userAreas.find((ua) => ua.areaId === data.areaId.value)?.role.name ?? 'User',
+      })),
+    },
+  };
+};
 
 const processFormSubmissions = (submissions: RequestFormStepperType['submissions'], tenantId: string) => {
   if (!submissions) return [];
@@ -331,7 +337,7 @@ const detectChanges = (oldRequest: RequestType, newRequest: RequestType) => {
   }> = [];
 
   // Direct properties of the Request object
-  const mainFields: Array<keyof typeof oldRequest> = ['issueSubject', 'description', 'comment'];
+  const mainFields: Array<keyof typeof oldRequest> = ['issueSubject', 'description'];
 
   // Compare the main fields of the request object
   for (const field of mainFields) {
@@ -420,7 +426,7 @@ export const getRequestById = async (tenantId: string, requestId: string): Promi
     id: request.id,
     requestCategory,
     assignmentCategory,
-    comment: request.comment ?? '',
+    isDraft: request.isDraft,
     description: request.description ?? '',
     issueSubject: request.issueSubject ?? '',
     areaId: { value: request.requestAssignments[0].area.id, label: request.requestAssignments[0].area.name },
@@ -464,7 +470,13 @@ export const getRequestDetailsByRequest = async (tenantId: string, request: Requ
     select: { id: true, name: true, createdAt: true },
   });
 
+  const guides = await db.guideDocument.findMany({
+    select: { id: true, name: true, description: true, fileType: true, fileUrl: true, version: true, updatedAt: true },
+    where: { tenantId, requestCategoryId: { in: request.requestCategory.map((rc) => rc.value) } },
+  });
+
   return {
+    guides,
     submissions: {
       count: submissions,
       total: forms,
@@ -485,27 +497,12 @@ export const getPrioritiesAsOptions = async (tenantId: string) => {
 
   const priorities = await db.requestPriorityType.findMany({
     select: { id: true, name: true, primaryColor: true },
-    where: { tenantId },
+    where: { tenantId, isActive: true },
   });
 
   return priorities.map((status) => ({
     label: status.name,
     value: status.id,
-  }));
-};
-
-export const getStatusesAsOptions = async (tenantId: string, levels: number[] = [STATUS.DRAFT, STATUS.REVIEW, STATUS.APPROVED, STATUS.IMPLEMENTING, STATUS.CLOSED]) => {
-  const session = await currentSession();
-  if (!session) throw new UserNotFoundErr();
-
-  const priorities = await db.requestStatusType.findMany({
-    select: { id: true, name: true },
-    where: { tenantId, level: { in: levels } },
-  });
-
-  return priorities.map((priority) => ({
-    label: priority.name,
-    value: priority.id,
   }));
 };
 

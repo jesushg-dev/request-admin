@@ -8,7 +8,7 @@ import { useTranslations } from 'next-intl';
 import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
-import { CardDescription, CardTitle } from '@/components/ui/card';
+import { Card, CardDescription, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { FormElementInstance } from '@/components/builder-form/form-elements';
 import FormRenderer, { FormRendererRef } from '@/components/builder-form/form-renderer';
@@ -106,52 +106,54 @@ export const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds, 
 
   return (
     <>
-      <div className="flex justify-between items-center w-full">
-        <div>
-          <CardTitle>{data[currentChildStepIndex]?.name}</CardTitle>
-          <CardDescription>{data[currentChildStepIndex]?.description}</CardDescription>
+      <Card className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex justify-between items-center w-full">
+          <div>
+            <CardTitle>{data[currentChildStepIndex]?.name}</CardTitle>
+            <CardDescription>{data[currentChildStepIndex]?.description}</CardDescription>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">{t('stepCounter', { current: currentChildStepIndex + 1, total: data.length })}</span>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">{t('stepCounter', { current: currentChildStepIndex + 1, total: data.length })}</span>
+        <div className="flex flex-col gap-4 flex-1 overflow-y-hidden">
+          <div className="flex flex-1 flex-col gap-4 overflow-y-hidden">
+            <ZodErrorAlert />
+            <ScrollArea className="flex flex-1 gap-4">
+              <div className="flex flex-col gap-4 flex-1 mx-1">
+                {data[currentChildStepIndex] && (
+                  <Controller
+                    control={control}
+                    name={`submissions.${data[currentChildStepIndex].id}`}
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <FormRenderer
+                          ref={formRef}
+                          onSubmit={(value) => {
+                            onChange(value);
+                            updateChildStepStatus('dynamicForm', data[currentChildStepIndex].id, 'completed');
+                            if (currentChildStepIndex === data.length - 1) {
+                              onNext();
+                            } else {
+                              setCurrentChildStepIndex((prev) => prev + 1);
+                            }
+                          }}
+                          showSubmitButton={false}
+                          initialValues={value}
+                          content={JSON.parse(data[currentChildStepIndex].content ?? '[]') as FormElementInstance[]}
+                        />
+                      );
+                    }}
+                  />
+                )}
+              </div>
+            </ScrollArea>
+            {formState.errors?.submissions?.[data[currentChildStepIndex]?.id]?.response?.message && (
+              <p className="text-red-500 text-sm">{formState.errors.submissions?.[data[currentChildStepIndex]?.id]?.response?.message?.toString() ?? ''}</p>
+            )}
+          </div>
         </div>
-      </div>
-      <div className="flex flex-col gap-4 flex-1 overflow-y-hidden">
-        <div className="flex flex-1 flex-col gap-4 overflow-y-hidden">
-          <ZodErrorAlert />
-          <ScrollArea className="flex flex-1 gap-4">
-            <div className="flex flex-col gap-4 flex-1 mx-1">
-              {data[currentChildStepIndex] && (
-                <Controller
-                  control={control}
-                  name={`submissions.${data[currentChildStepIndex].id}`}
-                  render={({ field: { onChange, value } }) => {
-                    return (
-                      <FormRenderer
-                        ref={formRef}
-                        onSubmit={(value) => {
-                          onChange(value);
-                          updateChildStepStatus('dynamicForm', data[currentChildStepIndex].id, 'completed');
-                          if (currentChildStepIndex === data.length - 1) {
-                            onNext();
-                          } else {
-                            setCurrentChildStepIndex((prev) => prev + 1);
-                          }
-                        }}
-                        showSubmitButton={false}
-                        initialValues={value}
-                        content={JSON.parse(data[currentChildStepIndex].content ?? '[]') as FormElementInstance[]}
-                      />
-                    );
-                  }}
-                />
-              )}
-            </div>
-          </ScrollArea>
-          {formState.errors?.submissions?.[data[currentChildStepIndex]?.id]?.response?.message && (
-            <p className="text-red-500 text-sm">{formState.errors.submissions?.[data[currentChildStepIndex]?.id]?.response?.message?.toString() ?? ''}</p>
-          )}
-        </div>
-      </div>
+      </Card>
       <StepperNavigationButtons
         isLastStep={false}
         isFirstStep={false}

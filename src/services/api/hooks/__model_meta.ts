@@ -247,13 +247,6 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
-        relatedIncidents: {
-          name: 'relatedIncidents',
-          type: 'RelatedIncident',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
         requestChangeLogs: {
           name: 'requestChangeLogs',
           type: 'RequestChangeLog',
@@ -2159,6 +2152,11 @@ const metadata = {
           type: 'String',
           isOptional: true,
         },
+        isDraft: {
+          name: 'isDraft',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
         closedAt: {
           name: 'closedAt',
           type: 'DateTime',
@@ -2171,11 +2169,6 @@ const metadata = {
         },
         closedComment: {
           name: 'closedComment',
-          type: 'String',
-          isOptional: true,
-        },
-        comment: {
-          name: 'comment',
           type: 'String',
           isOptional: true,
         },
@@ -2199,20 +2192,6 @@ const metadata = {
           isDataModel: true,
           isArray: true,
           backLink: 'request',
-        },
-        relatedIncidents: {
-          name: 'relatedIncidents',
-          type: 'RelatedIncident',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'request',
-        },
-        relatedTo: {
-          name: 'relatedTo',
-          type: 'RelatedIncident',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'related',
         },
         changeLog: {
           name: 'changeLog',
@@ -2547,96 +2526,6 @@ const metadata = {
           name: 'unAssignmentDate',
           type: 'DateTime',
           isOptional: true,
-        },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
-        },
-      },
-    },
-    relatedIncident: {
-      name: 'RelatedIncident',
-      fields: {
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
-        },
-        deletedAt: {
-          name: 'deletedAt',
-          type: 'DateTime',
-          isOptional: true,
-        },
-        createdBy: {
-          name: 'createdBy',
-          type: 'String',
-          isOptional: true,
-        },
-        updatedBy: {
-          name: 'updatedBy',
-          type: 'String',
-          isOptional: true,
-        },
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'relatedIncidents',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
-        },
-        requestId: {
-          name: 'requestId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'request',
-        },
-        relatedId: {
-          name: 'relatedId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'related',
-        },
-        isActive: {
-          name: 'isActive',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: true }] }],
-        },
-        request: {
-          name: 'request',
-          type: 'Request',
-          isDataModel: true,
-          backLink: 'relatedIncidents',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'requestId' },
-        },
-        related: {
-          name: 'related',
-          type: 'Request',
-          isDataModel: true,
-          backLink: 'relatedTo',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'relatedId' },
         },
       },
       uniqueConstraints: {
@@ -7761,24 +7650,17 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
-        url: {
-          name: 'url',
+        fileType: {
+          name: 'fileType',
           type: 'String',
-          isOptional: true,
         },
-        status: {
-          name: 'status',
-          type: 'Int',
-        },
-        expirationDate: {
-          name: 'expirationDate',
-          type: 'DateTime',
-          isOptional: true,
+        fileUrl: {
+          name: 'fileUrl',
+          type: 'String',
         },
         version: {
           name: 'version',
-          type: 'Int',
-          attributes: [{ name: '@default', args: [{ value: 1 }] }],
+          type: 'String',
         },
         requestCategoryId: {
           name: 'requestCategoryId',

@@ -27,6 +27,7 @@ import { toast } from 'sonner';
 
 import { AssignmentLevelType, RequestLevelType } from '@/types/prisma/hierarchy';
 import { RequestDetailsType } from '@/types/prisma/request';
+import { RequestWorkflowType } from '@/types/prisma/workflow';
 import useMessage from '@/lib/message';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -55,10 +56,10 @@ const icons2: { [key: number]: typeof Circle } = {
   4: CircleCheckBig,
 };
 
-interface ProjectDetailsProps {
+interface RequestDetailsProps {
   slug: string;
   tenantId: string;
-  statuses: OptionType[];
+  workflow: RequestWorkflowType;
   priorities: OptionType[];
   request: RequestFormStepperType;
   requestLevelTypes: RequestLevelType[];
@@ -68,26 +69,26 @@ interface ProjectDetailsProps {
   enablePriorityChange: boolean;
 }
 
-const ProjectDetails: FC<ProjectDetailsProps> = ({
+const RequestDetails: FC<RequestDetailsProps> = ({
   enableStatusChange,
   enablePriorityChange,
   tenantId,
   slug,
   request,
   requestDetails,
-  statuses,
+  workflow,
   priorities,
   requestLevelTypes,
   assignmentLevelTypes,
 }) => {
-  const t = useTranslations('admin.request.view.projectDetails');
+  const t = useTranslations('admin.request.view.requestDetails');
 
   const message = useMessage();
   const [isPending, startTransition] = useTransition();
   const [status, setStatus] = useState<string | number>(request.statusId.value);
   const [priority, setPriority] = useState<string | number>(request.priorityId.value);
 
-  const statusesOptions = statuses.map((status, index) => ({ value: status.value, label: status.label, icon: icons2[index] ?? Circle }));
+  const statusesOptions = workflow.requestWorkflowStatus.map((status, index) => ({ value: status.id, label: status.name, icon: icons2[index] ?? Circle }));
   const priorityOptions = priorities.map((priority, index) => ({ value: priority.value, label: priority.label, icon: icons[index] ?? Circle }));
 
   const assignmentCategories: MetadataItemProps[] = request.assignmentCategory.map((category, index) => ({
@@ -263,4 +264,4 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({
   );
 };
 
-export default ProjectDetails;
+export default RequestDetails;

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { ALargeSmallIcon, ImageIcon, Mail, MessageSquare, SendHorizonalIcon, Smile, XIcon } from 'lucide-react';
+import { ImageIcon, Mail, MessageSquare, SendHorizonalIcon, Smile, XIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -26,20 +26,19 @@ interface EditorProps {
   };
   defaultValue?: string;
   disabled?: boolean;
+  isWhatsAppNotificationEnabled?: boolean;
+  isEmailNotificationEnabled?: boolean;
   variant?: 'create' | 'update';
 }
 
-const Editor = ({ onCancel, onSubmit, disabled = false, defaultValue = '', variant = 'create' }: EditorProps) => {
-  const [text] = useState<string>(defaultValue);
+const Editor = ({ onCancel, onSubmit, disabled = false, defaultValue = '', variant = 'create', isEmailNotificationEnabled = false, isWhatsAppNotificationEnabled = false }: EditorProps) => {
+  const [text, setText] = useState<string>(defaultValue);
   const [image, setImage] = useState<File | null>(null);
   const [sendEmail, setSendEmail] = useState(false);
   const [sendWhatsApp, setSendWhatsApp] = useState(false);
-  const [isToolbarHidden, setIsToolbarHidden] = useState(true);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const imageElementRef = useRef<HTMLInputElement>(null);
-
-  const toggleToolbar = () => setIsToolbarHidden((prev) => !prev);
 
   useEffect(() => {
     if (image) {
@@ -83,47 +82,66 @@ const Editor = ({ onCancel, onSubmit, disabled = false, defaultValue = '', varia
         )}
 
         <div className="flex px-2 py-1.5 gap-2 items-center justify-between">
-          <div className="flex items-center justify-start gap-2">
-            <Hint label={isToolbarHidden ? 'Show formatting' : 'Hide formatting'}>
-              <Button disabled={disabled} size="sm" variant="ghost" onClick={toggleToolbar}>
-                <ALargeSmallIcon className="size-4" />
-              </Button>
-            </Hint>
+          <div className={cn('w-full flex gap-2 resize-none rounded-md border-2 border-muted px-2')}>
+            <textarea
+              disabled={disabled}
+              className="flex-1"
+              placeholder={variant === 'create' ? text : 'Add a comment...'}
+              value={text}
+              onChange={(e) => {
+                setText(e.target.value);
+              }}
+              rows={1}
+              aria-label="Message body"
+            />
 
-            <EmojiPopover onEmojiSelect={console.log}>
-              <Button disabled={disabled} size="sm" variant="ghost">
-                <Smile className="size-4" />
-                <span className="sr-only">Add emoji</span>
-              </Button>
-            </EmojiPopover>
-
-            {variant === 'create' && (
-              <Hint label="Add image">
-                <Button disabled={disabled} size="sm" variant="ghost" onClick={() => imageElementRef.current?.click()} aria-label="Add image">
-                  <ImageIcon className="size-4" />
+            <div className="flex items-center justify-start gap-2">
+              <EmojiPopover
+                onEmojiSelect={(emoji) => {
+                  setText((prev) => prev + emoji.emoji);
+                }}>
+                <Button disabled={disabled} size="sm" variant="ghost">
+                  <Smile className="size-4" />
+                  <span className="sr-only">Add emoji</span>
                 </Button>
-              </Hint>
-            )}
+              </EmojiPopover>
+
+              {variant === 'create' && (
+                <Hint label="Add image">
+                  <Button disabled={disabled} size="sm" variant="ghost" onClick={() => imageElementRef.current?.click()} aria-label="Add image">
+                    <ImageIcon className="size-4" />
+                  </Button>
+                </Hint>
+              )}
+            </div>
           </div>
 
           {variant === 'create' ? (
             <div className="flex items-center justify-start gap-2">
-              <Toggle
-                pressed={sendEmail}
-                onPressedChange={setSendEmail}
-                aria-label="Send email notification"
-                size="sm"
-                className="data-[state=on]:border-primary data-[state=on]:bg-primary/20 data-[state=on]:text-primary">
-                <Mail className="h-4 w-4" />
-              </Toggle>
-              <Toggle
-                pressed={sendWhatsApp}
-                onPressedChange={setSendWhatsApp}
-                aria-label="Send WhatsApp notification"
-                size="sm"
-                className="data-[state=on]:border-primary data-[state=on]:bg-primary/20 data-[state=on]:text-primary">
-                <MessageSquare className="h-4 w-4" />
-              </Toggle>
+              {isEmailNotificationEnabled && (
+                <Hint label="Send email notification">
+                  <Toggle
+                    pressed={sendEmail}
+                    onPressedChange={setSendEmail}
+                    aria-label="Send email notification"
+                    size="sm"
+                    className="data-[state=on]:border-primary data-[state=on]:bg-primary/20 data-[state=on]:text-primary">
+                    <Mail className="h-4 w-4" />
+                  </Toggle>
+                </Hint>
+              )}
+              {isWhatsAppNotificationEnabled && (
+                <Hint label="Send WhatsApp notification">
+                  <Toggle
+                    pressed={sendWhatsApp}
+                    onPressedChange={setSendWhatsApp}
+                    aria-label="Send WhatsApp notification"
+                    size="sm"
+                    className="data-[state=on]:border-primary data-[state=on]:bg-primary/20 data-[state=on]:text-primary">
+                    <MessageSquare className="h-4 w-4" />
+                  </Toggle>
+                </Hint>
+              )}
 
               <Button size="sm" disabled={disabled || isEmptyContent()} onClick={handleSubmit} className={cn(isEmptyContent() ? 'text-muted-foreground' : '')} aria-label="Submit content">
                 <SendHorizonalIcon className="size-4" />

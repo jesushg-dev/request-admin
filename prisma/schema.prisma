@@ -53,7 +53,6 @@ model Tenant {
   requestWorkflowStatuses        RequestWorkflowStatus[]
   requestWorkflowTransitions     RequestWorkflowTransition[]
   requirementComplianceTrackings RequirementComplianceTracking[]
-  relatedIncidents               RelatedIncident[]
   requestChangeLogs              RequestChangeLog[]
   customerSatisfactionSurveys    CustomerSatisfactionSurvey[]
   assignmentTypes                AssignmentType[]
@@ -445,15 +444,13 @@ model Request {
   id                   String                          @id() @default(uuid())
   issueSubject         String
   description          String?
+  isDraft              Boolean                         @default(true)
   closedAt             DateTime?
   closedBy             String?
   closedComment        String?
-  comment              String?
   formSubmission       FormSubmission[]
   complianceTrackings  RequirementComplianceTracking[]
   requestAssignments   RequestAssignment[]
-  relatedIncidents     RelatedIncident[]               @relation("RequestIncident")
-  relatedTo            RelatedIncident[]               @relation("RequestRelated")
   changeLog            RequestChangeLog[]
   dataroomId           String?
   dataroom             Dataroom?
@@ -527,26 +524,6 @@ model AssignedUser {
   userTenant          UserTenant        @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   role                String
   unAssignmentDate    DateTime?
-}
-
-/// Represents related incidents or problems for a request.
-model RelatedIncident {
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt()
-  deletedAt DateTime?
-  createdBy String?
-  updatedBy String?
-  tenantId  String
-  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id        String    @id() @default(uuid())
-  requestId String
-  relatedId String
-  isActive  Boolean   @default(true)
-  request   Request   @relation("RequestIncident", fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  related   Request   @relation("RequestRelated", fields: [relatedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@index([requestId], name: "idx_related_incident_request_id")
-  @@index([relatedId], name: "idx_related_incident_related_id")
 }
 
 /// Represents a catalog of possible priority levels for requests or assignments.
@@ -1600,10 +1577,9 @@ model GuideDocument {
   updatedBy         String?
   tenantId          String
   tenant            Tenant          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  url               String?
-  status            Int
-  expirationDate    DateTime?
-  version           Int             @default(1)
+  fileType          String
+  fileUrl           String
+  version           String
   requestCategoryId String
   requestCategory   RequestCategory @relation(fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 

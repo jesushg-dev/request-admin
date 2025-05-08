@@ -1,6 +1,7 @@
 // StepperNavigationButtons.tsx
 import { memo, type FC } from 'react';
 import { LoaderCircleIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '../ui/button';
 
@@ -17,30 +18,29 @@ interface StepperNavigationButtonsProps {
   isPending?: boolean; // Optional boolean to show a loading spinner on the submit button
 }
 
-export const StepperNavigationButtons: FC<StepperNavigationButtonsProps> = memo(
-  ({ isResetAllowed = false, isPending, isFirstStep, isLastStep, onPrev, onNext, onReset, submitText = 'Finish', nextText = 'Next' }) => {
-    return (
-      <div className="flex items-center justify-end gap-4">
-        {isLastStep && isResetAllowed && onReset && (
-          <Button type="button" variant="destructive" onClick={onReset}>
-            Reset
-          </Button>
-        )}
-        <Button type="button" variant="secondary" onClick={onPrev} disabled={isFirstStep}>
-          Back
-        </Button>
-        {onNext ? (
-          <Button type="button" onClick={onNext} disabled={isPending}>
-            {isLastStep ? submitText : nextText} {isPending && <LoaderCircleIcon className="animate-spin" />}
-          </Button>
-        ) : (
-          <Button type="submit" disabled={isPending}>
-            {isLastStep ? submitText : nextText} {isPending && <LoaderCircleIcon className="animate-spin" />}
-          </Button>
-        )}
-      </div>
-    );
-  }
-);
+export const StepperNavigationButtons: FC<StepperNavigationButtonsProps> = memo(({ isResetAllowed = false, isPending, isFirstStep, isLastStep, onPrev, onNext, onReset, submitText, nextText }) => {
+  const t = useTranslations('component.stepper.navigationButtons');
 
+  return (
+    <div className="flex items-center justify-end gap-4">
+      {isLastStep && isResetAllowed && onReset && (
+        <Button type="button" variant="destructive" onClick={onReset}>
+          {t('reset')}
+        </Button>
+      )}
+      <Button type="button" variant="secondary" onClick={onPrev} disabled={isFirstStep}>
+        {t('back')}
+      </Button>
+      {onNext ? (
+        <Button type="button" onClick={onNext} disabled={isPending}>
+          {isLastStep ? (submitText ? submitText : t('finish')) : nextText ? nextText : t('next')} {isPending && <LoaderCircleIcon className="animate-spin" />}
+        </Button>
+      ) : (
+        <Button type="submit" disabled={isPending}>
+          {isLastStep ? (submitText ? submitText : t('finish')) : nextText ? nextText : t('next')} {isPending && <LoaderCircleIcon className="animate-spin" />}
+        </Button>
+      )}
+    </div>
+  );
+});
 StepperNavigationButtons.displayName = 'StepperNavigationButtons';

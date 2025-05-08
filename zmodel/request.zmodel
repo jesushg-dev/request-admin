@@ -14,10 +14,10 @@ model Request extends TenantScoped, Auditable {
   // Request details
   issueSubject         String                         //@db.VarChar(255)    // Optional issue subject
   description          String?                         //@db.VarChar(5000)   // Detailed request description
+  isDraft              Boolean                        @default(true)      // Indicates if the request is a draft
   closedAt             DateTime?
   closedBy             String?                         //@db.VarChar(50)     // User ID who closed the request
   closedComment        String?                         //@db.VarChar(500)    // Closure comment
-  comment              String?                         //@db.VarChar(255)    // Optional comment
 
   // Form submissions
   formSubmission       FormSubmission[]
@@ -27,10 +27,6 @@ model Request extends TenantScoped, Auditable {
 
   // Assignments
   requestAssignments   RequestAssignment[]
-
-  // Related incidents
-  relatedIncidents     RelatedIncident[]               @relation("RequestIncident")
-  relatedTo            RelatedIncident[]               @relation("RequestRelated")
 
   // Change log
   changeLog            RequestChangeLog[]
@@ -113,20 +109,6 @@ model AssignedUser extends TenantScoped, Auditable {
 
   role                String            //@db.VarChar(150) 
   unAssignmentDate    DateTime?
-}
-
-/// Represents related incidents or problems for a request.
-model RelatedIncident extends TenantScoped, Auditable {
-  id        String  @id @default(uuid()) //@db.UniqueIdentifier
-  requestId String  //@db.UniqueIdentifier
-  relatedId String  //@db.UniqueIdentifier
-  isActive  Boolean @default(true)
-
-  request   Request @relation("RequestIncident", fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  related   Request @relation("RequestRelated", fields: [relatedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@index([requestId], name: "idx_related_incident_request_id")
-  @@index([relatedId], name: "idx_related_incident_related_id")
 }
 
 /// Represents a catalog of possible priority levels for requests or assignments.

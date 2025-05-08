@@ -44,6 +44,18 @@ export async function getRequestCategoriesByIds(rootIds: string[], tenantId: str
             escalationTime: true,
           },
         },
+        guideDocuments: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            fileType: true,
+            fileUrl: true,
+            version: true,
+            updatedAt: true,
+            isActive: true,
+          },
+        },
       },
       where: {
         tenantId,
@@ -82,7 +94,16 @@ export async function getRequestCategoriesByIds(rootIds: string[], tenantId: str
               },
           parentCategoryId: dbCat.parentCategoryId,
           children: [],
-          guides: [],
+          guides: dbCat.guideDocuments.map((doc) => ({
+            id: doc.id,
+            name: doc.name,
+            description: doc.description,
+            fileType: doc.fileType as 'PDF' | 'Excel' | 'Video' | 'DOCX' | 'XLSX',
+            fileUrl: doc.fileUrl,
+            version: doc.version,
+            updatedAt: doc.updatedAt?.toISOString() ?? new Date().toISOString(),
+            isActive: doc.isActive,
+          })),
           executionSteps: [],
         };
 

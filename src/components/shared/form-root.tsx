@@ -167,12 +167,13 @@ type FormActionsProps = {
   title?: string;
   className?: string;
   children?: ReactNode;
+  onClick?: () => void;
 };
 
-export const FormActions = ({ isPending, title = 'Submit', className, children }: FormActionsProps) => (
+export const FormActions = ({ isPending, title = 'Submit', onClick, className, children }: FormActionsProps) => (
   <div className={cn('mt-4 flex justify-end gap-2', className)}>
     {children}
-    <Button type="submit" disabled={isPending}>
+    <Button type={onClick ? 'button' : 'submit'} onClick={onClick} className="w-full sm:w-auto" size="lg" disabled={isPending}>
       {title}
       {isPending && <LoaderCircleIcon className="animate-spin ml-2" />}
     </Button>

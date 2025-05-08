@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { db } from '@/server/db-client';
 import { type Locale } from 'next-intl';
 
-import { RequestWorkflowDefaultArgs } from '@/types/prisma/workflow';
+import { RequestWorkflowDefaultArgs, RequestWorkflowType } from '@/types/prisma/workflow';
 import { transformStatusToNode, transformTransitionToEdge } from '@/lib/workflow';
 import WorkflowFormStepper from '@/components/common/workflow/workflow-stepper';
 
@@ -21,7 +21,7 @@ const UpdateRequirementPage: FC<UpdateRequirementPageProps> = async ({ params })
   if (!workflow) {
     throw new Error('Workflow not found');
   }
-  const { requestWorkflowStatus, requestWorkflowTransition, ...workflowData } = workflow;
+  const { requestWorkflowStatus, requestWorkflowTransition, ...workflowData } = workflow as RequestWorkflowType;
   const nodes = requestWorkflowStatus.map(transformStatusToNode);
   const edges = requestWorkflowTransition.map(transformTransitionToEdge);
 

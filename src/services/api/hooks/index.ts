@@ -28,7 +28,6 @@ export * from './passkey';
 export * from './request';
 export * from './request-assignment';
 export * from './assigned-user';
-export * from './related-incident';
 export * from './request-priority-type';
 export * from './assignment-type';
 export * from './request-workflow';

@@ -3,38 +3,36 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { BookOpen, Edit, FileText, FileUp, Plus, Trash2 } from 'lucide-react';
+import { BookOpen, Edit, FileText, Plus, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useForm, useFormContext } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
+import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { FormItem } from '@/components/shared/form-root';
+import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
 
 import { RequestCategoryValues } from '.';
 
 export const guideSchema = z.object({
   id: z.string(),
-  title: z.string().min(2, 'El título debe tener al menos 2 caracteres'),
-  description: z.string().optional(),
+  name: z.string().min(2, 'El título debe tener al menos 2 caracteres'),
+  description: z.string().nullish(),
   fileType: z.enum(['PDF', 'Excel', 'Video', 'DOCX', 'XLSX']),
   fileUrl: z.string().url('Debe ser una URL válida'),
   version: z.string().min(1, 'La versión es requerida'),
   updatedAt: z.string().datetime('Fecha inválida'),
+  isActive: z.boolean().default(true),
 });
 
 type GuideFormValues = z.infer<typeof guideSchema>;
-
-type Guide = GuideFormValues & {
-  id: string;
-};
 
 export function GuideTab() {
   const t = useTranslations('admin.requestType.create.guidesTab');
@@ -81,7 +79,7 @@ export function GuideTab() {
       {fields.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">{t('noGuides')}</div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2 ">
           {fields.map((field, index) => (
             <Card key={field.id}>
               <CardHeader className="pb-2">
@@ -90,10 +88,11 @@ export function GuideTab() {
                     {field.fileType === 'PDF' && <FileText className="h-5 w-5 text-red-500" />}
                     {field.fileType === 'Excel' && <FileText className="h-5 w-5 text-green-500" />}
                     {field.fileType === 'Video' && <FileText className="h-5 w-5 text-blue-500" />}
-                    <CardTitle className="text-base">{field.title}</CardTitle>
+                    <CardTitle className="text-base">{field.name}</CardTitle>
                   </div>
                   <div className="flex gap-1">
                     <Button
+                      type="button"
                       variant="ghost"
                       size="sm"
                       className="h-8 w-8 p-0"
@@ -104,7 +103,7 @@ export function GuideTab() {
                       aria-label={t('editGuide')}>
                       <Edit className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleDeleteGuide(index)} aria-label={t('deleteGuide')}>
+                    <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleDeleteGuide(index)} aria-label={t('deleteGuide')}>
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
                   </div>
@@ -132,20 +131,19 @@ export function GuideTab() {
                       })}
                     </span>
                   </div>
+                  <div>
+                    <a href={field.fileUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground block">
+                      <span className="text-xs text-muted-foreground block">{t('view')}</span>
+                    </a>
+                  </div>
                 </div>
               </CardContent>
 
               <CardFooter className="flex justify-end gap-2">
-                <Button variant="outline" size="sm" asChild>
+                <Button type="button" variant="outline" size="sm" asChild>
                   <Link href={field.fileUrl} target="_blank">
                     <BookOpen className="mr-2 h-4 w-4" />
                     {t('view')}
-                  </Link>
-                </Button>
-                <Button variant="default" size="sm" asChild>
-                  <Link href={field.fileUrl} download>
-                    <FileUp className="mr-2 h-4 w-4" />
-                    {t('download')}
                   </Link>
                 </Button>
               </CardFooter>
@@ -154,133 +152,124 @@ export function GuideTab() {
         </div>
       )}
 
-      <Button onClick={handleAddGuide} type="button" variant="dashed" className="w-full" size="sm">
-        <Plus className="mr-2 h-4 w-4" />
-        {t('addGuide')}
-      </Button>
+      <div className="flex m-2">
+        <Button onClick={handleAddGuide} type="button" variant="dashed" className="w-full" size="sm">
+          <Plus className="mr-2 h-4 w-4" />
+          {t('addGuide')}
+        </Button>
+      </div>
 
       <GuideModal open={modalOpen} onClose={() => setModalOpen(false)} onSave={handleSaveGuide} initialData={currentGuideIndex !== null ? guides[currentGuideIndex] : undefined} />
     </>
   );
 }
 
-function GuideModal({ open, onClose, onSave, initialData }: { open: boolean; onClose: () => void; onSave: (data: GuideFormValues) => void; initialData?: Guide }) {
+const getDefaultGuideValues = (): GuideFormValues => ({
+  id: generateUuid(),
+  name: '',
+  description: '',
+  fileType: 'PDF',
+  fileUrl: '',
+  version: '',
+  updatedAt: new Date().toISOString(),
+  isActive: true,
+});
+
+function GuideModal({ open, onClose, onSave, initialData }: { open: boolean; onClose: () => void; onSave: (data: GuideFormValues) => void; initialData?: GuideFormValues }) {
   const t = useTranslations('admin.requestType.create.guidesTab');
-  const form = useForm<GuideFormValues>({
+  const form = useForm({
     resolver: zodResolver(guideSchema),
-    defaultValues: {
-      title: '',
-      description: '',
-      fileType: 'PDF',
-      fileUrl: '',
-      version: '',
-      updatedAt: new Date().toISOString(),
-    },
+    defaultValues: initialData ?? getDefaultGuideValues(),
   });
 
   useEffect(() => {
-    form.reset(
-      initialData ?? {
-        title: '',
-        description: '',
-        fileType: 'PDF',
-        fileUrl: '',
-        version: '',
-        updatedAt: new Date().toISOString(),
-      }
-    );
+    form.reset(initialData ?? getDefaultGuideValues());
   }, [open, initialData, form]);
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden">
         <DialogHeader>
           <DialogTitle>{initialData ? t('editGuide') : t('newGuide')}</DialogTitle>
           <DialogDescription>{initialData ? t('editGuideDescription') : t('newGuideDescription')}</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSave)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem label={t('title')} description={t('titleDescription')}>
-                  <Input {...field} placeholder={t('titlePlaceholder')} />
-                </FormItem>
-              )}
-            />
+          <FormRoot onSubmit={form.handleSubmit(onSave)}>
+            <FormContent>
+              <FormSection>
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem label={t('title')} description={t('titleDescription')}>
+                      <Input {...field} placeholder={t('titlePlaceholder')} />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem label={t('description')} description={t('guideDescriptionDescription')}>
+                      <Textarea {...field} placeholder={t('descriptionPlaceholder')} rows={3} value={field.value || ''} />
+                    </FormItem>
+                  )}
+                />
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="fileType"
+                    render={({ field }) => (
+                      <FormItem label={t('fileType')} description={t('fileTypeDescription')}>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder={t('selectFileType')} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="PDF">PDF</SelectItem>
+                            <SelectItem value="Excel">Excel</SelectItem>
+                            <SelectItem value="Video">Video</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormItem>
+                    )}
+                  />
 
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem label={t('description')} description={t('guideDescriptionDescription')}>
-                  <Textarea {...field} placeholder={t('descriptionPlaceholder')} rows={3} value={field.value || ''} />
-                </FormItem>
-              )}
-            />
-
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="fileType"
-                render={({ field }) => (
-                  <FormItem label={t('fileType')} description={t('fileTypeDescription')}>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder={t('selectFileType')} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="PDF">PDF</SelectItem>
-                        <SelectItem value="Excel">Excel</SelectItem>
-                        <SelectItem value="Video">Video</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="version"
-                render={({ field }) => (
-                  <FormItem label={t('version')} description={t('versionDescription')}>
-                    <Input {...field} placeholder={t('versionPlaceholder')} />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <FormField
-              control={form.control}
-              name="fileUrl"
-              render={({ field }) => (
-                <FormItem label={t('fileUrl')} description={t('fileUrlDescription')}>
-                  <Input {...field} placeholder={t('fileUrlPlaceholder')} />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="updatedAt"
-              render={({ field }) => (
-                <FormItem label={t('lastUpdated')} description={t('lastUpdatedDescription')}>
-                  <Input type="datetime-local" {...field} value={new Date(field.value).toISOString().slice(0, 16)} onChange={(e) => field.onChange(new Date(e.target.value).toISOString())} />
-                </FormItem>
-              )}
-            />
-
-            <DialogFooter>
-              <Button variant="outline" type="button" onClick={onClose}>
-                {t('cancel')}
-              </Button>
-              <Button type="submit">{initialData ? t('saveChanges') : t('createGuide')}</Button>
-            </DialogFooter>
-          </form>
+                  <FormField
+                    control={form.control}
+                    name="version"
+                    render={({ field }) => (
+                      <FormItem label={t('version')} description={t('versionDescription')}>
+                        <Input {...field} placeholder={t('versionPlaceholder')} />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <FormField
+                  control={form.control}
+                  name="fileUrl"
+                  render={({ field }) => (
+                    <FormItem label={t('fileUrl')} description={t('fileUrlDescription')}>
+                      <Input {...field} placeholder={t('fileUrlPlaceholder')} />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="updatedAt"
+                  render={({ field }) => (
+                    <FormItem label={t('lastUpdated')} description={t('lastUpdatedDescription')}>
+                      <Input type="datetime-local" {...field} value={new Date(field.value).toISOString().slice(0, 16)} onChange={(e) => field.onChange(new Date(e.target.value).toISOString())} />
+                    </FormItem>
+                  )}
+                />
+              </FormSection>
+            </FormContent>
+            <FormActions isPending={form.formState.isSubmitting} title={initialData ? t('saveChanges') : t('createGuide')} className="mt-4" onClick={form.handleSubmit(onSave)} />
+          </FormRoot>
         </Form>
       </DialogContent>
     </Dialog>

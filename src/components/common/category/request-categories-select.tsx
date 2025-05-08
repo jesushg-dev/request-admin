@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, type FC } from 'react';
 import { useFindManyRequestCategory } from '@/services/api/hooks';
+import { useTranslations } from 'next-intl';
 import { ControllerRenderProps, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -25,7 +26,7 @@ type RequestCategoriesSelectProps = {
   levels: RequestLevelType[];
 };
 
-export const RequestCategoriesSelect: React.FC<RequestCategoriesSelectProps> = ({ levels }) => {
+export const RequestCategoriesSelect: FC<RequestCategoriesSelectProps> = ({ levels }) => {
   const { control, watch, setValue } = useFormContext<RequestCategorySelectArrayValues>();
   const watchedFields = watch('requestCategory', []);
   const lastSelectedIndex = watchedFields.findLastIndex((field) => !!field?.value);
@@ -39,28 +40,30 @@ export const RequestCategoriesSelect: React.FC<RequestCategoriesSelectProps> = (
 
   return (
     <>
-      {levels.map((level, index) => (
-        <FormField
-          key={`${level.id}-${index}`}
-          control={control}
-          name={`requestCategory.${index}`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{level.name}</FormLabel>
-              <SingleRequestCategorySelect
-                field={field}
-                hierarchyLevelId={level.id}
-                hierarchyLevelName={level.name}
-                parentCategoryId={index > 0 ? watchedFields[index - 1]?.value : ''}
-                enabled={index <= activeLevel}
-                position={level.position}
-                onClearNextLevels={() => handleClearLevels(index + 1)}
-              />
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      ))}
+      {levels.map((level) => {
+        const currentPosition = level.position - 1;
+        return (
+          <FormField
+            key={`${level.id}-${currentPosition}`}
+            control={control}
+            name={`requestCategory.${currentPosition}`}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{level.name}</FormLabel>
+                <SingleRequestCategorySelect
+                  field={field}
+                  position={currentPosition}
+                  hierarchyLevelName={level.name}
+                  enabled={currentPosition <= activeLevel}
+                  onClearNextLevels={() => handleClearLevels(currentPosition + 1)}
+                  parentCategoryId={currentPosition > 0 ? watchedFields[currentPosition - 1]?.value : ''}
+                />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        );
+      })}
     </>
   );
 };
@@ -68,17 +71,21 @@ export const RequestCategoriesSelect: React.FC<RequestCategoriesSelectProps> = (
 type SingleRequestCategorySelectProps = {
   enabled: boolean;
   position: number;
-  hierarchyLevelId: string;
   hierarchyLevelName: string;
   parentCategoryId?: string;
   onClearNextLevels: () => void;
   field: ControllerRenderProps<RequestCategorySelectArrayValues, `requestCategory.${number}`>;
 };
 
-const SingleRequestCategorySelect: React.FC<SingleRequestCategorySelectProps> = ({ field, hierarchyLevelId, hierarchyLevelName, parentCategoryId, enabled, position, onClearNextLevels }) => {
-  const where = useMemo(() => (parentCategoryId ? { parentCategoryId } : { hierarchyLevelId }), [parentCategoryId, hierarchyLevelId]);
-
-  const { data: categories = [], isLoading } = useFindManyRequestCategory({ where }, { enabled, staleTime: 60000 });
+const SingleRequestCategorySelect: React.FC<SingleRequestCategorySelectProps> = ({ field, parentCategoryId, hierarchyLevelName, enabled, position, onClearNextLevels }) => {
+  const t = useTranslations('admin.request.form.classificationStep');
+  const { data: categories = [], isLoading } = useFindManyRequestCategory(
+    {
+      select: { id: true, name: true, description: true },
+      where: { parentCategoryId: parentCategoryId ?? null },
+    },
+    { enabled, staleTime: 60000 }
+  );
 
   const options = useMemo(() => categories.map(({ id, name }) => ({ label: name, value: id })), [categories]);
 
@@ -99,7 +106,6 @@ const SingleRequestCategorySelect: React.FC<SingleRequestCategorySelectProps> = 
           isClearable
           isSearchable
           options={options}
-          isDisabled={!enabled}
           isLoading={isLoading}
           onChange={(option) => {
             const newValue = option ? { ...option, position } : { label: '', value: '', position };
@@ -110,9 +116,10 @@ const SingleRequestCategorySelect: React.FC<SingleRequestCategorySelectProps> = 
           }}
           value={field.value}
           menuShouldScrollIntoView={false}
+          placeholder={t('requestCategory.selectPlaceholder')}
         />
       </FormControl>
-      <FormDescription>{categories.length === 0 && isLoading ? 'Loading' : `Select the ${hierarchyLevelName.toLowerCase()}.`}</FormDescription>
+      <FormDescription>{isLoading ? t('common.loading') : t('assignmentCategory.selectDescription', { level: hierarchyLevelName.toLowerCase() })}</FormDescription>{' '}
     </>
   );
 };

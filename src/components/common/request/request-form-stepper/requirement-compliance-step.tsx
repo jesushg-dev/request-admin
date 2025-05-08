@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { useFindManyRequirement } from '@/services/api/hooks';
 import { Filter } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -14,7 +14,7 @@ import { FormField } from '@/components/ui/form';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
-import Select from '@/components/custom-ui/select';
+import Select, { OptionType } from '@/components/custom-ui/select';
 import EmptyState from '@/components/shared/empty-state';
 
 export const requirementComplianceSchema = z.object({
@@ -28,9 +28,9 @@ export const getDefaultComplianceValues = (): RequirementComplianceValues => ({
 });
 
 const filterOptions = [
-  { value: 'all', label: 'All requirements' },
-  { value: 'selected', label: 'Selected only' },
-  { value: 'unselected', label: 'Unselected only' },
+  { value: 'all', label: 'filterOptions.all' },
+  { value: 'selected', label: 'filterOptions.selected' },
+  { value: 'unselected', label: 'filterOptions.unselected' },
 ] as const;
 
 interface RequirementComplianceStepProps {
@@ -40,7 +40,12 @@ interface RequirementComplianceStepProps {
 const RequirementComplianceStep: FC<RequirementComplianceStepProps> = ({ requestCategoryIds }) => {
   const t = useTranslations('admin.request.form.requirementsStep');
   const { control, setValue, watch } = useFormContext<RequirementComplianceValues>();
-  const [filter, setFilter] = useState<(typeof filterOptions)[number]>(filterOptions[0]);
+  const [filter, setFilter] = useState<OptionType>(filterOptions[0]);
+  const filterLocalizedOptions = useMemo(() => {
+    const localized = filterOptions.map((option) => ({ ...option, label: t(option.label) }));
+    setFilter(localized[0]);
+    return localized;
+  }, [t]);
 
   const { data: requirements, isLoading } = useFindManyRequirement({
     select: { id: true, name: true, description: true },
@@ -128,7 +133,7 @@ const RequirementComplianceStep: FC<RequirementComplianceStepProps> = ({ request
               <Select
                 value={filter}
                 isSearchable={false}
-                options={filterOptions}
+                options={filterLocalizedOptions}
                 onChange={(newValue) => setFilter(newValue as (typeof filterOptions)[number])}
                 components={{ DropdownIndicator: () => <Filter className="w-4 h-4" /> }}
               />
@@ -151,7 +156,7 @@ const RequirementComplianceStep: FC<RequirementComplianceStepProps> = ({ request
         </div>
 
         <ScrollArea className="flex-1">
-          <div className="flex flex-col gap-2 pr-4">
+          <div className="flex flex-col gap-2 pr-2">
             {filteredRequirements?.map((req) => (
               <FormField
                 key={req.id}

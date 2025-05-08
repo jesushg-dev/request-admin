@@ -95,7 +95,8 @@
         "contact": "Contact",
         "getDemo": "Get a Demo"
       }
-    }
+    },
+    "scheduleDemoButton": "Schedule a Demo"
   },
   "auth": {
     "loginForm": {
@@ -1049,7 +1050,7 @@
       "view": {
         "no_documents_found": "No documents found",
         "contact_support": "Please check back later or contact support if you need immediate assistance.",
-        "projectDetails": {
+        "requestDetails": {
           "edit": "Edit",
           "submissions": "Submissions",
           "requirements": "Requirements",
@@ -1077,14 +1078,22 @@
           "priorityUpdateError": "Error updating priority: {error}"
         },
         "tabs": {
-          "requirements": "Requirements",
-          "assignments": "Assignments",
-          "chat": "Chat",
-          "submissions": "Submissions",
-          "guides": "Guides",
-          "attachments": "Attachments",
-          "related": "Related",
-          "history": "History"
+          "main": {
+            "execution": "Execution",
+            "comments": "Comments",
+            "reference": "Reference"
+          },
+          "execution": {
+            "requirements": "Requirements",
+            "executionModel": "Execution Model",
+            "guides": "Guides",
+            "submissions": "Forms",
+            "attachments": "Attachments"
+          },
+          "reference": {
+            "assignments": "Assignments",
+            "history": "History"
+          }
         },
         "requirements": {
           "noChangesToSave": "No changes to save",
@@ -1151,17 +1160,6 @@
             "content": "Content"
           }
         },
-        "related": {
-          "title": "Related Incidents",
-          "entityLabel": "Incidents",
-          "relateRequest": "Relate Incident",
-          "columns": {
-            "relatedId": "Incident ID",
-            "issueSubject": "Subject",
-            "createdAt": "Creation Date",
-            "noSubject": "No subject"
-          }
-        },
         "history": {
           "requestId": "Request ID",
           "fullDate": "Full Date",
@@ -1177,14 +1175,59 @@
           "requestUpdated": "Request Updated",
           "requestApproved": "Request Approved",
           "requestRejected": "Request Rejected"
+        },
+        "guidesViewer": {
+          "guides": "Guides and documentation",
+          "guidesDescription": "Reference documentation to resolve this type of request",
+          "fileType": "File type",
+          "version": "Version",
+          "lastUpdated": "Last updated",
+          "viewGuide": "View guide",
+          "noGuidesFound": "No guides available",
+          "noGuidesDescription": "There are currently no guides to help complete this service request. If you have any questions or believe a guide is missing, please contact your supervisor or administrator."
         }
       },
       "form": {
-        "categoryStep": {
-          "titleRequest": "Request Category",
-          "titleAssignment": "Assignment Category",
-          "areaLabel": "Area",
-          "areaDescription": "Select the area where the request is assigned."
+        "classification": "Classification",
+        "compliance": "Compliance",
+        "details": "Details",
+        "attachments": "Attachments",
+        "forms": "Forms",
+        "summary": "Summary",
+        "savingRequest": "Saving request...",
+        "uploadingFiles": "Uploading files to storage service",
+        "requestCreatedSuccessfully": "Request created successfully",
+        "errorCreatingRequest": "Error creating request",
+        "classificationStep": {
+          "reassign": {
+            "alertTitle": "Change Area",
+            "alertDescription": "When changing the area, the request history will be maintained, but you may need to complete some required fields again in the new assignment."
+          },
+          "requestCategory": {
+            "title": "Request Category",
+            "description": "Identify the request category by providing the necessary information for its correct management.",
+            "defaultLabel": "Request Category",
+            "defaultDescription": "Select the request category.",
+            "dynamicDescription": "Select \"{category}\"",
+            "selectDescription": "Select the {level}.",
+            "selectPlaceholder": "Select"
+          },
+          "assignmentCategory": {
+            "title": "Assignment Category",
+            "description": "This will allow for the correct allocation of resources and the proper distribution of the request.",
+            "areaLabel": "Area",
+            "areaDescription": "Select the area where the request will be assigned.",
+            "defaultLabel": "Assignment Category",
+            "defaultDescription": "Select the assignment category.",
+            "dynamicDescription": "Select {category}",
+            "selectPlaceholder": "Select the assignment category.",
+            "areaFirstPlaceholder": "Select the area first",
+            "selectDescription": "Select the {level}",
+            "areaPlaceholder": "Select Area"
+          },
+          "common": {
+            "loading": "Loading..."
+          }
         },
         "requirementsStep": {
           "emptyTitle": "No requirements found",
@@ -1196,7 +1239,12 @@
           "deselectAll": "Deselect All",
           "selectAll": "Select All",
           "progress": "{progress}% Completed",
-          "remaining": "{pending} remaining"
+          "remaining": "{pending} remaining",
+          "filterOptions": {
+            "all": "All",
+            "selected": "Selected",
+            "unselected": "Unselected"
+          }
         },
         "detailsStep": {
           "issueSubject": "Issue Subject",
@@ -1205,19 +1253,26 @@
           "status": "Status",
           "statusDescription": "Status is used to determine the current state of the request.",
           "priority": "Priority",
-          "priorityDescription": "Priority is used to determine the order in which requests are handled.",
+          "priorityDescription": "Determine how urgent this request is.",
           "comment": "Comment",
           "commentPlaceholder": "Enter comment",
           "commentDescription": "Comment is used to provide even more information about the request.",
           "description": "Description",
-          "descriptionDescription": "Description is used to provide more information about the request."
+          "descriptionDescription": "Description is used to provide more information about the request.",
+          "descriptionPlaceholder": "Write a descriptive text here...",
+          "isDraft": "Is Draft",
+          "isDraftDescription": "This option allows you to save this request without sending it to the assigned area, to disable this option, you must fulfilling the required requirements.",
+          "detailsStep": "Request Information",
+          "detailsStepDescription": "Enter necessary details to initiate your service request"
         },
         "attachmentsStep": {
           "uploadFiles": "Upload Files",
           "uploadNewFiles": "You can only upload <strong>new files</strong> in this section, and they will be <strong>saved with the request</strong>.",
           "modifyExistingFiles": "If you want to <strong>modify existing files</strong>, you can do so in the <link>attachments section</link> or in the <link>data room generated with the request</link>.",
           "images": "Images",
-          "maxFileSize": "Max file size: 4MB"
+          "maxFileSize": "Max file size: 4MB",
+          "attachmentStep": "Attach Documents",
+          "attachmentStepDescription": "You can attach any additional documents you deem appropriate."
         },
         "dynamicFormStep": {
           "emptyState": {
@@ -2819,12 +2874,33 @@
       "delete": "Delete",
       "addSubcategory": "Add \"{levelName}\""
     },
-    "LocaleSwitcher": {
+    "localeSwitcher": {
       "label": "Select language",
       "locale": {
         "en": "English",
         "es": "Spanish"
       }
+    },
+    "stepper": {
+      "navigationButtons": {
+        "next": "Next",
+        "back": "Back",
+        "finish": "Finish",
+        "reset": "Reset",
+        "cancel": "Cancel"
+      }
+    },
+    "fileUploader": {
+      "singleFileLimit": "You can't upload more than 1 file at a time",
+      "maxFilesExceeded": "You can't upload more than {maxFileCount} files",
+      "fileRejected": "File {fileName} rejected",
+      "uploading": "Uploading {count} file(s)...",
+      "uploadSuccess": "{count} file(s) uploaded successfully",
+      "uploadError": "Error uploading {count} file(s)",
+      "dropHere": "Drop files here",
+      "dragAndDrop": "Drag and drop files here, or click to select them",
+      "uploadInstructions": "You can upload {count, select, 1 {one file up to {maxSize}} other {{count} files (up to {maxSize} each)}}",
+      "removeFile": "Remove File"
     }
   }
 }

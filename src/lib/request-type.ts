@@ -49,6 +49,21 @@ export function buildRequestCategoryUpsertArgs(category: RequestCategoryValues, 
             },
           }
         : undefined,
+
+      guideDocuments: {
+        create:
+          category.guides?.map((doc) => ({
+            id: doc.id,
+            name: doc.name,
+            description: doc.description,
+            fileType: doc.fileType,
+            fileUrl: doc.fileUrl,
+            version: doc.version,
+            updatedAt: doc.updatedAt,
+            isActive: doc.isActive,
+            tenantId,
+          })) || [],
+      },
     },
     update: {
       name: category.name,
@@ -113,6 +128,35 @@ export function buildRequestCategoryUpsertArgs(category: RequestCategoryValues, 
             },
           }
         : undefined,
+      guideDocuments: {
+        deleteMany: { id: { notIn: category.guides?.map((doc) => doc.id) } },
+        upsert:
+          category.guides?.map((doc) => ({
+            where: { id: doc.id, tenantId },
+            create: {
+              id: doc.id,
+              name: doc.name,
+              description: doc.description,
+              fileType: doc.fileType,
+              fileUrl: doc.fileUrl,
+              version: doc.version,
+              updatedAt: doc.updatedAt,
+              isActive: doc.isActive,
+              tenantId,
+            },
+            update: {
+              id: doc.id,
+              name: doc.name,
+              description: doc.description,
+              fileType: doc.fileType,
+              fileUrl: doc.fileUrl,
+              version: doc.version,
+              updatedAt: doc.updatedAt,
+              isActive: doc.isActive,
+              tenantId,
+            },
+          })) || [],
+      },
     },
   };
 }

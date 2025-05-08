@@ -5,34 +5,33 @@ import { upsertRequest } from '@/actions/request';
 import { useRouter } from '@/i18n/routing';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { defineStepper } from '@stepperize/react';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { AssignmentLevelType, RequestLevelType } from '@/types/prisma/hierarchy';
 import { uploadFiles } from '@/lib/uploadthing';
-import { Card } from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
 import { OptionType } from '@/components/custom-ui/select';
 import { ChildSteps } from '@/components/stepper/child-steps';
 import { ChildStepsProvider } from '@/components/stepper/child-steps-context';
-import { StepNavigation } from '@/components/stepper/step-navigation';
+import { StepNavigationModern } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 
 import AttachmentsStep, { attachmentSchema, AttachmentsValues, getDefaultAttachmentsValues } from './attachments-step';
-import CategoryStep, { combinedCategoriesSchema, CombinedCategoriesValues, getDefaultCombinedCategoriesValues } from './category-step';
+import ClassificationStep, { combinedCategoriesSchema, CombinedCategoriesValues, getDefaultCombinedCategoriesValues } from './classification-step';
 import DynamicFormStep, { formResponseSchema, FormResponsesValues, getDefaultFormResponsesValues } from './dynamic-form-step';
 import RequestDetailsStep, { getDefaultDetailsValues, requestDetailSchema, RequestDetailValues } from './request-details-step';
 import RequirementComplianceStep, { getDefaultComplianceValues, requirementComplianceSchema, RequirementComplianceValues } from './requirement-compliance-step';
 import SummaryStep from './summary-step';
 
 const { useStepper, utils } = defineStepper(
-  { id: 'classification', label: 'Classification', schema: combinedCategoriesSchema },
-  { id: 'requirementCompliance', label: 'Compliance', schema: requirementComplianceSchema },
-  { id: 'requestDetails', label: 'Details', schema: requestDetailSchema },
-  { id: 'attachments', label: 'Attachments', schema: attachmentSchema },
-  { id: 'dynamicForm', label: 'Forms', schema: formResponseSchema },
-  { id: 'summary', label: 'Summary', schema: z.object({}) }
+  { id: 'classification', label: 'classification', schema: combinedCategoriesSchema },
+  { id: 'requirementCompliance', label: 'compliance', schema: requirementComplianceSchema },
+  { id: 'requestDetails', label: 'details', schema: requestDetailSchema },
+  { id: 'attachments', label: 'attachments', schema: attachmentSchema },
+  { id: 'dynamicForm', label: 'forms', schema: formResponseSchema },
+  { id: 'summary', label: 'summary', schema: z.object({}) }
 );
 
 export type RequestFormStepperType = CombinedCategoriesValues & RequirementComplianceValues & RequestDetailValues & AttachmentsValues & FormResponsesValues;
@@ -44,17 +43,16 @@ type CategoryIds = {
 
 interface CombinedFormProps {
   tenantId: string;
-  requestLevelTypes: RequestLevelType[];
-  assignmentLevelTypes: AssignmentLevelType[];
-  statusesOptions: OptionType[];
   prioritiesOptions: OptionType[];
   defaultValues?: RequestFormStepperType;
 }
 
-const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, requestLevelTypes, assignmentLevelTypes, statusesOptions, prioritiesOptions }) => {
+const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, prioritiesOptions }) => {
+  const t = useTranslations('admin.request.form');
   const router = useRouter();
   const stepper = useStepper();
   const [isPending, startTransition] = useTransition();
+  const [isDraftRemovable, setIsDraftRemovable] = useState(false);
   const [categoryIds, setCategoryIds] = useState<CategoryIds>({ requestCategory: [], assignmentCategory: [] });
 
   const form = useForm({
@@ -80,31 +78,39 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, re
       }
     }
 
+    if (stepper.current.id === 'requirementCompliance') {
+      const data = values as RequirementComplianceValues;
+      const allRequirements = Object.values(data.requirementCompliances).every((value) => value === true);
+      setIsDraftRemovable(allRequirements);
+    }
+
     if (!stepper.isLast) {
       stepper.next();
       return;
     }
 
     startTransition(async () => {
-      const toastId = toast.loading('Saving request...');
+      const toastId = toast.loading(t('savingRequest'));
       try {
         const data = form.getValues() as RequestFormStepperType;
         const response = await upsertRequest(tenantId, data);
         if (data.additionalDocuments) {
-          toast.loading('Uploading files to storage service', { id: toastId });
-          await uploadFiles('imageUploader', {
-            files: data.additionalDocuments,
-            input: { tenantId, dataroomId: response.dataroomId },
-            /*onUploadProgress: ({ file, progress }) => {
+          if (data.additionalDocuments.length > 0) {
+            toast.loading(t('uploadingFiles'), { id: toastId });
+            await uploadFiles('imageUploader', {
+              files: data.additionalDocuments,
+              input: { tenantId, dataroomId: response.dataroomId },
+              /*onUploadProgress: ({ file, progress }) => {
               //setProgresses((prev) => ({ ...prev, [file.name]: progress }));
             },*/
-          });
+            });
+          }
         }
 
         router.push({ pathname: '/admin/[tenantId]/requests/[slug]', params: { tenantId, slug: response.id } });
-        toast.success('Request created successfully', { id: toastId });
+        toast.success(t('requestCreatedSuccessfully'), { id: toastId });
       } catch (error) {
-        toast.error('Error creating request', { id: toastId });
+        toast.error(t('errorCreatingRequest'), { id: toastId });
         console.error(error);
       }
     });
@@ -112,30 +118,28 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, re
 
   return (
     <div className="flex flex-col flex-1 p-4">
-      <Card className="w-full flex flex-col flex-1 overflow-hidden">
+      <ChildStepsProvider initialSteps={{}}>
+        <StepNavigationModern t={t as (key: string) => string} steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo}>
+          {(index, currentIndex) => <ChildSteps index={index} currentIndex={currentIndex} currentId={stepper.current.id} />}
+        </StepNavigationModern>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between gap-4 overflow-hidden p-6">
-            <ChildStepsProvider initialSteps={{}}>
-              <StepNavigation steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo}>
-                {(index, currentIndex) => <ChildSteps index={index} currentIndex={currentIndex} currentId={stepper.current.id} />}
-              </StepNavigation>
-              {stepper.switch({
-                classification: () => <CategoryStep requestLevelTypes={requestLevelTypes} assignmentLevelTypes={assignmentLevelTypes} />,
-                requirementCompliance: () => <RequirementComplianceStep requestCategoryIds={categoryIds.requestCategory} />,
-                requestDetails: () => <RequestDetailsStep statusesOptions={statusesOptions} prioritiesOptions={prioritiesOptions} />,
-                attachments: () => <AttachmentsStep />,
-                dynamicForm: () => (
-                  <DynamicFormStep assignmentCategoryIds={categoryIds.assignmentCategory} requestCategoryIds={categoryIds.requestCategory} onNext={stepper.next} onPrev={stepper.prev} />
-                ),
-                summary: () => <SummaryStep tenantId={tenantId} requestLevelTypes={requestLevelTypes} assignmentLevelTypes={assignmentLevelTypes} />,
-              })}
-            </ChildStepsProvider>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between gap-4 overflow-hidden">
+            {stepper.switch({
+              classification: () => <ClassificationStep />,
+              requirementCompliance: () => <RequirementComplianceStep requestCategoryIds={categoryIds.requestCategory} />,
+              requestDetails: () => <RequestDetailsStep isDraftRemovable={isDraftRemovable} prioritiesOptions={prioritiesOptions} />,
+              attachments: () => <AttachmentsStep />,
+              dynamicForm: () => (
+                <DynamicFormStep assignmentCategoryIds={categoryIds.assignmentCategory} requestCategoryIds={categoryIds.requestCategory} onNext={stepper.next} onPrev={stepper.prev} />
+              ),
+              summary: () => <SummaryStep tenantId={tenantId} />,
+            })}
             {stepper.current.id !== 'dynamicForm' && (
               <StepperNavigationButtons isPending={isPending} isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onReset={stepper.reset} />
             )}
           </form>
         </Form>
-      </Card>
+      </ChildStepsProvider>
     </div>
   );
 };

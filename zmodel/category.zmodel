@@ -95,10 +95,9 @@ model SLAChangeLog extends TenantScoped, Auditable {
 
 /// Represents a guide document used to resolve a request.
 model GuideDocument extends TenantScoped, Auditable, CatalogBase {
-  url               String?         //@db.VarChar(500) // Optional URL for the document
-  status            Int          // Status code representing the state of the document
-  expirationDate    DateTime?    // Optional expiration date for the document
-  version           Int             @default(1) //  Version number of the document
+  fileType    String
+  fileUrl     String
+  version     String
   requestCategoryId String          //@db.UniqueIdentifier // ID of the associated request category
   requestCategory   RequestCategory @relation(fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
 

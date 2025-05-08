@@ -411,9 +411,9 @@ export function useCheckGuideDocument<TError = DefaultError>(
       createdBy?: string;
       updatedBy?: string;
       tenantId?: string;
-      url?: string;
-      status?: number;
-      version?: number;
+      fileType?: string;
+      fileUrl?: string;
+      version?: string;
       requestCategoryId?: string;
     };
   },

@@ -6,7 +6,7 @@ import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-server';
 import { type Locale } from 'next-intl';
 
-import { AssignmentHierarchyWithLevelsType, RequestHierarchyWithLevelsType } from '@/types/prisma/hierarchy';
+import { AssignmentHierarchyDefaultArgs, AssignmentHierarchyWithLevelsType, RequestHierarchyDefaultArgs, RequestHierarchyWithLevelsType } from '@/types/prisma/hierarchy';
 import { generateUuid } from '@/lib/id';
 import { HierarchyFormStepperValues } from '@/components/common/hierarchy/hierarchy-form-stepper';
 
@@ -115,6 +115,9 @@ export const getRequestHierarchyAndLevelsById = async (tenantId: string, id: str
           description: true,
           position: true,
         },
+        orderBy: {
+          position: 'asc',
+        },
       },
       _count: {
         select: {
@@ -130,14 +133,12 @@ export const getRequestHierarchyAndLevelsById = async (tenantId: string, id: str
     name: hierarchy.name ?? '',
     description: hierarchy.description ?? '',
     isActive: hierarchy.isActive ?? true,
-    levels: hierarchy.levels
-      .sort((a, b) => a.position - b.position)
-      .map((level) => ({
-        id: level.id,
-        name: level.name,
-        description: level.description ?? '',
-        isActive: true,
-      })) ?? [{ id: generateUuid(), name: '', isActive: true }],
+    levels: hierarchy.levels.map((level) => ({
+      id: level.id,
+      name: level.name,
+      description: level.description ?? '',
+      isActive: true,
+    })) ?? [{ id: generateUuid(), name: '', isActive: true }],
     categoriesCount: hierarchy._count.categories,
   };
 };
@@ -159,6 +160,9 @@ export const getAssignmentHierarchyAndLevelsById = async (tenantId: string, id: 
           description: true,
           position: true,
         },
+        orderBy: {
+          position: 'asc',
+        },
       },
       _count: {
         select: {
@@ -174,14 +178,12 @@ export const getAssignmentHierarchyAndLevelsById = async (tenantId: string, id: 
     name: hierarchy.name ?? '',
     description: hierarchy.description ?? '',
     isActive: hierarchy.isActive ?? true,
-    levels: hierarchy.levels
-      .sort((a, b) => a.position - b.position)
-      .map((level) => ({
-        id: level.id,
-        name: level.name,
-        description: level.description ?? '',
-        isActive: true,
-      })) ?? [{ id: generateUuid(), name: '', isActive: true }],
+    levels: hierarchy.levels.map((level) => ({
+      id: level.id,
+      name: level.name,
+      description: level.description ?? '',
+      isActive: true,
+    })) ?? [{ id: generateUuid(), name: '', isActive: true }],
     categoriesCount: hierarchy._count.categories,
   };
 };
@@ -191,12 +193,7 @@ export const getRequestHierarchiesAndLevelsByTenantId = async (locale: Locale, t
   if (!session) throw new UserNotFoundErr('User not found');
 
   const hierarchies = await db.requestHierarchy.findMany({
-    select: {
-      id: true,
-      name: true,
-      description: true,
-      levels: { select: { id: true, name: true, position: true } },
-    },
+    ...RequestHierarchyDefaultArgs,
     where: { tenantId },
   });
 
@@ -204,12 +201,7 @@ export const getRequestHierarchiesAndLevelsByTenantId = async (locale: Locale, t
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/configurations/request-hierarchies', params: { tenantId } } });
   }
 
-  return hierarchies.map((h) => ({
-    id: h.id,
-    name: h.name,
-    description: h.description,
-    levels: h.levels.sort((a, b) => a.position - b.position),
-  }));
+  return hierarchies;
 };
 
 export const getAssignmentHierarchiesAndLevelsByTenantId = async (locale: Locale, tenantId: string): Promise<AssignmentHierarchyWithLevelsType[]> => {
@@ -217,12 +209,7 @@ export const getAssignmentHierarchiesAndLevelsByTenantId = async (locale: Locale
   if (!session) throw new UserNotFoundErr('User not found');
 
   const hierarchies = await db.assignmentHierarchy.findMany({
-    select: {
-      id: true,
-      name: true,
-      description: true,
-      levels: { select: { id: true, name: true, position: true } },
-    },
+    ...AssignmentHierarchyDefaultArgs,
     where: { tenantId },
   });
 
@@ -230,10 +217,37 @@ export const getAssignmentHierarchiesAndLevelsByTenantId = async (locale: Locale
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/configurations/assignment-hierarchies', params: { tenantId } } });
   }
 
-  return hierarchies.map((h) => ({
-    id: h.id,
-    name: h.name,
-    description: h.description,
-    levels: h.levels.sort((a, b) => a.position - b.position),
-  }));
+  return hierarchies;
+};
+
+export const getRequestHierarchyAndLevelsByCategoryId = async (locale: Locale, tenantId: string, categoryId: string): Promise<RequestHierarchyWithLevelsType> => {
+  const session = await currentSession();
+  if (!session) throw new UserNotFoundErr('User not found');
+
+  const hierarchy = await db.requestHierarchy.findFirst({
+    ...RequestHierarchyDefaultArgs,
+    where: { tenantId, categories: { some: { id: categoryId } } },
+  });
+
+  if (!hierarchy) {
+    return redirect({ locale, href: { pathname: '/admin/[tenantId]/configurations/request-hierarchies', params: { tenantId } } });
+  }
+
+  return hierarchy;
+};
+
+export const getAssignmentHierarchyAndLevelsByCategoryId = async (locale: Locale, tenantId: string, categoryId: string): Promise<AssignmentHierarchyWithLevelsType> => {
+  const session = await currentSession();
+  if (!session) throw new UserNotFoundErr('User not found');
+
+  const hierarchy = await db.assignmentHierarchy.findFirst({
+    ...AssignmentHierarchyDefaultArgs,
+    where: { tenantId, categories: { some: { id: categoryId } } },
+  });
+
+  if (!hierarchy) {
+    return redirect({ locale, href: { pathname: '/admin/[tenantId]/configurations/assignment-hierarchies', params: { tenantId } } });
+  }
+
+  return hierarchy;
 };

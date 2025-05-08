@@ -378,9 +378,9 @@ export function useCheckRequest<TError = DefaultError>(
       id?: string;
       issueSubject?: string;
       description?: string;
+      isDraft?: boolean;
       closedBy?: string;
       closedComment?: string;
-      comment?: string;
       dataroomId?: string;
       satisfactionSurveyId?: string;
       channelId?: string;

@@ -57,28 +57,30 @@ function EmptyState({ title, description, icons = [], actions, className }: Empt
             </div>
           )}
         </div>
-        <h2 className="text-foreground font-medium mt-6">{title}</h2>
-        <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{description}</p>
-        <div className="flex justify-center mt-6 gap-2">
-          {actions?.map((action) => {
-            if (action.href) {
+        <div className="flex flex-col">
+          <h2 className="text-foreground font-medium mt-6">{title}</h2>
+          <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{description}</p>
+          <div className="flex justify-center mt-6 gap-2">
+            {actions?.map((action) => {
+              if (action.href) {
+                return (
+                  <Button key={action.label} asChild variant={action.variant ?? 'outline'}>
+                    <Link href={action.href}>
+                      {action.icon && <action.icon className="ml-2 h-4 w-4" />}
+                      {action.label}
+                    </Link>
+                  </Button>
+                );
+              }
+
               return (
-                <Button key={action.label} asChild variant={action.variant ?? 'outline'}>
-                  <Link href={action.href}>
-                    {action.icon && <action.icon className="ml-2 h-4 w-4" />}
-                    {action.label}
-                  </Link>
+                <Button key={action.label} type="button" onClick={action.onClick} variant={action.variant ?? 'outline'}>
+                  {action.icon && <action.icon className="ml-2 h-4 w-4" />}
+                  {action.label}
                 </Button>
               );
-            }
-
-            return (
-              <Button key={action.label} type="button" onClick={action.onClick} variant={action.variant ?? 'outline'}>
-                {action.icon && <action.icon className="ml-2 h-4 w-4" />}
-                {action.label}
-              </Button>
-            );
-          })}
+            })}
+          </div>
         </div>
       </div>
     </div>

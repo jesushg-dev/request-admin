@@ -5,8 +5,7 @@ interface RendererProps {
 }
 
 const Renderer = ({ value }: RendererProps) => {
-  // todo: this must be temporary and experimental solution for rendering html content until we hava better support for react 19
-  return <div dangerouslySetInnerHTML={{ __html: value }}></div>;
+  return <div>{value}</div>;
   //return <TiptapRenderer>{value}</TiptapRenderer>;
 };
 

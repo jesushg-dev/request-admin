@@ -54,7 +54,6 @@ model Tenant extends Auditable {
   requestWorkflowStatuses      RequestWorkflowStatus[]
   requestWorkflowTransitions   RequestWorkflowTransition[]
   requirementComplianceTrackings RequirementComplianceTracking[]
-  relatedIncidents               RelatedIncident[]
   requestChangeLogs              RequestChangeLog[]
   customerSatisfactionSurveys    CustomerSatisfactionSurvey[]
   assignmentTypes                AssignmentType[]

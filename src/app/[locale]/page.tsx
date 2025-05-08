@@ -40,8 +40,8 @@ const Home = async () => {
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline">
-                Schedule a Demo
+              <Button size="lg" type="button" variant="outline">
+                {t('scheduleDemoButton')}
               </Button>
             </div>
           </section>
