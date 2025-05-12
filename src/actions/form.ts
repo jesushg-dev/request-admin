@@ -4,7 +4,7 @@ import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-server';
 import { formSchema, formSchemaType, keysSchema } from '@/services/schemas/form';
 
-export class UserNotFoundErr extends Error {}
+import { UserNotFoundErr } from '@/lib/error';
 
 export const getFormsAsOptions = async (tenantId: string) => {
   const session = await currentSession();

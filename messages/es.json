@@ -18,6 +18,33 @@
     "actions": {
       "export": "Exportar"
     },
+    "viewOptions": {
+      "ariaLabel": "Alternar columnas",
+      "text": "Opciones de vista",
+      "placeholder": "Filtrar columnas...",
+      "emptyTitle": "No se encontraron columnas."
+    },
+    "filters": {
+      "title": "Filtros",
+      "noFilters": "No hay filtros aplicados",
+      "noFiltersDescription": "Agrega filtros para refinar tus resultados.",
+      "addFilter": "Agregar filtro",
+      "resetFilters": "Restablecer filtros",
+      "where": "Donde",
+      "selectField": "Seleccionar campo",
+      "searchFields": "Buscar campos...",
+      "noFieldsFound": "No se encontraron campos.",
+      "selectOperator": "Seleccionar operador de filtro",
+      "enterValue": "Ingresar un valor...",
+      "pickDate": "Seleccionar fecha",
+      "searchOptions": "Buscar opciones...",
+      "noOptionsFound": "No se encontraron opciones.",
+      "selected": "seleccionado",
+      "true": "Verdadero",
+      "false": "Falso",
+      "isEmpty": "está vacío",
+      "isNotEmpty": "no está vacío"
+    },
     "delete": {
       "title": "¿Estás completamente seguro?",
       "description": "{count, plural, one {Esta acción no se puede deshacer. Esto eliminará permanentemente tu {entity} de nuestros servidores.} other {Esta acción no se puede deshacer. Esto eliminará permanentemente tus {entityPlural} de nuestros servidores.}}",
@@ -32,7 +59,40 @@
       "clearSelection": "Borrar selección",
       "export": "Exportar {entity}",
       "delete": "Eliminar {entity}"
-    }
+    },
+    "pagination": {
+      "rowsSelected": "{selectedCount} de {totalCount} {totalCount, plural, one {fila seleccionada} other {filas seleccionadas}}",
+      "rowsPerPage": "Filas por página",
+      "pageInfo": "Página {current} de {total}",
+      "firstPage": "Ir a la primera página",
+      "previousPage": "Ir a la página anterior",
+      "nextPage": "Ir a la página siguiente",
+      "lastPage": "Ir a la última página"
+    },
+    "columnHeader": {
+      "sortAscHint": "Orden ascendente. Click para ordenar descendente.",
+      "sortDescHint": "Orden descendente. Click para ordenar ascendente.",
+      "sortNoneHint": "Sin ordenar. Click para ordenar ascendente.",
+      "sortAsc": "Asc",
+      "sortDesc": "Desc",
+      "hide": "Ocultar"
+    },
+    "emptyState": {
+      "title": "No hay datos",
+      "description": "No hay datos para mostrar"
+    },
+    "sort": {
+      "title": "Ordenar",
+      "noSorting": "No hay ordenamiento aplicado",
+      "noSortingDescription": "Agrega ordenamiento para organizar tus resultados.",
+      "addSort": "Agregar ordenamiento",
+      "resetSorting": "Restablecer ordenamiento",
+      "searchFields": "Buscar campos...",
+      "noFieldsFound": "No se encontraron campos.",
+      "default": "Predeterminado",
+      "selectDirection": "Seleccionar dirección de ordenamiento"
+    },
+    "filterDatePlaceholder": "Seleccionar fecha"
   },
   "home": {
     "title": "Request Engine",
@@ -1295,7 +1355,8 @@
             "compliances": "Cumplimientos",
             "submissions": "Envíos",
             "attachments": "Adjuntos"
-          }
+          },
+          "requestDetails": "Detalles de solicitud"
         }
       },
       "relatedIncidentForm": {

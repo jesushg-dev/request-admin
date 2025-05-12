@@ -3,9 +3,8 @@
 import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-server';
 
+import { UserNotFoundErr } from '@/lib/error';
 import { generateUuid } from '@/lib/id';
-
-export class UserNotFoundErr extends Error {}
 
 export async function cloneDocumentsAndFolders(documentIds: string[], folderIds: string[], dataroomId: string, currentFolderId: string | null) {
   const session = await currentSession();

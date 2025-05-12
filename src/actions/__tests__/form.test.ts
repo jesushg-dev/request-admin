@@ -1,8 +1,10 @@
 // __tests__/formActions.test.ts
-import { CreateForm, GetFormById, getFormsAsOptions, GetFormStats, SubmitForm, UserNotFoundErr } from '@/actions/form';
+import { CreateForm, GetFormById, getFormsAsOptions, GetFormStats, SubmitForm } from '@/actions/form';
 import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-server';
 import { formSchemaType } from '@/services/schemas/form';
+
+import { UserNotFoundErr } from '@/lib/error';
 
 // Mock external dependencies
 jest.mock('@/server/auth-server', () => ({

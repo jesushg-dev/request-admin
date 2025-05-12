@@ -2,6 +2,7 @@ import { createContext, Fragment, ReactNode, useContext } from 'react';
 import { ColumnDef, flexRender, type Row, type Table as TanstackTable } from '@tanstack/react-table';
 import { Files, FileText, Link, NotepadText, NotepadTextDashed } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import { useTranslations } from 'next-intl';
 import { parseAsBoolean, parseAsStringEnum, useQueryState } from 'nuqs';
 
 import { getCommonPinningStyles } from '@/lib/data-table';
@@ -61,6 +62,7 @@ interface DataTableProps<TData, TSubData> extends CommonDataTableProps<TData> {
 }
 
 export function DataTable<TData, TSubData>({ table, subComponent, emptyState, isLoading, children, customCard }: DataTableProps<TData, TSubData>) {
+  const t = useTranslations('table.emptyState');
   const { listType } = useDataTable();
 
   if (isLoading) {
@@ -91,7 +93,7 @@ export function DataTable<TData, TSubData>({ table, subComponent, emptyState, is
               ))}
             </div>
           ) : (
-            <EmptyState title={emptyState?.title ?? 'No data'} description={emptyState?.description ?? 'There are no records to display'} icons={[FileText, Link, Files]} {...emptyState} />
+            <EmptyState title={emptyState?.title ?? t('title')} description={emptyState?.description ?? t('description')} icons={[FileText, Link, Files]} {...emptyState} />
           )}
         </div>
       </>
@@ -132,7 +134,7 @@ export function DataTable<TData, TSubData>({ table, subComponent, emptyState, is
             ) : (
               <TableRow>
                 <TableCell colSpan={table.getAllColumns().length} className="h-full w-full text-center">
-                  <EmptyState title={emptyState?.title ?? 'No data'} description={emptyState?.description ?? 'There are no records to display'} icons={[FileText, Link, Files]} {...emptyState} />
+                  <EmptyState title={emptyState?.title ?? t('title')} description={emptyState?.description ?? t('description')} icons={[FileText, Link, Files]} {...emptyState} />
                 </TableCell>
               </TableRow>
             )}

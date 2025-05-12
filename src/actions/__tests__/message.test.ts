@@ -1,7 +1,9 @@
 import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-client';
 
-import { findOrCreateConversation, UserNotFoundErr } from '../message';
+import { UserNotFoundErr } from '@/lib/error';
+
+import { findOrCreateConversation } from '../message';
 
 // Mock the dependencies
 jest.mock('@/server/auth-server', () => ({

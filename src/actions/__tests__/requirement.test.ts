@@ -2,7 +2,9 @@
 import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-client';
 
-import { getRequirementAsFormById, getRequirementsAsOptions, UserNotFoundErr } from '../requirement';
+import { UserNotFoundErr } from '@/lib/error';
+
+import { getRequirementAsFormById, getRequirementsAsOptions } from '../requirement';
 
 // Mock the dependencies
 jest.mock('@/server/auth-server', () => ({

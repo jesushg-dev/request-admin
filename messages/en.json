@@ -18,6 +18,33 @@
     "actions": {
       "export": "Export"
     },
+    "viewOptions": {
+      "ariaLabel": "Toggle columns",
+      "text": "View options",
+      "placeholder": "Filter columns...",
+      "emptyTitle": "No columns found."
+    },
+    "filters": {
+      "title": "Filters",
+      "noFilters": "No filters applied",
+      "noFiltersDescription": "Add filters to refine your results.",
+      "addFilter": "Add filter",
+      "resetFilters": "Reset filters",
+      "where": "Where",
+      "selectField": "Select field",
+      "searchFields": "Search fields...",
+      "noFieldsFound": "No fields found.",
+      "selectOperator": "Select filter operator",
+      "enterValue": "Enter a value...",
+      "pickDate": "Pick a date",
+      "searchOptions": "Search options...",
+      "noOptionsFound": "No options found.",
+      "selected": "selected",
+      "true": "True",
+      "false": "False",
+      "isEmpty": "is empty",
+      "isNotEmpty": "is not empty"
+    },
     "delete": {
       "title": "Are you absolutely sure?",
       "description": "{count, plural, one {This action cannot be undone. This will permanently delete your # {entity} from our servers.} other {This action cannot be undone. This will permanently delete your # {entityPlural} from our servers.}}",
@@ -32,7 +59,40 @@
       "clearSelection": "Clear selection",
       "export": "Export {entity}",
       "delete": "Delete {entity}"
-    }
+    },
+    "pagination": {
+      "rowsSelected": "{selectedCount} of {totalCount} {totalCount, plural, one {row} other {rows}} selected",
+      "rowsPerPage": "Rows per page",
+      "pageInfo": "Page {current} of {total}",
+      "firstPage": "Go to first page",
+      "previousPage": "Go to previous page",
+      "nextPage": "Go to next page",
+      "lastPage": "Go to last page"
+    },
+    "columnHeader": {
+      "sortAscHint": "Sorted ascending. Click to sort descending.",
+      "sortDescHint": "Sorted descending. Click to sort ascending.",
+      "sortNoneHint": "Not sorted. Click to sort ascending.",
+      "sortAsc": "Asc",
+      "sortDesc": "Desc",
+      "hide": "Hide"
+    },
+    "emptyState": {
+      "title": "No data",
+      "description": "There is no data to display"
+    },
+    "sort": {
+      "title": "Sort",
+      "noSorting": "No sorting applied",
+      "noSortingDescription": "Add sorting to organize your results.",
+      "addSort": "Add sort",
+      "resetSorting": "Reset sorting",
+      "searchFields": "Search fields...",
+      "noFieldsFound": "No fields found.",
+      "default": "Default",
+      "selectDirection": "Select sort direction"
+    },
+    "filterDatePlaceholders": "Pick a date"
   },
   "home": {
     "title": "Request Engine",
@@ -1290,7 +1350,8 @@
             "compliances": "Compliances",
             "submissions": "Submissions",
             "attachments": "Attachments"
-          }
+          },
+          "requestDetails": "Request Details"
         }
       },
       "relatedIncidentForm": {

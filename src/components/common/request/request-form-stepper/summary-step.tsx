@@ -25,11 +25,11 @@ interface CategoryData {
   label?: string;
 }
 
-function DetailsSection({ issueSubject, priorityId, statusId, areaId }: RequestFormStepperType) {
+function DetailsSection({ title, issueSubject, priorityId, statusId, areaId }: RequestFormStepperType & { title: string }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Request Details</CardTitle>
+        <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4">
@@ -127,7 +127,7 @@ export const SummaryStep: FC<SummaryStepProps> = ({ tenantId }) => {
   return (
     <ScrollArea className="flex-1">
       <div className="w-full flex flex-col gap-4 px-1">
-        <DetailsSection {...formData} />
+        <DetailsSection title={t('requestDetails')} {...formData} />
 
         <div className="grid md:grid-cols-2 gap-4">
           {isRequestLevelTypesLoading ? (

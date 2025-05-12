@@ -1,9 +1,10 @@
 import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-server';
 
+import { UserNotFoundErr } from '@/lib/error';
 import { generateUuid } from '@/lib/id';
 
-import { cloneDocumentsAndFolders, UserNotFoundErr } from '../document';
+import { cloneDocumentsAndFolders } from '../document';
 
 // Mock the dependencies
 jest.mock('@/server/auth-server', () => ({
