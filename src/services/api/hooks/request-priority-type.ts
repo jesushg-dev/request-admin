@@ -10,8 +10,8 @@ import type { PolicyCrudKind } from '@zenstackhq/runtime';
 import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
 import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
 
-import type { Prisma, RequestPriorityType } from '../../../../node_modules/.prisma/client';
 import metadata from './__model_meta';
+import type { Prisma, RequestPriorityType } from '.prisma/client';
 
 type DefaultError = QueryError;
 
