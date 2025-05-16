@@ -54,11 +54,11 @@ model ExecutionNodeGuide extends TenantScoped, Auditable {
 
 model ExecutionEdgeDefinition extends TenantScoped, Auditable {
   id           String                    @id @default(uuid()) //@db.UniqueIdentifier                             // Primary key
-  flow         ExecutionFlowDefinition   @relation(fields: [flowId], references: [id])             // Flow this edge belongs to
+  flow ExecutionFlowDefinition @relation(fields: [flowId], references: [id], onUpdate: NoAction, onDelete: NoAction) // Flow this edge belongs to
   flowId       String                                                                             
-  source       ExecutionNodeDefinition   @relation("SourceEdges", fields: [sourceId], references: [id])  // Source node
+  source ExecutionNodeDefinition @relation("SourceEdges", fields: [sourceId], references: [id], onUpdate: NoAction, onDelete: NoAction)  // Source node
   sourceId     String                                                                           
-  target       ExecutionNodeDefinition   @relation("TargetEdges", fields: [targetId], references: [id])  // Target node
+  target       ExecutionNodeDefinition   @relation("TargetEdges", fields: [targetId], references: [id], onUpdate: NoAction, onDelete: NoAction)  // Target node
   targetId     String                                                                           
   sourceHandle String?                                                                         // Optional handle name (e.g., yes/no)
   condition    String?                   //@db.NVarChar(Max)                                    // Optional expression to evaluate
@@ -85,9 +85,9 @@ model ExecutionModelInstance extends TenantScoped, Auditable {
 model ExecutionModelLog extends TenantScoped, Auditable {
   id          String                     @id @default(uuid()) //@db.UniqueIdentifier                             // Primary key
   executionId String                                                                          // Related execution
-  execution   ExecutionModelInstance     @relation(fields: [executionId], references: [id])       
+  execution ExecutionModelInstance @relation(fields: [executionId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   nodeId      String                                                                          // Related node
-  node        ExecutionNodeDefinition    @relation(fields: [nodeId], references: [id])       
+  node        ExecutionNodeDefinition    @relation(fields: [nodeId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   timestamp   DateTime                   @default(now())                                        // When the event happened
   eventType   String                                                                          // Type of event (start, success, etc.)
   details     String                     //@db.NVarChar(Max)                                    // Details of the log
@@ -99,12 +99,12 @@ model ExecutionModelLog extends TenantScoped, Auditable {
 
 model ExecutionModelHistory extends TenantScoped, Auditable {
   id             String                     @id @default(uuid()) //@db.UniqueIdentifier                         // Primary key
-  executionId    String                                                                          // Related execution
-  execution      ExecutionModelInstance     @relation(fields: [executionId], references: [id])     
-  previousFlowId String?                                                                         // Old flow version
-  previousFlow   ExecutionFlowDefinition?   @relation("PreviousFlowHistory", fields: [previousFlowId], references: [id]) 
-  newFlowId      String                                                                          // New flow version
-  newFlow        ExecutionFlowDefinition    @relation("NewFlowHistory", fields: [newFlowId], references: [id]) 
+  executionId String
+  execution ExecutionModelInstance @relation(fields: [executionId], references: [id])
+  previousFlowId String?
+  previousFlow ExecutionFlowDefinition? @relation("PreviousFlowHistory", fields: [previousFlowId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  newFlowId String
+  newFlow ExecutionFlowDefinition @relation("NewFlowHistory", fields: [newFlowId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   changedAt      DateTime                   @default(now())                                      // When the migration happened
   reason         String                     //@db.NVarChar(Max)                                    // Reason for change
 

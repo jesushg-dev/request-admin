@@ -1,6 +1,6 @@
 'use client';
 
-import { type FC } from 'react';
+import { useCallback, useEffect, type FC } from 'react';
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
@@ -42,7 +42,17 @@ interface RequestDetailsStepProps {
 
 const RequestDetailsStep: FC<RequestDetailsStepProps> = ({ isDraftRemovable, prioritiesOptions }) => {
   const t = useTranslations('admin.request.form.detailsStep');
-  const { control } = useFormContext<RequestDetailValues>();
+  const { control, setValue } = useFormContext<RequestDetailValues>();
+
+  const enableDraft = useCallback(() => {
+    setValue('isDraft', true);
+  }, [setValue]);
+
+  useEffect(() => {
+    if (!isDraftRemovable) {
+      enableDraft();
+    }
+  }, [isDraftRemovable, enableDraft]);
 
   return (
     <Card className="flex-1 flex flex-col overflow-hidden">

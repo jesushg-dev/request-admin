@@ -4,8 +4,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -1917,11 +1917,11 @@ model ExecutionEdgeDefinition {
   tenantId     String
   tenant       Tenant                  @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id           String                  @id() @default(uuid())
-  flow         ExecutionFlowDefinition @relation(fields: [flowId], references: [id])
+  flow         ExecutionFlowDefinition @relation(fields: [flowId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   flowId       String
-  source       ExecutionNodeDefinition @relation("SourceEdges", fields: [sourceId], references: [id])
+  source       ExecutionNodeDefinition @relation("SourceEdges", fields: [sourceId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   sourceId     String
-  target       ExecutionNodeDefinition @relation("TargetEdges", fields: [targetId], references: [id])
+  target       ExecutionNodeDefinition @relation("TargetEdges", fields: [targetId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   targetId     String
   sourceHandle String?
   condition    String?
@@ -1962,9 +1962,9 @@ model ExecutionModelLog {
   tenant      Tenant                  @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id          String                  @id() @default(uuid())
   executionId String
-  execution   ExecutionModelInstance  @relation(fields: [executionId], references: [id])
+  execution   ExecutionModelInstance  @relation(fields: [executionId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   nodeId      String
-  node        ExecutionNodeDefinition @relation(fields: [nodeId], references: [id])
+  node        ExecutionNodeDefinition @relation(fields: [nodeId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   timestamp   DateTime                @default(now())
   eventType   String
   details     String
@@ -1986,9 +1986,9 @@ model ExecutionModelHistory {
   executionId    String
   execution      ExecutionModelInstance   @relation(fields: [executionId], references: [id])
   previousFlowId String?
-  previousFlow   ExecutionFlowDefinition? @relation("PreviousFlowHistory", fields: [previousFlowId], references: [id])
+  previousFlow   ExecutionFlowDefinition? @relation("PreviousFlowHistory", fields: [previousFlowId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   newFlowId      String
-  newFlow        ExecutionFlowDefinition  @relation("NewFlowHistory", fields: [newFlowId], references: [id])
+  newFlow        ExecutionFlowDefinition  @relation("NewFlowHistory", fields: [newFlowId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   changedAt      DateTime                 @default(now())
   reason         String
 
