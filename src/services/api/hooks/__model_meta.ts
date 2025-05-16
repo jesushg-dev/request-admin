@@ -8968,16 +8968,6 @@ const metadata = {
           type: 'Int',
           attributes: [{ name: '@default', args: [{ value: 1 }] }],
         },
-        name: {
-          name: 'name',
-          type: 'String',
-          isOptional: true,
-        },
-        description: {
-          name: 'description',
-          type: 'String',
-          isOptional: true,
-        },
         nodes: {
           name: 'nodes',
           type: 'ExecutionNodeDefinition',

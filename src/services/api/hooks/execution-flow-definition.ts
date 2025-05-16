@@ -472,10 +472,7 @@ export function useSuspenseCountExecutionFlowDefinition<
 }
 
 export function useCheckExecutionFlowDefinition<TError = DefaultError>(
-  args: {
-    operation: PolicyCrudKind;
-    where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; version?: number; name?: string; description?: string; isActive?: boolean; requestCategoryId?: string };
-  },
+  args: { operation: PolicyCrudKind; where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; version?: number; isActive?: boolean; requestCategoryId?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

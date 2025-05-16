@@ -1,3 +1,5 @@
+import { WorkflowStatusType } from '@/constants/workflow';
+
 // constants/requests.ts
 export interface WorkflowStatus {
   id: string;
@@ -25,23 +27,10 @@ export interface WorkflowTransition {
 export function getITILStatuses(): WorkflowStatus[] {
   return [
     {
-      id: 'b08dfa3f-3769-416e-88cf-78809a29091e',
-      name: { en: 'Draft', es: 'Borrador' },
-      color: 'gray',
-      type: 'initial',
-      positionX: 207.5,
-      positionY: 63.5,
-      description: {
-        en: 'Initial request registration',
-        es: 'Registro inicial de la solicitud',
-      },
-      isActive: true,
-    },
-    {
       id: 'aa4edc6f-e444-4d00-915d-006e840241cf',
       name: { en: 'Review', es: 'En revisión' },
       color: 'blue',
-      type: 'default',
+      type: WorkflowStatusType.INITIAL,
       positionX: 190,
       positionY: 154.5,
       description: {
@@ -54,7 +43,7 @@ export function getITILStatuses(): WorkflowStatus[] {
       id: 'e29e89c0-abad-454b-9b45-0b87fc739253',
       name: { en: 'In Progress', es: 'En Progreso' },
       color: 'indigo',
-      type: 'default',
+      type: WorkflowStatusType.DEFAULT,
       positionX: 128.48,
       positionY: 255.31,
       description: {
@@ -67,7 +56,7 @@ export function getITILStatuses(): WorkflowStatus[] {
       id: 'd1827d8a-1e83-45eb-8798-699f05ab2fcc',
       name: { en: 'Closed', es: 'Cerrado' },
       color: 'green',
-      type: 'final',
+      type: WorkflowStatusType.FINAL,
       positionX: 61.52,
       positionY: 380.68,
       description: {
@@ -80,7 +69,7 @@ export function getITILStatuses(): WorkflowStatus[] {
       id: '6f613584-27e7-4a48-baaa-d5c727213796',
       name: { en: 'Canceled', es: 'Cancelado' },
       color: 'red',
-      type: 'final',
+      type: WorkflowStatusType.FINAL,
       positionX: 365.09,
       positionY: 361.12,
       description: {
@@ -94,15 +83,6 @@ export function getITILStatuses(): WorkflowStatus[] {
 
 export function getITILTransitions(): WorkflowTransition[] {
   return [
-    {
-      id: '89b97b69-9b03-49dc-bcb6-d55f9d7046f8',
-      label: { en: 'Submit', es: 'Enviar' },
-      fromStatusId: 'b08dfa3f-3769-416e-88cf-78809a29091e',
-      toStatusId: 'aa4edc6f-e444-4d00-915d-006e840241cf',
-      maxDuration: 1440,
-      isDefault: true,
-      priority: 1,
-    },
     {
       id: '412d347a-8562-476f-912b-bd7648be65c1',
       label: { en: 'Approve', es: 'Aprobar' },

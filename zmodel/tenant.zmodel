@@ -8,6 +8,7 @@ import './request.zmodel'
 import './area.zmodel'
 import './category.zmodel'
 import './permission.zmodel'
+import './execution.zmodel'
 
 model Tenant extends Auditable {
   id                             String       @id
@@ -45,6 +46,15 @@ model Tenant extends Auditable {
   slas                           SLA[]
   sLAChangeLogs                  SLAChangeLog[]
   guideDocuments                 GuideDocument[] 
+
+  // --- Execution Flow and Logs ---
+  executionFlowDefinitions       ExecutionFlowDefinition[]
+  executionNodeDefinitions       ExecutionNodeDefinition[]
+  executionEdgeDefinitions       ExecutionEdgeDefinition[]
+  executionModelInstances        ExecutionModelInstance[]
+  executionModelLogs             ExecutionModelLog[]
+  executionModelHistory          ExecutionModelHistory[]
+  executionNodeGuides           ExecutionNodeGuide[]
 
   // --- Requests and Statuses ---
   requests                       Request[]

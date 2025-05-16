@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 const Tabs = TabsPrimitive.Root;
 
 const TabsList = React.forwardRef<React.ComponentRef<typeof TabsPrimitive.List>, React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>>(({ className, ...props }, ref) => (
-  <TabsPrimitive.List ref={ref} className={cn('bg-muted text-muted-foreground inline-flex h-8 items-center justify-center rounded-md p-1', className)} {...props} />
+  <TabsPrimitive.List ref={ref} className={cn('bg-muted text-muted-foreground inline-flex h-8 items-center rounded-md p-1', className)} {...props} />
 ));
 TabsList.displayName = TabsPrimitive.List.displayName;
 

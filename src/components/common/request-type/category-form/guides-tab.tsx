@@ -32,7 +32,7 @@ export const guideSchema = z.object({
   isActive: z.boolean().default(true),
 });
 
-type GuideFormValues = z.infer<typeof guideSchema>;
+export type GuideFormValues = z.infer<typeof guideSchema>;
 
 export function GuideTab() {
   const t = useTranslations('admin.requestType.create.guidesTab');
@@ -193,7 +193,6 @@ function GuideModal({ open, onClose, onSave, initialData }: { open: boolean; onC
           <DialogTitle>{initialData ? t('editGuide') : t('newGuide')}</DialogTitle>
           <DialogDescription>{initialData ? t('editGuideDescription') : t('newGuideDescription')}</DialogDescription>
         </DialogHeader>
-
         <Form {...form}>
           <FormRoot onSubmit={form.handleSubmit(onSave)}>
             <FormContent>

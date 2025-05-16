@@ -26,7 +26,7 @@ import { Skeleton } from '../ui/skeleton';
 export type OptionType = { label: string; value: string | number };
 
 export const optionSchema = z.object({
-  label: z.string(),
+  label: z.string().min(1, 'Este campo es obligatorio'),
   value: z.union([z.string(), z.number()]),
 });
 

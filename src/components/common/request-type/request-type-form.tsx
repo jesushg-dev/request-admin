@@ -1,22 +1,22 @@
 'use client';
 
-import { FC, useCallback, useEffect, useMemo, useState, useTransition } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { useUpsertRequestCategory } from '@/services/api/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { BookCopyIcon, BookIcon, ContainerIcon, FileCogIcon, FileStackIcon, PackageOpenIcon, X } from 'lucide-react';
+import { BookCopyIcon, BookIcon, ChevronLeft, ChevronRight, ContainerIcon, FileCogIcon, FileStackIcon, PackageOpenIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
+import { ImperativePanelHandle } from 'react-resizable-panels';
 import { SingleValue } from 'react-select';
 import { toast } from 'sonner';
 
 import { RequestHierarchyWithLevelsType } from '@/types/prisma/hierarchy';
 import { buildRequestCategoryUpsertArgs } from '@/lib/request-type';
-import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import Select, { OptionType } from '@/components/custom-ui/select';
 import EmptyState from '@/components/shared/empty-state';
-import { FormActions, FormError, FormRoot } from '@/components/shared/form-root';
+import { FormError, FormRoot } from '@/components/shared/form-root';
 
 import { CategoryForm, getDefaultCategory, requestCategorySchema, RequestCategoryValues } from './category-form';
 import { CategoryTreeView } from './category-tree-view';
@@ -39,11 +39,15 @@ interface RequestTypeFormProps {
 
 const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements, forms, requestHierarchies, tenantId, disableHierarchyChange = false }) => {
   const t = useTranslations('admin.requestType.create');
+
+  const ref = useRef<ImperativePanelHandle>(null);
   const [isPending, startTransition] = useTransition();
-  const [mode, setMode] = useState<Mode>('none');
   const { mutateAsync: upsert, error, reset: resetError } = useUpsertRequestCategory();
+
+  const [mode, setMode] = useState<Mode>('none');
   const [selectedHierarchy, setSelectedHierarchy] = useState<SingleValue<OptionType>>();
   const [currentState, setCurrentState] = useState<RequestTypeFormValues['categories']>([]);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
 
   const form = useForm({
     resolver: zodResolver(requestCategorySchema),
@@ -55,6 +59,14 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
 
   const formsOptions = useMemo(() => forms, [forms]);
   const requirementsOptions = useMemo(() => requirements, [requirements]);
+
+  const toggleSidebar = () => {
+    if (ref.current) {
+      const newSize = ref.current.isCollapsed() ? 30 : 0;
+      setIsSidebarCollapsed(!isSidebarCollapsed);
+      ref.current.resize(newSize);
+    }
+  };
 
   const handleAddCategory = useCallback(
     (hierarchyLevelId: string, parentCategoryId?: string | null) => {
@@ -155,7 +167,7 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
 
   return (
     <ResizablePanelGroup direction="horizontal" className="flex-1">
-      <ResizablePanel defaultSize={30}>
+      <ResizablePanel defaultSize={30} collapsible ref={ref} minSize={0}>
         {!initialValues && (
           <div className="flex flex-col border-b bg-background/50 px-4 py-2">
             <h2 className="text-sm font-medium mb-2">{t('hierarchyLabel')}</h2>
@@ -174,29 +186,23 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
 
         {selectedHierarchyData && <CategoryTreeView categories={currentState} onAddCategory={handleAddCategory} onEditCategory={handleEditCategory} hierarchy={selectedHierarchyData} />}
       </ResizablePanel>
-
       <ResizableHandle />
 
-      <ResizablePanel className="flex-1" defaultSize={70}>
+      <ResizablePanel className="flex-1 relative" defaultSize={70}>
         <div className="flex items-center justify-center h-full p-4 overflow-hidden">
+          <button type="button" onClick={toggleSidebar} className="absolute top-1/2 -left-2 -translate-y-1/2 p-2 rounded-lg hover:bg-accent transition-colors z-10">
+            {isSidebarCollapsed ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+          </button>
+
           {selectedHierarchy && selectedHierarchyData ? (
             isFormActive ? (
-              <div className="rounded-lg border h-full p-6 flex-1 flex flex-col overflow-hidden">
-                <Form {...form}>
-                  <FormRoot onSubmit={form.handleSubmit(onSubmit)}>
-                    <div className="flex justify-between items-center">
-                      <h2 className="text-xl font-bold">{mode === 'add' ? t('createTitle') : t('editTitle')}</h2>
-                      <Button variant="ghost" size="sm" type="button" onClick={handleCancelForm} disabled={isPending}>
-                        <X className="h-4 w-4 mr-2" />
-                        {t('cancel')}
-                      </Button>
-                    </div>
-                    <FormError error={error} />
-                    <CategoryForm formsOptions={formsOptions} requirementsOptions={requirementsOptions} />
-                    <FormActions isPending={isPending} title={mode === 'add' ? t('create') : t('update')} />
-                  </FormRoot>
-                </Form>
-              </div>
+              <Form {...form}>
+                <FormRoot className="h-full" onSubmit={form.handleSubmit(onSubmit)}>
+                  <FormError error={error} />
+
+                  <CategoryForm formsOptions={formsOptions} requirementsOptions={requirementsOptions} mode={mode} isPending={isPending} handleCancelForm={handleCancelForm} />
+                </FormRoot>
+              </Form>
             ) : (
               <EmptyState
                 title="Manage Request Categories"

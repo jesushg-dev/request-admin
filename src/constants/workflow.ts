@@ -1,17 +1,31 @@
+export enum WorkflowStatusType {
+  INITIAL = 'initial',
+  DEFAULT = 'default',
+  FINAL = 'final',
+}
+export enum WorkflowStatusColor {
+  GRAY = 'gray',
+  BLUE = 'blue',
+  INDIGO = 'indigo',
+  GREEN = 'green',
+  RED = 'red',
+  YELLOW = 'yellow',
+}
+
 export const typeOptions = [
-  { label: 'Default', value: 'default' },
-  { label: 'Initial', value: 'initial' },
-  { label: 'Final', value: 'final' },
-];
+  { label: 'Initial', value: WorkflowStatusType.INITIAL },
+  { label: 'Default', value: WorkflowStatusType.DEFAULT },
+  { label: 'Final', value: WorkflowStatusType.FINAL },
+] satisfies { label: string; value: WorkflowStatusType }[];
 
 export const colorOptions = [
-  { label: 'Gray', value: 'gray' },
-  { label: 'Blue', value: 'blue' },
-  { label: 'Indigo', value: 'indigo' },
-  { label: 'Green', value: 'green' },
-  { label: 'Red', value: 'red' },
-  { label: 'Yellow', value: 'yellow' },
-];
+  { label: 'Gray', value: WorkflowStatusColor.GRAY },
+  { label: 'Blue', value: WorkflowStatusColor.BLUE },
+  { label: 'Indigo', value: WorkflowStatusColor.INDIGO },
+  { label: 'Green', value: WorkflowStatusColor.GREEN },
+  { label: 'Red', value: WorkflowStatusColor.RED },
+  { label: 'Yellow', value: WorkflowStatusColor.YELLOW },
+] satisfies { label: string; value: WorkflowStatusColor }[];
 
 export const nodeColors = {
   red: { bg: '#fee2e2', color: '#991b1b', border: '#fca5a5' },

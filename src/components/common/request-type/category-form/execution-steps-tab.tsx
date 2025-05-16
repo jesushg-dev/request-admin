@@ -16,9 +16,10 @@ import { Form, FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import Select from '@/components/custom-ui/select';
-import { FormItem } from '@/components/shared/form-root';
+import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
 
 import { RequestCategoryValues } from '.';
+import { GuideFormValues } from './guides-tab';
 
 export const stepFormSchema = z.object({
   id: z.string(),
@@ -44,13 +45,6 @@ type ExecutionStep = StepFormValues & {
   linkedGuides?: string[];
 };
 
-type Guide = {
-  id: string;
-  title: string;
-  description?: string;
-  fileType: 'PDF' | 'Excel' | 'Video';
-};
-
 export function ExecutionStepsTab() {
   const t = useTranslations('admin.requestType.create.executionTab');
   const { control, watch } = useFormContext<RequestCategoryValues>();
@@ -60,7 +54,7 @@ export function ExecutionStepsTab() {
   const [linkGuidesModalOpen, setLinkGuidesModalOpen] = useState(false);
   const [currentStepIndex, setCurrentStepIndex] = useState<number | null>(null);
 
-  const guides = watch('guides', []) as Guide[];
+  const guides = watch('guides', []) as GuideFormValues[];
   const executionSteps = watch('executionSteps', []) as ExecutionStep[];
   const totalEstimatedTime = executionSteps.reduce((total, step) => total + step.estimatedTime, 0);
 
@@ -201,7 +195,7 @@ export function ExecutionStepsTab() {
                               const guide = guides.find((g) => g.id === guideId);
                               return (
                                 <Badge key={guideId} variant="secondary">
-                                  {guide?.title || t('guideNotFound')}
+                                  {guide?.name || t('guideNotFound')}
                                 </Badge>
                               );
                             })}
@@ -266,63 +260,60 @@ function StepModal({ open, onClose, onSave, initialData }: { open: boolean; onCl
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSave)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem label={t('stepName')} description={t('stepNameDescription')}>
-                  <Input placeholder={t('stepNamePlaceholder')} {...field} />
-                </FormItem>
-              )}
-            />
+          <FormRoot onSubmit={form.handleSubmit(onSave)}>
+            <FormContent>
+              <FormSection>
+                {' '}
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem label={t('stepName')} description={t('stepNameDescription')}>
+                      <Input placeholder={t('stepNamePlaceholder')} {...field} />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem label={t('description')} description={t('stepDescriptionDescription')}>
+                      <Textarea placeholder={t('stepDescriptionPlaceholder')} {...field} value={field.value || ''} />
+                    </FormItem>
+                  )}
+                />
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="estimatedTime"
+                    render={({ field }) => (
+                      <FormItem label={t('estimatedTime')} description={t('estimatedTimeDescription')}>
+                        <Input type="number" placeholder={t('minutesPlaceholder')} {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                      </FormItem>
+                    )}
+                  />
 
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem label={t('description')} description={t('stepDescriptionDescription')}>
-                  <Textarea placeholder={t('stepDescriptionPlaceholder')} {...field} value={field.value || ''} />
-                </FormItem>
-              )}
-            />
-
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="estimatedTime"
-                render={({ field }) => (
-                  <FormItem label={t('estimatedTime')} description={t('estimatedTimeDescription')}>
-                    <Input type="number" placeholder={t('minutesPlaceholder')} {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="responsible"
-                render={({ field }) => (
-                  <FormItem label={t('responsible')} description={t('responsibleDescription')}>
-                    <Input placeholder={t('responsiblePlaceholder')} {...field} />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <DialogFooter>
-              <Button variant="outline" type="button" onClick={onClose}>
-                {t('cancel')}
-              </Button>
-              <Button type="submit">{initialData ? t('saveChanges') : t('createStep')}</Button>
-            </DialogFooter>
-          </form>
+                  <FormField
+                    control={form.control}
+                    name="responsible"
+                    render={({ field }) => (
+                      <FormItem label={t('responsible')} description={t('responsibleDescription')}>
+                        <Input placeholder={t('responsiblePlaceholder')} {...field} />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </FormSection>
+            </FormContent>
+            <FormActions isPending={form.formState.isSubmitting} title={initialData ? t('saveChanges') : t('createStep')} className="mt-4" onClick={form.handleSubmit(onSave)} />
+          </FormRoot>
         </Form>
       </DialogContent>
     </Dialog>
   );
 }
 
-function LinkGuidesModal({ open, onClose, guides, initialSelectedGuides }: { open: boolean; onClose: (savedGuides?: string[]) => void; guides: Guide[]; initialSelectedGuides: string[] }) {
+function LinkGuidesModal({ open, onClose, guides, initialSelectedGuides }: { open: boolean; onClose: (savedGuides?: string[]) => void; guides: GuideFormValues[]; initialSelectedGuides: string[] }) {
   const t = useTranslations('admin.requestType.create.executionTab');
 
   const form = useForm<LinkGuidesFormValues>({
@@ -345,36 +336,41 @@ function LinkGuidesModal({ open, onClose, guides, initialSelectedGuides }: { ope
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit((data) => onClose(data.guideIds))} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="guideIds"
-              render={({ field }) => (
-                <FormItem label={t('selectGuides')} description={t('selectGuidesDescription')}>
-                  <Select
-                    menuPortalTarget={document.body}
-                    isMulti
-                    isLoading={false}
-                    isSearchable
-                    isClearable
-                    options={guides.map((guide) => ({
-                      value: guide.id,
-                      label: guide.title,
-                    }))}
-                    value={guides.filter((guide) => field.value.includes(guide.id)).map((guide) => ({ value: guide.id, label: guide.title }))}
-                    onChange={(selected) => field.onChange(selected.map((option) => option.value))}
-                  />
-                </FormItem>
-              )}
-            />
-
-            <DialogFooter>
-              <Button variant="outline" type="button" onClick={() => onClose()}>
-                {t('cancel')}
-              </Button>
-              <Button type="button">{t('save')}</Button>
-            </DialogFooter>
-          </form>
+          <FormRoot onSubmit={form.handleSubmit((data) => onClose(data.guideIds))}>
+            <FormContent>
+              <FormSection>
+                {' '}
+                <FormField
+                  control={form.control}
+                  name="guideIds"
+                  render={({ field }) => (
+                    <FormItem label={t('selectGuides')} description={t('selectGuidesDescription')}>
+                      <Select
+                        menuPortalTarget={document.body}
+                        isMulti
+                        isLoading={false}
+                        isSearchable
+                        isClearable
+                        options={guides.map((guide) => ({
+                          value: guide.id,
+                          label: guide.name,
+                        }))}
+                        value={guides.filter((guide) => field.value.includes(guide.id)).map((guide) => ({ value: guide.id, label: guide.name }))}
+                        onChange={(selected) => field.onChange(selected.map((option) => option.value))}
+                      />
+                    </FormItem>
+                  )}
+                />
+                <DialogFooter>
+                  <Button variant="outline" type="button" onClick={() => onClose()}>
+                    {t('cancel')}
+                  </Button>
+                  <Button type="button">{t('save')}</Button>
+                </DialogFooter>
+              </FormSection>
+            </FormContent>
+            <FormActions isPending={form.formState.isSubmitting} title={t('save')} className="mt-4" onClick={form.handleSubmit((data) => onClose(data.guideIds))} />
+          </FormRoot>
         </Form>
       </DialogContent>
     </Dialog>

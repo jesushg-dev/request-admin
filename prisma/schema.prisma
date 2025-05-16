@@ -46,6 +46,13 @@ model Tenant {
   slas                           SLA[]
   sLAChangeLogs                  SLAChangeLog[]
   guideDocuments                 GuideDocument[]
+  executionFlowDefinitions       ExecutionFlowDefinition[]
+  executionNodeDefinitions       ExecutionNodeDefinition[]
+  executionEdgeDefinitions       ExecutionEdgeDefinition[]
+  executionModelInstances        ExecutionModelInstance[]
+  executionModelLogs             ExecutionModelLog[]
+  executionModelHistory          ExecutionModelHistory[]
+  executionNodeGuides            ExecutionNodeGuide[]
   requests                       Request[]
   requestAssignments             RequestAssignment[]
   assignedUsers                  AssignedUser[]
@@ -1490,6 +1497,7 @@ model RequestCategory {
   tenantId                    String
   tenant                      Tenant                       @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   sla                         SLA?
+  executionFlowDefinition     ExecutionFlowDefinition?
   isEligibleForNewClients     Boolean                      @default(true)
   hierarchyLevelId            String
   hierarchyLevel              RequestHierarchyLevel        @relation(fields: [hierarchyLevelId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -1566,22 +1574,23 @@ model SLAChangeLog {
 
 /// Represents a guide document used to resolve a request.
 model GuideDocument {
-  id                String          @id() @default(uuid())
+  id                String               @id() @default(uuid())
   name              String
   description       String?
-  isActive          Boolean         @default(true)
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime?       @updatedAt()
+  isActive          Boolean              @default(true)
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime?            @updatedAt()
   deletedAt         DateTime?
   createdBy         String?
   updatedBy         String?
   tenantId          String
-  tenant            Tenant          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tenant            Tenant               @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   fileType          String
   fileUrl           String
   version           String
   requestCategoryId String
-  requestCategory   RequestCategory @relation(fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  requestCategory   RequestCategory      @relation(fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  nodeGuide         ExecutionNodeGuide[]
 
   @@unique([name, tenantId])
   @@index([requestCategoryId], name: "idx_guide_document_request_category_id")
@@ -1826,6 +1835,164 @@ model MenuItem {
   parentId  String?
   parent    MenuItem?  @relation("MenuItemToParent", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   children  MenuItem[] @relation("MenuItemToParent")
+}
+
+model ExecutionFlowDefinition {
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime?                 @updatedAt()
+  deletedAt         DateTime?
+  createdBy         String?
+  updatedBy         String?
+  tenantId          String
+  tenant            Tenant                    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                String                    @id() @default(uuid())
+  version           Int                       @default(1)
+  nodes             ExecutionNodeDefinition[]
+  edges             ExecutionEdgeDefinition[]
+  isActive          Boolean                   @default(true)
+  executions        ExecutionModelInstance[]
+  previousHistories ExecutionModelHistory[]   @relation("PreviousFlowHistory")
+  newHistories      ExecutionModelHistory[]   @relation("NewFlowHistory")
+  requestCategoryId String?                   @unique()
+  requestCategory   RequestCategory?          @relation(fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  viewportX         Float?
+  viewportY         Float?
+  viewportZoom      Float?
+
+  @@unique([id, version])
+  @@index([requestCategoryId])
+}
+
+model ExecutionNodeDefinition {
+  createdAt     DateTime                  @default(now())
+  updatedAt     DateTime?                 @updatedAt()
+  deletedAt     DateTime?
+  createdBy     String?
+  updatedBy     String?
+  tenantId      String
+  tenant        Tenant                    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id            String                    @id() @default(uuid())
+  flow          ExecutionFlowDefinition   @relation(fields: [flowId], references: [id])
+  flowId        String
+  type          String
+  positionX     Float
+  positionY     Float
+  config        String
+  edgesFrom     ExecutionEdgeDefinition[] @relation("SourceEdges")
+  edgesTo       ExecutionEdgeDefinition[] @relation("TargetEdges")
+  executionLogs ExecutionModelLog[]
+  nodeGuide     ExecutionNodeGuide[]
+
+  @@index([type])
+}
+
+model ExecutionNodeGuide {
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime?               @updatedAt()
+  deletedAt          DateTime?
+  createdBy          String?
+  updatedBy          String?
+  tenantId           String
+  tenant             Tenant                  @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                 String                  @id() @default(uuid())
+  applicationScope   String                  @default("full")
+  customInstructions String?
+  order              Int                     @default(1)
+  guideId            String
+  guide              GuideDocument           @relation(fields: [guideId], references: [id])
+  nodeId             String
+  node               ExecutionNodeDefinition @relation(fields: [nodeId], references: [id])
+
+  @@unique([guideId, nodeId])
+  @@index([applicationScope])
+  @@index([order])
+}
+
+model ExecutionEdgeDefinition {
+  createdAt    DateTime                @default(now())
+  updatedAt    DateTime?               @updatedAt()
+  deletedAt    DateTime?
+  createdBy    String?
+  updatedBy    String?
+  tenantId     String
+  tenant       Tenant                  @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id           String                  @id() @default(uuid())
+  flow         ExecutionFlowDefinition @relation(fields: [flowId], references: [id])
+  flowId       String
+  source       ExecutionNodeDefinition @relation("SourceEdges", fields: [sourceId], references: [id])
+  sourceId     String
+  target       ExecutionNodeDefinition @relation("TargetEdges", fields: [targetId], references: [id])
+  targetId     String
+  sourceHandle String?
+  condition    String?
+  style        String?
+  markerEnd    String?
+
+  @@index([sourceId])
+  @@index([targetId])
+}
+
+model ExecutionModelInstance {
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime?               @updatedAt()
+  deletedAt   DateTime?
+  createdBy   String?
+  updatedBy   String?
+  tenantId    String
+  tenant      Tenant                  @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id          String                  @id() @default(uuid())
+  flow        ExecutionFlowDefinition @relation(fields: [flowId], references: [id])
+  flowId      String
+  referenceId String
+  status      String
+  logs        ExecutionModelLog[]
+  history     ExecutionModelHistory[]
+
+  @@index([referenceId])
+  @@index([status])
+}
+
+model ExecutionModelLog {
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime?               @updatedAt()
+  deletedAt   DateTime?
+  createdBy   String?
+  updatedBy   String?
+  tenantId    String
+  tenant      Tenant                  @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id          String                  @id() @default(uuid())
+  executionId String
+  execution   ExecutionModelInstance  @relation(fields: [executionId], references: [id])
+  nodeId      String
+  node        ExecutionNodeDefinition @relation(fields: [nodeId], references: [id])
+  timestamp   DateTime                @default(now())
+  eventType   String
+  details     String
+  outcome     String
+
+  @@index([timestamp])
+  @@index([eventType])
+}
+
+model ExecutionModelHistory {
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime?                @updatedAt()
+  deletedAt      DateTime?
+  createdBy      String?
+  updatedBy      String?
+  tenantId       String
+  tenant         Tenant                   @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id             String                   @id() @default(uuid())
+  executionId    String
+  execution      ExecutionModelInstance   @relation(fields: [executionId], references: [id])
+  previousFlowId String?
+  previousFlow   ExecutionFlowDefinition? @relation("PreviousFlowHistory", fields: [previousFlowId], references: [id])
+  newFlowId      String
+  newFlow        ExecutionFlowDefinition  @relation("NewFlowHistory", fields: [newFlowId], references: [id])
+  changedAt      DateTime                 @default(now())
+  reason         String
+
+  @@index([changedAt])
 }
 
 model UserTenantRole {

@@ -11,13 +11,14 @@ import { getTranslations } from 'next-intl/server';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DataroomDocuments } from '@/components/common/data-room/dataroom-documents';
-import AssignmentHistory from '@/components/common/request/detail/assignments-viewer';
-import GuidesViewer from '@/components/common/request/detail/guides-viewer';
-import Messages from '@/components/common/request/detail/messages';
-import RequestActivities from '@/components/common/request/detail/request-activities';
 import RequestDetails from '@/components/common/request/detail/request-details';
-import RequirementProgress from '@/components/common/request/detail/requirement-progress';
-import FormSubmissionsViewer from '@/components/common/request/detail/submissions-viewer';
+import AssignmentHistory from '@/components/common/request/viewer/assignments-viewer';
+import GuidesViewer from '@/components/common/request/viewer/guides-viewer';
+import Messages from '@/components/common/request/viewer/messages';
+import RequestActivities from '@/components/common/request/viewer/request-activities';
+import RequirementProgress from '@/components/common/request/viewer/requirement-progress';
+import FormSubmissionsViewer from '@/components/common/request/viewer/submissions-viewer';
+import ExecutionView from '@/components/process-flow/execution/execution-view';
 import EmptyState from '@/components/shared/empty-state';
 
 interface CaseDetailPageProps {
@@ -61,68 +62,63 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
     <ResizablePanelGroup direction="horizontal" className="flex-1">
       <ResizablePanel minSize={30} defaultSize={70}>
         <div className="h-full p-4 overflow-hidden">
-          <Tabs defaultValue="execution" className="w-full h-full overflow-hidden flex flex-col">
+          <Tabs defaultValue="requirements" className="w-full h-full overflow-hidden flex flex-col">
             {/* Main Tabs */}
-            <TabsList className="flex gap-2 h-8 w-full">
-              <TabsTrigger className="h-7 text-xs" value="execution">
-                {t('tabs.main.execution')}
-              </TabsTrigger>
-              <TabsTrigger className="h-7 text-xs" value="comments">
-                {t('tabs.main.comments')}
-              </TabsTrigger>
-              <TabsTrigger className="h-7 text-xs" value="reference">
-                {t('tabs.main.reference')}
-              </TabsTrigger>
-            </TabsList>
+
+            <div className="overflow-x-auto w-full">
+              <TabsList className="flex gap-2 h-8 w-full">
+                <TabsTrigger className="h-7 text-xs" value="requirements">
+                  {t('tabs.requirements')}
+                </TabsTrigger>
+                <TabsTrigger className="h-7 text-xs" value="executionModel">
+                  {t('tabs.executionModel')}
+                </TabsTrigger>
+                <TabsTrigger className="h-7 text-xs" value="guides">
+                  {t('tabs.guides')}
+                </TabsTrigger>
+                <TabsTrigger className="h-7 text-xs" value="submissions">
+                  {t('tabs.submissions')}
+                </TabsTrigger>
+                <TabsTrigger className="h-7 text-xs" value="attachments">
+                  {t('tabs.attachments')}
+                </TabsTrigger>
+                <TabsTrigger className="h-7 text-xs" value="comments">
+                  {t('tabs.comments')}
+                </TabsTrigger>
+                <TabsTrigger className="h-7 text-xs" value="assignments">
+                  {t('tabs.assignments')}
+                </TabsTrigger>
+                <TabsTrigger className="h-7 text-xs" value="history">
+                  {t('tabs.history')}
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
             {/* Execution Tab Content */}
-            <TabsContent value="execution" className="flex-1 flex flex-col overflow-hidden">
-              {/* Nested Tabs for Execution */}
-              <Tabs defaultValue="requirements" className="w-full h-full overflow-hidden flex flex-col">
-                <TabsList className="flex gap-2 h-8 w-full">
-                  <TabsTrigger className="h-7 text-xs" value="requirements">
-                    {t('tabs.execution.requirements')}
-                  </TabsTrigger>
-                  <TabsTrigger className="h-7 text-xs" value="executionModel">
-                    {t('tabs.execution.executionModel')}
-                  </TabsTrigger>
-                  <TabsTrigger className="h-7 text-xs" value="guides">
-                    {t('tabs.execution.guides')}
-                  </TabsTrigger>
-                  <TabsTrigger className="h-7 text-xs" value="submissions">
-                    {t('tabs.execution.submissions')}
-                  </TabsTrigger>
-                  <TabsTrigger className="h-7 text-xs" value="attachments">
-                    {t('tabs.execution.attachments')}
-                  </TabsTrigger>
-                </TabsList>
+            <TabsContent value="requirements" className="flex-1 flex flex-col overflow-hidden">
+              <RequirementProgress tenantId={tenantId} requestId={slug} />
+            </TabsContent>
 
-                <TabsContent value="requirements" className="flex-1 flex flex-col overflow-hidden">
-                  <RequirementProgress tenantId={tenantId} requestId={slug} />
-                </TabsContent>
+            <TabsContent value="executionModel" className="flex-1 flex flex-col overflow-hidden">
+              <ExecutionView />
+            </TabsContent>
 
-                <TabsContent value="executionModel" className="flex-1 flex flex-col overflow-hidden">
-                  {/* <ExecutionModelViewer tenantId={tenantId} requestId={slug} /> */}
-                </TabsContent>
+            <TabsContent value="guides" className="flex-1 flex flex-col overflow-hidden">
+              <GuidesViewer guides={requestDetails.guides} />
+            </TabsContent>
 
-                <TabsContent value="guides" className="flex-1 flex flex-col overflow-hidden">
-                  <GuidesViewer guides={requestDetails.guides} />
-                </TabsContent>
+            <TabsContent value="submissions" className="flex-1 flex flex-col overflow-hidden">
+              <FormSubmissionsViewer tenantId={tenantId} requestId={slug} />
+            </TabsContent>
 
-                <TabsContent value="submissions" className="flex-1 flex flex-col overflow-hidden">
-                  <FormSubmissionsViewer tenantId={tenantId} requestId={slug} />
-                </TabsContent>
-
-                <TabsContent value="attachments" className="flex-1 flex flex-col overflow-hidden">
-                  {requestDetails.dataroom?.id ? (
-                    <DataroomDocuments dataroomId={requestDetails.dataroom?.id} tenantId={tenantId} callbackUrl={callbackUrl} />
-                  ) : (
-                    <div className="flex-1 flex items-center justify-center">
-                      <EmptyState title={t('no_documents_found')} description={t('contact_support')} />
-                    </div>
-                  )}
-                </TabsContent>
-              </Tabs>
+            <TabsContent value="attachments" className="flex-1 flex flex-col overflow-hidden">
+              {requestDetails.dataroom?.id ? (
+                <DataroomDocuments dataroomId={requestDetails.dataroom?.id} tenantId={tenantId} callbackUrl={callbackUrl} />
+              ) : (
+                <div className="flex-1 flex items-center justify-center">
+                  <EmptyState title={t('no_documents_found')} description={t('contact_support')} />
+                </div>
+              )}
             </TabsContent>
 
             {/* Comments Tab Content */}
@@ -131,26 +127,12 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
             </TabsContent>
 
             {/* Reference Tab Content */}
-            <TabsContent value="reference" className="flex-1 flex flex-col overflow-hidden">
-              {/* Nested Tabs for Reference */}
-              <Tabs defaultValue="assignments" className="w-full h-full overflow-hidden flex flex-col">
-                <TabsList className="flex gap-2 h-8 w-full">
-                  <TabsTrigger className="h-7 text-xs" value="assignments">
-                    {t('tabs.reference.assignments')}
-                  </TabsTrigger>
-                  <TabsTrigger className="h-7 text-xs" value="history">
-                    {t('tabs.reference.history')}
-                  </TabsTrigger>
-                </TabsList>
+            <TabsContent value="assignments" className="flex-1 flex flex-col overflow-hidden">
+              <AssignmentHistory tenantId={tenantId} requestId={slug} />
+            </TabsContent>
 
-                <TabsContent value="assignments" className="flex-1 flex flex-col overflow-hidden">
-                  <AssignmentHistory tenantId={tenantId} requestId={slug} />
-                </TabsContent>
-
-                <TabsContent value="history" className="flex-1 flex flex-col overflow-hidden">
-                  <RequestActivities requestId={slug} tenantId={tenantId} />
-                </TabsContent>
-              </Tabs>
+            <TabsContent value="history" className="flex-1 flex flex-col overflow-hidden">
+              <RequestActivities requestId={slug} tenantId={tenantId} />
             </TabsContent>
           </Tabs>
         </div>
@@ -169,6 +151,7 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
             assignmentLevelTypes={assignmentHierarchy.levels}
             enableStatusChange={hasAreaPermissions(request.areaId.value, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_STATUS])}
             enablePriorityChange={hasAreaPermissions(request.areaId.value, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_PRIORITY])}
+            enableAssignmentChange={hasAreaPermissions(request.areaId.value, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_ASSIGN_USER])}
           />
         </div>
       </ResizablePanel>

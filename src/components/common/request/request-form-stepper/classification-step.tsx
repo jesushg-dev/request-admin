@@ -33,22 +33,14 @@ export const getDefaultCombinedCategoriesValues = (): CombinedCategoriesValues =
 
 export type CombinedCategoriesValues = z.infer<typeof combinedCategoriesSchema>;
 
-const ClassificationStep: FC = ({}) => {
+interface CategoryFieldsProps {
+  menuPortalTarget?: HTMLElement;
+}
+
+export const RequestCategoryFields: FC<CategoryFieldsProps> = ({ menuPortalTarget }) => {
   const t = useTranslations('admin.request.form.classificationStep');
-  const [isReassigning] = useQueryState('reassign', parseAsBoolean.withDefault(false));
-
-  const { control, watch } = useFormContext<CombinedCategoriesValues>();
-
+  const { control } = useFormContext<CombinedCategoriesValues>();
   const [requestLevelTypes, setRequestLevelTypes] = useState<RequestLevelType[]>([]);
-  const [assignmentLevelTypes, setAssignmentLevelTypes] = useState<AssignmentLevelType[]>([]);
-  const areaValue = watch('areaId');
-  const areaId = areaValue?.value || '';
-
-  const { data: areas = [], isLoading } = useFindManyArea({
-    select: { id: true, name: true, description: true },
-  });
-
-  const areaOptions = useMemo(() => areas.map((a) => ({ label: a.name, value: a.id })), [areas]);
 
   const { data: requestCategories = [], isLoading: isRequestCategoriesLoading } = useFindManyRequestCategory({
     select: {
@@ -62,6 +54,49 @@ const ClassificationStep: FC = ({}) => {
 
   const requestCategoryOptions = useMemo(() => requestCategories.map(({ id, name }) => ({ label: name, value: id })), [requestCategories]);
 
+  return (
+    <>
+      <FormField
+        control={control}
+        name="requestCategory.0"
+        render={({ field }) => (
+          <FormItem
+            label={requestLevelTypes[0]?.name || t('requestCategory.defaultLabel')}
+            description={requestLevelTypes[0]?.name ? t('requestCategory.dynamicDescription', { category: requestLevelTypes[0].name }) : t('requestCategory.defaultDescription')}>
+            <Select
+              isLoading={isRequestCategoriesLoading}
+              isSearchable
+              isClearable
+              placeholder={t('requestCategory.selectPlaceholder')}
+              options={requestCategoryOptions}
+              onChange={(e) => {
+                field.onChange({ ...e, position: 0 });
+                const levelTypes = requestCategories.find((c) => c.id === e?.value)?.hierarchy.levels || [];
+                setRequestLevelTypes(levelTypes);
+              }}
+              value={field.value}
+              menuPortalTarget={menuPortalTarget}
+            />
+          </FormItem>
+        )}
+      />
+      <RequestCategoriesSelect levels={requestLevelTypes.filter((l) => l.position !== 1)} />
+    </>
+  );
+};
+
+export const AssignmentCategoryFields: FC<CategoryFieldsProps> = ({ menuPortalTarget }) => {
+  const t = useTranslations('admin.request.form.classificationStep');
+  const { control, watch } = useFormContext<CombinedCategoriesValues>();
+  const [assignmentLevelTypes, setAssignmentLevelTypes] = useState<AssignmentLevelType[]>([]);
+  const areaId = watch('areaId.value');
+
+  const { data: areas = [], isLoading } = useFindManyArea({
+    select: { id: true, name: true, description: true },
+  });
+
+  const areaOptions = useMemo(() => areas.map((a) => ({ label: a.name, value: a.id })), [areas]);
+
   const { data: assignmentCategories = [], isLoading: isAssignmentCategoriesLoading } = useFindManyAssignmentCategory(
     {
       select: {
@@ -72,12 +107,64 @@ const ClassificationStep: FC = ({}) => {
       },
       where: { parentCategoryId: null, areaId },
     },
-    {
-      enabled: !!areaId,
-    }
+    { enabled: !!areaId }
   );
 
   const assignmentCategoryOptions = useMemo(() => assignmentCategories.map(({ id, name }) => ({ label: name, value: id })), [assignmentCategories]);
+
+  return (
+    <>
+      <FormField
+        control={control}
+        name="areaId"
+        render={({ field }) => (
+          <FormItem label={t('assignmentCategory.areaLabel')} description={t('assignmentCategory.areaDescription')}>
+            <Select
+              isLoading={isLoading}
+              placeholder={t('assignmentCategory.areaPlaceholder')}
+              isSearchable
+              isClearable
+              options={areaOptions}
+              onChange={field.onChange}
+              value={field.value}
+              menuPortalTarget={menuPortalTarget}
+            />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={control}
+        name="assignmentCategory.0"
+        render={({ field }) => (
+          <FormItem
+            label={assignmentLevelTypes[0]?.name || t('assignmentCategory.defaultLabel')}
+            description={assignmentLevelTypes[0]?.name ? t('assignmentCategory.dynamicDescription', { category: assignmentLevelTypes[0].name }) : t('assignmentCategory.defaultDescription')}>
+            <Select
+              isLoading={isAssignmentCategoriesLoading}
+              isSearchable
+              isClearable
+              options={assignmentCategoryOptions}
+              onChange={(e) => {
+                field.onChange({ ...e, position: 0 });
+                const levelTypes = assignmentCategories.find((c) => c.id === e?.value)?.hierarchy.levels || [];
+                setAssignmentLevelTypes(levelTypes);
+              }}
+              value={field.value}
+              isDisabled={!areaId}
+              placeholder={areaId ? t('assignmentCategory.selectPlaceholder') : t('assignmentCategory.areaFirstPlaceholder')}
+              menuPortalTarget={menuPortalTarget}
+            />
+          </FormItem>
+        )}
+      />
+      <AssignmentCategoriesSelect levels={assignmentLevelTypes.filter((l) => l.position !== 1)} areaId={areaId} menuPortalTarget={menuPortalTarget} />
+    </>
+  );
+};
+
+const ClassificationStep: FC = ({}) => {
+  const t = useTranslations('admin.request.form.classificationStep');
+  const [isReassigning] = useQueryState('reassign', parseAsBoolean.withDefault(false));
 
   return (
     <>
@@ -91,30 +178,7 @@ const ClassificationStep: FC = ({}) => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4">
-                <FormField
-                  control={control}
-                  name="requestCategory.0"
-                  render={({ field }) => (
-                    <FormItem
-                      label={requestLevelTypes.length > 0 ? requestLevelTypes[0].name : t('requestCategory.defaultLabel')}
-                      description={requestLevelTypes.length > 0 ? t('requestCategory.dynamicDescription', { category: requestLevelTypes[0].name }) : t('requestCategory.defaultDescription')}>
-                      <Select
-                        isLoading={isRequestCategoriesLoading}
-                        isSearchable
-                        isClearable
-                        placeholder={t('requestCategory.selectPlaceholder')}
-                        options={requestCategoryOptions}
-                        onChange={(e) => {
-                          field.onChange({ ...e, position: 0 });
-                          const levelTypes = requestCategories.find((c) => c.id === e?.value)?.hierarchy.levels || [];
-                          setRequestLevelTypes(levelTypes);
-                        }}
-                        value={field.value}
-                      />
-                    </FormItem>
-                  )}
-                />
-                <RequestCategoriesSelect levels={requestLevelTypes.filter((l) => l.position !== 1)} />
+                <RequestCategoryFields />
               </div>
             </CardContent>
           </Card>
@@ -126,50 +190,7 @@ const ClassificationStep: FC = ({}) => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4">
-                <FormField
-                  control={control}
-                  name="areaId"
-                  render={({ field }) => (
-                    <FormItem label={t('assignmentCategory.areaLabel')} description={t('assignmentCategory.areaDescription')}>
-                      <Select
-                        isLoading={isLoading}
-                        placeholder={t('assignmentCategory.areaPlaceholder')}
-                        isSearchable
-                        isClearable
-                        options={areaOptions}
-                        onChange={field.onChange}
-                        value={field.value}
-                      />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={control}
-                  name="assignmentCategory.0"
-                  render={({ field }) => (
-                    <FormItem
-                      label={assignmentLevelTypes.length > 0 ? assignmentLevelTypes[0].name : t('assignmentCategory.defaultLabel')}
-                      description={
-                        assignmentLevelTypes.length > 0 ? t('assignmentCategory.dynamicDescription', { category: assignmentLevelTypes[0].name }) : t('assignmentCategory.defaultDescription')
-                      }>
-                      <Select
-                        isLoading={isAssignmentCategoriesLoading}
-                        isSearchable
-                        isClearable
-                        options={assignmentCategoryOptions}
-                        onChange={(e) => {
-                          field.onChange({ ...e, position: 0 });
-                          const levelTypes = assignmentCategories.find((c) => c.id === e?.value)?.hierarchy.levels || [];
-                          setAssignmentLevelTypes(levelTypes);
-                        }}
-                        value={field.value}
-                        isDisabled={!areaId}
-                        placeholder={areaId ? t('assignmentCategory.selectPlaceholder') : t('assignmentCategory.areaFirstPlaceholder')}
-                      />
-                    </FormItem>
-                  )}
-                />
-                <AssignmentCategoriesSelect levels={assignmentLevelTypes.filter((l) => l.position !== 1)} areaId={areaId} />
+                <AssignmentCategoryFields />
               </div>
             </CardContent>
           </Card>

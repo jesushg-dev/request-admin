@@ -4,9 +4,9 @@
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 
-import { Checkbox } from '@/components/ui/checkbox';
 import { FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { FormCheckboxItem, FormItem, FormSection } from '@/components/shared/form-root';
 
@@ -17,7 +17,7 @@ export function BasicInfoTab() {
   const t = useTranslations('admin.requestType.create.basicTab');
 
   return (
-    <FormSection>
+    <FormSection className="flex-1 flex flex-col overflow-y-auto">
       <FormField
         control={control}
         name="name"
@@ -38,25 +38,27 @@ export function BasicInfoTab() {
         )}
       />
 
-      <FormField
-        control={control}
-        name="isActive"
-        render={({ field }) => (
-          <FormCheckboxItem label={t('active')} description={t('activeDescription')}>
-            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-          </FormCheckboxItem>
-        )}
-      />
+      <div className="grid grid-cols-2 gap-4">
+        <FormField
+          control={control}
+          name="isActive"
+          render={({ field }) => (
+            <FormCheckboxItem label={t('active')} description={t('activeDescription')}>
+              <Switch checked={field.value} onCheckedChange={field.onChange} />
+            </FormCheckboxItem>
+          )}
+        />
 
-      <FormField
-        control={control}
-        name="isEligibleForNewClients"
-        render={({ field }) => (
-          <FormCheckboxItem label={t('newClients')} description={t('newClientsDescription')}>
-            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-          </FormCheckboxItem>
-        )}
-      />
+        <FormField
+          control={control}
+          name="isEligibleForNewClients"
+          render={({ field }) => (
+            <FormCheckboxItem label={t('newClients')} description={t('newClientsDescription')}>
+              <Switch checked={field.value} onCheckedChange={field.onChange} />
+            </FormCheckboxItem>
+          )}
+        />
+      </div>
     </FormSection>
   );
 }

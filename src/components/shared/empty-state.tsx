@@ -24,7 +24,7 @@ function EmptyState({ title, description, icons = [], actions, className }: Empt
     <div className="flex flex-1 items-center justify-center">
       <div
         className={cn(
-          'border-2 border-dashed rounded-xl p-14 w-full',
+          'flex-1 border-2 border-dashed rounded-xl p-14 w-full',
           'bg-background border-border hover:border-border/80 text-center',
           'group hover:bg-muted/50 transition duration-500 hover:duration-200',
           className

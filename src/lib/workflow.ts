@@ -4,9 +4,14 @@ import { MarkerType } from '@xyflow/react';
 import type { RequestWorkflowStatusType, RequestWorkflowTransitionType, RequestWorkflowType } from '@/types/prisma/workflow';
 import { WorkflowEdge, WorkflowNode } from '@/components/common/workflow/workflow-stepper/flow-diagram-editor';
 
+type NextStatusWithTransition = RequestWorkflowStatusType & {
+  requiresApproval: boolean;
+  requiresJustification: boolean;
+};
+
 type StatusWithTransitions = {
   current: RequestWorkflowStatusType;
-  allowedTransitions: RequestWorkflowStatusType[];
+  allowedTransitions: NextStatusWithTransition[];
 };
 
 export const transformStatusToNode = (status: RequestWorkflowStatusType): WorkflowNode => ({
@@ -72,14 +77,10 @@ export const getStatusTransitions = (workflow: RequestWorkflowType, currentStatu
     };
   }
 
-  // Get valid transitions
-  const transitions = workflow.requestWorkflowTransition.filter((t) => t.fromStatusId === currentStatusId).map((t) => t.toStatusId);
-
-  const allowedStatuses = workflow.requestWorkflowStatus.filter((s) => transitions.includes(s.id));
-
+  // Use getNextStatuses to get transitions with extra fields
   return {
     current: currentStatus,
-    allowedTransitions: allowedStatuses,
+    allowedTransitions: getNextStatuses(workflow, currentStatusId),
   };
 };
 
@@ -119,11 +120,19 @@ export const validateTransition = (workflow: RequestWorkflowType, fromStatusId: 
 };
 
 // Helper function to get next statuses
-const getNextStatuses = (workflow: RequestWorkflowType, fromStatusId: string) => {
+const getNextStatuses = (workflow: RequestWorkflowType, fromStatusId: string): NextStatusWithTransition[] => {
   return workflow.requestWorkflowTransition
     .filter((t) => t.fromStatusId === fromStatusId)
-    .map((t) => workflow.requestWorkflowStatus.find((s) => s.id === t.toStatusId)!)
-    .filter(Boolean);
+    .map((t) => {
+      const status = workflow.requestWorkflowStatus.find((s) => s.id === t.toStatusId);
+      if (!status) return null;
+      return {
+        ...status,
+        requiresApproval: t.requiresApproval,
+        requiresJustification: t.requiresJustification,
+      };
+    })
+    .filter(Boolean) as NextStatusWithTransition[];
 };
 
 // Get complete state machine with type constraints

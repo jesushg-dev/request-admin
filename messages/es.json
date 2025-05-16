@@ -1140,25 +1140,30 @@
           "priorityChange": "Cambio de Prioridad",
           "updatingPriority": "Actualizando prioridad...",
           "priorityUpdated": "La prioridad ha sido actualizada.",
-          "priorityUpdateError": "Error al actualizar la prioridad: {error}"
+          "priorityUpdateError": "Error al actualizar la prioridad: {error}",
+          "executionModel": "Modelo de ejecución",
+          "requestCategory": "Categoría de solicitud",
+          "issueDescription": "Descripción",
+          "assignmentCategory": "Categoría de tarea",
+          "area": "Área",
+          "currentStatus": "Estado actual",
+          "changeStatus": "Cambiar",
+          "changePriority": "Cambiar",
+          "progress": "Progreso",
+          "updated": "Actualizado",
+          "dates": "Fechas",
+          "assignedTo": "Asignado a",
+          "requester": "Solicitante"
         },
         "tabs": {
-          "main": {
-            "execution": "Ejecución",
-            "comments": "Comentarios",
-            "reference": "Referencia"
-          },
-          "execution": {
-            "requirements": "Requerimientos",
-            "executionModel": "Modelo de Ejecución",
-            "guides": "Guías",
-            "submissions": "Submisiones",
-            "attachments": "Adjuntos"
-          },
-          "reference": {
-            "assignments": "Asignaciones",
-            "history": "Historial"
-          }
+          "requirements": "Requerimientos",
+          "executionModel": "Modelo de Ejecución",
+          "guides": "Guías",
+          "submissions": "Submisiones",
+          "attachments": "Adjuntos",
+          "comments": "Comentarios",
+          "assignments": "Asignaciones",
+          "history": "Historial"
         },
         "requirements": {
           "noChangesToSave": "No hay cambios para guardar",
@@ -1249,7 +1254,9 @@
           "lastUpdated": "Última actualización",
           "viewGuide": "Ver guía",
           "noGuidesFound": "No hay guías disponibles",
-          "noGuidesDescription": "Actualmente no hay guías disponibles para completar esta solicitud de servicio. Si tiene alguna duda o cree que falta un manual, por favor contacte con su supervisor o administrador."
+          "noGuidesDescription": "Actualmente no hay guías disponibles para completar esta solicitud de servicio. Si tiene alguna duda o cree que falta un manual, por favor contacte con su supervisor o administrador.",
+          "guidesViewerTitle": "Guías para esta solicitud ({count})",
+          "guidesViewerDescription": "Aquí puede encontrar todas las guías relacionadas con esta solicitud. \nSeleccione una guía para ver más detalles o descargar el archivo."
         }
       },
       "form": {
@@ -1266,7 +1273,28 @@
         "classificationStep": {
           "reassign": {
             "alertTitle": "Cambiar de área",
-            "alertDescription": "Al cambiar el área, se mantendrá el historial de la solicitud pero puede que debas volver a completar algunos campos requeridos en la nueva asignación."
+            "alertDescription": "Al cambiar el área, se mantendrá el historial de la solicitud pero puede que debas volver a completar algunos campos requeridos en la nueva asignación.",
+            "area": {
+              "title": "Reasignar a otra área",
+              "description": "Cambia el área asignado a la solicitud #{requestId}",
+              "action": "Reasignar"
+            },
+            "reason": {
+              "label": "Motivo de la reasignación",
+              "description": "Explica por qué se está reasignando esta solicitud.",
+              "placeholder": "Explica por qué se está reasignando esta solicitud."
+            },
+            "notify": {
+              "label": "Notificar a",
+              "description": "¿A quién notificaremos?",
+              "requester": "Solo al solicitante",
+              "area": "Solo a la nueva área",
+              "both": "Ambos"
+            },
+            "toast": {
+              "title": "Departamento reasignado",
+              "description": "La solicitud #{requestId} ha sido reasignada a {area} correctamente."
+            }
           },
           "requestCategory": {
             "title": "Categoría de Solicitud",
@@ -1359,14 +1387,88 @@
           "requestDetails": "Detalles de solicitud"
         }
       },
-      "relatedIncidentForm": {
-        "relatedId": "ID Relacionado",
-        "relatedIdDescription": "Escriba el ID del incidente relacionado.",
-        "savingChanges": "Guardando cambios...",
-        "successSave": "Incidente relacionado ({id}) ha sido guardado exitosamente.",
-        "errorSave": "Error al guardar el incidente relacionado: {message}",
-        "saveChanges": "Guardar Cambios",
-        "addRelatedIncident": "Agregar Incidente Relacionado"
+      "assign": {
+        "title": "Asignar solicitud",
+        "description": "Asigna la solicitud #{requestId} a un usuario",
+        "area": "Departamento",
+        "currentAssignee": "Asignado actualmente a",
+        "assignee": {
+          "label": "Asignar a",
+          "description": "Selecciona el usuario al que se asignará la solicitud.",
+          "placeholder": "Selecciona un usuario"
+        },
+        "comments": {
+          "label": "Comentarios (opcional)",
+          "description": "Agrega un comentario sobre la asignación.",
+          "placeholder": "Añade un comentario sobre la asignación..."
+        },
+        "action": "Asignar",
+        "toast": {
+          "loading": "Asignando...",
+          "success": "Solicitud asignada correctamente",
+          "error": "Error al asignar la solicitud: {error}"
+        }
+      },
+      "status": {
+        "title": "Cambiar estado de la solicitud",
+        "description": "Actualiza el estado de la solicitud #{requestId}",
+        "currentStatus": "Estado actual",
+        "flowTitle": "Flujo de estados",
+        "newStatus": {
+          "label": "Nuevo estado",
+          "description": "Selecciona el nuevo estado para la solicitud."
+        },
+        "comments": {
+          "label": "Comentarios (opcional)",
+          "description": "Agrega un comentario sobre el cambio de estado.",
+          "placeholder": "Agrega un comentario sobre el cambio de estado...",
+          "labelRequired": "Justificación (obligatoria)",
+          "descriptionRequired": "Debes justificar este cambio de estado.",
+          "placeholderRequired": "Explica por qué se realiza este cambio de estado..."
+        },
+        "resolution": {
+          "label": "Resolución",
+          "description": "Selecciona el tipo de resolución para la solicitud."
+        },
+        "action": "Guardar cambios",
+        "cancel": "Cancelar",
+        "reasonRequired": "Justificación requerida",
+        "reasonRequiredDescription": "Debes proporcionar una justificación para este cambio de estado.",
+        "toast": {
+          "loading": "Actualizando estado...",
+          "success": "La solicitud #{requestId} ha cambiado de \"{from}\" a \"{to}\" correctamente.",
+          "error": "Ocurrió un error al cambiar el estado: {error}"
+        },
+        "flowDescription": "{count, plural, one {Una solicitud en el estado \"{from}\" puede avanzar al siguiente estado: {to}.} other {Una solicitud en el estado \"{from}\" puede avanzar a los siguientes estados: {to}.}}",
+        "assignmentRequired": "Permisos insuficientes",
+        "assignmentRequiredDescription": "Póngase en contacto con el usuario que le asignó la solicitud o alguien con el permiso requerido para hacer el cambio."
+      },
+      "priority": {
+        "title": "Cambiar prioridad de la solicitud",
+        "description": "Actualiza la prioridad de la solicitud #{requestId}",
+        "currentPriority": "Prioridad actual",
+        "newPriority": {
+          "label": "Nueva prioridad",
+          "description": "Selecciona la nueva prioridad para la solicitud."
+        },
+        "reason": {
+          "label": "Motivo del cambio",
+          "description": "Explica por qué se está cambiando la prioridad.",
+          "placeholder": "Agrega un motivo para el cambio de prioridad..."
+        },
+        "notify": {
+          "label": "¿Notificar al solicitante?",
+          "description": "El solicitante recibirá una notificación sobre el cambio de prioridad.",
+          "yes": "Sí",
+          "no": "No"
+        },
+        "action": "Guardar cambios",
+        "cancel": "Cancelar",
+        "toast": {
+          "loading": "Actualizando prioridad...",
+          "success": "La prioridad de la solicitud #{requestId} ha sido cambiada a \"{priority}\" correctamente.",
+          "error": "Ocurrió un error al cambiar la prioridad: {error}"
+        }
       }
     },
     "requestType": {

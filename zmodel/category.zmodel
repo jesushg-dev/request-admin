@@ -2,6 +2,7 @@ import './abstract.zmodel'
 import './area.zmodel'
 import './form.zmodel'
 import './request.zmodel'
+import './execution.zmodel'
 
 /// Represents a hierarchy for requests.
 model RequestHierarchy extends TenantScoped, Auditable, CatalogBase {
@@ -29,6 +30,7 @@ model RequestHierarchyLevel extends TenantScoped, Auditable, CatalogBase {
 /// Represents a request category, with SLA and required documents.
 model RequestCategory extends TenantScoped, Auditable, CatalogBase {
   sla                        SLA?                  // SLA specific to this category
+  executionFlowDefinition    ExecutionFlowDefinition? // Execution flow definition for this category
   isEligibleForNewClients    Boolean                      @default(true) // Indicates if the category accepts new clients
   hierarchyLevelId           String                       //@db.UniqueIdentifier
   hierarchyLevel             RequestHierarchyLevel        @relation(fields: [hierarchyLevelId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
@@ -39,6 +41,7 @@ model RequestCategory extends TenantScoped, Auditable, CatalogBase {
  
 	requestWorkflow RequestWorkflow? @relation(fields: [requestWorkflowId], references: [id])
 	requestWorkflowId String? //@db.UniqueIdentifier // ID of the associated request workflow
+
 
   subcategories              RequestCategory[]            @relation("ParentRequestCategory") // Subcategories under this category
   requestCategoryRequirements RequestCategoryRequirement[] // Requirement mappings
@@ -100,6 +103,7 @@ model GuideDocument extends TenantScoped, Auditable, CatalogBase {
   version     String
   requestCategoryId String          //@db.UniqueIdentifier // ID of the associated request category
   requestCategory   RequestCategory @relation(fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
+	nodeGuide ExecutionNodeGuide[]
 
   @@index([requestCategoryId], name: "idx_guide_document_request_category_id")
   @@unique([name, tenantId])

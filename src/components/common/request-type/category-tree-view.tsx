@@ -190,9 +190,8 @@ export const CategoryTreeView: React.FC<CategoryTreeViewProps> = ({ onAddCategor
               <div style={{ paddingLeft: item.getItemMeta().level * 25 }} key={id} {...item.getProps()} onClick={() => {}}>
                 <Hint label={levelName.name} side="right">
                   <div
-                    /*className="flex items-center py-1 px-1 rounded-md group relative" */
                     className={cn(
-                      'group cursor-pointer flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium ' + 'min-w-[100px] flex-shrink-0',
+                      'group relative cursor-pointer flex w-full items-center justify-start space-x-2 rounded-md px-3 py-2 text-sm font-medium min-w-[100px] flex-shrink-0',
                       item.isSelected() ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'
                     )}>
                     {item.isFolder() && (
@@ -202,43 +201,39 @@ export const CategoryTreeView: React.FC<CategoryTreeViewProps> = ({ onAddCategor
                         className="h-6 w-6"
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (item.isExpanded()) {
-                            item.collapse();
-                          } else {
-                            item.expand();
-                          }
+                          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+                          item.isExpanded() ? item.collapse() : item.expand();
                         }}>
                         {item.isExpanded() ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                       </Button>
                     )}
 
                     {item.isRenaming() ? (
-                      <div className="flex items-center px-3 py-2 rounded-md bg-muted/50 w-full gap-2">
-                        {item.isFolder() ? <Folder className="h-4 w-4 mr-2 text-muted-foreground" /> : <File className="h-4 w-4 mr-2 text-muted-foreground" />}
+                      <div className="flex w-full items-center gap-2 rounded-md bg-muted/50 px-3 py-2">
+                        {item.isFolder() ? <Folder className="h-4 w-4 text-muted-foreground" /> : <File className="h-4 w-4 text-muted-foreground" />}
                         <input {...item.getRenameInputProps()} className="w-full bg-transparent outline-none" />
                       </div>
                     ) : (
                       <>
                         <button
-                          className="text-sm flex-1 cursor-pointer flex items-center"
+                          className="flex-1 text-sm flex items-center space-x-2"
                           onClick={(e) => {
                             e.stopPropagation();
-                            tree.setSelectedItems([id]);
+                            tree.setSelectedItems([item.getId()]);
                             onEditCategory(item.getItemData());
                           }}>
-                          {item.isFolder() ? <Folder className="h-4 w-4 mr-2 text-muted-foreground" /> : <File className="h-4 w-4 mr-2 text-muted-foreground" />}
-                          {item.getItemName()}
+                          {item.isFolder() ? <Folder className="h-4 w-4 text-muted-foreground" /> : <File className="h-4 w-4 text-muted-foreground" />}
+                          <span>{item.getItemName()}</span>
                         </button>
                       </>
                     )}
 
-                    <div className={cn('absolute right-1 flex items-center gap-1 transition-opacity group-hover:opacity-100 opacity-0')}>
+                    <div className="absolute right-1 top-1/2 flex -translate-y-1/2 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                       {nextLevel && (
                         <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => onAddCategory(nextLevel.id, item.getId())} title={t('addSubcategory', { levelName: nextLevel.name })}>
                           <FolderPlus className="h-3.5 w-3.5" />
                         </Button>
                       )}
-
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="icon" className="h-6 w-6">
@@ -246,7 +241,7 @@ export const CategoryTreeView: React.FC<CategoryTreeViewProps> = ({ onAddCategor
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => tree.getItemInstance(id).startRenaming()}>
+                          <DropdownMenuItem onClick={() => tree.getItemInstance(item.getId()).startRenaming()}>
                             <Edit className="h-4 w-4 mr-2" />
                             {t('rename')}
                           </DropdownMenuItem>

@@ -1,0 +1,32 @@
+import { memo } from 'react';
+import { Handle, Position, type NodeProps } from '@xyflow/react';
+import { Box, Clock, User } from 'lucide-react';
+
+export const StepNode = memo(({ data }: NodeProps) => {
+  return (
+    <div className="px-4 py-2 border rounded bg-blue-50 border-blue-300 min-w-[200px]">
+      <div className="flex items-center gap-2 mb-1">
+        <Box className="w-4 h-4 text-blue-500" />
+        <div className="font-medium">{data.label}</div>
+      </div>
+      {data.action && <div className="px-2 py-1 mb-2 text-sm bg-white/70 rounded">{data.action}</div>}
+      <div className="flex flex-wrap gap-2 text-xs">
+        {data.responsible && (
+          <div className="flex items-center gap-1 px-2 py-1 bg-blue-100 rounded-full">
+            <User className="w-3 h-3" /> {data.responsible}
+          </div>
+        )}
+        {data.estimatedTime && (
+          <div className="flex items-center gap-1 px-2 py-1 bg-amber-100 rounded-full">
+            <Clock className="w-3 h-3" /> {data.estimatedTime} {data.timeUnit}
+          </div>
+        )}
+        {data.sla && <div className="px-2 py-1 bg-yellow-100 rounded-full">⏱️ SLA: {data.sla}h</div>}
+      </div>
+      <Handle type="target" position={Position.Top} />
+      <Handle type="source" position={Position.Bottom} />
+    </div>
+  );
+});
+
+StepNode.displayName = 'StepNode';

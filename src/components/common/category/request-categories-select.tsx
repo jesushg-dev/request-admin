@@ -24,9 +24,10 @@ export type RequestCategorySelectArrayValues = z.infer<typeof requestCategorySel
 
 type RequestCategoriesSelectProps = {
   levels: RequestLevelType[];
+  menuPortalTarget?: HTMLElement;
 };
 
-export const RequestCategoriesSelect: FC<RequestCategoriesSelectProps> = ({ levels }) => {
+export const RequestCategoriesSelect: FC<RequestCategoriesSelectProps> = ({ levels, menuPortalTarget }) => {
   const { control, watch, setValue } = useFormContext<RequestCategorySelectArrayValues>();
   const watchedFields = watch('requestCategory', []);
   const lastSelectedIndex = watchedFields.findLastIndex((field) => !!field?.value);
@@ -57,6 +58,7 @@ export const RequestCategoriesSelect: FC<RequestCategoriesSelectProps> = ({ leve
                   enabled={currentPosition <= activeLevel}
                   onClearNextLevels={() => handleClearLevels(currentPosition + 1)}
                   parentCategoryId={currentPosition > 0 ? watchedFields[currentPosition - 1]?.value : ''}
+                  menuPortalTarget={menuPortalTarget}
                 />
                 <FormMessage />
               </FormItem>
@@ -74,10 +76,11 @@ type SingleRequestCategorySelectProps = {
   hierarchyLevelName: string;
   parentCategoryId?: string;
   onClearNextLevels: () => void;
+  menuPortalTarget?: HTMLElement;
   field: ControllerRenderProps<RequestCategorySelectArrayValues, `requestCategory.${number}`>;
 };
 
-const SingleRequestCategorySelect: React.FC<SingleRequestCategorySelectProps> = ({ field, parentCategoryId, hierarchyLevelName, enabled, position, onClearNextLevels }) => {
+const SingleRequestCategorySelect: React.FC<SingleRequestCategorySelectProps> = ({ field, parentCategoryId, hierarchyLevelName, enabled, position, menuPortalTarget, onClearNextLevels }) => {
   const t = useTranslations('admin.request.form.classificationStep');
   const { data: categories = [], isLoading } = useFindManyRequestCategory(
     {
@@ -117,6 +120,8 @@ const SingleRequestCategorySelect: React.FC<SingleRequestCategorySelectProps> = 
           value={field.value}
           menuShouldScrollIntoView={false}
           placeholder={t('requestCategory.selectPlaceholder')}
+          isDisabled={!enabled}
+          menuPortalTarget={menuPortalTarget}
         />
       </FormControl>
       <FormDescription>{isLoading ? t('common.loading') : t('assignmentCategory.selectDescription', { level: hierarchyLevelName.toLowerCase() })}</FormDescription>{' '}

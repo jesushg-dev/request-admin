@@ -1,5 +1,6 @@
 'use server';
 
+import { WorkflowStatusType } from '@/constants/workflow';
 import { db } from '@/server/db-client';
 
 import { RequestWorkflowDefaultArgs, type RequestWorkflowType } from '@/types/prisma/workflow';
@@ -29,7 +30,7 @@ export const getInitialStatusFromDatabase = async (tenantId: string, requestCate
     ...RequestWorkflowDefaultArgs.select.requestWorkflowStatus,
     where: {
       tenantId,
-      type: 'initial',
+      type: WorkflowStatusType.INITIAL,
       workflow: {
         tenantId,
         requestCategory: {

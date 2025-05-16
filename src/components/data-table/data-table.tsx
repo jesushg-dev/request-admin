@@ -40,7 +40,7 @@ export function DataTableShell<TData>({ table, floatingBar = null, children, cla
   const toggleStats = () => setIsStatsOpen((prev) => !prev);
 
   return (
-    <div className={cn('flex w-full flex-col gap-1 overflow-auto p-2 flex-1', className)} {...props}>
+    <div className={cn('flex w-full flex-col gap-1 overflow-auto flex-1', className)} {...props}>
       <DataTableStatsContext.Provider value={{ isStatsOpen, toggleStats, listType, toggleListType }}>{children}</DataTableStatsContext.Provider>
       <div className="flex flex-col gap-2.5">
         <DataTablePagination table={table} />

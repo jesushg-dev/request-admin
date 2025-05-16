@@ -92,7 +92,7 @@
       "default": "Default",
       "selectDirection": "Select sort direction"
     },
-    "filterDatePlaceholders": "Pick a date"
+    "filterDatePlaceholder": "Pick a date"
   },
   "home": {
     "title": "Request Engine",
@@ -1135,25 +1135,30 @@
           "priorityChange": "Priority Change",
           "updatingPriority": "Updating priority...",
           "priorityUpdated": "Priority has been updated.",
-          "priorityUpdateError": "Error updating priority: {error}"
+          "priorityUpdateError": "Error updating priority: {error}",
+          "executionModel": "Execution Model",
+          "requestCategory": "Request Category",
+          "issueDescription": "Description",
+          "assignmentCategory": "Assignment Category",
+          "area": "Area",
+          "currentStatus": "Current Status",
+          "changeStatus": "Change",
+          "changePriority": "Change",
+          "progress": "Progress",
+          "updated": "Updated",
+          "dates": "Dates",
+          "assignedTo": "Assigned to",
+          "requester": "Requester"
         },
         "tabs": {
-          "main": {
-            "execution": "Execution",
-            "comments": "Comments",
-            "reference": "Reference"
-          },
-          "execution": {
-            "requirements": "Requirements",
-            "executionModel": "Execution Model",
-            "guides": "Guides",
-            "submissions": "Forms",
-            "attachments": "Attachments"
-          },
-          "reference": {
-            "assignments": "Assignments",
-            "history": "History"
-          }
+          "requirements": "Requirements",
+          "executionModel": "Execution Model",
+          "guides": "Guides",
+          "submissions": "Forms",
+          "attachments": "Attachments",
+          "comments": "Comments",
+          "assignments": "Assignments",
+          "history": "History"
         },
         "requirements": {
           "noChangesToSave": "No changes to save",
@@ -1244,7 +1249,9 @@
           "lastUpdated": "Last updated",
           "viewGuide": "View guide",
           "noGuidesFound": "No guides available",
-          "noGuidesDescription": "There are currently no guides to help complete this service request. If you have any questions or believe a guide is missing, please contact your supervisor or administrator."
+          "noGuidesDescription": "There are currently no guides to help complete this service request. If you have any questions or believe a guide is missing, please contact your supervisor or administrator.",
+          "guidesViewerTitle": "Guides for this Request ({count})",
+          "guidesViewerDescription": "Here you can find all the guides related to this request. Select a guide to view more details or download the file."
         }
       },
       "form": {
@@ -1261,7 +1268,28 @@
         "classificationStep": {
           "reassign": {
             "alertTitle": "Change Area",
-            "alertDescription": "When changing the area, the request history will be maintained, but you may need to complete some required fields again in the new assignment."
+            "alertDescription": "When changing the area, the request history will be maintained, but you may need to complete some required fields again in the new assignment.",
+            "area": {
+              "title": "Reassign to another area",
+              "description": "Change the assigned area for request #{requestId}",
+              "action": "Reassign"
+            },
+            "reason": {
+              "label": "Reason for reassignment",
+              "description": "Explain why this request is being reassigned.",
+              "placeholder": "Explain why this request is being reassigned."
+            },
+            "notify": {
+              "label": "Notify",
+              "description": "Who will be notified?",
+              "requester": "Only the requester",
+              "area": "Only the new area",
+              "both": "Both"
+            },
+            "toast": {
+              "title": "Area reassigned",
+              "description": "Request #{requestId} has been reassigned to {area} successfully."
+            }
           },
           "requestCategory": {
             "title": "Request Category",
@@ -1354,14 +1382,88 @@
           "requestDetails": "Request Details"
         }
       },
-      "relatedIncidentForm": {
-        "relatedId": "Related Id",
-        "relatedIdDescription": "Type the id of the related incident.",
-        "savingChanges": "Saving changes...",
-        "successSave": "Related incident ({id}) has been saved successfully.",
-        "errorSave": "Failed to save related incident: {message}",
-        "saveChanges": "Save Changes",
-        "addRelatedIncident": "Add Related Incident"
+      "assign": {
+        "title": "Assign request",
+        "description": "Assign request #{requestId} to a user",
+        "area": "Area",
+        "currentAssignee": "Currently assigned to",
+        "assignee": {
+          "label": "Assign to",
+          "description": "Select the user to assign the request to.",
+          "placeholder": "Select a user"
+        },
+        "comments": {
+          "label": "Comments (optional)",
+          "description": "Add a comment about the assignment.",
+          "placeholder": "Add a comment about the assignment..."
+        },
+        "action": "Assign",
+        "toast": {
+          "loading": "Loading...",
+          "success": "Request assigned successfully",
+          "error": "Error assigning request: {error}"
+        }
+      },
+      "status": {
+        "title": "Change request status",
+        "description": "Update the status of request #{requestId}",
+        "currentStatus": "Current status",
+        "flowTitle": "Status flow",
+        "newStatus": {
+          "label": "New status",
+          "description": "Select the new status for the request."
+        },
+        "comments": {
+          "label": "Comments (optional)",
+          "description": "Add a comment about the status change.",
+          "placeholder": "Add a comment about the status change...",
+          "labelRequired": "Justification (required)",
+          "descriptionRequired": "You must provide a justification for this status change.",
+          "placeholderRequired": "Explain why this status change is being made..."
+        },
+        "resolution": {
+          "label": "Resolution",
+          "description": "Select the resolution type for the request."
+        },
+        "action": "Save changes",
+        "cancel": "Cancel",
+        "reasonRequired": "Justification required",
+        "reasonRequiredDescription": "You must provide a justification for this status change.",
+        "toast": {
+          "loading": "Updating status...",
+          "success": "Request #{requestId} has changed from \"{from}\" to \"{to}\" successfully.",
+          "error": "An error occurred while changing the status: {error}"
+        },
+        "flowDescription": "{count, plural, one {A request in the \"{from}\" status can move to the following state: {to}.} other {A request in the \"{from}\" status can move to the following states: {to}.}}",
+        "assignmentRequired": "Insufficient permissions",
+        "assignmentRequiredDescription": "Please contact the user who assigned you the request or someone with the required permission to make the change."
+      },
+      "priority": {
+        "title": "Change request priority",
+        "description": "Update the priority of request #{requestId}",
+        "currentPriority": "Current priority",
+        "newPriority": {
+          "label": "New priority",
+          "description": "Select the new priority for the request."
+        },
+        "reason": {
+          "label": "Reason for change",
+          "description": "Explain why the priority is being changed.",
+          "placeholder": "Add a reason for the priority change..."
+        },
+        "notify": {
+          "label": "Notify requester?",
+          "description": "The requester will be notified about the priority change.",
+          "yes": "Yes",
+          "no": "No"
+        },
+        "action": "Save changes",
+        "cancel": "Cancel",
+        "toast": {
+          "loading": "Updating priority...",
+          "success": "The priority of request #{requestId} has been changed to \"{priority}\" successfully.",
+          "error": "An error occurred while changing the priority: {error}"
+        }
       }
     },
     "requestType": {
