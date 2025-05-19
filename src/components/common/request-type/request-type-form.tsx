@@ -199,7 +199,6 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
               <Form {...form}>
                 <FormRoot className="h-full" onSubmit={form.handleSubmit(onSubmit)}>
                   <FormError error={error} />
-
                   <CategoryForm formsOptions={formsOptions} requirementsOptions={requirementsOptions} mode={mode} isPending={isPending} handleCancelForm={handleCancelForm} />
                 </FormRoot>
               </Form>

@@ -1,22 +1,29 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, useTransition } from 'react';
+import { updateCurrentStatus } from '@/actions/request-assignment';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, SquarePen } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
+import { type RequestMetadata } from '@/types/prisma/request';
 import { RequestWorkflowType } from '@/types/prisma/workflow';
 import { normalizeValue } from '@/lib/utils';
 import { getStatusTransitions } from '@/lib/workflow';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormField } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
+import { AlertBanner } from '@/components/custom-ui/alert-banner';
 import Select, { optionSchema, OptionType } from '@/components/custom-ui/select';
+import { Hint } from '@/components/hint';
 import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
+
+import { RequestFormStepperType } from '../request-form-stepper';
 
 // Zod schema for form validation
 export const changeStatusSchema = z
@@ -49,19 +56,22 @@ type StatusOption = OptionType & {
 };
 
 interface ChangeStatusModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  requestId: string;
-  currentStatus: OptionType;
+  tenantId: string;
+  enableStatusChange: boolean;
+  IsStatusModalOpen: boolean;
   workflow: RequestWorkflowType;
   enableAssignmentChange: boolean;
+  setIsStatusModalOpen: (IsStatusModalOpen: boolean) => void;
+  request: Pick<RequestFormStepperType, 'id' | 'statusId' | 'isDraft'>;
 }
 
-export function ChangeStatusModal({ isOpen, onClose, currentStatus, requestId, workflow, enableAssignmentChange }: ChangeStatusModalProps) {
+export function ChangeStatusModal({ IsStatusModalOpen, tenantId, request, workflow, enableAssignmentChange, enableStatusChange, setIsStatusModalOpen }: ChangeStatusModalProps) {
   const formRef = useRef<HTMLDivElement>(null);
   const t = useTranslations('admin.request.status');
 
+  const [isPending, startTransition] = useTransition();
   const [requiresReason, setRequiresReason] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState<OptionType | undefined>(request.statusId);
 
   const form = useForm<ChangeStatusFormValues>({
     resolver: zodResolver(changeStatusSchema),
@@ -85,94 +95,118 @@ export function ChangeStatusModal({ isOpen, onClose, currentStatus, requestId, w
     }
 
     // Simulate an async request (replace with real API call)
-    const promise = new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(true);
-        // Here you could make the real request
-      }, 1500);
+    const promise = updateCurrentStatus(tenantId, request.id, String(data.newStatus.value), {
+      type: 'STATUS_CHANGE',
+      requiredReason: data.requiredReason,
+      comments: data.comments,
     });
 
     // Show toast notifications for the async operation
-    toast.promise(promise, {
-      loading: t('toast.loading'),
-      success: () => {
-        onClose();
-        return t('toast.success', {
-          requestId,
-          from: currentStatus?.label,
-          to: data.newStatus.label,
-        });
-      },
-      error: (error) => {
-        return t('toast.error', { error: error.message });
-      },
+    startTransition(async () => {
+      toast.promise(promise, {
+        loading: t('toast.loading'),
+        success: () => {
+          form.reset(getDefaultValues());
+          setCurrentStatus(data.newStatus);
+          setIsStatusModalOpen(false);
+          return t('toast.success', { requestId: request.id, from: currentStatus?.label ?? 'N/A', to: data.newStatus.label });
+        },
+        error: (error) => {
+          return t('toast.error', { error: error.message });
+        },
+      });
     });
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden" ref={formRef}>
-        <DialogHeader>
-          <DialogTitle>{t('title')}</DialogTitle>
-          <DialogDescription>{t('description', { requestId })}</DialogDescription>
-        </DialogHeader>
-        <Form {...form}>
-          <FormRoot onSubmit={form.handleSubmit(handleSubmit)}>
-            <FormContent>
-              <FormSection>
-                {/* Show transition flow explanation */}
-                <Alert>
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>{t('flowTitle')}</AlertTitle>
-                  <AlertDescription>
-                    {t('flowDescription', {
-                      from: currentStatus.label,
+    <>
+      <div className="flex flex-col">
+        <div className="flex gap-2 w-full justify-between">
+          <div>
+            <p className="text-sm font-medium">{t('currentStatus')}</p>
+            <Badge>{request.isDraft ? t('draft') : currentStatus?.label ? currentStatus.label : 'N/A'}</Badge>
+          </div>
+          {enableStatusChange && !request.isDraft && (
+            <Hint label={t('changeStatus')}>
+              <Button size="sm" variant="ghost" aria-label={t('changeStatus')} onClick={() => setIsStatusModalOpen(true)}>
+                <SquarePen className="h-4 w-4" />
+              </Button>
+            </Hint>
+          )}
+        </div>
+        {!request.isDraft && (
+          <p className="text-xs text-muted-foreground mt-1 w-full">
+            {t('flowDescriptionShort', {
+              to: validNextStates.map((status) => status.label).join(', '),
+              count: validNextStates.length,
+            })}
+          </p>
+        )}
+      </div>
+      <Dialog open={IsStatusModalOpen} onOpenChange={setIsStatusModalOpen}>
+        <DialogContent className="sm:max-w-[425px] max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden" ref={formRef}>
+          <DialogHeader>
+            <DialogTitle>{t('title')}</DialogTitle>
+            <DialogDescription>{t('description', { requestId: request.id })}</DialogDescription>
+          </DialogHeader>
+          <Form {...form}>
+            <FormRoot onSubmit={form.handleSubmit(handleSubmit)}>
+              <FormContent>
+                <FormSection>
+                  {/* Show transition flow explanation */}
+                  <AlertBanner
+                    variant="info"
+                    icon={<AlertCircle className="h-4 w-4" />}
+                    title={t('flowTitle')}
+                    description={t('flowDescription', {
+                      from: currentStatus?.label ?? 'N/A',
                       to: validNextStates.map((status) => status.label).join(', '),
                       count: validNextStates.length,
                     })}
-                  </AlertDescription>
-                </Alert>
-                {/* New status selection */}
-                <FormField
-                  control={form.control}
-                  name="newStatus"
-                  render={({ field }) => (
-                    <FormItem label={t('newStatus.label')} description={t('newStatus.description')}>
-                      <Select
-                        menuPortalTarget={null}
-                        isSearchable
-                        isClearable
-                        options={validNextStates}
-                        {...field}
-                        onChange={(selectedOption: StatusOption | null) => {
-                          if (selectedOption?.requiresApproval && !enableAssignmentChange) {
-                            toast.error(t('assignmentRequired'), { description: t('assignmentRequiredDescription') });
-                            return;
-                          }
+                  />
 
-                          field.onChange(selectedOption);
-                          setRequiresReason(selectedOption?.requiresJustification ?? false);
-                        }}
-                      />
-                    </FormItem>
-                  )}
-                />
-                {/* Comments/justification field */}
-                <FormField
-                  control={form.control}
-                  name="comments"
-                  render={({ field }) => (
-                    <FormItem label={requiresReason ? t('comments.labelRequired') : t('comments.label')} description={requiresReason ? t('comments.descriptionRequired') : t('comments.description')}>
-                      <Textarea id="comments" placeholder={requiresReason ? t('comments.placeholderRequired') : t('comments.placeholder')} rows={3} required={requiresReason} {...field} />
-                    </FormItem>
-                  )}
-                />
-              </FormSection>
-            </FormContent>
-            <FormActions isPending={form.formState.isSubmitting} title={t('action')} />
-          </FormRoot>
-        </Form>
-      </DialogContent>
-    </Dialog>
+                  {/* New status selection */}
+                  <FormField
+                    control={form.control}
+                    name="newStatus"
+                    render={({ field }) => (
+                      <FormItem label={t('newStatus.label')} description={t('newStatus.description')}>
+                        <Select
+                          menuPortalTarget={null}
+                          isSearchable
+                          isClearable
+                          options={validNextStates}
+                          {...field}
+                          onChange={(selectedOption: StatusOption | null) => {
+                            if (selectedOption?.requiresApproval && !enableAssignmentChange) {
+                              toast.error(t('assignmentRequired'), { description: t('assignmentRequiredDescription') });
+                              return;
+                            }
+
+                            field.onChange(selectedOption);
+                            setRequiresReason(selectedOption?.requiresJustification ?? false);
+                          }}
+                        />
+                      </FormItem>
+                    )}
+                  />
+                  {/* Comments/justification field */}
+                  <FormField
+                    control={form.control}
+                    name="comments"
+                    render={({ field }) => (
+                      <FormItem label={requiresReason ? t('comments.labelRequired') : t('comments.label')} description={requiresReason ? t('comments.descriptionRequired') : t('comments.description')}>
+                        <Textarea id="comments" placeholder={requiresReason ? t('comments.placeholderRequired') : t('comments.placeholder')} rows={3} required={requiresReason} {...field} />
+                      </FormItem>
+                    )}
+                  />
+                </FormSection>
+              </FormContent>
+              <FormActions isPending={isPending} title={t('action')} />
+            </FormRoot>
+          </Form>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

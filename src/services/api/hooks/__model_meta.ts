@@ -2576,6 +2576,11 @@ const metadata = {
           type: 'DateTime',
           isOptional: true,
         },
+        isCoordinator: {
+          name: 'isCoordinator',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
       },
       uniqueConstraints: {
         id: {
@@ -3414,6 +3419,11 @@ const metadata = {
         changedAt: {
           name: 'changedAt',
           type: 'DateTime',
+        },
+        metadata: {
+          name: 'metadata',
+          type: 'String',
+          isOptional: true,
         },
       },
       uniqueConstraints: {

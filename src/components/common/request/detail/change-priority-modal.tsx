@@ -1,17 +1,22 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState, useTransition } from 'react';
+import { updateCurrentPriority } from '@/actions/request-assignment';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { SquarePen } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormField } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import Select, { optionSchema, OptionType } from '@/components/custom-ui/select';
+import { Hint } from '@/components/hint';
 import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
 
 // Zod schema for form validation
@@ -31,16 +36,20 @@ export const getDefaultValues = (): ChangePriorityFormValues => ({
 });
 
 interface ChangePriorityModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  tenantId: string;
   requestId: string;
-  currentPriority: OptionType;
+  defaultPriority: OptionType;
   priorities: OptionType[];
+  enablePriorityChange: boolean;
+  isPriorityModalOpen: boolean;
+  setIsPriorityModalOpen: (value: boolean) => void;
 }
 
-export function ChangePriorityModal({ isOpen, onClose, requestId, currentPriority, priorities }: ChangePriorityModalProps) {
+export function ChangePriorityModal({ isPriorityModalOpen, setIsPriorityModalOpen, requestId, defaultPriority, priorities, tenantId, enablePriorityChange }: ChangePriorityModalProps) {
   const formRef = useRef<HTMLDivElement>(null);
   const t = useTranslations('admin.request.priority');
+  const [isPending, startTransition] = useTransition();
+  const [currentPriority, setCurrentPriority] = useState<OptionType | undefined>(defaultPriority);
 
   // Notify options for the select
   const notifyOptions: OptionType[] = [
@@ -56,82 +65,102 @@ export function ChangePriorityModal({ isOpen, onClose, requestId, currentPriorit
 
   // Handle form submission
   const handleSubmit = (data: ChangePriorityFormValues) => {
-    // Simulate an async request (replace with real API call)
-    const promise = new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(true);
-      }, 1500);
+    const promise = updateCurrentPriority(tenantId, requestId, String(data.newPriority.value), {
+      type: 'PRIORITY_CHANGE',
+      reason: data.reason,
+      notify: data.notify.value === 'yes',
     });
 
     // Show toast notifications for the async operation
-    toast.promise(promise, {
-      loading: t('toast.loading'),
-      success: () => {
-        onClose();
-        return t('toast.success', {
-          requestId,
-          priority: data.newPriority.label,
-        });
-      },
-      error: (error) => {
-        return t('toast.error', { error: error.message });
-      },
+    startTransition(() => {
+      toast.promise(promise, {
+        loading: t('toast.loading'),
+        success: () => {
+          setIsPriorityModalOpen(false);
+          form.reset(getDefaultValues());
+          setCurrentPriority(data.newPriority);
+          return t('toast.success', {
+            requestId,
+            priority: data.newPriority.label,
+          });
+        },
+        error: (error) => {
+          return t('toast.error', { error: error.message });
+        },
+      });
     });
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden" ref={formRef}>
-        <DialogHeader>
-          <DialogTitle>{t('title')}</DialogTitle>
-          <DialogDescription>{t('description', { requestId })}</DialogDescription>
-        </DialogHeader>
-        <Form {...form}>
-          <FormRoot onSubmit={form.handleSubmit(handleSubmit)}>
-            <FormContent>
-              <FormSection>
-                {/* Display current priority */}
-                <div className="grid gap-2">
-                  <Label htmlFor="current-priority">{t('currentPriority')}</Label>
-                  <div className="text-sm text-muted-foreground">{currentPriority.label}</div>
-                </div>
-                {/* New priority selection */}
-                <FormField
-                  control={form.control}
-                  name="newPriority"
-                  render={({ field }) => (
-                    <FormItem label={t('newPriority.label')} description={t('newPriority.description')}>
-                      <Select menuPortalTarget={null} isSearchable isClearable options={priorities} {...field} />
-                    </FormItem>
-                  )}
-                />
-                {/* Reason for change (optional) */}
-                <FormField
-                  control={form.control}
-                  name="reason"
-                  render={({ field }) => (
-                    <FormItem label={t('reason.label')} description={t('reason.description')}>
-                      <Textarea id="reason" required placeholder={t('reason.placeholder')} rows={3} {...field} />
-                    </FormItem>
-                  )}
-                />
-                {/* Notify requester */}
-                <FormField
-                  control={form.control}
-                  name="notify"
-                  render={({ field }) => (
-                    <FormItem label={t('notify.label')} description={t('notify.description')}>
-                      <Select menuPortalTarget={null} isSearchable isClearable options={notifyOptions} {...field} />
-                    </FormItem>
-                  )}
-                />
-              </FormSection>
-            </FormContent>
-            {/* Form actions (submit/cancel) */}
-            <FormActions isPending={form.formState.isSubmitting} title={t('action')} />
-          </FormRoot>
-        </Form>
-      </DialogContent>
-    </Dialog>
+    <>
+      <div className="flex flex-col">
+        <div className="flex gap-2 w-full justify-between">
+          <div>
+            <p className="text-sm font-medium">{t('priority')}</p>
+            <Badge>{currentPriority?.label ?? 'N/A'}</Badge>
+          </div>
+          {enablePriorityChange && (
+            <Hint label={t('changePriority')}>
+              <Button size="sm" variant="ghost" aria-label={t('changePriority')} onClick={() => setIsPriorityModalOpen(true)}>
+                <SquarePen className="h-4 w-4" />
+              </Button>
+            </Hint>
+          )}
+        </div>
+      </div>
+      <Dialog open={isPriorityModalOpen} onOpenChange={setIsPriorityModalOpen}>
+        <DialogContent className="sm:max-w-[425px] max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden" ref={formRef}>
+          <DialogHeader>
+            <DialogTitle>{t('title')}</DialogTitle>
+            <DialogDescription>{t('description', { requestId })}</DialogDescription>
+          </DialogHeader>
+          <Form {...form}>
+            <FormRoot onSubmit={form.handleSubmit(handleSubmit)}>
+              <FormContent>
+                <FormSection>
+                  {/* Display current priority */}
+                  <div className="grid gap-2">
+                    <Label htmlFor="current-priority">{t('currentPriority')}</Label>
+                    <div className="text-sm text-muted-foreground">{currentPriority?.label ?? 'N/A'}</div>
+                  </div>
+                  {/* New priority selection */}
+                  <FormField
+                    control={form.control}
+                    name="newPriority"
+                    render={({ field }) => (
+                      <FormItem label={t('newPriority.label')} description={t('newPriority.description')}>
+                        <Select menuPortalTarget={null} isSearchable isClearable options={priorities.filter((option) => option.value !== currentPriority?.value)} {...field} />
+                      </FormItem>
+                    )}
+                  />
+                  {/* Reason for change (optional) */}
+                  <FormField
+                    control={form.control}
+                    name="reason"
+                    render={({ field }) => (
+                      <FormItem label={t('reason.label')} description={t('reason.description')}>
+                        <Textarea id="reason" required placeholder={t('reason.placeholder')} rows={3} {...field} />
+                      </FormItem>
+                    )}
+                  />
+                  {/* Notify requester */}
+                  <FormField
+                    control={form.control}
+                    name="notify"
+                    render={({ field }) => (
+                      <FormItem label={t('notify.label')} description={t('notify.description')}>
+                        <Select menuPortalTarget={null} isSearchable isClearable options={notifyOptions} {...field} />
+                      </FormItem>
+                    )}
+                  />
+                </FormSection>
+              </FormContent>
+              {/* Form actions (submit/cancel) */}
+              <FormActions isPending={isPending} title={t('action')} />
+            </FormRoot>
+          </Form>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

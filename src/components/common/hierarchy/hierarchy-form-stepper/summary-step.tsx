@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { CheckCircle, FileText, FolderTree, LayoutList, Network, XCircle } from 'lucide-react';
+import { motion } from 'motion/react';
 import { useFormContext } from 'react-hook-form';
 
 import { Badge } from '@/components/ui/badge';

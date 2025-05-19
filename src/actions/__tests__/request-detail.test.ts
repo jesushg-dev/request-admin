@@ -1,7 +1,9 @@
 import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-server';
 
-import { updateCurrentPriority, updateCurrentStatus } from '../request-detail';
+import { RequestMetadata } from '@/types/prisma/request';
+
+import { updateCurrentPriority, updateCurrentStatus } from '../request-assignment';
 
 // Mock the dependencies
 jest.mock('@/server/auth-server', () => ({
@@ -27,6 +29,16 @@ describe('Request Detail Actions', () => {
   const mockUserId = 'user-123';
   const mockStatusId = 'status-123';
   const mockPriorityId = 'priority-123';
+  const priorityMetadata: RequestMetadata = {
+    type: 'PRIORITY_CHANGE',
+    reason: 'Not so relevant',
+    notify: true,
+  };
+  const mockStatusMetadata: RequestMetadata = {
+    type: 'STATUS_CHANGE',
+    requiredReason: true,
+    comments: 'Task completed',
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -45,7 +57,7 @@ describe('Request Detail Actions', () => {
 
       (db.$transaction as jest.Mock).mockResolvedValue([{}, {}]);
 
-      const result = await updateCurrentStatus(mockTenantId, mockRequestId, mockStatusId);
+      const result = await updateCurrentStatus(mockTenantId, mockRequestId, mockStatusId, mockStatusMetadata);
 
       expect(result).toEqual({ statusId: mockStatusId });
       expect(db.$transaction).toHaveBeenCalled();
@@ -63,13 +75,13 @@ describe('Request Detail Actions', () => {
     it('should throw AuthorizationError when user is not authenticated', async () => {
       (currentSession as jest.Mock).mockResolvedValue(null);
 
-      await expect(updateCurrentStatus(mockTenantId, mockRequestId, mockStatusId)).rejects.toThrow('Authentication required');
+      await expect(updateCurrentStatus(mockTenantId, mockRequestId, mockStatusId, mockStatusMetadata)).rejects.toThrow('Authentication required');
     });
 
     it('should throw RequestNotFoundError when request does not exist', async () => {
       (db.request.findUnique as jest.Mock).mockResolvedValue(null);
 
-      await expect(updateCurrentStatus(mockTenantId, mockRequestId, mockStatusId)).rejects.toThrow('Request not found');
+      await expect(updateCurrentStatus(mockTenantId, mockRequestId, mockStatusId, mockStatusMetadata)).rejects.toThrow('Request not found');
     });
 
     it('should throw RequestAssignmentError when no active assignments exist', async () => {
@@ -78,7 +90,7 @@ describe('Request Detail Actions', () => {
         requestAssignments: [],
       });
 
-      await expect(updateCurrentStatus(mockTenantId, mockRequestId, mockStatusId)).rejects.toThrow('No active request assignments found');
+      await expect(updateCurrentStatus(mockTenantId, mockRequestId, mockStatusId, mockStatusMetadata)).rejects.toThrow('No active request assignments found');
     });
   });
 
@@ -92,7 +104,7 @@ describe('Request Detail Actions', () => {
 
       (db.$transaction as jest.Mock).mockResolvedValue([{}, {}]);
 
-      const result = await updateCurrentPriority(mockTenantId, mockRequestId, mockPriorityId);
+      const result = await updateCurrentPriority(mockTenantId, mockRequestId, mockPriorityId, priorityMetadata);
 
       expect(result).toEqual({ priorityId: mockPriorityId });
       expect(db.$transaction).toHaveBeenCalled();
@@ -110,13 +122,13 @@ describe('Request Detail Actions', () => {
     it('should throw AuthorizationError when user is not authenticated', async () => {
       (currentSession as jest.Mock).mockResolvedValue(null);
 
-      await expect(updateCurrentPriority(mockTenantId, mockRequestId, mockPriorityId)).rejects.toThrow('Authentication required');
+      await expect(updateCurrentPriority(mockTenantId, mockRequestId, mockPriorityId, priorityMetadata)).rejects.toThrow('Authentication required');
     });
 
     it('should throw RequestNotFoundError when request does not exist', async () => {
       (db.request.findUnique as jest.Mock).mockResolvedValue(null);
 
-      await expect(updateCurrentPriority(mockTenantId, mockRequestId, mockPriorityId)).rejects.toThrow('Request not found');
+      await expect(updateCurrentPriority(mockTenantId, mockRequestId, mockPriorityId, priorityMetadata)).rejects.toThrow('Request not found');
     });
 
     it('should throw RequestAssignmentError when no active assignments exist', async () => {
@@ -125,7 +137,7 @@ describe('Request Detail Actions', () => {
         requestAssignments: [],
       });
 
-      await expect(updateCurrentPriority(mockTenantId, mockRequestId, mockPriorityId)).rejects.toThrow('No active request assignments found');
+      await expect(updateCurrentPriority(mockTenantId, mockRequestId, mockPriorityId, priorityMetadata)).rejects.toThrow('No active request assignments found');
     });
   });
 });

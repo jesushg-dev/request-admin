@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, memo, useCallback, useContext, useMemo, useState, type ComponentPropsWithRef, type ReactNode } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 
 import {
   AlertDialog,

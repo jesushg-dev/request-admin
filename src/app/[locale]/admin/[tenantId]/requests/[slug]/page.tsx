@@ -27,7 +27,7 @@ interface CaseDetailPageProps {
 
 export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
   const { locale, tenantId, slug } = await params;
-  const { hasAreaPermissions, hasPermissions } = await getAuthContext(tenantId);
+  const { isAdmin, hasAreaPermissions, hasPermissions } = await getAuthContext(tenantId);
   const t = await getTranslations('admin.request.view');
 
   // --- Request Data Fetching ---
@@ -149,9 +149,9 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
             requestDetails={requestDetails}
             requestLevelTypes={requestHierarchy.levels}
             assignmentLevelTypes={assignmentHierarchy.levels}
-            enableStatusChange={hasAreaPermissions(request.areaId.value, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_STATUS])}
-            enablePriorityChange={hasAreaPermissions(request.areaId.value, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_PRIORITY])}
-            enableAssignmentChange={hasAreaPermissions(request.areaId.value, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_ASSIGN_USER])}
+            enableStatusChange={hasAreaPermissions(request.areaId.value, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_STATUS]) || isAdmin}
+            enablePriorityChange={hasAreaPermissions(request.areaId.value, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_PRIORITY]) || isAdmin}
+            enableAssignmentChange={hasAreaPermissions(request.areaId.value, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_ASSIGN_USER]) || isAdmin}
           />
         </div>
       </ResizablePanel>

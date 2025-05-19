@@ -454,6 +454,7 @@ export const getRequestDetailsByRequest = async (tenantId: string, request: Requ
   if (!session) throw new UserNotFoundErr();
 
   // Get total submissions count
+  // todo: we can improve this by using a single query
   const submissions = await db.formSubmission.count({ where: { requestId: request.id, tenantId } });
   const requestCategoryIds = request.requestCategory.map((rc) => rc.value);
   const forms = await db.requestCategoryForm.count({ where: { categoryId: { in: requestCategoryIds }, tenantId } });
@@ -475,6 +476,45 @@ export const getRequestDetailsByRequest = async (tenantId: string, request: Requ
     where: { tenantId, requestCategoryId: { in: request.requestCategory.map((rc) => rc.value) } },
   });
 
+  const requester = await db.userTenant.findFirst({
+    where: { userId: session.user.id, tenantId },
+    select: {
+      person: {
+        select: {
+          firstName: true,
+          lastName: true,
+        },
+      },
+      user: {
+        select: {
+          email: true,
+        },
+      },
+    },
+  });
+
+  const assignedUsers = await db.assignedUser.findMany({
+    where: { requestAssignment: { requestId: request.id, tenantId, isActive: true } },
+    select: {
+      isCoordinator: true,
+      userTenant: {
+        select: {
+          id: true,
+          person: { select: { firstName: true, lastName: true } },
+          user: { select: { email: true } },
+        },
+      },
+    },
+  });
+
+  const relatedRequestCount = await db.requestAssignment.count({
+    where: { requestCategoryId: request.requestCategory[0].value, requestId: { not: request.id }, tenantId, isActive: true },
+  });
+
+  const relatedAssignmentCount = await db.requestAssignment.count({
+    where: { assignmentCategoryId: request.assignmentCategory[0].value, requestId: { not: request.id }, tenantId, isActive: true },
+  });
+
   return {
     guides,
     submissions: {
@@ -488,6 +528,19 @@ export const getRequestDetailsByRequest = async (tenantId: string, request: Requ
     satisfactionSurvey: satisfactionSurvey ?? undefined,
     channel: channel ?? undefined,
     dataroom: dataroom ?? undefined,
+    requester: {
+      name: requester?.person ? `${requester.person.firstName} ${requester.person.lastName}` : 'N/A',
+      email: requester?.user ? requester.user.email : 'N/A',
+    },
+    assignedUsers: assignedUsers.map((user) => ({
+      user: {
+        value: user.userTenant.id,
+        label: user.userTenant.person ? `${user.userTenant.person.firstName} ${user.userTenant.person.lastName} (${user.userTenant.user.email})` : user.userTenant.user.email,
+      },
+      isCoordinator: user.isCoordinator,
+    })),
+    relatedAssignmentCount,
+    relatedRequestCount,
   };
 };
 

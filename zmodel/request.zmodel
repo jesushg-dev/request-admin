@@ -109,6 +109,7 @@ model AssignedUser extends TenantScoped, Auditable {
 
   role                String            //@db.VarChar(150) 
   unAssignmentDate    DateTime?
+  isCoordinator        Boolean           @default(false) // Indicates if the user is a coordinator
 }
 
 /// Represents a catalog of possible priority levels for requests or assignments.
@@ -221,6 +222,7 @@ model RequestChangeLog extends TenantScoped, Auditable {
   oldValue  String?  //@db.VarChar(500)
   newValue  String?  //@db.VarChar(500)
   changedAt DateTime
+  metadata  String?   //@db.NVarChar(Max)    // JSON metadata { "type": 'STATUS_CHANGE', "comment": value }
 
   @@index([requestId], name: "idx_change_log_request_id")
   @@index([changedBy], name: "idx_change_log_changed_by")

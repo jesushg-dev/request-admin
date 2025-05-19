@@ -4,8 +4,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 datasource db {
-  provider = "sqlserver"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 generator client {
@@ -531,6 +531,7 @@ model AssignedUser {
   userTenant          UserTenant        @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   role                String
   unAssignmentDate    DateTime?
+  isCoordinator       Boolean           @default(false)
 }
 
 /// Represents a catalog of possible priority levels for requests or assignments.
@@ -705,6 +706,7 @@ model RequestChangeLog {
   oldValue  String?
   newValue  String?
   changedAt DateTime
+  metadata  String?
 
   @@index([requestId], name: "idx_change_log_request_id")
   @@index([changedBy], name: "idx_change_log_changed_by")

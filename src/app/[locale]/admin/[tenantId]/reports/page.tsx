@@ -18,8 +18,79 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
+// Types
+type WorkflowType = {
+  id: number;
+  name: string;
+};
+
+type WorkflowState = {
+  id: number;
+  name: string;
+  value: number;
+  color: string;
+};
+
+type Step = {
+  name: string;
+  avgTime: number;
+  compliance: number;
+};
+
+type Document = {
+  name: string;
+  type: string;
+  required: boolean;
+};
+
+type MonthlyExecution = {
+  month: string;
+  count: number;
+  compliance: number;
+};
+
+type RequestModel = {
+  id: number;
+  name: string;
+  area: string;
+  workflow: string;
+  avgCompletionTime: number;
+  successRate: number;
+  documentCount: number;
+  steps: Step[];
+  documents: Document[];
+  monthlyExecution: MonthlyExecution[];
+};
+
+type MonthlyData = {
+  name: string;
+  solicitudes?: number;
+  [key: string]: number | string | undefined;
+};
+
+type AreaData = {
+  name: string;
+  value: number;
+};
+
+type ResponseTimeData = {
+  name: string;
+  tiempo: number;
+};
+
+type SLACompliance = {
+  name: string;
+  cumplimiento: number;
+};
+
+type ProcessEfficiency = {
+  name: string;
+  eficiencia: number;
+  volumen: number;
+};
+
 // Simulación de API para obtener flujos de trabajo y estados
-const getWorkflowTypes = () => {
+const getWorkflowTypes = (): WorkflowType[] => {
   return [
     { id: 1, name: 'Activaciones' },
     { id: 2, name: 'Comisiones' },
@@ -29,7 +100,7 @@ const getWorkflowTypes = () => {
   ];
 };
 
-const getWorkflowStates = () => {
+const getWorkflowStates = (): WorkflowState[] => {
   return [
     { id: 1, name: 'Cerrado', value: 45, color: '#10b981' },
     { id: 2, name: 'En progreso', value: 30, color: '#3b82f6' },
@@ -40,7 +111,7 @@ const getWorkflowStates = () => {
 };
 
 // Datos de ejemplo para los modelos de solicitud
-const requestModels = [
+const requestModels: RequestModel[] = [
   {
     id: 1,
     name: 'Activación de servicio móvil',
@@ -124,7 +195,7 @@ const requestModels = [
 ];
 
 // Datos de ejemplo para los gráficos
-const generateMonthlyData = (selectedWorkflows) => {
+const generateMonthlyData = (selectedWorkflows: string[]): MonthlyData[] => {
   const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
   if (selectedWorkflows.length === 0) {
@@ -135,7 +206,7 @@ const generateMonthlyData = (selectedWorkflows) => {
   }
 
   return months.map((month) => {
-    const result = { name: month };
+    const result: MonthlyData = { name: month };
     selectedWorkflows.forEach((workflow) => {
       result[workflow] = Math.floor(Math.random() * 40) + 10;
     });
@@ -143,7 +214,7 @@ const generateMonthlyData = (selectedWorkflows) => {
   });
 };
 
-const generateAreaData = (selectedWorkflows) => {
+const generateAreaData = (selectedWorkflows: string[]): AreaData[] => {
   if (selectedWorkflows.length === 0) {
     return getWorkflowTypes().map((type) => ({
       name: type.name,
@@ -159,7 +230,7 @@ const generateAreaData = (selectedWorkflows) => {
     }));
 };
 
-const generateResponseTimeData = (selectedWorkflows) => {
+const generateResponseTimeData = (selectedWorkflows: string[]): ResponseTimeData[] => {
   if (selectedWorkflows.length === 0) {
     return getWorkflowTypes().map((type) => ({
       name: type.name,
@@ -176,7 +247,7 @@ const generateResponseTimeData = (selectedWorkflows) => {
 };
 
 // Datos para el gráfico de cumplimiento de SLA
-const slaComplianceData = [
+const slaComplianceData: SLACompliance[] = [
   { name: 'Ene', cumplimiento: 92 },
   { name: 'Feb', cumplimiento: 94 },
   { name: 'Mar', cumplimiento: 91 },
@@ -186,7 +257,7 @@ const slaComplianceData = [
 ];
 
 // Datos para el gráfico de eficiencia de procesos
-const processEfficiencyData = [
+const processEfficiencyData: ProcessEfficiency[] = [
   { name: 'Activaciones', eficiencia: 87, volumen: 120 },
   { name: 'Comisiones', eficiencia: 75, volumen: 80 },
   { name: 'Soporte', eficiencia: 92, volumen: 150 },
@@ -195,11 +266,11 @@ const processEfficiencyData = [
 ];
 
 export default function ReportsPage() {
-  const [dateRange, setDateRange] = useState('year');
-  const [selectedWorkflows, setSelectedWorkflows] = useState([]);
-  const [showFilters, setShowFilters] = useState(false);
-  const [selectedModel, setSelectedModel] = useState(null);
-  const [selectedTab, setSelectedTab] = useState('overview');
+  const [dateRange, setDateRange] = useState<string>('year');
+  const [selectedWorkflows, setSelectedWorkflows] = useState<string[]>([]);
+  const [showFilters, setShowFilters] = useState<boolean>(false);
+  const [selectedModel, setSelectedModel] = useState<RequestModel | undefined>(undefined);
+  const [selectedTab, setSelectedTab] = useState<string>('overview');
 
   const workflowTypes = getWorkflowTypes();
   const statusData = getWorkflowStates();
@@ -207,11 +278,11 @@ export default function ReportsPage() {
   const areaData = generateAreaData(selectedWorkflows);
   const responseTimeData = generateResponseTimeData(selectedWorkflows);
 
-  const handleWorkflowToggle = (workflow) => {
+  const handleWorkflowToggle = (workflow: string) => {
     setSelectedWorkflows((prev) => (prev.includes(workflow) ? prev.filter((w) => w !== workflow) : [...prev, workflow]));
   };
 
-  const handleExport = (format) => {
+  const handleExport = (format: string) => {
     // Simulación de exportación
     toast.warning('Exportando reporte', {
       description: `El reporte se está exportando en formato ${format}`,
@@ -225,7 +296,7 @@ export default function ReportsPage() {
     }, 2000);
   };
 
-  const handleModelSelect = (modelId) => {
+  const handleModelSelect = (modelId: string) => {
     const model = requestModels.find((m) => m.id === Number.parseInt(modelId));
     setSelectedModel(model);
   };

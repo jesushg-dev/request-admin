@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { useFindManyRequestChangeLog } from '@/services/api/hooks';
 import { Prisma } from '@prisma/client';
 import { format, parseISO } from 'date-fns';
@@ -25,6 +25,7 @@ export const FormSubmissionDefaultArgs = Prisma.validator<Prisma.RequestChangeLo
     oldValue: true,
     newValue: true,
     createdAt: true,
+    metadata: true,
   },
 });
 
@@ -35,16 +36,64 @@ interface TimelineProps {
   tenantId: string;
 }
 
+const tryParseJSON = (str: string | null | undefined): Record<string, any> | null => {
+  if (!str) return null;
+  try {
+    const parsed = JSON.parse(str);
+    return typeof parsed === 'object' && parsed !== null ? parsed : null;
+  } catch {
+    return null;
+  }
+};
+
 function RequestActivities({ requestId, tenantId }: TimelineProps) {
   const t = useTranslations('admin.request.view.history');
   const { data, isLoading, isError, error, refetch } = useFindManyRequestChangeLog({
-    select: { id: true, changedAt: true, fieldName: true, requestId: true, changedBy: true, tenantId: true, oldValue: true, newValue: true, createdAt: true },
+    ...FormSubmissionDefaultArgs,
     where: { requestId, tenantId },
     orderBy: { changedAt: 'desc' },
   });
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
 
-  const getDisplayData = (item: TimelineItem) => {
+  const toggleExpand = useCallback((id: string) => {
+    setExpandedItem((current) => (current === id ? null : id));
+  }, []);
+
+  if (isLoading)
+    return (
+      <div className="flex flex-col gap-4">
+        {[...Array(3)].map((_, i) => (
+          <Placeholder key={i} />
+        ))}
+      </div>
+    );
+
+  if (isError && error) return <ErrorRetryFallback error={error} onRetry={refetch} />;
+
+  return (
+    <div className="flex-1 w-full gap-4 flex flex-col overflow-auto">
+      {data ? (
+        <div className="flex flex-col gap-2 w-full">
+          {data.map((item) => (
+            <TimelineItemComponent key={item.id} item={item} isExpanded={expandedItem === item.id} onToggle={() => toggleExpand(item.id)} t={t} />
+          ))}
+        </div>
+      ) : (
+        <p>{t('loading')}</p>
+      )}
+    </div>
+  );
+}
+
+interface TimelineItemComponentProps {
+  item: TimelineItem;
+  isExpanded: boolean;
+  onToggle: () => void;
+  t: ReturnType<typeof useTranslations<'admin.request.view.history'>>;
+}
+
+const TimelineItemComponent = memo(({ item, isExpanded, onToggle, t }: TimelineItemComponentProps) => {
+  const displayData = useMemo(() => {
     const date = new Date(item.changedAt);
 
     if (isNaN(date.getTime())) {
@@ -74,111 +123,140 @@ function RequestActivities({ requestId, tenantId }: TimelineProps) {
       fullDate: format(date, 'PPP', { locale: es }),
       userId: item.changedBy || t('unknownUser'),
     };
-  };
+  }, [item.changedAt, item.fieldName, item.changedBy, t]);
 
-  const toggleExpand = (id: string) => {
-    setExpandedItem(expandedItem === id ? null : id);
-  };
+  const metadataContent = useMemo(() => {
+    const metadataObj = tryParseJSON(item.metadata);
+    if (metadataObj) {
+      return (
+        <div className="grid gap-2">
+          <span className="font-medium">{t('metadata')}:</span>
+          <div className="grid gap-2">
+            {Object.entries(metadataObj).map(([key, value]) => (
+              <div key={key} className="flex items-center gap-2 border rounded p-2 bg-muted/30">
+                <span className="font-semibold">{key}:</span>
+                <span className="text-xs text-muted-foreground">{String(value)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+    return (
+      <div className="grid grid-cols-[120px_1fr] gap-2">
+        <span className="font-medium">{t('metadata')}:</span>
+        <span>{item.metadata}</span>
+      </div>
+    );
+  }, [item.metadata, t]);
 
-  if (isLoading) return <Placeholder />;
+  const changesContent = useMemo(() => {
+    const oldObj = tryParseJSON(item.oldValue);
+    const newObj = tryParseJSON(item.newValue);
 
-  if (isError && error) return <ErrorRetryFallback error={error} onRetry={refetch} />;
+    if (oldObj && newObj) {
+      const allKeys = Array.from(new Set([...Object.keys(oldObj), ...Object.keys(newObj)]));
+      return (
+        <div className="grid gap-2">
+          <span className="font-medium">{t('change')}:</span>
+          <div className="grid gap-2">
+            {allKeys.map((key) => (
+              <div key={key} className="flex items-center gap-2 border rounded p-2 bg-muted/30">
+                <span className="font-semibold">{key}:</span>
+                <span className="text-xs text-muted-foreground">{oldObj[key] !== undefined ? `"${oldObj[key]}"` : '—'}</span>
+                <span className="mx-1">→</span>
+                <span className="text-xs text-muted-foreground">{newObj[key] !== undefined ? `"${newObj[key]}"` : '—'}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-[120px_1fr] gap-2">
+        <span className="font-medium">{t('change')}:</span>
+        <span>
+          {item.oldValue !== null ? `"${item.oldValue}"` : '—'} → {item.newValue !== null ? `"${item.newValue}"` : '—'}
+        </span>
+      </div>
+    );
+  }, [item.oldValue, item.newValue, t]);
 
   return (
-    <div className="flex-1 w-full gap-4 flex flex-col">
-      {data ? (
-        <>
-          {data.map((item) => {
-            const { dayOfWeek, dayNumber, title, time, fullDate, userId } = getDisplayData(item);
-            const isExpanded = item.id === expandedItem;
+    <div className={cn('rounded-lg border transition-colors overflow-hidden', isExpanded ? 'bg-muted/70 border-muted-foreground/20' : 'bg-background hover:bg-muted/50')}>
+      <div className="flex items-center cursor-pointer" onClick={onToggle}>
+        <div
+          className={cn(
+            'flex flex-col items-center justify-center p-4 min-w-[80px] text-center border-r relative',
+            isExpanded && 'after:absolute after:left-0 after:top-0 after:h-full after:w-1 after:bg-primary'
+          )}>
+          <div className={cn('text-sm font-medium', isExpanded ? 'text-foreground' : 'text-muted-foreground')}>{displayData.dayOfWeek}</div>
+          <div className="text-3xl font-bold">{displayData.dayNumber}</div>
+        </div>
 
-            return (
-              <div key={item.id} className={cn('rounded-lg border transition-colors overflow-hidden', isExpanded ? 'bg-muted/70 border-muted-foreground/20' : 'bg-background hover:bg-muted/50')}>
-                <div className="flex items-center cursor-pointer" onClick={() => toggleExpand(item.id)}>
-                  <div
-                    className={cn(
-                      'flex flex-col items-center justify-center p-4 min-w-[80px] text-center border-r relative',
-                      isExpanded && 'after:absolute after:left-0 after:top-0 after:h-full after:w-1 after:bg-primary'
-                    )}>
-                    <div className={cn('text-sm font-medium', isExpanded ? 'text-foreground' : 'text-muted-foreground')}>{dayOfWeek}</div>
-                    <div className="text-3xl font-bold">{dayNumber}</div>
-                  </div>
+        <div className="flex-1 p-4">
+          <div className="font-medium">{displayData.title}</div>
+          <div className="flex items-center text-sm">
+            <div className={cn('flex items-center gap-1', isExpanded ? 'text-foreground/80' : 'text-muted-foreground')}>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+              {displayData.time}
+            </div>
+          </div>
+        </div>
 
-                  <div className="flex-1 p-4">
-                    <div className="font-medium">{title}</div>
-                    <div className="flex items-center text-sm">
-                      <div className={cn('flex items-center gap-1', isExpanded ? 'text-foreground/80' : 'text-muted-foreground')}>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="12" cy="12" r="10" />
-                          <polyline points="12 6 12 12 16 14" />
-                        </svg>
-                        {time}
-                      </div>
-                    </div>
-                  </div>
+        <div className="p-4">
+          <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.3 }}>
+            <ChevronDown className={cn('h-5 w-5', isExpanded ? 'text-foreground' : 'text-muted-foreground')} />
+          </motion.div>
+        </div>
+      </div>
 
-                  <div className="p-4">
-                    <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.3 }}>
-                      <ChevronDown className={cn('h-5 w-5', isExpanded ? 'text-foreground' : 'text-muted-foreground')} />
-                    </motion.div>
-                  </div>
-                </div>
-
-                <AnimatePresence>
-                  {isExpanded && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="border-t border-muted-foreground/20 px-4 py-3 bg-background/80">
-                      <div className="grid gap-2 text-sm">
-                        <div className="grid grid-cols-[120px_1fr] gap-2">
-                          <span className="font-medium">{t('requestId')}:</span>
-                          <span>{item.requestId}</span>
-                        </div>
-                        <div className="grid grid-cols-[120px_1fr] gap-2">
-                          <span className="font-medium">{t('fullDate')}:</span>
-                          <span>{fullDate}</span>
-                        </div>
-                        <div className="grid grid-cols-[120px_1fr] gap-2">
-                          <span className="font-medium">{t('modifiedBy')}:</span>
-                          <span>{userId}</span>
-                        </div>
-                        {item.tenantId && (
-                          <div className="grid grid-cols-[120px_1fr] gap-2">
-                            <span className="font-medium">{t('tenantId')}:</span>
-                            <span>{item.tenantId}</span>
-                          </div>
-                        )}
-                        {(item.oldValue !== undefined || item.newValue !== undefined) && (
-                          <div className="grid grid-cols-[120px_1fr] gap-2">
-                            <span className="font-medium">{t('change')}:</span>
-                            <span>
-                              {item.oldValue !== null ? `"${item.oldValue}"` : '—'} → {item.newValue !== null ? `"${item.newValue}"` : '—'}
-                            </span>
-                          </div>
-                        )}
-                        {item.createdAt && (
-                          <div className="grid grid-cols-[120px_1fr] gap-2">
-                            <span className="font-medium">{t('created')}:</span>
-                            <span>{format(parseISO(item.createdAt.toISOString()), 'Pp', { locale: es })}</span>
-                          </div>
-                        )}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="border-t border-muted-foreground/20 px-4 py-3 bg-background/80">
+            <div className="grid gap-2 text-sm">
+              <div className="grid grid-cols-[120px_1fr] gap-2">
+                <span className="font-medium">{t('requestId')}:</span>
+                <span>{item.requestId}</span>
               </div>
-            );
-          })}
-        </>
-      ) : (
-        <p>{t('loading')}</p>
-      )}
+              <div className="grid grid-cols-[120px_1fr] gap-2">
+                <span className="font-medium">{t('fullDate')}:</span>
+                <span>{displayData.fullDate}</span>
+              </div>
+              <div className="grid grid-cols-[120px_1fr] gap-2">
+                <span className="font-medium">{t('modifiedBy')}:</span>
+                <span>{displayData.userId}</span>
+              </div>
+              {item.tenantId && (
+                <div className="grid grid-cols-[120px_1fr] gap-2">
+                  <span className="font-medium">{t('tenantId')}:</span>
+                  <span>{item.tenantId}</span>
+                </div>
+              )}
+              {changesContent}
+              {metadataContent}
+              {item.createdAt && (
+                <div className="grid grid-cols-[120px_1fr] gap-2">
+                  <span className="font-medium">{t('created')}:</span>
+                  <span>{format(parseISO(item.createdAt.toISOString()), 'Pp', { locale: es })}</span>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
-}
+});
 
 function Placeholder() {
   return (

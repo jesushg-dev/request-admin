@@ -1124,12 +1124,6 @@
           "status": "Status",
           "created": "Created",
           "submittedOn": "Submitted on",
-          "setStatus": "Set Status",
-          "confirmStatusChange": "Are you sure you want to change the status?",
-          "statusChange": "Status Change",
-          "updatingStatus": "Updating status...",
-          "statusUpdated": "Status has been updated.",
-          "statusUpdateError": "Error updating status: {error}",
           "unknownError": "An unknown error occurred.",
           "confirmPriorityChange": "Are you sure you want to change the priority?",
           "priorityChange": "Priority Change",
@@ -1143,12 +1137,20 @@
           "area": "Area",
           "currentStatus": "Current Status",
           "changeStatus": "Change",
-          "changePriority": "Change",
+          "changePriority": "Change priority",
           "progress": "Progress",
           "updated": "Updated",
           "dates": "Dates",
           "assignedTo": "Assigned to",
-          "requester": "Requester"
+          "requester": "Requester",
+          "statusState": "Request State",
+          "manageRequest": "Manage Request",
+          "assignToUser": "Assign to user",
+          "reassignDepartment": "Reassign department",
+          "printRequest": "Print request",
+          "exportAsPDF": "Export as PDF",
+          "reopenRequest": "Reopen request",
+          "cancelRequest": "Cancel request"
         },
         "tabs": {
           "requirements": "Requirements",
@@ -1191,7 +1193,10 @@
             "slaEnd": "SLA End",
             "timeElapsed": "Time Elapsed",
             "remainingTime": "Remaining Time",
-            "comments": "Comments"
+            "comments": "Comments",
+            "status": "Status",
+            "priority": "Priority",
+            "isActive": "Is Active"
           },
           "fields": {
             "visibleFields": "Visible Fields",
@@ -1239,7 +1244,8 @@
           "requestCreated": "Request Created",
           "requestUpdated": "Request Updated",
           "requestApproved": "Request Approved",
-          "requestRejected": "Request Rejected"
+          "requestRejected": "Request Rejected",
+          "metadata": "Metadata"
         },
         "guidesViewer": {
           "guides": "Guides and documentation",
@@ -1289,6 +1295,11 @@
             "toast": {
               "title": "Area reassigned",
               "description": "Request #{requestId} has been reassigned to {area} successfully."
+            },
+            "reassign": "Reassign",
+            "confirm": {
+              "title": "Are you sure you want to change the request classification?",
+              "description": "This action modifies abruptly the request classification, and it will be required to refresh the page to see the changes."
             }
           },
           "requestCategory": {
@@ -1315,7 +1326,17 @@
           },
           "common": {
             "loading": "Loading..."
-          }
+          },
+          "area": "Area",
+          "requestType": "Request Type",
+          "assignmentType": "Assignment Type",
+          "toast": {
+            "loading": "Saving Changes...",
+            "error": "There was an error: {error}"
+          },
+          "requestCategoryUpdated": "Updated {date}",
+          "relatedRequestCount": "{count} similar requests",
+          "relatedAssignmentCount": "{count} similar assignment"
         },
         "requirementsStep": {
           "emptyTitle": "No requirements found",
@@ -1402,7 +1423,12 @@
           "loading": "Loading...",
           "success": "Request assigned successfully",
           "error": "Error assigning request: {error}"
-        }
+        },
+        "assignedTo": "Assigned to",
+        "reassigne": "Reassigne",
+        "removeAssignee": "Remove Assignee",
+        "coordinator": "Coordinator",
+        "addAssignee": "Add Assignee"
       },
       "status": {
         "title": "Change request status",
@@ -1435,8 +1461,11 @@
           "error": "An error occurred while changing the status: {error}"
         },
         "flowDescription": "{count, plural, one {A request in the \"{from}\" status can move to the following state: {to}.} other {A request in the \"{from}\" status can move to the following states: {to}.}}",
+        "flowDescriptionShort": "Can continue to: {to}.",
         "assignmentRequired": "Insufficient permissions",
-        "assignmentRequiredDescription": "Please contact the user who assigned you the request or someone with the required permission to make the change."
+        "assignmentRequiredDescription": "Please contact the user who assigned you the request or someone with the required permission to make the change.",
+        "changeStatus": "Change Status",
+        "draft": "Draft"
       },
       "priority": {
         "title": "Change request priority",
@@ -1463,7 +1492,9 @@
           "loading": "Updating priority...",
           "success": "The priority of request #{requestId} has been changed to \"{priority}\" successfully.",
           "error": "An error occurred while changing the priority: {error}"
-        }
+        },
+        "priority": "Priority",
+        "changePriority": "Change Priority"
       }
     },
     "requestType": {

@@ -15,6 +15,7 @@ import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-advanced-toolbar';
@@ -34,7 +35,7 @@ export const RequestAssignmentDefaultArgs = Prisma.validator<Prisma.RequestAssig
         role: true,
         userTenant: {
           select: {
-            user: { select: { id: true, username: true } },
+            user: { select: { id: true, email: true } },
             person: { select: { id: true, firstName: true, lastName: true } },
           },
         },
@@ -89,7 +90,7 @@ const AssignmentHistoryDataTable: React.FC<AssignmentHistoryDataTableProps> = ({
     pageCount,
     enableAdvancedFilter: true,
     initialState: {
-      sorting: [{ id: 'assignmentDate', desc: false }],
+      sorting: [{ id: 'assignmentDate', desc: true }],
       columnVisibility: {
         slaStart: false,
         slaDeadline: false,
@@ -140,11 +141,13 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
       meta: { group: 'basic' },
     },
     {
-      id: 'usuarios',
+      id: 'users',
       header: t('columns.users'),
       cell: ({ row }) => {
         const users = row.original.assignedUsers;
-        return users.map((user) => (user.userTenant.person ? `${user.userTenant.person.firstName} ${user.userTenant.person.lastName}` : `@${user.userTenant.user.username}`)).join(', ');
+        return users
+          .map((user) => (user.userTenant.person ? `${user.userTenant.person.firstName} ${user.userTenant.person.lastName} (${user.userTenant.user.email})` : `${user.userTenant.user.email}`))
+          .join(', ');
       },
       meta: { group: 'basic' },
     },
@@ -173,6 +176,26 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
       header: t('columns.assignmentCategory'),
       cell: ({ row }) => <Badge variant="outline">{row.original.assignmentCategory?.name ?? 'N/A'}</Badge>,
       meta: { group: 'categories' },
+    },
+    {
+      id: 'status',
+      accessorKey: 'status.name',
+      header: t('columns.status'),
+      cell: ({ row }) => <Badge variant="outline">{row.original.status?.name ?? 'N/A'}</Badge>,
+    },
+    {
+      id: 'priority',
+      accessorKey: 'priority.name',
+      header: t('columns.priority'),
+      cell: ({ row }) => <Badge variant="outline">{row.original.priority?.name ?? 'N/A'}</Badge>,
+      meta: { group: 'basic' },
+    },
+    {
+      id: 'isActive',
+      accessorKey: 'isActive',
+      header: t('columns.isActive'),
+      cell: ({ row }) => <Checkbox checked={row.original.isActive} disabled />,
+      meta: { group: 'basic' },
     },
     {
       id: 'slaStart',

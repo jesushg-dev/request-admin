@@ -24,7 +24,8 @@
     "generate": "npx zenstack generate && npx prisma db push && prettier --write \"src/services/api/**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "test": "jest",
     "test:watch": "jest --watch",
-    "cypress:open": "cypress open"
+    "cypress:open": "cypress open",
+    "type": "npx tsc --noEmit --pretty"
   },
   "prettier": {
     "endOfLine": "lf",

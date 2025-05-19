@@ -1117,7 +1117,7 @@
         "contact_support": "Por favor, vuelva más tarde o contacte al soporte si necesita asistencia inmediata.",
         "requestDetails": {
           "edit": "Editar",
-          "submissions": "Envíos",
+          "submissions": "Formularios",
           "requirements": "Requisitos",
           "currentSla": "SLA Actual",
           "resolution": "Resolución",
@@ -1129,12 +1129,6 @@
           "status": "Estado",
           "created": "Creado",
           "submittedOn": "Enviado el",
-          "setStatus": "Establecer el estado",
-          "confirmStatusChange": "¿Estás seguro de que quieres cambiar el estado?",
-          "statusChange": "Cambio de Estado",
-          "updatingStatus": "Actualizando estado...",
-          "statusUpdated": "El estado ha sido actualizado.",
-          "statusUpdateError": "Error al actualizar el estado: {error}",
           "unknownError": "Ocurrió un error desconocido.",
           "confirmPriorityChange": "¿Estás seguro de que quieres cambiar la prioridad?",
           "priorityChange": "Cambio de Prioridad",
@@ -1148,18 +1142,26 @@
           "area": "Área",
           "currentStatus": "Estado actual",
           "changeStatus": "Cambiar",
-          "changePriority": "Cambiar",
+          "changePriority": "Cambiar prioridad",
           "progress": "Progreso",
           "updated": "Actualizado",
           "dates": "Fechas",
           "assignedTo": "Asignado a",
-          "requester": "Solicitante"
+          "requester": "Solicitante",
+          "statusState": "Estado de solicitud",
+          "manageRequest": "Administrar solicitud",
+          "assignToUser": "Asignar a usuario",
+          "reassignDepartment": "Reasignar departamento",
+          "printRequest": "Imprimir solicitud",
+          "exportAsPDF": "Exportar como PDF",
+          "reopenRequest": "Reabrir solicitud",
+          "cancelRequest": "Cancelar solicitud"
         },
         "tabs": {
           "requirements": "Requerimientos",
           "executionModel": "Modelo de Ejecución",
           "guides": "Guías",
-          "submissions": "Submisiones",
+          "submissions": "Formularios",
           "attachments": "Adjuntos",
           "comments": "Comentarios",
           "assignments": "Asignaciones",
@@ -1196,7 +1198,10 @@
             "slaEnd": "Fin SLA",
             "timeElapsed": "Tiempo Transcurrido",
             "remainingTime": "Tiempo Restante",
-            "comments": "Comentarios"
+            "comments": "Comentarios",
+            "status": "Estado",
+            "priority": "Prioridad",
+            "isActive": "Es activo"
           },
           "fields": {
             "visibleFields": "Campos Visibles",
@@ -1217,11 +1222,11 @@
           "noComments": "Sin comentarios"
         },
         "submissions": {
-          "title": "Submisiones",
-          "entityLabel": "Submisiones",
+          "title": "Formularios",
+          "entityLabel": "Formularios",
           "noSubmissions": {
-            "title": "No se encontraron submisiones",
-            "description": "No se encontraron submisiones para esta solicitud."
+            "title": "No se encontraron formularios",
+            "description": "No se encontraron formularios para esta solicitud."
           },
           "columns": {
             "visibility": "Visibilidad",
@@ -1244,7 +1249,8 @@
           "requestCreated": "Solicitud Creada",
           "requestUpdated": "Solicitud Actualizada",
           "requestApproved": "Solicitud Aprobada",
-          "requestRejected": "Solicitud Rechazada"
+          "requestRejected": "Solicitud Rechazada",
+          "metadata": "Metadatos"
         },
         "guidesViewer": {
           "guides": "Guías y documentación",
@@ -1294,6 +1300,11 @@
             "toast": {
               "title": "Departamento reasignado",
               "description": "La solicitud #{requestId} ha sido reasignada a {area} correctamente."
+            },
+            "reassign": "Reasignar",
+            "confirm": {
+              "title": "¿Estás seguro de que quieres cambiar la clasificación de solicitudes?",
+              "description": "Esta acción modifica abruptamente la clasificación de solicitud, y será necesario actualizar la página para ver los cambios."
             }
           },
           "requestCategory": {
@@ -1320,7 +1331,17 @@
           },
           "common": {
             "loading": "Cargando..."
-          }
+          },
+          "area": "Área",
+          "requestType": "Tipo de solicitud",
+          "assignmentType": "Tipo de asignación",
+          "toast": {
+            "loading": "Guardando Cambios...",
+            "error": "Hubo un error: {error}"
+          },
+          "requestCategoryUpdated": "Actualizado {date}",
+          "relatedRequestCount": "{count} solicitudes similares",
+          "relatedAssignmentCount": "{count} Asignación similar"
         },
         "requirementsStep": {
           "emptyTitle": "No se encontraron requisitos",
@@ -1407,7 +1428,12 @@
           "loading": "Asignando...",
           "success": "Solicitud asignada correctamente",
           "error": "Error al asignar la solicitud: {error}"
-        }
+        },
+        "assignedTo": "Asignado a",
+        "reassigne": "Reasignar",
+        "removeAssignee": "Eliminar asignado",
+        "coordinator": "Coordinador",
+        "addAssignee": "Agregar asignado"
       },
       "status": {
         "title": "Cambiar estado de la solicitud",
@@ -1441,7 +1467,10 @@
         },
         "flowDescription": "{count, plural, one {Una solicitud en el estado \"{from}\" puede avanzar al siguiente estado: {to}.} other {Una solicitud en el estado \"{from}\" puede avanzar a los siguientes estados: {to}.}}",
         "assignmentRequired": "Permisos insuficientes",
-        "assignmentRequiredDescription": "Póngase en contacto con el usuario que le asignó la solicitud o alguien con el permiso requerido para hacer el cambio."
+        "assignmentRequiredDescription": "Póngase en contacto con el usuario que le asignó la solicitud o alguien con el permiso requerido para hacer el cambio.",
+        "changeStatus": "Cambiar Estado",
+        "flowDescriptionShort": "Puede continuar: {to}.",
+        "draft": "Borrador"
       },
       "priority": {
         "title": "Cambiar prioridad de la solicitud",
@@ -1468,7 +1497,9 @@
           "loading": "Actualizando prioridad...",
           "success": "La prioridad de la solicitud #{requestId} ha sido cambiada a \"{priority}\" correctamente.",
           "error": "Ocurrió un error al cambiar la prioridad: {error}"
-        }
+        },
+        "priority": "Prioridad",
+        "changePriority": "Prioridad de cambio"
       }
     },
     "requestType": {

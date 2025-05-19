@@ -9,6 +9,7 @@ import { UserTenantDefaultArgs } from '@/types/prisma/authorization';
 class AuthorizationError extends Error {}
 
 type AuthResult = {
+  isAdmin: boolean;
   hasPermissions: (required: PermissionAction | PermissionAction[], options?: { requireAll?: boolean }) => boolean;
   hasAreaPermissions: (areaId: string, required: PermissionAction | PermissionAction[], options?: { requireAll?: boolean }) => boolean;
 };
@@ -52,6 +53,8 @@ export const getAuthContext = async (tenantId: string): Promise<AuthResult> => {
   await loadPermissions();
 
   return {
+    isAdmin,
+
     hasPermissions: (required, options = {}) => {
       if (isAdmin) return true;
 
