@@ -15,27 +15,25 @@ export const AssignmentLevelDefaultArgs = Prisma.validator<Prisma.AssignmentHier
 
 type AssignmentLevel = Prisma.AssignmentHierarchyLevelGetPayload<typeof AssignmentLevelDefaultArgs>;
 
-interface AssignmentLevelTableProps {
-  row: Row<{ levels: Array<AssignmentLevel> }>;
+interface AssignmentHierarchyLevelTableProps {
+  levels: AssignmentLevel[];
   columns: ColumnDef<AssignmentLevel>[];
   isExpanded: boolean;
 }
 
-export function AssignmentHierarchyLevelTable({ row, columns, isExpanded }: AssignmentLevelTableProps) {
+export function AssignmentHierarchyLevelTable({ levels, columns, isExpanded }: AssignmentHierarchyLevelTableProps) {
   const table = useReactTable({
     columns,
-    data: row.original.levels,
+    data: levels,
     getCoreRowModel: getCoreRowModel(),
     getRowId: (originalRow) => originalRow.id,
   });
 
-  if (!isExpanded) {
-    return null;
-  }
+  if (!isExpanded) return null;
 
   return (
     <TableRow>
-      <TableCell colSpan={row.getVisibleCells().length} className="p-4">
+      <TableCell colSpan={columns.length} className="p-4">
         <DataTable table={table} />
       </TableCell>
     </TableRow>

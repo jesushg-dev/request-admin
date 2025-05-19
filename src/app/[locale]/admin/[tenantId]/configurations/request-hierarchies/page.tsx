@@ -87,7 +87,10 @@ const HierarchyMainPage: React.FC = () => {
       <DataTable
         table={table}
         isLoading={isLoading}
-        subComponent={{ columns: levelColumns, render: (props) => <RequestHierarchyLevelTable {...props} columns={levelColumns} isExpanded={props.row.getIsExpanded()} /> }}>
+        subComponent={{
+          columns: levelColumns,
+          render: ({ row, columns, isExpanded }) => <RequestHierarchyLevelTable levels={row.original.levels} columns={columns} isExpanded={isExpanded} />,
+        }}>
         <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
           <DataTableToolbarActions
             table={table}

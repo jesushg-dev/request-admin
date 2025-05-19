@@ -16,15 +16,15 @@ export const RequestLevelDefaultArgs = Prisma.validator<Prisma.RequestHierarchyL
 type RequestLevel = Prisma.RequestHierarchyLevelGetPayload<typeof RequestLevelDefaultArgs>;
 
 interface RequestLevelTableProps {
-  row: Row<{ levels: Array<RequestLevel> }>;
+  levels: Array<RequestLevel>;
   columns: ColumnDef<RequestLevel>[];
   isExpanded: boolean;
 }
 
-export function RequestHierarchyLevelTable({ row, columns, isExpanded }: RequestLevelTableProps) {
+export function RequestHierarchyLevelTable({ levels, columns, isExpanded }: RequestLevelTableProps) {
   const table = useReactTable({
     columns,
-    data: row.original.levels,
+    data: levels,
     getCoreRowModel: getCoreRowModel(),
     getRowId: (originalRow) => originalRow.id,
   });
@@ -35,7 +35,7 @@ export function RequestHierarchyLevelTable({ row, columns, isExpanded }: Request
 
   return (
     <TableRow>
-      <TableCell colSpan={row.getVisibleCells().length} className="p-4">
+      <TableCell colSpan={columns.length} className="p-4">
         <DataTable table={table} />
       </TableCell>
     </TableRow>

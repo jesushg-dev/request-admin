@@ -84,7 +84,13 @@ const AssignmentHierarchyMainPage: React.FC = () => {
 
   return (
     <DataTableShell table={table} floatingBar={<DataTableFloatingBar table={table} />}>
-      <DataTable table={table} isLoading={isLoading} subComponent={{ columns: levelColumns, render: (props) => <AssignmentHierarchyLevelTable {...props} /> }}>
+      <DataTable
+        table={table}
+        isLoading={isLoading}
+        subComponent={{
+          columns: levelColumns,
+          render: ({ row, isExpanded, columns }) => <AssignmentHierarchyLevelTable levels={row.original.levels} columns={columns} isExpanded={isExpanded} />,
+        }}>
         <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
           <DataTableToolbarActions
             table={table}
