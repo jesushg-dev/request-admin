@@ -63,8 +63,6 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
       <ResizablePanel minSize={30} defaultSize={70}>
         <div className="h-full p-4 overflow-hidden">
           <Tabs defaultValue="requirements" className="w-full h-full overflow-hidden flex flex-col">
-            {/* Main Tabs */}
-
             <div className="overflow-x-auto w-full">
               <TabsList className="flex gap-2 h-8 w-full">
                 <TabsTrigger className="h-7 text-xs" value="requirements">
@@ -94,7 +92,6 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
               </TabsList>
             </div>
 
-            {/* Execution Tab Content */}
             <TabsContent value="requirements" className="flex-1 flex flex-col overflow-hidden">
               <RequirementProgress tenantId={tenantId} requestId={slug} />
             </TabsContent>
@@ -121,12 +118,10 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
               )}
             </TabsContent>
 
-            {/* Comments Tab Content */}
             <TabsContent value="comments" className="flex-1 flex flex-col overflow-hidden">
               <Messages currentUserTenantId={currentUser.userTenantId} channel={requestDetails.channel} tenantId={tenantId} />
             </TabsContent>
 
-            {/* Reference Tab Content */}
             <TabsContent value="assignments" className="flex-1 flex flex-col overflow-hidden">
               <AssignmentHistory tenantId={tenantId} requestId={slug} />
             </TabsContent>

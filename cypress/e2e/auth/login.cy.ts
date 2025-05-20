@@ -12,24 +12,28 @@ describe('Login Page', () => {
 
   it('should show validation errors for empty fields', () => {
     cy.get('button[type="submit"]').click();
-    cy.get('form').contains('Required').should('be.visible');
+    cy.contains('Invalid email').should('be.visible');
+    cy.contains('Password is required').should('be.visible');
   });
 
-  it('should show validation error for invalid email', () => {
-    cy.get('input[type="email"]').type('invalid-email');
+  it('should not submit the form or make a request for invalid email', () => {
+    cy.intercept('POST', '/api/auth/login').as('loginRequest');
+
+    cy.get('input[type="email"]').should('not.be.disabled').type('invalid-email');
     cy.get('button[type="submit"]').click();
-    cy.get('form').contains('Invalid email').should('be.visible');
+
+    cy.wait(500);
+    cy.get('@loginRequest.all').should('have.length', 0);
   });
 
   it('should show error message for invalid credentials', () => {
-    cy.get('input[type="email"]').type('test@example.com');
-    cy.get('input[type="password"]').type('wrongpassword');
+    cy.get('input[type="email"]').should('not.be.disabled').type('test@example.com');
+    cy.get('input[type="password"]').should('not.be.disabled').type('wrongpassword');
     cy.get('button[type="submit"]').click();
-    cy.get('[role="alert"]').should('be.visible');
+    cy.contains('An error occurred:').should('be.visible');
   });
 
   it('should successfully login with valid credentials', () => {
-    // Replace these with your test user credentials
     const testEmail = Cypress.env('TEST_USER_EMAIL');
     const testPassword = Cypress.env('TEST_USER_PASSWORD');
 
@@ -37,18 +41,16 @@ describe('Login Page', () => {
     cy.get('input[type="password"]').type(testPassword);
     cy.get('button[type="submit"]').click();
 
-    // Add assertion for successful login
-    // This will depend on your application's behavior after successful login
     cy.url().should('not.include', '/auth/login');
   });
 
   it('should navigate to forgot password page', () => {
-    cy.contains('Forgot password?').click();
+    cy.get('a[href="/auth/reset"]').click();
     cy.url().should('include', '/auth/reset');
   });
 
   it('should navigate to register page', () => {
-    cy.contains('No account?').click();
+    cy.contains("Don't have an account?").click();
     cy.url().should('include', '/auth/register');
   });
 
@@ -58,7 +60,7 @@ describe('Login Page', () => {
 
     cy.get('input[type="email"]').type(testEmail);
     cy.get('input[type="password"]').type(testPassword);
-    cy.get('input[type="checkbox"]').check();
+    cy.get('button#remember').click();
     cy.get('button[type="submit"]').click();
 
     // After successful login, refresh the page

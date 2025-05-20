@@ -5,30 +5,10 @@ import { db } from '@/server/db-server';
 import { Prisma } from '@prisma/client';
 
 import { RequestMetadata } from '@/types/prisma/request';
+import { AuthorizationError, ConcurrentModificationError, ValidationError } from '@/lib/error';
 import { normalizeValue } from '@/lib/utils';
 import { AssignRequestFormValues } from '@/components/common/request/detail/assign-request-modal';
 import { ReassignAreaFormValues } from '@/components/common/request/detail/reassign-area-modal';
-
-class ValidationError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'ValidationError';
-  }
-}
-
-class AuthorizationError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'AuthorizationError';
-  }
-}
-
-class ConcurrentModificationError extends Error {
-  constructor(message: string = 'Database update conflict occurred') {
-    super(message);
-    this.name = 'ConcurrentModificationError';
-  }
-}
 
 type UUID = string;
 type FieldName = 'status' | 'priority';
