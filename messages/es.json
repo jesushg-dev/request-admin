@@ -18,10 +18,37 @@
     "actions": {
       "export": "Exportar"
     },
+    "viewOptions": {
+      "ariaLabel": "Alternar columnas",
+      "text": "Opciones de vista",
+      "placeholder": "Filtrar columnas...",
+      "emptyTitle": "No se encontraron columnas."
+    },
+    "filters": {
+      "title": "Filtros",
+      "noFilters": "No hay filtros aplicados",
+      "noFiltersDescription": "Agrega filtros para refinar tus resultados.",
+      "addFilter": "Agregar filtro",
+      "resetFilters": "Restablecer filtros",
+      "where": "Donde",
+      "selectField": "Seleccionar campo",
+      "searchFields": "Buscar campos...",
+      "noFieldsFound": "No se encontraron campos.",
+      "selectOperator": "Seleccionar operador de filtro",
+      "enterValue": "Ingresar un valor...",
+      "pickDate": "Seleccionar fecha",
+      "searchOptions": "Buscar opciones...",
+      "noOptionsFound": "No se encontraron opciones.",
+      "selected": "seleccionado",
+      "true": "Verdadero",
+      "false": "Falso",
+      "isEmpty": "está vacío",
+      "isNotEmpty": "no está vacío"
+    },
     "delete": {
       "title": "¿Estás completamente seguro?",
-      "description": "Esta acción no se puede deshacer. Esto eliminará permanentemente tus {count} {entity}{count, plural, one {} other {s}} de nuestros servidores.",
-      "trigger": "Eliminar ({count} {entity}{count, plural, one {} other {s}})",
+      "description": "{count, plural, one {Esta acción no se puede deshacer. Esto eliminará permanentemente tu {entity} de nuestros servidores.} other {Esta acción no se puede deshacer. Esto eliminará permanentemente tus {entityPlural} de nuestros servidores.}}",
+      "trigger": "{count, plural, one {Eliminar 1 {entity}} other {Eliminar # {entityPlural}}}",
       "confirm": "Eliminar",
       "cancel": "Cancelar",
       "success": "Se eliminaron correctamente {count} {entity}{count, plural, one {} other {s}}.",
@@ -32,7 +59,40 @@
       "clearSelection": "Borrar selección",
       "export": "Exportar {entity}",
       "delete": "Eliminar {entity}"
-    }
+    },
+    "pagination": {
+      "rowsSelected": "{selectedCount} de {totalCount} {totalCount, plural, one {fila seleccionada} other {filas seleccionadas}}",
+      "rowsPerPage": "Filas por página",
+      "pageInfo": "Página {current} de {total}",
+      "firstPage": "Ir a la primera página",
+      "previousPage": "Ir a la página anterior",
+      "nextPage": "Ir a la página siguiente",
+      "lastPage": "Ir a la última página"
+    },
+    "columnHeader": {
+      "sortAscHint": "Orden ascendente. Click para ordenar descendente.",
+      "sortDescHint": "Orden descendente. Click para ordenar ascendente.",
+      "sortNoneHint": "Sin ordenar. Click para ordenar ascendente.",
+      "sortAsc": "Asc",
+      "sortDesc": "Desc",
+      "hide": "Ocultar"
+    },
+    "emptyState": {
+      "title": "No hay datos",
+      "description": "No hay datos para mostrar"
+    },
+    "sort": {
+      "title": "Ordenar",
+      "noSorting": "No hay ordenamiento aplicado",
+      "noSortingDescription": "Agrega ordenamiento para organizar tus resultados.",
+      "addSort": "Agregar ordenamiento",
+      "resetSorting": "Restablecer ordenamiento",
+      "searchFields": "Buscar campos...",
+      "noFieldsFound": "No se encontraron campos.",
+      "default": "Predeterminado",
+      "selectDirection": "Seleccionar dirección de ordenamiento"
+    },
+    "filterDatePlaceholder": "Seleccionar fecha"
   },
   "home": {
     "title": "Request Engine",
@@ -97,7 +157,8 @@
         "contact": "Contacto",
         "getDemo": "Solicita una Demo"
       }
-    }
+    },
+    "scheduleDemoButton": "Programe una demostración"
   },
   "auth": {
     "loginForm": {
@@ -128,7 +189,9 @@
       },
       "loading": "Cargando...",
       "success": "¡Bienvenido de nuevo",
-      "error": "Ha ocurrido un error: {error}"
+      "error": "Ha ocurrido un error: {error}",
+      "headerTitle": "Iniciar sesión",
+      "headerLabel": "Accede a tu cuenta para continuar"
     },
     "twoFactor": {
       "headerTitle": "Autenticación de dos factores",
@@ -1052,9 +1115,9 @@
       "view": {
         "no_documents_found": "No se encontraron documentos",
         "contact_support": "Por favor, vuelva más tarde o contacte al soporte si necesita asistencia inmediata.",
-        "projectDetails": {
+        "requestDetails": {
           "edit": "Editar",
-          "submissions": "Envíos",
+          "submissions": "Formularios",
           "requirements": "Requisitos",
           "currentSla": "SLA Actual",
           "resolution": "Resolución",
@@ -1066,27 +1129,42 @@
           "status": "Estado",
           "created": "Creado",
           "submittedOn": "Enviado el",
-          "setStatus": "Establecer el estado",
-          "confirmStatusChange": "¿Estás seguro de que quieres cambiar el estado?",
-          "statusChange": "Cambio de Estado",
-          "updatingStatus": "Actualizando estado...",
-          "statusUpdated": "El estado ha sido actualizado.",
-          "statusUpdateError": "Error al actualizar el estado: {error}",
           "unknownError": "Ocurrió un error desconocido.",
           "confirmPriorityChange": "¿Estás seguro de que quieres cambiar la prioridad?",
           "priorityChange": "Cambio de Prioridad",
           "updatingPriority": "Actualizando prioridad...",
           "priorityUpdated": "La prioridad ha sido actualizada.",
-          "priorityUpdateError": "Error al actualizar la prioridad: {error}"
+          "priorityUpdateError": "Error al actualizar la prioridad: {error}",
+          "executionModel": "Modelo de ejecución",
+          "requestCategory": "Categoría de solicitud",
+          "issueDescription": "Descripción",
+          "assignmentCategory": "Categoría de tarea",
+          "area": "Área",
+          "currentStatus": "Estado actual",
+          "changeStatus": "Cambiar",
+          "changePriority": "Cambiar prioridad",
+          "progress": "Progreso",
+          "updated": "Actualizado",
+          "dates": "Fechas",
+          "assignedTo": "Asignado a",
+          "requester": "Solicitante",
+          "statusState": "Estado de solicitud",
+          "manageRequest": "Administrar solicitud",
+          "assignToUser": "Asignar a usuario",
+          "reassignDepartment": "Reasignar departamento",
+          "printRequest": "Imprimir solicitud",
+          "exportAsPDF": "Exportar como PDF",
+          "reopenRequest": "Reabrir solicitud",
+          "cancelRequest": "Cancelar solicitud"
         },
         "tabs": {
           "requirements": "Requerimientos",
-          "assignments": "Asignaciones",
-          "chat": "Chat",
-          "submissions": "Envíos",
+          "executionModel": "Modelo de Ejecución",
           "guides": "Guías",
-          "attachments": "Archivos Adjuntos",
-          "related": "Relacionado",
+          "submissions": "Formularios",
+          "attachments": "Adjuntos",
+          "comments": "Comentarios",
+          "assignments": "Asignaciones",
           "history": "Historial"
         },
         "requirements": {
@@ -1120,7 +1198,10 @@
             "slaEnd": "Fin SLA",
             "timeElapsed": "Tiempo Transcurrido",
             "remainingTime": "Tiempo Restante",
-            "comments": "Comentarios"
+            "comments": "Comentarios",
+            "status": "Estado",
+            "priority": "Prioridad",
+            "isActive": "Es activo"
           },
           "fields": {
             "visibleFields": "Campos Visibles",
@@ -1141,28 +1222,17 @@
           "noComments": "Sin comentarios"
         },
         "submissions": {
-          "title": "Submisiones",
-          "entityLabel": "Submisiones",
+          "title": "Formularios",
+          "entityLabel": "Formularios",
           "noSubmissions": {
-            "title": "No se encontraron submisiones",
-            "description": "No se encontraron submisiones para esta solicitud."
+            "title": "No se encontraron formularios",
+            "description": "No se encontraron formularios para esta solicitud."
           },
           "columns": {
             "visibility": "Visibilidad",
             "formName": "Nombre del Formulario",
             "submittedAt": "Enviado el",
             "content": "Contenido"
-          }
-        },
-        "related": {
-          "title": "Incidentes Relacionados",
-          "entityLabel": "Incidentes",
-          "relateRequest": "Relacionar Solicitud",
-          "columns": {
-            "relatedId": "ID Incidente",
-            "issueSubject": "Asunto",
-            "createdAt": "Fecha de Creación",
-            "noSubject": "Sin asunto"
           }
         },
         "history": {
@@ -1179,27 +1249,116 @@
           "requestCreated": "Solicitud Creada",
           "requestUpdated": "Solicitud Actualizada",
           "requestApproved": "Solicitud Aprobada",
-          "requestRejected": "Solicitud Rechazada"
+          "requestRejected": "Solicitud Rechazada",
+          "metadata": "Metadatos"
+        },
+        "guidesViewer": {
+          "guides": "Guías y documentación",
+          "guidesDescription": "Documentación de referencia para resolver este tipo de solicitud",
+          "fileType": "Tipo de archivo",
+          "version": "Versión",
+          "lastUpdated": "Última actualización",
+          "viewGuide": "Ver guía",
+          "noGuidesFound": "No hay guías disponibles",
+          "noGuidesDescription": "Actualmente no hay guías disponibles para completar esta solicitud de servicio. Si tiene alguna duda o cree que falta un manual, por favor contacte con su supervisor o administrador.",
+          "guidesViewerTitle": "Guías para esta solicitud ({count})",
+          "guidesViewerDescription": "Aquí puede encontrar todas las guías relacionadas con esta solicitud. \nSeleccione una guía para ver más detalles o descargar el archivo."
         }
       },
       "form": {
-        "categoryStep": {
-          "titleRequest": "Categoría de Solicitud",
-          "titleAssignment": "Categoría de Asignación",
-          "areaLabel": "Área",
-          "areaDescription": "Seleccione el área donde se asigna la solicitud."
+        "classification": "Clasificación",
+        "compliance": "Cumplimiento",
+        "details": "Detalles",
+        "attachments": "Adjuntos",
+        "forms": "Formularios",
+        "summary": "Resumen",
+        "savingRequest": "Guardando solicitud...",
+        "uploadingFiles": "Subiendo archivos al servicio de almacenamiento",
+        "requestCreatedSuccessfully": "Solicitud creada con éxito",
+        "errorCreatingRequest": "Error al crear la solicitud",
+        "classificationStep": {
+          "reassign": {
+            "alertTitle": "Cambiar de área",
+            "alertDescription": "Al cambiar el área, se mantendrá el historial de la solicitud pero puede que debas volver a completar algunos campos requeridos en la nueva asignación.",
+            "area": {
+              "title": "Reasignar a otra área",
+              "description": "Cambia el área asignado a la solicitud #{requestId}",
+              "action": "Reasignar"
+            },
+            "reason": {
+              "label": "Motivo de la reasignación",
+              "description": "Explica por qué se está reasignando esta solicitud.",
+              "placeholder": "Explica por qué se está reasignando esta solicitud."
+            },
+            "notify": {
+              "label": "Notificar a",
+              "description": "¿A quién notificaremos?",
+              "requester": "Solo al solicitante",
+              "area": "Solo a la nueva área",
+              "both": "Ambos"
+            },
+            "toast": {
+              "title": "Departamento reasignado",
+              "description": "La solicitud #{requestId} ha sido reasignada a {area} correctamente."
+            },
+            "reassign": "Reasignar",
+            "confirm": {
+              "title": "¿Estás seguro de que quieres cambiar la clasificación de solicitudes?",
+              "description": "Esta acción modifica abruptamente la clasificación de solicitud, y será necesario actualizar la página para ver los cambios."
+            }
+          },
+          "requestCategory": {
+            "title": "Categoría de Solicitud",
+            "description": "Identifica la categoría de la solicitud brindando la información necesaria para su correcta gestión.",
+            "defaultLabel": "Categoría de Solicitud",
+            "defaultDescription": "Selecciona la categoría de la solicitud.",
+            "dynamicDescription": "Seleccionar \"{category}\"",
+            "selectDescription": "Seleccionar {level}.",
+            "selectPlaceholder": "Seleccionar"
+          },
+          "assignmentCategory": {
+            "title": "Categoría de Asignación",
+            "description": "Esto permitirá una correcta asignación de recursos y la distribución adecuada de la solicitud.",
+            "areaLabel": "Área",
+            "areaDescription": "Selecciona el área donde se asignará la solicitud.",
+            "defaultLabel": "Categoría de Asignación",
+            "defaultDescription": "Selecciona la categoría de asignación.",
+            "dynamicDescription": "Seleccionar {category}",
+            "selectPlaceholder": "Selecciona la categoría de asignación.",
+            "areaFirstPlaceholder": "Selecciona el área primero",
+            "selectDescription": "Seleccionar {level}",
+            "areaPlaceholder": "Área seleccionada"
+          },
+          "common": {
+            "loading": "Cargando..."
+          },
+          "area": "Área",
+          "requestType": "Tipo de solicitud",
+          "assignmentType": "Tipo de asignación",
+          "toast": {
+            "loading": "Guardando Cambios...",
+            "error": "Hubo un error: {error}"
+          },
+          "requestCategoryUpdated": "Actualizado {date}",
+          "relatedRequestCount": "{count} solicitudes similares",
+          "relatedAssignmentCount": "{count} Asignación similar"
         },
         "requirementsStep": {
           "emptyTitle": "No se encontraron requisitos",
           "emptyDescription": "No hay requisitos disponibles para las categorías seleccionadas.",
-          "title": "Requisitos ({{completed}}/{{total}})",
-          "total": "{{total}} requisitos en total",
-          "completed": "{{completed}} completados",
-          "pending": "{{pending}} pendientes",
+          "title": "Requisitos ({completed}/{total})",
+          "total": "{total} requisitos en total",
+          "completed": "{completed} completados",
+          "pending": "{pending} pendientes",
           "deselectAll": "Deseleccionar todo",
           "selectAll": "Seleccionar todo",
-          "progress": "{{progress}}% Completado",
-          "remaining": "{{pending}} restantes"
+          "progress": "{progress}% Completado",
+          "remaining": "{pending} restantes",
+          "filterOptions": {
+            "all": "Todos",
+            "selected": "Seleccionados",
+            "unselected": "No seleccionados"
+          }
         },
         "detailsStep": {
           "issueSubject": "Asunto del problema",
@@ -1208,19 +1367,26 @@
           "status": "Estado",
           "statusDescription": "El estado se usa para determinar el estado actual de la solicitud.",
           "priority": "Prioridad",
-          "priorityDescription": "La prioridad se usa para determinar el orden en que se manejan las solicitudes.",
+          "priorityDescription": "Determine cuán urgente es esta solicitud.",
           "comment": "Comentario",
           "commentPlaceholder": "Ingrese un comentario",
           "commentDescription": "El comentario se usa para proporcionar más información sobre la solicitud.",
           "description": "Descripción",
-          "descriptionDescription": "La descripción se usa para proporcionar más información sobre la solicitud."
+          "descriptionDescription": "La descripción se usa para proporcionar más información sobre la solicitud.",
+          "descriptionPlaceholder": "Escribe un texto descriptivo aquí ...",
+          "isDraft": "Es borrador",
+          "isDraftDescription": "Esta opción le permite guardar esta solicitud sin enviarla al área asignada, para deshabilitar esta opción, debe cumplir con los requisitos requeridos.",
+          "detailsStep": "Solicitar información",
+          "detailsStepDescription": "Ingrese los detalles necesarios para iniciar su solicitud de servicio"
         },
         "attachmentsStep": {
           "uploadFiles": "Subir archivos",
           "uploadNewFiles": "Solo podrá subir <strong>nuevos archivos</strong> en esta sección y estos serán <strong>guardados con la solicitud</strong>.",
           "modifyExistingFiles": "Si desea <strong>modificar archivos ya existentes</strong>, podrá hacerlo en la <link>sección de archivos adjuntos</link> o en el <link>dataroom generado con la solicitud</link>.",
           "images": "Imágenes",
-          "maxFileSize": "Tamaño máximo del archivo: 4MB"
+          "maxFileSize": "Tamaño máximo del archivo: 4MB",
+          "attachmentStep": "Adjuntar documentos",
+          "attachmentStepDescription": "Puede adjuntar cualquier documento adicional que considere apropiado."
         },
         "dynamicFormStep": {
           "emptyState": {
@@ -1238,17 +1404,102 @@
             "compliances": "Cumplimientos",
             "submissions": "Envíos",
             "attachments": "Adjuntos"
-          }
+          },
+          "requestDetails": "Detalles de solicitud"
         }
       },
-      "relatedIncidentForm": {
-        "relatedId": "ID Relacionado",
-        "relatedIdDescription": "Escriba el ID del incidente relacionado.",
-        "savingChanges": "Guardando cambios...",
-        "successSave": "Incidente relacionado ({id}) ha sido guardado exitosamente.",
-        "errorSave": "Error al guardar el incidente relacionado: {message}",
-        "saveChanges": "Guardar Cambios",
-        "addRelatedIncident": "Agregar Incidente Relacionado"
+      "assign": {
+        "title": "Asignar solicitud",
+        "description": "Asigna la solicitud #{requestId} a un usuario",
+        "area": "Departamento",
+        "currentAssignee": "Asignado actualmente a",
+        "assignee": {
+          "label": "Asignar a",
+          "description": "Selecciona el usuario al que se asignará la solicitud.",
+          "placeholder": "Selecciona un usuario"
+        },
+        "comments": {
+          "label": "Comentarios (opcional)",
+          "description": "Agrega un comentario sobre la asignación.",
+          "placeholder": "Añade un comentario sobre la asignación..."
+        },
+        "action": "Asignar",
+        "toast": {
+          "loading": "Asignando...",
+          "success": "Solicitud asignada correctamente",
+          "error": "Error al asignar la solicitud: {error}"
+        },
+        "assignedTo": "Asignado a",
+        "reassigne": "Reasignar",
+        "removeAssignee": "Eliminar asignado",
+        "coordinator": "Coordinador",
+        "addAssignee": "Agregar asignado"
+      },
+      "status": {
+        "title": "Cambiar estado de la solicitud",
+        "description": "Actualiza el estado de la solicitud #{requestId}",
+        "currentStatus": "Estado actual",
+        "flowTitle": "Flujo de estados",
+        "newStatus": {
+          "label": "Nuevo estado",
+          "description": "Selecciona el nuevo estado para la solicitud."
+        },
+        "comments": {
+          "label": "Comentarios (opcional)",
+          "description": "Agrega un comentario sobre el cambio de estado.",
+          "placeholder": "Agrega un comentario sobre el cambio de estado...",
+          "labelRequired": "Justificación (obligatoria)",
+          "descriptionRequired": "Debes justificar este cambio de estado.",
+          "placeholderRequired": "Explica por qué se realiza este cambio de estado..."
+        },
+        "resolution": {
+          "label": "Resolución",
+          "description": "Selecciona el tipo de resolución para la solicitud."
+        },
+        "action": "Guardar cambios",
+        "cancel": "Cancelar",
+        "reasonRequired": "Justificación requerida",
+        "reasonRequiredDescription": "Debes proporcionar una justificación para este cambio de estado.",
+        "toast": {
+          "loading": "Actualizando estado...",
+          "success": "La solicitud #{requestId} ha cambiado de \"{from}\" a \"{to}\" correctamente.",
+          "error": "Ocurrió un error al cambiar el estado: {error}"
+        },
+        "flowDescription": "{count, plural, one {Una solicitud en el estado \"{from}\" puede avanzar al siguiente estado: {to}.} other {Una solicitud en el estado \"{from}\" puede avanzar a los siguientes estados: {to}.}}",
+        "assignmentRequired": "Permisos insuficientes",
+        "assignmentRequiredDescription": "Póngase en contacto con el usuario que le asignó la solicitud o alguien con el permiso requerido para hacer el cambio.",
+        "changeStatus": "Cambiar Estado",
+        "flowDescriptionShort": "Puede continuar: {to}.",
+        "draft": "Borrador"
+      },
+      "priority": {
+        "title": "Cambiar prioridad de la solicitud",
+        "description": "Actualiza la prioridad de la solicitud #{requestId}",
+        "currentPriority": "Prioridad actual",
+        "newPriority": {
+          "label": "Nueva prioridad",
+          "description": "Selecciona la nueva prioridad para la solicitud."
+        },
+        "reason": {
+          "label": "Motivo del cambio",
+          "description": "Explica por qué se está cambiando la prioridad.",
+          "placeholder": "Agrega un motivo para el cambio de prioridad..."
+        },
+        "notify": {
+          "label": "¿Notificar al solicitante?",
+          "description": "El solicitante recibirá una notificación sobre el cambio de prioridad.",
+          "yes": "Sí",
+          "no": "No"
+        },
+        "action": "Guardar cambios",
+        "cancel": "Cancelar",
+        "toast": {
+          "loading": "Actualizando prioridad...",
+          "success": "La prioridad de la solicitud #{requestId} ha sido cambiada a \"{priority}\" correctamente.",
+          "error": "Ocurrió un error al cambiar la prioridad: {error}"
+        },
+        "priority": "Prioridad",
+        "changePriority": "Prioridad de cambio"
       }
     },
     "requestType": {
@@ -1280,7 +1531,141 @@
       },
       "create": {
         "title": "Categoría de Solicitud",
-        "subtitle": "Crea una nueva categoría de solicitud. Una categoría puede tener múltiples subcategorías recursivas según las necesidades de tu negocio."
+        "subtitle": "Crea una nueva categoría de solicitud. Una categoría puede tener múltiples subcategorías recursivas según las necesidades de tu negocio.",
+        "hierarchyLabel": "Jerarquía asociada",
+        "hierarchyDescription": "Selecciona la estructura organizacional relacionada",
+        "saveButton": "Guardar",
+        "savingChanges": "Guardando cambios...",
+        "changeHierarchyWarning": "¡Al cambiar de jerarquía se reiniciarán las categorías! ¿Deseas continuar?",
+        "saveSuccess": "Configuración guardada exitosamente",
+        "saveError": "Error al guardar: {error}",
+        "unknownError": "Error desconocido",
+        "editTitle": "Editar Categoría",
+        "createTitle": "Crear Nueva Categoría",
+        "cancel": "Cancelar",
+        "update": "Actualizar Categoría",
+        "create": "Crear Categoría",
+        "tabs": {
+          "basic": "Información Básica",
+          "requirements": "Requisitos",
+          "forms": "Formularios",
+          "sla": "SLA",
+          "executionSteps": "Pasos de Ejecución",
+          "guides": "Guías"
+        },
+        "basicTab": {
+          "name": "Nombre",
+          "namePlaceholder": "Nombre de la categoría",
+          "description": "Descripción",
+          "descriptionPlaceholder": "Descripción breve de esta categoría",
+          "active": "Activo",
+          "activeDescription": "¿Esta categoría está activa y disponible?",
+          "newClients": "Nuevos Clientes",
+          "newClientsDescription": "¿Disponible para nuevos clientes?",
+          "nameDescription": "Este nombre se utilizará para identificar la categoría en todo el sistema.",
+          "descriptionDescription": "Esta descripción ayudará a otros usuarios a comprender el propósito y el alcance de la categoría."
+        },
+        "requirementsTab": {
+          "title": "Requisitos",
+          "empty": "No hay requisitos seleccionados",
+          "addTitle": "Agregar Requisitos"
+        },
+        "formsTab": {
+          "title": "Formularios",
+          "empty": "No hay formularios seleccionados",
+          "addTitle": "Agregar Formularios"
+        },
+        "slaTab": {
+          "resolutionTime": "Tiempo de Resolución (horas)",
+          "resolutionDescription": "Tiempo máximo para resolver solicitudes en esta categoría",
+          "escalationTime": "Tiempo de Escalación (horas)",
+          "escalationDescription": "Tiempo antes de que la solicitud sea escalada"
+        },
+        "executionTab": {
+          "executionModel": "Modelo de Ejecución",
+          "executionModelDescription": "Configura los pasos necesarios para ejecutar este tipo de solicitud",
+          "noStepsConfigured": "No hay pasos configurados",
+          "totalEstimatedTime": "Tiempo Total Estimado",
+          "minutes": "minutos",
+          "linkedGuides": "Guías Vinculadas",
+          "noLinkedGuides": "No hay guías vinculadas",
+          "guideNotFound": "Guía no encontrada",
+          "updateSuccess": "Paso actualizado",
+          "updateSuccessDescription": "El paso ha sido actualizado correctamente",
+          "createSuccess": "Paso agregado",
+          "createSuccessDescription": "El paso ha sido agregado correctamente",
+          "deleteSuccess": "Paso eliminado",
+          "deleteSuccessDescription": "El paso ha sido eliminado correctamente",
+          "linkSuccess": "Guías vinculadas",
+          "linkSuccessDescription": "Las guías han sido vinculadas correctamente",
+          "moveUp": "Mover arriba",
+          "moveDown": "Mover abajo",
+          "deleteStep": "Eliminar paso",
+          "editStep": "Editar paso",
+          "addStep": "Agregar paso",
+          "stepName": "Nombre del paso",
+          "stepNameDescription": "Nombre descriptivo para identificar el paso en el proceso",
+          "stepNamePlaceholder": "Ej: Verificación de documentos",
+          "description": "Descripción",
+          "stepDescriptionDescription": "Detalles adicionales sobre el propósito del paso",
+          "stepDescriptionPlaceholder": "Ej: Revisar documentos de identidad válidos",
+          "estimatedTime": "Tiempo estimado",
+          "estimatedTimeDescription": "Tiempo aproximado que toma completar este paso",
+          "minutesPlaceholder": "Minutos",
+          "responsible": "Responsable",
+          "responsibleDescription": "Rol o área encargada de ejecutar este paso",
+          "responsiblePlaceholder": "Ej: Agente de servicio",
+          "cancel": "Cancelar",
+          "saveChanges": "Guardar cambios",
+          "createStep": "Crear paso",
+          "linkGuides": "Vincular guías",
+          "linkGuidesDescription": "Selecciona las guías relacionadas con este paso",
+          "selectGuides": "Guías disponibles",
+          "selectGuidesDescription": "Selecciona una o más guías para vincular",
+          "save": "Guardar"
+        },
+        "guidesTab": {
+          "guidesTitle": "Guías y Documentación",
+          "guidesDescription": "Administra las guías y documentos relacionados",
+          "addGuide": "Agregar Guía",
+          "noGuides": "No hay guías registradas",
+          "fileType": "Tipo de Archivo",
+          "version": "Versión",
+          "lastUpdated": "Actualizado",
+          "view": "Ver",
+          "download": "Descargar",
+          "editGuide": "Editar Guía",
+          "deleteGuide": "Eliminar Guía",
+          "newGuide": "Nueva Guía",
+          "editGuideDescription": "Modifica los detalles de la guía",
+          "newGuideDescription": "Completa los campos para agregar una nueva guía",
+          "title": "Título",
+          "titleDescription": "Nombre principal de la guía",
+          "titlePlaceholder": "Ej: Manual de usuario",
+          "guideDescriptionDescription": "Descripción detallada del contenido",
+          "descriptionPlaceholder": "Ej: Instrucciones de uso del sistema",
+          "fileTypeDescription": "Tipo de documento o recurso",
+          "selectFileType": "Selecciona un tipo",
+          "versionDescription": "Versión actual del documento",
+          "versionPlaceholder": "Ej: 1.0.1",
+          "fileUrl": "URL del Archivo",
+          "fileUrlDescription": "Enlace público al documento",
+          "fileUrlPlaceholder": "https://ejemplo.com/manual.pdf",
+          "lastUpdatedDescription": "Fecha de última actualización",
+          "createGuide": "Crear Guía",
+          "updateSuccess": "Guía actualizada",
+          "createSuccess": "Guía creada",
+          "deleteSuccess": "Guía eliminada",
+          "cancel": "Cancelar",
+          "saveChanges": "Guardar cambios",
+          "description": "Descripción",
+          "locale": "Locale"
+        },
+        "category": {
+          "loading": "Saving changes...",
+          "success": "Changes saved successfully",
+          "error": "Error saving changes: {error}"
+        }
       }
     },
     "role": {
@@ -1334,6 +1719,36 @@
         "savingChanges": "Guardando cambios...",
         "successSave": "Requisito '{name}' guardado exitosamente.",
         "errorSave": "Error al guardar el requisito: {message}"
+      }
+    },
+    "requirementType": {
+      "entityLabel": "Tipo de Requisito",
+      "columns": {
+        "name": "Nombre",
+        "description": "Descripción",
+        "createdAt": "Fecha de Creación"
+      },
+      "filters": {
+        "name": "Nombre",
+        "namePlaceholder": "Buscar por nombre",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Buscar por descripción",
+        "createdAt": "Fecha de Creación"
+      },
+      "form": {
+        "savingChanges": "Guardando cambios...",
+        "successSave": "{name} se ha guardado correctamente.",
+        "errorSave": "Error al guardar: {message}",
+        "name": "Nombre",
+        "namePlaceholder": "Introduce el nombre",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Introduce la descripción",
+        "isActive": "Activo",
+        "isActivePlaceholder": "Marca si está activo",
+        "isDefault": "Predeterminado",
+        "isDefaultPlaceholder": "Marca si es predeterminado",
+        "update": "Actualizar",
+        "create": "Crear"
       }
     },
     "security": {
@@ -2181,6 +2596,262 @@
         "create": "Crear",
         "saveChanges": "Guardar cambios"
       }
+    },
+    "requestPriorityType": {
+      "entityLabel": "Tipos de Prioridad de Solicitud",
+      "newRequestPriorityType": "Nuevo Tipo de Prioridad de Solicitud",
+      "dialog": {
+        "title": "Crear Nuevo Tipo de Prioridad de Solicitud",
+        "description": "Rellene los detalles para crear un nuevo tipo de prioridad de solicitud."
+      },
+      "form": {
+        "name": "Nombre",
+        "namePlaceholder": "Ingrese el nombre de la prioridad",
+        "color": "Color",
+        "colorPlaceholder": "Seleccione un color primario",
+        "preview": "Vista previa",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Ingrese la descripción",
+        "level": "Nivel",
+        "levelPlaceholder": "Ingrese el nivel de prioridad (0–100)",
+        "isActive": "Activo",
+        "isActivePlaceholder": "Alternar para activar o desactivar",
+        "isDefault": "Predeterminado",
+        "isDefaultPlaceholder": "Alternar para establecer como predeterminado",
+        "create": "Crear",
+        "update": "Actualizar",
+        "savingChanges": "Guardando cambios…",
+        "successSave": "Guardado exitosamente \"{name}\"",
+        "errorSave": "Error al guardar: {message}"
+      },
+      "actions": {
+        "cancel": "Cancelar",
+        "create": "Crear"
+      },
+      "columns": {
+        "name": "Nombre",
+        "selectRow": "Seleccionar fila",
+        "description": "Descripción",
+        "requests": "Solicitudes",
+        "requestsCount": "Cantidad de Solicitudes",
+        "createdAt": "Creado el"
+      },
+      "filters": {
+        "name": "Nombre",
+        "namePlaceholder": "Filtrar por nombre",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Filtrar por descripción",
+        "createdAt": "Creado el"
+      }
+    },
+    "workflow": {
+      "main": {
+        "entityLabel": "Flujos de trabajo",
+        "columns": {
+          "name": "Nombre",
+          "description": "Descripción",
+          "requestTypes": "Tipos de solicitud",
+          "states": "Estados",
+          "lastModified": "Última modificación",
+          "actions": "Acciones",
+          "default": "Es predeterminado"
+        },
+        "badges": {
+          "default": "Predeterminado",
+          "categories": "categorías",
+          "states": "estados",
+          "transitions": "transiciones",
+          "yes": "Sí",
+          "no": "No"
+        },
+        "filters": {
+          "name": "Nombre",
+          "createdAt": "Fecha de creación",
+          "default": "Predeterminado",
+          "namePlaceholder": "Filtrar por nombre...",
+          "createdAtPlaceholder": "Seleccionar fecha"
+        },
+        "actions": {
+          "view": "Ver",
+          "edit": "Editar",
+          "duplicate": "Duplicar",
+          "delete": "Eliminar"
+        }
+      },
+      "form": {
+        "workflowName": "Nombre del Flujo de Trabajo",
+        "workflowNameDescription": "El nombre de tu flujo de trabajo",
+        "workflowNamePlaceholder": "Ingrese nombre del flujo",
+        "description": "Descripción",
+        "descriptionDescription": "Detalles adicionales sobre el flujo de trabajo",
+        "descriptionPlaceholder": "Ingrese descripción del flujo",
+        "defaultWorkflow": "Flujo Predeterminado",
+        "defaultWorkflowDesc": "Establecer como flujo predeterminado para nuevas solicitudes",
+        "requireComments": "Requerir Comentarios",
+        "requireCommentsDesc": "Comentarios obligatorios para cambios de estado",
+        "notifyChanges": "Notificar Cambios",
+        "notifyChangesDesc": "Enviar notificaciones cuando el flujo cambie",
+        "editorTab": "Editor visual",
+        "statesTab": "Estados",
+        "transitionsTab": "Transiciones",
+        "validationErrors": "Errores de validación",
+        "states": "estados",
+        "transitions": "transiciones",
+        "initialState": "Estado inicial",
+        "finalState": "Estado final",
+        "requiresJustification": "Requiere justificación",
+        "requiresApproval": "Requiere aprobación",
+        "workflowTransitions": "Transiciones entre estados",
+        "newState": "Nuevo estado",
+        "newTransition": "Nueva transición",
+        "statesTabTitle": "Estados del flujo de trabajo",
+        "errors": {
+          "initialState": "El flujo de trabajo debe tener al menos un estado inicial",
+          "finalState": "El flujo de trabajo debe tener al menos un estado final",
+          "disconnectedStates": "Hay estados desconectados: {states}",
+          "statesWithoutPathToFinal": "Hay estados sin un camino hacia un estado final: {states}"
+        },
+        "validationErrorsTitle": "Errores de validación",
+        "validationErrorsMessage": "Hay errores en el flujo de trabajo. Por favor, corríjalos antes de guardar.",
+        "savedTitle": "Flujo de trabajo guardado",
+        "savedMessage": "El flujo de trabajo ha sido guardado exitosamente.",
+        "diagramEditor": {
+          "statesCounter": "Estados: {count}",
+          "transitionsCounter": "Transiciones: {count}",
+          "actions": {
+            "deleteState": "Eliminar estado",
+            "deleteTransition": "Eliminar transición"
+          },
+          "validation": {
+            "error": "Error de validación",
+            "success": "Validación exitosa",
+            "successDescription": "El flujo de trabajo es válido y cumple con todas las reglas de negocio.",
+            "disconnectedNodes": "Hay {count} estados sin conexiones. Todos los estados deben estar conectados.",
+            "initialNodes": "Debe haber exactamente un estado inicial en el flujo.",
+            "finalNodes": "Debe haber al menos un estado final en el flujo.",
+            "nonFinalNodesWithoutExits": "Hay {count} estados no finales sin salidas. Todos deben tener al menos una transición de salida."
+          },
+          "transitions": {
+            "new": "Nueva transición",
+            "edit": "Editar transición"
+          },
+          "states": {
+            "add": "Agregar estado",
+            "edit": "Editar estado"
+          }
+        },
+        "state": {
+          "updatedTitle": "Estado actualizado",
+          "updatedMessage": "El estado \"{stateName}\" ha sido actualizado exitosamente.",
+          "addedTitle": "Estado agregado",
+          "addedMessage": "El estado \"{stateName}\" ha sido agregado exitosamente.",
+          "deleteErrorTitle": "No se puede eliminar",
+          "deleteErrorMessage": "Este estado tiene transiciones asociadas. Elimine las transiciones primero.",
+          "deletedTitle": "Estado eliminado",
+          "deletedMessage": "El estado ha sido eliminado exitosamente."
+        },
+        "transition": {
+          "updatedTitle": "Transición actualizada",
+          "updatedMessage": "La transición \"{transitionName}\" ha sido actualizada exitosamente.",
+          "addedTitle": "Transición agregada",
+          "addedMessage": "La transición \"{transitionName}\" ha sido agregada exitosamente.",
+          "deletedTitle": "Transición eliminada",
+          "deletedMessage": "La transición ha sido eliminada exitosamente."
+        },
+        "review": {
+          "noName": "Sin nombre",
+          "noDescription": "Sin descripción",
+          "isDefault": "Predeterminado",
+          "requiresComments": "Requiere comentarios",
+          "notifyChanges": "Notificar cambios",
+          "tabs": {
+            "diagram": "Diagrama",
+            "states": "Estados",
+            "transitions": "Transiciones"
+          },
+          "table": {
+            "name": "Nombre",
+            "type": "Tipo",
+            "color": "Color",
+            "from": "Desde",
+            "to": "Hacia",
+            "approval": "Aprobación",
+            "justification": "Justificación"
+          },
+          "types": {
+            "initial": "Inicial",
+            "final": "Final",
+            "default": "Intermedio"
+          },
+          "colors": {
+            "gray": "Gris",
+            "blue": "Azul",
+            "indigo": "Índigo",
+            "green": "Verde",
+            "red": "Rojo"
+          }
+        },
+        "validateWorkflow": "Validar el flujo de trabajo",
+        "noTransitions": "Sin transiciones",
+        "noTransitionsDescription": "Cree una transición para conectar estados.",
+        "noStates": "No hay estados",
+        "noStatesDescription": "Cree un estado para comenzar el flujo de trabajo."
+      },
+      "transition": {
+        "addTitle": "Agregar Transición",
+        "editTitle": "Editar Transición",
+        "addDescription": "Agregar nueva transición de flujo de trabajo",
+        "editDescription": "Modificar transición de flujo de trabajo",
+        "nameLabel": "Nombre de la Transición",
+        "nameDescription": "Identificador único para la transición",
+        "namePlaceholder": "Ingrese el nombre de la transición",
+        "descriptionLabel": "Descripción",
+        "descriptionDescription": "Detalles adicionales sobre la transición",
+        "descriptionPlaceholder": "Ingrese la descripción",
+        "sourceLabel": "Estado de Origen",
+        "sourcePlaceholder": "Seleccione el estado de origen",
+        "sourceDescription": "Estado actual de la solicitud antes de la transición",
+        "targetLabel": "Estado de Destino",
+        "targetPlaceholder": "Seleccione el estado de destino",
+        "targetDescription": "Estado al que se moverá la solicitud después de la transición",
+        "justificationLabel": "Requiere Justificación",
+        "justificationDescription": "Justificación obligatoria para la transición",
+        "approvalLabel": "Requiere Aprobación",
+        "approvalDescription": "Necesita aprobación del supervisor",
+        "cancel": "Cancelar",
+        "save": "Guardar",
+        "localeKey": "es"
+      },
+      "state": {
+        "addTitle": "Agregar Estado",
+        "editTitle": "Editar Estado",
+        "addDescription": "Agregar nuevo estado de flujo de trabajo",
+        "editDescription": "Modificar estado de flujo de trabajo",
+        "nameLabel": "Nombre del Estado",
+        "nameDescription": "Identificador único para el estado",
+        "namePlaceholder": "Ingrese el nombre del estado",
+        "descriptionLabel": "Descripción",
+        "descriptionDescription": "Detalles adicionales sobre el estado",
+        "descriptionPlaceholder": "Ingrese la descripción",
+        "colorLabel": "Color",
+        "colorDescription": "Color del estado en el flujo de trabajo",
+        "colors": {
+          "gray": "Gris",
+          "blue": "Azul",
+          "indigo": "Índigo",
+          "green": "Verde",
+          "red": "Rojo",
+          "yellow": "Amarillo"
+        },
+        "initialStateLabel": "Estado Inicial",
+        "initialStateDescription": "Primer estado en el flujo de trabajo",
+        "finalStateLabel": "Estado Final",
+        "finalStateDescription": "Estado de finalización del flujo de trabajo",
+        "cancel": "Cancelar",
+        "save": "Guardar",
+        "typeLabel": "Tipo",
+        "typeDescription": "Tipo de estado"
+      }
     }
   },
   "component": {
@@ -2251,6 +2922,9 @@
       "descriptionLabel": "Descripción",
       "descriptionPlaceholder": "Ingresa una descripción",
       "descriptionDescription": "Agrega detalles adicionales o una descripción aquí.",
+      "hierarchyLabel": "Jerarquía",
+      "hierarchyDescription": "Selecciona la jerarquía que regirá esta área.",
+      "hierarchyPlaceholder": "Selecciona una jerarquía",
       "isActiveLabel": "Activo",
       "isActiveDescription": "Marcar como activo o inactivo.",
       "submitButton": "Enviar",
@@ -2329,11 +3003,268 @@
       "formElements": "Elementos del formulario",
       "layoutElements": "Elementos de diseño"
     },
-    "LocaleSwitcher": {
+    "hierarchyForm": {
+      "hierarchyDetails": "Detalles de la Jerarquía",
+      "hierarchyDetailsDescription": "Proporcione un nombre y una descripción para su jerarquía.",
+      "hierarchyName": "Nombre de la Jerarquía",
+      "hierarchyNameDescription": "El nombre de su jerarquía (por ejemplo, 'Jerarquía del Canal de Ventas')",
+      "hierarchyNamePlaceholder": "Ingrese el nombre de la jerarquía",
+      "description": "Descripción",
+      "descriptionDescription": "Opcional: Proporcione una breve descripción de la jerarquía",
+      "descriptionPlaceholder": "Ingrese una descripción para esta jerarquía",
+      "isActive": "Está Activo",
+      "isActiveDescription": "Si la jerarquía está activa, estará disponible para su uso en la aplicación.",
+      "saveChanges": "Guardar Cambios",
+      "create": "Crear"
+    },
+    "rolesForm": {
+      "roleName": "Nombre del Rol",
+      "roleNamePlaceholder": "Nombre del Rol",
+      "roleNameDescription": "El nombre del rol debe tener al menos 3 caracteres y no exceder los 100 caracteres",
+      "addRole": "Agregar Rol",
+      "featureCountTooltip": "Número total de funcionalidades para este rol: {count}",
+      "roleStatusTooltip": "El rol está activo",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "featureRoleFormDialog": {
+        "close": "Cerrar",
+        "dialogTitle": "Funciones del Rol: #{number}",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Descripción del Rol",
+        "descriptionHelp": "Proporciona una descripción para el rol",
+        "featuresTitle": "Funciones del Rol",
+        "module": "Módulo",
+        "features": "Funciones",
+        "featuresHelp": "Selecciona las funciones a las que los usuarios con este rol deben tener acceso. Si una función no está seleccionada, los usuarios con este rol no tendrán acceso a ella.",
+        "activeLabel": "Activo",
+        "activeHelp": "Si el rol está activo, los usuarios asignados a este rol tendrán acceso a las funciones seleccionadas."
+      }
+    },
+    "userRoleAssignmentForm": {
+      "user": {
+        "label": "Usuario",
+        "description": {
+          "none": "No hay usuarios disponibles",
+          "select": "Selecciona un usuario para el rol"
+        },
+        "toast": {
+          "noRoles": "No hay roles disponibles"
+        },
+        "active": {
+          "label": "Activo",
+          "description": {
+            "true": "El usuario tendrá acceso al sistema con el rol seleccionado",
+            "false": "El usuario no tendrá acceso al sistema"
+          }
+        },
+        "add": "Agregar usuario"
+      },
+      "role": {
+        "label": "Rol",
+        "description": "Selecciona un rol para el usuario"
+      }
+    },
+    "categoryTreeView": {
+      "searchPlaceholder": "Buscar...",
+      "matches": "coincidencias",
+      "categories": "Categorías",
+      "rename": "Renombrar",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "addSubcategory": "Agregar \"{levelName}\""
+    },
+    "localeSwitcher": {
       "label": "Seleccionar idioma",
       "locale": {
         "en": "Inglés",
         "es": "Español"
+      }
+    },
+    "stepper": {
+      "navigationButtons": {
+        "next": "Siguiente",
+        "back": "Anterior",
+        "finish": "Finalizar",
+        "reset": "Reiniciar",
+        "cancel": "Cancelar"
+      }
+    },
+    "fileUploader": {
+      "singleFileLimit": "No se puede subir más de 1 archivo a la vez",
+      "maxFilesExceeded": "No se pueden subir más de {maxFileCount} archivos",
+      "fileRejected": "Archivo {fileName} rechazado",
+      "uploading": "Subiendo {count} archivo(s)...",
+      "uploadSuccess": "{count} archivo(s) subido(s) correctamente",
+      "uploadError": "Error al subir {count} archivo(s)",
+      "dropHere": "Suelta los archivos aquí",
+      "dragAndDrop": "Arrastra y suelta archivos aquí, o haz clic para seleccionarlos",
+      "uploadInstructions": "Puedes subir {count, select, 1 {un archivo de hasta {maxSize}} other {{count} archivos (hasta {maxSize} cada uno)}}",
+      "removeFile": "Eliminar archivo"
+    },
+    "flowExecution": {
+      "build": {
+        "nodePalette": {
+          "title": "Paleta de Nodos",
+          "subtitle": "Arrastra nodos al lienzo",
+          "categories": {
+            "basic": "Bloques Básicos",
+            "advanced": "Bloques Avanzados"
+          },
+          "nodes": {
+            "start": "Inicio",
+            "end": "Fin",
+            "step": "Paso",
+            "condition": "Condición",
+            "loop": "Bucle",
+            "subprocess": "Subproceso",
+            "task": "Tarea",
+            "approval": "Aprobación",
+            "notification": "Notificación",
+            "timer": "Temporizador",
+            "gateway": "Puerta de Enlace",
+            "message": "Mensaje",
+            "annotation": "Anotación"
+          }
+        },
+        "controls": {
+          "load": "Cargar",
+          "export": "Exportar",
+          "validate": "Validar",
+          "simulate": "Simular",
+          "stopSimulation": "Detener simulación",
+          "save": "Guardar"
+        },
+        "selectedEdge": {
+          "selected": "Conexión seleccionada: {source} → {target}",
+          "delete": "Eliminar conexión"
+        },
+        "form": {
+          "properties": "Propiedades",
+          "label": "Etiqueta",
+          "action": "Acción",
+          "responsible": "Responsable",
+          "estimatedTime": "Tiempo estimado",
+          "timeUnit": "Unidad de tiempo",
+          "sla": "SLA (horas)",
+          "expression": "Expresión",
+          "condition": "Condición",
+          "maxIterations": "Máximo de iteraciones",
+          "processRef": "Referencia del proceso",
+          "taskType": "Tipo de tarea",
+          "details": "Detalles",
+          "approvers": "Aprobadores (separados por coma)",
+          "channel": "Canal",
+          "message": "Mensaje",
+          "duration": "Duración",
+          "gatewayType": "Tipo de puerta de enlace",
+          "text": "Texto",
+          "linkedGuides": "Guías vinculadas",
+          "linkGuides": "Vincular guías",
+          "noLinkedGuides": "No hay guías vinculadas",
+          "timeUnits": {
+            "seconds": "Segundos",
+            "minutes": "Minutos",
+            "hours": "Horas",
+            "days": "Días"
+          },
+          "taskTypes": {
+            "manual": "Manual",
+            "automatic": "Automático",
+            "api": "API",
+            "rpa": "RPA"
+          },
+          "channels": {
+            "email": "Correo electrónico",
+            "sms": "SMS",
+            "alert": "Alerta del sistema"
+          },
+          "gatewayTypes": {
+            "parallel": "Paralelo",
+            "inclusive": "Inclusivo"
+          },
+          "actions": {
+            "apply": "Aplicar",
+            "cancel": "Cancelar",
+            "save": "Guardar"
+          }
+        },
+        "validation": {
+          "title": "Errores de validación"
+        }
+      },
+      "simulation": {
+        "simulationControls": {
+          "title": "Simulación",
+          "description": {
+            "completed": "¡Simulación completada!",
+            "step": "Paso {step}: {nodeName}",
+            "start": "Inicia la simulación para visualizar el flujo del proceso"
+          },
+          "controls": {
+            "speed": "Velocidad",
+            "metrics": {
+              "totalHours": "Horas Totales",
+              "visitedNodes": "Nodos Visitados",
+              "slaCompliance": "Cumplimiento SLA"
+            }
+          }
+        }
+      },
+      "execution": {
+        "decision": {
+          "yes": "Sí",
+          "no": "No",
+          "approve": "Aprobar",
+          "reject": "Rechazar",
+          "continueLoop": "Continuar bucle",
+          "exitLoop": "Salir del bucle",
+          "path": "Camino {number}: {label}",
+          "unknown": "Desconocido",
+          "nextStep": "Siguiente paso"
+        },
+        "history": {
+          "parallelStepsActivation": "Activación de pasos paralelos",
+          "parallelStepsActivationDetails": "Se activaron {count} pasos desde {label}",
+          "decision": "Decisión: {decision}",
+          "decisionDetails": "En {label}",
+          "completed": "Completado",
+          "completedDetails": "{type}: {label}",
+          "processCompleted": "Proceso completado",
+          "processCompletedDetails": "El flujo de proceso ha finalizado correctamente",
+          "processStart": "Inicio del proceso"
+        },
+        "nodeTypes": {
+          "start": "Inicio",
+          "end": "Fin",
+          "task": "Tarea",
+          "condition": "Condición",
+          "approval": "Aprobación",
+          "loop": "Bucle",
+          "gateway": "Compuerta",
+          "message": "Mensaje",
+          "notification": "Notificación",
+          "timer": "Temporizador",
+          "unknown": "Desconocido"
+        },
+        "export": {
+          "executionHistoryFileName": "historial-ejecucion-{date}-{time}.csv"
+        }
+      },
+      "validation": {
+        "mustHaveStart": "El flujo debe tener al menos un nodo de inicio",
+        "onlyOneStart": "El flujo debe tener solo un nodo de inicio",
+        "mustHaveEnd": "El flujo debe tener al menos un nodo de fin",
+        "startNoOutgoing": "El nodo de inicio \"{label}\" no tiene conexiones de salida",
+        "endNoIncoming": "El nodo de fin \"{label}\" no tiene conexiones de entrada",
+        "nodeNoIncoming": "El nodo \"{label}\" no tiene conexiones de entrada",
+        "nodeNoOutgoing": "El nodo \"{label}\" no tiene conexiones de salida",
+        "conditionMinOutgoing": "El nodo de condición \"{label}\" debe tener al menos dos conexiones de salida (Sí/No)",
+        "conditionNoExpression": "El nodo de condición \"{label}\" no tiene una expresión definida",
+        "loopNoCondition": "El nodo de bucle \"{label}\" no tiene una condición definida",
+        "loopInvalidMax": "El nodo de bucle \"{label}\" tiene un valor inválido de iteraciones máximas",
+        "stepNoAction": "El nodo de paso \"{label}\" no tiene una acción definida",
+        "stepNoResponsible": "El nodo de paso \"{label}\" no tiene responsable definido",
+        "cycleDetected": "El flujo contiene ciclos no intencionados (bucles infinitos)"
       }
     }
   }

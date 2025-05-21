@@ -5,12 +5,12 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import type { AssignedUser, Prisma } from '@prisma/client';
 import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
 import type { PolicyCrudKind } from '@zenstackhq/runtime';
 import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
 import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
 
+import type { AssignedUser, Prisma } from '../../../../node_modules/.prisma/client';
 import metadata from './__model_meta';
 
 type DefaultError = QueryError;
@@ -399,7 +399,10 @@ export function useSuspenseCountAssignedUser<
 }
 
 export function useCheckAssignedUser<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; requestAssignmentId?: string; userTenantId?: string; role?: string } },
+  args: {
+    operation: PolicyCrudKind;
+    where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; requestAssignmentId?: string; userTenantId?: string; role?: string; isCoordinator?: boolean };
+  },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

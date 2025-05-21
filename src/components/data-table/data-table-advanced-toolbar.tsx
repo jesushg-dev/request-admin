@@ -3,6 +3,7 @@
 import * as React from 'react';
 import type { DataTableAdvancedFilterField } from '@/types';
 import { type Table } from '@tanstack/react-table';
+import { useTranslations } from 'next-intl';
 
 import { cn } from '@/lib/utils';
 import { DataTableFilterList } from '@/components/data-table/data-table-filter-list';
@@ -74,6 +75,7 @@ export function DataTableAdvancedToolbar<TData>({
   className,
   ...props
 }: DataTableAdvancedToolbarProps<TData>) {
+  const t = useTranslations('table');
   return (
     <div className={cn('flex w-full items-center justify-between gap-2 overflow-auto', className)} {...props}>
       <div className="flex items-center gap-2">
@@ -82,7 +84,7 @@ export function DataTableAdvancedToolbar<TData>({
         {!isSortHidden && <DataTableSortList table={table} debounceMs={debounceMs} shallow={shallow} />}
         {!isDateRangeHidden && (
           <React.Suspense fallback={<Skeleton className="h-7 w-52" />}>
-            <DateRangePicker triggerSize="sm" triggerClassName="ml-auto w-56 sm:w-60" align="end" shallow={false} />
+            <DateRangePicker triggerSize="sm" triggerClassName="ml-auto w-56 sm:w-60" align="end" shallow={false} placeholder={t('filterDatePlaceholder')} />
           </React.Suspense>
         )}
       </div>

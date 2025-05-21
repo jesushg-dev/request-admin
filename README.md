@@ -101,3 +101,5 @@ Develop a web system for managing service requests efficiently while adhering to
 - [Gestion de niveles de servicio](https://blog.invgate.com/es/topic/gesti%C3%B3n-de-niveles-de-servicio)
 
 -- otros: agregar asignamiento masivo: seria selecionar varios casos, y asignarlos a una misma persona
+
+el coordinador solo ve las solicitudes de sus areas y el colaborador solicitudes asignadas

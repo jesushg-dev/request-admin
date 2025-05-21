@@ -121,6 +121,13 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
+        assignmentCategoryForms: {
+          name: 'assignmentCategoryForms',
+          type: 'AssignmentCategoryForm',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
         requestHierarchies: {
           name: 'requestHierarchies',
           type: 'RequestHierarchy',
@@ -138,6 +145,13 @@ const metadata = {
         requestCategories: {
           name: 'requestCategories',
           type: 'RequestCategory',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        requestCategoryForms: {
+          name: 'requestCategoryForms',
+          type: 'RequestCategoryForm',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
@@ -184,6 +198,55 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
+        executionFlowDefinitions: {
+          name: 'executionFlowDefinitions',
+          type: 'ExecutionFlowDefinition',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        executionNodeDefinitions: {
+          name: 'executionNodeDefinitions',
+          type: 'ExecutionNodeDefinition',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        executionEdgeDefinitions: {
+          name: 'executionEdgeDefinitions',
+          type: 'ExecutionEdgeDefinition',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        executionModelInstances: {
+          name: 'executionModelInstances',
+          type: 'ExecutionModelInstance',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        executionModelLogs: {
+          name: 'executionModelLogs',
+          type: 'ExecutionModelLog',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        executionModelHistory: {
+          name: 'executionModelHistory',
+          type: 'ExecutionModelHistory',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        executionNodeGuides: {
+          name: 'executionNodeGuides',
+          type: 'ExecutionNodeGuide',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
         requests: {
           name: 'requests',
           type: 'Request',
@@ -205,16 +268,23 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
-        requestStatusTypes: {
-          name: 'requestStatusTypes',
-          type: 'RequestStatusType',
+        requestWorkflows: {
+          name: 'requestWorkflows',
+          type: 'RequestWorkflow',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
         },
-        requestStatusTransitions: {
-          name: 'requestStatusTransitions',
-          type: 'RequestStatusTransition',
+        requestWorkflowStatuses: {
+          name: 'requestWorkflowStatuses',
+          type: 'RequestWorkflowStatus',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        requestWorkflowTransitions: {
+          name: 'requestWorkflowTransitions',
+          type: 'RequestWorkflowTransition',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
@@ -222,13 +292,6 @@ const metadata = {
         requirementComplianceTrackings: {
           name: 'requirementComplianceTrackings',
           type: 'RequirementComplianceTracking',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
-        relatedIncidents: {
-          name: 'relatedIncidents',
-          type: 'RelatedIncident',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
@@ -278,13 +341,6 @@ const metadata = {
         formSubmissionKeys: {
           name: 'formSubmissionKeys',
           type: 'FormSubmissionKey',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
-        categoryForms: {
-          name: 'categoryForms',
-          type: 'CategoryForm',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
@@ -2145,6 +2201,11 @@ const metadata = {
           type: 'String',
           isOptional: true,
         },
+        isDraft: {
+          name: 'isDraft',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
         closedAt: {
           name: 'closedAt',
           type: 'DateTime',
@@ -2157,11 +2218,6 @@ const metadata = {
         },
         closedComment: {
           name: 'closedComment',
-          type: 'String',
-          isOptional: true,
-        },
-        comment: {
-          name: 'comment',
           type: 'String',
           isOptional: true,
         },
@@ -2185,20 +2241,6 @@ const metadata = {
           isDataModel: true,
           isArray: true,
           backLink: 'request',
-        },
-        relatedIncidents: {
-          name: 'relatedIncidents',
-          type: 'RelatedIncident',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'request',
-        },
-        relatedTo: {
-          name: 'relatedTo',
-          type: 'RelatedIncident',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'related',
         },
         changeLog: {
           name: 'changeLog',
@@ -2373,7 +2415,7 @@ const metadata = {
         },
         status: {
           name: 'status',
-          type: 'RequestStatusType',
+          type: 'RequestWorkflowStatus',
           isDataModel: true,
           backLink: 'assignments',
           isRelationOwner: true,
@@ -2534,95 +2576,10 @@ const metadata = {
           type: 'DateTime',
           isOptional: true,
         },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
-        },
-      },
-    },
-    relatedIncident: {
-      name: 'RelatedIncident',
-      fields: {
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
-        },
-        deletedAt: {
-          name: 'deletedAt',
-          type: 'DateTime',
-          isOptional: true,
-        },
-        createdBy: {
-          name: 'createdBy',
-          type: 'String',
-          isOptional: true,
-        },
-        updatedBy: {
-          name: 'updatedBy',
-          type: 'String',
-          isOptional: true,
-        },
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'relatedIncidents',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
-        },
-        requestId: {
-          name: 'requestId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'request',
-        },
-        relatedId: {
-          name: 'relatedId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'related',
-        },
-        isActive: {
-          name: 'isActive',
+        isCoordinator: {
+          name: 'isCoordinator',
           type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: true }] }],
-        },
-        request: {
-          name: 'request',
-          type: 'Request',
-          isDataModel: true,
-          backLink: 'relatedIncidents',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'requestId' },
-        },
-        related: {
-          name: 'related',
-          type: 'Request',
-          isDataModel: true,
-          backLink: 'relatedTo',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'relatedId' },
+          attributes: [{ name: '@default', args: [{ value: false }] }],
         },
       },
       uniqueConstraints: {
@@ -2702,6 +2659,11 @@ const metadata = {
         level: {
           name: 'level',
           type: 'Int',
+        },
+        isDefault: {
+          name: 'isDefault',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
         },
         assignments: {
           name: 'assignments',
@@ -2808,49 +2770,9 @@ const metadata = {
         },
       },
     },
-    requestStatusType: {
-      name: 'RequestStatusType',
+    requestWorkflow: {
+      name: 'RequestWorkflow',
       fields: {
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
-        },
-        deletedAt: {
-          name: 'deletedAt',
-          type: 'DateTime',
-          isOptional: true,
-        },
-        createdBy: {
-          name: 'createdBy',
-          type: 'String',
-          isOptional: true,
-        },
-        updatedBy: {
-          name: 'updatedBy',
-          type: 'String',
-          isOptional: true,
-        },
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'requestStatusTypes',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
         id: {
           name: 'id',
           type: 'String',
@@ -2871,69 +2793,6 @@ const metadata = {
           type: 'Boolean',
           attributes: [{ name: '@default', args: [{ value: true }] }],
         },
-        level: {
-          name: 'level',
-          type: 'Int',
-        },
-        itilCode: {
-          name: 'itilCode',
-          type: 'String',
-          isOptional: true,
-        },
-        isFinal: {
-          name: 'isFinal',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: false }] }],
-        },
-        requiresApproval: {
-          name: 'requiresApproval',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: false }] }],
-        },
-        assignments: {
-          name: 'assignments',
-          type: 'RequestAssignment',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'status',
-        },
-        fromTransitions: {
-          name: 'fromTransitions',
-          type: 'RequestStatusTransition',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'fromStatus',
-        },
-        toTransitions: {
-          name: 'toTransitions',
-          type: 'RequestStatusTransition',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'toStatus',
-        },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
-        },
-        name: {
-          name: 'name',
-          fields: ['name'],
-        },
-        itilCode: {
-          name: 'itilCode',
-          fields: ['itilCode'],
-        },
-        unique_itil_code_per_tenant: {
-          name: 'unique_itil_code_per_tenant',
-          fields: ['tenantId', 'itilCode'],
-        },
-      },
-    },
-    requestStatusTransition: {
-      name: 'RequestStatusTransition',
-      fields: {
         createdAt: {
           name: 'createdAt',
           type: 'DateTime',
@@ -2970,20 +2829,238 @@ const metadata = {
           name: 'tenant',
           type: 'Tenant',
           isDataModel: true,
-          backLink: 'requestStatusTransitions',
+          backLink: 'requestWorkflows',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
+        isDefault: {
+          name: 'isDefault',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        requireComments: {
+          name: 'requireComments',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        notifyChanges: {
+          name: 'notifyChanges',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        requestCategory: {
+          name: 'requestCategory',
+          type: 'RequestCategory',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'requestWorkflow',
+        },
+        requestWorkflowStatus: {
+          name: 'requestWorkflowStatus',
+          type: 'RequestWorkflowStatus',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'workflow',
+        },
+        requestWorkflowTransition: {
+          name: 'requestWorkflowTransition',
+          type: 'RequestWorkflowTransition',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'workflow',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    requestWorkflowStatus: {
+      name: 'RequestWorkflowStatus',
+      fields: {
         id: {
           name: 'id',
           type: 'String',
           isId: true,
           attributes: [{ name: '@default', args: [] }],
         },
-        isDefault: {
-          name: 'isDefault',
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        description: {
+          name: 'description',
+          type: 'String',
+          isOptional: true,
+        },
+        isActive: {
+          name: 'isActive',
           type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: false }] }],
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'requestWorkflowStatuses',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        color: {
+          name: 'color',
+          type: 'String',
+        },
+        type: {
+          name: 'type',
+          type: 'String',
+        },
+        positionX: {
+          name: 'positionX',
+          type: 'Float',
+        },
+        positionY: {
+          name: 'positionY',
+          type: 'Float',
+        },
+        workflowId: {
+          name: 'workflowId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'workflow',
+        },
+        workflow: {
+          name: 'workflow',
+          type: 'RequestWorkflow',
+          isDataModel: true,
+          backLink: 'requestWorkflowStatus',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'workflowId' },
+        },
+        assignments: {
+          name: 'assignments',
+          type: 'RequestAssignment',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'status',
+        },
+        fromTransitions: {
+          name: 'fromTransitions',
+          type: 'RequestWorkflowTransition',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'fromStatus',
+        },
+        toTransitions: {
+          name: 'toTransitions',
+          type: 'RequestWorkflowTransition',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'toStatus',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    requestWorkflowTransition: {
+      name: 'RequestWorkflowTransition',
+      fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        description: {
+          name: 'description',
+          type: 'String',
+          isOptional: true,
+        },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'requestWorkflowTransitions',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
         },
         priority: {
           name: 'priority',
@@ -3000,10 +3077,29 @@ const metadata = {
           type: 'Int',
           isOptional: true,
         },
-        description: {
-          name: 'description',
+        requiresApproval: {
+          name: 'requiresApproval',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        requiresJustification: {
+          name: 'requiresJustification',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        workflowId: {
+          name: 'workflowId',
           type: 'String',
-          isOptional: true,
+          isForeignKey: true,
+          relationField: 'workflow',
+        },
+        workflow: {
+          name: 'workflow',
+          type: 'RequestWorkflow',
+          isDataModel: true,
+          backLink: 'requestWorkflowTransition',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'workflowId' },
         },
         fromStatusId: {
           name: 'fromStatusId',
@@ -3019,7 +3115,7 @@ const metadata = {
         },
         fromStatus: {
           name: 'fromStatus',
-          type: 'RequestStatusType',
+          type: 'RequestWorkflowStatus',
           isDataModel: true,
           backLink: 'fromTransitions',
           isRelationOwner: true,
@@ -3027,7 +3123,7 @@ const metadata = {
         },
         toStatus: {
           name: 'toStatus',
-          type: 'RequestStatusType',
+          type: 'RequestWorkflowStatus',
           isDataModel: true,
           backLink: 'toTransitions',
           isRelationOwner: true,
@@ -3039,8 +3135,8 @@ const metadata = {
           name: 'id',
           fields: ['id'],
         },
-        unique_transition_path: {
-          name: 'unique_transition_path',
+        unique_transition_path_per_tenant: {
+          name: 'unique_transition_path_per_tenant',
           fields: ['tenantId', 'fromStatusId', 'toStatusId'],
         },
       },
@@ -3323,6 +3419,11 @@ const metadata = {
         changedAt: {
           name: 'changedAt',
           type: 'DateTime',
+        },
+        metadata: {
+          name: 'metadata',
+          type: 'String',
+          isOptional: true,
         },
       },
       uniqueConstraints: {
@@ -7159,28 +7260,24 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
-        parentCategoryId: {
-          name: 'parentCategoryId',
-          type: 'String',
-          isOptional: true,
-          isForeignKey: true,
-          relationField: 'parentCategory',
-        },
-        parentCategory: {
-          name: 'parentCategory',
-          type: 'RequestCategory',
+        sla: {
+          name: 'sla',
+          type: 'SLA',
           isDataModel: true,
           isOptional: true,
-          backLink: 'subcategories',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'parentCategoryId' },
+          backLink: 'requestCategory',
         },
-        subcategories: {
-          name: 'subcategories',
-          type: 'RequestCategory',
+        executionFlowDefinition: {
+          name: 'executionFlowDefinition',
+          type: 'ExecutionFlowDefinition',
           isDataModel: true,
-          isArray: true,
-          backLink: 'parentCategory',
+          isOptional: true,
+          backLink: 'requestCategory',
+        },
+        isEligibleForNewClients: {
+          name: 'isEligibleForNewClients',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
         },
         hierarchyLevelId: {
           name: 'hierarchyLevelId',
@@ -7210,11 +7307,50 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'hierarchyId' },
         },
-        sla: {
-          name: 'sla',
-          type: 'SLA',
+        parentCategoryId: {
+          name: 'parentCategoryId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'parentCategory',
+        },
+        parentCategory: {
+          name: 'parentCategory',
+          type: 'RequestCategory',
           isDataModel: true,
           isOptional: true,
+          backLink: 'subcategories',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'parentCategoryId' },
+        },
+        requestWorkflow: {
+          name: 'requestWorkflow',
+          type: 'RequestWorkflow',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'requestCategory',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'requestWorkflowId' },
+        },
+        requestWorkflowId: {
+          name: 'requestWorkflowId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'requestWorkflow',
+        },
+        subcategories: {
+          name: 'subcategories',
+          type: 'RequestCategory',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'parentCategory',
+        },
+        requestCategoryRequirements: {
+          name: 'requestCategoryRequirements',
+          type: 'RequestCategoryRequirement',
+          isDataModel: true,
+          isArray: true,
           backLink: 'requestCategory',
         },
         guideDocuments: {
@@ -7224,24 +7360,12 @@ const metadata = {
           isArray: true,
           backLink: 'requestCategory',
         },
-        isEligibleForNewClients: {
-          name: 'isEligibleForNewClients',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: true }] }],
-        },
         categoryForms: {
           name: 'categoryForms',
-          type: 'CategoryForm',
+          type: 'RequestCategoryForm',
           isDataModel: true,
           isArray: true,
           backLink: 'requestCategories',
-        },
-        requestCategoryRequirements: {
-          name: 'requestCategoryRequirements',
-          type: 'RequestCategoryRequirement',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'requestCategory',
         },
         requests: {
           name: 'requests',
@@ -7262,8 +7386,8 @@ const metadata = {
         },
       },
     },
-    categoryForm: {
-      name: 'CategoryForm',
+    requestCategoryForm: {
+      name: 'RequestCategoryForm',
       fields: {
         createdAt: {
           name: 'createdAt',
@@ -7301,7 +7425,7 @@ const metadata = {
           name: 'tenant',
           type: 'Tenant',
           isDataModel: true,
-          backLink: 'categoryForms',
+          backLink: 'requestCategoryForms',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
@@ -7340,7 +7464,7 @@ const metadata = {
           name: 'form',
           type: 'Form',
           isDataModel: true,
-          backLink: 'categoryForms',
+          backLink: 'requestCategoryForms',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'formId' },
         },
@@ -7592,24 +7716,17 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'tenantId' },
         },
-        url: {
-          name: 'url',
+        fileType: {
+          name: 'fileType',
           type: 'String',
-          isOptional: true,
         },
-        status: {
-          name: 'status',
-          type: 'Int',
-        },
-        expirationDate: {
-          name: 'expirationDate',
-          type: 'DateTime',
-          isOptional: true,
+        fileUrl: {
+          name: 'fileUrl',
+          type: 'String',
         },
         version: {
           name: 'version',
-          type: 'Int',
-          attributes: [{ name: '@default', args: [{ value: 1 }] }],
+          type: 'String',
         },
         requestCategoryId: {
           name: 'requestCategoryId',
@@ -7624,6 +7741,13 @@ const metadata = {
           backLink: 'guideDocuments',
           isRelationOwner: true,
           foreignKeyMapping: { id: 'requestCategoryId' },
+        },
+        nodeGuide: {
+          name: 'nodeGuide',
+          type: 'ExecutionNodeGuide',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'guide',
         },
       },
       uniqueConstraints: {
@@ -8269,6 +8393,13 @@ const metadata = {
           isArray: true,
           backLink: 'assignmentCategory',
         },
+        assignmentCategoryForms: {
+          name: 'assignmentCategoryForms',
+          type: 'AssignmentCategoryForm',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'assignmentCategory',
+        },
       },
       uniqueConstraints: {
         id: {
@@ -8278,6 +8409,100 @@ const metadata = {
         name_hierarchyLevelId_areaId_parentCategoryId_tenantId: {
           name: 'name_hierarchyLevelId_areaId_parentCategoryId_tenantId',
           fields: ['name', 'hierarchyLevelId', 'areaId', 'parentCategoryId', 'tenantId'],
+        },
+      },
+    },
+    assignmentCategoryForm: {
+      name: 'AssignmentCategoryForm',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'assignmentCategoryForms',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
+        categoryId: {
+          name: 'categoryId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'assignmentCategory',
+        },
+        formId: {
+          name: 'formId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'form',
+        },
+        assignmentCategory: {
+          name: 'assignmentCategory',
+          type: 'AssignmentCategory',
+          isDataModel: true,
+          backLink: 'assignmentCategoryForms',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'categoryId' },
+        },
+        form: {
+          name: 'form',
+          type: 'Form',
+          isDataModel: true,
+          backLink: 'assignmentCategoryForms',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'formId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        categoryId_formId_tenantId: {
+          name: 'categoryId_formId_tenantId',
+          fields: ['categoryId', 'formId', 'tenantId'],
         },
       },
     },
@@ -8374,9 +8599,16 @@ const metadata = {
           type: 'String',
           attributes: [{ name: '@default', args: [] }],
         },
-        categoryForms: {
-          name: 'categoryForms',
-          type: 'CategoryForm',
+        requestCategoryForms: {
+          name: 'requestCategoryForms',
+          type: 'RequestCategoryForm',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'form',
+        },
+        assignmentCategoryForms: {
+          name: 'assignmentCategoryForms',
+          type: 'AssignmentCategoryForm',
           isDataModel: true,
           isArray: true,
           backLink: 'form',
@@ -8683,6 +8915,790 @@ const metadata = {
           isDataModel: true,
           isArray: true,
           backLink: 'parent',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    executionFlowDefinition: {
+      name: 'ExecutionFlowDefinition',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'executionFlowDefinitions',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        version: {
+          name: 'version',
+          type: 'Int',
+          attributes: [{ name: '@default', args: [{ value: 1 }] }],
+        },
+        nodes: {
+          name: 'nodes',
+          type: 'ExecutionNodeDefinition',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'flow',
+        },
+        edges: {
+          name: 'edges',
+          type: 'ExecutionEdgeDefinition',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'flow',
+        },
+        isActive: {
+          name: 'isActive',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: true }] }],
+        },
+        executions: {
+          name: 'executions',
+          type: 'ExecutionModelInstance',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'flow',
+        },
+        previousHistories: {
+          name: 'previousHistories',
+          type: 'ExecutionModelHistory',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'previousFlow',
+        },
+        newHistories: {
+          name: 'newHistories',
+          type: 'ExecutionModelHistory',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'newFlow',
+        },
+        requestCategoryId: {
+          name: 'requestCategoryId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'requestCategory',
+        },
+        requestCategory: {
+          name: 'requestCategory',
+          type: 'RequestCategory',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'executionFlowDefinition',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'requestCategoryId' },
+        },
+        viewportX: {
+          name: 'viewportX',
+          type: 'Float',
+          isOptional: true,
+        },
+        viewportY: {
+          name: 'viewportY',
+          type: 'Float',
+          isOptional: true,
+        },
+        viewportZoom: {
+          name: 'viewportZoom',
+          type: 'Float',
+          isOptional: true,
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        requestCategoryId: {
+          name: 'requestCategoryId',
+          fields: ['requestCategoryId'],
+        },
+        id_version: {
+          name: 'id_version',
+          fields: ['id', 'version'],
+        },
+      },
+    },
+    executionNodeDefinition: {
+      name: 'ExecutionNodeDefinition',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'executionNodeDefinitions',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        flow: {
+          name: 'flow',
+          type: 'ExecutionFlowDefinition',
+          isDataModel: true,
+          backLink: 'nodes',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'flowId' },
+        },
+        flowId: {
+          name: 'flowId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'flow',
+        },
+        type: {
+          name: 'type',
+          type: 'String',
+        },
+        positionX: {
+          name: 'positionX',
+          type: 'Float',
+        },
+        positionY: {
+          name: 'positionY',
+          type: 'Float',
+        },
+        config: {
+          name: 'config',
+          type: 'String',
+        },
+        edgesFrom: {
+          name: 'edgesFrom',
+          type: 'ExecutionEdgeDefinition',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'source',
+        },
+        edgesTo: {
+          name: 'edgesTo',
+          type: 'ExecutionEdgeDefinition',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'target',
+        },
+        executionLogs: {
+          name: 'executionLogs',
+          type: 'ExecutionModelLog',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'node',
+        },
+        nodeGuide: {
+          name: 'nodeGuide',
+          type: 'ExecutionNodeGuide',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'node',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    executionNodeGuide: {
+      name: 'ExecutionNodeGuide',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'executionNodeGuides',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        applicationScope: {
+          name: 'applicationScope',
+          type: 'String',
+          attributes: [{ name: '@default', args: [{ value: 'full' }] }],
+        },
+        customInstructions: {
+          name: 'customInstructions',
+          type: 'String',
+          isOptional: true,
+        },
+        order: {
+          name: 'order',
+          type: 'Int',
+          attributes: [{ name: '@default', args: [{ value: 1 }] }],
+        },
+        guideId: {
+          name: 'guideId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'guide',
+        },
+        guide: {
+          name: 'guide',
+          type: 'GuideDocument',
+          isDataModel: true,
+          backLink: 'nodeGuide',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'guideId' },
+        },
+        nodeId: {
+          name: 'nodeId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'node',
+        },
+        node: {
+          name: 'node',
+          type: 'ExecutionNodeDefinition',
+          isDataModel: true,
+          backLink: 'nodeGuide',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'nodeId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        guideId_nodeId: {
+          name: 'guideId_nodeId',
+          fields: ['guideId', 'nodeId'],
+        },
+      },
+    },
+    executionEdgeDefinition: {
+      name: 'ExecutionEdgeDefinition',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'executionEdgeDefinitions',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        flow: {
+          name: 'flow',
+          type: 'ExecutionFlowDefinition',
+          isDataModel: true,
+          backLink: 'edges',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'flowId' },
+        },
+        flowId: {
+          name: 'flowId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'flow',
+        },
+        source: {
+          name: 'source',
+          type: 'ExecutionNodeDefinition',
+          isDataModel: true,
+          backLink: 'edgesFrom',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'sourceId' },
+        },
+        sourceId: {
+          name: 'sourceId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'source',
+        },
+        target: {
+          name: 'target',
+          type: 'ExecutionNodeDefinition',
+          isDataModel: true,
+          backLink: 'edgesTo',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'targetId' },
+        },
+        targetId: {
+          name: 'targetId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'target',
+        },
+        sourceHandle: {
+          name: 'sourceHandle',
+          type: 'String',
+          isOptional: true,
+        },
+        condition: {
+          name: 'condition',
+          type: 'String',
+          isOptional: true,
+        },
+        style: {
+          name: 'style',
+          type: 'String',
+          isOptional: true,
+        },
+        markerEnd: {
+          name: 'markerEnd',
+          type: 'String',
+          isOptional: true,
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    executionModelInstance: {
+      name: 'ExecutionModelInstance',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'executionModelInstances',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        flow: {
+          name: 'flow',
+          type: 'ExecutionFlowDefinition',
+          isDataModel: true,
+          backLink: 'executions',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'flowId' },
+        },
+        flowId: {
+          name: 'flowId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'flow',
+        },
+        referenceId: {
+          name: 'referenceId',
+          type: 'String',
+        },
+        status: {
+          name: 'status',
+          type: 'String',
+        },
+        logs: {
+          name: 'logs',
+          type: 'ExecutionModelLog',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'execution',
+        },
+        history: {
+          name: 'history',
+          type: 'ExecutionModelHistory',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'execution',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    executionModelLog: {
+      name: 'ExecutionModelLog',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'executionModelLogs',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        executionId: {
+          name: 'executionId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'execution',
+        },
+        execution: {
+          name: 'execution',
+          type: 'ExecutionModelInstance',
+          isDataModel: true,
+          backLink: 'logs',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'executionId' },
+        },
+        nodeId: {
+          name: 'nodeId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'node',
+        },
+        node: {
+          name: 'node',
+          type: 'ExecutionNodeDefinition',
+          isDataModel: true,
+          backLink: 'executionLogs',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'nodeId' },
+        },
+        timestamp: {
+          name: 'timestamp',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        eventType: {
+          name: 'eventType',
+          type: 'String',
+        },
+        details: {
+          name: 'details',
+          type: 'String',
+        },
+        outcome: {
+          name: 'outcome',
+          type: 'String',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    executionModelHistory: {
+      name: 'ExecutionModelHistory',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'executionModelHistory',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        executionId: {
+          name: 'executionId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'execution',
+        },
+        execution: {
+          name: 'execution',
+          type: 'ExecutionModelInstance',
+          isDataModel: true,
+          backLink: 'history',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'executionId' },
+        },
+        previousFlowId: {
+          name: 'previousFlowId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'previousFlow',
+        },
+        previousFlow: {
+          name: 'previousFlow',
+          type: 'ExecutionFlowDefinition',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'previousHistories',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'previousFlowId' },
+        },
+        newFlowId: {
+          name: 'newFlowId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'newFlow',
+        },
+        newFlow: {
+          name: 'newFlow',
+          type: 'ExecutionFlowDefinition',
+          isDataModel: true,
+          backLink: 'newHistories',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'newFlowId' },
+        },
+        changedAt: {
+          name: 'changedAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        reason: {
+          name: 'reason',
+          type: 'String',
         },
       },
       uniqueConstraints: {
@@ -9755,10 +10771,11 @@ const metadata = {
     user: ['UserTenant', 'InvitationTenant', 'Session', 'Account', 'TwoFactor', 'SsoProvider', 'Apikey', 'Passkey'],
     requestAssignment: ['AssignedUser'],
     area: ['AssignmentCategory'],
-    requestCategory: ['CategoryForm'],
+    requestCategory: ['RequestCategoryForm'],
     assignmentHierarchy: ['AssignmentCategory'],
     assignmentHierarchyLevel: ['AssignmentCategory'],
-    form: ['CategoryForm'],
+    assignmentCategory: ['AssignmentCategoryForm'],
+    form: ['RequestCategoryForm', 'AssignmentCategoryForm'],
     formSubmission: ['FormSubmissionKey'],
   },
   authModel: 'User',

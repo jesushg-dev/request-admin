@@ -5,12 +5,12 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import type { Prisma, RequestChangeLog } from '@prisma/client';
 import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
 import type { PolicyCrudKind } from '@zenstackhq/runtime';
 import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
 import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
 
+import type { Prisma, RequestChangeLog } from '../../../../node_modules/.prisma/client';
 import metadata from './__model_meta';
 
 type DefaultError = QueryError;
@@ -441,7 +441,18 @@ export function useSuspenseCountRequestChangeLog<
 export function useCheckRequestChangeLog<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
-    where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; requestId?: string; changedBy?: string; fieldName?: string; oldValue?: string; newValue?: string };
+    where?: {
+      createdBy?: string;
+      updatedBy?: string;
+      tenantId?: string;
+      id?: string;
+      requestId?: string;
+      changedBy?: string;
+      fieldName?: string;
+      oldValue?: string;
+      newValue?: string;
+      metadata?: string;
+    };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {

@@ -14,10 +14,10 @@ model Request extends TenantScoped, Auditable {
   // Request details
   issueSubject         String                         //@db.VarChar(255)    // Optional issue subject
   description          String?                         //@db.VarChar(5000)   // Detailed request description
+  isDraft              Boolean                        @default(true)      // Indicates if the request is a draft
   closedAt             DateTime?
   closedBy             String?                         //@db.VarChar(50)     // User ID who closed the request
   closedComment        String?                         //@db.VarChar(500)    // Closure comment
-  comment              String?                         //@db.VarChar(255)    // Optional comment
 
   // Form submissions
   formSubmission       FormSubmission[]
@@ -27,10 +27,6 @@ model Request extends TenantScoped, Auditable {
 
   // Assignments
   requestAssignments   RequestAssignment[]
-
-  // Related incidents
-  relatedIncidents     RelatedIncident[]               @relation("RequestIncident")
-  relatedTo            RelatedIncident[]               @relation("RequestRelated")
 
   // Change log
   changeLog            RequestChangeLog[]
@@ -74,7 +70,7 @@ model RequestAssignment extends TenantScoped, Auditable {
   area                 Area                @relation(fields: [areaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   statusId             String               //@db.UniqueIdentifier
-  status               RequestStatusType    @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  status               RequestWorkflowStatus    @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   typeId               String               //@db.UniqueIdentifier
   type                 AssignmentType       @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -113,26 +109,14 @@ model AssignedUser extends TenantScoped, Auditable {
 
   role                String            //@db.VarChar(150) 
   unAssignmentDate    DateTime?
-}
-
-/// Represents related incidents or problems for a request.
-model RelatedIncident extends TenantScoped, Auditable {
-  id        String  @id @default(uuid()) //@db.UniqueIdentifier
-  requestId String  //@db.UniqueIdentifier
-  relatedId String  //@db.UniqueIdentifier
-  isActive  Boolean @default(true)
-
-  request   Request @relation("RequestIncident", fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  related   Request @relation("RequestRelated", fields: [relatedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@index([requestId], name: "idx_related_incident_request_id")
-  @@index([relatedId], name: "idx_related_incident_related_id")
+  isCoordinator        Boolean           @default(false) // Indicates if the user is a coordinator
 }
 
 /// Represents a catalog of possible priority levels for requests or assignments.
 model RequestPriorityType extends TenantScoped, Auditable, CatalogBase {
   primaryColor        String                   //@db.VarChar(10)
-  level               Int                       @gt(0) @lt(10) 
+  level               Int                       @gt(0) @lt(10)
+  isDefault           Boolean                  @default(false)
 
   assignments RequestAssignment[]
   @@unique([name, tenantId])
@@ -146,64 +130,54 @@ model AssignmentType extends  TenantScoped, Auditable, CatalogBase {
   @@unique([name, tenantId])
 }
 
+model RequestWorkflow extends TenantScoped, Auditable, CatalogBase {
+  isDefault           Boolean                   @default(false)
+  requireComments     Boolean                   @default(false) // Requires comments for transitions
+  notifyChanges       Boolean                   @default(false) // Notify changes to the requester
 
-// Represents core ITIL request lifecycle states
-model RequestStatusType extends TenantScoped, Auditable {
-  id                  String                    @id @default(uuid()) //@db.UniqueIdentifier
-  // Human-readable state name
-  name                String                     @unique //@db.VarChar(50)
-  // Technical description for support teams
-  description         String?                   //@db.VarChar(255) 
-  // Controls state availability in dropdowns
-  isActive            Boolean                   @default(true)
-  // Hierarchical position in ITIL workflow (1=initial, 5=final)
-  level               Int                       @gt(0) @lt(5)
-  // ITIL-compliant state identifier
-  itilCode            String?                   @unique  //@db.VarChar(20)// draft, cab_review, etc.
-  // Marks terminal states where no transitions are allowed
-  isFinal             Boolean                   @default(false)
-  // Requires managerial approval when transitioning to this state
-  requiresApproval    Boolean                   @default(false)
-
-  // Relationship fields
-  assignments         RequestAssignment[]
-  fromTransitions     RequestStatusTransition[] @relation("FromStatus")
-  toTransitions       RequestStatusTransition[] @relation("ToStatus")
-
-  // Ensures unique ITIL codes per tenant
-  @@unique([tenantId, itilCode], name: "unique_itil_code_per_tenant")
-  // Optimized querying by state hierarchy
-  @@index([level], name: "idx_status_level")
-  // Quick lookup of terminal states
-  @@index([isFinal], name: "idx_status_final")
+  // Relationships
+  requestCategory     RequestCategory[]
+  requestWorkflowStatus RequestWorkflowStatus[] @relation("RequestWorkflowStatus")
+  requestWorkflowTransition RequestWorkflowTransition[] @relation("RequestWorkflowTransition")
 }
 
+model RequestWorkflowStatus extends TenantScoped, Auditable, CatalogBase {
+  // New diagram fields
+  color               String                    // Stores color.value
+  type                String                    // Stores type.value (initial/default/final)
+  positionX           Float                     // X coordinate of the node
+  positionY           Float                     // Y coordinate of the node
 
-// Manages state transitions with SLA rules
-model RequestStatusTransition extends TenantScoped, Auditable {
-  id           String            @id @default(uuid()) //@db.UniqueIdentifier
-  // Marks default transition path
-  isDefault    Boolean           @default(false)
-  // Determines display order in UI
-  priority     Int               @default(0)
-  // Maximum allowed duration in minutes (SLA tracking)
-  maxDuration  Int?              
-  // Notification threshold before SLA breach (minutes)
-  notifyAfter  Int?
+  // Relationships
+  workflowId          String
+  workflow            RequestWorkflow           @relation("RequestWorkflowStatus", fields: [workflowId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  assignments         RequestAssignment[]
+  fromTransitions     RequestWorkflowTransition[] @relation("FromStatus")
+  toTransitions       RequestWorkflowTransition[] @relation("ToStatus")
 
-  description  String?           //@db.VarChar(255)           
+  // Constraints
+  @@index([type], name: "idx_status_type")
+}
 
-  // Relationship fields
-  fromStatusId String            //@db.UniqueIdentifier
-  toStatusId   String            //@db.UniqueIdentifier
-  fromStatus RequestStatusType @relation("FromStatus", fields: [fromStatusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  toStatus RequestStatusType @relation("ToStatus", fields: [toStatusId], references: [id])
+model RequestWorkflowTransition extends TenantScoped, Auditable, CatalogBase {
+  priority            Int                       @default(0)
+  maxDuration         Int?                      // SLA in minutes
+  notifyAfter         Int?                      // Pre-SLA notification
+  requiresApproval    Boolean                   @default(false) // Requires approval
+  requiresJustification Boolean                 @default(false) // Requires justification
 
-  // Indexes for common query patterns
+  // Relationships
+  workflowId          String
+  workflow            RequestWorkflow           @relation("RequestWorkflowTransition", fields: [workflowId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  fromStatusId        String                    // Source status ID (required)
+  toStatusId          String                    // Target status ID (required)
+  fromStatus          RequestWorkflowStatus     @relation("FromStatus", fields: [fromStatusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  toStatus            RequestWorkflowStatus     @relation("ToStatus", fields: [toStatusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  // Constraints
+  @@unique([tenantId, fromStatusId, toStatusId], name: "unique_transition_path_per_tenant")
   @@index([fromStatusId], name: "idx_transition_source")
   @@index([toStatusId], name: "idx_transition_target")
-  // Ensures unique transition paths per tenant
-  @@unique([tenantId, fromStatusId, toStatusId], name: "unique_transition_path")
 }
 
 /// Tracks compliance with requirements for a specific request.
@@ -248,6 +222,7 @@ model RequestChangeLog extends TenantScoped, Auditable {
   oldValue  String?  //@db.VarChar(500)
   newValue  String?  //@db.VarChar(500)
   changedAt DateTime
+  metadata  String?   //@db.NVarChar(Max)    // JSON metadata { "type": 'STATUS_CHANGE', "comment": value }
 
   @@index([requestId], name: "idx_change_log_request_id")
   @@index([changedBy], name: "idx_change_log_changed_by")

@@ -5,12 +5,12 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import type { Prisma, RequestCategory } from '@prisma/client';
 import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
 import type { PolicyCrudKind } from '@zenstackhq/runtime';
 import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
 import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
 
+import type { Prisma, RequestCategory } from '../../../../node_modules/.prisma/client';
 import metadata from './__model_meta';
 
 type DefaultError = QueryError;
@@ -449,10 +449,11 @@ export function useCheckRequestCategory<TError = DefaultError>(
       createdBy?: string;
       updatedBy?: string;
       tenantId?: string;
-      parentCategoryId?: string;
+      isEligibleForNewClients?: boolean;
       hierarchyLevelId?: string;
       hierarchyId?: string;
-      isEligibleForNewClients?: boolean;
+      parentCategoryId?: string;
+      requestWorkflowId?: string;
     };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions

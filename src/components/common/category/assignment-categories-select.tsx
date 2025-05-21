@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useFindManyAssignmentCategory } from '@/services/api/hooks';
+import { useTranslations } from 'next-intl';
 import { ControllerRenderProps, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -23,9 +24,11 @@ export type AssignmentCategorySelectArrayValues = z.infer<typeof assignmentCateg
 type AssignmentCategoriesSelectProps = {
   levels: AssignmentLevelType[];
   areaId?: string;
+  isDisabled?: boolean;
+  menuPortalTarget?: HTMLElement;
 };
 
-export const AssignmentCategoriesSelect: React.FC<AssignmentCategoriesSelectProps> = ({ levels, areaId }) => {
+export const AssignmentCategoriesSelect: React.FC<AssignmentCategoriesSelectProps> = ({ levels, areaId, isDisabled, menuPortalTarget }) => {
   const { control, watch, setValue } = useFormContext<AssignmentCategorySelectArrayValues>();
   const watchedFields = watch('assignmentCategory', []);
   const lastSelectedIndex = watchedFields.findLastIndex((field) => !!field?.value);
@@ -39,14 +42,15 @@ export const AssignmentCategoriesSelect: React.FC<AssignmentCategoriesSelectProp
 
   return (
     <>
-      {levels.map((level, index) => {
-        const isLevelEnabled = !!areaId && index <= activeLevel;
+      {levels.map((level) => {
+        const currentPosition = level.position - 1;
+        const isLevelEnabled = !!areaId && currentPosition <= activeLevel;
 
         return (
           <FormField
-            key={`${level.id}-${index}`}
+            key={`${level.id}-${currentPosition}`}
             control={control}
-            name={`assignmentCategory.${index}`}
+            name={`assignmentCategory.${currentPosition}`}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{level.name}</FormLabel>
@@ -54,11 +58,12 @@ export const AssignmentCategoriesSelect: React.FC<AssignmentCategoriesSelectProp
                   field={field}
                   hierarchyLevelId={level.id}
                   hierarchyLevelName={level.name}
-                  parentCategoryId={index > 0 ? watchedFields[index - 1]?.value : ''}
-                  enabled={isLevelEnabled}
-                  position={level.position}
+                  parentCategoryId={currentPosition > 0 ? watchedFields[currentPosition - 1]?.value : ''}
+                  enabled={isLevelEnabled && !isDisabled}
+                  position={currentPosition}
                   areaId={areaId}
-                  onClearNextLevels={() => handleClearLevels(index + 1)}
+                  onClearNextLevels={() => handleClearLevels(currentPosition + 1)}
+                  menuPortalTarget={menuPortalTarget}
                 />
                 <FormMessage />
               </FormItem>
@@ -79,6 +84,8 @@ type SingleAssignmentCategorySelectProps = {
   parentCategoryId?: string;
   onClearNextLevels: () => void;
   field: ControllerRenderProps<AssignmentCategorySelectArrayValues, `assignmentCategory.${number}`>;
+  menuPortalTarget?: HTMLElement;
+  isDisabled?: boolean;
 };
 
 const SingleAssignmentCategorySelect: React.FC<SingleAssignmentCategorySelectProps> = ({
@@ -89,8 +96,11 @@ const SingleAssignmentCategorySelect: React.FC<SingleAssignmentCategorySelectPro
   enabled,
   position,
   onClearNextLevels,
+  menuPortalTarget,
+  isDisabled,
   areaId,
 }) => {
+  const t = useTranslations('admin.request.form.classificationStep');
   const where = useMemo(() => {
     const baseFilter = parentCategoryId ? { parentCategoryId } : { hierarchyLevelId };
     return areaId ? { ...baseFilter, areaId } : baseFilter;
@@ -129,7 +139,6 @@ const SingleAssignmentCategorySelect: React.FC<SingleAssignmentCategorySelectPro
           isClearable
           isSearchable
           options={options}
-          isDisabled={!enabled}
           isLoading={isLoading}
           onChange={(option) => {
             const newValue = option ? { ...option, position } : { label: '', value: '', position };
@@ -140,9 +149,12 @@ const SingleAssignmentCategorySelect: React.FC<SingleAssignmentCategorySelectPro
           }}
           value={field.value}
           menuShouldScrollIntoView={false}
+          placeholder={t('assignmentCategory.selectPlaceholder')}
+          isDisabled={!enabled || isDisabled}
+          menuPortalTarget={menuPortalTarget}
         />
       </FormControl>
-      <FormDescription>{isLoading ? 'Loading...' : `Select the ${hierarchyLevelName.toLowerCase()}`}</FormDescription>
+      <FormDescription>{isLoading ? t('common.loading') : t('assignmentCategory.selectDescription', { level: hierarchyLevelName.toLowerCase() })}</FormDescription>{' '}
     </>
   );
 };

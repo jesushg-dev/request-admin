@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { getAssignmentHierarchyAndLevelsByTenantId } from '@/actions/hierarchy';
+import { getAssignmentHierarchiesAndLevelsByTenantId } from '@/actions/hierarchy';
 import { getModuleByTenantIdAndScope } from '@/actions/module';
 import { getRequirementsAsOptions } from '@/actions/requirement';
 import { getUsersAsOptions } from '@/actions/user';
@@ -15,13 +15,12 @@ const NewPage: FC<NewPageProps> = async ({ params }) => {
   const { locale, tenantId } = await params;
 
   // Fetch hierarchy data using Prisma
-  const { hierarchy, levels } = await getAssignmentHierarchyAndLevelsByTenantId(locale, tenantId);
-
   const userOptions = await getUsersAsOptions(tenantId);
   const requirements = await getRequirementsAsOptions(tenantId);
   const modules = await getModuleByTenantIdAndScope(tenantId, 'area');
+  const hierarchies = await getAssignmentHierarchiesAndLevelsByTenantId(locale, tenantId);
 
-  return <AreaFormStepper tenantId={tenantId} hierarchyId={hierarchy.id} assignmentLevels={levels} requirements={requirements} userOptions={userOptions} moduleWithFeatures={modules} />;
+  return <AreaFormStepper tenantId={tenantId} assignmentHierarchies={hierarchies} requirements={requirements} userOptions={userOptions} moduleWithFeatures={modules} />;
 };
 
 export default NewPage;

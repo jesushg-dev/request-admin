@@ -1,0 +1,112 @@
+import './abstract.zmodel'
+import './category.zmodel'
+
+model ExecutionFlowDefinition extends TenantScoped, Auditable {
+  id                  String                      @id @default(uuid()) //@db.UniqueIdentifier                      // Primary key: unique identifier for the flow definition
+  version             Int                         @default(1)                                        // Version number to support versioned flow definitions
+  nodes               ExecutionNodeDefinition[]                                                       // Graph nodes that belong to this flow
+  edges               ExecutionEdgeDefinition[]                                                       // Graph edges that connect nodes in this flow
+  isActive            Boolean                     @default(true)                                     // Whether this version of the flow is active
+  executions          ExecutionModelInstance[]                                                        // Instances created from this flow definition
+  previousHistories   ExecutionModelHistory[]     @relation("PreviousFlowHistory")                   // Histories referencing this flow as the “previous” definition
+  newHistories        ExecutionModelHistory[]     @relation("NewFlowHistory")                        // Histories referencing this flow as the “new” definition
+  requestCategoryId   String?                     @unique                                             // Optional category grouping for requests
+  requestCategory     RequestCategory?            @relation(fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Relationship to category
+  viewportX           Float?                                                                          // Optional viewport X for rendering the flow
+  viewportY           Float?                                                                          // Optional viewport Y for rendering the flow
+  viewportZoom        Float?                                                                          // Optional viewport zoom for rendering the flow
+
+  @@unique([id, version])
+  @@index([requestCategoryId])
+}
+
+model ExecutionNodeDefinition extends TenantScoped, Auditable {
+  id            String                     @id @default(uuid()) //@db.UniqueIdentifier                              // Primary key
+  flow          ExecutionFlowDefinition     @relation(fields: [flowId], references: [id])             // Flow that owns this node
+  flowId        String                                                                           
+  type          String                                                                          // Semantic type (e.g., "start", "step", etc.)
+  positionX     Float                                                                           // X coordinate for UI placement
+  positionY     Float                                                                           // Y coordinate for UI placement
+  config        String                     //@db.NVarChar(Max)                                    // JSON string storing node-specific configuration
+  edgesFrom     ExecutionEdgeDefinition[]  @relation("SourceEdges")                            // Edges originating from this node
+  edgesTo       ExecutionEdgeDefinition[]  @relation("TargetEdges")                            // Edges pointing into this node
+  executionLogs ExecutionModelLog[]                                                            // Logs recorded when this node executes
+  nodeGuide     ExecutionNodeGuide[]                                                            // Guides linked to this node
+
+  @@index([type])
+}
+
+model ExecutionNodeGuide extends TenantScoped, Auditable {
+  id                  String                   @id @default(uuid()) //@db.UniqueIdentifier                      // Primary key
+  applicationScope    String                   @default("full")                                   // Scope of application
+  customInstructions  String?                  //@db.NVarChar(Max)                                  // Optional custom instructions override
+  order               Int                      @default(1)                                        // Order of guide usage
+
+  guideId             String                                                                       // Related guide
+  guide               GuideDocument            @relation(fields: [guideId], references: [id])      
+  nodeId              String                                                                       // Related node
+  node                ExecutionNodeDefinition  @relation(fields: [nodeId], references: [id])       
+
+  @@unique([guideId, nodeId])
+  @@index([applicationScope])
+  @@index([order])
+}
+
+model ExecutionEdgeDefinition extends TenantScoped, Auditable {
+  id           String                    @id @default(uuid()) //@db.UniqueIdentifier                             // Primary key
+  flow ExecutionFlowDefinition @relation(fields: [flowId], references: [id], onUpdate: NoAction, onDelete: NoAction) // Flow this edge belongs to
+  flowId       String                                                                             
+  source ExecutionNodeDefinition @relation("SourceEdges", fields: [sourceId], references: [id], onUpdate: NoAction, onDelete: NoAction)  // Source node
+  sourceId     String                                                                           
+  target       ExecutionNodeDefinition   @relation("TargetEdges", fields: [targetId], references: [id], onUpdate: NoAction, onDelete: NoAction)  // Target node
+  targetId     String                                                                           
+  sourceHandle String?                                                                         // Optional handle name (e.g., yes/no)
+  condition    String?                   //@db.NVarChar(Max)                                    // Optional expression to evaluate
+  style        String?                   //@db.NVarChar(Max)                                    // Optional JSON for edge styling
+  markerEnd    String?                   //@db.NVarChar(Max)                                    // Optional JSON for marker end
+
+  @@index([sourceId])
+  @@index([targetId])
+}
+
+model ExecutionModelInstance extends TenantScoped, Auditable {
+  id          String                    @id @default(uuid()) //@db.UniqueIdentifier                             // Primary key
+  flow        ExecutionFlowDefinition    @relation(fields: [flowId], references: [id])            // Flow this instance was created from
+  flowId      String                                                                             
+  referenceId String                                                                          // Business reference
+  status      String                                                                          // Current status
+  logs        ExecutionModelLog[]                                                            // Execution logs
+  history     ExecutionModelHistory[]                                                        // Migration history
+
+  @@index([referenceId])
+  @@index([status])
+}
+
+model ExecutionModelLog extends TenantScoped, Auditable {
+  id          String                     @id @default(uuid()) //@db.UniqueIdentifier                             // Primary key
+  executionId String                                                                          // Related execution
+  execution ExecutionModelInstance @relation(fields: [executionId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  nodeId      String                                                                          // Related node
+  node        ExecutionNodeDefinition    @relation(fields: [nodeId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  timestamp   DateTime                   @default(now())                                        // When the event happened
+  eventType   String                                                                          // Type of event (start, success, etc.)
+  details     String                     //@db.NVarChar(Max)                                    // Details of the log
+  outcome     String                                                                          // Result of the action
+
+  @@index([timestamp])
+  @@index([eventType])
+}
+
+model ExecutionModelHistory extends TenantScoped, Auditable {
+  id             String                     @id @default(uuid()) //@db.UniqueIdentifier                         // Primary key
+  executionId String
+  execution ExecutionModelInstance @relation(fields: [executionId], references: [id])
+  previousFlowId String?
+  previousFlow ExecutionFlowDefinition? @relation("PreviousFlowHistory", fields: [previousFlowId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  newFlowId String
+  newFlow ExecutionFlowDefinition @relation("NewFlowHistory", fields: [newFlowId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  changedAt      DateTime                   @default(now())                                      // When the migration happened
+  reason         String                     //@db.NVarChar(Max)                                    // Reason for change
+
+  @@index([changedAt])
+}

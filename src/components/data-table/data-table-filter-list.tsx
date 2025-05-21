@@ -5,6 +5,7 @@ import type { DataTableAdvancedFilterField, Filter, FilterOperator, JoinOperator
 import { type Table } from '@tanstack/react-table';
 import { CalendarIcon, Check, ChevronsUpDown, GripVertical, ListFilter, Trash2 } from 'lucide-react';
 import { customAlphabet } from 'nanoid';
+import { useTranslations } from 'next-intl';
 import { parseAsStringEnum, useQueryState } from 'nuqs';
 
 import { dataTableConfig } from '@/config/data-table';
@@ -39,6 +40,7 @@ interface DataTableFilterListProps<TData> {
 }
 
 export function DataTableFilterList<TData>({ table, filterFields, debounceMs, shallow }: DataTableFilterListProps<TData>) {
+  const t = useTranslations('table.filters');
   const id = React.useId();
   const [filters, setFilters] = useQueryState(
     'filters',
@@ -114,7 +116,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
           id={inputId}
           role="status"
           aria-live="polite"
-          aria-label={`${filterField.label} filter is ${filter.operator === 'isEmpty' ? 'empty' : 'not empty'}`}
+          aria-label={`${filterField.label} filter is ${filter.operator === 'isEmpty' ? t('isEmpty') : t('isNotEmpty')}`}
           className="h-8 w-full rounded border border-dashed"
         />
       );
@@ -129,7 +131,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
             type={filter.type}
             aria-label={`${filterField.label} filter value`}
             aria-describedby={`${inputId}-description`}
-            placeholder={filterField.placeholder ?? 'Enter a value...'}
+            placeholder={filterField.placeholder ?? t('enterValue')}
             className="h-8 w-full rounded"
             defaultValue={typeof filter.value === 'string' ? filter.value : undefined}
             onChange={(event) =>
@@ -158,16 +160,16 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
                   </Badge>
                 ) : (
                   <>
-                    {filterField.placeholder ?? 'Select an option...'}
+                    {filterField.placeholder ?? t('selectField')}
                     <ChevronsUpDown className="size-4" aria-hidden="true" />
                   </>
                 )}
               </Button>
             </FacetedFilterTrigger>
             <FacetedFilterContent id={`${inputId}-listbox`} className="w-[12.5rem] origin-[var(--radix-popover-content-transform-origin)]">
-              <FacetedFilterInput placeholder={filterField?.label ?? 'Search options...'} aria-label={`Search ${filterField?.label} options`} />
+              <FacetedFilterInput placeholder={filterField?.label ?? t('searchOptions')} aria-label={`Search ${filterField?.label} options`} />
               <FacetedFilterList>
-                <FacetedFilterEmpty>No options found.</FacetedFilterEmpty>
+                <FacetedFilterEmpty>{t('noOptionsFound')}</FacetedFilterEmpty>
                 <FacetedFilterGroup>
                   {filterField?.options?.map((option) => (
                     <FacetedFilterItem
@@ -206,7 +208,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
                 <>
                   {selectedValues.size === 0 && (
                     <>
-                      {filterField.placeholder ?? ' Select options...'}
+                      {filterField.placeholder ?? t('selectField')}
                       <ChevronsUpDown className="size-4" aria-hidden="true" />
                     </>
                   )}
@@ -219,7 +221,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
                     <div className="hidden min-w-0 gap-1 lg:flex">
                       {selectedValues.size > 2 ? (
                         <Badge variant="secondary" className="rounded-sm px-1 font-normal">
-                          {selectedValues.size} selected
+                          {selectedValues.size} {t('selected')}
                         </Badge>
                       ) : (
                         filterField?.options
@@ -236,9 +238,9 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
               </Button>
             </FacetedFilterTrigger>
             <FacetedFilterContent id={`${inputId}-listbox`} className="w-[12.5rem] origin-[var(--radix-popover-content-transform-origin)]">
-              <FacetedFilterInput aria-label={`Search ${filterField?.label} options`} placeholder={filterField?.label ?? 'Search options...'} />
+              <FacetedFilterInput aria-label={`Search ${filterField?.label} options`} placeholder={filterField?.label ?? t('searchOptions')} />
               <FacetedFilterList>
-                <FacetedFilterEmpty>No options found.</FacetedFilterEmpty>
+                <FacetedFilterEmpty>{t('noOptionsFound')}</FacetedFilterEmpty>
                 <FacetedFilterGroup>
                   {filterField?.options?.map((option) => (
                     <FacetedFilterItem
@@ -271,7 +273,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
             ? `${formatDate(dateValue[0] ?? new Date())} - ${formatDate(dateValue[1] ?? new Date())}`
             : dateValue[0]
               ? formatDate(dateValue[0])
-              : 'Pick a date';
+              : t('pickDate');
 
         return (
           <Popover>
@@ -312,7 +314,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
                       },
                     });
                   }}
-                  initialFocus
+                  autoFocus
                   numberOfMonths={1}
                 />
               ) : (
@@ -331,7 +333,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
                       document.getElementById(inputId)?.click();
                     }, 0);
                   }}
-                  initialFocus
+                  autoFocus
                 />
               )}
             </PopoverContent>
@@ -343,11 +345,11 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
         return (
           <Select value={filter.value} onValueChange={(value) => updateFilter({ rowId: filter.rowId, field: { value } })}>
             <SelectTrigger id={inputId} aria-label={`${filterField.label} boolean filter`} aria-controls={`${inputId}-listbox`} className="h-8 w-full rounded bg-transparent">
-              <SelectValue placeholder={filter.value ? 'True' : 'False'} />
+              <SelectValue placeholder={filter.value ? t('true') : t('false')} />
             </SelectTrigger>
             <SelectContent id={`${inputId}-listbox`}>
-              <SelectItem value="true">True</SelectItem>
-              <SelectItem value="false">False</SelectItem>
+              <SelectItem value="true">{t('true')}</SelectItem>
+              <SelectItem value="false">{t('false')}</SelectItem>
             </SelectContent>
           </Select>
         );
@@ -375,7 +377,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
         <PopoverTrigger asChild>
           <Button variant="outline" size="sm" className="gap-2" aria-label="Open filters" aria-controls={`${id}-filter-dialog`}>
             <ListFilter className="size-3" aria-hidden="true" />
-            Filters
+            {t('title')}
             {filters.length > 0 && (
               <Badge variant="secondary" className="h-[1.14rem] rounded-[0.2rem] px-[0.32rem] font-mono text-[0.65rem] font-normal">
                 {filters.length}
@@ -389,11 +391,11 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
           collisionPadding={16}
           className={cn('flex w-[calc(100vw-(--spacing(12)))] min-w-60 origin-[var(--radix-popover-content-transform-origin)] flex-col p-4 sm:w-[36rem]', filters.length > 0 ? 'gap-3.5' : 'gap-2')}>
           {filters.length > 0 ? (
-            <h4 className="leading-none font-medium">Filters</h4>
+            <h4 className="leading-none font-medium">{t('title')}</h4>
           ) : (
             <div className="flex flex-col gap-1">
-              <h4 className="leading-none font-medium">No filters applied</h4>
-              <p className="text-muted-foreground text-sm">Add filters to refine your results.</p>
+              <h4 className="leading-none font-medium">{t('noFilters')}</h4>
+              <p className="text-muted-foreground text-sm">{t('noFiltersDescription')}</p>
             </div>
           )}
           <div className="flex max-h-40 flex-col gap-2 overflow-y-auto py-0.5 pr-1">
@@ -410,7 +412,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
                   <div className="flex items-center gap-2">
                     <div className="min-w-[4.5rem] text-center">
                       {index === 0 ? (
-                        <span className="text-muted-foreground text-sm">Where</span>
+                        <span className="text-muted-foreground text-sm">{t('where')}</span>
                       ) : index === 1 ? (
                         <Select value={joinOperator} onValueChange={(value: JoinOperator) => setJoinOperator(value)}>
                           <SelectTrigger aria-label="Select join operator" aria-controls={joinOperatorListboxId} className="h-8 rounded lowercase">
@@ -435,10 +437,10 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
                           variant="outline"
                           size="sm"
                           role="combobox"
-                          aria-label="Select filter field"
+                          aria-label={t('selectField')}
                           aria-controls={fieldListboxId}
                           className="focus:ring-ring h-8 w-32 justify-between gap-2 rounded focus:ring-1 focus:outline-hidden focus-visible:ring-0">
-                          <span className="truncate">{filterFields.find((field) => field.id === filter.id)?.label ?? 'Select field'}</span>
+                          <span className="truncate">{filterFields.find((field) => field.id === filter.id)?.label ?? t('selectField')}</span>
                           <ChevronsUpDown className="size-4 shrink-0 opacity-50" />
                         </Button>
                       </PopoverTrigger>
@@ -452,9 +454,9 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
                           })
                         }>
                         <Command>
-                          <CommandInput placeholder="Search fields..." />
+                          <CommandInput placeholder={t('searchFields')} />
                           <CommandList>
-                            <CommandEmpty>No fields found.</CommandEmpty>
+                            <CommandEmpty>{t('noFieldsFound')}</CommandEmpty>
                             <CommandGroup>
                               {filterFields.map((field) => (
                                 <CommandItem
@@ -497,7 +499,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
                           },
                         })
                       }>
-                      <SelectTrigger aria-label="Select filter operator" aria-controls={operatorListboxId} className="h-8 w-32 rounded">
+                      <SelectTrigger aria-label={t('selectOperator')} aria-controls={operatorListboxId} className="h-8 w-32 rounded">
                         <div className="truncate">
                           <SelectValue placeholder={filter.operator} />
                         </div>
@@ -524,7 +526,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
           </div>
           <div className="flex w-full items-center gap-2">
             <Button size="sm" className="h-[1.85rem] rounded" onClick={addFilter}>
-              Add filter
+              {t('addFilter')}
             </Button>
             {filters.length > 0 ? (
               <Button
@@ -535,7 +537,7 @@ export function DataTableFilterList<TData>({ table, filterFields, debounceMs, sh
                   void setFilters(null);
                   void setJoinOperator('and');
                 }}>
-                Reset filters
+                {t('resetFilters')}
               </Button>
             ) : null}
           </div>

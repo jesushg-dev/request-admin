@@ -39,7 +39,6 @@ export const ourFileRouter = {
       return { userId: session.user.id, ...input };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.log('🚀 ~ .onUploadComplete ~ metadata:', metadata);
       const type = file.name.split('.').pop()?.toLowerCase();
       const contentType = file.type;
 
@@ -60,7 +59,6 @@ export const ourFileRouter = {
         console.error('Error creating document in database:', JSON.stringify(error));
         throw new UploadThingError('Failed to create document in database');
       }
-      console.log('2🚀 ~ .onUploadComplete ~ metadata:');
 
       // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
       return { uploadedBy: metadata.userId };

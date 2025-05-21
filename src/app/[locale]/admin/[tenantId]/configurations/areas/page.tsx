@@ -96,7 +96,16 @@ const AreaMainPage: React.FC = () => {
         isLoading={isLoading}
         subComponent={{
           columns: categoryColumns,
-          render: (props) => <AssignmentCategoryTable {...props} parentType="area" />,
+          render: ({ row, isExpanded, columns }) => (
+            <AssignmentCategoryTable
+              parentType="area"
+              isExpanded={isExpanded}
+              columns={columns}
+              areaId={row.original.id}
+              referenceId={row.original.id}
+              visibleCellsCount={row.getVisibleCells().length}
+            />
+          ),
         }}>
         <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
           <DataTableToolbarActions

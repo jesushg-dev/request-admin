@@ -2,6 +2,7 @@
 
 import React, { FC, useMemo } from 'react';
 import { Plus, Trash } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Control, FieldErrors, useController, useFieldArray, useFormContext } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -43,16 +44,23 @@ interface UserRoleAssignmentFormProps {
   roleOptions: OptionType[];
 }
 
-const UserRoleAssignmentForm: FC<UserRoleAssignmentFormProps> = ({ userOptions, roleOptions }) => {
+export const UserRoleAssignmentForm: FC<UserRoleAssignmentFormProps> = ({ userOptions, roleOptions }) => {
+  const t = useTranslations('component.userRoleAssignmentForm');
   const { control, formState } = useFormContext<userRoleAssignmentFormValues>();
-  const { fields, append, remove } = useFieldArray({ control, name: 'userRoles', keyName: '_id' });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'userRoles',
+    keyName: '_id',
+  });
 
   const onAppendUser = () => {
     if (roleOptions.length === 0) {
-      toast.warning('No roles available');
+      toast.warning(t('user.toast.noRoles'));
       return;
     }
-    const newUser = { ...getDefaultUserRole(roleOptions.length === 1 ? roleOptions[0] : { value: '', label: '' }) };
+    const newUser = {
+      ...getDefaultUserRole(roleOptions.length === 1 ? roleOptions[0] : { value: '', label: '' }),
+    };
     append(newUser);
   };
 
@@ -72,8 +80,8 @@ const UserRoleAssignmentForm: FC<UserRoleAssignmentFormProps> = ({ userOptions, 
                     <Checkbox checked={field.value} onCheckedChange={field.onChange} id={`userRoles.${index}.isActive`} />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel htmlFor={`userRoles.${index}.isActive`}>Active</FormLabel>
-                    <FormDescription>{field.value ? 'User will have access to the system with the selected role' : 'User will not have access to the system'}</FormDescription>
+                    <FormLabel htmlFor={`userRoles.${index}.isActive`}>{t('user.active.label')}</FormLabel>
+                    <FormDescription>{field.value ? t('user.active.description.true') : t('user.active.description.false')}</FormDescription>
                     <FormMessage />
                   </div>
                 </FormItem>
@@ -87,7 +95,7 @@ const UserRoleAssignmentForm: FC<UserRoleAssignmentFormProps> = ({ userOptions, 
       ))}
       <Button type="button" variant="outline" role="combobox" size="sm" className="border-2 border-dashed" onClick={onAppendUser}>
         <Plus className="mr-2 size-4" />
-        Add User
+        {t('user.add')}
       </Button>
     </div>
   );
@@ -101,19 +109,22 @@ interface UserSelectFieldProps {
   errors: FieldErrors<userRoleAssignmentFormValues>;
 }
 
-const UserSelectField: FC<UserSelectFieldProps> = ({ index, userArray, selectedUsers, control, errors }) => {
+export const UserSelectField: FC<UserSelectFieldProps> = ({ index, userArray, selectedUsers, control, errors }) => {
+  const t = useTranslations('component.userRoleAssignmentForm');
   const { field } = useController({ name: `userRoles.${index}.userId`, control });
+
   const filteredUsers = useMemo(() => {
     const currentValue = field.value?.value;
-    return userArray.filter((opt) => opt.value === currentValue || !selectedUsers.includes(opt.value as string));
+    return userArray.filter((opt) => opt.value === currentValue || !selectedUsers.includes(String(opt.value)));
   }, [userArray, selectedUsers, field.value]);
+
   return (
     <FormItem className="flex-1">
-      <FormLabel>User</FormLabel>
+      <FormLabel>{t('user.label')}</FormLabel>
       <FormControl>
         <Select value={field.value} options={filteredUsers} onChange={(selected) => field.onChange(selected || null)} className="w-full" />
       </FormControl>
-      <FormDescription>{filteredUsers.length === 0 ? 'No users available' : 'Select a user for the role'}</FormDescription>
+      <FormDescription>{filteredUsers.length === 0 ? t('user.description.none') : t('user.description.select')}</FormDescription>
       <FormMessage>{errors.userRoles?.[index]?.userId?.value?.message || errors.userRoles?.[index]?.userId?.label?.message || errors.userRoles?.[index]?.userId?.message}</FormMessage>
     </FormItem>
   );
@@ -126,12 +137,14 @@ interface RoleSelectFieldProps {
   errors: FieldErrors<userRoleAssignmentFormValues>;
 }
 
-const RoleSelectField: FC<RoleSelectFieldProps> = ({ index, roleArray, control, errors }) => {
+export const RoleSelectField: FC<RoleSelectFieldProps> = ({ index, roleArray, control, errors }) => {
+  const t = useTranslations('component.userRoleAssignmentForm');
   const { field } = useController({ name: `userRoles.${index}.roleId`, control });
   const currentValue = field.value?.value;
+
   return (
     <FormItem className="flex-1">
-      <FormLabel>Role</FormLabel>
+      <FormLabel>{t('role.label')}</FormLabel>
       <FormControl>
         <Select
           value={roleArray.find((r) => r.value === currentValue) || null}
@@ -140,10 +153,9 @@ const RoleSelectField: FC<RoleSelectFieldProps> = ({ index, roleArray, control, 
           className="w-full"
         />
       </FormControl>
-      <FormDescription>Select a role for the user</FormDescription>
+      <FormDescription>{t('role.description')}</FormDescription>
       <FormMessage>{errors.userRoles?.[index]?.roleId?.value?.message || errors.userRoles?.[index]?.roleId?.label?.message || errors.userRoles?.[index]?.roleId?.message}</FormMessage>
     </FormItem>
   );
 };
-
 export default UserRoleAssignmentForm;

@@ -8,6 +8,7 @@ import './request.zmodel'
 import './area.zmodel'
 import './category.zmodel'
 import './permission.zmodel'
+import './execution.zmodel'
 
 model Tenant extends Auditable {
   id                             String       @id
@@ -29,9 +30,12 @@ model Tenant extends Auditable {
   assignmentHierarchies          AssignmentHierarchy[]
   assignmentHierarchyLevels      AssignmentHierarchyLevel[]
   assignmentCategories           AssignmentCategory[]
+  assignmentCategoryForms        AssignmentCategoryForm[]
+
   requestHierarchies             RequestHierarchy[]
   requestHierarchyLevels         RequestHierarchyLevel[]
   requestCategories              RequestCategory[] 
+  requestCategoryForms           RequestCategoryForm[]
 
   // --- Requirements and Compliance ---
   requirements                   Requirement[]
@@ -43,14 +47,23 @@ model Tenant extends Auditable {
   sLAChangeLogs                  SLAChangeLog[]
   guideDocuments                 GuideDocument[] 
 
+  // --- Execution Flow and Logs ---
+  executionFlowDefinitions       ExecutionFlowDefinition[]
+  executionNodeDefinitions       ExecutionNodeDefinition[]
+  executionEdgeDefinitions       ExecutionEdgeDefinition[]
+  executionModelInstances        ExecutionModelInstance[]
+  executionModelLogs             ExecutionModelLog[]
+  executionModelHistory          ExecutionModelHistory[]
+  executionNodeGuides           ExecutionNodeGuide[]
+
   // --- Requests and Statuses ---
   requests                       Request[]
   requestAssignments             RequestAssignment[]
   assignedUsers                  AssignedUser[]
-  requestStatusTypes             RequestStatusType[]
-  requestStatusTransitions       RequestStatusTransition[]
+  requestWorkflows            RequestWorkflow[]
+  requestWorkflowStatuses      RequestWorkflowStatus[]
+  requestWorkflowTransitions   RequestWorkflowTransition[]
   requirementComplianceTrackings RequirementComplianceTracking[]
-  relatedIncidents               RelatedIncident[]
   requestChangeLogs              RequestChangeLog[]
   customerSatisfactionSurveys    CustomerSatisfactionSurvey[]
   assignmentTypes                AssignmentType[]
@@ -60,7 +73,6 @@ model Tenant extends Auditable {
   forms                          Form[]
   formSubmissions                FormSubmission[]
   formSubmissionKeys             FormSubmissionKey[]
-  categoryForms                  CategoryForm[]
   menuItems                      MenuItem[]
 
   // --- Areas and Categories ---

@@ -20,6 +20,15 @@ export const RequestDefaultArgs = Prisma.validator<Prisma.RequestDefaultArgs>()(
 export type RequestType = Prisma.RequestGetPayload<typeof RequestDefaultArgs>;
 
 export type RequestDetailsType = {
+  guides: {
+    id: string;
+    name: string;
+    description?: string | null;
+    fileType: string;
+    fileUrl: string;
+    version: string;
+    updatedAt: Date | null;
+  }[];
   submissions: {
     count: number;
     total: number;
@@ -48,4 +57,46 @@ export type RequestDetailsType = {
     name: string;
     createdAt: Date;
   };
+  requester?: {
+    name: string;
+    email: string;
+  };
+  assignedUsers: {
+    user: {
+      value: string | number;
+      label: string;
+    };
+    isCoordinator: boolean;
+  }[];
+  relatedAssignmentCount: number;
+  relatedRequestCount: number;
 };
+
+type StatusChangeMetadata = {
+  type: 'STATUS_CHANGE';
+  requiredReason: boolean;
+  comments?: string;
+};
+
+type PriorityChangeMetadata = {
+  type: 'PRIORITY_CHANGE';
+  reason: string;
+  notify: boolean;
+};
+
+type AssignmentChangeMetadata = {
+  type: 'ASSIGNMENT_CHANGE';
+  comments?: string;
+  users: {
+    userId: string;
+    isCoordinator: boolean;
+  }[];
+};
+
+type AssignmentAreaChangeMetadata = {
+  type: 'ASSIGNMENT_AREA_CHANGE';
+  reason: string;
+  notify: string;
+};
+
+export type RequestMetadata = StatusChangeMetadata | PriorityChangeMetadata | AssignmentChangeMetadata | AssignmentAreaChangeMetadata;

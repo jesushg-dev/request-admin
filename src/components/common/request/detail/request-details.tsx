@@ -1,64 +1,30 @@
 'use client';
 
-import { useState, useTransition, type FC } from 'react';
-import { updateCurrentPriority, updateCurrentStatus } from '@/actions/request-detail';
+import { useState, type FC } from 'react';
 import { Link } from '@/i18n/routing';
-import {
-  AlertTriangle,
-  ArrowDown,
-  ArrowRight,
-  ArrowUp,
-  CalendarIcon,
-  Circle,
-  CircleCheckBig,
-  CircleDashed,
-  Edit3Icon,
-  FlagIcon,
-  FolderIcon,
-  MonitorCog,
-  ScanSearch,
-  Signature,
-  StarIcon,
-  TagIcon,
-  UserIcon,
-} from 'lucide-react';
+import { Clock, Edit3Icon, EllipsisVertical, FileDown, MessageSquare, Printer, StarIcon, User } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { toast } from 'sonner';
 
 import { AssignmentLevelType, RequestLevelType } from '@/types/prisma/hierarchy';
 import { RequestDetailsType } from '@/types/prisma/request';
-import useMessage from '@/lib/message';
+import { RequestWorkflowType } from '@/types/prisma/workflow';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
-import { SelectCombobox } from '@/components/custom-ui/linear-select';
-import { OptionType } from '@/components/custom-ui/select';
-import { ProgressCircle } from '@/components/progress-circle';
-import { ExpandableMetadata, MetadataItem, MetadataItemProps } from '@/components/shared/metadata-item';
+import { type OptionType } from '@/components/custom-ui/select';
 
 import { RequestFormStepperType } from '../request-form-stepper';
+import { AssignRequestModal } from './assign-request-modal';
+import { ChangePriorityModal } from './change-priority-modal';
+import { ChangeStatusModal } from './change-status-modal';
+import { ReassignAreaModal } from './reassign-area-modal';
 
-const icons: { [key: number]: typeof Circle } = {
-  0: Circle,
-  1: AlertTriangle,
-  2: ArrowUp,
-  3: ArrowRight,
-  4: ArrowDown,
-};
-
-const icons2: { [key: number]: typeof Circle } = {
-  0: Signature,
-  1: MonitorCog,
-  2: ScanSearch,
-  3: CircleDashed,
-  4: CircleCheckBig,
-};
-
-interface ProjectDetailsProps {
+interface RequestDetailsProps {
   slug: string;
   tenantId: string;
-  statuses: OptionType[];
+  workflow: RequestWorkflowType;
   priorities: OptionType[];
   request: RequestFormStepperType;
   requestLevelTypes: RequestLevelType[];
@@ -66,113 +32,220 @@ interface ProjectDetailsProps {
   requestDetails: RequestDetailsType;
   enableStatusChange: boolean;
   enablePriorityChange: boolean;
+  enableAssignmentChange: boolean;
 }
 
-const ProjectDetails: FC<ProjectDetailsProps> = ({
+const RequestDetails: FC<RequestDetailsProps> = ({
   enableStatusChange,
   enablePriorityChange,
+  enableAssignmentChange,
   tenantId,
   slug,
   request,
   requestDetails,
-  statuses,
+  workflow,
   priorities,
   requestLevelTypes,
   assignmentLevelTypes,
 }) => {
-  const t = useTranslations('admin.request.view.projectDetails');
+  const t = useTranslations('admin.request.view.requestDetails');
 
-  const message = useMessage();
-  const [isPending, startTransition] = useTransition();
-  const [status, setStatus] = useState<string | number>(request.statusId.value);
-  const [priority, setPriority] = useState<string | number>(request.priorityId.value);
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [isPriorityModalOpen, setIsPriorityModalOpen] = useState(false);
+  const [isReassignModalOpen, setIsReassignModalOpen] = useState(false);
 
-  const statusesOptions = statuses.map((status, index) => ({ value: status.value, label: status.label, icon: icons2[index] ?? Circle }));
-  const priorityOptions = priorities.map((priority, index) => ({ value: priority.value, label: priority.label, icon: icons[index] ?? Circle }));
-
-  const assignmentCategories: MetadataItemProps[] = request.assignmentCategory.map((category, index) => ({
-    icon: <FolderIcon className="h-4 w-4" />,
-    label: assignmentLevelTypes[index].name,
-    value: category.label,
-  }));
-
-  const requestCategories: MetadataItemProps[] = request.requestCategory.map((category, index) => ({
-    icon: <FolderIcon className="h-4 w-4" />,
-    label: requestLevelTypes[index].name,
-    value: category.label,
-  }));
-
-  const onStatusChange = async (value: string | number) => {
-    const confirm = await message.confirm(t('confirmStatusChange'), {
-      title: t('statusChange'),
-    });
-    if (!confirm) return;
-
-    startTransition(async () => {
-      toast.promise(updateCurrentStatus(tenantId, slug, String(value)), {
-        loading: t('updatingStatus'),
-        success: () => {
-          setStatus(value);
-          return t('statusUpdated');
-        },
-        error: (err) => {
-          if (err instanceof Error) return t('statusUpdateError', { error: err.message });
-          return t('statusUpdateError', { error: t('unknownError') });
-        },
-      });
-    });
+  const handlePrint = () => {
+    alert('No implemented yet');
   };
 
-  const onPriorityChange = async (value: string | number) => {
-    const confirm = await message.confirm(t('confirmPriorityChange'), {
-      title: t('priorityChange'),
-    });
-    if (!confirm) return;
-
-    startTransition(async () => {
-      toast.promise(updateCurrentPriority(tenantId, slug, String(value)), {
-        loading: t('updatingPriority'),
-        success: () => {
-          setPriority(value);
-          return t('priorityUpdated');
-        },
-        error: (err) => {
-          if (err instanceof Error) return t('priorityUpdateError', { error: err.message });
-          return t('priorityUpdateError', { error: t('unknownError') });
-        },
-      });
-    });
+  const handleExportPDF = async () => {
+    alert('No implemented yet');
   };
 
   return (
-    <Card className="flex flex-1 flex-col">
-      <CardHeader>
-        <CardTitle className="flex w-full justify-between gap-4">
-          {request.issueSubject}
-          <Button variant="outline" size="sm" asChild>
-            <Link
-              href={{
-                pathname: '/admin/[tenantId]/requests/[slug]/edit',
-                params: { tenantId, slug },
-              }}>
-              <Edit3Icon className="h-4 w-4" />
-              <span className="sr-only">{t('edit')}</span>
-            </Link>
-          </Button>
-        </CardTitle>
-        <CardDescription>{request.description}</CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-1">
-        <div className="relative flex flex-1">
-          <div className="absolute inset-0 flex overflow-hidden">
-            <div className="flex flex-1 flex-col overflow-y-auto">
-              <div className="space-y-4">
-                {/* Progress Indicators */}
-                <div className="grid grid-cols-[repeat(auto-fit,minmax(5rem,1fr))] gap-4">
-                  <ProgressCircle value={requestDetails.submissions.count} total={requestDetails.submissions.total} label={t('submissions')} />
-                  <ProgressCircle value={requestDetails.requirements.count} total={requestDetails.requirements.total} label={t('requirements')} />
+    <>
+      <div className="flex flex-col gap-4 flex-1 overflow-auto">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>{t('statusState')}</CardTitle>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm">
+                  <EllipsisVertical />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>{t('manageRequest')}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link
+                    href={{
+                      pathname: '/admin/[tenantId]/requests/[slug]/edit',
+                      params: { tenantId, slug },
+                    }}>
+                    <Edit3Icon className="mr-2 h-4 w-4" />
+                    {t('edit')}
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setIsAssignModalOpen(true)}>{t('assignToUser')}</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setIsPriorityModalOpen(true)}>{t('changePriority')}</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setIsReassignModalOpen(true)}>{t('reassignDepartment')}</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handlePrint}>
+                  <Printer className="mr-2 h-4 w-4" />
+                  {t('printRequest')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleExportPDF}>
+                  <FileDown className="mr-2 h-4 w-4" />
+                  {t('exportAsPDF')}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                {/*requestData.status === 'Cerrado' ? (
+                  <DropdownMenuItem onClick={() => setIsStatusModalOpen(true)}>
+                    {t('reopenRequest')}
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem className="text-destructive" onClick={() => setIsStatusModalOpen(true)}>
+                    {t('cancelRequest')}
+                  </DropdownMenuItem>
+                )*/}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-2">
+            <ChangeStatusModal
+              tenantId={tenantId}
+              request={request}
+              workflow={workflow}
+              IsStatusModalOpen={isStatusModalOpen}
+              setIsStatusModalOpen={setIsStatusModalOpen}
+              enableAssignmentChange={enableAssignmentChange}
+              enableStatusChange={enableStatusChange}
+            />
 
-                  {requestDetails.sla && (
+            <ChangePriorityModal
+              tenantId={tenantId}
+              requestId={request.id}
+              defaultPriority={request.priorityId}
+              priorities={priorities}
+              isPriorityModalOpen={isPriorityModalOpen}
+              setIsPriorityModalOpen={setIsPriorityModalOpen}
+              enablePriorityChange={enablePriorityChange}
+            />
+
+            <Separator className="my-4" />
+
+            <div className="flex flex-col">
+              <h3 className="text-sm font-bold">{t('progress')}</h3>
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>{t('submissions')}</span>
+                    <span className="font-medium">
+                      {requestDetails.submissions.count}/{requestDetails.submissions.total}
+                    </span>
+                  </div>
+                  <Progress value={(requestDetails.submissions.count / requestDetails.submissions.total) * 100 || 0} />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>{t('requirements')}</span>
+                    <span className="font-medium">
+                      {requestDetails.requirements.count}/{requestDetails.requirements.total}
+                    </span>
+                  </div>
+                  <Progress value={(requestDetails.requirements.count / requestDetails.requirements.total) * 100} />
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>{t('executionModel')}</span>
+                    <span className="font-medium">0%</span>
+                  </div>
+                  <Progress value={0} />
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Categorías y Detalles */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Detalles</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-col">
+                <div className="text-sm font-medium text-muted-foreground">{t('issueSubject')}</div>
+                <p>{request.issueSubject}</p>
+              </div>
+
+              <div className="flex flex-col">
+                <div className="text-sm font-medium text-muted-foreground">{t('issueDescription')}</div>
+                <p>{request.description ?? 'N/A'}</p>
+              </div>
+
+              <Separator className="my-4" />
+
+              <ReassignAreaModal
+                request={request}
+                tenantId={tenantId}
+                relatedAssignmentCount={requestDetails.relatedAssignmentCount}
+                relatedRequestCount={requestDetails.relatedRequestCount}
+                isReassignModalOpen={isReassignModalOpen}
+                setIsReassignModalOpen={setIsReassignModalOpen}
+                requestLevelTypes={requestLevelTypes}
+                assignmentLevelTypes={assignmentLevelTypes}
+                enableAssignmentChange={enableAssignmentChange}
+              />
+
+              <Separator className="my-4" />
+
+              <AssignRequestModal
+                tenantId={tenantId}
+                requestId={request.id}
+                area={request.areaId}
+                enableAssignmentChange={enableAssignmentChange}
+                defaultAssignedUsers={requestDetails.assignedUsers}
+                isAssignModalOpen={isAssignModalOpen}
+                setIsAssignModalOpen={setIsAssignModalOpen}
+              />
+
+              <div className="flex flex-col">
+                <div className="text-sm font-medium text-muted-foreground">{t('requester')}</div>
+                <div className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  <div className="text-sm">{requestDetails.requester?.name ?? 'N/A'}</div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <MessageSquare className="h-4 w-4" />
+                  <div className="text-sm">{requestDetails.requester?.email ?? 'N/A'}</div>
+                </div>
+              </div>
+
+              <div className="flex flex-col">
+                <div className="text-sm font-medium text-muted-foreground">{t('dates')}</div>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  <div className="text-sm">
+                    {t('created')}: {new Date().toLocaleDateString()}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  <div className="text-sm">
+                    {t('updated')}: {new Date().toLocaleDateString()}
+                  </div>
+                </div>
+              </div>
+
+              {/* Progress Indicators */}
+              {requestDetails.sla && (
+                <>
+                  <Separator className="my-4" />
+                  <div className="grid grid-cols-[repeat(auto-fit,minmax(5rem,1fr))] gap-4">
                     <div className="w-full p-4 sm:col-span-2">
                       <h4 className="mb-2 text-sm font-medium">{t('currentSla')}</h4>
                       <div className="space-y-2">
@@ -187,59 +260,13 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({
                         <Progress value={requestDetails.sla.progress} />
                       </div>
                     </div>
-                  )}
-                </div>
-                <Separator />
-                {/* Metadata */}
-                <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4">
-                  <MetadataItem icon={<UserIcon className="h-4 w-4" />} label={t('issueSubject')} value={request.issueSubject ?? 'N/A'} />
-                  {enablePriorityChange ? (
-                    <MetadataItem
-                      icon={<FlagIcon className="h-4 w-4" />}
-                      label={t('priority')}
-                      value={
-                        <SelectCombobox
-                          hotkey="p"
-                          value={priority}
-                          defaultIcon={Circle}
-                          onChange={onPriorityChange}
-                          options={priorityOptions}
-                          buttonText={t('setPriority')}
-                          placeholder={t('search')}
-                          disabled={isPending}
-                        />
-                      }
-                    />
-                  ) : (
-                    <MetadataItem icon={<FlagIcon className="h-4 w-4" />} label={t('priority')} value={request.priorityId.label} />
-                  )}
-
-                  <ExpandableMetadata items={assignmentCategories} />
-                  <ExpandableMetadata items={requestCategories} />
-                  {enableStatusChange ? (
-                    <MetadataItem
-                      icon={<TagIcon className="h-4 w-4" />}
-                      label={t('status')}
-                      value={
-                        <SelectCombobox
-                          hotkey="s"
-                          value={status}
-                          defaultIcon={Circle}
-                          onChange={onStatusChange}
-                          options={statusesOptions}
-                          buttonText={t('setStatus')}
-                          placeholder={t('search')}
-                          disabled={isPending}
-                        />
-                      }
-                    />
-                  ) : (
-                    <MetadataItem icon={<TagIcon className="h-4 w-4" />} label={t('status')} value={request.statusId.label} />
-                  )}
-                  <MetadataItem icon={<CalendarIcon className="h-4 w-4" />} label={t('created')} value={new Date().toLocaleDateString()} />
-                </div>
-                {/* Satisfaction Survey */}
-                {requestDetails.satisfactionSurvey && (
+                  </div>
+                </>
+              )}
+              {/* Satisfaction Survey */}
+              {requestDetails.satisfactionSurvey && (
+                <>
+                  <Separator className="my-4" />
                   <div className="bg-muted/50 flex items-center gap-4 rounded-lg p-4">
                     <div className="flex">
                       {Array.from({ length: 5 }).map((_, i) => (
@@ -253,14 +280,14 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({
                       </p>
                     </div>
                   </div>
-                )}
-              </div>
+                </>
+              )}
             </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+          </CardContent>
+        </Card>
+      </div>
+    </>
   );
 };
 
-export default ProjectDetails;
+export default RequestDetails;

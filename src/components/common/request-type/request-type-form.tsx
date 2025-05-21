@@ -1,73 +1,239 @@
 'use client';
 
-import { FC, useTransition } from 'react';
-import { upsertCategoriesFlat } from '@/actions/request-type';
-import { useRouter } from '@/i18n/routing';
+import { FC, useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
+import { useUpsertRequestCategory } from '@/services/api/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LoaderCircleIcon } from 'lucide-react';
+import { BookCopyIcon, BookIcon, ChevronLeft, ChevronRight, ContainerIcon, FileCogIcon, FileStackIcon, PackageOpenIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
+import { ImperativePanelHandle } from 'react-resizable-panels';
+import { SingleValue } from 'react-select';
 import { toast } from 'sonner';
 
-import { RequestLevelType } from '@/types/prisma/hierarchy';
-import { Button } from '@/components/ui/button';
+import { RequestHierarchyWithLevelsType } from '@/types/prisma/hierarchy';
+import { buildRequestCategoryUpsertArgs } from '@/lib/request-type';
 import { Form } from '@/components/ui/form';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { OptionType } from '@/components/custom-ui/select';
-import { ZodErrorAlert } from '@/components/shared/zod-error-alert';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
+import Select, { OptionType } from '@/components/custom-ui/select';
+import EmptyState from '@/components/shared/empty-state';
+import { FormError, FormRoot } from '@/components/shared/form-root';
 
-import RequestCategoryForm, { categoriesSchema, getDefaultSubcategory, RequestCategoryFormValues } from '../category/request-category-form';
+import { CategoryForm, getDefaultCategory, requestCategorySchema, RequestCategoryValues } from './category-form';
+import { CategoryTreeView } from './category-tree-view';
+
+type Mode = 'add' | 'edit' | 'none';
+
+export interface RequestTypeFormValues {
+  hierarchyId: OptionType;
+  categories: RequestCategoryValues[];
+}
 
 interface RequestTypeFormProps {
   tenantId: string;
-  hierarchyId: string;
   forms: OptionType[];
-  levels: RequestLevelType[];
   requirements: OptionType[];
-  initialValues?: RequestCategoryFormValues | null;
+  requestHierarchies: RequestHierarchyWithLevelsType[];
+  initialValues?: RequestTypeFormValues | null;
+  disableHierarchyChange?: boolean;
 }
 
-const RequestTypeForm: FC<RequestTypeFormProps> = ({ hierarchyId, requirements, forms, levels, tenantId, initialValues }) => {
+const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements, forms, requestHierarchies, tenantId, disableHierarchyChange = false }) => {
+  const t = useTranslations('admin.requestType.create');
+
+  const ref = useRef<ImperativePanelHandle>(null);
   const [isPending, startTransition] = useTransition();
-  const router = useRouter();
+  const { mutateAsync: upsert, error, reset: resetError } = useUpsertRequestCategory();
+
+  const [mode, setMode] = useState<Mode>('none');
+  const [selectedHierarchy, setSelectedHierarchy] = useState<SingleValue<OptionType>>();
+  const [currentState, setCurrentState] = useState<RequestTypeFormValues['categories']>([]);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
 
   const form = useForm({
-    mode: 'onTouched',
-    resolver: zodResolver(categoriesSchema),
-    defaultValues: initialValues ?? { categories: [getDefaultSubcategory(levels[0].id)] },
+    resolver: zodResolver(requestCategorySchema),
   });
 
-  const onSubmit = (values: RequestCategoryFormValues) => {
-    startTransition(async () => {
-      const operation = upsertCategoriesFlat(values.categories, tenantId, hierarchyId);
-      toast.promise(operation, {
-        loading: 'Saving...',
-        success: () => {
-          router.push({ pathname: '/admin/[tenantId]/configurations/request-types', params: { tenantId } });
-          return 'Saved successfully.';
+  const hierarchyOptions = useMemo(() => requestHierarchies.map((h) => ({ label: h.name, value: h.id })), [requestHierarchies]);
+
+  const selectedHierarchyData = useMemo(() => requestHierarchies.find((h) => h.id === selectedHierarchy?.value), [requestHierarchies, selectedHierarchy]);
+
+  const formsOptions = useMemo(() => forms, [forms]);
+  const requirementsOptions = useMemo(() => requirements, [requirements]);
+
+  const toggleSidebar = () => {
+    if (ref.current) {
+      const newSize = ref.current.isCollapsed() ? 30 : 0;
+      setIsSidebarCollapsed(!isSidebarCollapsed);
+      ref.current.resize(newSize);
+    }
+  };
+
+  const handleAddCategory = useCallback(
+    (hierarchyLevelId: string, parentCategoryId?: string | null) => {
+      setMode('add');
+      form.reset(getDefaultCategory(hierarchyLevelId, parentCategoryId));
+    },
+    [form]
+  );
+
+  const handleEditCategory = useCallback(
+    (category: RequestCategoryValues) => {
+      setMode('edit');
+      form.reset(category);
+    },
+    [form]
+  );
+
+  const handleCancelForm = useCallback(() => {
+    setMode('none');
+    const defaultLevelId = selectedHierarchyData?.levels[0].id ?? '';
+    form.reset(getDefaultCategory(defaultLevelId));
+    resetError();
+  }, [form, resetError, selectedHierarchyData]);
+
+  const handleHierarchyChange = useCallback((newValue: SingleValue<OptionType>) => setSelectedHierarchy(newValue), []);
+
+  const onSubmit = (cat: RequestCategoryValues) => {
+    if (!selectedHierarchy?.value) return;
+
+    startTransition(() => {
+      const previousState = currentState?.find((c) => c.id === cat.id);
+
+      setCurrentState((prev) => {
+        const prevCategories = [...prev];
+        if (previousState) {
+          const previousParent = prevCategories.find((c) => c.id === previousState.parentCategoryId);
+          if (previousParent) {
+            previousParent.children = previousParent.children.filter((id) => id !== cat.id);
+          }
+        }
+
+        const categoryIndex = prevCategories.findIndex((c) => c.id === cat.id);
+        const isNewCategory = categoryIndex === -1;
+
+        if (isNewCategory) {
+          prevCategories.push({
+            ...cat,
+            children: [],
+          });
+        } else {
+          prevCategories[categoryIndex] = {
+            ...prevCategories[categoryIndex],
+            ...cat,
+          };
+        }
+
+        if (cat.parentCategoryId) {
+          const newParent = prevCategories.find((c) => c.id === cat.parentCategoryId);
+          if (newParent && !newParent.children.includes(cat.id)) {
+            newParent.children = [...newParent.children, cat.id];
+          }
+        }
+
+        return prevCategories;
+      });
+
+      const promise = upsert(buildRequestCategoryUpsertArgs(cat, tenantId, String(selectedHierarchy.value)));
+
+      toast.promise(promise, {
+        loading: t('category.loading'),
+        success: (response) => {
+          if (response) {
+            setCurrentState((prev) => prev.map((c) => (c.id === response.id ? { ...c, ...response } : c)));
+          }
+          setMode('none');
+          return t('category.success');
         },
-        error: (err) => {
-          return `Failed to save: ${err.message}`;
+        error: (error) => {
+          setCurrentState((prev) => [...prev]);
+          return t('category.error', { error: error.message });
         },
-        position: 'top-right',
       });
     });
   };
 
+  useEffect(() => {
+    if (initialValues) {
+      setCurrentState(initialValues.categories);
+      setSelectedHierarchy(initialValues.hierarchyId);
+    } else if (requestHierarchies.length === 1) {
+      const defaultHierarchy = hierarchyOptions[0];
+      setSelectedHierarchy(defaultHierarchy);
+    }
+  }, [initialValues, requestHierarchies, hierarchyOptions]);
+
+  const isFormActive = mode !== 'none';
+  const firstLevelId = selectedHierarchyData?.levels[0].id ?? '';
+
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col flex-1 overflow-hidden gap-4 items-end">
-        <ZodErrorAlert />
-        <ScrollArea className="flex w-full flex-1 overflow-y-hidden">
-          <div className="m-1 mr-4 flex flex-1 flex-col gap-2">
-            <RequestCategoryForm levels={levels} forms={forms} requirements={requirements} mode="single" />
+    <ResizablePanelGroup direction="horizontal" className="flex-1">
+      <ResizablePanel defaultSize={30} collapsible ref={ref} minSize={0}>
+        {!initialValues && (
+          <div className="flex flex-col border-b bg-background/50 px-4 py-2">
+            <h2 className="text-sm font-medium mb-2">{t('hierarchyLabel')}</h2>
+            <Select
+              isSearchable
+              menuPortalTarget={null}
+              isClearable={!disableHierarchyChange && hierarchyOptions.length > 1}
+              options={hierarchyOptions}
+              isDisabled={disableHierarchyChange || hierarchyOptions.length === 1}
+              onChange={handleHierarchyChange}
+              value={selectedHierarchy}
+            />
+            <span className="text-xs text-muted-foreground">{t('hierarchyDescription')}</span>
           </div>
-        </ScrollArea>
-        <Button type="submit" disabled={isPending}>
-          Save
-          {isPending && <LoaderCircleIcon className="animate-spin ml-2" />}
-        </Button>
-      </form>
-    </Form>
+        )}
+
+        {selectedHierarchyData && <CategoryTreeView categories={currentState} onAddCategory={handleAddCategory} onEditCategory={handleEditCategory} hierarchy={selectedHierarchyData} />}
+      </ResizablePanel>
+      <ResizableHandle />
+
+      <ResizablePanel className="flex-1 relative" defaultSize={70}>
+        <div className="flex items-center justify-center h-full p-4 overflow-hidden">
+          <button type="button" onClick={toggleSidebar} className="absolute top-1/2 -left-2 -translate-y-1/2 p-2 rounded-lg hover:bg-accent transition-colors z-10">
+            {isSidebarCollapsed ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+          </button>
+
+          {selectedHierarchy && selectedHierarchyData ? (
+            isFormActive ? (
+              <Form {...form}>
+                <FormRoot className="h-full" onSubmit={form.handleSubmit(onSubmit)}>
+                  <FormError error={error} />
+                  <CategoryForm formsOptions={formsOptions} requirementsOptions={requirementsOptions} mode={mode} isPending={isPending} handleCancelForm={handleCancelForm} />
+                </FormRoot>
+              </Form>
+            ) : (
+              <EmptyState
+                title="Manage Request Categories"
+                description='Select a category from the sidebar to edit or click "Add New" to create a new category.'
+                icons={[FileStackIcon, BookCopyIcon, ContainerIcon]}
+                actions={[
+                  {
+                    label: 'Create New Category',
+                    onClick: () => handleAddCategory(firstLevelId),
+                  },
+                ]}
+              />
+            )
+          ) : (
+            <EmptyState
+              title="Select a Hierarchy"
+              description="Please select a hierarchy from the sidebar to manage its categories."
+              icons={[PackageOpenIcon, FileCogIcon, BookIcon]}
+              actions={[
+                {
+                  label: 'Create New Hierarchy',
+                  href: {
+                    pathname: '/admin/[tenantId]/configurations/request-hierarchies/new',
+                    params: { tenantId },
+                  },
+                },
+              ]}
+            />
+          )}
+        </div>
+      </ResizablePanel>
+    </ResizablePanelGroup>
   );
 };
 

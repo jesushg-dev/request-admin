@@ -5,12 +5,12 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import type { Prisma, RequestPriorityType } from '@prisma/client';
 import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
 import type { PolicyCrudKind } from '@zenstackhq/runtime';
 import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
 import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
 
+import type { Prisma, RequestPriorityType } from '../../../../node_modules/.prisma/client';
 import metadata from './__model_meta';
 
 type DefaultError = QueryError;
@@ -452,7 +452,18 @@ export function useSuspenseCountRequestPriorityType<
 export function useCheckRequestPriorityType<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
-    where?: { id?: string; name?: string; description?: string; isActive?: boolean; createdBy?: string; updatedBy?: string; tenantId?: string; primaryColor?: string; level?: number };
+    where?: {
+      id?: string;
+      name?: string;
+      description?: string;
+      isActive?: boolean;
+      createdBy?: string;
+      updatedBy?: string;
+      tenantId?: string;
+      primaryColor?: string;
+      level?: number;
+      isDefault?: boolean;
+    };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {

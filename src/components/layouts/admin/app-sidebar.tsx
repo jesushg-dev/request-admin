@@ -18,7 +18,7 @@ import {
   LandPlotIcon,
   LayersIcon,
   MessageCircleQuestionIcon,
-  MessagesSquareIcon,
+  //MessagesSquareIcon,
   RadarIcon,
   RadioTowerIcon,
   ScaleIcon,
@@ -78,12 +78,12 @@ export function AppSidebar({ tenantId, tenants, user, ...props }: AppSidebarProp
         url: { pathname: '/admin/[tenantId]/reports', params: { tenantId } },
         items: [],
       },
-      {
+      /*{
         title: t('messages'),
         icon: MessagesSquareIcon,
         url: { pathname: '/admin/[tenantId]/messages', params: { tenantId } },
         items: [],
-      },
+      },*/
       {
         title: t('formDesigner'),
         url: { pathname: '/admin/[tenantId]/form-designer', params: { tenantId } },

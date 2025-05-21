@@ -1,32 +1,25 @@
 export function getPriorities() {
   const priorities = [
     {
-      id: '00000000-0000-0000-0000-000000000001',
-      name: 'Critical',
-      description: 'Requires immediate attention due to high impact and urgency.',
-      primaryColor: '#FF0000', // Red
+      id: '00000000-0000-0000-0000-000000000002',
+      name: 'Alta',
+      description: 'Alta impacto o urgencia. Debe ser resuelto rápidamente.',
+      primaryColor: '#FF0000', // Orange
       level: 1,
     },
     {
-      id: '00000000-0000-0000-0000-000000000002',
-      name: 'High',
-      description: 'High impact or urgency. Should be resolved quickly.',
+      id: '00000000-0000-0000-0000-000000000003',
+      name: 'Media',
+      description: 'Impacto y urgencia moderados. Manejado en procesos normales.',
       primaryColor: '#FFA500', // Orange
       level: 2,
     },
     {
-      id: '00000000-0000-0000-0000-000000000003',
-      name: 'Medium',
-      description: 'Moderate impact and urgency. Addressed in normal workflows.',
-      primaryColor: '#FFFF00', // Yellow
-      level: 3,
-    },
-    {
       id: '00000000-0000-0000-0000-000000000004',
-      name: 'Low',
-      description: 'Low impact and urgency. Handled in standard processing.',
+      name: 'Baja',
+      description: 'Impacto y urgencia baja. Manejado en procesos estándar.',
       primaryColor: '#008000', // Green
-      level: 4,
+      level: 3,
     },
   ];
 

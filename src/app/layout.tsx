@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 
 import './style.scss';
 import './globals.css';
+import '@xyflow/react/dist/style.css';
 import 'react-complex-tree/lib/style-modern.css';
 
 type Props = {

@@ -52,7 +52,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         ...classNames,
       }} */
       classNames={{
-        [UI.Months]: 'relative',
+        [UI.Months]: 'flex flex-col relative sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
         [UI.Month]: 'space-y-4 ml-0',
         [UI.MonthCaption]: 'flex justify-center items-center h-7',
         [UI.CaptionLabel]: 'text-sm font-medium',

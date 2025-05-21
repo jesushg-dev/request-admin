@@ -3,7 +3,7 @@
 import React from 'react';
 import { useFindFirstRequestHierarchyLevel, useFindManyRequestCategory } from '@/services/api/hooks';
 import { Prisma } from '@prisma/client';
-import { ColumnDef, getCoreRowModel, Row, useReactTable } from '@tanstack/react-table';
+import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
@@ -29,12 +29,13 @@ const RequestCategoryDefaultArgs = Prisma.validator<Prisma.RequestCategoryDefaul
 type RequestCategory = Prisma.RequestCategoryGetPayload<typeof RequestCategoryDefaultArgs>;
 
 interface IRequestCategoryBaseProps {
-  row: Row<{ id: string }>;
+  referenceId: string;
+  visibleCellsCount: number;
   columns: ColumnDef<RequestCategory>[];
   isExpanded: boolean;
 }
 
-function RequestCategorySubTable({ row, columns, isExpanded }: IRequestCategoryBaseProps) {
+function RequestCategorySubTable({ referenceId, visibleCellsCount, columns, isExpanded }: IRequestCategoryBaseProps) {
   const {
     data,
     isError,
@@ -45,7 +46,7 @@ function RequestCategorySubTable({ row, columns, isExpanded }: IRequestCategoryB
     {
       select: RequestCategoryDefaultArgs.select,
       where: {
-        parentCategoryId: row.original.id,
+        parentCategoryId: referenceId,
       },
     },
     { enabled: isExpanded }
@@ -77,7 +78,7 @@ function RequestCategorySubTable({ row, columns, isExpanded }: IRequestCategoryB
 
   return (
     <TableRow>
-      <TableCell colSpan={row.getVisibleCells().length}>
+      <TableCell colSpan={visibleCellsCount}>
         <div className="space-y-4">
           <div className="flex items-center space-x-2">{hierarchyIsLoading ? <Skeleton className="h-5 w-32" /> : <span className="font-semibold">{hierarchy?.name}</span>}</div>
           {requestCategoryIsLoading ? (
@@ -87,7 +88,7 @@ function RequestCategorySubTable({ row, columns, isExpanded }: IRequestCategoryB
               table={nestedTable}
               subComponent={{
                 columns,
-                render: (props) => <RequestCategorySubTable {...props} />,
+                render: ({ row, columns, isExpanded }) => <RequestCategorySubTable referenceId={row.id} visibleCellsCount={row.getVisibleCells().length} columns={columns} isExpanded={isExpanded} />,
               }}
             />
           )}
@@ -97,8 +98,8 @@ function RequestCategorySubTable({ row, columns, isExpanded }: IRequestCategoryB
   );
 }
 
-export function RequestCategoryTable({ row, columns, isExpanded }: IRequestCategoryBaseProps) {
-  return <RequestCategorySubTable row={row} columns={columns} isExpanded={isExpanded} />;
+export function RequestCategoryTable({ referenceId, visibleCellsCount, columns, isExpanded }: IRequestCategoryBaseProps) {
+  return <RequestCategorySubTable referenceId={referenceId} visibleCellsCount={visibleCellsCount} columns={columns} isExpanded={isExpanded} />;
 }
 
 export function useRequestCategoryTableConfiguration({ entity }: { entity?: string }) {

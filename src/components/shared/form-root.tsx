@@ -102,7 +102,7 @@ export const AnimatedVisibility = ({
 
 type FormItemProps = {
   label: string;
-  description: string;
+  description?: string;
   children: ReactNode;
   className?: string;
 };
@@ -111,14 +111,14 @@ export const FormItem = ({ label, description, children, className }: FormItemPr
   <ShadcnFormItem className={className}>
     <FormLabel>{label}</FormLabel>
     <FormControl>{children}</FormControl>
-    <FormDescription>{description}</FormDescription>
+    {description && <FormDescription>{description}</FormDescription>}
     <FormMessage />
   </ShadcnFormItem>
 );
 
 type FormCheckboxItemProps = {
   label: string;
-  description: string;
+  description?: string;
   children: ReactNode;
   className?: string;
 };
@@ -128,7 +128,7 @@ export const FormCheckboxItem = ({ label, description, children, className }: Fo
     <FormControl>{children}</FormControl>
     <div className="leading-none space-y-1">
       <FormLabel>{label}</FormLabel>
-      <FormDescription>{description}</FormDescription>
+      {description && <FormDescription>{description}</FormDescription>}
     </div>
     <FormMessage />
   </ShadcnFormItem>
@@ -167,12 +167,13 @@ type FormActionsProps = {
   title?: string;
   className?: string;
   children?: ReactNode;
+  onClick?: () => void;
 };
 
-export const FormActions = ({ isPending, title = 'Submit', className, children }: FormActionsProps) => (
-  <div className={cn('mt-4 flex justify-end gap-2', className)}>
+export const FormActions = ({ isPending, title = 'Submit', onClick, className, children }: FormActionsProps) => (
+  <div className={cn('mt-4 flex justify-end gap-2 w-full', className)}>
     {children}
-    <Button type="submit" disabled={isPending}>
+    <Button type={onClick ? 'button' : 'submit'} onClick={onClick} className="w-full sm:w-auto" size="sm" disabled={isPending}>
       {title}
       {isPending && <LoaderCircleIcon className="animate-spin ml-2" />}
     </Button>

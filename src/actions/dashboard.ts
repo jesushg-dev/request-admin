@@ -37,7 +37,9 @@ export async function getDashboardRequestCounts(tenantId: string) {
       tenantId,
       requestAssignments: {
         some: {
-          status: { level: { not: STATUS.CLOSED } },
+          status: {
+            type: { in: [STATUS.INITIAL, STATUS.DEFAULT] },
+          },
         },
       },
     },

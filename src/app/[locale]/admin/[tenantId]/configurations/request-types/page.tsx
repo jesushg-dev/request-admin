@@ -106,7 +106,7 @@ const CategoryMainPage: React.FC = () => {
         isLoading={isLoading}
         subComponent={{
           columns: categoryColumns,
-          render: (props) => RequestCategoryTable(props),
+          render: ({ row, columns, isExpanded }) => <RequestCategoryTable referenceId={row.original.id} visibleCellsCount={row.getVisibleCells().length} columns={columns} isExpanded={isExpanded} />,
         }}>
         <DataTableAdvancedToolbar table={table} filterFields={advancedFilterFields} shallow={false}>
           <DataTableToolbarActions

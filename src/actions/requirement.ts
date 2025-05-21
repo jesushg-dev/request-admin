@@ -5,9 +5,8 @@ import { db } from '@/server/db-client';
 import { omit } from 'lodash';
 
 import { RequirementDefaultArgs } from '@/types/prisma/requirement';
+import { UserNotFoundErr } from '@/lib/error';
 import { RequirementFormValues } from '@/components/common/requirement/requirement-form';
-
-class UserNotFoundErr extends Error {}
 
 export const getRequirementsAsOptions = async (tenantId: string) => {
   const session = await currentSession();

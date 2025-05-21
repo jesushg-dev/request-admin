@@ -1,67 +1,100 @@
 'use client';
 
-import React from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import { useFormContext } from 'react-hook-form';
+import { Control, useFormContext, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 
+import { AssignmentHierarchyWithLevelsType } from '@/types/prisma/hierarchy';
 import { generateUuid } from '@/lib/id';
-import { Checkbox } from '@/components/ui/checkbox';
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import Select, { optionSchema } from '@/components/custom-ui/select';
+import { FormCheckboxItem, FormContent, FormItem } from '@/components/shared/form-root';
 
-export const getAreaDefaultValue = (): AreaFormValues => ({
-  id: generateUuid(),
-  name: '',
-  description: '',
-  isActive: true,
-});
+import { PillChain } from '../hierarchy/hierarchy-viewer-with-alternatives';
 
 export const areaFormSchema = z.object({
   id: z.string(),
   name: z.string().min(1, 'requiredName'),
   description: z.string().optional(),
   isActive: z.boolean().default(true),
+  hierarchyId: optionSchema,
 });
 
 export type AreaFormValues = z.infer<typeof areaFormSchema>;
 
-// Props to decouple AreaForm entirely
+export const getAreaDefaultValue = (): AreaFormValues => ({
+  id: generateUuid(),
+  name: '',
+  description: '',
+  isActive: true,
+  hierarchyId: { label: '', value: '' },
+});
 
-export default function AreaForm() {
+export default function AreaForm({ assignmentHierarchies = [], disableHierarchyChange = false }: { assignmentHierarchies: AssignmentHierarchyWithLevelsType[]; disableHierarchyChange?: boolean }) {
   const t = useTranslations('component.areaForm');
-  const { control, formState } = useFormContext<AreaFormValues>();
+  const { control, setValue, getValues } = useFormContext<AreaFormValues>();
+
+  const hierarchyOptions = useMemo(() => {
+    return assignmentHierarchies.map((hierarchy) => ({
+      label: hierarchy.name,
+      value: hierarchy.id,
+    }));
+  }, [assignmentHierarchies]);
+
+  useEffect(() => {
+    if (hierarchyOptions.length === 1) {
+      const singleOption = hierarchyOptions[0];
+      const currentValue = getValues('hierarchyId');
+      if (currentValue.value !== singleOption.value) {
+        setValue('hierarchyId', singleOption);
+      }
+    }
+  }, [hierarchyOptions, setValue, getValues]);
 
   return (
-    <div className="flex flex-col gap-2 px-1">
+    <FormContent>
       {/* Name Field */}
       <FormField
         control={control}
         name="name"
         render={({ field }) => (
-          <FormItem>
-            <FormLabel>{t('nameLabel')}</FormLabel>
-            <FormControl>
-              <Input className="h-8 w-full rounded" placeholder={t('namePlaceholder')} {...field} value={field.value ?? ''} />
-            </FormControl>
-            {formState.errors.name?.message ? <FormMessage>{t(formState.errors.name.message as 'requiredName')}</FormMessage> : <FormDescription>{t('nameDescription')}</FormDescription>}
+          <FormItem label={t('nameLabel')} description={t('nameDescription')}>
+            <Input placeholder={t('namePlaceholder')} {...field} />
           </FormItem>
         )}
       />
+
+      <FormField
+        control={control}
+        name="hierarchyId"
+        render={({ field }) => (
+          <FormItem label={t('hierarchyLabel')} description={t('hierarchyDescription')}>
+            <Select
+              menuPortalTarget={null}
+              isSearchable
+              isClearable={!disableHierarchyChange && hierarchyOptions.length > 1}
+              options={hierarchyOptions}
+              isDisabled={disableHierarchyChange || hierarchyOptions.length === 1}
+              {...field}
+            />
+          </FormItem>
+        )}
+      />
+
+      {/* Hierarchy View */}
+      <HierarchyView control={control} assignmentHierarchies={assignmentHierarchies} />
 
       {/* Description Field */}
       <FormField
         control={control}
         name="description"
         render={({ field }) => (
-          <FormItem>
-            <FormLabel>{t('descriptionLabel')}</FormLabel>
-            <FormControl>
-              <Textarea placeholder={t('descriptionPlaceholder')} className="h-8 w-full rounded" {...field} />
-            </FormControl>
-            <FormDescription>{t('descriptionDescription')}</FormDescription>
-            <FormMessage />
+          <FormItem label={t('descriptionLabel')} description={t('descriptionDescription')}>
+            <Textarea placeholder={t('descriptionPlaceholder')} {...field} value={field.value ?? ''} />
           </FormItem>
         )}
       />
@@ -71,18 +104,24 @@ export default function AreaForm() {
         control={control}
         name="isActive"
         render={({ field }) => (
-          <FormItem className="flex items-center space-x-3">
-            <FormControl>
-              <Checkbox checked={field.value} onCheckedChange={field.onChange} id="isActive" />
-            </FormControl>
-            <div>
-              <FormLabel htmlFor="isActive">{t('isActiveLabel')}</FormLabel>
-              <FormDescription>{t('isActiveDescription')}</FormDescription>
-            </div>
-            <FormMessage />
-          </FormItem>
+          <FormCheckboxItem label={t('isActiveLabel')} description={t('isActiveDescription')}>
+            <Switch checked={field.value} onCheckedChange={field.onChange} />
+          </FormCheckboxItem>
         )}
       />
-    </div>
+    </FormContent>
   );
 }
+
+const HierarchyView = ({ control, assignmentHierarchies }: { control: Control<AreaFormValues>; assignmentHierarchies: AssignmentHierarchyWithLevelsType[] }) => {
+  const hierarchy = useWatch({
+    control,
+    name: 'hierarchyId',
+    defaultValue: { label: '', value: '' },
+  });
+
+  const selectedHierarchy = assignmentHierarchies.find((h) => h.id === hierarchy.value);
+  if (!selectedHierarchy) return null;
+
+  return <PillChain hierarchy={selectedHierarchy} />;
+};

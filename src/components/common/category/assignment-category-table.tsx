@@ -3,7 +3,7 @@
 import React from 'react';
 import { useFindFirstAssignmentHierarchyLevel, useFindManyAssignmentCategory } from '@/services/api/hooks';
 import { Prisma } from '@prisma/client';
-import { ColumnDef, getCoreRowModel, Row, useReactTable } from '@tanstack/react-table';
+import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
@@ -26,21 +26,22 @@ const AssignmentCategoryDefaultArgs = Prisma.validator<Prisma.AssignmentCategory
 type AssignmentCategory = Prisma.AssignmentCategoryGetPayload<typeof AssignmentCategoryDefaultArgs>;
 
 interface IAssignmentCategoryBaseProps {
-  row: Row<{ id: string }>;
+  referenceId: string;
+  visibleCellsCount: number;
   columns: ColumnDef<AssignmentCategory>[];
   isExpanded: boolean;
   parentType: 'area' | 'category';
   areaId?: string;
 }
 
-function AssignmentCategorySubTable({ row, columns, isExpanded, parentType, areaId }: IAssignmentCategoryBaseProps) {
+function AssignmentCategorySubTable({ referenceId, visibleCellsCount, columns, isExpanded, parentType, areaId }: IAssignmentCategoryBaseProps) {
   const { data, isError, error, refetch, isLoading } = useFindManyAssignmentCategory(
     {
       select: AssignmentCategoryDefaultArgs.select,
       where: {
-        areaId: parentType === 'area' ? row.original.id : areaId,
+        areaId: parentType === 'area' ? referenceId : areaId,
         hierarchyLevel: parentType === 'area' ? { position: 1 } : undefined,
-        parentCategoryId: parentType === 'category' ? row.original.id : undefined,
+        parentCategoryId: parentType === 'category' ? referenceId : undefined,
       },
       orderBy: { name: 'asc' },
     },
@@ -73,7 +74,7 @@ function AssignmentCategorySubTable({ row, columns, isExpanded, parentType, area
 
   return (
     <TableRow>
-      <TableCell colSpan={row.getVisibleCells().length}>
+      <TableCell colSpan={visibleCellsCount}>
         <div className="space-y-4">
           <div className="flex items-center space-x-2">
             {hierarchyIsLoading ? (
@@ -88,7 +89,16 @@ function AssignmentCategorySubTable({ row, columns, isExpanded, parentType, area
             table={nestedTable}
             subComponent={{
               columns,
-              render: (props) => <AssignmentCategorySubTable {...props} parentType="category" areaId={parentType === 'area' ? row.original.id : areaId} />,
+              render: ({ row, columns, isExpanded }) => (
+                <AssignmentCategorySubTable
+                  visibleCellsCount={row.getVisibleCells().length}
+                  parentType="category"
+                  columns={columns}
+                  isExpanded={isExpanded}
+                  referenceId={referenceId}
+                  areaId={parentType === 'area' ? referenceId : areaId}
+                />
+              ),
             }}
           />
         </div>
@@ -97,8 +107,8 @@ function AssignmentCategorySubTable({ row, columns, isExpanded, parentType, area
   );
 }
 
-export function AssignmentCategoryTable({ row, columns, isExpanded, parentType }: Omit<IAssignmentCategoryBaseProps, 'position'>) {
-  return <AssignmentCategorySubTable row={row} columns={columns} isExpanded={isExpanded} parentType={parentType} />;
+export function AssignmentCategoryTable({ referenceId, visibleCellsCount, columns, isExpanded, parentType }: Omit<IAssignmentCategoryBaseProps, 'position'>) {
+  return <AssignmentCategorySubTable referenceId={referenceId} visibleCellsCount={visibleCellsCount} columns={columns} isExpanded={isExpanded} parentType={parentType} />;
 }
 
 export function useAssignmentCategoryTableConfiguration({}: { entity?: string }) {

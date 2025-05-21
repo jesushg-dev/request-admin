@@ -30,6 +30,7 @@ import { getPriorities } from './priority';
 import { getITILStatuses, getITILTransitions } from './status';
 import { UNSTABLE_TENANT_ID } from './util';
 
+const LANGUAGE = 'es';
 const prisma = new PrismaClient();
 const USER_TENANT_JESUS_ID = '98c74680-9b23-473d-a105-b2591e2cd187';
 const USER_TENANT_DANILO_ID = 'fb420cf8-8820-4fb7-9fe5-bfe7b2f83894';
@@ -183,57 +184,7 @@ async function main() {
   }
 
   // Create ITIL states
-  const itilStates = getITILStatuses();
-  for (const state of itilStates) {
-    await prisma.requestStatusType.create({
-      data: {
-        ...state,
-        tenant: { connect: { id: UNSTABLE_TENANT_ID } },
-        createdBy: 'system-seed',
-        updatedBy: 'system-seed',
-      },
-    });
-  }
-
-  // Create ITIL transitions
-  const itilTransitions = getITILTransitions();
-  for (const transition of itilTransitions) {
-    // Get status IDs from ITIL codes
-    const fromStatus = await prisma.requestStatusType.findUnique({
-      where: {
-        unique_itil_code_per_tenant: {
-          tenantId: UNSTABLE_TENANT_ID,
-          itilCode: transition.fromCode,
-        },
-      },
-    });
-
-    const toStatus = await prisma.requestStatusType.findUnique({
-      where: {
-        unique_itil_code_per_tenant: {
-          tenantId: UNSTABLE_TENANT_ID,
-          itilCode: transition.toCode,
-        },
-      },
-    });
-
-    if (!fromStatus || !toStatus) {
-      throw new Error(`Missing status for transition: ${transition.fromCode}->${transition.toCode}`);
-    }
-
-    await prisma.requestStatusTransition.create({
-      data: {
-        maxDuration: transition.maxDuration,
-        isDefault: transition.isDefault || false,
-        priority: transition.priority || 0,
-        description: transition.description || '',
-        fromStatus: { connect: { id: fromStatus.id } },
-        toStatus: { connect: { id: toStatus.id } },
-        tenant: { connect: { id: UNSTABLE_TENANT_ID } },
-        createdBy: 'system-seed',
-      },
-    });
-  }
+  const { workflow } = await seedITILWorkflow();
 
   // Create ITIL Assignment Types
   const assignmentTypes = getITILAssignmentTypes();
@@ -544,6 +495,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -605,6 +557,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -666,6 +619,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -699,6 +653,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -760,6 +715,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -821,6 +777,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -882,6 +839,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -943,6 +901,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -1004,6 +963,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -1065,6 +1025,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -1126,6 +1087,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -1187,6 +1149,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -1251,6 +1214,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -1312,6 +1276,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -1373,6 +1338,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -1406,6 +1372,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -1467,6 +1434,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -1528,6 +1496,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -1589,6 +1558,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -1650,6 +1620,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -1711,6 +1682,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -1772,6 +1744,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -1805,6 +1778,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -1869,6 +1843,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -1930,6 +1905,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -1991,6 +1967,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -2024,6 +2001,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -2085,6 +2063,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -2146,6 +2125,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -2207,6 +2187,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -2268,6 +2249,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -2329,6 +2311,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -2390,6 +2373,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -2451,6 +2435,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -2484,6 +2469,7 @@ async function main() {
       tenantId: UNSTABLE_TENANT_ID,
       hierarchyId,
       hierarchyLevelId: hierarchyLevelServiceTypeId,
+      requestWorkflowId: workflow.id,
       requestCategoryRequirements: {
         create: [
           {
@@ -2555,6 +2541,61 @@ async function createModuleAndFeature() {
       },
     });
   }
+}
+
+export async function seedITILWorkflow() {
+  // 1. Create main workflow
+  const workflow = await prisma.requestWorkflow.create({
+    data: {
+      tenantId: UNSTABLE_TENANT_ID,
+      name: 'Flujo ITIL Predeterminado',
+      description: 'Flujo de trabajo estándar ITIL para gestión de solicitudes',
+      isActive: true,
+      isDefault: true,
+    },
+  });
+
+  // 2. Create statuses
+  const statuses = await Promise.all(
+    getITILStatuses().map((status) =>
+      prisma.requestWorkflowStatus.create({
+        data: {
+          id: status.id,
+          tenantId: UNSTABLE_TENANT_ID,
+          workflowId: workflow.id,
+          name: status.name[LANGUAGE],
+          description: status.description?.[LANGUAGE] || '',
+          color: status.color,
+          type: status.type,
+          positionX: status.positionX,
+          positionY: status.positionY,
+          isActive: status.isActive ?? true,
+        },
+      })
+    )
+  );
+
+  // 3. Create transitions
+  const transitions = await Promise.all(
+    getITILTransitions().map((transition) =>
+      prisma.requestWorkflowTransition.create({
+        data: {
+          id: transition.id,
+          tenantId: UNSTABLE_TENANT_ID,
+          workflowId: workflow.id,
+          fromStatusId: transition.fromStatusId,
+          toStatusId: transition.toStatusId,
+          name: transition.label[LANGUAGE],
+          maxDuration: transition.maxDuration,
+          priority: transition.priority ?? 0,
+          requiresApproval: transition.requiresApproval ?? false,
+          requiresJustification: transition.requiresJustification ?? false,
+        },
+      })
+    )
+  );
+
+  return { workflow, statuses, transitions };
 }
 
 // Definir permisos comunes para reutilizar

@@ -2,13 +2,15 @@
 
 import { AssignmentTypeEnum } from '@/constants/assignment-type';
 import { PermissionActions } from '@/constants/permissions';
-import { STATUS } from '@/constants/requests';
 import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-server';
 
 import { RequestDefaultArgs, RequestDetailsType, RequestType } from '@/types/prisma/request';
 import { UserAreaWithRoleType, UserTenantWithAreaDefaultArgs } from '@/types/prisma/user';
+import { normalizeValue } from '@/lib/utils';
 import { RequestFormStepperType } from '@/components/common/request/request-form-stepper';
+
+import { getInitialStatusFromDatabase } from './workflow';
 
 class UserNotFoundErr extends Error {}
 
@@ -66,8 +68,6 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
       },
     });
 
-    console.log('🚀 ~ handleCreate ~ newDataroom:', newDataroom);
-
     // Create Request and associate with Dataroom
     const newRequest = await tx.request.create({
       data: {
@@ -75,9 +75,9 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
         tenantId,
         issueSubject: data.issueSubject,
         description: data.description,
-        comment: data.comment,
+        isDraft: data.isDraft,
         requestAssignments: {
-          create: createAssignmentData(tenantId, data, assignmentType.id, userAreas),
+          create: await createAssignmentData(tenantId, data, assignmentType.id, userAreas),
         },
         complianceTrackings: {
           create: requirementCompliances.map((rc) => ({
@@ -103,8 +103,6 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
         },
       },
     });
-
-    console.log('🚀 ~ handleCreate ~ newRequest:', newRequest);
 
     // Log the change in request creation
     await tx.requestChangeLog.create({
@@ -147,13 +145,14 @@ const handleUpdate = async (existingRequest: RequestType, tenantId: string, data
       data: {
         issueSubject: data.issueSubject,
         description: data.description,
-        comment: data.comment,
+
+        isDraft: data.isDraft,
         requestAssignments: {
           updateMany: {
             where: { isActive: true },
             data: { isActive: false },
           },
-          create: createAssignmentData(tenantId, data, assignmentType.id, area),
+          create: await createAssignmentData(tenantId, data, assignmentType.id, area),
         },
         complianceTrackings: {
           upsert: requirementCompliances.map((rc) => ({
@@ -278,23 +277,26 @@ const getAreaWithSupervisors = async (tenantId: string, areaId: string) => {
   });
 };
 
-const createAssignmentData = (tenantId: string, data: RequestFormStepperType, assignmentTypeId: string, userAreas: UserAreaWithRoleType[]) => ({
-  tenantId,
-  typeId: assignmentTypeId,
-  areaId: data.areaId.value,
-  statusId: data.statusId.value,
-  priorityId: data.priorityId.value,
-  requestCategoryId: data.requestCategory.slice(-1)[0].value,
-  assignmentCategoryId: data.assignmentCategory.slice(-1)[0].value,
-  assignmentDate: new Date(),
-  assignedUsers: {
-    create: userAreas.map((ua) => ({
-      tenantId,
-      userTenantId: ua.id,
-      role: ua.userAreas.find((ua) => ua.areaId === data.areaId.value)?.role.name ?? 'User',
-    })),
-  },
-});
+const createAssignmentData = async (tenantId: string, data: RequestFormStepperType, assignmentTypeId: string, userAreas: UserAreaWithRoleType[]) => {
+  const statusId = normalizeValue(data.statusId?.value) ?? (await getInitialStatusFromDatabase(tenantId, data.requestCategory.slice(-1)[0].value)).id;
+  return {
+    tenantId,
+    typeId: assignmentTypeId,
+    areaId: data.areaId.value,
+    statusId: statusId,
+    priorityId: data.priorityId.value,
+    requestCategoryId: data.requestCategory.slice(-1)[0].value,
+    assignmentCategoryId: data.assignmentCategory.slice(-1)[0].value,
+    assignmentDate: new Date(),
+    assignedUsers: {
+      create: userAreas.map((ua) => ({
+        tenantId,
+        userTenantId: ua.id,
+        role: ua.userAreas.find((ua) => ua.areaId === data.areaId.value)?.role.name ?? 'User',
+      })),
+    },
+  };
+};
 
 const processFormSubmissions = (submissions: RequestFormStepperType['submissions'], tenantId: string) => {
   if (!submissions) return [];
@@ -335,7 +337,7 @@ const detectChanges = (oldRequest: RequestType, newRequest: RequestType) => {
   }> = [];
 
   // Direct properties of the Request object
-  const mainFields: Array<keyof typeof oldRequest> = ['issueSubject', 'description', 'comment'];
+  const mainFields: Array<keyof typeof oldRequest> = ['issueSubject', 'description'];
 
   // Compare the main fields of the request object
   for (const field of mainFields) {
@@ -424,7 +426,7 @@ export const getRequestById = async (tenantId: string, requestId: string): Promi
     id: request.id,
     requestCategory,
     assignmentCategory,
-    comment: request.comment ?? '',
+    isDraft: request.isDraft,
     description: request.description ?? '',
     issueSubject: request.issueSubject ?? '',
     areaId: { value: request.requestAssignments[0].area.id, label: request.requestAssignments[0].area.name },
@@ -452,9 +454,10 @@ export const getRequestDetailsByRequest = async (tenantId: string, request: Requ
   if (!session) throw new UserNotFoundErr();
 
   // Get total submissions count
+  // todo: we can improve this by using a single query
   const submissions = await db.formSubmission.count({ where: { requestId: request.id, tenantId } });
   const requestCategoryIds = request.requestCategory.map((rc) => rc.value);
-  const forms = await db.categoryForm.count({ where: { categoryId: { in: requestCategoryIds }, tenantId } });
+  const forms = await db.requestCategoryForm.count({ where: { categoryId: { in: requestCategoryIds }, tenantId } });
   const satisfactionSurvey = await db.customerSatisfactionSurvey.findFirst({
     where: { requestId: request.id },
     select: { rating: true, feedback: true, submittedAt: true },
@@ -468,7 +471,52 @@ export const getRequestDetailsByRequest = async (tenantId: string, request: Requ
     select: { id: true, name: true, createdAt: true },
   });
 
+  const guides = await db.guideDocument.findMany({
+    select: { id: true, name: true, description: true, fileType: true, fileUrl: true, version: true, updatedAt: true },
+    where: { tenantId, requestCategoryId: { in: request.requestCategory.map((rc) => rc.value) } },
+  });
+
+  const requester = await db.userTenant.findFirst({
+    where: { userId: session.user.id, tenantId },
+    select: {
+      person: {
+        select: {
+          firstName: true,
+          lastName: true,
+        },
+      },
+      user: {
+        select: {
+          email: true,
+        },
+      },
+    },
+  });
+
+  const assignedUsers = await db.assignedUser.findMany({
+    where: { requestAssignment: { requestId: request.id, tenantId, isActive: true } },
+    select: {
+      isCoordinator: true,
+      userTenant: {
+        select: {
+          id: true,
+          person: { select: { firstName: true, lastName: true } },
+          user: { select: { email: true } },
+        },
+      },
+    },
+  });
+
+  const relatedRequestCount = await db.requestAssignment.count({
+    where: { requestCategoryId: request.requestCategory[0].value, requestId: { not: request.id }, tenantId, isActive: true },
+  });
+
+  const relatedAssignmentCount = await db.requestAssignment.count({
+    where: { assignmentCategoryId: request.assignmentCategory[0].value, requestId: { not: request.id }, tenantId, isActive: true },
+  });
+
   return {
+    guides,
     submissions: {
       count: submissions,
       total: forms,
@@ -480,6 +528,19 @@ export const getRequestDetailsByRequest = async (tenantId: string, request: Requ
     satisfactionSurvey: satisfactionSurvey ?? undefined,
     channel: channel ?? undefined,
     dataroom: dataroom ?? undefined,
+    requester: {
+      name: requester?.person ? `${requester.person.firstName} ${requester.person.lastName}` : 'N/A',
+      email: requester?.user ? requester.user.email : 'N/A',
+    },
+    assignedUsers: assignedUsers.map((user) => ({
+      user: {
+        value: user.userTenant.id,
+        label: user.userTenant.person ? `${user.userTenant.person.firstName} ${user.userTenant.person.lastName} (${user.userTenant.user.email})` : user.userTenant.user.email,
+      },
+      isCoordinator: user.isCoordinator,
+    })),
+    relatedAssignmentCount,
+    relatedRequestCount,
   };
 };
 
@@ -489,27 +550,12 @@ export const getPrioritiesAsOptions = async (tenantId: string) => {
 
   const priorities = await db.requestPriorityType.findMany({
     select: { id: true, name: true, primaryColor: true },
-    where: { tenantId },
+    where: { tenantId, isActive: true },
   });
 
   return priorities.map((status) => ({
     label: status.name,
     value: status.id,
-  }));
-};
-
-export const getStatusesAsOptions = async (tenantId: string, levels: number[] = [STATUS.DRAFT, STATUS.REVIEW, STATUS.APPROVED, STATUS.IMPLEMENTING, STATUS.CLOSED]) => {
-  const session = await currentSession();
-  if (!session) throw new UserNotFoundErr();
-
-  const priorities = await db.requestStatusType.findMany({
-    select: { id: true, name: true },
-    where: { tenantId, level: { in: levels } },
-  });
-
-  return priorities.map((priority) => ({
-    label: priority.name,
-    value: priority.id,
   }));
 };
 

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { AnimatePresence, AnimationProps, motion } from 'framer-motion';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { AnimatePresence, AnimationProps, motion } from 'motion/react';
 
 import { cn } from '@/lib/utils';
 

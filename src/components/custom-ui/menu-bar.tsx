@@ -1,8 +1,8 @@
 'use client';
 
 import type * as React from 'react';
-import { motion } from 'framer-motion';
 import { Bell, Home, Settings, User } from 'lucide-react';
+import { motion } from 'motion/react';
 import { useTheme } from 'next-themes';
 
 interface MenuItem {

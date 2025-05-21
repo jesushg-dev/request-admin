@@ -3,6 +3,7 @@
 import { useTransition, type FC } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { defineStepper } from '@stepperize/react';
+import { Locale } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -27,11 +28,12 @@ export type HierarchyFormStepperValues = z.infer<typeof hierarchySchema> & z.inf
 interface HierarchyFormStepperProps {
   tenantId: string;
   isInUse?: boolean;
+  locale: Locale;
   defaultValues?: HierarchyFormStepperValues;
-  upsertAction: (values: HierarchyFormStepperValues, tenantId: string) => Promise<HierarchyFormStepperValues>;
+  upsertAction: (values: HierarchyFormStepperValues, tenantId: string, locale: Locale) => Promise<void>;
 }
 
-const HierarchyFormStepper: FC<HierarchyFormStepperProps> = ({ tenantId, defaultValues, isInUse = false, upsertAction }) => {
+const HierarchyFormStepper: FC<HierarchyFormStepperProps> = ({ tenantId, locale, defaultValues, isInUse = false, upsertAction }) => {
   const stepper = useStepper();
   const [isPending, startTransition] = useTransition();
 
@@ -50,13 +52,11 @@ const HierarchyFormStepper: FC<HierarchyFormStepperProps> = ({ tenantId, default
 
     startTransition(async () => {
       const data = form.getValues() as HierarchyFormStepperValues;
-      const promise = upsertAction(data, tenantId);
+      const promise = upsertAction(data, tenantId, locale);
 
       toast.promise(promise, {
         loading: 'Saving hierarchy...',
-        success: (responses) => {
-          return `Hierarchy ${responses.name} saved successfully!`;
-        },
+        success: () => 'Hierarchy saved successfully',
         error: (error) => {
           return `Failed to save hierarchy: ${error.message}`;
         },

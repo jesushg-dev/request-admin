@@ -1,6 +1,6 @@
 import { FC } from 'react';
-import { getAreaByTenandIdAndAreaId } from '@/actions/area';
-import { getAssignmentHierarchyAndLevelsByTenantId } from '@/actions/hierarchy';
+import { getAreaByTenantIdAndAreaId } from '@/actions/area';
+import { getAssignmentHierarchiesAndLevelsByTenantId } from '@/actions/hierarchy';
 import { getModuleByTenantIdAndScope } from '@/actions/module';
 import { getRequirementsAsOptions } from '@/actions/requirement';
 import { getUsersAsOptions } from '@/actions/user';
@@ -16,17 +16,13 @@ const EditPage: FC<EditPageProps> = async ({ params }) => {
   const { locale, tenantId, slug } = await params;
 
   // Fetch hierarchy data using Prisma
-  const { hierarchy, levels } = await getAssignmentHierarchyAndLevelsByTenantId(locale, tenantId);
-
   const userOptions = await getUsersAsOptions(tenantId);
   const requirements = await getRequirementsAsOptions(tenantId);
-  const area = await getAreaByTenandIdAndAreaId(tenantId, slug);
+  const area = await getAreaByTenantIdAndAreaId(tenantId, slug);
   const modules = await getModuleByTenantIdAndScope(tenantId, 'area');
-  console.log('🚀 ~ constEditPage:FC<EditPageProps>= ~ modules:', modules);
+  const hierarchies = await getAssignmentHierarchiesAndLevelsByTenantId(locale, tenantId);
 
-  return (
-    <AreaFormStepper tenantId={tenantId} defaultValues={area} hierarchyId={hierarchy.id} assignmentLevels={levels} requirements={requirements} userOptions={userOptions} moduleWithFeatures={modules} />
-  );
+  return <AreaFormStepper tenantId={tenantId} defaultValues={area} assignmentHierarchies={hierarchies} requirements={requirements} userOptions={userOptions} moduleWithFeatures={modules} />;
 };
 
 export default EditPage;

@@ -1,4 +1,4 @@
-import { Link } from '@/i18n/routing';
+import Link from '@/i18n/routing-client';
 import { ArrowRight } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
@@ -34,14 +34,14 @@ const Home = async () => {
               <p className="mx-auto max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">{t('subHeading')} </p>
             </div>
             <div className="flex gap-4">
-              <Button size="lg" asChild={true}>
+              <Button size="lg" variant="default" asChild={true}>
                 <Link href="/auth/login">
                   {t('signInButton')}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline">
-                Schedule a Demo
+              <Button size="lg" type="button" variant="outline">
+                {t('scheduleDemoButton')}
               </Button>
             </div>
           </section>

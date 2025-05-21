@@ -1,9 +1,7 @@
-//convert level to statuses name as constants
+//(initial/default/final)
 
 export const STATUS = {
-  DRAFT: 1,
-  REVIEW: 2,
-  APPROVED: 3,
-  IMPLEMENTING: 4,
-  CLOSED: 5,
-};
+  INITIAL: 'initial',
+  DEFAULT: 'default',
+  FINAL: 'final',
+} as const;

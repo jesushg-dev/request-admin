@@ -1,6 +1,7 @@
 'use client';
 
 import { Fragment, useState, type FC } from 'react';
+import { useFindFirstAssignmentHierarchy, useFindFirstRequestHierarchy } from '@/services/api/hooks';
 import { ChevronDown, ChevronRight, FlagIcon, MapPin, TagIcon, TagsIcon, UserIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslations } from 'next-intl';
@@ -10,6 +11,7 @@ import type { AssignmentLevelType, RequestLevelType } from '@/types/prisma/hiera
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MetadataItem } from '@/components/shared/metadata-item';
 
@@ -23,17 +25,17 @@ interface CategoryData {
   label?: string;
 }
 
-function DetailsSection({ issueSubject, priorityId, statusId, areaId }: RequestFormStepperType) {
+function DetailsSection({ title, issueSubject, priorityId, statusId, areaId }: RequestFormStepperType & { title: string }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Request Details</CardTitle>
+        <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4">
           <MetadataItem icon={<UserIcon className="h-4 w-4" />} label="Issue Subject" value={issueSubject} />
           <MetadataItem icon={<FlagIcon className="h-4 w-4" />} label="Priority" value={priorityId.label} />
-          <MetadataItem icon={<TagIcon className="h-4 w-4" />} label="Status" value={statusId.label} />
+          {statusId?.value && <MetadataItem icon={<TagIcon className="h-4 w-4" />} label="Status" value={statusId.label} />}
           <MetadataItem icon={<MapPin className="h-4 w-4" />} label="Area" value={areaId.label} />
         </div>
       </CardContent>
@@ -106,23 +108,38 @@ const CollapsedView: FC<{ categories: CategoryData[] }> = ({ categories }) => (
 
 interface SummaryStepProps {
   tenantId: string;
-  requestLevelTypes: RequestLevelType[];
-  assignmentLevelTypes: AssignmentLevelType[];
 }
 
-export const SummaryStep: FC<SummaryStepProps> = ({ tenantId, requestLevelTypes, assignmentLevelTypes }) => {
+export const SummaryStep: FC<SummaryStepProps> = ({ tenantId }) => {
   const t = useTranslations('admin.request.form.summaryStep');
   const { watch } = useFormContext<RequestFormStepperType>();
   const formData = watch();
 
+  const { data: requestLevelTypes, isLoading: isRequestLevelTypesLoading } = useFindFirstRequestHierarchy({
+    select: { levels: { select: { id: true, name: true, position: true }, orderBy: { position: 'asc' } } },
+    where: { tenantId, categories: { some: { id: { in: formData.requestCategory?.map((category) => category.value) } } } },
+  });
+  const { data: assignmentLevelTypes, isLoading: isAssignmentLevelTypesLoading } = useFindFirstAssignmentHierarchy({
+    select: { levels: { select: { id: true, name: true, position: true }, orderBy: { position: 'asc' } } },
+    where: { tenantId, categories: { some: { id: { in: formData.assignmentCategory?.map((category) => category.value) } } } },
+  });
+
   return (
     <ScrollArea className="flex-1">
       <div className="w-full flex flex-col gap-4 px-1">
-        <DetailsSection {...formData} />
+        <DetailsSection title={t('requestDetails')} {...formData} />
 
         <div className="grid md:grid-cols-2 gap-4">
-          <CategorySection title={t('service_category')} data={formData.requestCategory} levelTypes={requestLevelTypes} />
-          <CategorySection title={t('assignment_category')} data={formData.assignmentCategory} levelTypes={assignmentLevelTypes} />
+          {isRequestLevelTypesLoading ? (
+            <Skeleton className="h-6 w-full" />
+          ) : (
+            <CategorySection title={t('service_category')} data={formData.requestCategory} levelTypes={requestLevelTypes?.levels ?? []} />
+          )}
+          {isAssignmentLevelTypesLoading ? (
+            <Skeleton className="h-6 w-full" />
+          ) : (
+            <CategorySection title={t('assignment_category')} data={formData.assignmentCategory} levelTypes={assignmentLevelTypes?.levels ?? []} />
+          )}
         </div>
 
         <Tabs defaultValue="compliances" className="w-full">

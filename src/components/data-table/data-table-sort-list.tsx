@@ -4,6 +4,7 @@ import * as React from 'react';
 import type { ExtendedColumnSort, ExtendedSortingState, StringKeyOf } from '@/types';
 import type { SortDirection, Table } from '@tanstack/react-table';
 import { ArrowDownUp, Check, ChevronsUpDown, GripVertical, Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useQueryState } from 'nuqs';
 
 import { dataTableConfig } from '@/config/data-table';
@@ -24,6 +25,7 @@ interface DataTableSortListProps<TData> {
 }
 
 export function DataTableSortList<TData>({ table, debounceMs, shallow }: DataTableSortListProps<TData>) {
+  const t = useTranslations('table.sort');
   const id = React.useId();
 
   const initialSorting = (table.initialState.sorting ?? []) as ExtendedSortingState<TData>;
@@ -95,9 +97,9 @@ export function DataTableSortList<TData>({ table, debounceMs, shallow }: DataTab
       }>
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="outline" size="sm" className="gap-2" aria-label="Open sorting" aria-controls={`${id}-sort-dialog`}>
+          <Button variant="outline" size="sm" className="gap-2" aria-label={t('title')} aria-controls={`${id}-sort-dialog`}>
             <ArrowDownUp className="size-3" aria-hidden="true" />
-            Sort
+            {t('title')}
             {uniqueSorting.length > 0 && (
               <Badge variant="secondary" className="h-[1.14rem] rounded-[0.2rem] px-[0.32rem] font-mono text-[0.65rem] font-normal">
                 {uniqueSorting.length}
@@ -114,11 +116,11 @@ export function DataTableSortList<TData>({ table, debounceMs, shallow }: DataTab
             sorting.length > 0 ? 'gap-3.5' : 'gap-2'
           )}>
           {uniqueSorting.length > 0 ? (
-            <h4 className="leading-none font-medium">Sort by</h4>
+            <h4 className="leading-none font-medium">{t('title')}</h4>
           ) : (
             <div className="flex flex-col gap-1">
-              <h4 className="leading-none font-medium">No sorting applied</h4>
-              <p className="text-muted-foreground text-sm">Add sorting to organize your results.</p>
+              <h4 className="leading-none font-medium">{t('noSorting')}</h4>
+              <p className="text-muted-foreground text-sm">{t('noSortingDescription')}</p>
             </div>
           )}
           <div className="flex max-h-40 flex-col gap-2 overflow-y-auto p-0.5">
@@ -145,7 +147,7 @@ export function DataTableSortList<TData>({ table, debounceMs, shallow }: DataTab
                             <div className="ml-auto flex items-center gap-1">
                               {initialSorting.length === 1 && initialSorting[0]?.id === sort.id ? (
                                 <Badge variant="secondary" className="h-[1.125rem] rounded px-1 font-mono text-[0.65rem] font-normal">
-                                  Default
+                                  {t('default')}
                                 </Badge>
                               ) : null}
                               <ChevronsUpDown className="size-4 shrink-0 opacity-50" aria-hidden="true" />
@@ -154,9 +156,9 @@ export function DataTableSortList<TData>({ table, debounceMs, shallow }: DataTab
                         </PopoverTrigger>
                         <PopoverContent id={fieldListboxId} className="w-[var(--radix-popover-trigger-width)] p-0" onCloseAutoFocus={() => document.getElementById(fieldTriggerId)?.focus()}>
                           <Command>
-                            <CommandInput placeholder="Search fields..." />
+                            <CommandInput placeholder={t('searchFields')} />
                             <CommandList>
-                              <CommandEmpty>No fields found.</CommandEmpty>
+                              <CommandEmpty>{t('noFieldsFound')}</CommandEmpty>
                               <CommandGroup>
                                 {sortableColumns.map((column) => (
                                   <CommandItem
@@ -193,7 +195,7 @@ export function DataTableSortList<TData>({ table, debounceMs, shallow }: DataTab
                             field: { id: sort.id, desc: value === 'desc' },
                           })
                         }>
-                        <SelectTrigger aria-label="Select sort direction" aria-controls={directionListboxId} className="h-8 w-24 rounded">
+                        <SelectTrigger aria-label={t('selectDirection')} aria-controls={directionListboxId} className="h-8 w-24 rounded">
                           <div className="truncate">
                             <SelectValue />
                           </div>
@@ -220,11 +222,11 @@ export function DataTableSortList<TData>({ table, debounceMs, shallow }: DataTab
           </div>
           <div className="flex w-full items-center gap-2">
             <Button size="sm" className="h-[1.85rem] rounded" onClick={addSort} disabled={sorting.length >= sortableColumns.length}>
-              Add sort
+              {t('addSort')}
             </Button>
             {sorting.length > 0 ? (
               <Button size="sm" variant="outline" className="rounded" onClick={() => setSorting(null)}>
-                Reset sorting
+                {t('resetSorting')}
               </Button>
             ) : null}
           </div>

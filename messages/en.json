@@ -18,10 +18,37 @@
     "actions": {
       "export": "Export"
     },
+    "viewOptions": {
+      "ariaLabel": "Toggle columns",
+      "text": "View options",
+      "placeholder": "Filter columns...",
+      "emptyTitle": "No columns found."
+    },
+    "filters": {
+      "title": "Filters",
+      "noFilters": "No filters applied",
+      "noFiltersDescription": "Add filters to refine your results.",
+      "addFilter": "Add filter",
+      "resetFilters": "Reset filters",
+      "where": "Where",
+      "selectField": "Select field",
+      "searchFields": "Search fields...",
+      "noFieldsFound": "No fields found.",
+      "selectOperator": "Select filter operator",
+      "enterValue": "Enter a value...",
+      "pickDate": "Pick a date",
+      "searchOptions": "Search options...",
+      "noOptionsFound": "No options found.",
+      "selected": "selected",
+      "true": "True",
+      "false": "False",
+      "isEmpty": "is empty",
+      "isNotEmpty": "is not empty"
+    },
     "delete": {
       "title": "Are you absolutely sure?",
-      "description": "This action cannot be undone. This will permanently delete your {count} {entity}{count, plural, one {} other {s} from our servers.",
-      "trigger": "Delete ({count} {entity}{count, plural, one {} other {s})",
+      "description": "{count, plural, one {This action cannot be undone. This will permanently delete your # {entity} from our servers.} other {This action cannot be undone. This will permanently delete your # {entityPlural} from our servers.}}",
+      "trigger": "{count, plural, one {Delete 1 {entity}} other {Delete # {entityPlural}}}",
       "confirm": "Delete",
       "cancel": "Cancel",
       "success": "Successfully deleted {count} {entity}{count, plural, one {} other {s}.",
@@ -32,7 +59,40 @@
       "clearSelection": "Clear selection",
       "export": "Export {entity}",
       "delete": "Delete {entity}"
-    }
+    },
+    "pagination": {
+      "rowsSelected": "{selectedCount} of {totalCount} {totalCount, plural, one {row} other {rows}} selected",
+      "rowsPerPage": "Rows per page",
+      "pageInfo": "Page {current} of {total}",
+      "firstPage": "Go to first page",
+      "previousPage": "Go to previous page",
+      "nextPage": "Go to next page",
+      "lastPage": "Go to last page"
+    },
+    "columnHeader": {
+      "sortAscHint": "Sorted ascending. Click to sort descending.",
+      "sortDescHint": "Sorted descending. Click to sort ascending.",
+      "sortNoneHint": "Not sorted. Click to sort ascending.",
+      "sortAsc": "Asc",
+      "sortDesc": "Desc",
+      "hide": "Hide"
+    },
+    "emptyState": {
+      "title": "No data",
+      "description": "There is no data to display"
+    },
+    "sort": {
+      "title": "Sort",
+      "noSorting": "No sorting applied",
+      "noSortingDescription": "Add sorting to organize your results.",
+      "addSort": "Add sort",
+      "resetSorting": "Reset sorting",
+      "searchFields": "Search fields...",
+      "noFieldsFound": "No fields found.",
+      "default": "Default",
+      "selectDirection": "Select sort direction"
+    },
+    "filterDatePlaceholder": "Pick a date"
   },
   "home": {
     "title": "Request Engine",
@@ -95,7 +155,8 @@
         "contact": "Contact",
         "getDemo": "Get a Demo"
       }
-    }
+    },
+    "scheduleDemoButton": "Schedule a Demo"
   },
   "auth": {
     "loginForm": {
@@ -1049,7 +1110,7 @@
       "view": {
         "no_documents_found": "No documents found",
         "contact_support": "Please check back later or contact support if you need immediate assistance.",
-        "projectDetails": {
+        "requestDetails": {
           "edit": "Edit",
           "submissions": "Submissions",
           "requirements": "Requirements",
@@ -1063,27 +1124,42 @@
           "status": "Status",
           "created": "Created",
           "submittedOn": "Submitted on",
-          "setStatus": "Set Status",
-          "confirmStatusChange": "Are you sure you want to change the status?",
-          "statusChange": "Status Change",
-          "updatingStatus": "Updating status...",
-          "statusUpdated": "Status has been updated.",
-          "statusUpdateError": "Error updating status: {error}",
           "unknownError": "An unknown error occurred.",
           "confirmPriorityChange": "Are you sure you want to change the priority?",
           "priorityChange": "Priority Change",
           "updatingPriority": "Updating priority...",
           "priorityUpdated": "Priority has been updated.",
-          "priorityUpdateError": "Error updating priority: {error}"
+          "priorityUpdateError": "Error updating priority: {error}",
+          "executionModel": "Execution Model",
+          "requestCategory": "Request Category",
+          "issueDescription": "Description",
+          "assignmentCategory": "Assignment Category",
+          "area": "Area",
+          "currentStatus": "Current Status",
+          "changeStatus": "Change",
+          "changePriority": "Change priority",
+          "progress": "Progress",
+          "updated": "Updated",
+          "dates": "Dates",
+          "assignedTo": "Assigned to",
+          "requester": "Requester",
+          "statusState": "Request State",
+          "manageRequest": "Manage Request",
+          "assignToUser": "Assign to user",
+          "reassignDepartment": "Reassign department",
+          "printRequest": "Print request",
+          "exportAsPDF": "Export as PDF",
+          "reopenRequest": "Reopen request",
+          "cancelRequest": "Cancel request"
         },
         "tabs": {
           "requirements": "Requirements",
-          "assignments": "Assignments",
-          "chat": "Chat",
-          "submissions": "Submissions",
+          "executionModel": "Execution Model",
           "guides": "Guides",
+          "submissions": "Forms",
           "attachments": "Attachments",
-          "related": "Related",
+          "comments": "Comments",
+          "assignments": "Assignments",
           "history": "History"
         },
         "requirements": {
@@ -1117,7 +1193,10 @@
             "slaEnd": "SLA End",
             "timeElapsed": "Time Elapsed",
             "remainingTime": "Remaining Time",
-            "comments": "Comments"
+            "comments": "Comments",
+            "status": "Status",
+            "priority": "Priority",
+            "isActive": "Is Active"
           },
           "fields": {
             "visibleFields": "Visible Fields",
@@ -1151,17 +1230,6 @@
             "content": "Content"
           }
         },
-        "related": {
-          "title": "Related Incidents",
-          "entityLabel": "Incidents",
-          "relateRequest": "Relate Incident",
-          "columns": {
-            "relatedId": "Incident ID",
-            "issueSubject": "Subject",
-            "createdAt": "Creation Date",
-            "noSubject": "No subject"
-          }
-        },
         "history": {
           "requestId": "Request ID",
           "fullDate": "Full Date",
@@ -1176,15 +1244,99 @@
           "requestCreated": "Request Created",
           "requestUpdated": "Request Updated",
           "requestApproved": "Request Approved",
-          "requestRejected": "Request Rejected"
+          "requestRejected": "Request Rejected",
+          "metadata": "Metadata"
+        },
+        "guidesViewer": {
+          "guides": "Guides and documentation",
+          "guidesDescription": "Reference documentation to resolve this type of request",
+          "fileType": "File type",
+          "version": "Version",
+          "lastUpdated": "Last updated",
+          "viewGuide": "View guide",
+          "noGuidesFound": "No guides available",
+          "noGuidesDescription": "There are currently no guides to help complete this service request. If you have any questions or believe a guide is missing, please contact your supervisor or administrator.",
+          "guidesViewerTitle": "Guides for this Request ({count})",
+          "guidesViewerDescription": "Here you can find all the guides related to this request. Select a guide to view more details or download the file."
         }
       },
       "form": {
-        "categoryStep": {
-          "titleRequest": "Request Category",
-          "titleAssignment": "Assignment Category",
-          "areaLabel": "Area",
-          "areaDescription": "Select the area where the request is assigned."
+        "classification": "Classification",
+        "compliance": "Compliance",
+        "details": "Details",
+        "attachments": "Attachments",
+        "forms": "Forms",
+        "summary": "Summary",
+        "savingRequest": "Saving request...",
+        "uploadingFiles": "Uploading files to storage service",
+        "requestCreatedSuccessfully": "Request created successfully",
+        "errorCreatingRequest": "Error creating request",
+        "classificationStep": {
+          "reassign": {
+            "alertTitle": "Change Area",
+            "alertDescription": "When changing the area, the request history will be maintained, but you may need to complete some required fields again in the new assignment.",
+            "area": {
+              "title": "Reassign to another area",
+              "description": "Change the assigned area for request #{requestId}",
+              "action": "Reassign"
+            },
+            "reason": {
+              "label": "Reason for reassignment",
+              "description": "Explain why this request is being reassigned.",
+              "placeholder": "Explain why this request is being reassigned."
+            },
+            "notify": {
+              "label": "Notify",
+              "description": "Who will be notified?",
+              "requester": "Only the requester",
+              "area": "Only the new area",
+              "both": "Both"
+            },
+            "toast": {
+              "title": "Area reassigned",
+              "description": "Request #{requestId} has been reassigned to {area} successfully."
+            },
+            "reassign": "Reassign",
+            "confirm": {
+              "title": "Are you sure you want to change the request classification?",
+              "description": "This action modifies abruptly the request classification, and it will be required to refresh the page to see the changes."
+            }
+          },
+          "requestCategory": {
+            "title": "Request Category",
+            "description": "Identify the request category by providing the necessary information for its correct management.",
+            "defaultLabel": "Request Category",
+            "defaultDescription": "Select the request category.",
+            "dynamicDescription": "Select \"{category}\"",
+            "selectDescription": "Select the {level}.",
+            "selectPlaceholder": "Select"
+          },
+          "assignmentCategory": {
+            "title": "Assignment Category",
+            "description": "This will allow for the correct allocation of resources and the proper distribution of the request.",
+            "areaLabel": "Area",
+            "areaDescription": "Select the area where the request will be assigned.",
+            "defaultLabel": "Assignment Category",
+            "defaultDescription": "Select the assignment category.",
+            "dynamicDescription": "Select {category}",
+            "selectPlaceholder": "Select the assignment category.",
+            "areaFirstPlaceholder": "Select the area first",
+            "selectDescription": "Select the {level}",
+            "areaPlaceholder": "Select Area"
+          },
+          "common": {
+            "loading": "Loading..."
+          },
+          "area": "Area",
+          "requestType": "Request Type",
+          "assignmentType": "Assignment Type",
+          "toast": {
+            "loading": "Saving Changes...",
+            "error": "There was an error: {error}"
+          },
+          "requestCategoryUpdated": "Updated {date}",
+          "relatedRequestCount": "{count} similar requests",
+          "relatedAssignmentCount": "{count} similar assignment"
         },
         "requirementsStep": {
           "emptyTitle": "No requirements found",
@@ -1196,7 +1348,12 @@
           "deselectAll": "Deselect All",
           "selectAll": "Select All",
           "progress": "{progress}% Completed",
-          "remaining": "{pending} remaining"
+          "remaining": "{pending} remaining",
+          "filterOptions": {
+            "all": "All",
+            "selected": "Selected",
+            "unselected": "Unselected"
+          }
         },
         "detailsStep": {
           "issueSubject": "Issue Subject",
@@ -1205,19 +1362,26 @@
           "status": "Status",
           "statusDescription": "Status is used to determine the current state of the request.",
           "priority": "Priority",
-          "priorityDescription": "Priority is used to determine the order in which requests are handled.",
+          "priorityDescription": "Determine how urgent this request is.",
           "comment": "Comment",
           "commentPlaceholder": "Enter comment",
           "commentDescription": "Comment is used to provide even more information about the request.",
           "description": "Description",
-          "descriptionDescription": "Description is used to provide more information about the request."
+          "descriptionDescription": "Description is used to provide more information about the request.",
+          "descriptionPlaceholder": "Write a descriptive text here...",
+          "isDraft": "Is Draft",
+          "isDraftDescription": "This option allows you to save this request without sending it to the assigned area, to disable this option, you must fulfilling the required requirements.",
+          "detailsStep": "Request Information",
+          "detailsStepDescription": "Enter necessary details to initiate your service request"
         },
         "attachmentsStep": {
           "uploadFiles": "Upload Files",
           "uploadNewFiles": "You can only upload <strong>new files</strong> in this section, and they will be <strong>saved with the request</strong>.",
           "modifyExistingFiles": "If you want to <strong>modify existing files</strong>, you can do so in the <link>attachments section</link> or in the <link>data room generated with the request</link>.",
           "images": "Images",
-          "maxFileSize": "Max file size: 4MB"
+          "maxFileSize": "Max file size: 4MB",
+          "attachmentStep": "Attach Documents",
+          "attachmentStepDescription": "You can attach any additional documents you deem appropriate."
         },
         "dynamicFormStep": {
           "emptyState": {
@@ -1235,17 +1399,102 @@
             "compliances": "Compliances",
             "submissions": "Submissions",
             "attachments": "Attachments"
-          }
+          },
+          "requestDetails": "Request Details"
         }
       },
-      "relatedIncidentForm": {
-        "relatedId": "Related Id",
-        "relatedIdDescription": "Type the id of the related incident.",
-        "savingChanges": "Saving changes...",
-        "successSave": "Related incident ({id}) has been saved successfully.",
-        "errorSave": "Failed to save related incident: {message}",
-        "saveChanges": "Save Changes",
-        "addRelatedIncident": "Add Related Incident"
+      "assign": {
+        "title": "Assign request",
+        "description": "Assign request #{requestId} to a user",
+        "area": "Area",
+        "currentAssignee": "Currently assigned to",
+        "assignee": {
+          "label": "Assign to",
+          "description": "Select the user to assign the request to.",
+          "placeholder": "Select a user"
+        },
+        "comments": {
+          "label": "Comments (optional)",
+          "description": "Add a comment about the assignment.",
+          "placeholder": "Add a comment about the assignment..."
+        },
+        "action": "Assign",
+        "toast": {
+          "loading": "Loading...",
+          "success": "Request assigned successfully",
+          "error": "Error assigning request: {error}"
+        },
+        "assignedTo": "Assigned to",
+        "reassigne": "Reassigne",
+        "removeAssignee": "Remove Assignee",
+        "coordinator": "Coordinator",
+        "addAssignee": "Add Assignee"
+      },
+      "status": {
+        "title": "Change request status",
+        "description": "Update the status of request #{requestId}",
+        "currentStatus": "Current status",
+        "flowTitle": "Status flow",
+        "newStatus": {
+          "label": "New status",
+          "description": "Select the new status for the request."
+        },
+        "comments": {
+          "label": "Comments (optional)",
+          "description": "Add a comment about the status change.",
+          "placeholder": "Add a comment about the status change...",
+          "labelRequired": "Justification (required)",
+          "descriptionRequired": "You must provide a justification for this status change.",
+          "placeholderRequired": "Explain why this status change is being made..."
+        },
+        "resolution": {
+          "label": "Resolution",
+          "description": "Select the resolution type for the request."
+        },
+        "action": "Save changes",
+        "cancel": "Cancel",
+        "reasonRequired": "Justification required",
+        "reasonRequiredDescription": "You must provide a justification for this status change.",
+        "toast": {
+          "loading": "Updating status...",
+          "success": "Request #{requestId} has changed from \"{from}\" to \"{to}\" successfully.",
+          "error": "An error occurred while changing the status: {error}"
+        },
+        "flowDescription": "{count, plural, one {A request in the \"{from}\" status can move to the following state: {to}.} other {A request in the \"{from}\" status can move to the following states: {to}.}}",
+        "flowDescriptionShort": "Can continue to: {to}.",
+        "assignmentRequired": "Insufficient permissions",
+        "assignmentRequiredDescription": "Please contact the user who assigned you the request or someone with the required permission to make the change.",
+        "changeStatus": "Change Status",
+        "draft": "Draft"
+      },
+      "priority": {
+        "title": "Change request priority",
+        "description": "Update the priority of request #{requestId}",
+        "currentPriority": "Current priority",
+        "newPriority": {
+          "label": "New priority",
+          "description": "Select the new priority for the request."
+        },
+        "reason": {
+          "label": "Reason for change",
+          "description": "Explain why the priority is being changed.",
+          "placeholder": "Add a reason for the priority change..."
+        },
+        "notify": {
+          "label": "Notify requester?",
+          "description": "The requester will be notified about the priority change.",
+          "yes": "Yes",
+          "no": "No"
+        },
+        "action": "Save changes",
+        "cancel": "Cancel",
+        "toast": {
+          "loading": "Updating priority...",
+          "success": "The priority of request #{requestId} has been changed to \"{priority}\" successfully.",
+          "error": "An error occurred while changing the priority: {error}"
+        },
+        "priority": "Priority",
+        "changePriority": "Change Priority"
       }
     },
     "requestType": {
@@ -1276,8 +1525,142 @@
         }
       },
       "create": {
-        "title": "Assignment Category",
-        "subtitle": "Create a new assignment category. A category can have multiple and recursive subcategories according to your business needs."
+        "title": "Request Category",
+        "subtitle": "Create a new request category. A category can have multiple recursive subcategories according to the needs of your business.",
+        "hierarchyLabel": "Associated Hierarchy",
+        "hierarchyDescription": "Select the related organizational structure",
+        "saveButton": "Save",
+        "savingChanges": "Saving changes...",
+        "changeHierarchyWarning": "Changing the hierarchy will reset the categories! Do you want to continue?",
+        "saveSuccess": "Configuration saved successfully",
+        "saveError": "Error saving: {error}",
+        "unknownError": "Unknown error",
+        "editTitle": "Edit Category",
+        "createTitle": "Create New Category",
+        "cancel": "Cancel",
+        "update": "Update Category",
+        "create": "Create Category",
+        "tabs": {
+          "basic": "Basic Information",
+          "requirements": "Requirements",
+          "forms": "Forms",
+          "sla": "SLA",
+          "executionSteps": "Execution Steps",
+          "guides": "Guides"
+        },
+        "basicTab": {
+          "name": "Name",
+          "namePlaceholder": "Category name",
+          "description": "Description",
+          "descriptionPlaceholder": "Brief description of this category",
+          "active": "Active",
+          "activeDescription": "Is this category active and available?",
+          "newClients": "New Clients",
+          "newClientsDescription": "Available for new clients?",
+          "nameDescription": "This name will be used to identify the category throughout the system.",
+          "descriptionDescription": "This description will help other users understand the purpose and scope of the category."
+        },
+        "requirementsTab": {
+          "title": "Requirements",
+          "empty": "No requirements selected",
+          "addTitle": "Add Requirements"
+        },
+        "formsTab": {
+          "title": "Forms",
+          "empty": "No forms selected",
+          "addTitle": "Add Forms"
+        },
+        "slaTab": {
+          "resolutionTime": "Resolution Time (hours)",
+          "resolutionDescription": "Maximum time to resolve requests in this category",
+          "escalationTime": "Escalation Time (hours)",
+          "escalationDescription": "Time before the request is escalated"
+        },
+        "executionTab": {
+          "executionModel": "Execution Model",
+          "executionModelDescription": "Configure the necessary steps to execute this type of request",
+          "noStepsConfigured": "No steps configured",
+          "totalEstimatedTime": "Total Estimated Time",
+          "minutes": "minutes",
+          "linkedGuides": "Linked Guides",
+          "noLinkedGuides": "No linked guides",
+          "guideNotFound": "Guide not found",
+          "updateSuccess": "Step updated",
+          "updateSuccessDescription": "The step has been updated successfully",
+          "createSuccess": "Step added",
+          "createSuccessDescription": "The step has been added successfully",
+          "deleteSuccess": "Step deleted",
+          "deleteSuccessDescription": "The step has been deleted successfully",
+          "linkSuccess": "Guides linked",
+          "linkSuccessDescription": "The guides have been linked successfully",
+          "moveUp": "Move up",
+          "moveDown": "Move down",
+          "deleteStep": "Delete step",
+          "editStep": "Edit Step",
+          "addStep": "Add Step",
+          "stepName": "Step Name",
+          "stepNameDescription": "Descriptive name to identify the step in the process",
+          "stepNamePlaceholder": "E.g.: Document Verification",
+          "description": "Description",
+          "stepDescriptionDescription": "Additional details about the purpose of the step",
+          "stepDescriptionPlaceholder": "E.g.: Review valid identity documents",
+          "estimatedTime": "Estimated Time",
+          "estimatedTimeDescription": "Approximate time it takes to complete this step",
+          "minutesPlaceholder": "Minutes",
+          "responsible": "Responsible",
+          "responsibleDescription": "Role or area in charge of executing this step",
+          "responsiblePlaceholder": "E.g.: Service Agent",
+          "cancel": "Cancel",
+          "saveChanges": "Save Changes",
+          "createStep": "Create Step",
+          "linkGuides": "Link Guides",
+          "linkGuidesDescription": "Select the guides related to this step",
+          "selectGuides": "Available Guides",
+          "selectGuidesDescription": "Select one or more guides to link",
+          "save": "Save"
+        },
+        "guidesTab": {
+          "guidesTitle": "Guides and Documentation",
+          "guidesDescription": "Manage related guides and documents",
+          "addGuide": "Add Guide",
+          "noGuides": "No guides registered",
+          "fileType": "File Type",
+          "version": "Version",
+          "lastUpdated": "Last Updated",
+          "view": "View",
+          "download": "Download",
+          "editGuide": "Edit Guide",
+          "deleteGuide": "Delete Guide",
+          "newGuide": "New Guide",
+          "editGuideDescription": "Modify the guide details",
+          "newGuideDescription": "Fill in the fields to add a new guide",
+          "title": "Title",
+          "titleDescription": "Main name of the guide",
+          "titlePlaceholder": "E.g.: User Manual",
+          "guideDescriptionDescription": "Detailed description of the content",
+          "descriptionPlaceholder": "E.g.: System usage instructions",
+          "fileTypeDescription": "Document or resource type",
+          "selectFileType": "Select a type",
+          "versionDescription": "Current version of the document",
+          "versionPlaceholder": "E.g.: 1.0.1",
+          "fileUrl": "File URL",
+          "fileUrlDescription": "Public link to the document",
+          "fileUrlPlaceholder": "https://example.com/manual.pdf",
+          "lastUpdatedDescription": "Last update date",
+          "createGuide": "Create Guide",
+          "updateSuccess": "Guide updated",
+          "createSuccess": "Guide created",
+          "deleteSuccess": "Guide deleted",
+          "cancel": "Cancel",
+          "saveChanges": "Save Changes",
+          "description": "Description",
+          "locale": "Locale"
+        },
+        "category": {
+          "loading": "Guardando cambios...",
+          "success": "Cambios guardados con éxito",
+          "error": "Error al guardar los cambios: {error}"
+        }
       }
     },
     "requirement": {
@@ -1312,6 +1695,36 @@
         "savingChanges": "Saving changes...",
         "successSave": "Requirement '{name}' saved successfully.",
         "errorSave": "Failed to save requirement: {error}"
+      }
+    },
+    "requirementType": {
+      "entityLabel": "Requirement Type",
+      "columns": {
+        "name": "Name",
+        "description": "Description",
+        "createdAt": "Created At"
+      },
+      "filters": {
+        "name": "Name",
+        "namePlaceholder": "Search by name",
+        "description": "Description",
+        "descriptionPlaceholder": "Search by description",
+        "createdAt": "Created At"
+      },
+      "form": {
+        "savingChanges": "Saving changes...",
+        "successSave": "{name} has been saved successfully.",
+        "errorSave": "Error saving: {message}",
+        "name": "Name",
+        "namePlaceholder": "Enter the name",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter the description",
+        "isActive": "Active",
+        "isActivePlaceholder": "Check if active",
+        "isDefault": "Default",
+        "isDefaultPlaceholder": "Check if default",
+        "update": "Update",
+        "create": "Create"
       }
     },
     "role": {
@@ -2182,6 +2595,258 @@
         "saveChanges": "Save changes",
         "create": "Create"
       }
+    },
+    "requestPriorityType": {
+      "entityLabel": "Request Priority Types",
+      "newRequestPriorityType": "New Request Priority Type",
+      "dialog": {
+        "title": "Create New Request Priority Type",
+        "description": "Fill in the details to create a new request priority type."
+      },
+      "form": {
+        "name": "Name",
+        "namePlaceholder": "Enter priority name",
+        "color": "Color",
+        "colorPlaceholder": "Pick a primary color",
+        "preview": "Preview",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter description",
+        "level": "Level",
+        "levelPlaceholder": "Enter priority level (0–100)",
+        "isActive": "Active",
+        "isActivePlaceholder": "Toggle to activate or deactivate",
+        "isDefault": "Default",
+        "isDefaultPlaceholder": "Toggle to set as default priority",
+        "create": "Create",
+        "update": "Update",
+        "savingChanges": "Saving changes…",
+        "successSave": "Successfully saved \"{name}\"",
+        "errorSave": "Error saving: {message}"
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "create": "Create"
+      },
+      "columns": {
+        "name": "Name",
+        "selectRow": "Select row",
+        "description": "Description",
+        "requests": "Requests",
+        "requestsCount": "Requests Count",
+        "createdAt": "Created At"
+      },
+      "filters": {
+        "name": "Name",
+        "namePlaceholder": "Filter by name",
+        "description": "Description",
+        "descriptionPlaceholder": "Filter by description",
+        "createdAt": "Created At"
+      }
+    },
+    "workflow": {
+      "main": {
+        "entityLabel": "Workflows",
+        "columns": {
+          "name": "Name",
+          "description": "Description",
+          "requestTypes": "Request Types",
+          "states": "States",
+          "lastModified": "Last Modified",
+          "actions": "Actions",
+          "default": "Is Default"
+        },
+        "badges": {
+          "default": "Default",
+          "categories": "categories",
+          "states": "states",
+          "transitions": "transitions",
+          "yes": "Yes",
+          "no": "No"
+        },
+        "filters": {
+          "name": "Name",
+          "createdAt": "Creation Date",
+          "default": "Default",
+          "namePlaceholder": "Filter by name...",
+          "createdAtPlaceholder": "Select date"
+        },
+        "actions": {
+          "view": "View",
+          "edit": "Edit",
+          "duplicate": "Duplicate",
+          "delete": "Delete"
+        }
+      },
+      "form": {
+        "workflowName": "Workflow Name",
+        "workflowNameDescription": "The name of your workflow",
+        "workflowNamePlaceholder": "Enter workflow name",
+        "description": "Description",
+        "descriptionDescription": "Additional details about the workflow",
+        "descriptionPlaceholder": "Enter workflow description",
+        "defaultWorkflow": "Default Workflow",
+        "defaultWorkflowDesc": "Set as default workflow for new requests",
+        "requireComments": "Require Comments",
+        "requireCommentsDesc": "Mandatory comments for status changes",
+        "notifyChanges": "Notify Changes",
+        "notifyChangesDesc": "Send notifications when workflow changes",
+        "editorTab": "Visual editor",
+        "statesTab": "States",
+        "transitionsTab": "Transitions",
+        "validationErrors": "Validation errors",
+        "states": "states",
+        "transitions": "transitions",
+        "initialState": "Initial state",
+        "finalState": "Final state",
+        "requiresJustification": "Requires justification",
+        "requiresApproval": "Requires approval",
+        "workflowTransitions": "Transitions between states",
+        "newState": "New state",
+        "newTransition": "New transition",
+        "statesTabTitle": "Workflow states",
+        "errors": {
+          "initialState": "The workflow must have at least one initial state",
+          "finalState": "The workflow must have at least one final state",
+          "disconnectedStates": "There are disconnected states: {{states}}",
+          "statesWithoutPathToFinal": "There are states without a path to a final state: {{states}}"
+        },
+        "validationErrorsTitle": "Validation errors",
+        "validationErrorsMessage": "There are errors in the workflow. Please correct them before saving.",
+        "savedTitle": "Workflow saved",
+        "savedMessage": "The workflow has been successfully saved.",
+        "diagramEditor": {
+          "statesCounter": "States: {count}",
+          "transitionsCounter": "Transitions: {count}",
+          "actions": {
+            "deleteState": "Delete state",
+            "deleteTransition": "Delete transition"
+          },
+          "validation": {
+            "error": "Validation error",
+            "success": "Successful validation",
+            "successDescription": "The workflow is valid and meets all business rules.",
+            "disconnectedNodes": "There are {count} states without connections. All states must be connected.",
+            "initialNodes": "There must be exactly one initial state in the flow.",
+            "finalNodes": "There must be at least one final state in the flow.",
+            "nonFinalNodesWithoutExits": "There are {count} non-final states without exits. All must have at least one outgoing transition."
+          },
+          "transitions": {
+            "new": "New transition",
+            "edit": "Edit transition"
+          },
+          "states": {
+            "add": "Add state",
+            "edit": "Edit state"
+          }
+        },
+        "state": {
+          "updatedTitle": "State updated",
+          "updatedMessage": "The state \"{stateName}\" has been successfully updated.",
+          "addedTitle": "State added",
+          "addedMessage": "The state \"{stateName}\" has been successfully added.",
+          "deleteErrorTitle": "Cannot delete",
+          "deleteErrorMessage": "This state has associated transitions. Delete the transitions first.",
+          "deletedTitle": "State deleted",
+          "deletedMessage": "The state has been successfully deleted."
+        },
+        "transition": {
+          "localeKey": "en",
+          "updatedTitle": "Transition updated",
+          "updatedMessage": "The transition \"{transitionName}\" has been successfully updated.",
+          "addedTitle": "Transition added",
+          "addedMessage": "The transition \"{transitionName}\" has been successfully added.",
+          "deletedTitle": "Transition deleted",
+          "deletedMessage": "The transition has been successfully deleted."
+        },
+        "review": {
+          "noName": "Unnamed",
+          "noDescription": "No description",
+          "isDefault": "Default",
+          "requiresComments": "Requires comments",
+          "notifyChanges": "Notify changes",
+          "tabs": {
+            "diagram": "Diagram",
+            "states": "States",
+            "transitions": "Transitions"
+          },
+          "table": {
+            "name": "Name",
+            "type": "Type",
+            "color": "Color",
+            "from": "From",
+            "to": "To",
+            "approval": "Approval",
+            "justification": "Justification"
+          },
+          "types": {
+            "initial": "Initial",
+            "final": "Final",
+            "default": "Intermediate"
+          },
+          "colors": {
+            "gray": "Gray",
+            "blue": "Blue",
+            "indigo": "Indigo",
+            "green": "Green",
+            "red": "Red"
+          }
+        },
+        "validateWorkflow": "Validate Workflow",
+        "noTransitions": "No transitions",
+        "noTransitionsDescription": "Create a transition to connect states.",
+        "noStates": "No states",
+        "noStatesDescription": "Create a state to start the workflow."
+      },
+      "transition": {
+        "addTitle": "Add Transition",
+        "editTitle": "Edit Transition",
+        "addDescription": "Add new workflow transition",
+        "editDescription": "Modify workflow transition",
+        "nameLabel": "Transition Name",
+        "nameDescription": "Unique identifier for the transition",
+        "namePlaceholder": "Enter transition name",
+        "descriptionLabel": "Description",
+        "descriptionDescription": "Additional details about the transition",
+        "descriptionPlaceholder": "Enter description",
+        "sourceLabel": "Source State",
+        "sourcePlaceholder": "Select source state",
+        "sourceDescription": "State from which the transition starts",
+        "targetLabel": "Target State",
+        "targetPlaceholder": "Select target state",
+        "targetDescription": "State to which the transition leads",
+        "justificationLabel": "Requires Justification",
+        "justificationDescription": "Mandatory justification for transition",
+        "approvalLabel": "Requires Approval",
+        "approvalDescription": "Needs supervisor approval",
+        "cancel": "Cancel",
+        "save": "Save"
+      },
+      "state": {
+        "addTitle": "Add State",
+        "editTitle": "Edit State",
+        "addDescription": "Add new workflow state",
+        "editDescription": "Modify workflow state",
+        "nameLabel": "State Name",
+        "nameDescription": "Unique identifier for the state",
+        "namePlaceholder": "Enter state name",
+        "descriptionLabel": "Description",
+        "descriptionDescription": "Additional details about the state",
+        "descriptionPlaceholder": "Enter description",
+        "colorLabel": "Color",
+        "colorDescription": "Select a color for the state",
+        "colors": {
+          "gray": "Gray",
+          "blue": "Blue",
+          "indigo": "Indigo",
+          "green": "Green",
+          "red": "Red",
+          "yellow": "Yellow"
+        },
+        "typeLabel": "Type",
+        "typeDescription": "Type of state",
+        "cancel": "Cancel",
+        "save": "Save"
+      }
     }
   },
   "component": {
@@ -2252,6 +2917,9 @@
       "descriptionLabel": "Description",
       "descriptionPlaceholder": "Enter a description",
       "descriptionDescription": "Add additional details or a description here.",
+      "hierarchyLabel": "Hierarchy",
+      "hierarchyDescription": "Select the hierarchy that will govern this area.",
+      "hierarchyPlaceholder": "Select a hierarchy",
       "isActiveLabel": "Active",
       "isActiveDescription": "Mark as active or inactive.",
       "submitButton": "Submit",
@@ -2330,11 +2998,356 @@
       "formElements": "Form elements",
       "layoutElements": "Layout elements"
     },
-    "LocaleSwitcher": {
+    "hierarchyForm": {
+      "hierarchyDetails": "Hierarchy Details",
+      "hierarchyDetailsDescription": "Provide a name and description for your hierarchy.",
+      "hierarchyName": "Hierarchy Name",
+      "hierarchyNameDescription": "The name of your hierarchy (e.g., 'Sales Channel Hierarchy')",
+      "hierarchyNamePlaceholder": "Enter hierarchy name",
+      "description": "Description",
+      "descriptionDescription": "Optional: Provide a brief description of the hierarchy",
+      "descriptionPlaceholder": "Enter a description for this hierarchy",
+      "isActive": "Is Active",
+      "isActiveDescription": "If the hierarchy is active, it will be available for use in the application.",
+      "saveChanges": "Save Changes",
+      "create": "Create"
+    },
+    "rolesForm": {
+      "roleName": "Role Name",
+      "roleNamePlaceholder": "Role Name",
+      "roleNameDescription": "Role Name must be at least 3 characters and not exceed 100 characters",
+      "addRole": "Add Role",
+      "featureCountTooltip": "Total number of features for this role: {count}",
+      "roleStatusTooltip": "Role is active",
+      "active": "Active",
+      "inactive": "Inactive",
+      "featureRoleFormDialog": {
+        "close": "Close",
+        "dialogTitle": "Role Features: #{number}",
+        "description": "Description",
+        "descriptionPlaceholder": "Role Description",
+        "descriptionHelp": "Provide a description for the role",
+        "featuresTitle": "Role Features",
+        "module": "Module",
+        "features": "Features",
+        "featuresHelp": "Select the features that users with this role should have access to. If a feature is not selected, users with this role will not have access to it.",
+        "activeLabel": "Active",
+        "activeHelp": "If the role is active, users assigned to this role will have access to the selected features."
+      }
+    },
+    "userRoleAssignmentForm": {
+      "user": {
+        "label": "User",
+        "description": {
+          "none": "No users available",
+          "select": "Select a user for the role"
+        },
+        "toast": {
+          "noRoles": "No roles available"
+        },
+        "active": {
+          "label": "Active",
+          "description": {
+            "true": "User will have access to the system with the selected role",
+            "false": "User will not have access to the system"
+          }
+        },
+        "add": "Add User"
+      },
+      "role": {
+        "label": "Role",
+        "description": "Select a role for the user"
+      }
+    },
+    "categoryTreeView": {
+      "searchPlaceholder": "Search...",
+      "matches": "matches",
+      "categories": "Categories",
+      "rename": "Rename",
+      "edit": "Edit",
+      "delete": "Delete",
+      "addSubcategory": "Add \"{levelName}\""
+    },
+    "localeSwitcher": {
       "label": "Select language",
       "locale": {
         "en": "English",
         "es": "Spanish"
+      }
+    },
+    "stepper": {
+      "navigationButtons": {
+        "next": "Next",
+        "back": "Back",
+        "finish": "Finish",
+        "reset": "Reset",
+        "cancel": "Cancel"
+      }
+    },
+    "fileUploader": {
+      "singleFileLimit": "You can't upload more than 1 file at a time",
+      "maxFilesExceeded": "You can't upload more than {maxFileCount} files",
+      "fileRejected": "File {fileName} rejected",
+      "uploading": "Uploading {count} file(s)...",
+      "uploadSuccess": "{count} file(s) uploaded successfully",
+      "uploadError": "Error uploading {count} file(s)",
+      "dropHere": "Drop files here",
+      "dragAndDrop": "Drag and drop files here, or click to select them",
+      "uploadInstructions": "You can upload {count, select, 1 {one file up to {maxSize}} other {{count} files (up to {maxSize} each)}}",
+      "removeFile": "Remove File"
+    },
+    "flowExecution": {
+      "build": {
+        "nodePalette": {
+          "title": "Node Palette",
+          "subtitle": "Drag nodes to the canvas",
+          "categories": {
+            "basic": "Basic Blocks",
+            "advanced": "Advanced Blocks"
+          },
+          "nodes": {
+            "start": "Start",
+            "end": "End",
+            "step": "Step",
+            "condition": "Condition",
+            "loop": "Loop",
+            "subprocess": "Subprocess",
+            "task": "Task",
+            "approval": "Approval",
+            "notification": "Notification",
+            "timer": "Timer",
+            "gateway": "Gateway",
+            "message": "Message",
+            "annotation": "Annotation"
+          }
+        },
+        "controls": {
+          "load": "Load",
+          "export": "Export",
+          "validate": "Validate",
+          "simulate": "Simulate",
+          "stopSimulation": "Stop Simulation",
+          "save": "Save"
+        },
+        "selectedEdge": {
+          "selected": "Selected connection: {source} → {target}",
+          "delete": "Delete connection"
+        },
+        "form": {
+          "properties": "Properties",
+          "label": "Label",
+          "action": "Action",
+          "responsible": "Responsible",
+          "estimatedTime": "Estimated Time",
+          "timeUnit": "Time Unit",
+          "sla": "SLA (hours)",
+          "expression": "Expression",
+          "condition": "Condition",
+          "maxIterations": "Max Iterations",
+          "processRef": "Process Reference",
+          "taskType": "Task Type",
+          "details": "Details",
+          "approvers": "Approvers (comma separated)",
+          "channel": "Channel",
+          "message": "Message",
+          "duration": "Duration",
+          "gatewayType": "Gateway Type",
+          "text": "Text",
+          "linkedGuides": "Linked Guides",
+          "linkGuides": "Link Guides",
+          "noLinkedGuides": "No linked guides",
+          "timeUnits": {
+            "seconds": "Seconds",
+            "minutes": "Minutes",
+            "hours": "Hours",
+            "days": "Days"
+          },
+          "taskTypes": {
+            "manual": "Manual",
+            "automatic": "Automatic",
+            "api": "API",
+            "rpa": "RPA"
+          },
+          "channels": {
+            "email": "Email",
+            "sms": "SMS",
+            "alert": "System Alert"
+          },
+          "gatewayTypes": {
+            "parallel": "Parallel",
+            "inclusive": "Inclusive"
+          },
+          "actions": {
+            "apply": "Apply",
+            "cancel": "Cancel",
+            "save": "Save"
+          }
+        },
+        "validation": {
+          "title": "Validation Errors"
+        }
+      },
+      "simulation": {
+        "simulationControls": {
+          "title": "Simulation",
+          "description": {
+            "completed": "Simulation completed!",
+            "step": "Step {step}: {nodeName}",
+            "start": "Start the simulation to visualize the process flow"
+          },
+          "controls": {
+            "speed": "Speed",
+            "metrics": {
+              "totalHours": "Total Hours",
+              "visitedNodes": "Visited Nodes",
+              "slaCompliance": "SLA Compliance"
+            }
+          }
+        }
+      },
+      "execution": {
+        "currentNodeCard": {
+          "title": "Current Node",
+          "inProgress": "In Progress",
+          "unknownType": "Unknown type",
+          "decisionRequired": "A decision is required:",
+          "next": "Next: {target}",
+          "noDetails": "No additional details for this node type.",
+          "action": "Action",
+          "responsible": "Responsible",
+          "estimatedTime": "Estimated Time",
+          "expression": "Expression",
+          "notDefined": "Not defined",
+          "condition": "Condition",
+          "maxIterations": "Max Iterations",
+          "type": "Type",
+          "details": "Details",
+          "approvers": "Approvers",
+          "channel": "Channel",
+          "message": "Message",
+          "duration": "Duration"
+        },
+        "executionViewError": {
+          "howToCreate": "To create a process:",
+          "stepBuilder": "Go to the \"Builder\" tab",
+          "stepDesign": "Design your process flow",
+          "stepValidate": "Validate the flow with the \"Validate\" button",
+          "stepReturn": "Return to this tab to execute the process"
+        },
+        "executionViewSuccess": {
+          "title": "Process Completed",
+          "finished": "Finished",
+          "description": "The process has finished successfully",
+          "summary": "Process summary:",
+          "completedNodes": "Completed nodes: {count}",
+          "totalTime": "Total time: {minutes} minutes",
+          "executedSteps": "Executed steps: {count}",
+          "reset": "Reset Process"
+        },
+        "executionHistory": {
+          "title": "Execution History",
+          "stepsCompleted": "Steps completed: {count}",
+          "noSteps": "No steps completed yet"
+        },
+        "nodeCard": {
+          "invalidNodeType": "Invalid node type",
+          "blocked": "Blocked",
+          "active": "Active",
+          "pending": "Pending",
+          "start": "Process start",
+          "end": "Process end",
+          "condition": "Condition: {expression}",
+          "approval": "Requires approval",
+          "notification": "Notification via {channel}",
+          "message": "Informative message",
+          "timer": "Wait: {duration} {timeUnit}",
+          "task": "Task: {type}",
+          "loop": "Loop (max: {max})",
+          "gateway": "Gateway {type}",
+          "parallel": "Parallel",
+          "inclusive": "Inclusive",
+          "subprocess": "Subprocess: {ref}",
+          "notDefined": "Not defined",
+          "step": "Process step",
+          "timeLeft": "Time left",
+          "status": "Status",
+          "sending": "Sending...",
+          "sent": "Sent",
+          "error": "Error",
+          "running": "Running...",
+          "completed": "Completed",
+          "iteration": "Iteration",
+          "pendingDependencies": "Pending dependencies",
+          "yes": "Yes",
+          "no": "No",
+          "approve": "Approve",
+          "reject": "Reject",
+          "startTimer": "Start Timer",
+          "pause": "Pause",
+          "skipWait": "Skip Wait",
+          "sendNotification": "Send Notification",
+          "retry": "Retry",
+          "skip": "Skip",
+          "executeTask": "Execute Task",
+          "continueLoop": "Continue Loop",
+          "exitLoop": "Exit Loop",
+          "selectPath": "Select Path",
+          "complete": "Complete"
+        },
+        "decision": {
+          "yes": "Yes",
+          "no": "No",
+          "approve": "Approve",
+          "reject": "Reject",
+          "continueLoop": "Continue loop",
+          "exitLoop": "Exit loop",
+          "path": "Path {number}: {label}",
+          "unknown": "Unknown",
+          "nextStep": "Next step"
+        },
+        "history": {
+          "parallelStepsActivation": "Parallel steps activation",
+          "parallelStepsActivationDetails": "{count} steps activated from {label}",
+          "decision": "Decision: {decision}",
+          "decisionDetails": "In {label}",
+          "completed": "Completed",
+          "completedDetails": "{type}: {label}",
+          "processCompleted": "Process completed",
+          "processCompletedDetails": "The process flow has completed successfully",
+          "processStart": "Process start"
+        },
+        "nodeTypes": {
+          "start": "Start",
+          "end": "End",
+          "task": "Task",
+          "condition": "Condition",
+          "approval": "Approval",
+          "loop": "Loop",
+          "gateway": "Gateway",
+          "message": "Message",
+          "notification": "Notification",
+          "timer": "Timer",
+          "unknown": "Unknown"
+        },
+        "export": {
+          "executionHistoryFileName": "execution-history-{date}-{time}.csv"
+        }
+      },
+      "validation": {
+        "mustHaveStart": "Flow must have at least one Start node",
+        "onlyOneStart": "Flow should have only one Start node",
+        "mustHaveEnd": "Flow must have at least one End node",
+        "startNoOutgoing": "Start node \"{label}\" has no outgoing connections",
+        "endNoIncoming": "End node \"{label}\" has no incoming connections",
+        "nodeNoIncoming": "Node \"{label}\" has no incoming connections",
+        "nodeNoOutgoing": "Node \"{label}\" has no outgoing connections",
+        "conditionMinOutgoing": "Condition node \"{label}\" should have at least two outgoing connections (Yes/No)",
+        "conditionNoExpression": "Condition node \"{label}\" has no expression defined",
+        "loopNoCondition": "Loop node \"{label}\" has no condition defined",
+        "loopInvalidMax": "Loop node \"{label}\" has invalid max iterations value",
+        "stepNoAction": "Step node \"{label}\" has no action defined",
+        "stepNoResponsible": "Step node \"{label}\" has no responsible defined",
+        "cycleDetected": "Flow contains unintended cycles (infinite loops)"
       }
     }
   }

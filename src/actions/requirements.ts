@@ -1,6 +1,5 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
 import { db } from '@/server/db-client';
 
 export async function updateRequirementCompliance(requestId: string, tenantId: string, compliances: Record<string, boolean>) {
@@ -26,7 +25,6 @@ export async function updateRequirementCompliance(requestId: string, tenantId: s
       }
     });
 
-    revalidatePath('/[locale]/admin/[tenantId]/requests/[slug]');
     return { success: true };
   } catch (error) {
     console.error('Update failed:', error);
