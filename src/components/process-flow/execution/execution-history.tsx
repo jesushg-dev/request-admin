@@ -1,6 +1,8 @@
 'use client';
 
-import type { ExecutionHistoryEntry, FlowNode } from '@/types/execution';
+import { useTranslations } from 'next-intl';
+
+import type { ExecutionHistoryEntry, FlowNode } from '@/types/execution-flow';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface ExecutionHistoryProps {
@@ -9,15 +11,17 @@ interface ExecutionHistoryProps {
 }
 
 export function ExecutionHistory({ executionHistory, nodes }: ExecutionHistoryProps) {
+  const t = useTranslations('component.flowExecution.execution.executionHistory');
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Historial de Ejecución</CardTitle>
-        <CardDescription>Pasos completados: {executionHistory.length}</CardDescription>
+        <CardTitle>{t('title')}</CardTitle>
+        <CardDescription>{t('stepsCompleted', { count: executionHistory.length })}</CardDescription>
       </CardHeader>
       <CardContent>
         {executionHistory.length === 0 ? (
-          <p className="text-sm text-muted-foreground p-4">No hay pasos completados aún</p>
+          <p className="text-sm text-muted-foreground p-4">{t('noSteps')}</p>
         ) : (
           <div className="divide-y">
             {executionHistory.map((entry, index) => {

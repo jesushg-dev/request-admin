@@ -1,5 +1,3 @@
-'use client';
-
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { Trash2, X } from 'lucide-react';

@@ -1,4 +1,3 @@
-import type { Edge, Node } from '@xyflow/react';
 import { useTranslations } from 'next-intl';
 
 import type { ConditionNodeType, FlowEdge, FlowNode, LoopNodeType, StepNodeType } from '@/types/execution-flow';

@@ -1,5 +1,3 @@
-'use client';
-
 import { useCallback, useState } from 'react';
 
 import type { EndNodeType, FlowEdge, FlowNode, StartNodeType, StepNodeData, TimerNodeData } from '@/types/execution-flow';
