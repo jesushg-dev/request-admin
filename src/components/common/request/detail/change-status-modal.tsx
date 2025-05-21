@@ -9,7 +9,6 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { type RequestMetadata } from '@/types/prisma/request';
 import { RequestWorkflowType } from '@/types/prisma/workflow';
 import { normalizeValue } from '@/lib/utils';
 import { getStatusTransitions } from '@/lib/workflow';

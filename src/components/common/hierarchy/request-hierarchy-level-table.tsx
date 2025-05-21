@@ -1,6 +1,6 @@
 import React from 'react';
 import { Prisma } from '@prisma/client';
-import { ColumnDef, getCoreRowModel, Row, useReactTable } from '@tanstack/react-table';
+import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 
 import { TableCell, TableRow } from '@/components/ui/table';
 import { DataTable } from '@/components/data-table/data-table';

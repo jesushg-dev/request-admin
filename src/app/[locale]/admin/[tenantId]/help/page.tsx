@@ -14,7 +14,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 export default function HelpPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('guides');
-  const [selectedFaq, setSelectedFaq] = useState<string | null>(null);
   const [, startTransition] = useTransition();
   const language = 'es'; // This should be dynamically set based on the user's locale
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,12 +26,6 @@ export default function HelpPage() {
   const handleTabChange = (value: string) => {
     startTransition(() => {
       setActiveTab(value);
-    });
-  };
-
-  const handleFaqClick = (faqId: string) => {
-    startTransition(() => {
-      setSelectedFaq(faqId === selectedFaq ? null : faqId);
     });
   };
 

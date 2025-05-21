@@ -496,11 +496,15 @@ describe('Request Actions', () => {
   });
 
   describe('getRequestDetailsByRequest', () => {
-    const mockRequestDetails = {
+    const mockRequestDetails: RequestFormStepperType = {
       id: mockRequestId,
-      requestCategory: [{ value: 'cat-1', label: 'Category 1' }],
-      assignmentCategory: [{ value: 'assign-cat-1', label: 'Assignment Category 1' }],
+      areaId: { value: 'area-1', label: 'Area 1' },
+      requestCategory: [{ value: 'cat-1', label: 'Category 1', position: 0 }],
+      assignmentCategory: [{ value: 'assign-cat-1', label: 'Assignment Category 1', position: 0 }],
       requirementCompliances: { 'req-1': true },
+      issueSubject: 'Test subject',
+      priorityId: { value: 'priority-1', label: 'Priority 1' },
+      isDraft: false,
     };
 
     beforeEach(() => {
@@ -535,7 +539,7 @@ describe('Request Actions', () => {
         createdAt: new Date(),
       });
 
-      const result = await getRequestDetailsByRequest(mockTenantId, mockRequestDetails as any);
+      const result = await getRequestDetailsByRequest(mockTenantId, mockRequestDetails);
 
       expect(result.satisfactionSurvey).toBeDefined();
       expect(result.channel).toBeDefined();
@@ -554,7 +558,7 @@ describe('Request Actions', () => {
         },
       ]);
 
-      const result = await getRequestDetailsByRequest(mockTenantId, mockRequestDetails as any);
+      const result = await getRequestDetailsByRequest(mockTenantId, mockRequestDetails);
 
       expect(result.assignedUsers).toHaveLength(1);
       expect(result.assignedUsers[0].isCoordinator).toBe(true);
@@ -563,7 +567,7 @@ describe('Request Actions', () => {
     it('should handle missing user tenant data', async () => {
       (db.userTenant.findFirst as jest.Mock).mockResolvedValue(null);
 
-      const result = await getRequestDetailsByRequest(mockTenantId, mockRequestDetails as any);
+      const result = await getRequestDetailsByRequest(mockTenantId, mockRequestDetails);
 
       expect(result.requester!.name).toBe('N/A');
       expect(result.requester!.email).toBe('N/A');
@@ -582,7 +586,7 @@ describe('Request Actions', () => {
         },
       ]);
 
-      const result = await getRequestDetailsByRequest(mockTenantId, mockRequestDetails as any);
+      const result = await getRequestDetailsByRequest(mockTenantId, mockRequestDetails);
 
       expect(result.guides).toHaveLength(1);
       expect(result.guides[0].name).toBe('Test Guide');
@@ -593,7 +597,7 @@ describe('Request Actions', () => {
         .mockResolvedValueOnce(3) // for relatedRequestCount
         .mockResolvedValueOnce(2); // for relatedAssignmentCount
 
-      const result = await getRequestDetailsByRequest(mockTenantId, mockRequestDetails as any);
+      const result = await getRequestDetailsByRequest(mockTenantId, mockRequestDetails);
 
       expect(result.relatedRequestCount).toBe(3);
       expect(result.relatedAssignmentCount).toBe(2);
@@ -603,7 +607,7 @@ describe('Request Actions', () => {
       (db.formSubmission.count as jest.Mock).mockResolvedValue(5);
       (db.requestCategoryForm.count as jest.Mock).mockResolvedValue(10);
 
-      const result = await getRequestDetailsByRequest(mockTenantId, mockRequestDetails as any);
+      const result = await getRequestDetailsByRequest(mockTenantId, mockRequestDetails);
 
       expect(result.submissions.count).toBe(5);
       expect(result.submissions.total).toBe(10);
@@ -631,7 +635,7 @@ describe('Request Actions', () => {
         },
       };
 
-      const result = await getRequestDetailsByRequest(mockTenantId, requestWithInactiveReqs as any);
+      const result = await getRequestDetailsByRequest(mockTenantId, requestWithInactiveReqs);
       expect(result.requirements.count).toBe(2);
       expect(result.requirements.total).toBe(2);
     });
@@ -656,7 +660,7 @@ describe('Request Actions', () => {
         },
       ]);
 
-      const result = await getRequestDetailsByRequest(mockTenantId, mockRequestDetails as any);
+      const result = await getRequestDetailsByRequest(mockTenantId, mockRequestDetails);
       expect(result.assignedUsers).toHaveLength(2);
       expect(result.assignedUsers[0].isCoordinator).toBe(true);
       expect(result.assignedUsers[1].isCoordinator).toBe(false);
@@ -666,7 +670,7 @@ describe('Request Actions', () => {
       (db.assignedUser.findMany as jest.Mock).mockResolvedValue([]);
       (db.userTenant.findFirst as jest.Mock).mockResolvedValue(null);
 
-      const result = await getRequestDetailsByRequest(mockTenantId, mockRequestDetails as any);
+      const result = await getRequestDetailsByRequest(mockTenantId, mockRequestDetails);
       expect(result.assignedUsers).toHaveLength(0);
       expect(result.requester!.name).toBe('N/A');
       expect(result.requester!.email).toBe('N/A');
@@ -684,7 +688,7 @@ describe('Request Actions', () => {
         },
       ]);
 
-      const result = await getRequestDetailsByRequest(mockTenantId, mockRequestDetails as any);
+      const result = await getRequestDetailsByRequest(mockTenantId, mockRequestDetails);
       expect(result.assignedUsers[0].user.label).toContain('user@example.com');
     });
   });

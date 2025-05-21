@@ -889,7 +889,7 @@ export default function ReportsPage() {
                   <div className="rounded-md border border-red-200 bg-red-50 p-4">
                     <div className="flex items-center">
                       <Badge className="bg-red-500">Crítico</Badge>
-                      <h3 className="ml-2 font-medium">5 solicitudes en "En revisión" por más de 7 días</h3>
+                      <h3 className="ml-2 font-medium">5 solicitudes en &quot;En revisión&quot; por más de 7 días</h3>
                     </div>
                     <p className="mt-1 text-sm text-muted-foreground">Estas solicitudes han excedido el tiempo máximo recomendado en este estado.</p>
                     <Button variant="outline" size="sm" className="mt-2">
@@ -900,7 +900,7 @@ export default function ReportsPage() {
                   <div className="rounded-md border border-amber-200 bg-amber-50 p-4">
                     <div className="flex items-center">
                       <Badge className="bg-amber-500">Advertencia</Badge>
-                      <h3 className="ml-2 font-medium">12 solicitudes en "En progreso" por más de 3 días</h3>
+                      <h3 className="ml-2 font-medium">12 solicitudes en &quot;En progreso&quot; por más de 3 días</h3>
                     </div>
                     <p className="mt-1 text-sm text-muted-foreground">Estas solicitudes están cerca de exceder el tiempo máximo recomendado en este estado.</p>
                     <Button variant="outline" size="sm" className="mt-2">

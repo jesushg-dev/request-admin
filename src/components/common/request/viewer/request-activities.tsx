@@ -36,7 +36,7 @@ interface TimelineProps {
   tenantId: string;
 }
 
-const tryParseJSON = (str: string | null | undefined): Record<string, any> | null => {
+const tryParseJSON = (str: string | null | undefined): Record<string, unknown> | null => {
   if (!str) return null;
   try {
     const parsed = JSON.parse(str);
@@ -257,6 +257,8 @@ const TimelineItemComponent = memo(({ item, isExpanded, onToggle, t }: TimelineI
     </div>
   );
 });
+
+TimelineItemComponent.displayName = 'TimelineItemComponent';
 
 function Placeholder() {
   return (

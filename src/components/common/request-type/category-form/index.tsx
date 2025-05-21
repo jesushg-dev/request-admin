@@ -14,7 +14,7 @@ import FlowBuilder from '@/components/process-flow/flow-builder/flow-builder';
 import { TabSection } from '@/components/shared/tab-section';
 
 import { BasicInfoTab } from './basic-info-tab';
-import { ExecutionStepsTab, stepFormSchema } from './execution-steps-tab';
+import { stepFormSchema } from './execution-steps-tab';
 import { guideSchema, GuideTab } from './guides-tab';
 import { SlaTab } from './sla-tab';
 

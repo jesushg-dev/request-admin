@@ -3,7 +3,7 @@
 import React from 'react';
 import { useFindFirstRequestHierarchyLevel, useFindManyRequestCategory } from '@/services/api/hooks';
 import { Prisma } from '@prisma/client';
-import { ColumnDef, getCoreRowModel, Row, useReactTable } from '@tanstack/react-table';
+import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 

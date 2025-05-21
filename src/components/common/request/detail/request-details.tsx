@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, type FC } from 'react';
+import { useState, type FC } from 'react';
 import { Link } from '@/i18n/routing';
 import { Clock, Edit3Icon, EllipsisVertical, FileDown, MessageSquare, Printer, StarIcon, User } from 'lucide-react';
 import { useTranslations } from 'next-intl';

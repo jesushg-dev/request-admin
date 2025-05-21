@@ -12,7 +12,6 @@ import { z } from 'zod';
 import { AssignmentLevelType, RequestLevelType } from '@/types/prisma/hierarchy';
 import useMessage from '@/lib/message';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormField } from '@/components/ui/form';
