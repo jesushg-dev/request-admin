@@ -28,7 +28,6 @@ export default function SimulationControls({ nodes, edges }: SimulationControlsP
   const t = useTranslations('component.flowExecution.simulation.simulationControls');
   const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
   const [visitedNodeIds, setVisitedNodeIds] = useState<string[]>([]);
-  const [simulationPath, setSimulationPath] = useState<string[]>([]);
   const [simulationMetrics, setSimulationMetrics] = useState<SimulationMetrics>({
     totalTime: 0,
     nodeVisits: {},
@@ -46,7 +45,6 @@ export default function SimulationControls({ nodes, edges }: SimulationControlsP
 
     setActiveNodeId(startNode.id);
     setVisitedNodeIds([startNode.id]);
-    setSimulationPath([startNode.id]);
     setSimulationMetrics({
       totalTime: 0,
       nodeVisits: { [startNode.id]: 1 },
@@ -60,7 +58,6 @@ export default function SimulationControls({ nodes, edges }: SimulationControlsP
     setIsPlaying(false);
     setActiveNodeId(null);
     setVisitedNodeIds([]);
-    setSimulationPath([]);
     setSimulationStep(0);
     setSimulationComplete(false);
     setSimulationMetrics({
@@ -91,7 +88,6 @@ export default function SimulationControls({ nodes, edges }: SimulationControlsP
 
     setActiveNodeId(nextNodeId);
     setVisitedNodeIds((prev) => [...prev, nextNodeId]);
-    setSimulationPath((prev) => [...prev, nextNodeId]);
     setSimulationStep((prev) => prev + 1);
 
     setSimulationMetrics((prev) => {
@@ -127,7 +123,11 @@ export default function SimulationControls({ nodes, edges }: SimulationControlsP
         const data = nextNode.data as StepNodeData;
         if (data.sla) {
           const metSla = Math.random() > 0.3;
-          metSla ? slaCompliance.met++ : slaCompliance.notMet++;
+          if (metSla) {
+            slaCompliance.met++;
+          } else {
+            slaCompliance.notMet++;
+          }
         }
       }
 

@@ -51,7 +51,6 @@ interface Template {
 
 export default function IntegrationPanel() {
   const [activeTab, setActiveTab] = useState<IntegrationType>('servicenow');
-  const [activeSection, setActiveSection] = useState('configure');
   const [isConfigured, setIsConfigured] = useState({
     servicenow: false,
     jira: false,
@@ -61,7 +60,6 @@ export default function IntegrationPanel() {
     email: false,
     custom: false,
   });
-  const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -155,7 +153,7 @@ export default function IntegrationPanel() {
   ]);
 
   // Datos de ejemplo para las plantillas
-  const [templates, setTemplates] = useState<Template[]>([
+  const [templates] = useState<Template[]>([
     {
       id: 'template1',
       name: 'ServiceNow ITSM Completo',
@@ -1071,7 +1069,7 @@ export default function IntegrationPanel() {
         {activeIntegrations.length === 0 ? (
           <div className="text-center p-8 border rounded-md bg-gray-50">
             <p className="text-muted-foreground">No hay integraciones configuradas</p>
-            <Button variant="outline" className="mt-4" onClick={() => setActiveSection('configure')}>
+            <Button variant="outline" className="mt-4">
               <Plus className="w-4 h-4 mr-2" />
               Añadir Integración
             </Button>
@@ -1142,7 +1140,7 @@ export default function IntegrationPanel() {
                               <DialogContent>
                                 <DialogHeader>
                                   <DialogTitle>Eliminar Integración</DialogTitle>
-                                  <DialogDescription>¿Estás seguro de que deseas eliminar la integración "{integration.name}"? Esta acción no se puede deshacer.</DialogDescription>
+                                  <DialogDescription>¿Estás seguro de que deseas eliminar la integración &quot;{integration.name}&quot;? Esta acción no se puede deshacer.</DialogDescription>
                                 </DialogHeader>
                                 <DialogFooter>
                                   <Button variant="outline" onClick={() => setShowDeleteDialog(false)}>
@@ -1297,7 +1295,6 @@ export default function IntegrationPanel() {
                         onClick={(e) => {
                           e.stopPropagation();
                           setActiveTab(template.type);
-                          setActiveSection('configure');
                         }}>
                         Usar Plantilla
                       </Button>
@@ -1482,7 +1479,7 @@ export default function IntegrationPanel() {
       </Tabs>
 
       <div className="mt-8">
-        <Tabs defaultValue="active" className="w-full space-y-4" onValueChange={(value) => setActiveSection(value)}>
+        <Tabs defaultValue="active" className="w-full space-y-4">
           <TabsList>
             <TabsTrigger value="active">Integraciones Activas</TabsTrigger>
             <TabsTrigger value="history">Historial de Sincronización</TabsTrigger>

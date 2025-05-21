@@ -1,31 +1,12 @@
-'use client';
+import { useCallback, useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 
-import type React from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import type { AvailableNode, ExecutionHistoryEntry, FlowEdge, FlowNode, NodeSpecificStates, ParallelGroups, PendingDecision } from '@/types/execution-flow';
+import { isValidNodeType } from '@/lib/execution-flow';
 
-import type { AvailableNode, ExecutionHistoryEntry, FlowEdge, FlowNode, NodeSpecificStates, ParallelGroups, PendingDecision, ProcessFlow } from '@/types/execution';
+import { useExecutionContext } from '../execution-context';
 
 interface UseFlowExecutionProps {
-  processFlow: ProcessFlow | null;
-  nodes: FlowNode[];
-  edges: FlowEdge[];
-  currentNodeId: string | null;
-  completedNodeIds: string[];
-  nodeSpecificStates: NodeSpecificStates;
-  executionHistory: ExecutionHistoryEntry[];
-  currentLevel: number;
-  setCurrentNodeId: React.Dispatch<React.SetStateAction<string | null>>;
-  setCompletedNodeIds: React.Dispatch<React.SetStateAction<string[]>>;
-  setProgress: React.Dispatch<React.SetStateAction<number>>;
-  setIsComplete: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsPlaying: React.Dispatch<React.SetStateAction<boolean>>;
-  setPendingDecision: React.Dispatch<React.SetStateAction<PendingDecision | null>>;
-  setExecutionHistory: React.Dispatch<React.SetStateAction<ExecutionHistoryEntry[]>>;
-  setAvailableNodes: React.Dispatch<React.SetStateAction<AvailableNode[]>>;
-  setCurrentLevel: React.Dispatch<React.SetStateAction<number>>;
-  setTotalLevels: React.Dispatch<React.SetStateAction<number>>;
-  setNodeSpecificStates: React.Dispatch<React.SetStateAction<NodeSpecificStates>>;
-  setParallelGroups: React.Dispatch<React.SetStateAction<ParallelGroups>>;
   updateNodeStyles: (nodeList: FlowNode[], currentId: string | null, completedIds: string[]) => void;
   calculateLevelsAndAvailableNodes: (
     nodes: FlowNode[],
@@ -36,7 +17,6 @@ interface UseFlowExecutionProps {
     level?: number,
     parentId?: string
   ) => { levels: number; availableNodes: AvailableNode[] };
-  timersRef: React.MutableRefObject<{ [key: string]: NodeJS.Timeout }>;
   initializeNodeSpecificStates: (nodes: FlowNode[]) => void;
   handleTimerStart: (nodeId: string) => void;
   handleTimerPause: (nodeId: string) => void;
@@ -46,522 +26,317 @@ interface UseFlowExecutionProps {
 }
 
 export function useFlowExecution({
-  processFlow,
-  nodes,
-  edges,
-  currentNodeId,
-  completedNodeIds,
-  nodeSpecificStates,
-  executionHistory,
-  currentLevel,
-  setCurrentNodeId,
-  setCompletedNodeIds,
-  setProgress,
-  setIsComplete,
-  setIsPlaying,
-  setPendingDecision,
-  setExecutionHistory,
-  setAvailableNodes,
-  setCurrentLevel,
-  setTotalLevels,
-  setNodeSpecificStates,
-  setParallelGroups,
   updateNodeStyles,
   calculateLevelsAndAvailableNodes,
-  timersRef,
   initializeNodeSpecificStates,
   handleTimerStart,
-  handleTimerPause,
   handleSendNotification,
   handleExecuteTask,
-  handleLoopContinue,
 }: UseFlowExecutionProps) {
-  const [isPlayingInternal, setIsPlayingInternal] = useState(false);
-  const [pendingDecisionInternal, setPendingDecisionInternal] = useState<PendingDecision | null>(null);
-  const [isCompleteInternal, setIsCompleteInternal] = useState(false);
+  const t = useTranslations('component.flowExecution.execution');
+  const { state, dispatch, timersRef } = useExecutionContext();
+  const { processFlow, currentNodeId, completedNodeIds, nodes, currentLevel, executionHistory, isPlaying, isComplete, pendingDecision } = state;
 
-  // Usar useRef para todas las funciones interdependientes
+  // Ref to keep the functions updated
   const advanceToNextNodeRef = useRef<(outcome?: string) => void>(() => {});
   const checkForDecisionRef = useRef<(node: FlowNode) => void>(() => {});
   const checkForAutomaticBehaviorRef = useRef<(node: FlowNode) => void>(() => {});
   const handleDecisionRef = useRef<(outcome: string) => void>(() => {});
 
-  // Sincronizar estado interno con externo
-  useEffect(() => {
-    setIsPlaying(isPlayingInternal);
-  }, [isPlayingInternal, setIsPlaying]);
+  // Common actions
+  const setCurrentNodeId = useCallback((id: string | null) => dispatch({ type: 'SET_CURRENT_NODE_ID', payload: id }), [dispatch]);
+  const setCompletedNodeIds = useCallback((ids: string[]) => dispatch({ type: 'SET_COMPLETED_NODES', payload: ids }), [dispatch]);
+  const setProgress = useCallback((value: number) => dispatch({ type: 'SET_PROGRESS', payload: value }), [dispatch]);
+  const setExecutionHistory = useCallback((history: ExecutionHistoryEntry[]) => dispatch({ type: 'SET_EXECUTION_HISTORY', payload: history }), [dispatch]);
+  const setParallelGroups = useCallback((groups: ParallelGroups) => dispatch({ type: 'SET_PARALLEL_GROUPS', payload: groups }), [dispatch]);
+  const setPendingDecision = useCallback((decision: PendingDecision | null) => dispatch({ type: 'SET_PENDING_DECISION', payload: decision }), [dispatch]);
+  const setAvailableNodes = useCallback((nodes: AvailableNode[]) => dispatch({ type: 'SET_AVAILABLE_NODES', payload: nodes }), [dispatch]);
+  const setTotalLevels = useCallback((levels: number) => dispatch({ type: 'SET_LEVELS', payload: { current: currentLevel, total: levels } }), [dispatch, currentLevel]);
+  const setCurrentLevel = useCallback((level: number) => dispatch({ type: 'SET_LEVELS', payload: { current: level, total: state.totalLevels } }), [dispatch, state.totalLevels]);
+  const setNodeSpecificStates = useCallback((states: NodeSpecificStates) => dispatch({ type: 'SET_NODE_SPECIFIC_STATES', payload: states }), [dispatch]);
 
-  useEffect(() => {
-    setIsComplete(isCompleteInternal);
-  }, [isCompleteInternal, setIsComplete]);
-
-  // Función para manejar múltiples salidas de un nodo (no de decisión)
   const handleMultipleOutputs = useCallback(
-    (nodeId: string, completedNodeIds: string[]) => {
-      if (!processFlow) return { nextNodeIds: [] as string[], updatedCompletedNodeIds: completedNodeIds };
+    (nodeId: string) => {
+      if (!processFlow) return { nextNodeIds: [] as string[] };
 
-      // Encontrar todas las conexiones salientes del nodo
       const outgoingEdges = processFlow.edges.filter((edge) => edge.source === nodeId);
+      if (outgoingEdges.length === 0) return { nextNodeIds: [] as string[] };
 
-      // Si no hay conexiones salientes, retornar
-      if (outgoingEdges.length === 0) {
-        return { nextNodeIds: [] as string[], updatedCompletedNodeIds: completedNodeIds };
-      }
-
-      // Obtener los IDs de los nodos siguientes
       const nextNodeIds = outgoingEdges.map((edge) => edge.target);
-
-      // Actualizar el historial de ejecución
       const node = processFlow.nodes.find((n) => n.id === nodeId);
+
       if (node) {
-        setExecutionHistory((prev) => [
-          ...prev,
+        setExecutionHistory([
+          ...executionHistory,
           {
             timestamp: new Date(),
             nodeId: nodeId,
-            action: 'Activación de pasos paralelos',
-            details: `Se activaron ${nextNodeIds.length} pasos desde ${node.data.label}`,
+            action: t('history.parallelStepsActivation'),
+            details: t('history.parallelStepsActivationDetails', { count: nextNodeIds.length, label: node.data.label }),
           },
         ]);
       }
 
-      return { nextNodeIds, updatedCompletedNodeIds: completedNodeIds };
+      return { nextNodeIds };
     },
-    [processFlow, setExecutionHistory]
+    [processFlow, executionHistory, setExecutionHistory, t]
   );
 
-  // Actualizar grupos paralelos
-  const updateParallelGroups = useCallback(
-    (currentNodeId: string, completedNodeIds: string[]) => {
-      if (!processFlow) return;
+  const updateParallelGroups = useCallback(() => {
+    if (!processFlow) return;
 
-      // Buscar nodos gateway paralelos
-      const parallelGateways = processFlow.nodes.filter((node) => node.type === 'gateway' && node.data.type === 'parallel');
+    const newParallelGroups: ParallelGroups = {};
+    const parallelGateways = processFlow.nodes.filter((node) => node.type === 'gateway' && node.data.type === 'parallel');
 
-      const newParallelGroups: ParallelGroups = {};
+    parallelGateways.forEach((gateway) => {
+      const outgoingEdges = processFlow.edges.filter((edge) => edge.source === gateway.id);
+      newParallelGroups[gateway.id] = {
+        total: outgoingEdges.length,
+        completed: outgoingEdges.filter((edge) => completedNodeIds.includes(edge.target)).length,
+      };
+    });
 
-      parallelGateways.forEach((gateway) => {
-        // Encontrar todas las salidas del gateway
-        const outgoingEdges = processFlow.edges.filter((edge) => edge.source === gateway.id);
+    setParallelGroups(newParallelGroups);
+  }, [processFlow, completedNodeIds, setParallelGroups]);
 
-        // Contar cuántas están completadas
-        const totalPaths = outgoingEdges.length;
-        const completedPaths = outgoingEdges.filter((edge) => completedNodeIds.includes(edge.target)).length;
-
-        newParallelGroups[gateway.id] = {
-          total: totalPaths,
-          completed: completedPaths,
-        };
-      });
-
-      setParallelGroups(newParallelGroups);
-    },
-    [processFlow, setParallelGroups]
-  );
-
-  // Verificar si un nodo requiere decisión - Definir primero como función independiente
   const checkForDecision = useCallback(
     (node: FlowNode) => {
       if (!processFlow) return;
 
-      // Pausar la ejecución automática si se encuentra un nodo que requiere decisión
-      setIsPlayingInternal(false);
+      dispatch({ type: 'SET_PLAYING', payload: false });
 
-      switch (node.type) {
-        case 'condition':
-          // Obtener las conexiones salientes
-          const conditionEdges = processFlow.edges.filter((edge) => edge.source === node.id);
-          const yesEdge = conditionEdges.find((edge) => edge.sourceHandle === 'yes');
-          const noEdge = conditionEdges.find((edge) => edge.sourceHandle === 'no');
+      const getDecisionOptions = () => {
+        const edges = processFlow.edges.filter((edge) => edge.source === node.id);
 
-          // Encontrar los nodos destino
-          const yesTarget = yesEdge ? processFlow.nodes.find((n) => n.id === yesEdge.target)?.data.label : 'Siguiente paso';
-          const noTarget = noEdge ? processFlow.nodes.find((n) => n.id === noEdge.target)?.data.label : 'Siguiente paso';
-
-          setPendingDecisionInternal({
-            nodeId: node.id,
-            type: 'condition',
-            options: [
-              { label: 'Sí', value: 'yes', target: yesTarget },
-              { label: 'No', value: 'no', target: noTarget },
-            ],
-          });
-          setPendingDecision({
-            nodeId: node.id,
-            type: 'condition',
-            options: [
-              { label: 'Sí', value: 'yes', target: yesTarget },
-              { label: 'No', value: 'no', target: noTarget },
-            ],
-          });
-          break;
-
-        case 'approval':
-          // Obtener las conexiones salientes
-          const approvalEdges = processFlow.edges.filter((edge) => edge.source === node.id);
-          const approveEdge = approvalEdges.find((edge) => edge.sourceHandle === 'approve');
-          const rejectEdge = approvalEdges.find((edge) => edge.sourceHandle === 'reject');
-
-          // Encontrar los nodos destino
-          const approveTarget = approveEdge ? processFlow.nodes.find((n) => n.id === approveEdge.target)?.data.label : 'Siguiente paso';
-          const rejectTarget = rejectEdge ? processFlow.nodes.find((n) => n.id === rejectEdge.target)?.data.label : 'Siguiente paso';
-
-          setPendingDecisionInternal({
-            nodeId: node.id,
-            type: 'approval',
-            options: [
-              { label: 'Aprobar', value: 'approve', target: approveTarget },
-              { label: 'Rechazar', value: 'reject', target: rejectTarget },
-            ],
-          });
-          setPendingDecision({
-            nodeId: node.id,
-            type: 'approval',
-            options: [
-              { label: 'Aprobar', value: 'approve', target: approveTarget },
-              { label: 'Rechazar', value: 'reject', target: rejectTarget },
-            ],
-          });
-          break;
-
-        case 'loop':
-          // Obtener las conexiones salientes
-          const loopEdges = processFlow.edges.filter((edge) => edge.source === node.id);
-          const successEdge = loopEdges.find((edge) => edge.sourceHandle === 'success');
-          const errorEdge = loopEdges.find((edge) => edge.sourceHandle === 'error');
-
-          // Encontrar los nodos destino
-          const successTarget = successEdge ? processFlow.nodes.find((n) => n.id === successEdge.target)?.data.label : 'Continuar bucle';
-          const errorTarget = errorEdge ? processFlow.nodes.find((n) => n.id === errorEdge.target)?.data.label : 'Salir del bucle';
-
-          setPendingDecisionInternal({
-            nodeId: node.id,
-            type: 'loop',
-            options: [
-              { label: 'Continuar bucle', value: 'success', target: successTarget },
-              { label: 'Salir del bucle', value: 'error', target: errorTarget },
-            ],
-          });
-          setPendingDecision({
-            nodeId: node.id,
-            type: 'loop',
-            options: [
-              { label: 'Continuar bucle', value: 'success', target: successTarget },
-              { label: 'Salir del bucle', value: 'error', target: errorTarget },
-            ],
-          });
-          break;
-
-        case 'gateway':
-          // Para gateways, mostrar todas las opciones de salida
-          const gatewayEdges = processFlow.edges.filter((edge) => edge.source === node.id);
-          const options = gatewayEdges.map((edge, index) => {
-            const targetNode = processFlow.nodes.find((n) => n.id === edge.target);
-            return {
-              label: `Camino ${index + 1}: ${targetNode?.data.label || 'Desconocido'}`,
+        switch (node.type) {
+          case 'condition':
+            return [
+              { label: t('decision.yes'), value: 'yes', target: edges.find((e) => e.sourceHandle === 'yes')?.target },
+              { label: t('decision.no'), value: 'no', target: edges.find((e) => e.sourceHandle === 'no')?.target },
+            ];
+          case 'approval':
+            return [
+              { label: t('decision.approve'), value: 'approve', target: edges.find((e) => e.sourceHandle === 'approve')?.target },
+              { label: t('decision.reject'), value: 'reject', target: edges.find((e) => e.sourceHandle === 'reject')?.target },
+            ];
+          case 'loop':
+            return [
+              { label: t('decision.continueLoop'), value: 'success', target: edges.find((e) => e.sourceHandle === 'success')?.target },
+              { label: t('decision.exitLoop'), value: 'error', target: edges.find((e) => e.sourceHandle === 'error')?.target },
+            ];
+          case 'gateway':
+            return edges.map((edge, index) => ({
+              label: t('decision.path', { number: index + 1, label: processFlow.nodes.find((n) => n.id === edge.target)?.data.label || t('decision.unknown') }),
               value: edge.sourceHandle || `path_${index}`,
-              target: targetNode?.data.label,
-            };
-          });
+              target: edge.target,
+            }));
+          default:
+            return [];
+        }
+      };
 
-          setPendingDecisionInternal({
-            nodeId: node.id,
-            type: 'gateway',
-            options,
-          });
-          setPendingDecision({
-            nodeId: node.id,
-            type: 'gateway',
-            options,
-          });
-          break;
+      const options = getDecisionOptions().map((opt) => ({
+        ...opt,
+        target: processFlow.nodes.find((n) => n.id === opt.target)?.data.label || t('decision.nextStep'),
+      }));
 
-        default:
-          // Para otros tipos de nodos, no se requiere decisión
-          setPendingDecisionInternal(null);
-          setPendingDecision(null);
-          break;
-      }
+      setPendingDecision(
+        node.type === 'gateway'
+          ? {
+              nodeId: node.id,
+              type: node.type,
+              options,
+            }
+          : {
+              nodeId: node.id,
+              type: node.type as 'condition' | 'approval' | 'loop',
+              options,
+            }
+      );
     },
-    [processFlow, setPendingDecision, setIsPlayingInternal]
+    [processFlow, setPendingDecision, dispatch, t]
   );
 
-  // Actualizar la referencia a checkForDecision
-  useEffect(() => {
-    checkForDecisionRef.current = checkForDecision;
-  }, [checkForDecision]);
-
-  // Verificar comportamientos automáticos - Definir como función independiente
   const checkForAutomaticBehavior = useCallback(
     (node: FlowNode) => {
       if (!node) return;
 
-      // Comportamientos automáticos según el tipo de nodo
+      const updateStates = (update: Partial<NodeSpecificStates[typeof node.id]>) => {
+        setNodeSpecificStates({
+          ...state.nodeSpecificStates,
+          [node.id]: {
+            ...state.nodeSpecificStates[node.id],
+            ...update,
+          },
+        });
+      };
+
       switch (node.type) {
         case 'message':
-          // Mostrar mensaje automáticamente
-          setNodeSpecificStates((prev) => ({
-            ...prev,
-            [node.id]: {
-              ...prev[node.id],
-              message: { shown: true },
-            },
-          }));
-
-          // Avanzar automáticamente después de mostrar el mensaje
-          if (timersRef.current && node.id) {
-            timersRef.current[node.id] = setTimeout(() => {
-              advanceToNextNodeRef.current(); // Usar la referencia en lugar de la función directamente
-            }, 3000);
-          }
+          updateStates({ message: { shown: true } });
+          timersRef.current[node.id] = setTimeout(() => advanceToNextNodeRef.current(), 3000);
           break;
-
         case 'notification':
-          // Intentar enviar notificación automáticamente
           handleSendNotification(node.id);
           break;
-
         case 'task':
-          // Si es una tarea automática, ejecutarla
-          if (node.data.type === 'automatic' || node.data.type === 'api') {
-            handleExecuteTask(node.id);
-          }
+          if (node.data.type === 'automatic' || node.data.type === 'api') handleExecuteTask(node.id);
           break;
-
         case 'timer':
-          // Iniciar temporizador automáticamente
           handleTimerStart(node.id);
           break;
       }
     },
-    [setNodeSpecificStates, timersRef, handleSendNotification, handleExecuteTask, handleTimerStart]
+    [state.nodeSpecificStates, setNodeSpecificStates, timersRef, handleSendNotification, handleExecuteTask, handleTimerStart]
   );
 
-  // Actualizar la referencia a checkForAutomaticBehavior
-  useEffect(() => {
-    checkForAutomaticBehaviorRef.current = checkForAutomaticBehavior;
-  }, [checkForAutomaticBehavior]);
-
-  // Manejar decisión del usuario - Definir como función independiente
   const handleDecision = useCallback(
     (outcome: string) => {
-      if (!processFlow) return;
+      if (!processFlow || !pendingDecision) return;
 
-      const pendingDecision = pendingDecisionInternal;
-      if (pendingDecision) {
-        // Actualizar el historial de ejecución
-        const node = processFlow.nodes.find((n) => n.id === pendingDecision.nodeId);
-        if (node) {
-          const option = pendingDecision.options.find((opt) => opt.value === outcome);
-          setExecutionHistory((prev) => [
-            ...prev,
-            {
-              timestamp: new Date(),
-              nodeId: pendingDecision.nodeId,
-              action: `Decisión: ${option?.label || outcome}`,
-              details: `En ${node.data.label}`,
-            },
-          ]);
-        }
-
-        advanceToNextNodeRef.current(outcome); // Usar la referencia en lugar de la función directamente
-        setPendingDecisionInternal(null);
-        setPendingDecision(null);
-
-        // Reanudar la ejecución automática si estaba activa
-        if (isPlayingInternal) {
-          setTimeout(() => {
-            const nextNode = processFlow.nodes.find((node) => node.id === currentNodeId);
-            if (nextNode) {
-              checkForDecisionRef.current(nextNode);
-              checkForAutomaticBehaviorRef.current(nextNode);
-            }
-          }, 500);
-        }
-      }
-    },
-    [processFlow, isPlayingInternal, currentNodeId, setPendingDecision, setExecutionHistory, pendingDecisionInternal]
-  );
-
-  // Actualizar la referencia a handleDecision
-  useEffect(() => {
-    handleDecisionRef.current = handleDecision;
-  }, [handleDecision]);
-
-  // Avanzar al siguiente nodo - Definir después de las referencias
-  const advanceToNextNode = useCallback(
-    (outcome = 'default') => {
-      if (!processFlow || !currentNodeId) return;
-
-      // Añadir el nodo actual a los completados
-      const newCompletedNodeIds = [...completedNodeIds, currentNodeId];
-      setCompletedNodeIds(newCompletedNodeIds);
-
-      // Encontrar el siguiente nodo basado en las conexiones
-      const currentEdges = processFlow.edges.filter((edge) => edge.source === currentNodeId);
-      const currentNode = processFlow.nodes.find((node) => node.id === currentNodeId);
-
-      // Actualizar el historial de ejecución
-      if (currentNode) {
-        setExecutionHistory((prev) => [
-          ...prev,
+      const node = processFlow.nodes.find((n) => n.id === pendingDecision.nodeId);
+      if (node) {
+        setExecutionHistory([
+          ...executionHistory,
           {
             timestamp: new Date(),
-            nodeId: currentNodeId,
-            action: 'Completado',
-            details: `${currentNode.type.charAt(0).toUpperCase() + currentNode.type.slice(1)}: ${currentNode.data.label}`,
+            nodeId: pendingDecision.nodeId,
+            action: t('history.decision', { decision: pendingDecision.options.find((opt) => opt.value === outcome)?.label || outcome }),
+            details: t('history.decisionDetails', { label: node.data.label }),
           },
         ]);
       }
 
-      // Si no hay conexiones salientes, el proceso ha terminado
+      advanceToNextNodeRef.current(outcome);
+      setPendingDecision(null);
+
+      if (isPlaying) {
+        setTimeout(() => {
+          const nextNode = processFlow.nodes.find((n) => n.id === currentNodeId);
+          if (nextNode) {
+            checkForDecisionRef.current(nextNode);
+            checkForAutomaticBehaviorRef.current(nextNode);
+          }
+        }, 500);
+      }
+    },
+    [processFlow, pendingDecision, executionHistory, setExecutionHistory, setPendingDecision, isPlaying, currentNodeId, t]
+  );
+
+  const advanceToNextNode = useCallback(
+    (outcome = 'default') => {
+      if (!processFlow || !currentNodeId) return;
+
+      const newCompletedNodeIds = [...completedNodeIds, currentNodeId];
+      setCompletedNodeIds(newCompletedNodeIds);
+
+      const currentEdges = processFlow.edges.filter((edge) => edge.source === currentNodeId);
+      const currentNode = processFlow.nodes.find((node) => node.id === currentNodeId);
+
+      if (currentNode) {
+        setExecutionHistory([
+          ...executionHistory,
+          {
+            timestamp: new Date(),
+            nodeId: currentNodeId,
+            action: t('history.completed'),
+            details: t('history.completedDetails', {
+              label: currentNode.data.label,
+              type: isValidNodeType(currentNode.type ?? '') ? t(`nodeTypes.${currentNode.type}` as 'nodeTypes.start') : t('nodeTypes.unknown'),
+            }),
+          },
+        ]);
+      }
+
       if (currentEdges.length === 0) {
         setCurrentNodeId(null);
         setProgress(100);
-        setIsCompleteInternal(true);
-        setIsPlayingInternal(false);
+        dispatch({ type: 'SET_COMPLETE', payload: true });
+        dispatch({ type: 'SET_PLAYING', payload: false });
         updateNodeStyles(nodes, null, newCompletedNodeIds);
         return;
       }
 
-      // Manejar nodos de step con múltiples salidas (no de decisión)
       if (currentNode?.type === 'step' && currentEdges.length > 1) {
-        // Para steps con múltiples salidas, activar todos los nodos siguientes a la vez
-        const { nextNodeIds, updatedCompletedNodeIds } = handleMultipleOutputs(currentNodeId, newCompletedNodeIds);
+        const { nextNodeIds } = handleMultipleOutputs(currentNodeId);
+        if (nextNodeIds.length === 0) return;
 
-        if (nextNodeIds.length === 0) {
-          // No hay nodos siguientes, el proceso ha terminado
-          setCurrentNodeId(null);
-          setProgress(100);
-          setIsCompleteInternal(true);
-          setIsPlayingInternal(false);
-          updateNodeStyles(nodes, null, updatedCompletedNodeIds);
-          return;
-        }
+        setProgress(Math.round((newCompletedNodeIds.length / (processFlow.nodes.length - 1)) * 100));
+        updateNodeStyles(nodes, null, newCompletedNodeIds);
 
-        // Actualizar el progreso
-        const totalNodes = processFlow.nodes.length;
-        const newProgress = Math.round((updatedCompletedNodeIds.length / (totalNodes - 1)) * 100);
-        setProgress(newProgress);
-
-        // Actualizar estilos de los nodos
-        updateNodeStyles(nodes, null, updatedCompletedNodeIds);
-
-        // Recalcular niveles y nodos disponibles para todos los nodos siguientes
-        let allAvailableNodes: AvailableNode[] = [];
-        let maxLevel = currentLevel + 1; // Incrementar el nivel
+        let maxLevel = currentLevel + 1;
+        const allAvailableNodes: AvailableNode[] = [];
 
         nextNodeIds.forEach((nodeId) => {
-          const { levels, availableNodes } = calculateLevelsAndAvailableNodes(processFlow.nodes, processFlow.edges, nodeId, updatedCompletedNodeIds);
+          const { levels, availableNodes } = calculateLevelsAndAvailableNodes(processFlow.nodes, processFlow.edges, nodeId, newCompletedNodeIds);
           maxLevel = Math.max(maxLevel, levels);
-          allAvailableNodes = [...allAvailableNodes, ...availableNodes];
+          allAvailableNodes.push(...availableNodes);
         });
 
         setTotalLevels(maxLevel);
         setAvailableNodes(allAvailableNodes);
-
-        // Actualizar nivel actual al siguiente nivel
         setCurrentLevel(currentLevel + 1);
+        updateParallelGroups();
 
-        // Actualizar grupos paralelos
-        updateParallelGroups(currentNodeId, updatedCompletedNodeIds);
-
-        // Activar todos los nodos siguientes
         nextNodeIds.forEach((nodeId) => {
           const node = processFlow.nodes.find((n) => n.id === nodeId);
           if (node) {
-            // Verificar si el nodo requiere decisión o tiene comportamiento automático
             checkForDecisionRef.current(node);
             checkForAutomaticBehaviorRef.current(node);
           }
         });
-
         return;
       }
 
-      // Si hay múltiples salidas, usar el outcome para determinar cuál seguir
-      let nextEdge: FlowEdge | undefined;
-
-      if (outcome !== 'default' && currentEdges.length > 1) {
-        // Buscar la conexión específica basada en el sourceHandle
-        nextEdge = currentEdges.find((edge) => edge.sourceHandle === outcome);
-      }
-
-      // Si no se encontró una conexión específica o no se especificó outcome, usar la primera
-      if (!nextEdge) {
-        nextEdge = currentEdges[0];
-      }
+      const nextEdge = outcome !== 'default' && currentEdges.length > 1 ? currentEdges.find((edge) => edge.sourceHandle === outcome) : currentEdges[0];
 
       if (nextEdge) {
         const nextNodeId = nextEdge.target;
         const nextNode = processFlow.nodes.find((node) => node.id === nextNodeId);
 
-        // Si el siguiente nodo es de tipo "end", marcar como completado automáticamente
         if (nextNode?.type === 'end') {
           setCurrentNodeId(nextNodeId);
-
-          // Actualizar el progreso
-          setProgress(100); // Marcar como 100% cuando llegamos al nodo de fin
-
-          // Actualizar estilos de los nodos
+          setProgress(100);
           updateNodeStyles(nodes, nextNodeId, newCompletedNodeIds);
 
-          // Marcar el proceso como completado
           setTimeout(() => {
             setCompletedNodeIds([...newCompletedNodeIds, nextNodeId]);
-            setIsCompleteInternal(true);
-            setIsPlayingInternal(false);
+            dispatch({ type: 'SET_COMPLETE', payload: true });
+            dispatch({ type: 'SET_PLAYING', payload: false });
             updateNodeStyles(nodes, null, [...newCompletedNodeIds, nextNodeId]);
-
-            // Actualizar el historial de ejecución
-            setExecutionHistory((prev) => [
-              ...prev,
+            setExecutionHistory([
+              ...executionHistory,
               {
                 timestamp: new Date(),
                 nodeId: nextNodeId,
-                action: 'Proceso completado',
-                details: 'El flujo de proceso ha finalizado correctamente',
+                action: t('history.processCompleted'),
+                details: t('history.processCompletedDetails'),
               },
             ]);
-          }, 1000); // Pequeña pausa para mostrar el nodo de fin antes de completar
-
+          }, 1000);
           return;
         }
 
-        // Para otros tipos de nodos, comportamiento normal
         setCurrentNodeId(nextNodeId);
-
-        // Actualizar el progreso
-        const totalNodes = processFlow.nodes.length;
-        const newProgress = Math.round((newCompletedNodeIds.length / (totalNodes - 1)) * 100);
-        setProgress(newProgress);
-
-        // Actualizar estilos de los nodos
+        setProgress(Math.round((newCompletedNodeIds.length / (processFlow.nodes.length - 1)) * 100));
         updateNodeStyles(nodes, nextNodeId, newCompletedNodeIds);
 
-        // Recalcular niveles y nodos disponibles
         const { levels, availableNodes } = calculateLevelsAndAvailableNodes(processFlow.nodes, processFlow.edges, nextNodeId, newCompletedNodeIds);
+
         setTotalLevels(levels);
         setAvailableNodes(availableNodes);
+        setCurrentLevel(availableNodes.find((n) => n.node.id === nextNodeId)?.level || currentLevel + 1);
+        updateParallelGroups();
 
-        // Actualizar nivel actual
-        const currentNodeLevel = availableNodes.find((n) => n.node.id === nextNodeId)?.level || currentLevel + 1;
-        setCurrentLevel(currentNodeLevel);
-
-        // Verificar si el siguiente nodo requiere decisión
         if (nextNode) {
           checkForDecisionRef.current(nextNode);
           checkForAutomaticBehaviorRef.current(nextNode);
         }
-
-        // Actualizar grupos paralelos
-        updateParallelGroups(nextNodeId, newCompletedNodeIds);
       } else {
-        // No hay más nodos, el proceso ha terminado
         setCurrentNodeId(null);
         setProgress(100);
-        setIsCompleteInternal(true);
-        setIsPlayingInternal(false);
+        dispatch({ type: 'SET_COMPLETE', payload: true });
+        dispatch({ type: 'SET_PLAYING', payload: false });
         updateNodeStyles(nodes, null, newCompletedNodeIds);
       }
     },
@@ -571,63 +346,62 @@ export function useFlowExecution({
       completedNodeIds,
       nodes,
       currentLevel,
+      executionHistory,
+      updateNodeStyles,
+      calculateLevelsAndAvailableNodes,
       setCurrentNodeId,
       setCompletedNodeIds,
       setProgress,
       setExecutionHistory,
-      updateNodeStyles,
-      handleMultipleOutputs,
       setTotalLevels,
       setAvailableNodes,
       setCurrentLevel,
       updateParallelGroups,
-      calculateLevelsAndAvailableNodes,
+      handleMultipleOutputs,
+      dispatch,
+      t,
     ]
   );
 
-  // Actualizar la referencia a advanceToNextNode
+  // Update the refs with the latest function references
   useEffect(() => {
     advanceToNextNodeRef.current = advanceToNextNode;
-  }, [advanceToNextNode]);
+    checkForDecisionRef.current = checkForDecision;
+    checkForAutomaticBehaviorRef.current = checkForAutomaticBehavior;
+    handleDecisionRef.current = handleDecision;
+  }, [advanceToNextNode, checkForDecision, checkForAutomaticBehavior, handleDecision]);
 
-  // Reiniciar la ejecución
   const resetExecution = useCallback(() => {
     if (!processFlow) return;
 
-    setIsPlayingInternal(false);
-    setIsCompleteInternal(false);
+    dispatch({ type: 'SET_PLAYING', payload: false });
+    dispatch({ type: 'SET_COMPLETE', payload: false });
     setCompletedNodeIds([]);
     setProgress(0);
-    setPendingDecisionInternal(null);
     setPendingDecision(null);
     setExecutionHistory([]);
 
-    // Limpiar todos los timers
     Object.values(timersRef.current).forEach((timer) => clearTimeout(timer));
     timersRef.current = {};
 
-    // Reiniciar estados específicos
     initializeNodeSpecificStates(processFlow.nodes);
 
-    // Reiniciar con el nodo de inicio
     const startNode = processFlow.nodes.find((node) => node.type === 'start');
     if (startNode) {
       setCurrentNodeId(startNode.id);
       updateNodeStyles(nodes, startNode.id, []);
       setCurrentLevel(1);
 
-      // Recalcular niveles y nodos disponibles
       const { levels, availableNodes } = calculateLevelsAndAvailableNodes(processFlow.nodes, processFlow.edges, startNode.id, []);
+
       setTotalLevels(levels);
       setAvailableNodes(availableNodes);
-
-      // Actualizar el historial de ejecución
       setExecutionHistory([
         {
           timestamp: new Date(),
           nodeId: startNode.id,
-          action: 'Inicio del proceso',
-          details: `${startNode.data.label}`,
+          action: t('history.processStart'),
+          details: startNode.data.label,
         },
       ]);
     }
@@ -646,114 +420,93 @@ export function useFlowExecution({
     calculateLevelsAndAvailableNodes,
     setTotalLevels,
     setAvailableNodes,
+    dispatch,
+    t,
   ]);
 
-  // Modificar la función togglePlayPause para manejar el inicio automático
   const togglePlayPause = useCallback(() => {
     if (!processFlow) return;
 
-    if (isCompleteInternal) {
-      // Reiniciar la ejecución
+    if (isComplete) {
       resetExecution();
       return;
     }
 
-    setIsPlayingInternal(!isPlayingInternal);
+    dispatch({ type: 'SET_PLAYING', payload: !isPlaying });
 
-    // Si estamos iniciando la ejecución, verificar si el nodo actual requiere decisión
-    if (!isPlayingInternal) {
+    if (!isPlaying) {
       const currentNode = processFlow.nodes.find((node) => node.id === currentNodeId);
-
-      // Si el nodo actual es de tipo "start", avanzar automáticamente
       if (currentNode?.type === 'start') {
-        advanceToNextNodeRef.current(); // Usar la referencia en lugar de la función directamente
+        advanceToNextNodeRef.current();
       } else if (currentNode) {
         checkForDecisionRef.current(currentNode);
         checkForAutomaticBehaviorRef.current(currentNode);
       }
     }
-  }, [processFlow, isPlayingInternal, currentNodeId, resetExecution, isCompleteInternal]);
+  }, [processFlow, isPlaying, isComplete, currentNodeId, resetExecution, dispatch]);
 
-  // Calcular tiempo total estimado
   const calculateTotalTime = useCallback(() => {
     if (!processFlow) return 0;
 
-    let totalMinutes = 0;
-
-    completedNodeIds.forEach((nodeId) => {
+    return completedNodeIds.reduce((total, nodeId) => {
       const node = processFlow.nodes.find((n) => n.id === nodeId);
-      if (!node) return;
+      if (!node) return total;
+
+      let minutes = 0;
 
       if (node.data.estimatedTime) {
-        let minutes = Number.parseInt(node.data.estimatedTime.toString());
-
-        // Convertir a minutos según la unidad
-        if (node.data.timeUnit === 'hours') {
-          minutes *= 60;
-        } else if (node.data.timeUnit === 'days') {
-          minutes *= 1440; // 24 * 60
-        }
-
-        totalMinutes += minutes;
+        minutes = Number(node.data.estimatedTime);
+        if (node.data.timeUnit === 'hours') minutes *= 60;
+        if (node.data.timeUnit === 'days') minutes *= 1440;
       } else if (node.type === 'timer' && node.data.duration) {
-        let minutes = Number.parseInt(node.data.duration.toString());
-
-        // Convertir a minutos según la unidad
-        if (node.data.timeUnit === 'seconds') {
-          minutes /= 60;
-        } else if (node.data.timeUnit === 'hours') {
-          minutes *= 60;
-        } else if (node.data.timeUnit === 'days') {
-          minutes *= 1440; // 24 * 60
-        }
-
-        totalMinutes += minutes;
+        minutes = Number(node.data.duration);
+        if (node.data.timeUnit === 'seconds') minutes /= 60;
+        if (node.data.timeUnit === 'hours') minutes *= 60;
+        if (node.data.timeUnit === 'days') minutes *= 1440;
       }
-    });
 
-    return totalMinutes;
+      return total + minutes;
+    }, 0);
   }, [processFlow, completedNodeIds]);
 
-  // Exportar historial de ejecución
   const exportExecutionHistory = useCallback(() => {
     if (executionHistory.length === 0) return;
 
-    // Crear CSV
-    let csvContent = 'Fecha,Hora,Nodo,Acción,Detalles\n';
+    const csvHeaders = 'Fecha,Hora,Nodo,Acción,Detalles\n';
+    const csvRows = executionHistory
+      .map((entry) => {
+        const date = entry.timestamp.toLocaleDateString();
+        const time = entry.timestamp.toLocaleTimeString();
+        const action = entry.action.replace(/,/g, ';');
+        const details = entry.details?.replace(/,/g, ';') || '';
 
-    executionHistory.forEach((entry) => {
-      const date = entry.timestamp.toLocaleDateString();
-      const time = entry.timestamp.toLocaleTimeString();
-      const nodeId = entry.nodeId;
-      const action = entry.action;
-      const details = entry.details || '';
+        return `${date},${time},${entry.nodeId},${action},${details}`;
+      })
+      .join('\n');
 
-      // Escapar comas en los campos
-      const escapedAction = action.includes(',') ? `"${action}"` : action;
-      const escapedDetails = details.includes(',') ? `"${details}"` : details;
-
-      csvContent += `${date},${time},${nodeId},${escapedAction},${escapedDetails}\n`;
-    });
-
-    // Crear blob y descargar
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([csvHeaders + csvRows], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
+
     const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', `execution-history-${new Date().toISOString().slice(0, 10)}.csv`);
+    link.href = url;
+    link.download = t('export.executionHistoryFileName', {
+      date: new Date().toLocaleDateString(),
+      time: new Date().toLocaleTimeString(),
+    });
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   }, [executionHistory]);
 
   return {
-    isPlaying: isPlayingInternal,
+    isPlaying,
     advanceToNextNode,
+    calculateTotalTime,
+    exportExecutionHistory,
     handleDecision,
     resetExecution,
     togglePlayPause,
-    calculateTotalTime,
-    exportExecutionHistory,
     checkForDecision,
     checkForAutomaticBehavior,
     updateParallelGroups,

@@ -2,6 +2,7 @@ import type {
   AnnotationNodeData,
   AnnotationNodeType,
   ApprovalNodeData,
+  ApprovalNodeType,
   ConditionNodeData,
   ConditionNodeType,
   EndNodeData,
@@ -14,11 +15,13 @@ import type {
   MessageNodeType,
   NodeData,
   NotificationNodeData,
+  NotificationNodeType,
   StartNodeData,
   StepNodeData,
   StepNodeType,
   SubProcessNodeData,
   TaskNodeData,
+  TaskNodeType,
   TimerNodeData,
 } from '@/types/execution-flow';
 
@@ -95,11 +98,20 @@ export const getDefaultDataForType = <T extends FlowNodeType>(type: T): NodeData
 };
 
 // Type guards
-export const isStepNode = (node: FlowNode): node is StepNodeType => node.type === 'step';
-export const isConditionNode = (node: FlowNode): node is ConditionNodeType => node.type === 'condition';
 export const isLoopNode = (node: FlowNode): node is LoopNodeType => node.type === 'loop';
-export const isAnnotationNode = (node: FlowNode): node is AnnotationNodeType => node.type === 'annotation' && 'text' in node.data;
+export const isStepNode = (node: FlowNode): node is StepNodeType => node.type === 'step';
 export const isMessageNode = (node: FlowNode): node is MessageNodeType => node.type === 'message';
+export const isConditionNode = (node: FlowNode): node is ConditionNodeType => node.type === 'condition';
+export const isAnnotationNode = (node: FlowNode): node is AnnotationNodeType => node.type === 'annotation' && 'text' in node.data;
+
+// Type guard: checks if the FlowNode has a 'message' property (for notification or message nodes)
+export const isNodeWithMessage = (node: FlowNode): node is NotificationNodeType | MessageNodeType => node.type === 'notification' || (node.type === 'message' && 'message' in node.data);
+
+// Type guard: checks if the FlowNode has both 'estimatedTime' and 'timeUnit' properties (for step, task, approval, or timer nodes)
+export const isNodeWithEstimatedTime = (node: FlowNode): node is StepNodeType | TaskNodeType | ApprovalNodeType => {
+  return (node.type === 'step' || node.type === 'task' || node.type === 'approval') && 'estimatedTime' in node.data && 'timeUnit' in node.data;
+};
+
 export const isValidNodeType = (type: string): type is FlowNodeType => {
   const validTypes: FlowNodeType[] = ['start', 'end', 'step', 'condition', 'loop', 'subprocess', 'task', 'approval', 'notification', 'timer', 'gateway', 'message', 'annotation'];
   return validTypes.includes(type as FlowNodeType);

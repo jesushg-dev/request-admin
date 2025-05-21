@@ -3293,6 +3293,44 @@
           "exitLoop": "Exit Loop",
           "selectPath": "Select Path",
           "complete": "Complete"
+        },
+        "decision": {
+          "yes": "Yes",
+          "no": "No",
+          "approve": "Approve",
+          "reject": "Reject",
+          "continueLoop": "Continue loop",
+          "exitLoop": "Exit loop",
+          "path": "Path {number}: {label}",
+          "unknown": "Unknown",
+          "nextStep": "Next step"
+        },
+        "history": {
+          "parallelStepsActivation": "Parallel steps activation",
+          "parallelStepsActivationDetails": "{count} steps activated from {label}",
+          "decision": "Decision: {decision}",
+          "decisionDetails": "In {label}",
+          "completed": "Completed",
+          "completedDetails": "{type}: {label}",
+          "processCompleted": "Process completed",
+          "processCompletedDetails": "The process flow has completed successfully",
+          "processStart": "Process start"
+        },
+        "nodeTypes": {
+          "start": "Start",
+          "end": "End",
+          "task": "Task",
+          "condition": "Condition",
+          "approval": "Approval",
+          "loop": "Loop",
+          "gateway": "Gateway",
+          "message": "Message",
+          "notification": "Notification",
+          "timer": "Timer",
+          "unknown": "Unknown"
+        },
+        "export": {
+          "executionHistoryFileName": "execution-history-{date}-{time}.csv"
         }
       },
       "validation": {

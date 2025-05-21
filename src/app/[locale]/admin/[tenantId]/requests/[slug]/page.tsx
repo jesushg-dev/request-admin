@@ -18,6 +18,7 @@ import Messages from '@/components/common/request/viewer/messages';
 import RequestActivities from '@/components/common/request/viewer/request-activities';
 import RequirementProgress from '@/components/common/request/viewer/requirement-progress';
 import FormSubmissionsViewer from '@/components/common/request/viewer/submissions-viewer';
+import { ExecutionProvider } from '@/components/process-flow/execution/execution-context';
 import ExecutionView from '@/components/process-flow/execution/execution-view';
 import EmptyState from '@/components/shared/empty-state';
 
@@ -97,7 +98,9 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
             </TabsContent>
 
             <TabsContent value="executionModel" className="flex-1 flex flex-col overflow-hidden">
-              <ExecutionView />
+              <ExecutionProvider>
+                <ExecutionView />
+              </ExecutionProvider>
             </TabsContent>
 
             <TabsContent value="guides" className="flex-1 flex flex-col overflow-hidden">

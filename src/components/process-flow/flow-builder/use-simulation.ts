@@ -104,7 +104,11 @@ export const useSimulation = (nodes: FlowNode[], edges: FlowEdge[]) => {
       if (nextNode?.type === 'step') {
         // todo: simplified SLA compliance check
         const metSla = Math.random() > 0.3;
-        metSla ? slaCompliance.met++ : slaCompliance.notMet++;
+        if (metSla) {
+          slaCompliance.met++;
+        } else {
+          slaCompliance.notMet++;
+        }
       }
 
       return {

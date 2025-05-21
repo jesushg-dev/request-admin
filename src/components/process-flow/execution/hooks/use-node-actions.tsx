@@ -1,336 +1,217 @@
-'use client';
+import { useCallback } from 'react';
 
-import type React from 'react';
-import { useCallback, useRef } from 'react';
+import type { ExecutionHistoryEntry, LoopNodeType, NodeSpecificStates, NotificationNodeType, TaskNodeType, TimerNodeType } from '@/types/execution-flow';
 
-import type { ExecutionHistoryEntry, NodeSpecificStates, ProcessFlow } from '@/types/execution';
+import { useExecutionContext } from '../execution-context';
 
-interface UseNodeActionsProps {
-  processFlow: ProcessFlow | null;
-  setNodeSpecificStates: React.Dispatch<React.SetStateAction<NodeSpecificStates>>;
-  setExecutionHistory: React.Dispatch<React.SetStateAction<ExecutionHistoryEntry[]>>;
-  advanceToNextNode: (outcome?: string) => void;
-}
+export function useNodeActions() {
+  const { state, dispatch, timersRef } = useExecutionContext();
+  const { processFlow, nodeSpecificStates, executionHistory } = state;
 
-export function useNodeActions({ processFlow, setNodeSpecificStates, setExecutionHistory, advanceToNextNode }: UseNodeActionsProps) {
-  // Referencia para los timers
-  const timersRef = useRef<{ [key: string]: NodeJS.Timeout }>({});
-
-  // Limpiar timers cuando se desmonte el componente
+  // Clear all timers on unmount
   const cleanupTimers = useCallback(() => {
-    Object.values(timersRef.current).forEach((timer) => clearTimeout(timer));
+    Object.values(timersRef.current).forEach(clearTimeout);
     timersRef.current = {};
-  }, []);
+  }, [timersRef]);
 
+  // Start a timer node
   const handleTimerStart = useCallback(
     (nodeId: string) => {
-      const node = processFlow?.nodes.find((n) => n.id === nodeId);
+      const node = processFlow?.nodes.find((n): n is TimerNodeType => n.id === nodeId && n.type === 'timer');
       if (!node) return;
 
-      setNodeSpecificStates((prev) => ({
-        ...prev,
+      // Update node-specific state
+      const newStates = {
+        ...nodeSpecificStates,
         [nodeId]: {
-          ...prev[nodeId],
-          timer: {
-            timeLeft: node.data.duration || 0,
-            timerActive: true,
-          },
+          ...nodeSpecificStates[nodeId],
+          timer: { timeLeft: node.data.duration, timerActive: true },
         },
-      }));
+      };
+      dispatch({ type: 'SET_NODE_SPECIFIC_STATES', payload: newStates });
 
-      // Actualizar el historial de ejecución
-      setExecutionHistory((prev) => [
-        ...prev,
-        {
-          timestamp: new Date(),
-          nodeId: nodeId,
-          action: 'Temporizador iniciado',
-          details: `Duración: ${node.data.duration} ${node.data.timeUnit}`,
-        },
-      ]);
+      // Log history
+      const entry: ExecutionHistoryEntry = {
+        nodeId,
+        timestamp: new Date(),
+        action: 'Timer started',
+        details: `Duration: ${node.data.duration} ${node.data.timeUnit}`,
+      };
+      dispatch({ type: 'SET_EXECUTION_HISTORY', payload: [...executionHistory, entry] });
 
-      // Iniciar cuenta regresiva
-      let timeLeft = node.data.duration || 0;
-
-      const timerInterval = setInterval(() => {
+      // Begin countdown
+      let timeLeft = node.data.duration;
+      const interval = setInterval(() => {
         timeLeft--;
-
-        setNodeSpecificStates((prev) => ({
-          ...prev,
+        const updatedStates = {
+          ...nodeSpecificStates,
           [nodeId]: {
-            ...prev[nodeId],
-            timer: {
-              timeLeft,
-              timerActive: true,
-            },
+            ...nodeSpecificStates[nodeId],
+            timer: { timeLeft, timerActive: true },
           },
-        }));
+        };
+        dispatch({ type: 'SET_NODE_SPECIFIC_STATES', payload: updatedStates });
 
         if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-
-          // Avanzar automáticamente cuando el tiempo llegue a cero
-          setTimeout(() => {
-            advanceToNextNode();
-          }, 500);
+          clearInterval(interval);
+          setTimeout(() => dispatch({ type: 'SET_CURRENT_NODE_ID', payload: null }), 500);
         }
       }, 1000);
 
-      timersRef.current[nodeId] = timerInterval as unknown as NodeJS.Timeout;
+      timersRef.current[nodeId] = interval as unknown as NodeJS.Timeout;
     },
-    [processFlow?.nodes, advanceToNextNode, setNodeSpecificStates, setExecutionHistory]
+    [processFlow, nodeSpecificStates, executionHistory, dispatch]
   );
 
+  // Pause a timer node
   const handleTimerPause = useCallback(
     (nodeId: string) => {
-      // Pausar el timer
       if (timersRef.current[nodeId]) {
         clearTimeout(timersRef.current[nodeId]);
       }
-
-      setNodeSpecificStates((prev) => ({
-        ...prev,
+      const updatedStates = {
+        ...nodeSpecificStates,
         [nodeId]: {
-          ...prev[nodeId],
+          ...nodeSpecificStates[nodeId],
           timer: {
-            ...(prev[nodeId]?.timer || { timeLeft: 0 }),
+            ...nodeSpecificStates[nodeId].timer,
             timerActive: false,
           },
         },
-      }));
-
-      // Actualizar el historial de ejecución
-      setExecutionHistory((prev) => [
-        ...prev,
-        {
-          timestamp: new Date(),
-          nodeId: nodeId,
-          action: 'Temporizador pausado',
-          details: '',
-        },
-      ]);
+      } as NodeSpecificStates;
+      const entry: ExecutionHistoryEntry = { nodeId, timestamp: new Date(), action: 'Timer paused', details: '' };
+      dispatch({ type: 'SET_NODE_SPECIFIC_STATES', payload: updatedStates });
+      dispatch({ type: 'SET_EXECUTION_HISTORY', payload: [...executionHistory, entry] });
     },
-    [setNodeSpecificStates, setExecutionHistory]
+    [nodeSpecificStates, executionHistory, dispatch]
   );
 
+  // Send a notification node
   const handleSendNotification = useCallback(
     (nodeId: string) => {
-      setNodeSpecificStates((prev) => ({
-        ...prev,
-        [nodeId]: {
-          ...prev[nodeId],
-          notification: {
-            status: 'sending',
-          },
-        },
-      }));
-
-      // Actualizar el historial de ejecución
-      const node = processFlow?.nodes.find((n) => n.id === nodeId);
-      setExecutionHistory((prev) => [
-        ...prev,
-        {
-          timestamp: new Date(),
-          nodeId: nodeId,
-          action: 'Enviando notificación',
-          details: node ? `Canal: ${node.data.channel || 'email'}` : '',
-        },
-      ]);
-
-      // Simular envío de notificación
-      setTimeout(() => {
-        // 90% de probabilidad de éxito
-        if (Math.random() > 0.1) {
-          setNodeSpecificStates((prev) => ({
-            ...prev,
-            [nodeId]: {
-              ...prev[nodeId],
-              notification: {
-                status: 'success',
-              },
-            },
-          }));
-
-          // Actualizar el historial de ejecución
-          setExecutionHistory((prev) => [
-            ...prev,
-            {
-              timestamp: new Date(),
-              nodeId: nodeId,
-              action: 'Notificación enviada',
-              details: 'Éxito',
-            },
-          ]);
-
-          // Avanzar automáticamente después de éxito
-          setTimeout(() => {
-            advanceToNextNode();
-          }, 1500);
-        } else {
-          setNodeSpecificStates((prev) => ({
-            ...prev,
-            [nodeId]: {
-              ...prev[nodeId],
-              notification: {
-                status: 'error',
-              },
-            },
-          }));
-
-          // Actualizar el historial de ejecución
-          setExecutionHistory((prev) => [
-            ...prev,
-            {
-              timestamp: new Date(),
-              nodeId: nodeId,
-              action: 'Error en notificación',
-              details: 'No se pudo enviar la notificación',
-            },
-          ]);
-        }
-      }, 2000);
-    },
-    [advanceToNextNode, processFlow?.nodes, setNodeSpecificStates, setExecutionHistory]
-  );
-
-  const handleExecuteTask = useCallback(
-    (nodeId: string) => {
-      setNodeSpecificStates((prev) => ({
-        ...prev,
-        [nodeId]: {
-          ...prev[nodeId],
-          task: {
-            status: 'running',
-          },
-        },
-      }));
-
-      // Actualizar el historial de ejecución
-      const node = processFlow?.nodes.find((n) => n.id === nodeId);
-      setExecutionHistory((prev) => [
-        ...prev,
-        {
-          timestamp: new Date(),
-          nodeId: nodeId,
-          action: 'Ejecutando tarea',
-          details: node ? `Tipo: ${node.data.type || 'manual'}` : '',
-        },
-      ]);
-
-      // Simular ejecución de tarea
-      setTimeout(() => {
-        // 90% de probabilidad de éxito
-        if (Math.random() > 0.1) {
-          setNodeSpecificStates((prev) => ({
-            ...prev,
-            [nodeId]: {
-              ...prev[nodeId],
-              task: {
-                status: 'success',
-              },
-            },
-          }));
-
-          // Actualizar el historial de ejecución
-          setExecutionHistory((prev) => [
-            ...prev,
-            {
-              timestamp: new Date(),
-              nodeId: nodeId,
-              action: 'Tarea completada',
-              details: 'Éxito',
-            },
-          ]);
-
-          // Avanzar automáticamente después de éxito
-          setTimeout(() => {
-            advanceToNextNode();
-          }, 1500);
-        } else {
-          setNodeSpecificStates((prev) => ({
-            ...prev,
-            [nodeId]: {
-              ...prev[nodeId],
-              task: {
-                status: 'error',
-              },
-            },
-          }));
-
-          // Actualizar el historial de ejecución
-          setExecutionHistory((prev) => [
-            ...prev,
-            {
-              timestamp: new Date(),
-              nodeId: nodeId,
-              action: 'Error en tarea',
-              details: 'No se pudo completar la tarea',
-            },
-          ]);
-        }
-      }, 2000);
-    },
-    [advanceToNextNode, processFlow?.nodes, setNodeSpecificStates, setExecutionHistory]
-  );
-
-  const handleLoopContinue = useCallback(
-    (nodeId: string) => {
-      const node = processFlow?.nodes.find((n) => n.id === nodeId);
+      const node = processFlow?.nodes.find((n): n is NotificationNodeType => n.id === nodeId && n.type === 'notification');
       if (!node) return;
 
-      setNodeSpecificStates((prev) => {
-        const currentCount = (prev[nodeId]?.loop?.count || 0) + 1;
-
-        // Actualizar el historial de ejecución
-        setExecutionHistory((prevHistory) => [
-          ...prevHistory,
-          {
-            timestamp: new Date(),
-            nodeId: nodeId,
-            action: 'Iteración de bucle',
-            details: `${currentCount} de ${node.data.maxIterations}`,
-          },
-        ]);
-
-        // Si no hemos alcanzado el máximo, continuamos en el bucle
-        if (currentCount < (node.data.maxIterations || 0)) {
-          return {
-            ...prev,
-            [nodeId]: {
-              ...prev[nodeId],
-              loop: {
-                count: currentCount,
-              },
-            },
-          };
-        } else {
-          // Si alcanzamos el máximo, salimos del bucle
-          setTimeout(() => {
-            advanceToNextNode('error');
-          }, 500);
-
-          return {
-            ...prev,
-            [nodeId]: {
-              ...prev[nodeId],
-              loop: {
-                count: currentCount,
-              },
-            },
-          };
-        }
+      dispatch({
+        type: 'SET_NODE_SPECIFIC_STATES',
+        payload: {
+          ...nodeSpecificStates,
+          [nodeId]: { ...nodeSpecificStates[nodeId], notification: { status: 'sending' } },
+        },
       });
+
+      const startEntry: ExecutionHistoryEntry = {
+        nodeId,
+        timestamp: new Date(),
+        action: 'Sending notification',
+        details: `Channel: ${node.data.channel}`,
+      };
+      dispatch({ type: 'SET_EXECUTION_HISTORY', payload: [...executionHistory, startEntry] });
+
+      setTimeout(() => {
+        const success = Math.random() > 0.1;
+        dispatch({
+          type: 'SET_NODE_SPECIFIC_STATES',
+          payload: {
+            ...nodeSpecificStates,
+            [nodeId]: {
+              ...nodeSpecificStates[nodeId],
+              notification: { status: success ? 'success' : 'error' },
+            },
+          },
+        });
+
+        const resultEntry: ExecutionHistoryEntry = {
+          nodeId,
+          timestamp: new Date(),
+          action: success ? 'Notification sent' : 'Notification error',
+          details: success ? 'Success' : 'Failed to send notification',
+        };
+        dispatch({ type: 'SET_EXECUTION_HISTORY', payload: [...executionHistory, resultEntry] });
+
+        if (success) {
+          setTimeout(() => dispatch({ type: 'SET_CURRENT_NODE_ID', payload: null }), 1500);
+        }
+      }, 2000);
     },
-    [processFlow?.nodes, advanceToNextNode, setNodeSpecificStates, setExecutionHistory]
+    [processFlow, nodeSpecificStates, executionHistory, dispatch]
   );
 
-  return {
-    timersRef,
-    handleTimerStart,
-    handleTimerPause,
-    handleSendNotification,
-    handleExecuteTask,
-    handleLoopContinue,
-    cleanupTimers,
-  };
+  // Execute a task node
+  const handleExecuteTask = useCallback(
+    (nodeId: string) => {
+      const node = processFlow?.nodes.find((n): n is TaskNodeType => n.id === nodeId && n.type === 'task');
+      if (!node) return;
+
+      dispatch({
+        type: 'SET_NODE_SPECIFIC_STATES',
+        payload: {
+          ...nodeSpecificStates,
+          [nodeId]: { ...nodeSpecificStates[nodeId], task: { status: 'running' } },
+        },
+      });
+
+      const startEntry: ExecutionHistoryEntry = {
+        nodeId,
+        timestamp: new Date(),
+        action: 'Executing task',
+        details: `Type: ${node.data.type}`,
+      };
+      dispatch({ type: 'SET_EXECUTION_HISTORY', payload: [...executionHistory, startEntry] });
+
+      setTimeout(() => {
+        const success = Math.random() > 0.1;
+        dispatch({
+          type: 'SET_NODE_SPECIFIC_STATES',
+          payload: {
+            ...nodeSpecificStates,
+            [nodeId]: { ...nodeSpecificStates[nodeId], task: { status: success ? 'success' : 'error' } },
+          },
+        });
+
+        const resultEntry: ExecutionHistoryEntry = {
+          nodeId,
+          timestamp: new Date(),
+          action: success ? 'Task completed' : 'Task error',
+          details: success ? 'Success' : 'Failed to complete task',
+        };
+        dispatch({ type: 'SET_EXECUTION_HISTORY', payload: [...executionHistory, resultEntry] });
+
+        if (success) {
+          setTimeout(() => dispatch({ type: 'SET_CURRENT_NODE_ID', payload: null }), 1500);
+        }
+      }, 2000);
+    },
+    [processFlow, nodeSpecificStates, executionHistory, dispatch]
+  );
+
+  // Continue a loop node
+  const handleLoopContinue = useCallback(
+    (nodeId: string) => {
+      const node = processFlow?.nodes.find((n): n is LoopNodeType => n.id === nodeId && n.type === 'loop');
+      if (!node) return;
+
+      const currentCount = (nodeSpecificStates[nodeId]?.loop?.count || 0) + 1;
+      const entry: ExecutionHistoryEntry = {
+        nodeId,
+        timestamp: new Date(),
+        action: 'Loop iteration',
+        details: `${currentCount} of ${node.data.maxIterations}`,
+      };
+
+      const updatedStates = {
+        ...nodeSpecificStates,
+        [nodeId]: { ...nodeSpecificStates[nodeId], loop: { count: currentCount } },
+      };
+      dispatch({ type: 'SET_NODE_SPECIFIC_STATES', payload: updatedStates });
+      dispatch({ type: 'SET_EXECUTION_HISTORY', payload: [...executionHistory, entry] });
+
+      if (currentCount >= node.data.maxIterations) {
+        setTimeout(() => dispatch({ type: 'SET_CURRENT_NODE_ID', payload: 'error' }), 500);
+      }
+    },
+    [processFlow, nodeSpecificStates, executionHistory, dispatch]
+  );
+
+  return { timersRef, cleanupTimers, handleTimerStart, handleTimerPause, handleSendNotification, handleExecuteTask, handleLoopContinue };
 }

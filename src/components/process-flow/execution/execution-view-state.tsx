@@ -2,6 +2,7 @@ import React from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
+import { ExecutionHistoryEntry } from '@/types/execution-flow';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -36,7 +37,7 @@ export default ExecutionViewError;
 
 interface ExecutionViewSuccessProps {
   completedNodeIds: string[];
-  executionHistory: any[];
+  executionHistory: ExecutionHistoryEntry[];
   calculateTotalTime: () => number;
   resetExecution: () => void;
 }

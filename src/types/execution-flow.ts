@@ -9,8 +9,10 @@ export interface BaseNodeData extends Record<string, unknown> {
   isCompleted?: boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface StartNodeData extends BaseNodeData {}
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface EndNodeData extends BaseNodeData {}
 
 export interface StepNodeData extends BaseNodeData {

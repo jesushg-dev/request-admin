@@ -18,7 +18,7 @@ import {
   LandPlotIcon,
   LayersIcon,
   MessageCircleQuestionIcon,
-  MessagesSquareIcon,
+  //MessagesSquareIcon,
   RadarIcon,
   RadioTowerIcon,
   ScaleIcon,

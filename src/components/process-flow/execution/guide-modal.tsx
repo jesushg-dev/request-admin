@@ -1,5 +1,6 @@
 'use client';
 
+//todo: we probably need to delete this file because properties-panel.tsx is already creating the guide modal
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';

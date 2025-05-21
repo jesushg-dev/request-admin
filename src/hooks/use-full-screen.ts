@@ -26,10 +26,17 @@ export function useFullscreen<T extends HTMLElement = HTMLDivElement>(): UseFull
         el.requestFullscreen().catch((err) => {
           alert(`We encountered an error trying to enable full-screen mode: ${err.message}`);
         });
-      } else if ((el as any).webkitRequestFullscreen) {
-        (el as any).webkitRequestFullscreen();
-      } else if ((el as any).msRequestFullscreen) {
-        (el as any).msRequestFullscreen();
+      } else if (
+        (
+          el as HTMLElement & {
+            webkitRequestFullscreen?: () => void;
+            msRequestFullscreen?: () => void;
+          }
+        ).webkitRequestFullscreen
+      ) {
+        (el as HTMLElement & { webkitRequestFullscreen?: () => void }).webkitRequestFullscreen!();
+      } else if ((el as HTMLElement & { msRequestFullscreen?: () => void }).msRequestFullscreen) {
+        (el as HTMLElement & { msRequestFullscreen?: () => void }).msRequestFullscreen!();
       }
     } else {
       if (document.exitFullscreen) {
