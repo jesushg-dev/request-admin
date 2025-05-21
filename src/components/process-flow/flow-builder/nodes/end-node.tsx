@@ -2,7 +2,9 @@ import { memo } from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { Square } from 'lucide-react';
 
-export const EndNode = memo(({ data }: NodeProps) => {
+import type { EndNodeType } from '@/types/execution-flow';
+
+export const EndNode = memo(({ data }: NodeProps<EndNodeType>) => {
   return (
     <div className="px-4 py-2 border rounded-full bg-red-100 border-red-500 min-w-[100px] text-center">
       <div className="flex items-center justify-center gap-2">

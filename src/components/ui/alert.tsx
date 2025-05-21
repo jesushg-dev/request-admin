@@ -9,6 +9,7 @@ const alertVariants = cva('[&>svg]:text-textPrimary relative w-full rounded-lg b
       default: 'text-textPrimary bg-background',
       warning: 'border-yellow-50 text-yellow-500 dark:border-yellow-50 dark:text-yellow-500 bg-yellow-50 dark:bg-transparent dark:border-yellow-800 [&>svg]:text-yellow-500',
       destructive: 'border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive',
+      error: 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-200 dark:border-red-800/30',
     },
   },
   defaultVariants: {

@@ -2,7 +2,9 @@ import { memo } from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { MessageSquare } from 'lucide-react';
 
-export const MessageNode = memo(({ data }: NodeProps) => {
+import type { MessageNodeType } from '@/types/execution-flow';
+
+export const MessageNode = memo(({ data }: NodeProps<MessageNodeType>) => {
   return (
     <div className="px-4 py-2 border rounded bg-violet-50 border-violet-300 min-w-[150px]">
       <div className="flex items-center gap-2 mb-1">

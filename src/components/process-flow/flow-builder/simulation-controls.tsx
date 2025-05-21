@@ -2,9 +2,10 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { Panel } from '@xyflow/react';
-import type { Edge, Node } from '@xyflow/react';
 import { Clock, Pause, Play, RotateCcw, SkipForward } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
+import type { EndNodeType, FlowEdge, FlowNode, StartNodeType, StepNodeData, TimerNodeData } from '@/types/execution-flow';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
@@ -19,11 +20,12 @@ interface SimulationMetrics {
 }
 
 interface SimulationControlsProps {
-  nodes: Node[];
-  edges: Edge[];
+  nodes: FlowNode[];
+  edges: FlowEdge[];
 }
 
 export default function SimulationControls({ nodes, edges }: SimulationControlsProps) {
+  const t = useTranslations('component.flowExecution.simulation.simulationControls');
   const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
   const [visitedNodeIds, setVisitedNodeIds] = useState<string[]>([]);
   const [simulationPath, setSimulationPath] = useState<string[]>([]);
@@ -39,7 +41,7 @@ export default function SimulationControls({ nodes, edges }: SimulationControlsP
 
   // Start simulation from the start node
   const startSimulation = useCallback(() => {
-    const startNode = nodes.find((node) => node.type === 'start');
+    const startNode = nodes.find((node): node is StartNodeType => node.type === 'start');
     if (!startNode) return;
 
     setActiveNodeId(startNode.id);
@@ -54,7 +56,6 @@ export default function SimulationControls({ nodes, edges }: SimulationControlsP
     setSimulationComplete(false);
   }, [nodes]);
 
-  // Reset simulation
   const resetSimulation = useCallback(() => {
     setIsPlaying(false);
     setActiveNodeId(null);
@@ -84,63 +85,49 @@ export default function SimulationControls({ nodes, edges }: SimulationControlsP
     }
 
     // For simplicity, just take the first outgoing edge
-    // In a real implementation, you would use conditions to determine which path to take
+    // Todo: In a real implementation, you would use conditions to determine which path to take
     const nextEdge = outgoingEdges[0];
     const nextNodeId = nextEdge.target;
 
-    // Update active node
     setActiveNodeId(nextNodeId);
-
-    // Update visited nodes
     setVisitedNodeIds((prev) => [...prev, nextNodeId]);
-
-    // Update simulation path
     setSimulationPath((prev) => [...prev, nextNodeId]);
-
-    // Update simulation step
     setSimulationStep((prev) => prev + 1);
 
-    // Update metrics
-    setSimulationMetrics((prev: SimulationMetrics) => {
-      const nextNode = nodes.find((node) => node.id === nextNodeId);
+    setSimulationMetrics((prev) => {
+      const nextNode = nodes.find((n) => n.id === nextNodeId);
       let timeIncrement = 0;
 
       // Calculate time based on node type
-      if (nextNode?.type === 'step' && nextNode.data.estimatedTime) {
-        timeIncrement = Number.parseInt(String(nextNode.data.estimatedTime)) || 0;
-
-        // Convert to hours for consistency
-        if (nextNode.data.timeUnit === 'minutes') {
-          timeIncrement /= 60;
-        } else if (nextNode.data.timeUnit === 'days') {
-          timeIncrement *= 24;
+      if (nextNode?.type === 'step') {
+        const data = nextNode.data as StepNodeData;
+        if (data.estimatedTime) {
+          timeIncrement = Number(data.estimatedTime) || 0;
+          // Convert to hours for consistency
+          if (data.timeUnit === 'minutes') timeIncrement /= 60;
+          else if (data.timeUnit === 'days') timeIncrement *= 24;
         }
-      } else if (nextNode?.type === 'timer' && nextNode.data.duration) {
-        timeIncrement = Number.parseInt(String(nextNode.data.duration)) || 0;
-
-        // Convert to hours for consistency
-        if (nextNode.data.timeUnit === 'minutes') {
-          timeIncrement /= 60;
-        } else if (nextNode.data.timeUnit === 'seconds') {
-          timeIncrement /= 3600;
-        } else if (nextNode.data.timeUnit === 'days') {
-          timeIncrement *= 24;
+      } else if (nextNode?.type === 'timer') {
+        const data = nextNode.data as TimerNodeData;
+        if (data.duration) {
+          timeIncrement = Number(data.duration) || 0;
+          // Convert to hours for consistency
+          if (data.timeUnit === 'minutes') timeIncrement /= 60;
+          else if (data.timeUnit === 'seconds') timeIncrement /= 3600;
+          else if (data.timeUnit === 'days') timeIncrement *= 24;
         }
       }
 
-      // Update node visits
       const nodeVisits = { ...prev.nodeVisits };
       nodeVisits[nextNodeId] = (nodeVisits[nextNodeId] || 0) + 1;
 
       // Update SLA compliance
       const slaCompliance = { ...prev.slaCompliance };
-      if (nextNode?.type === 'step' && nextNode.data.sla) {
-        // Simplified SLA compliance check
-        const metSla = Math.random() > 0.3; // 70% chance of meeting SLA
-        if (metSla) {
-          slaCompliance.met++;
-        } else {
-          slaCompliance.notMet++;
+      if (nextNode?.type === 'step') {
+        const data = nextNode.data as StepNodeData;
+        if (data.sla) {
+          const metSla = Math.random() > 0.3;
+          metSla ? slaCompliance.met++ : slaCompliance.notMet++;
         }
       }
 
@@ -152,29 +139,22 @@ export default function SimulationControls({ nodes, edges }: SimulationControlsP
     });
 
     // If we reached an end node, stop simulation
-    const nextNode = nodes.find((node) => node.id === nextNodeId);
-    if (nextNode?.type === 'end') {
+    const endNode = nodes.find((n): n is EndNodeType => n.type === 'end' && n.id === nextNodeId);
+    if (endNode) {
       setIsPlaying(false);
       setSimulationComplete(true);
     }
   }, [activeNodeId, simulationComplete, edges, nodes]);
 
-  // Toggle play/pause
   const togglePlay = useCallback(() => {
-    if (!activeNodeId && !isPlaying) {
-      startSimulation();
-    }
+    if (!activeNodeId && !isPlaying) startSimulation();
     setIsPlaying((prev) => !prev);
   }, [activeNodeId, isPlaying, startSimulation]);
 
   // Auto-step simulation when playing
   useEffect(() => {
     if (!isPlaying) return;
-
-    const interval = setInterval(() => {
-      stepSimulation();
-    }, simulationSpeed);
-
+    const interval = setInterval(stepSimulation, simulationSpeed);
     return () => clearInterval(interval);
   }, [isPlaying, simulationSpeed, stepSimulation]);
 
@@ -209,13 +189,16 @@ export default function SimulationControls({ nodes, edges }: SimulationControlsP
     <Panel position="bottom-center" className="mb-8">
       <Card className="w-[500px]">
         <CardHeader className="pb-3">
-          <CardTitle>Simulación</CardTitle>
+          <CardTitle>{t('title')}</CardTitle>
           <CardDescription>
             {simulationComplete
-              ? 'Simulación completada!'
+              ? t('description.completed')
               : activeNodeId
-                ? `Paso ${simulationStep}: ${nodes.find((n) => n.id === activeNodeId)?.data.label || 'Desconocido'}`
-                : 'Inicia la simulación para visualizar el flujo del proceso'}
+                ? t('description.step', {
+                    step: simulationStep,
+                    nodeName: nodes.find((n) => n.id === activeNodeId)?.data.label || 'Unknown',
+                  })
+                : t('description.start')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -234,7 +217,7 @@ export default function SimulationControls({ nodes, edges }: SimulationControlsP
 
             <div className="flex items-center gap-2 w-[200px]">
               <Clock className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground mr-2">Velocidad:</span>
+              <span className="text-sm text-muted-foreground mr-2">{t('controls.speed')}:</span>
               <Slider value={[simulationSpeed]} min={100} max={2000} step={100} onValueChange={(value) => setSimulationSpeed(value[0])} className="w-[120px]" />
             </div>
           </div>
@@ -243,11 +226,11 @@ export default function SimulationControls({ nodes, edges }: SimulationControlsP
             <div className="grid grid-cols-3 gap-4 mt-4">
               <div className="text-center">
                 <div className="text-2xl font-bold">{simulationMetrics.totalTime.toFixed(1)}</div>
-                <div className="text-xs text-muted-foreground">Horas Totales</div>
+                <div className="text-xs text-muted-foreground">{t('controls.metrics.totalHours')}</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold">{Object.keys(simulationMetrics.nodeVisits).length}</div>
-                <div className="text-xs text-muted-foreground">Nodos Visitados</div>
+                <div className="text-xs text-muted-foreground">{t('controls.metrics.visitedNodes')}</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold">
@@ -255,7 +238,7 @@ export default function SimulationControls({ nodes, edges }: SimulationControlsP
                     ? `${Math.round((simulationMetrics.slaCompliance.met / (simulationMetrics.slaCompliance.met + simulationMetrics.slaCompliance.notMet)) * 100)}%`
                     : 'N/A'}
                 </div>
-                <div className="text-xs text-muted-foreground">Cumplimiento SLA</div>
+                <div className="text-xs text-muted-foreground">{t('controls.metrics.slaCompliance')}</div>
               </div>
             </div>
           )}

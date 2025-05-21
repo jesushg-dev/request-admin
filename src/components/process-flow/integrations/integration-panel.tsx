@@ -59,6 +59,7 @@ export default function IntegrationPanel() {
     teams: false,
     slack: false,
     email: false,
+    custom: false,
   });
   const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');

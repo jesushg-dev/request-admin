@@ -2,7 +2,9 @@ import { memo } from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { CheckSquare } from 'lucide-react';
 
-export const ApprovalNode = memo(({ data }: NodeProps) => {
+import type { ApprovalNodeType } from '@/types/execution-flow';
+
+export const ApprovalNode = memo(({ data }: NodeProps<ApprovalNodeType>) => {
   return (
     <div className="px-4 py-2 border rounded bg-emerald-50 border-emerald-300 min-w-[150px]">
       <div className="flex items-center gap-2 mb-1">

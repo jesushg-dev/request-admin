@@ -2,20 +2,22 @@ import { memo } from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { Bell } from 'lucide-react';
 
-export const NotificationNode = memo(({ data }: NodeProps) => {
-  const getChannelIcon = () => {
-    switch (data.channel) {
-      case 'email':
-        return '📧';
-      case 'sms':
-        return '📱';
-      case 'alert':
-        return '🔔';
-      default:
-        return '📧';
-    }
-  };
+import type { NotificationNodeType } from '@/types/execution-flow';
 
+const getChannelIcon = (channel: string) => {
+  switch (channel) {
+    case 'email':
+      return '📧';
+    case 'sms':
+      return '📱';
+    case 'alert':
+      return '🔔';
+    default:
+      return '📧';
+  }
+};
+
+export const NotificationNode = memo(({ data }: NodeProps<NotificationNodeType>) => {
   return (
     <div className="px-4 py-2 border rounded bg-pink-50 border-pink-300 min-w-[150px]">
       <div className="flex items-center gap-2 mb-1">
@@ -23,7 +25,7 @@ export const NotificationNode = memo(({ data }: NodeProps) => {
         <div className="font-medium">{data.label}</div>
       </div>
       <div className="px-2 py-0.5 mb-1 text-xs bg-white/50 rounded-full inline-block">
-        {getChannelIcon()} {data.channel}
+        {getChannelIcon(data.channel)} {data.channel}
       </div>
       {data.message && <div className="px-2 py-1 text-sm bg-white/70 rounded">{data.message}</div>}
       <Handle type="target" position={Position.Top} />

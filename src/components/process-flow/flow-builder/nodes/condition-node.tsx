@@ -2,7 +2,9 @@ import { memo } from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { GitBranch } from 'lucide-react';
 
-export const ConditionNode = memo(({ data }: NodeProps) => {
+import type { ConditionNodeType } from '@/types/execution-flow';
+
+export const ConditionNode = memo(({ data }: NodeProps<ConditionNodeType>) => {
   return (
     <div className="px-4 py-2 border rounded-lg bg-yellow-50 border-yellow-300 min-w-[150px] rotate-45">
       <div className="flex flex-col items-center -rotate-45">

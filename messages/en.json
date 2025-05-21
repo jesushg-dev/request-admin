@@ -3095,6 +3095,172 @@
       "dragAndDrop": "Drag and drop files here, or click to select them",
       "uploadInstructions": "You can upload {count, select, 1 {one file up to {maxSize}} other {{count} files (up to {maxSize} each)}}",
       "removeFile": "Remove File"
+    },
+    "flowExecution": {
+      "build": {
+        "nodePalette": {
+          "title": "Node Palette",
+          "subtitle": "Drag nodes to the canvas",
+          "categories": {
+            "basic": "Basic Blocks",
+            "advanced": "Advanced Blocks"
+          },
+          "nodes": {
+            "start": "Start",
+            "end": "End",
+            "step": "Step",
+            "condition": "Condition",
+            "loop": "Loop",
+            "subprocess": "Subprocess",
+            "task": "Task",
+            "approval": "Approval",
+            "notification": "Notification",
+            "timer": "Timer",
+            "gateway": "Gateway",
+            "message": "Message",
+            "annotation": "Annotation"
+          }
+        },
+        "controls": {
+          "load": "Load",
+          "export": "Export",
+          "validate": "Validate",
+          "simulate": "Simulate",
+          "stopSimulation": "Stop Simulation",
+          "save": "Save"
+        },
+        "selectedEdge": {
+          "selected": "Selected connection: {source} → {target}",
+          "delete": "Delete connection"
+        },
+        "form": {
+          "properties": "Properties",
+          "label": "Label",
+          "action": "Action",
+          "responsible": "Responsible",
+          "estimatedTime": "Estimated Time",
+          "timeUnit": "Time Unit",
+          "sla": "SLA (hours)",
+          "expression": "Expression",
+          "condition": "Condition",
+          "maxIterations": "Max Iterations",
+          "processRef": "Process Reference",
+          "taskType": "Task Type",
+          "details": "Details",
+          "approvers": "Approvers (comma separated)",
+          "channel": "Channel",
+          "message": "Message",
+          "duration": "Duration",
+          "gatewayType": "Gateway Type",
+          "text": "Text",
+          "linkedGuides": "Linked Guides",
+          "linkGuides": "Link Guides",
+          "noLinkedGuides": "No linked guides",
+          "timeUnits": {
+            "seconds": "Seconds",
+            "minutes": "Minutes",
+            "hours": "Hours",
+            "days": "Days"
+          },
+          "taskTypes": {
+            "manual": "Manual",
+            "automatic": "Automatic",
+            "api": "API",
+            "rpa": "RPA"
+          },
+          "channels": {
+            "email": "Email",
+            "sms": "SMS",
+            "alert": "System Alert"
+          },
+          "gatewayTypes": {
+            "parallel": "Parallel",
+            "inclusive": "Inclusive"
+          },
+          "actions": {
+            "apply": "Apply",
+            "cancel": "Cancel",
+            "save": "Save"
+          }
+        },
+        "validation": {
+          "title": "Validation Errors"
+        }
+      },
+      "simulation": {
+        "simulationControls": {
+          "title": "Simulation",
+          "description": {
+            "completed": "Simulation completed!",
+            "step": "Step {step}: {nodeName}",
+            "start": "Start the simulation to visualize the process flow"
+          },
+          "controls": {
+            "speed": "Speed",
+            "metrics": {
+              "totalHours": "Total Hours",
+              "visitedNodes": "Visited Nodes",
+              "slaCompliance": "SLA Compliance"
+            }
+          }
+        }
+      },
+      "execution": {
+        "currentNodeCard": {
+          "title": "Current Node",
+          "inProgress": "In Progress",
+          "unknownType": "Unknown type",
+          "decisionRequired": "A decision is required:",
+          "next": "Next: {target}",
+          "noDetails": "No additional details for this node type.",
+          "action": "Action",
+          "responsible": "Responsible",
+          "estimatedTime": "Estimated Time",
+          "expression": "Expression",
+          "notDefined": "Not defined",
+          "condition": "Condition",
+          "maxIterations": "Max Iterations",
+          "type": "Type",
+          "details": "Details",
+          "approvers": "Approvers",
+          "channel": "Channel",
+          "message": "Message",
+          "duration": "Duration"
+        },
+        "executionViewError": {
+          "howToCreate": "To create a process:",
+          "stepBuilder": "Go to the \"Builder\" tab",
+          "stepDesign": "Design your process flow",
+          "stepValidate": "Validate the flow with the \"Validate\" button",
+          "stepReturn": "Return to this tab to execute the process"
+        },
+        "executionViewSuccess": {
+          "title": "Process Completed",
+          "finished": "Finished",
+          "description": "The process has finished successfully",
+          "summary": "Process summary:",
+          "completedNodes": "Completed nodes: {count}",
+          "totalTime": "Total time: {minutes} minutes",
+          "executedSteps": "Executed steps: {count}",
+          "reset": "Reset Process"
+        }
+      },
+      "validation": {
+        "mustHaveStart": "Flow must have at least one Start node",
+        "onlyOneStart": "Flow should have only one Start node",
+        "mustHaveEnd": "Flow must have at least one End node",
+        "startNoOutgoing": "Start node \"{label}\" has no outgoing connections",
+        "endNoIncoming": "End node \"{label}\" has no incoming connections",
+        "nodeNoIncoming": "Node \"{label}\" has no incoming connections",
+        "nodeNoOutgoing": "Node \"{label}\" has no outgoing connections",
+        "conditionMinOutgoing": "Condition node \"{label}\" should have at least two outgoing connections (Yes/No)",
+        "conditionNoExpression": "Condition node \"{label}\" has no expression defined",
+        "loopNoCondition": "Loop node \"{label}\" has no condition defined",
+        "loopInvalidMax": "Loop node \"{label}\" has invalid max iterations value",
+        "stepNoAction": "Step node \"{label}\" has no action defined",
+        "stepNoResponsible": "Step node \"{label}\" has no responsible defined",
+        "cycleDetected": "Flow contains unintended cycles (infinite loops)"
+      }
     }
   }
 }

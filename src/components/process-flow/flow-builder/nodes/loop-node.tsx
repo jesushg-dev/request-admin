@@ -2,7 +2,9 @@ import { memo } from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { RefreshCw } from 'lucide-react';
 
-export const LoopNode = memo(({ data }: NodeProps) => {
+import type { LoopNodeType } from '@/types/execution-flow';
+
+export const LoopNode = memo(({ data }: NodeProps<LoopNodeType>) => {
   return (
     <div className="px-4 py-2 border rounded-lg bg-purple-50 border-purple-300 min-w-[150px]">
       <div className="flex items-center gap-2 mb-1">

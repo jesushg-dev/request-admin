@@ -2,7 +2,9 @@ import { memo } from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { Layers } from 'lucide-react';
 
-export const SubprocessNode = memo(({ data }: NodeProps) => {
+import type { SubProcessNodeType } from '@/types/execution-flow';
+
+export const SubprocessNode = memo(({ data }: NodeProps<SubProcessNodeType>) => {
   return (
     <div className="px-4 py-2 border-2 border-dashed rounded bg-gray-50 border-gray-400 min-w-[150px]">
       <div className="flex items-center gap-2 mb-1">

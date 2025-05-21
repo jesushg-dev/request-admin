@@ -1,7 +1,8 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import type { Edge, Node } from '@xyflow/react';
+
+import type { EndNodeType, FlowEdge, FlowNode, StartNodeType, StepNodeData, TimerNodeData } from '@/types/execution-flow';
 
 interface SimulationMetrics {
   totalTime: number;
@@ -13,7 +14,7 @@ interface SimulationMetrics {
 }
 
 // Simulation controller for the flow
-export const useSimulation = (nodes: Node[], edges: Edge[]) => {
+export const useSimulation = (nodes: FlowNode[], edges: FlowEdge[]) => {
   const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
   const [visitedNodeIds, setVisitedNodeIds] = useState<string[]>([]);
   const [simulationPath, setSimulationPath] = useState<string[]>([]);
@@ -25,9 +26,8 @@ export const useSimulation = (nodes: Node[], edges: Edge[]) => {
   const [isSimulating, setIsSimulating] = useState(false);
   const [simulationSpeed, setSimulationSpeed] = useState(1000); // ms per step
 
-  // Start simulation from the start node
   const startSimulation = useCallback(() => {
-    const startNode = nodes.find((node) => node.type === 'start');
+    const startNode = nodes.find((node): node is StartNodeType => node.type === 'start');
     if (!startNode) return;
 
     setActiveNodeId(startNode.id);
@@ -63,7 +63,7 @@ export const useSimulation = (nodes: Node[], edges: Edge[]) => {
     }
 
     // For simplicity, just take the first outgoing edge
-    // In a real implementation, you would use conditions to determine which path to take
+    // todo: In a real implementation, you would use conditions to determine which path to take
     const nextEdge = outgoingEdges[0];
     const nextNodeId = nextEdge.target;
 
@@ -82,18 +82,19 @@ export const useSimulation = (nodes: Node[], edges: Edge[]) => {
       let timeIncrement = 0;
 
       // Calculate time based on node type
-      if (nextNode?.type === 'step' && nextNode.data.sla) {
-        timeIncrement = Number.parseInt(nextNode.data.sla) || 0;
-      } else if (nextNode?.type === 'timer' && nextNode.data.duration) {
-        timeIncrement = Number.parseInt(nextNode.data.duration) || 0;
-
-        // Convert to hours for consistency
-        if (nextNode.data.timeUnit === 'minutes') {
-          timeIncrement /= 60;
-        } else if (nextNode.data.timeUnit === 'seconds') {
-          timeIncrement /= 3600;
-        } else if (nextNode.data.timeUnit === 'days') {
-          timeIncrement *= 24;
+      if (nextNode?.type === 'step') {
+        const data = nextNode.data as StepNodeData;
+        if (data.sla) {
+          timeIncrement = Number.parseInt(data.sla) || 0;
+        }
+      } else if (nextNode?.type === 'timer') {
+        const data = nextNode.data as TimerNodeData;
+        if (data.duration) {
+          timeIncrement = Number.parseInt(data.duration.toString()) || 0;
+          // Convert to hours for consistency
+          if (data.timeUnit === 'minutes') timeIncrement /= 60;
+          else if (data.timeUnit === 'seconds') timeIncrement /= 3600;
+          else if (data.timeUnit === 'days') timeIncrement *= 24;
         }
       }
 
@@ -101,16 +102,11 @@ export const useSimulation = (nodes: Node[], edges: Edge[]) => {
       const nodeVisits = { ...prev.nodeVisits };
       nodeVisits[nextNodeId] = (nodeVisits[nextNodeId] || 0) + 1;
 
-      // Update SLA compliance
       const slaCompliance = { ...prev.slaCompliance };
-      if (nextNode?.type === 'step' && nextNode.data.sla) {
-        // Simplified SLA compliance check
-        const metSla = Math.random() > 0.3; // 70% chance of meeting SLA
-        if (metSla) {
-          slaCompliance.met++;
-        } else {
-          slaCompliance.notMet++;
-        }
+      if (nextNode?.type === 'step') {
+        // todo: simplified SLA compliance check
+        const metSla = Math.random() > 0.3;
+        metSla ? slaCompliance.met++ : slaCompliance.notMet++;
       }
 
       return {
@@ -121,20 +117,15 @@ export const useSimulation = (nodes: Node[], edges: Edge[]) => {
     });
 
     // If we reached an end node, stop simulation
-    const nextNode = nodes.find((node) => node.id === nextNodeId);
-    if (nextNode?.type === 'end') {
-      setIsSimulating(false);
-    }
+    const nextNode = nodes.find((n): n is EndNodeType => n.type === 'end' && n.id === nextNodeId);
+    if (nextNode) setIsSimulating(false);
   }, [activeNodeId, isSimulating, edges, nodes]);
 
   // Auto-step simulation
   const autoStepSimulation = useCallback(() => {
     if (!isSimulating) return;
 
-    const interval = setInterval(() => {
-      stepSimulation();
-    }, simulationSpeed);
-
+    const interval = setInterval(stepSimulation, simulationSpeed);
     return () => clearInterval(interval);
   }, [isSimulating, simulationSpeed, stepSimulation]);
 

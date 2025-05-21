@@ -2,7 +2,9 @@ import { memo } from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { Box, Clock, User } from 'lucide-react';
 
-export const StepNode = memo(({ data }: NodeProps) => {
+import type { StepNodeType } from '@/types/execution-flow';
+
+export const StepNode = memo(({ data }: NodeProps<StepNodeType>) => {
   return (
     <div className="px-4 py-2 border rounded bg-blue-50 border-blue-300 min-w-[200px]">
       <div className="flex items-center gap-2 mb-1">

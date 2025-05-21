@@ -1,273 +1,119 @@
 'use client';
 
 import type React from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  addEdge,
-  Background,
-  BackgroundVariant,
-  Controls,
-  MarkerType,
-  Panel,
-  ReactFlow,
-  ReactFlowProvider,
-  useEdgesState,
-  useNodesState,
-  useReactFlow,
-  type Connection,
-  type Edge,
-  type Node,
-  type NodeTypes,
-} from '@xyflow/react';
+import { useCallback, useRef, useState } from 'react';
+import type { Connection } from '@xyflow/react';
+import { addEdge, Background, BackgroundVariant, Controls, MarkerType, Panel, ReactFlow, ReactFlowProvider, useEdgesState, useNodesState, useReactFlow } from '@xyflow/react';
+import { useTranslations } from 'next-intl';
+import { useTheme } from 'next-themes';
 
-import '@xyflow/react/dist/style.css';
-
-import { AlertCircle, FileDown, FileUp, Maximize, Minimize, Play, Save, Trash2 } from 'lucide-react';
-
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
+import type { FlowEdge, FlowNode, FlowNodeType, NodeData, ProcessFlow } from '@/types/execution-flow';
+import { getDefaultDataForType, isValidNodeType } from '@/lib/execution-flow';
+import { useFullscreen } from '@/hooks/use-full-screen';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
+import { AlertBanner } from '@/components/custom-ui/alert-banner';
 
+import { FlowBuilderControls, SelectedEdge } from './flow-builder-utils';
 import NodePalette from './node-palette';
-import { AnnotationNode } from './nodes/annotation-node';
-import { ApprovalNode } from './nodes/approval-node';
-import { ConditionNode } from './nodes/condition-node';
-import { EndNode } from './nodes/end-node';
-import { GatewayNode } from './nodes/gateway-node';
-import { LoopNode } from './nodes/loop-node';
-import { MessageNode } from './nodes/message-node';
-import { NotificationNode } from './nodes/notification-node';
-import { StartNode } from './nodes/start-node';
-import { StepNode } from './nodes/step-node';
-import { SubprocessNode } from './nodes/subprocess-node';
-import { TaskNode } from './nodes/task-node';
-import { TimerNode } from './nodes/timer-node';
+import { nodeTypes } from './nodes';
 import PropertiesPanel from './properties-panel';
 import SimulationControls from './simulation-controls';
-import { validateFlow } from './validation';
-
-// Definir interfaces para los datos de los nodos
-interface NodeData {
-  label: string;
-  action?: string;
-  responsible?: string;
-  sla?: string;
-  estimatedTime?: number;
-  timeUnit?: string;
-  expression?: string;
-  condition?: string;
-  maxIterations?: number;
-  processRef?: string;
-  type?: string;
-  details?: string;
-  approvers?: string[];
-  channel?: string;
-  message?: string;
-  duration?: number;
-  status?: string;
-  isExecuting?: boolean;
-  isCompleted?: boolean;
-}
-
-// Interfaz para el estado de ReactFlow
-interface ReactFlowInstance {
-  project: (position: { x: number; y: number }) => { x: number; y: number };
-  toObject: () => FlowObject;
-}
-
-// Interfaz para el objeto de flujo
-interface FlowObject {
-  nodes: Node[];
-  edges: Edge[];
-}
+import { useValidationFlow } from './use-validation';
 
 interface ValidationError {
   nodeId?: string;
   message: string;
 }
 
-// Define custom node types
-const nodeTypes: NodeTypes = {
-  start: StartNode,
-  end: EndNode,
-  step: StepNode,
-  condition: ConditionNode,
-  loop: LoopNode,
-  subprocess: SubprocessNode,
-  task: TaskNode,
-  approval: ApprovalNode,
-  notification: NotificationNode,
-  timer: TimerNode,
-  gateway: GatewayNode,
-  message: MessageNode,
-  annotation: AnnotationNode,
-};
-
-// Initial nodes and edges
-const initialNodes = [
+const initialNodes: FlowNode[] = [
   {
     id: '1',
     type: 'start',
     position: { x: 250, y: 5 },
-    data: { label: 'Start' },
+    data: { label: 'Start' } as NodeData<'start'>,
   },
 ];
 
-const initialEdges: Edge[] = [];
+const initialEdges: FlowEdge[] = [];
 
 function FlowBuilderNonContext() {
-  const reactFlow = useReactFlow();
+  const t = useTranslations('component.flowExecution.build');
+  const theme = useTheme();
+  const reactFlow = useReactFlow<FlowNode, FlowEdge>();
+  const { validateFlow } = useValidationFlow();
 
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
-  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
-  const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
+  const { ref: containerRef, isFullscreen, toggleFullscreen: handleFullscreenToggle } = useFullscreen<HTMLDivElement>();
+
+  const [selectedNode, setSelectedNode] = useState<FlowNode | null>(null);
+  const [selectedEdge, setSelectedEdge] = useState<FlowEdge | null>(null);
+  const [nodes, setNodes, onNodesChange] = useNodesState<FlowNode>(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<FlowEdge>(initialEdges);
+
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
   const [isSimulating, setIsSimulating] = useState(false);
   const [activeTab, setActiveTab] = useState('editor');
-  const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Handle connections between nodes
   const onConnect = useCallback(
     (params: Connection) => {
-      // Create edge with animated style for loops
       const isLoop = params.source === params.target;
-      const newEdge = {
+      const newEdge: FlowEdge = {
         ...params,
+        id: `${params.source}-${params.target}`,
         animated: isLoop,
         style: { stroke: isLoop ? '#ff0072' : '#555' },
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          width: 20,
-          height: 20,
-        },
+        markerEnd: { type: MarkerType.ArrowClosed, width: 20, height: 20 },
+        type: 'smoothstep',
       };
       setEdges((eds) => addEdge(newEdge, eds));
     },
     [setEdges]
   );
 
-  // Handle drag over for the flow area
   const onDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
   }, []);
 
-  // Handle drop for new nodes
   const onDrop = useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
       event.preventDefault();
+      if (!reactFlowWrapper.current || !reactFlow) return;
 
-      if (!reactFlowWrapper.current || !reactFlowInstance) return;
+      const type = event.dataTransfer.getData('application/reactflow') as FlowNodeType;
+      if (!isValidNodeType(type)) return;
 
-      const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-      const type = event.dataTransfer.getData('application/reactflow');
-
-      // Check if the dropped element is valid
-      if (typeof type === 'undefined' || !type) {
-        return;
-      }
-
+      const { left, top } = reactFlowWrapper.current.getBoundingClientRect();
       const position = reactFlow.screenToFlowPosition({
-        x: event.clientX - reactFlowBounds.left,
-        y: event.clientY - reactFlowBounds.top,
+        x: event.clientX - left,
+        y: event.clientY - top,
       });
 
-      // Create a new node based on the type
-      const newNode: Node = {
+      const newNode: FlowNode = {
         id: `${Date.now()}`,
         type,
         position,
         data: getDefaultDataForType(type),
-      };
+      } as FlowNode;
 
       setNodes((nds) => nds.concat(newNode));
     },
-    [reactFlowInstance, setNodes]
+    [reactFlowWrapper.current, reactFlow, setNodes]
   );
 
-  // Get default data for each node type
-  const getDefaultDataForType = (type: string): NodeData => {
-    switch (type) {
-      case 'start':
-        return { label: 'Inicio' };
-      case 'end':
-        return { label: 'Fin' };
-      case 'step':
-        return {
-          label: 'Paso',
-          action: '',
-          responsible: '',
-          sla: '',
-          estimatedTime: 15,
-          timeUnit: 'minutos',
-        };
-      case 'condition':
-        return { label: 'Condición', expression: '' };
-      case 'loop':
-        return { label: 'Bucle', condition: '', maxIterations: 10 };
-      case 'subprocess':
-        return { label: 'Subproceso', processRef: '' };
-      case 'task':
-        return {
-          label: 'Tarea',
-          type: 'manual',
-          details: '',
-          estimatedTime: 20,
-          timeUnit: 'minutos',
-        };
-      case 'approval':
-        return {
-          label: 'Aprobación',
-          approvers: [],
-          estimatedTime: 30,
-          timeUnit: 'minutos',
-        };
-      case 'notification':
-        return { label: 'Notificación', channel: 'email', message: '' };
-      case 'timer':
-        return { label: 'Temporizador', duration: 0, timeUnit: 'minutos' };
-      case 'gateway':
-        return { label: 'Gateway', type: 'parallel' };
-      case 'message':
-        return { label: 'Evento de Mensaje', message: '' };
-      case 'annotation':
-        return { label: 'Anotación', text: '' };
-      default:
-        return { label: type };
-    }
-  };
+  const onNodeClick = useCallback((_: React.MouseEvent, node: FlowNode) => {
+    setSelectedNode(node);
+  }, []);
 
-  // Handle node selection
-  const onNodeClick = useCallback(
-    (_: React.MouseEvent, node: Node) => {
-      setSelectedNode(node);
-    },
-    [setSelectedNode]
-  );
+  const onEdgeClick = useCallback((_: React.MouseEvent, edge: FlowEdge) => {
+    setSelectedEdge(edge);
+    setSelectedNode(null);
+  }, []);
 
-  // Handle click on edge
-  const onEdgeClick = useCallback(
-    (_: React.MouseEvent, edge: Edge) => {
-      setSelectedEdge(edge);
-      setSelectedNode(null);
-    },
-    [setSelectedEdge]
-  );
-
-  // Handle node deletion
   const onNodesDelete = useCallback(
-    (nodesToDelete: Node[]) => {
-      // Eliminar los nodos seleccionados
+    (nodesToDelete: FlowNode[]) => {
       setNodes((nds) => nds.filter((node) => !nodesToDelete.some((n) => n.id === node.id)));
-
-      // Eliminar las conexiones asociadas a los nodos eliminados
       setEdges((eds) => eds.filter((edge) => !nodesToDelete.some((node) => node.id === edge.source || node.id === edge.target)));
-
-      // Si el nodo eliminado es el seleccionado, deseleccionarlo
       if (nodesToDelete.some((node) => node.id === selectedNode?.id)) {
         setSelectedNode(null);
       }
@@ -275,12 +121,9 @@ function FlowBuilderNonContext() {
     [selectedNode, setNodes, setEdges]
   );
 
-  // Handle edge deletion
   const onEdgesDelete = useCallback(
-    (edgesToDelete: Edge[]) => {
+    (edgesToDelete: FlowEdge[]) => {
       setEdges((eds) => eds.filter((edge) => !edgesToDelete.some((e) => e.id === edge.id)));
-
-      // Si el borde eliminado es el seleccionado, deseleccionarlo
       if (edgesToDelete.some((edge) => edge.id === selectedEdge?.id)) {
         setSelectedEdge(null);
       }
@@ -288,32 +131,24 @@ function FlowBuilderNonContext() {
     [selectedEdge, setEdges]
   );
 
-  // Function to delete the selected edge
   const deleteSelectedEdge = useCallback(() => {
-    if (selectedEdge) {
-      onEdgesDelete([selectedEdge]);
-    }
+    if (selectedEdge) onEdgesDelete([selectedEdge]);
   }, [selectedEdge, onEdgesDelete]);
 
-  // Handle node deselection
   const onPaneClick = useCallback(() => {
     setSelectedNode(null);
     setSelectedEdge(null);
-  }, [setSelectedNode, setSelectedEdge]);
+  }, []);
 
-  // Update node data when properties change
   const onNodeDataChange = useCallback(
-    (nodeId: string, newData: NodeData) => {
+    <T extends FlowNodeType>(nodeId: string, newData: NodeData<T>) => {
       setNodes((nds) =>
         nds.map((node) => {
           if (node.id === nodeId) {
             return {
               ...node,
-              data: {
-                ...node.data,
-                ...newData,
-              },
-            };
+              data: { ...node.data, ...newData } as NodeData<T>,
+            } as FlowNode;
           }
           return node;
         })
@@ -322,158 +157,63 @@ function FlowBuilderNonContext() {
     [setNodes]
   );
 
-  // Actualizar la función handleValidateFlow
   const handleValidateFlow = useCallback(() => {
     const errors = validateFlow(nodes, edges);
     setValidationErrors(errors);
 
     if (errors.length === 0) {
-      // Guardar el flujo completo para la vista de ejecución
-      const processFlow = {
-        nodes: nodes.map((node) => ({
-          id: node.id,
-          type: node.type,
-          data: node.data,
-          position: node.position,
-        })),
-        edges: edges.map((edge) => ({
-          id: edge.id,
-          source: edge.source,
-          target: edge.target,
-          sourceHandle: edge.sourceHandle,
-          targetHandle: edge.targetHandle,
-        })),
-      };
-
-      // Guardar en localStorage para que la vista de ejecución pueda acceder
+      const processFlow: ProcessFlow = { nodes, edges };
       localStorage.setItem('itil-process-flow', JSON.stringify(processFlow));
-      alert('¡Validación exitosa! Flujo listo para ejecuci��n.');
     }
-  }, [nodes, edges]);
+  }, [nodes, edges, validateFlow]);
 
-  // Save flow
   const handleSaveFlow = useCallback(() => {
-    if (reactFlowInstance) {
-      const flow = reactFlowInstance.toObject();
-      console.log('🚀 ~ handleSaveFlow ~ flow:', flow);
+    if (reactFlow) {
+      const flow = reactFlow.toObject();
       localStorage.setItem('itil-flow', JSON.stringify(flow));
-      alert('Flow saved successfully!');
     }
-  }, [reactFlowInstance]);
+  }, [reactFlow]);
 
   const handleLoadFlow = useCallback(() => {
     const savedFlow = localStorage.getItem('itil-flow');
     if (savedFlow) {
-      const flow = JSON.parse(savedFlow) as FlowObject;
-      setNodes(flow.nodes || []);
-      setEdges(flow.edges || []);
-      alert('Flow loaded successfully!');
+      const flow = JSON.parse(savedFlow) as ProcessFlow;
+      setNodes(flow.nodes);
+      setEdges(flow.edges);
     }
   }, [setNodes, setEdges]);
 
   const handleExportFlow = useCallback(() => {
-    if (reactFlowInstance) {
-      const flow = reactFlowInstance.toObject();
+    if (reactFlow) {
+      const flow = reactFlow.toObject();
       const dataStr = JSON.stringify(flow, null, 2);
-      const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-
-      const exportFileDefaultName = 'itil-flow.json';
-
-      const linkElement = document.createElement('a');
-      linkElement.setAttribute('href', dataUri);
-      linkElement.setAttribute('download', exportFileDefaultName);
-      linkElement.click();
+      const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(dataStr)}`;
+      const link = document.createElement('a');
+      link.href = dataUri;
+      link.download = 'request-flow.json';
+      link.click();
     }
-  }, [reactFlowInstance]);
+  }, [reactFlow]);
 
-  // Toggle simulation mode
   const toggleSimulation = useCallback(() => {
-    setIsSimulating(!isSimulating);
-    setActiveTab(isSimulating ? 'editor' : 'simulation');
-  }, [isSimulating]);
-
-  // Detectar cambios en el estado de pantalla completa
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      const doc = document as Document & {
-        webkitFullscreenElement?: Element | null;
-        msFullscreenElement?: Element | null;
-      };
-      const isCurrentlyFullscreen = document.fullscreenElement !== null || doc.webkitFullscreenElement !== null || doc.msFullscreenElement !== null;
-
-      setIsFullscreen(isCurrentlyFullscreen);
-    };
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('msfullscreenchange', handleFullscreenChange);
-
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
-      document.removeEventListener('msfullscreenchange', handleFullscreenChange);
-    };
+    setIsSimulating((prev) => !prev);
+    setActiveTab((prev) => (prev === 'editor' ? 'simulation' : 'editor'));
   }, []);
-
-  // Implementación simplificada del botón de pantalla completa
-  const handleFullscreenToggle = () => {
-    if (
-      !document.fullscreenElement &&
-      !(document as Document & { webkitFullscreenElement?: Element | null }).webkitFullscreenElement &&
-      !(document as Document & { msFullscreenElement?: Element | null }).msFullscreenElement
-    ) {
-      if (containerRef.current) {
-        if (containerRef.current.requestFullscreen) {
-          containerRef.current.requestFullscreen().catch((err) => {
-            alert(`Error al intentar mostrar pantalla completa: ${err.message}`);
-          });
-        } else if ((containerRef.current as HTMLElement & { webkitRequestFullscreen?: () => void }).webkitRequestFullscreen) {
-          (containerRef.current as HTMLElement & { webkitRequestFullscreen?: () => void }).webkitRequestFullscreen!();
-        } else if ((containerRef.current as HTMLElement & { msRequestFullscreen?: () => void }).msRequestFullscreen) {
-          (containerRef.current as HTMLElement & { msRequestFullscreen?: () => void }).msRequestFullscreen!();
-        }
-      }
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen().catch((err) => {
-          alert(`Error al intentar salir de pantalla completa: ${err.message}`);
-        });
-      } else if ((document as Document & { webkitExitFullscreen?: () => Promise<void> }).webkitExitFullscreen) {
-        (document as Document & { webkitExitFullscreen?: () => Promise<void> }).webkitExitFullscreen!();
-      } else if ((document as Document & { msExitFullscreen?: () => Promise<void> }).msExitFullscreen) {
-        (document as Document & { msExitFullscreen?: () => Promise<void> }).msExitFullscreen!();
-      }
-    }
-  };
 
   return (
     <div className="flex-1 flex flex-col relative overflow-hidden border rounded-md">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col overflow-hidden" ref={containerRef}>
         <div className="flex border-b bg-background">
-          <div className="flex items-center ml-auto gap-2 p-2">
-            <Button type="button" variant="outline" size="sm" onClick={handleLoadFlow}>
-              <FileUp className="w-4 h-4 mr-2" />
-              Load
-            </Button>
-            <Button type="button" variant="outline" size="sm" onClick={handleExportFlow}>
-              <FileDown className="w-4 h-4 mr-2" />
-              Export
-            </Button>
-            <Button type="button" variant="outline" size="sm" onClick={handleValidateFlow}>
-              Validate
-            </Button>
-            <Button type="button" variant={isSimulating ? 'destructive' : 'default'} size="sm" onClick={toggleSimulation}>
-              <Play className="w-4 h-4 mr-2" />
-              {isSimulating ? 'Stop Simulation' : 'Simulate'}
-            </Button>
-            <Button type="button" variant="outline" size="sm" onClick={handleFullscreenToggle}>
-              {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
-            </Button>
-            <Button type="button" variant="outline" size="sm" onClick={handleSaveFlow}>
-              <Save className="w-4 h-4 mr-2" />
-              Save
-            </Button>
-          </div>
+          <FlowBuilderControls
+            isFullscreen={isFullscreen}
+            isSimulating={isSimulating}
+            handleLoadFlow={handleLoadFlow}
+            handleExportFlow={handleExportFlow}
+            handleValidateFlow={handleValidateFlow}
+            toggleSimulation={toggleSimulation}
+            handleFullscreenToggle={handleFullscreenToggle}
+            handleSaveFlow={handleSaveFlow}
+          />
         </div>
 
         <div className="flex flex-1 overflow-hidden bg-background">
@@ -485,7 +225,6 @@ function FlowBuilderNonContext() {
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
-                onInit={setReactFlowInstance}
                 onDrop={onDrop}
                 onDragOver={onDragOver}
                 onNodeClick={onNodeClick}
@@ -496,35 +235,28 @@ function FlowBuilderNonContext() {
                 nodeTypes={nodeTypes}
                 fitView
                 snapToGrid
-                snapGrid={[15, 15]}>
+                snapGrid={[15, 15]}
+                colorMode={theme.theme === 'dark' ? 'dark' : 'light'}>
                 <Controls />
                 <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
                 {selectedEdge && (
                   <Panel position="top-center" className="bg-white p-2 rounded shadow-md">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm">
-                        Conexión seleccionada: {selectedEdge.source} → {selectedEdge.target}
-                      </span>
-                      <Button type="button" variant="destructive" size="sm" onClick={deleteSelectedEdge}>
-                        <Trash2 className="w-4 h-4 mr-1" /> Eliminar conexión
-                      </Button>
-                    </div>
+                    <SelectedEdge source={selectedEdge.source} target={selectedEdge.target} onDelete={deleteSelectedEdge} />
                   </Panel>
                 )}
-
                 {validationErrors.length > 0 && (
                   <Panel position="bottom-center">
-                    <Alert variant="destructive" className="mb-4 max-w-md">
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertTitle>Validation Errors</AlertTitle>
-                      <AlertDescription>
+                    <AlertBanner
+                      title={t('validation.title')}
+                      variant="error"
+                      description={
                         <ul className="pl-5 list-disc">
                           {validationErrors.map((error, index) => (
                             <li key={index}>{error.message}</li>
                           ))}
                         </ul>
-                      </AlertDescription>
-                    </Alert>
+                      }
+                    />
                   </Panel>
                 )}
               </ReactFlow>

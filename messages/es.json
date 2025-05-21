@@ -3100,6 +3100,174 @@
       "dragAndDrop": "Arrastra y suelta archivos aquí, o haz clic para seleccionarlos",
       "uploadInstructions": "Puedes subir {count, select, 1 {un archivo de hasta {maxSize}} other {{count} archivos (hasta {maxSize} cada uno)}}",
       "removeFile": "Eliminar archivo"
+    },
+    "flowExecution": {
+      "build": {
+        "nodePalette": {
+          "title": "Paleta de Nodos",
+          "subtitle": "Arrastra nodos al lienzo",
+          "categories": {
+            "basic": "Bloques Básicos",
+            "advanced": "Bloques Avanzados"
+          },
+          "nodes": {
+            "start": "Inicio",
+            "end": "Fin",
+            "step": "Paso",
+            "condition": "Condición",
+            "loop": "Bucle",
+            "subprocess": "Subproceso",
+            "task": "Tarea",
+            "approval": "Aprobación",
+            "notification": "Notificación",
+            "timer": "Temporizador",
+            "gateway": "Puerta de Enlace",
+            "message": "Mensaje",
+            "annotation": "Anotación"
+          }
+        },
+        "controls": {
+          "load": "Cargar",
+          "export": "Exportar",
+          "validate": "Validar",
+          "simulate": "Simular",
+          "stopSimulation": "Detener simulación",
+          "save": "Guardar"
+        },
+        "selectedEdge": {
+          "selected": "Conexión seleccionada: {source} → {target}",
+          "delete": "Eliminar conexión"
+        },
+        "form": {
+          "properties": "Propiedades",
+          "label": "Etiqueta",
+          "action": "Acción",
+          "responsible": "Responsable",
+          "estimatedTime": "Tiempo estimado",
+          "timeUnit": "Unidad de tiempo",
+          "sla": "SLA (horas)",
+          "expression": "Expresión",
+          "condition": "Condición",
+          "maxIterations": "Máximo de iteraciones",
+          "processRef": "Referencia del proceso",
+          "taskType": "Tipo de tarea",
+          "details": "Detalles",
+          "approvers": "Aprobadores (separados por coma)",
+          "channel": "Canal",
+          "message": "Mensaje",
+          "duration": "Duración",
+          "gatewayType": "Tipo de puerta de enlace",
+          "text": "Texto",
+          "linkedGuides": "Guías vinculadas",
+          "linkGuides": "Vincular guías",
+          "noLinkedGuides": "No hay guías vinculadas",
+          "timeUnits": {
+            "seconds": "Segundos",
+            "minutes": "Minutos",
+            "hours": "Horas",
+            "days": "Días"
+          },
+          "taskTypes": {
+            "manual": "Manual",
+            "automatic": "Automático",
+            "api": "API",
+            "rpa": "RPA"
+          },
+          "channels": {
+            "email": "Correo electrónico",
+            "sms": "SMS",
+            "alert": "Alerta del sistema"
+          },
+          "gatewayTypes": {
+            "parallel": "Paralelo",
+            "inclusive": "Inclusivo"
+          },
+          "actions": {
+            "apply": "Aplicar",
+            "cancel": "Cancelar",
+            "save": "Guardar"
+          }
+        },
+        "validation": {
+          "title": "Errores de validación"
+        }
+      },
+      "simulation": {
+        "simulationControls": {
+          "title": "Simulación",
+          "description": {
+            "completed": "¡Simulación completada!",
+            "step": "Paso {step}: {nodeName}",
+            "start": "Inicia la simulación para visualizar el flujo del proceso"
+          },
+          "controls": {
+            "speed": "Velocidad",
+            "metrics": {
+              "totalHours": "Horas Totales",
+              "visitedNodes": "Nodos Visitados",
+              "slaCompliance": "Cumplimiento SLA"
+            }
+          }
+        }
+      },
+      "execution": {
+        "currentNodeCard": {
+          "title": "Nodo Actual",
+          "inProgress": "En Progreso",
+          "unknownType": "Tipo desconocido",
+          "decisionRequired": "Se requiere una decisión:",
+          "next": "Siguiente: {target}",
+          "noDetails": "No hay detalles adicionales para este tipo de nodo.",
+          "action": "Acción",
+          "responsible": "Responsable",
+          "estimatedTime": "Tiempo estimado",
+          "expression": "Expresión",
+          "notDefined": "No definida",
+          "condition": "Condición",
+          "maxIterations": "Iteraciones máximas",
+          "type": "Tipo",
+          "details": "Detalles",
+          "approvers": "Aprobadores",
+          "channel": "Canal",
+          "message": "Mensaje",
+          "duration": "Duración"
+        },
+        "execution": {
+          "executionViewError": {
+            "howToCreate": "Para crear un proceso:",
+            "stepBuilder": "Vaya a la pestaña \"Builder\"",
+            "stepDesign": "Diseñe su flujo de proceso",
+            "stepValidate": "Valide el flujo con el botón \"Validate\"",
+            "stepReturn": "Regrese a esta pestaña para ejecutar el proceso"
+          },
+          "executionViewSuccess": {
+            "title": "Proceso Completado",
+            "finished": "Finalizado",
+            "description": "El proceso ha finalizado correctamente",
+            "summary": "Resumen del proceso:",
+            "completedNodes": "Nodos completados: {count}",
+            "totalTime": "Tiempo total: {minutes} minutos",
+            "executedSteps": "Pasos ejecutados: {count}",
+            "reset": "Reiniciar Proceso"
+          }
+        }
+      },
+      "validation": {
+        "mustHaveStart": "El flujo debe tener al menos un nodo de inicio",
+        "onlyOneStart": "El flujo debe tener solo un nodo de inicio",
+        "mustHaveEnd": "El flujo debe tener al menos un nodo de fin",
+        "startNoOutgoing": "El nodo de inicio \"{label}\" no tiene conexiones de salida",
+        "endNoIncoming": "El nodo de fin \"{label}\" no tiene conexiones de entrada",
+        "nodeNoIncoming": "El nodo \"{label}\" no tiene conexiones de entrada",
+        "nodeNoOutgoing": "El nodo \"{label}\" no tiene conexiones de salida",
+        "conditionMinOutgoing": "El nodo de condición \"{label}\" debe tener al menos dos conexiones de salida (Sí/No)",
+        "conditionNoExpression": "El nodo de condición \"{label}\" no tiene una expresión definida",
+        "loopNoCondition": "El nodo de bucle \"{label}\" no tiene una condición definida",
+        "loopInvalidMax": "El nodo de bucle \"{label}\" tiene un valor inválido de iteraciones máximas",
+        "stepNoAction": "El nodo de paso \"{label}\" no tiene una acción definida",
+        "stepNoResponsible": "El nodo de paso \"{label}\" no tiene responsable definido",
+        "cycleDetected": "El flujo contiene ciclos no intencionados (bucles infinitos)"
+      }
     }
   }
 }

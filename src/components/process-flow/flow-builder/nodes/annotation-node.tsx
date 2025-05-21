@@ -2,7 +2,9 @@ import { memo } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import { FileText } from 'lucide-react';
 
-export const AnnotationNode = memo(({ data }: NodeProps) => {
+import type { AnnotationNodeType } from '@/types/execution-flow';
+
+export const AnnotationNode = memo(({ data }: NodeProps<AnnotationNodeType>) => {
   return (
     <div className="px-4 py-2 border border-dashed rounded bg-gray-50 border-gray-300 min-w-[150px] max-w-[250px]">
       <div className="flex items-center gap-2 mb-1">

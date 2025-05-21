@@ -2,7 +2,9 @@ import { memo } from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { GitMerge } from 'lucide-react';
 
-export const GatewayNode = memo(({ data }: NodeProps) => {
+import type { GatewayNodeType } from '@/types/execution-flow';
+
+export const GatewayNode = memo(({ data }: NodeProps<GatewayNodeType>) => {
   const isParallel = data.type === 'parallel';
 
   return (
