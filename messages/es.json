@@ -1581,49 +1581,6 @@
           "escalationTime": "Tiempo de Escalación (horas)",
           "escalationDescription": "Tiempo antes de que la solicitud sea escalada"
         },
-        "executionTab": {
-          "executionModel": "Modelo de Ejecución",
-          "executionModelDescription": "Configura los pasos necesarios para ejecutar este tipo de solicitud",
-          "noStepsConfigured": "No hay pasos configurados",
-          "totalEstimatedTime": "Tiempo Total Estimado",
-          "minutes": "minutos",
-          "linkedGuides": "Guías Vinculadas",
-          "noLinkedGuides": "No hay guías vinculadas",
-          "guideNotFound": "Guía no encontrada",
-          "updateSuccess": "Paso actualizado",
-          "updateSuccessDescription": "El paso ha sido actualizado correctamente",
-          "createSuccess": "Paso agregado",
-          "createSuccessDescription": "El paso ha sido agregado correctamente",
-          "deleteSuccess": "Paso eliminado",
-          "deleteSuccessDescription": "El paso ha sido eliminado correctamente",
-          "linkSuccess": "Guías vinculadas",
-          "linkSuccessDescription": "Las guías han sido vinculadas correctamente",
-          "moveUp": "Mover arriba",
-          "moveDown": "Mover abajo",
-          "deleteStep": "Eliminar paso",
-          "editStep": "Editar paso",
-          "addStep": "Agregar paso",
-          "stepName": "Nombre del paso",
-          "stepNameDescription": "Nombre descriptivo para identificar el paso en el proceso",
-          "stepNamePlaceholder": "Ej: Verificación de documentos",
-          "description": "Descripción",
-          "stepDescriptionDescription": "Detalles adicionales sobre el propósito del paso",
-          "stepDescriptionPlaceholder": "Ej: Revisar documentos de identidad válidos",
-          "estimatedTime": "Tiempo estimado",
-          "estimatedTimeDescription": "Tiempo aproximado que toma completar este paso",
-          "minutesPlaceholder": "Minutos",
-          "responsible": "Responsable",
-          "responsibleDescription": "Rol o área encargada de ejecutar este paso",
-          "responsiblePlaceholder": "Ej: Agente de servicio",
-          "cancel": "Cancelar",
-          "saveChanges": "Guardar cambios",
-          "createStep": "Crear paso",
-          "linkGuides": "Vincular guías",
-          "linkGuidesDescription": "Selecciona las guías relacionadas con este paso",
-          "selectGuides": "Guías disponibles",
-          "selectGuidesDescription": "Selecciona una o más guías para vincular",
-          "save": "Guardar"
-        },
         "guidesTab": {
           "guidesTitle": "Guías y Documentación",
           "guidesDescription": "Administra las guías y documentos relacionados",
@@ -3132,7 +3089,8 @@
           "validate": "Validar",
           "simulate": "Simular",
           "stopSimulation": "Detener simulación",
-          "save": "Guardar"
+          "save": "Guardar",
+          "validateAndSave": "Validar y guardar"
         },
         "selectedEdge": {
           "selected": "Conexión seleccionada: {source} → {target}",
@@ -3189,7 +3147,15 @@
           }
         },
         "validation": {
-          "title": "Errores de validación"
+          "title": "Errores de validación",
+          "invalidFlow": "¡El archivo no es un flujo de trabajo válido!",
+          "invalidJson": "¡El archivo no es un JSON válido!"
+        },
+        "ariaLabel": {
+          "loadFlow": "Cargar flujo desde el archivo"
+        },
+        "hint": {
+          "save": "Guarde sus cambios antes de cambiar las pestañas para evitar perder su progreso."
         }
       },
       "simulation": {

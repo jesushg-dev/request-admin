@@ -1,5 +1,4 @@
-'use client';
-
+import { executionFlowSchema } from '@/services/schemas/execution-flow';
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
@@ -14,7 +13,6 @@ import FlowBuilder from '@/components/process-flow/flow-builder/flow-builder';
 import { TabSection } from '@/components/shared/tab-section';
 
 import { BasicInfoTab } from './basic-info-tab';
-import { stepFormSchema } from './execution-steps-tab';
 import { guideSchema, GuideTab } from './guides-tab';
 import { SlaTab } from './sla-tab';
 
@@ -33,9 +31,9 @@ export const requestCategorySchema = z.object({
     resolutionTime: z.coerce.number().min(0, { message: 'Resolution time cannot be negative' }),
     escalationTime: z.coerce.number().min(0, { message: 'Escalation time cannot be negative' }),
   }),
-  executionSteps: z.array(stepFormSchema),
   guides: z.array(guideSchema),
   children: z.array(z.string()),
+  executionSteps: executionFlowSchema.optional(),
 });
 
 export type RequestCategoryValues = z.infer<typeof requestCategorySchema>;
@@ -55,7 +53,6 @@ export const getDefaultCategory = (hierarchyLevelId: string, parentCategoryId?: 
   },
   requirements: [],
   forms: [],
-  executionSteps: [],
   guides: [],
   children: [],
 });
@@ -181,7 +178,18 @@ export function CategoryForm({ formsOptions = [], requirementsOptions = [], hand
       </TabSection>
 
       <TabsContent value="execution-steps" className="mt-0 flex-1 flex flex-col overflow-hidden">
-        <FlowBuilder />
+        <FormField
+          control={control}
+          name="executionSteps"
+          render={({ field }) => (
+            <FormItem className="flex-1 flex overflow-hidden">
+              <FormControl>
+                <FlowBuilder value={field.value} onSave={field.onChange} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
       </TabsContent>
 
       <TabSection

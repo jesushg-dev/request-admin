@@ -94,11 +94,10 @@ Develop a web system for managing service requests efficiently while adhering to
 ## Useful Links
 
 - [WAAPI App](https://waapi.app/)
-- [Chromatic Sortable Tree Example](https://master--5fc05e08a4a65d0021ae0bf2.chromatic.com/?path=/story/examples-tree-sortable--all-features)
-- [ShadCN Form Playground](https://www.shadcn-form.com/playground)
 - [Zenstack Encryption](https://zenstack.dev/docs/guides/field-encryption)
 - [tableau](https://www.tableau.com/)
 - [Gestion de niveles de servicio](https://blog.invgate.com/es/topic/gesti%C3%B3n-de-niveles-de-servicio)
+- [Prisma Markdown](https://github.com/samchon/prisma-markdown?tab=readme-ov-file)
 
 -- otros: agregar asignamiento masivo: seria selecionar varios casos, y asignarlos a una misma persona
 

@@ -1,7 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ExecutionProvider } from '@/components/process-flow/execution/execution-context';
 import ExecutionView from '@/components/process-flow/execution/execution-view';
-import FlowBuilder from '@/components/process-flow/flow-builder/flow-builder';
 import IntegrationPanel from '@/components/process-flow/integrations/integration-panel';
 import MetricsDashboard from '@/components/process-flow/metrics/metrics-dashboard';
 
@@ -18,9 +17,7 @@ export default function Home() {
             <TabsTrigger value="integrations">Integraciones</TabsTrigger>
           </TabsList>
         </header>
-        <TabsContent value="builder" className="h-[calc(100vh-73px)]">
-          <FlowBuilder />
-        </TabsContent>
+        <TabsContent value="builder" className="h-[calc(100vh-73px)]"></TabsContent>
         <TabsContent value="execution">
           <ExecutionProvider>
             <ExecutionView />

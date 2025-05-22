@@ -1576,49 +1576,6 @@
           "escalationTime": "Escalation Time (hours)",
           "escalationDescription": "Time before the request is escalated"
         },
-        "executionTab": {
-          "executionModel": "Execution Model",
-          "executionModelDescription": "Configure the necessary steps to execute this type of request",
-          "noStepsConfigured": "No steps configured",
-          "totalEstimatedTime": "Total Estimated Time",
-          "minutes": "minutes",
-          "linkedGuides": "Linked Guides",
-          "noLinkedGuides": "No linked guides",
-          "guideNotFound": "Guide not found",
-          "updateSuccess": "Step updated",
-          "updateSuccessDescription": "The step has been updated successfully",
-          "createSuccess": "Step added",
-          "createSuccessDescription": "The step has been added successfully",
-          "deleteSuccess": "Step deleted",
-          "deleteSuccessDescription": "The step has been deleted successfully",
-          "linkSuccess": "Guides linked",
-          "linkSuccessDescription": "The guides have been linked successfully",
-          "moveUp": "Move up",
-          "moveDown": "Move down",
-          "deleteStep": "Delete step",
-          "editStep": "Edit Step",
-          "addStep": "Add Step",
-          "stepName": "Step Name",
-          "stepNameDescription": "Descriptive name to identify the step in the process",
-          "stepNamePlaceholder": "E.g.: Document Verification",
-          "description": "Description",
-          "stepDescriptionDescription": "Additional details about the purpose of the step",
-          "stepDescriptionPlaceholder": "E.g.: Review valid identity documents",
-          "estimatedTime": "Estimated Time",
-          "estimatedTimeDescription": "Approximate time it takes to complete this step",
-          "minutesPlaceholder": "Minutes",
-          "responsible": "Responsible",
-          "responsibleDescription": "Role or area in charge of executing this step",
-          "responsiblePlaceholder": "E.g.: Service Agent",
-          "cancel": "Cancel",
-          "saveChanges": "Save Changes",
-          "createStep": "Create Step",
-          "linkGuides": "Link Guides",
-          "linkGuidesDescription": "Select the guides related to this step",
-          "selectGuides": "Available Guides",
-          "selectGuidesDescription": "Select one or more guides to link",
-          "save": "Save"
-        },
         "guidesTab": {
           "guidesTitle": "Guides and Documentation",
           "guidesDescription": "Manage related guides and documents",
@@ -3127,7 +3084,8 @@
           "validate": "Validate",
           "simulate": "Simulate",
           "stopSimulation": "Stop Simulation",
-          "save": "Save"
+          "save": "Save",
+          "validateAndSave": "Validate and Save"
         },
         "selectedEdge": {
           "selected": "Selected connection: {source} → {target}",
@@ -3184,7 +3142,15 @@
           }
         },
         "validation": {
-          "title": "Validation Errors"
+          "title": "Validation Errors",
+          "invalidFlow": "The file is not a valid worflow!",
+          "invalidJson": "The file is not a valid json!"
+        },
+        "ariaLabel": {
+          "loadFlow": "Load flow from file"
+        },
+        "hint": {
+          "save": "Save your changes before switching tabs to avoid losing your progress."
         }
       },
       "simulation": {

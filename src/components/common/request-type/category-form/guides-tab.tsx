@@ -36,13 +36,12 @@ export type GuideFormValues = z.infer<typeof guideSchema>;
 
 export function GuideTab() {
   const t = useTranslations('admin.requestType.create.guidesTab');
-  const { control, watch, setValue } = useFormContext<RequestCategoryValues>();
+  const { control, watch } = useFormContext<RequestCategoryValues>();
   const { fields, append, update, remove } = useFieldArray({ control, name: 'guides' });
 
   const [modalOpen, setModalOpen] = useState(false);
   const [currentGuideIndex, setCurrentGuideIndex] = useState<number | null>(null);
 
-  const executionSteps = watch('executionSteps', []);
   const guides = watch('guides', []);
 
   const handleSaveGuide = (data: GuideFormValues) => {
@@ -57,14 +56,6 @@ export function GuideTab() {
   };
 
   const handleDeleteGuide = (index: number) => {
-    const guideId = fields[index].id;
-
-    const updatedSteps = executionSteps.map((step) => ({
-      ...step,
-      linkedGuides: step.linkedGuides?.filter((id: string) => id !== guideId) || [],
-    }));
-
-    setValue('executionSteps', updatedSteps);
     remove(index);
     toast.success(t('deleteSuccess'));
   };

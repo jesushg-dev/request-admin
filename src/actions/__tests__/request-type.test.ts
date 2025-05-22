@@ -81,7 +81,6 @@ describe('Request Type Actions', () => {
         parentCategoryId: null,
         children: [],
         guides: [],
-        executionSteps: [],
       });
     });
 
@@ -201,7 +200,6 @@ describe('Request Type Actions', () => {
         },
         children: ['cat-2'],
         guides: [],
-        executionSteps: [],
       },
       {
         id: 'cat-2',
@@ -220,7 +218,6 @@ describe('Request Type Actions', () => {
         },
         children: [],
         guides: [],
-        executionSteps: [],
       },
     ];
 
@@ -263,7 +260,6 @@ describe('Request Type Actions', () => {
           },
           children: ['cat-2', 'cat-3'],
           guides: [],
-          executionSteps: [],
         },
         {
           id: 'cat-2',
@@ -282,7 +278,6 @@ describe('Request Type Actions', () => {
           },
           children: ['cat-4'],
           guides: [],
-          executionSteps: [],
         },
         {
           id: 'cat-3',
@@ -301,7 +296,6 @@ describe('Request Type Actions', () => {
           },
           children: [],
           guides: [],
-          executionSteps: [],
         },
         {
           id: 'cat-4',
@@ -320,7 +314,6 @@ describe('Request Type Actions', () => {
           },
           children: [],
           guides: [],
-          executionSteps: [],
         },
       ];
 
@@ -376,7 +369,6 @@ describe('Request Type Actions', () => {
           },
           children: [],
           guides: [],
-          executionSteps: [],
         },
       ];
 

@@ -104,7 +104,6 @@ export async function getRequestCategoriesByIds(rootIds: string[], tenantId: str
             updatedAt: doc.updatedAt?.toISOString() ?? new Date().toISOString(),
             isActive: doc.isActive,
           })),
-          executionSteps: [],
         };
 
         categoryMap.set(dbCat.id, category);

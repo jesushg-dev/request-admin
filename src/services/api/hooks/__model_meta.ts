@@ -2285,6 +2285,18 @@ const metadata = {
           isOptional: true,
           backLink: 'request',
         },
+        executionModelInstanceId: {
+          name: 'executionModelInstanceId',
+          type: 'String',
+          isOptional: true,
+        },
+        executionModelInstance: {
+          name: 'executionModelInstance',
+          type: 'ExecutionModelInstance',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'request',
+        },
       },
       uniqueConstraints: {
         id: {
@@ -9180,110 +9192,6 @@ const metadata = {
         },
       },
     },
-    executionNodeGuide: {
-      name: 'ExecutionNodeGuide',
-      fields: {
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
-        },
-        deletedAt: {
-          name: 'deletedAt',
-          type: 'DateTime',
-          isOptional: true,
-        },
-        createdBy: {
-          name: 'createdBy',
-          type: 'String',
-          isOptional: true,
-        },
-        updatedBy: {
-          name: 'updatedBy',
-          type: 'String',
-          isOptional: true,
-        },
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'executionNodeGuides',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
-        },
-        applicationScope: {
-          name: 'applicationScope',
-          type: 'String',
-          attributes: [{ name: '@default', args: [{ value: 'full' }] }],
-        },
-        customInstructions: {
-          name: 'customInstructions',
-          type: 'String',
-          isOptional: true,
-        },
-        order: {
-          name: 'order',
-          type: 'Int',
-          attributes: [{ name: '@default', args: [{ value: 1 }] }],
-        },
-        guideId: {
-          name: 'guideId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'guide',
-        },
-        guide: {
-          name: 'guide',
-          type: 'GuideDocument',
-          isDataModel: true,
-          backLink: 'nodeGuide',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'guideId' },
-        },
-        nodeId: {
-          name: 'nodeId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'node',
-        },
-        node: {
-          name: 'node',
-          type: 'ExecutionNodeDefinition',
-          isDataModel: true,
-          backLink: 'nodeGuide',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'nodeId' },
-        },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
-        },
-        guideId_nodeId: {
-          name: 'guideId_nodeId',
-          fields: ['guideId', 'nodeId'],
-        },
-      },
-    },
     executionEdgeDefinition: {
       name: 'ExecutionEdgeDefinition',
       fields: {
@@ -9403,6 +9311,110 @@ const metadata = {
         },
       },
     },
+    executionNodeGuide: {
+      name: 'ExecutionNodeGuide',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'executionNodeGuides',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        applicationScope: {
+          name: 'applicationScope',
+          type: 'String',
+          attributes: [{ name: '@default', args: [{ value: 'full' }] }],
+        },
+        customInstructions: {
+          name: 'customInstructions',
+          type: 'String',
+          isOptional: true,
+        },
+        order: {
+          name: 'order',
+          type: 'Int',
+          attributes: [{ name: '@default', args: [{ value: 1 }] }],
+        },
+        guideId: {
+          name: 'guideId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'guide',
+        },
+        guide: {
+          name: 'guide',
+          type: 'GuideDocument',
+          isDataModel: true,
+          backLink: 'nodeGuide',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'guideId' },
+        },
+        nodeId: {
+          name: 'nodeId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'node',
+        },
+        node: {
+          name: 'node',
+          type: 'ExecutionNodeDefinition',
+          isDataModel: true,
+          backLink: 'nodeGuide',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'nodeId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        guideId_nodeId: {
+          name: 'guideId_nodeId',
+          fields: ['guideId', 'nodeId'],
+        },
+      },
+    },
     executionModelInstance: {
       name: 'ExecutionModelInstance',
       fields: {
@@ -9466,10 +9478,6 @@ const metadata = {
           isForeignKey: true,
           relationField: 'flow',
         },
-        referenceId: {
-          name: 'referenceId',
-          type: 'String',
-        },
         status: {
           name: 'status',
           type: 'String',
@@ -9488,11 +9496,31 @@ const metadata = {
           isArray: true,
           backLink: 'execution',
         },
+        requestId: {
+          name: 'requestId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'request',
+        },
+        request: {
+          name: 'request',
+          type: 'Request',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'executionModelInstance',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'requestId' },
+        },
       },
       uniqueConstraints: {
         id: {
           name: 'id',
           fields: ['id'],
+        },
+        requestId: {
+          name: 'requestId',
+          fields: ['requestId'],
         },
       },
     },

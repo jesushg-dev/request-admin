@@ -4,6 +4,7 @@ import { Calendar, Clock, FileWarningIcon } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
 import { ScrollArea } from '@/components/ui/scroll-area';
+import ClientOnly from '@/components/client-only';
 
 const StatCard = dynamic(() => import('@/components/stat-card'));
 const RequestTrends = dynamic(() => import('@/components/common/dashboard/request-trends'));
@@ -47,8 +48,10 @@ const DashboardPage = async ({ params }: DashboardPageProps) => {
         </div>
         <AssignmentDashboard />
         <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
-          <ResolutionTime />
-          <RequestTrends trends={trends} />
+          <ClientOnly>
+            <ResolutionTime />
+            <RequestTrends trends={trends} />
+          </ClientOnly>
         </div>
       </div>
     </ScrollArea>

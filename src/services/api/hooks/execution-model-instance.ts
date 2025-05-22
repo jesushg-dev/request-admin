@@ -472,7 +472,7 @@ export function useSuspenseCountExecutionModelInstance<
 }
 
 export function useCheckExecutionModelInstance<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; flowId?: string; referenceId?: string; status?: string } },
+  args: { operation: PolicyCrudKind; where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; flowId?: string; status?: string; requestId?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

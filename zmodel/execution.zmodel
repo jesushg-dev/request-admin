@@ -1,112 +1,144 @@
 import './abstract.zmodel'
 import './category.zmodel'
+import './request.zmodel'
 
+/// # Workflow Execution System
+///
+/// ## Core Workflow Definitions
+/// @namespace CoreWorkflow
+/// @erd CoreWorkflow
+
+/// Represents a versioned workflow template containing nodes and edges
+/// 
+/// Relationships:
+/// ╠═► nodes: Contains all component nodes
+/// ╠═► edges: Defines transitions between nodes
+/// ╠═► executions: Runtime instances using this template
+/// ╚═► requestCategory: Business process classification
 model ExecutionFlowDefinition extends TenantScoped, Auditable {
-  id                  String                      @id @default(uuid()) //@db.UniqueIdentifier                      // Primary key: unique identifier for the flow definition
-  version             Int                         @default(1)                                        // Version number to support versioned flow definitions
-  nodes               ExecutionNodeDefinition[]                                                       // Graph nodes that belong to this flow
-  edges               ExecutionEdgeDefinition[]                                                       // Graph edges that connect nodes in this flow
-  isActive            Boolean                     @default(true)                                     // Whether this version of the flow is active
-  executions          ExecutionModelInstance[]                                                        // Instances created from this flow definition
-  previousHistories   ExecutionModelHistory[]     @relation("PreviousFlowHistory")                   // Histories referencing this flow as the “previous” definition
-  newHistories        ExecutionModelHistory[]     @relation("NewFlowHistory")                        // Histories referencing this flow as the “new” definition
-  requestCategoryId   String?                     @unique                                             // Optional category grouping for requests
-  requestCategory     RequestCategory?            @relation(fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Relationship to category
-  viewportX           Float?                                                                          // Optional viewport X for rendering the flow
-  viewportY           Float?                                                                          // Optional viewport Y for rendering the flow
-  viewportZoom        Float?                                                                          // Optional viewport zoom for rendering the flow
+  id                  String                      @id @default(uuid())
+  version             Int                         @default(1)
+  nodes               ExecutionNodeDefinition[]
+  edges               ExecutionEdgeDefinition[]
+  isActive            Boolean                     @default(true)
+  executions          ExecutionModelInstance[]
+  previousHistories   ExecutionModelHistory[]     @relation("PreviousFlowHistory")
+  newHistories        ExecutionModelHistory[]     @relation("NewFlowHistory")
+  requestCategoryId   String?                     @unique
+  requestCategory     RequestCategory?            @relation(fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  viewportX           Float?
+  viewportY           Float?
+  viewportZoom        Float?
 
   @@unique([id, version])
   @@index([requestCategoryId])
 }
 
+/// Atomic unit in workflow execution path
+/// @minItems 1
 model ExecutionNodeDefinition extends TenantScoped, Auditable {
-  id            String                     @id @default(uuid()) //@db.UniqueIdentifier                              // Primary key
-  flow          ExecutionFlowDefinition     @relation(fields: [flowId], references: [id])             // Flow that owns this node
-  flowId        String                                                                           
-  type          String                                                                          // Semantic type (e.g., "start", "step", etc.)
-  positionX     Float                                                                           // X coordinate for UI placement
-  positionY     Float                                                                           // Y coordinate for UI placement
-  config        String                     //@db.NVarChar(Max)                                    // JSON string storing node-specific configuration
-  edgesFrom     ExecutionEdgeDefinition[]  @relation("SourceEdges")                            // Edges originating from this node
-  edgesTo       ExecutionEdgeDefinition[]  @relation("TargetEdges")                            // Edges pointing into this node
-  executionLogs ExecutionModelLog[]                                                            // Logs recorded when this node executes
-  nodeGuide     ExecutionNodeGuide[]                                                            // Guides linked to this node
+  id            String                     @id @default(uuid())
+  flow          ExecutionFlowDefinition     @relation(fields: [flowId], references: [id])
+  flowId        String
+  type          String
+  positionX     Float
+  positionY     Float
+  config        String
+  edgesFrom     ExecutionEdgeDefinition[]  @relation("SourceEdges")
+  edgesTo       ExecutionEdgeDefinition[]  @relation("TargetEdges")
+  executionLogs ExecutionModelLog[]
+  nodeGuide     ExecutionNodeGuide[]
 
   @@index([type])
 }
 
-model ExecutionNodeGuide extends TenantScoped, Auditable {
-  id                  String                   @id @default(uuid()) //@db.UniqueIdentifier                      // Primary key
-  applicationScope    String                   @default("full")                                   // Scope of application
-  customInstructions  String?                  //@db.NVarChar(Max)                                  // Optional custom instructions override
-  order               Int                      @default(1)                                        // Order of guide usage
+/// Defines transitions between nodes with conditional logic
+/// @minItems 1
+model ExecutionEdgeDefinition extends TenantScoped, Auditable {
+  id           String                    @id @default(uuid())
+  flow         ExecutionFlowDefinition @relation(fields: [flowId], references: [id])
+  flowId       String
+  source       ExecutionNodeDefinition @relation("SourceEdges", fields: [sourceId], references: [id])
+  sourceId     String
+  target       ExecutionNodeDefinition   @relation("TargetEdges", fields: [targetId], references: [id])
+  targetId     String
+  sourceHandle String?
+  condition    String?
+  style        String?
+  markerEnd    String?
 
-  guideId             String                                                                       // Related guide
-  guide               GuideDocument            @relation(fields: [guideId], references: [id])      
-  nodeId              String                                                                       // Related node
-  node                ExecutionNodeDefinition  @relation(fields: [nodeId], references: [id])       
+  @@index([sourceId, targetId])
+}
+
+/// ## Documentation System
+/// @namespace Documentation
+/// @erd Documentation
+
+/// Links procedural guides to workflow nodes
+model ExecutionNodeGuide extends TenantScoped, Auditable {
+  id                  String                   @id @default(uuid())
+  applicationScope    String                   @default("full")
+  customInstructions  String?
+  order               Int                      @default(1)
+  guideId             String
+  guide               GuideDocument            @relation(fields: [guideId], references: [id])
+  nodeId              String
+  node                ExecutionNodeDefinition  @relation(fields: [nodeId], references: [id])
 
   @@unique([guideId, nodeId])
-  @@index([applicationScope])
-  @@index([order])
 }
 
-model ExecutionEdgeDefinition extends TenantScoped, Auditable {
-  id           String                    @id @default(uuid()) //@db.UniqueIdentifier                             // Primary key
-  flow ExecutionFlowDefinition @relation(fields: [flowId], references: [id], onUpdate: NoAction, onDelete: NoAction) // Flow this edge belongs to
-  flowId       String                                                                             
-  source ExecutionNodeDefinition @relation("SourceEdges", fields: [sourceId], references: [id], onUpdate: NoAction, onDelete: NoAction)  // Source node
-  sourceId     String                                                                           
-  target       ExecutionNodeDefinition   @relation("TargetEdges", fields: [targetId], references: [id], onUpdate: NoAction, onDelete: NoAction)  // Target node
-  targetId     String                                                                           
-  sourceHandle String?                                                                         // Optional handle name (e.g., yes/no)
-  condition    String?                   //@db.NVarChar(Max)                                    // Optional expression to evaluate
-  style        String?                   //@db.NVarChar(Max)                                    // Optional JSON for edge styling
-  markerEnd    String?                   //@db.NVarChar(Max)                                    // Optional JSON for marker end
+/// ## Runtime Execution Tracking
+/// @namespace RuntimeExecution
+/// @erd RuntimeExecution
 
-  @@index([sourceId])
-  @@index([targetId])
-}
-
+/// Concrete instance of workflow execution
 model ExecutionModelInstance extends TenantScoped, Auditable {
-  id          String                    @id @default(uuid()) //@db.UniqueIdentifier                             // Primary key
-  flow        ExecutionFlowDefinition    @relation(fields: [flowId], references: [id])            // Flow this instance was created from
-  flowId      String                                                                             
-  referenceId String                                                                          // Business reference
-  status      String                                                                          // Current status
-  logs        ExecutionModelLog[]                                                            // Execution logs
-  history     ExecutionModelHistory[]                                                        // Migration history
+  id          String                    @id @default(uuid())
+  flow        ExecutionFlowDefinition    @relation(fields: [flowId], references: [id])
+  flowId      String
+  status      String
+  logs        ExecutionModelLog[]
+  history     ExecutionModelHistory[]
 
-  @@index([referenceId])
+  requestId String?   @unique //@db.UniqueIdentifier
+  request   Request?  @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
   @@index([status])
+  @@index([tenantId, flowId, requestId])
 }
 
+/// Immutable execution audit record
+/// @minItems 1
 model ExecutionModelLog extends TenantScoped, Auditable {
-  id          String                     @id @default(uuid()) //@db.UniqueIdentifier                             // Primary key
-  executionId String                                                                          // Related execution
-  execution ExecutionModelInstance @relation(fields: [executionId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  nodeId      String                                                                          // Related node
-  node        ExecutionNodeDefinition    @relation(fields: [nodeId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  timestamp   DateTime                   @default(now())                                        // When the event happened
-  eventType   String                                                                          // Type of event (start, success, etc.)
-  details     String                     //@db.NVarChar(Max)                                    // Details of the log
-  outcome     String                                                                          // Result of the action
+  id          String                     @id @default(uuid())
+  executionId String
+  execution   ExecutionModelInstance @relation(fields: [executionId], references: [id])
+  nodeId      String
+  node        ExecutionNodeDefinition    @relation(fields: [nodeId], references: [id])
+  timestamp   DateTime                   @default(now())
+  eventType   String
+  details     String
+  outcome     String
 
   @@index([timestamp])
-  @@index([eventType])
 }
 
+/// ## Version History Tracking
+/// @namespace VersionHistory
+/// @erd VersionHistory
+
+/// Records workflow template migrations during execution
 model ExecutionModelHistory extends TenantScoped, Auditable {
-  id             String                     @id @default(uuid()) //@db.UniqueIdentifier                         // Primary key
-  executionId String
-  execution ExecutionModelInstance @relation(fields: [executionId], references: [id])
+  id             String                     @id @default(uuid())
+  executionId    String
+  execution      ExecutionModelInstance @relation(fields: [executionId], references: [id])
   previousFlowId String?
-  previousFlow ExecutionFlowDefinition? @relation("PreviousFlowHistory", fields: [previousFlowId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  newFlowId String
-  newFlow ExecutionFlowDefinition @relation("NewFlowHistory", fields: [newFlowId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  changedAt      DateTime                   @default(now())                                      // When the migration happened
-  reason         String                     //@db.NVarChar(Max)                                    // Reason for change
+  previousFlow   ExecutionFlowDefinition? @relation("PreviousFlowHistory", fields: [previousFlowId], references: [id])
+  newFlowId      String
+  newFlow        ExecutionFlowDefinition @relation("NewFlowHistory", fields: [newFlowId], references: [id])
+  changedAt      DateTime                   @default(now())
+  reason         String
 
   @@index([changedAt])
 }

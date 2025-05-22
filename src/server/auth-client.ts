@@ -21,8 +21,7 @@ import { createAuthClient } from 'better-auth/react';
 import { auth } from './auth-server';
 
 export const authClient = createAuthClient({
-  // baseURL: process.env.BETTER_AUTH_URL,
-  baseURL: 'http://127.0.0.1:3000',
+  baseURL: process.env.BETTER_AUTH_URL,
   plugins: [
     inferAdditionalFields<typeof auth>(),
     usernameClient(),

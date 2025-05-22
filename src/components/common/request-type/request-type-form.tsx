@@ -1,6 +1,7 @@
 'use client';
 
 import { FC, useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
+import { upsertExecutionFlow } from '@/actions/execution-flow';
 import { useUpsertRequestCategory } from '@/services/api/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { BookCopyIcon, BookIcon, ChevronLeft, ChevronRight, ContainerIcon, FileCogIcon, FileStackIcon, PackageOpenIcon } from 'lucide-react';
@@ -45,9 +46,9 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
   const { mutateAsync: upsert, error, reset: resetError } = useUpsertRequestCategory();
 
   const [mode, setMode] = useState<Mode>('none');
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const [selectedHierarchy, setSelectedHierarchy] = useState<SingleValue<OptionType>>();
   const [currentState, setCurrentState] = useState<RequestTypeFormValues['categories']>([]);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
 
   const form = useForm({
     resolver: zodResolver(requestCategorySchema),
@@ -134,6 +135,9 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
       });
 
       const promise = upsert(buildRequestCategoryUpsertArgs(cat, tenantId, String(selectedHierarchy.value)));
+      if (cat.executionSteps) {
+        upsertExecutionFlow(cat.executionSteps, cat.id);
+      }
 
       toast.promise(promise, {
         loading: t('category.loading'),

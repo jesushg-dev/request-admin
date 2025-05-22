@@ -1,11 +1,13 @@
 'use client';
 
 import type React from 'react';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ExecutionFlowValues } from '@/services/schemas/execution-flow';
 import type { Connection } from '@xyflow/react';
 import { addEdge, Background, BackgroundVariant, Controls, MarkerType, Panel, ReactFlow, ReactFlowProvider, useEdgesState, useNodesState, useReactFlow } from '@xyflow/react';
 import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
+import { toast } from 'sonner';
 
 import type { FlowEdge, FlowNode, FlowNodeType, NodeData, ProcessFlow } from '@/types/execution-flow';
 import { getDefaultDataForType, isValidNodeType } from '@/lib/execution-flow';
@@ -36,13 +38,19 @@ const initialNodes: FlowNode[] = [
 
 const initialEdges: FlowEdge[] = [];
 
-function FlowBuilderNonContext() {
+interface FlowBuilderProps {
+  value?: ExecutionFlowValues | null;
+  onSave: (flow: ExecutionFlowValues) => void;
+}
+
+function FlowBuilderNonContext({ onSave, value }: FlowBuilderProps) {
   const t = useTranslations('component.flowExecution.build');
   const theme = useTheme();
   const reactFlow = useReactFlow<FlowNode, FlowEdge>();
   const { validateFlow } = useValidationFlow();
 
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { ref: containerRef, isFullscreen, toggleFullscreen: handleFullscreenToggle } = useFullscreen<HTMLDivElement>();
 
   const [selectedNode, setSelectedNode] = useState<FlowNode | null>(null);
@@ -50,9 +58,9 @@ function FlowBuilderNonContext() {
   const [nodes, setNodes, onNodesChange] = useNodesState<FlowNode>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState<FlowEdge>(initialEdges);
 
-  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
-  const [isSimulating, setIsSimulating] = useState(false);
   const [activeTab, setActiveTab] = useState('editor');
+  const [isValidationErrorVisible, setIsValidationErrorVisible] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
 
   const onConnect = useCallback(
     (params: Connection) => {
@@ -157,31 +165,34 @@ function FlowBuilderNonContext() {
     [setNodes]
   );
 
-  const handleValidateFlow = useCallback(() => {
-    const errors = validateFlow(nodes, edges);
-    setValidationErrors(errors);
-
-    if (errors.length === 0) {
-      const processFlow: ProcessFlow = { nodes, edges };
-      localStorage.setItem('itil-process-flow', JSON.stringify(processFlow));
-    }
-  }, [nodes, edges, validateFlow]);
-
-  const handleSaveFlow = useCallback(() => {
-    if (reactFlow) {
-      const flow = reactFlow.toObject();
-      localStorage.setItem('itil-flow', JSON.stringify(flow));
-    }
-  }, [reactFlow]);
-
   const handleLoadFlow = useCallback(() => {
-    const savedFlow = localStorage.getItem('itil-flow');
-    if (savedFlow) {
-      const flow = JSON.parse(savedFlow) as ProcessFlow;
-      setNodes(flow.nodes);
-      setEdges(flow.edges);
-    }
-  }, [setNodes, setEdges]);
+    fileInputRef.current?.click();
+  }, []);
+
+  const handleFileChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const json = JSON.parse(e.target?.result as string) as ProcessFlow;
+          if (json.nodes && json.edges) {
+            setNodes(json.nodes);
+            setEdges(json.edges);
+          } else {
+            toast.error(t('validation.invalidFlow'));
+          }
+        } catch {
+          toast.error(t('validation.invalidJson'));
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    },
+    [t, setNodes, setEdges]
+  );
 
   const handleExportFlow = useCallback(() => {
     if (reactFlow) {
@@ -196,24 +207,43 @@ function FlowBuilderNonContext() {
   }, [reactFlow]);
 
   const toggleSimulation = useCallback(() => {
-    setIsSimulating((prev) => !prev);
     setActiveTab((prev) => (prev === 'editor' ? 'simulation' : 'editor'));
   }, []);
+
+  const handleSaveFlow = useCallback(() => {
+    setActiveTab('editor');
+    const errors = validateFlow(nodes, edges);
+    setValidationErrors(errors);
+    setIsValidationErrorVisible(errors.length > 0);
+
+    if (reactFlow && errors.length === 0) {
+      const flow = reactFlow.toObject();
+      onSave(flow as ExecutionFlowValues);
+    }
+  }, [nodes, edges, validateFlow, reactFlow, onSave]);
+
+  useEffect(() => {
+    if (value) {
+      setNodes(value.nodes as FlowNode[]);
+      setEdges(value.edges as FlowEdge[]);
+    }
+  }, [value, setNodes, setEdges]);
 
   return (
     <div className="flex-1 flex flex-col relative overflow-hidden border rounded-md">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col overflow-hidden" ref={containerRef}>
-        <div className="flex border-b bg-background">
+        <div className="flex border-b bg-background w-full gap-4 justify-between items-center p-2">
+          <AlertBanner title={t('hint.save')} variant="info" />
           <FlowBuilderControls
             isFullscreen={isFullscreen}
-            isSimulating={isSimulating}
+            isSimulating={activeTab === 'simulation'}
             handleLoadFlow={handleLoadFlow}
             handleExportFlow={handleExportFlow}
-            handleValidateFlow={handleValidateFlow}
             toggleSimulation={toggleSimulation}
             handleFullscreenToggle={handleFullscreenToggle}
             handleSaveFlow={handleSaveFlow}
           />
+          <input type="file" className="hidden" accept="application/json" ref={fileInputRef} onChange={handleFileChange} aria-label={t('ariaLabel.loadFlow')} />
         </div>
 
         <div className="flex flex-1 overflow-hidden bg-background">
@@ -249,6 +279,8 @@ function FlowBuilderNonContext() {
                     <AlertBanner
                       title={t('validation.title')}
                       variant="error"
+                      visible={isValidationErrorVisible}
+                      onClose={() => setIsValidationErrorVisible(false)}
                       description={
                         <ul className="pl-5 list-disc">
                           {validationErrors.map((error, index) => (
@@ -273,8 +305,8 @@ function FlowBuilderNonContext() {
             </div>
           </TabsContent>
 
-          {activeTab === 'editor' && !isSimulating && !selectedNode && <NodePalette />}
-          {selectedNode && activeTab === 'editor' && !isSimulating && (
+          {activeTab === 'editor' && !selectedNode && <NodePalette />}
+          {selectedNode && activeTab === 'editor' && (
             <PropertiesPanel node={selectedNode} onChange={onNodeDataChange} onClose={() => setSelectedNode(null)} onDelete={() => onNodesDelete([selectedNode])} />
           )}
         </div>
@@ -283,10 +315,10 @@ function FlowBuilderNonContext() {
   );
 }
 
-export default function FlowBuilder() {
+export default function FlowBuilder(props: FlowBuilderProps) {
   return (
     <ReactFlowProvider>
-      <FlowBuilderNonContext />
+      <FlowBuilderNonContext {...props} />
     </ReactFlowProvider>
   );
 }

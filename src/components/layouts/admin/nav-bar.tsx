@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useSidebar } from '@/components/ui/sidebar';
 import { AdvancedBreadcrumb } from '@/components/advanced-breadcrumb';
+import ClientOnly from '@/components/client-only';
 import LocaleSwitcherSelect from '@/components/locale-switcher-select';
 
 // Sample notifications
@@ -57,7 +58,7 @@ const Navbar = ({ tenants = [] }: NavbarProps) => {
 
           {/* Theme Switcher */}
           <Button variant="ghost" size="icon" onClick={toggleTheme}>
-            {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+            <ClientOnly>{theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}</ClientOnly>
             <span className="sr-only">Toggle theme</span>
           </Button>
 

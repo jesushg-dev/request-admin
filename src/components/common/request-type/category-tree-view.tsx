@@ -52,7 +52,6 @@ const createCategoryTreeData = (categories: RequestCategoryValues[]) => {
     isEligibleForNewClients: false,
     isSubCategoryVisible: true,
     sla: { id: '', resolutionTime: 0, escalationTime: 0 },
-    executionSteps: [],
     guides: [],
     requirements: [],
     forms: [],

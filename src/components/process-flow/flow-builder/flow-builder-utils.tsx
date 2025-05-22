@@ -9,26 +9,16 @@ type FlowBuilderControlsProps = {
   isFullscreen: boolean;
   handleLoadFlow: () => void;
   handleExportFlow: () => void;
-  handleValidateFlow: () => void;
   toggleSimulation: () => void;
   handleFullscreenToggle: () => void;
   handleSaveFlow: () => void;
 };
 
-export const FlowBuilderControls: React.FC<FlowBuilderControlsProps> = ({
-  isSimulating,
-  isFullscreen,
-  handleLoadFlow,
-  handleExportFlow,
-  handleValidateFlow,
-  toggleSimulation,
-  handleFullscreenToggle,
-  handleSaveFlow,
-}) => {
+export const FlowBuilderControls: React.FC<FlowBuilderControlsProps> = ({ isSimulating, isFullscreen, handleLoadFlow, handleExportFlow, toggleSimulation, handleFullscreenToggle, handleSaveFlow }) => {
   const t = useTranslations('component.flowExecution.build.controls');
 
   return (
-    <div className="flex items-center ml-auto gap-2 p-2">
+    <div className="flex items-center ml-auto gap-2">
       <Button type="button" variant="outline" size="sm" onClick={handleLoadFlow}>
         <FileUp className="w-4 h-4 mr-2" />
         {t('load')}
@@ -37,17 +27,14 @@ export const FlowBuilderControls: React.FC<FlowBuilderControlsProps> = ({
         <FileDown className="w-4 h-4 mr-2" />
         {t('export')}
       </Button>
-      <Button type="button" variant="outline" size="sm" onClick={handleValidateFlow}>
-        {t('validate')}
-      </Button>
-      <Button type="button" variant={isSimulating ? 'destructive' : 'default'} size="sm" onClick={toggleSimulation}>
-        <Play className="w-4 h-4 mr-2" />
-        {isSimulating ? t('stopSimulation') : t('simulate')}
-      </Button>
       <Button type="button" variant="outline" size="sm" onClick={handleFullscreenToggle}>
         {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
       </Button>
-      <Button type="button" variant="outline" size="sm" onClick={handleSaveFlow}>
+      <Button type="button" variant="outline" size="sm" onClick={toggleSimulation}>
+        <Play className="w-4 h-4 mr-2" />
+        {isSimulating ? t('stopSimulation') : t('simulate')}
+      </Button>
+      <Button type="button" variant="default" size="sm" onClick={handleSaveFlow}>
         <Save className="w-4 h-4 mr-2" />
         {t('save')}
       </Button>

@@ -384,6 +384,7 @@ export function useCheckRequest<TError = DefaultError>(
       dataroomId?: string;
       satisfactionSurveyId?: string;
       channelId?: string;
+      executionModelInstanceId?: string;
     };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions

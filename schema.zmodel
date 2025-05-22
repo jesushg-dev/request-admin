@@ -8,8 +8,9 @@ plugin hooks {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 /*datasource db {
@@ -20,4 +21,10 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
   output   = "../node_modules/.prisma/client"
+}
+
+generator markdown {
+  provider = "prisma-markdown"
+  output   = "../docs/ERD.md"
+  title    = "Request Admin ERD"
 }

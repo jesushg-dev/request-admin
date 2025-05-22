@@ -5,6 +5,7 @@ import './area.zmodel' // areas for request assignment
 import './form.zmodel' // form submissions for requests
 import './category.zmodel' // categorization for requests
 import './messenger.zmodel' // messaging for requests
+import './execution.zmodel' // execution model for requests
 
 /// Represents a request that includes categorization for both request and assignment with ITIL compliance tracking
 model Request extends TenantScoped, Auditable {
@@ -42,6 +43,9 @@ model Request extends TenantScoped, Auditable {
   // Channel
   channelId            String?                         //@db.UniqueIdentifier
   channel              Channel?
+
+  executionModelInstanceId String? //@db.UniqueIdentifier
+  executionModelInstance   ExecutionModelInstance? 
 
   @@index([closedAt], name: "idx_request_closed_at")
   @@index([closedBy], name: "idx_request_closed_by")
