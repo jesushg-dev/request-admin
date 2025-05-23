@@ -3232,6 +3232,14 @@
         "stepNoResponsible": "El nodo de paso \"{label}\" no tiene responsable definido",
         "cycleDetected": "El flujo contiene ciclos no intencionados (bucles infinitos)"
       }
+    },
+    "errorState": {
+      "title": "¡Ups! Algo salió mal.",
+      "description": "Ocurrió un error inesperado. Por favor, inténtalo de nuevo más tarde.",
+      "errorMessage": "Mensaje de error: {message}",
+      "refresh": "Recargar página",
+      "home": "Volver al inicio",
+      "report": "Reportar"
     }
   }
 }

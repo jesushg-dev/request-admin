@@ -20,7 +20,7 @@ export async function getTenantsForUser(userId: string): Promise<{ id: string }[
   });
 
   if (!response.ok) {
-    throw new Error('Failed to get tenants for user');
+    throw new Error('Failed to get tenants for user' + response.statusText);
   }
 
   const data = await response.json();

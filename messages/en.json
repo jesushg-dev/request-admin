@@ -3315,6 +3315,14 @@
         "stepNoResponsible": "Step node \"{label}\" has no responsible defined",
         "cycleDetected": "Flow contains unintended cycles (infinite loops)"
       }
+    },
+    "errorState": {
+      "title": "Oops! Something went wrong.",
+      "description": "We encountered an unexpected error. Please try again later.",
+      "errorMessage": "Error message: {message}",
+      "refresh": "Refresh Page",
+      "home": "Go back to home",
+      "report": "Report"
     }
   }
 }
