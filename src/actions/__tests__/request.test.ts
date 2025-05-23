@@ -55,7 +55,14 @@ type MockDbType = {
   requestAssignment: {
     count: jest.Mock;
   };
+  requestCategory: {
+    findMany: jest.Mock;
+  };
+  assignmentCategory: {
+    findMany: jest.Mock;
+  };
   $transaction: jest.Mock;
+  $: jest.Mock;
   $queryRawUnsafe: jest.Mock;
 };
 
@@ -127,7 +134,14 @@ jest.mock('@/server/db-server', () => {
       requestAssignment: {
         count: jest.fn() as jest.Mock,
       },
+      requestCategory: {
+        findMany: jest.fn() as jest.Mock,
+      },
+      assignmentCategory: {
+        findMany: jest.fn() as jest.Mock,
+      },
       $transaction: jest.fn() as jest.Mock,
+      $: jest.fn() as jest.Mock,
       $queryRawUnsafe: jest.fn() as jest.Mock,
     };
 
@@ -369,10 +383,8 @@ describe('Request Actions', () => {
       };
 
       (db.request.findUniqueOrThrow as jest.Mock).mockResolvedValue(mockRequest);
-      (db.$queryRawUnsafe as jest.Mock).mockResolvedValue([
-        { id: 'cat-1', name: 'Category 1', level: 0 },
-        { id: 'assign-cat-1', name: 'Assignment Category 1', level: 0 },
-      ]);
+      (db.requestCategory.findMany as jest.Mock).mockResolvedValue([{ id: 'cat-1', name: 'Category 1', parentCategoryId: null }]);
+      (db.assignmentCategory.findMany as jest.Mock).mockResolvedValue([{ id: 'assign-cat-1', name: 'Assignment Category 1', parentCategoryId: null }]);
 
       const result = await getRequestById(mockTenantId, mockRequestId);
 
@@ -406,10 +418,8 @@ describe('Request Actions', () => {
       };
 
       (db.request.findUniqueOrThrow as jest.Mock).mockResolvedValue(mockRequest);
-      (db.$queryRawUnsafe as jest.Mock).mockResolvedValue([
-        { id: 'cat-1', name: 'Category 1', level: 0 },
-        { id: 'assign-cat-1', name: 'Assignment Category 1', level: 0 },
-      ]);
+      (db.requestCategory.findMany as jest.Mock).mockResolvedValue([{ id: 'cat-1', name: 'Category 1', parentCategoryId: null }]);
+      (db.assignmentCategory.findMany as jest.Mock).mockResolvedValue([{ id: 'assign-cat-1', name: 'Assignment Category 1', parentCategoryId: null }]);
 
       const result = await getRequestById(mockTenantId, mockRequestId);
 
@@ -445,10 +455,8 @@ describe('Request Actions', () => {
       };
 
       (db.request.findUniqueOrThrow as jest.Mock).mockResolvedValue(mockRequest);
-      (db.$queryRawUnsafe as jest.Mock).mockResolvedValue([
-        { id: 'cat-1', name: 'Category 1', level: 0 },
-        { id: 'assign-cat-1', name: 'Assignment Category 1', level: 0 },
-      ]);
+      (db.requestCategory.findMany as jest.Mock).mockResolvedValue([{ id: 'cat-1', name: 'Category 1', parentCategoryId: null }]);
+      (db.assignmentCategory.findMany as jest.Mock).mockResolvedValue([{ id: 'assign-cat-1', name: 'Assignment Category 1', parentCategoryId: null }]);
 
       const result = await getRequestById(mockTenantId, mockRequestId);
 
@@ -474,17 +482,16 @@ describe('Request Actions', () => {
       };
 
       (db.request.findUniqueOrThrow as jest.Mock).mockResolvedValue(mockRequest);
-      (db.$queryRawUnsafe as jest.Mock)
-        .mockResolvedValueOnce([
-          { id: 'cat-1', name: 'Parent Category', level: 2 },
-          { id: 'cat-2', name: 'Child Category', level: 1 },
-          { id: 'cat-3', name: 'Grandchild Category', level: 0 },
-        ])
-        .mockResolvedValueOnce([
-          { id: 'assign-cat-1', name: 'Parent Assignment', level: 2 },
-          { id: 'assign-cat-2', name: 'Child Assignment', level: 1 },
-          { id: 'assign-cat-3', name: 'Grandchild Assignment', level: 0 },
-        ]);
+      (db.requestCategory.findMany as jest.Mock).mockResolvedValue([
+        { id: 'cat-1', name: 'Parent Category', parentCategoryId: null },
+        { id: 'cat-2', name: 'Child Category', parentCategoryId: 'cat-1' },
+        { id: 'cat-3', name: 'Grandchild Category', parentCategoryId: 'cat-2' },
+      ]);
+      (db.assignmentCategory.findMany as jest.Mock).mockResolvedValue([
+        { id: 'assign-cat-1', name: 'Parent Assignment', parentCategoryId: null },
+        { id: 'assign-cat-2', name: 'Child Assignment', parentCategoryId: 'assign-cat-1' },
+        { id: 'assign-cat-3', name: 'Grandchild Assignment', parentCategoryId: 'assign-cat-2' },
+      ]);
 
       const result = await getRequestById(mockTenantId, mockRequestId);
 

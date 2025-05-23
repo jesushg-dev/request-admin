@@ -562,21 +562,32 @@ export const getPrioritiesAsOptions = async (tenantId: string) => {
 async function getAncestorCategories(categoryId: string, tableName: 'RequestCategory' | 'AssignmentCategory') {
   if (!['RequestCategory', 'AssignmentCategory'].includes(tableName)) throw new Error('Invalid table name');
 
-  const query = `
-    WITH Ancestors AS (
-      SELECT id, name, parentCategoryId, 0 AS [level] 
-      FROM ${tableName} WHERE id = @categoryId
-      UNION ALL
-      SELECT c.id, c.name, c.parentCategoryId, a.[level] + 1 
-      FROM ${tableName} c 
-      INNER JOIN Ancestors a ON c.id = a.parentCategoryId
-    )
-    SELECT id, name, [level] FROM Ancestors ORDER BY [level] DESC;
-  `;
+  let allCategories: { id: string; name: string; parentCategoryId: string | null }[] = [];
+  if (tableName === 'RequestCategory') {
+    allCategories = await db.requestCategory.findMany({
+      select: { id: true, name: true, parentCategoryId: true },
+    });
+  } else {
+    allCategories = await db.assignmentCategory.findMany({
+      select: { id: true, name: true, parentCategoryId: true },
+    });
+  }
 
-  const ancestors: { id: string; name: string; parentCategoryId: string | null; level: number }[] = await db.$queryRawUnsafe(query.replace('@categoryId', `'${categoryId}'`));
+  // Build the ancestor tree in memory
+  const categoryMap = new Map(allCategories.map((cat) => [cat.id, cat]));
+  const ancestors: { id: string; name: string }[] = [];
+  let currentId: string | null = categoryId;
 
-  return ancestors.map((category, index) => ({
+  // Traverse up the tree to collect all ancestors
+  while (currentId) {
+    const category = categoryMap.get(currentId);
+    if (!category) break;
+    ancestors.push({ id: category.id, name: category.name });
+    currentId = category.parentCategoryId;
+  }
+
+  // Return ancestors from the highest to the lowest
+  return ancestors.reverse().map((category, index) => ({
     label: category.name,
     value: category.id,
     position: index,
