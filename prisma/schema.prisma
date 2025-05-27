@@ -4,9 +4,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 generator client {
@@ -1508,7 +1507,6 @@ model RequestCategory {
   tenantId                    String
   tenant                      Tenant                       @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   sla                         SLA?
-  executionFlowDefinition     ExecutionFlowDefinition?
   isEligibleForNewClients     Boolean                      @default(true)
   hierarchyLevelId            String
   hierarchyLevel              RequestHierarchyLevel        @relation(fields: [hierarchyLevelId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -1518,6 +1516,7 @@ model RequestCategory {
   parentCategory              RequestCategory?             @relation("ParentRequestCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   requestWorkflow             RequestWorkflow?             @relation(fields: [requestWorkflowId], references: [id])
   requestWorkflowId           String?
+  executionFlowDefinitions    ExecutionFlowDefinition[]
   subcategories               RequestCategory[]            @relation("ParentRequestCategory")
   requestCategoryRequirements RequestCategoryRequirement[]
   guideDocuments              GuideDocument[]
@@ -1929,7 +1928,6 @@ model ExecutionEdgeDefinition {
   target       ExecutionNodeDefinition @relation("TargetEdges", fields: [targetId], references: [id])
   targetId     String
   sourceHandle String?
-  condition    String?
   style        String?
   markerEnd    String?
 
@@ -1975,11 +1973,11 @@ model ExecutionModelInstance {
   id        String                  @id() @default(uuid())
   flow      ExecutionFlowDefinition @relation(fields: [flowId], references: [id])
   flowId    String
+  requestId String                  @unique()
+  request   Request                 @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   status    String
   logs      ExecutionModelLog[]
   history   ExecutionModelHistory[]
-  requestId String?                 @unique()
-  request   Request?                @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([status])
   @@index([tenantId, flowId, requestId])

@@ -30,7 +30,6 @@ model RequestHierarchyLevel extends TenantScoped, Auditable, CatalogBase {
 /// Represents a request category, with SLA and required documents.
 model RequestCategory extends TenantScoped, Auditable, CatalogBase {
   sla                        SLA?                  // SLA specific to this category
-  executionFlowDefinition    ExecutionFlowDefinition? // Execution flow definition for this category
   isEligibleForNewClients    Boolean                      @default(true) // Indicates if the category accepts new clients
   hierarchyLevelId           String                       //@db.UniqueIdentifier
   hierarchyLevel             RequestHierarchyLevel        @relation(fields: [hierarchyLevelId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Avoid cascade
@@ -42,7 +41,7 @@ model RequestCategory extends TenantScoped, Auditable, CatalogBase {
 	requestWorkflow RequestWorkflow? @relation(fields: [requestWorkflowId], references: [id])
 	requestWorkflowId String? //@db.UniqueIdentifier // ID of the associated request workflow
 
-
+  executionFlowDefinitions   ExecutionFlowDefinition[] // Workflow definitions associated with this category
   subcategories              RequestCategory[]            @relation("ParentRequestCategory") // Subcategories under this category
   requestCategoryRequirements RequestCategoryRequirement[] // Requirement mappings
   guideDocuments             GuideDocument[]       // Documents guiding the resolution of requests

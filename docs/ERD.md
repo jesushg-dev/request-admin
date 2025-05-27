@@ -115,8 +115,8 @@ erDiagram
   String tenantId FK
   String id PK
   String flowId FK
+  String requestId FK,UK
   String status
-  String requestId FK,UK "nullable"
 }
 ```
 
@@ -137,8 +137,8 @@ Properties as follows:
 - `tenantId`:
 - `id`:
 - `flowId`:
-- `status`:
 - `requestId`:
+- `status`:
 
 ## VersionHistory
 
@@ -1369,7 +1369,6 @@ erDiagram
   String sourceId FK
   String targetId FK
   String sourceHandle "nullable"
-  String condition "nullable"
   String style "nullable"
   String markerEnd "nullable"
 }
@@ -3201,7 +3200,6 @@ Properties as follows:
 - `sourceId`:
 - `targetId`:
 - `sourceHandle`:
-- `condition`:
 - `style`:
 - `markerEnd`:
 

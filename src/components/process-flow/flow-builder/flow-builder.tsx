@@ -5,12 +5,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ExecutionFlowValues } from '@/services/schemas/execution-flow';
 import type { Connection } from '@xyflow/react';
 import { addEdge, Background, BackgroundVariant, Controls, MarkerType, Panel, ReactFlow, ReactFlowProvider, useEdgesState, useNodesState, useReactFlow } from '@xyflow/react';
-import { useTranslations } from 'next-intl';
+import { Locale, useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 import { toast } from 'sonner';
 
 import type { FlowEdge, FlowNode, FlowNodeType, NodeData, ProcessFlow } from '@/types/execution-flow';
 import { getDefaultDataForType, isValidNodeType } from '@/lib/execution-flow';
+import { generateUuid } from '@/lib/id';
 import { useFullscreen } from '@/hooks/use-full-screen';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { AlertBanner } from '@/components/custom-ui/alert-banner';
@@ -27,9 +28,9 @@ interface ValidationError {
   message: string;
 }
 
-const initialNodes: FlowNode[] = [
+const getDefaultNodes: () => FlowNode[] = () => [
   {
-    id: '1',
+    id: generateUuid(),
     type: 'start',
     position: { x: 250, y: 5 },
     data: { label: 'Start' } as NodeData<'start'>,
@@ -39,11 +40,12 @@ const initialNodes: FlowNode[] = [
 const initialEdges: FlowEdge[] = [];
 
 interface FlowBuilderProps {
+  locale: Locale;
   value?: ExecutionFlowValues | null;
   onSave: (flow: ExecutionFlowValues) => void;
 }
 
-function FlowBuilderNonContext({ onSave, value }: FlowBuilderProps) {
+function FlowBuilderNonContext({ onSave, value, locale }: FlowBuilderProps) {
   const t = useTranslations('component.flowExecution.build');
   const theme = useTheme();
   const reactFlow = useReactFlow<FlowNode, FlowEdge>();
@@ -55,7 +57,7 @@ function FlowBuilderNonContext({ onSave, value }: FlowBuilderProps) {
 
   const [selectedNode, setSelectedNode] = useState<FlowNode | null>(null);
   const [selectedEdge, setSelectedEdge] = useState<FlowEdge | null>(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState<FlowNode>(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState<FlowNode>(getDefaultNodes());
   const [edges, setEdges, onEdgesChange] = useEdgesState<FlowEdge>(initialEdges);
 
   const [activeTab, setActiveTab] = useState('editor');
@@ -67,7 +69,7 @@ function FlowBuilderNonContext({ onSave, value }: FlowBuilderProps) {
       const isLoop = params.source === params.target;
       const newEdge: FlowEdge = {
         ...params,
-        id: `${params.source}-${params.target}`,
+        id: generateUuid(),
         animated: isLoop,
         style: { stroke: isLoop ? '#ff0072' : '#555' },
         markerEnd: { type: MarkerType.ArrowClosed, width: 20, height: 20 },
@@ -98,10 +100,10 @@ function FlowBuilderNonContext({ onSave, value }: FlowBuilderProps) {
       });
 
       const newNode: FlowNode = {
-        id: `${Date.now()}`,
+        id: generateUuid(),
         type,
         position,
-        data: getDefaultDataForType(type),
+        data: getDefaultDataForType(type, locale),
       } as FlowNode;
 
       setNodes((nds) => nds.concat(newNode));
@@ -179,8 +181,24 @@ function FlowBuilderNonContext({ onSave, value }: FlowBuilderProps) {
         try {
           const json = JSON.parse(e.target?.result as string) as ProcessFlow;
           if (json.nodes && json.edges) {
-            setNodes(json.nodes);
-            setEdges(json.edges);
+            // 1. Generate new Ids for nodes and create a map of oldId -> newId
+            const idMap = new Map<string, string>();
+            const newNodes = json.nodes.map((node) => {
+              const newId = generateUuid();
+              idMap.set(node.id, newId);
+              return { ...node, id: newId };
+            });
+
+            // 2. Update the edges using the ID map
+            const newEdges = json.edges.map((edge) => ({
+              ...edge,
+              id: generateUuid(),
+              source: idMap.get(edge.source) || edge.source,
+              target: idMap.get(edge.target) || edge.target,
+            }));
+
+            setNodes(newNodes);
+            setEdges(newEdges);
           } else {
             toast.error(t('validation.invalidFlow'));
           }
@@ -219,14 +237,18 @@ function FlowBuilderNonContext({ onSave, value }: FlowBuilderProps) {
     if (reactFlow && errors.length === 0) {
       const flow = reactFlow.toObject();
       onSave(flow as ExecutionFlowValues);
+      toast.success(t('hint.saveSuccess'));
     }
   }, [nodes, edges, validateFlow, reactFlow, onSave]);
 
   useEffect(() => {
-    if (value) {
-      setNodes(value.nodes as FlowNode[]);
-      setEdges(value.edges as FlowEdge[]);
-    }
+    setNodes((value?.nodes as FlowNode[]) ?? getDefaultNodes());
+    setEdges((value?.edges as FlowEdge[]) ?? initialEdges);
+    setActiveTab('editor');
+    setSelectedNode(null);
+    setSelectedEdge(null);
+    setValidationErrors([]);
+    setIsValidationErrorVisible(false);
   }, [value, setNodes, setEdges]);
 
   return (

@@ -63,7 +63,6 @@ model ExecutionEdgeDefinition extends TenantScoped, Auditable {
   target       ExecutionNodeDefinition   @relation("TargetEdges", fields: [targetId], references: [id])
   targetId     String
   sourceHandle String?
-  condition    String?
   style        String?
   markerEnd    String?
 
@@ -97,12 +96,12 @@ model ExecutionModelInstance extends TenantScoped, Auditable {
   id          String                    @id @default(uuid())
   flow        ExecutionFlowDefinition    @relation(fields: [flowId], references: [id])
   flowId      String
+  requestId   String   @unique //@db.UniqueIdentifier
+  request     Request  @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   status      String
   logs        ExecutionModelLog[]
   history     ExecutionModelHistory[]
 
-  requestId String?   @unique //@db.UniqueIdentifier
-  request   Request?  @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([status])
   @@index([tenantId, flowId, requestId])

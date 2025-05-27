@@ -45,6 +45,7 @@ describe('Request Type Actions', () => {
         escalationTime: 12,
       },
       guideDocuments: [],
+      executionFlowDefinitions: [],
     };
 
     it('should fetch and transform categories correctly', async () => {
@@ -108,6 +109,7 @@ describe('Request Type Actions', () => {
           { formId: 'form-1', form: { name: 'Form 1' } },
           { formId: 'form-2', form: { name: 'Form 2' } },
         ],
+        executionFlowDefinitions: [],
       };
 
       (db.requestCategory.findMany as jest.Mock).mockResolvedValue([categoryWithRequirements]);
@@ -140,6 +142,7 @@ describe('Request Type Actions', () => {
             isActive: true,
           },
         ],
+        executionFlowDefinitions: [],
       };
 
       (db.requestCategory.findMany as jest.Mock).mockResolvedValue([categoryWithGuides]);

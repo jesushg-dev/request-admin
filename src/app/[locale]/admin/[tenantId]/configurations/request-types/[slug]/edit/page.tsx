@@ -18,7 +18,7 @@ const UpdateRequestTypePage: FC<UpdateRequestTypePageProps> = async ({ params })
   const hierarchies = await getRequestHierarchiesAndLevelsByTenantId(locale, tenantId);
   const initialValues = await getRequestCategoriesByIds([slug], tenantId);
 
-  return <RequestTypeForm initialValues={initialValues} forms={forms} requirements={requirements} requestHierarchies={hierarchies} tenantId={tenantId} />;
+  return <RequestTypeForm locale={locale} initialValues={initialValues} forms={forms} requirements={requirements} requestHierarchies={hierarchies} tenantId={tenantId} />;
 };
 
 export default UpdateRequestTypePage;

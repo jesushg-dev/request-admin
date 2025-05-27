@@ -2,6 +2,8 @@
 
 import { db } from '@/server/db-client';
 
+import { ExecutionFlowDefaultArgs } from '@/types/prisma/execution-flow';
+import { transformExecutionFlowToZodSchema } from '@/lib/execution-flow';
 import { generateUuid } from '@/lib/id';
 import { buildRequestCategoryUpsertArgs } from '@/lib/request-type';
 import { RequestCategoryValues } from '@/components/common/request-type/category-form';
@@ -56,6 +58,12 @@ export async function getRequestCategoriesByIds(rootIds: string[], tenantId: str
             isActive: true,
           },
         },
+        executionFlowDefinitions: {
+          ...ExecutionFlowDefaultArgs,
+          where: { tenantId, isActive: true },
+          take: 1,
+          orderBy: { version: 'desc' },
+        },
       },
       where: {
         tenantId,
@@ -104,6 +112,7 @@ export async function getRequestCategoriesByIds(rootIds: string[], tenantId: str
             updatedAt: doc.updatedAt?.toISOString() ?? new Date().toISOString(),
             isActive: doc.isActive,
           })),
+          executionSteps: dbCat.executionFlowDefinitions.length > 0 ? transformExecutionFlowToZodSchema(dbCat.executionFlowDefinitions[0]) : undefined,
         };
 
         categoryMap.set(dbCat.id, category);

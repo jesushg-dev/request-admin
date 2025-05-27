@@ -18,7 +18,6 @@ import Messages from '@/components/common/request/viewer/messages';
 import RequestActivities from '@/components/common/request/viewer/request-activities';
 import RequirementProgress from '@/components/common/request/viewer/requirement-progress';
 import FormSubmissionsViewer from '@/components/common/request/viewer/submissions-viewer';
-import { ExecutionProvider } from '@/components/process-flow/execution/execution-context';
 import ExecutionView from '@/components/process-flow/execution/execution-view';
 import EmptyState from '@/components/shared/empty-state';
 
@@ -60,8 +59,8 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
   const callbackUrl = getPathname({ locale, href: { pathname: '/admin/[tenantId]/requests/[slug]', params: { tenantId, slug } } });
 
   return (
-    <ResizablePanelGroup direction="horizontal" className="flex-1">
-      <ResizablePanel minSize={30} defaultSize={70}>
+    <ResizablePanelGroup direction="horizontal" className="!flex-col md:!flex-row gap-4">
+      <ResizablePanel minSize={30} defaultSize={70} className="!basis-auto md:!basis-0">
         <div className="h-full p-4 overflow-hidden">
           <Tabs defaultValue="requirements" className="w-full h-full overflow-hidden flex flex-col">
             <div className="overflow-x-auto w-full">
@@ -98,9 +97,7 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
             </TabsContent>
 
             <TabsContent value="executionModel" className="flex-1 flex flex-col overflow-hidden">
-              <ExecutionProvider>
-                <ExecutionView />
-              </ExecutionProvider>
+              <ExecutionView processFlow={requestDetails.executionFlow?.diagram} tenantId={tenantId} executionId={requestDetails.executionFlow?.executionId ?? ''} locale={locale} />
             </TabsContent>
 
             <TabsContent value="guides" className="flex-1 flex flex-col overflow-hidden">
@@ -135,8 +132,8 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
           </Tabs>
         </div>
       </ResizablePanel>
-      <ResizableHandle withHandle />
-      <ResizablePanel minSize={30} defaultSize={30}>
+      <ResizableHandle withHandle className="hidden md:flex" />
+      <ResizablePanel minSize={30} defaultSize={30} className="!basis-auto md:!basis-0">
         <div className="flex h-full flex-1 overflow-hidden p-4">
           <RequestDetails
             tenantId={tenantId}

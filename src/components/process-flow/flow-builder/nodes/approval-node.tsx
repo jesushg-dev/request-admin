@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
-import { CheckSquare } from 'lucide-react';
+import { CheckSquare, ShieldUser } from 'lucide-react';
 
 import type { ApprovalNodeType } from '@/types/execution-flow';
 
@@ -15,7 +15,7 @@ export const ApprovalNode = memo(({ data }: NodeProps<ApprovalNodeType>) => {
         <div className="flex flex-wrap gap-1">
           {data.approvers.map((approver: string, index: number) => (
             <div key={index} className="px-2 py-0.5 text-xs bg-emerald-100 rounded-full dark:bg-emerald-800 dark:text-emerald-100">
-              👤 {approver}
+              <ShieldUser /> {approver}
             </div>
           ))}
         </div>

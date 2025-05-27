@@ -1,5 +1,5 @@
 import { executionFlowSchema } from '@/services/schemas/execution-flow';
-import { useTranslations } from 'next-intl';
+import { Locale, useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -58,6 +58,7 @@ export const getDefaultCategory = (hierarchyLevelId: string, parentCategoryId?: 
 });
 
 interface CategoryFormProps {
+  locale: Locale;
   formsOptions: OptionType[];
   requirementsOptions: OptionType[];
   handleCancelForm: () => void;
@@ -65,7 +66,7 @@ interface CategoryFormProps {
   mode: 'add' | 'edit';
 }
 
-export function CategoryForm({ formsOptions = [], requirementsOptions = [], handleCancelForm, isPending, mode }: CategoryFormProps) {
+export function CategoryForm({ locale, formsOptions = [], requirementsOptions = [], handleCancelForm, isPending, mode }: CategoryFormProps) {
   const t = useTranslations('admin.requestType.create');
   const { control } = useFormContext<RequestCategoryValues>();
   const formTitle = mode === 'add' ? t('create') : t('update');
@@ -184,7 +185,7 @@ export function CategoryForm({ formsOptions = [], requirementsOptions = [], hand
           render={({ field }) => (
             <FormItem className="flex-1 flex overflow-hidden">
               <FormControl>
-                <FlowBuilder value={field.value} onSave={field.onChange} />
+                <FlowBuilder value={field.value} onSave={field.onChange} locale={locale} />
               </FormControl>
               <FormMessage />
             </FormItem>

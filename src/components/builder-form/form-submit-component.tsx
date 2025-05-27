@@ -39,8 +39,10 @@ const FormSubmitComponent: FC<FormSubmitComponentProps> = ({ tenantId, formId, c
     <FormRenderer
       isSubmitting={pending}
       content={content}
-      onSubmit={(jsonContent) => {
-        startTransition(submitForm.bind(null, jsonContent));
+      onSubmit={(jsonContent: Record<string, string>) => {
+        startTransition(() => {
+          submitForm(jsonContent);
+        });
       }}
     />
   );

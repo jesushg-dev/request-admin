@@ -1,3 +1,4 @@
+import { ExecutionFlowValues } from '@/services/schemas/execution-flow';
 import { Prisma } from '@prisma/client';
 
 // Default select for Requests
@@ -70,6 +71,10 @@ export type RequestDetailsType = {
   }[];
   relatedAssignmentCount: number;
   relatedRequestCount: number;
+  executionFlow?: {
+    executionId: string;
+    diagram: ExecutionFlowValues;
+  };
 };
 
 type StatusChangeMetadata = {

@@ -151,29 +151,6 @@ export type NodeData<T extends FlowNodeType> = T extends 'start'
 
 export type IntegrationStatus = 'connected' | 'error' | 'pending' | 'disconnected';
 
-export interface NodeSpecificState {
-  timer?: {
-    timeLeft: number;
-    timerActive: boolean;
-  };
-  notification?: {
-    status: 'idle' | 'sending' | 'success' | 'error';
-  };
-  task?: {
-    status: 'idle' | 'running' | 'success' | 'error';
-  };
-  message?: {
-    shown: boolean;
-  };
-  loop?: {
-    count: number;
-  };
-}
-
-export interface NodeSpecificStates {
-  [nodeId: string]: NodeSpecificState;
-}
-
 export interface ParallelGroup {
   total: number;
   completed: number;
@@ -183,21 +160,31 @@ export interface ParallelGroups {
   [key: string]: ParallelGroup;
 }
 
+export enum ExecutionHistoryActions {
+  START = 'start',
+  COMPLETE = 'complete',
+  FAIL = 'fail',
+  PENDING = 'pending',
+}
+
 export interface ExecutionHistoryEntry {
   timestamp: Date;
   nodeId: string;
-  action: string;
+  action: ExecutionHistoryActions;
   details?: string;
+}
+
+export interface DecisionOption {
+  label: string;
+  value: string;
+  target?: string;
+  bgClass?: string;
 }
 
 export interface PendingDecision {
   nodeId: string;
   type: string;
-  options: {
-    label: string;
-    value: string;
-    target?: string;
-  }[];
+  options: DecisionOption[];
 }
 
 export interface AvailableNode {

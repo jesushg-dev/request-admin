@@ -1621,8 +1621,15 @@
         "category": {
           "loading": "Saving changes...",
           "success": "Changes saved successfully",
-          "error": "Error saving changes: {error}"
-        }
+          "error": "Error saving changes: {error}",
+          "executionLoading": "Guardar flujo de ejecución ..."
+        },
+        "manageTitle": "Gestionar categorías de solicitud",
+        "manageDescription": "Selecciona una categoría en la barra lateral para editarla o haz clic en \\\"Agregar nueva\\\" para crear una nueva categoría.",
+        "manageAction": "Crear nueva categoría",
+        "selectTitle": "Seleccione una jerarquía",
+        "selectDescription": "Por favor selecciona una jerarquía desde la barra lateral para gestionar sus categorías.",
+        "selectAction": "Crear una nueva jerarquía"
       }
     },
     "role": {
@@ -3155,7 +3162,8 @@
           "loadFlow": "Cargar flujo desde el archivo"
         },
         "hint": {
-          "save": "Guarde sus cambios antes de cambiar las pestañas para evitar perder su progreso."
+          "save": "Guarde sus cambios antes de cambiar las pestañas para evitar perder su progreso.",
+          "saveSuccess": "¡El flujo del proceso se ha guardado con éxito!"
         }
       },
       "simulation": {
@@ -3177,31 +3185,47 @@
         }
       },
       "execution": {
-        "decision": {
-          "yes": "Sí",
-          "no": "No",
-          "approve": "Aprobar",
-          "reject": "Rechazar",
-          "continueLoop": "Continuar bucle",
-          "exitLoop": "Salir del bucle",
-          "path": "Camino {number}: {label}",
-          "unknown": "Desconocido",
-          "nextStep": "Siguiente paso"
+        "title": "Ejecución de Proceso",
+        "description": "Seguimiento del proceso en tiempo real",
+        "reset": "Reiniciar",
+        "viewDiagram": "Ver diagrama completo",
+        "fullFlowDiagram": "Diagrama de Flujo Completo",
+        "totalProgress": "Progreso total: {progress}%",
+        "stepProgress": "Paso {current} de {total}",
+        "completedSteps": "{completed}/{total} completado",
+        "noAvailableSteps": "No hay pasos disponibles",
+        "currentStep": "Paso Actual",
+        "inProgress": "En Progreso",
+        "estimatedTime": "Tiempo estimado",
+        "responsible": "Responsable",
+        "decisionRequired": "Se requiere una decisión:",
+        "nextStep": "Siguiente: {step}",
+        "executionViewError": {
+          "howToCreate": "Para crear un proceso:",
+          "stepBuilder": "Ir a la pestaña \"Builder\"",
+          "stepDesign": "Diseñe su flujo de proceso",
+          "stepValidate": "Guarde el flujo con el botón \"Guardar\" y luego guarde los cambios para el tipo de solicitud",
+          "stepReturn": "Regrese a esta pestaña para ejecutar el proceso"
         },
-        "history": {
-          "parallelStepsActivation": "Activación de pasos paralelos",
-          "parallelStepsActivationDetails": "Se activaron {count} pasos desde {label}",
-          "decision": "Decisión: {decision}",
-          "decisionDetails": "En {label}",
-          "completed": "Completado",
-          "completedDetails": "{type}: {label}",
-          "processCompleted": "Proceso completado",
-          "processCompletedDetails": "El flujo de proceso ha finalizado correctamente",
-          "processStart": "Inicio del proceso"
+        "executionViewSuccess": {
+          "title": "Proceso completado",
+          "finished": "Finalizado",
+          "description": "El proceso ha terminado con éxito",
+          "summary": "Resumen del proceso:",
+          "completedNodes": "Nodos completados: {count}",
+          "totalTime": "Tiempo total: {time}",
+          "executedSteps": "Pasos ejecutados: {count}",
+          "reset": "Proceso de reinicio"
+        },
+        "executionHistory": {
+          "title": "Historial de ejecución",
+          "stepsCompleted": "Pasos completados: {count}",
+          "noSteps": "No hay pasos completados todavía"
         },
         "nodeTypes": {
           "start": "Inicio",
           "end": "Fin",
+          "step": "Paso",
           "task": "Tarea",
           "condition": "Condición",
           "approval": "Aprobación",
@@ -3214,6 +3238,166 @@
         },
         "export": {
           "executionHistoryFileName": "historial-ejecucion-{date}-{time}.csv"
+        },
+        "status": {
+          "inProgress": "En Progreso",
+          "completed": "Completado",
+          "blocked": "Bloqueado",
+          "pending": "Pendiente"
+        },
+        "approvalNode": {
+          "approval": "Aprobación",
+          "decision": {
+            "approve": "Aprobar",
+            "reject": "Rechazar"
+          },
+          "estimatedTime": "Tiempo estimado: {count} {unit}",
+          "timeUnit": {
+            "minutes": "minutos",
+            "hours": "horas",
+            "days": "días"
+          },
+          "toast": {
+            "processing": "Procesando aprobación...",
+            "success": "Aprobación procesada exitosamente",
+            "error": "Error al procesar la aprobación"
+          }
+        },
+        "startNode": {
+          "title": "Inicio",
+          "button": "Iniciar",
+          "toast": {
+            "starting": "Iniciando proceso...",
+            "success": "Proceso iniciado exitosamente",
+            "error": "Error al iniciar el proceso"
+          }
+        },
+        "endNode": {
+          "end": "Fin",
+          "toast": {
+            "processing": "Finalizando proceso...",
+            "success": "Proceso finalizado exitosamente",
+            "error": "Error al finalizar el proceso"
+          },
+          "status": "Estado",
+          "ending": "Final",
+          "button": "Fin"
+        },
+        "taskNode": {
+          "title": "Tarea",
+          "button": "Ejecutar tarea",
+          "estimatedTime": "Tiempo estimado",
+          "type": "Tipo",
+          "toast": {
+            "executing": "Procesando tarea...",
+            "success": "Tarea procesada exitosamente",
+            "error": "Error al procesar la tarea"
+          }
+        },
+        "stepNode": {
+          "button": "Ejecutar paso",
+          "toast": {
+            "executing": "Ejecutando paso...",
+            "success": "Paso ejecutado exitosamente",
+            "error": "Error al ejecutar el paso"
+          }
+        },
+        "conditionNode": {
+          "condition": "Condición",
+          "decision": {
+            "true": "Verdadero",
+            "false": "Falso"
+          },
+          "toast": {
+            "processing": "Procesando condición...",
+            "success": "Condición procesada exitosamente",
+            "error": "Error al procesar la condición"
+          },
+          "expression": "Expresión"
+        },
+        "gatewayNode": {
+          "gateway": "Puerta de Enlace",
+          "decision": {
+            "path": "Camino {number}",
+            "nextStep": "Siguiente paso"
+          },
+          "toast": {
+            "processing": "Procesando puerta de enlace...",
+            "success": "Puerta de enlace procesada exitosamente",
+            "error": "Error al procesar la puerta de enlace"
+          }
+        },
+        "loopNode": {
+          "loop": "Bucle",
+          "continueLoop": "Continuar bucle",
+          "exitLoop": "Salir del bucle",
+          "nextStep": "Siguiente paso",
+          "toast": {
+            "processing": "Bucle de procesamiento ..."
+          }
+        },
+        "messageNode": {
+          "description": "Mensaje del sistema",
+          "message": "Mensaje",
+          "state": "Estado del mensaje:",
+          "sending": "Enviando...",
+          "success": "Enviado correctamente",
+          "error": "Error al enviar",
+          "retry": "Reintentar",
+          "skip": "Omitir",
+          "toast": {
+            "processing": "Procesando mensaje...",
+            "success": "Mensaje procesado exitosamente",
+            "error": "Error al procesar el mensaje",
+            "skipped": "Mensaje omitido"
+          }
+        },
+        "notificationNode": {
+          "title": "Notificación",
+          "channel": "Canal",
+          "message": "Mensaje",
+          "sending": "Enviando...",
+          "retry": "Reintentar",
+          "skip": "Omitir",
+          "error": "Error al enviar la notificación",
+          "toast": {
+            "sending": "Enviando notificación...",
+            "success": "Notificación enviada correctamente",
+            "error": "Error al enviar la notificación",
+            "skipped": "Notificación omitida"
+          }
+        },
+        "timerNode": {
+          "title": "Temporizador",
+          "button": "Iniciar temporizador",
+          "pause": "Pausar",
+          "resume": "Reanudar",
+          "restart": "Reiniciar",
+          "estimatedTime": "Tiempo estimado",
+          "toast": {
+            "starting": "Procesando temporizador...",
+            "success": "Temporizador procesado exitosamente",
+            "error": "Error al procesar el temporizador"
+          }
+        },
+        "subprocessNode": {
+          "title": "Subproceso",
+          "reference": "Referencia",
+          "state": "Estado",
+          "running": "Ejecutando",
+          "button": "Ejecutar Subproceso",
+          "toast": {
+            "error": "Error al ejecutar el subproceso",
+            "executing": "Ejecución de subprocesos ...",
+            "success": "Subproceso ejecutado con éxito"
+          }
+        },
+        "unknownNode": {
+          "title": "Nodo Desconocido",
+          "error": "Error",
+          "description": "No se reconoce el tipo de nodo: {type}",
+          "id": "ID del nodo: {id}",
+          "level": "Nivel: {level}"
         }
       },
       "validation": {
@@ -3231,6 +3415,20 @@
         "stepNoAction": "El nodo de paso \"{label}\" no tiene una acción definida",
         "stepNoResponsible": "El nodo de paso \"{label}\" no tiene responsable definido",
         "cycleDetected": "El flujo contiene ciclos no intencionados (bucles infinitos)"
+      },
+      "workflowNodes": {
+        "nodeNotFound": "No se encontró el nodo {type}",
+        "branchTypes": {
+          "approve": "Al aprobar",
+          "reject": "Al rechazar",
+          "yes": "Al aceptar",
+          "no": "Al rechazar"
+        }
+      },
+      "exportHistory": {
+        "exportHistory": "Exportar Historial",
+        "csvHeaders": "Fecha,Hora,Nodo,Acción,Detalles\n",
+        "fileName": "historial-ejecucion-{date}-{time}.csv"
       }
     },
     "errorState": {

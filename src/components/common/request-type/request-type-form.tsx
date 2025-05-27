@@ -1,11 +1,11 @@
 'use client';
 
 import { FC, useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
-import { upsertExecutionFlow } from '@/actions/execution-flow';
+import { createExecutionFlow } from '@/actions/execution-flow';
 import { useUpsertRequestCategory } from '@/services/api/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { BookCopyIcon, BookIcon, ChevronLeft, ChevronRight, ContainerIcon, FileCogIcon, FileStackIcon, PackageOpenIcon } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { Locale, useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { ImperativePanelHandle } from 'react-resizable-panels';
 import { SingleValue } from 'react-select';
@@ -30,6 +30,7 @@ export interface RequestTypeFormValues {
 }
 
 interface RequestTypeFormProps {
+  locale: Locale;
   tenantId: string;
   forms: OptionType[];
   requirements: OptionType[];
@@ -38,7 +39,7 @@ interface RequestTypeFormProps {
   disableHierarchyChange?: boolean;
 }
 
-const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements, forms, requestHierarchies, tenantId, disableHierarchyChange = false }) => {
+const RequestTypeForm: FC<RequestTypeFormProps> = ({ locale, initialValues, requirements, forms, requestHierarchies, tenantId, disableHierarchyChange = false }) => {
   const t = useTranslations('admin.requestType.create');
 
   const ref = useRef<ImperativePanelHandle>(null);
@@ -97,62 +98,57 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
   const onSubmit = (cat: RequestCategoryValues) => {
     if (!selectedHierarchy?.value) return;
 
-    startTransition(() => {
-      const previousState = currentState?.find((c) => c.id === cat.id);
+    startTransition(async () => {
+      try {
+        const previousState = currentState?.find((c) => c.id === cat.id);
 
-      setCurrentState((prev) => {
-        const prevCategories = [...prev];
-        if (previousState) {
-          const previousParent = prevCategories.find((c) => c.id === previousState.parentCategoryId);
-          if (previousParent) {
-            previousParent.children = previousParent.children.filter((id) => id !== cat.id);
+        const toastId = toast.loading(t('category.loading'));
+
+        const response = await upsert(buildRequestCategoryUpsertArgs(cat, tenantId, String(selectedHierarchy.value)));
+        if (cat.executionSteps && response) {
+          toast.loading(t('category.executionLoading'), { id: toastId });
+          await createExecutionFlow(cat.executionSteps, cat.id, tenantId);
+        }
+
+        toast.success(t('category.success'), { id: toastId });
+
+        setCurrentState((prev) => {
+          const prevCategories = [...prev];
+          if (previousState) {
+            const previousParent = prevCategories.find((c) => c.id === previousState.parentCategoryId);
+            if (previousParent) {
+              previousParent.children = previousParent.children.filter((id) => id !== cat.id);
+            }
           }
-        }
 
-        const categoryIndex = prevCategories.findIndex((c) => c.id === cat.id);
-        const isNewCategory = categoryIndex === -1;
+          const categoryIndex = prevCategories.findIndex((c) => c.id === cat.id);
+          const isNewCategory = categoryIndex === -1;
 
-        if (isNewCategory) {
-          prevCategories.push({
-            ...cat,
-            children: [],
-          });
-        } else {
-          prevCategories[categoryIndex] = {
-            ...prevCategories[categoryIndex],
-            ...cat,
-          };
-        }
-
-        if (cat.parentCategoryId) {
-          const newParent = prevCategories.find((c) => c.id === cat.parentCategoryId);
-          if (newParent && !newParent.children.includes(cat.id)) {
-            newParent.children = [...newParent.children, cat.id];
+          if (isNewCategory) {
+            prevCategories.push({
+              ...cat,
+              children: [],
+            });
+          } else {
+            prevCategories[categoryIndex] = {
+              ...prevCategories[categoryIndex],
+              ...cat,
+            };
           }
-        }
 
-        return prevCategories;
-      });
+          if (cat.parentCategoryId) {
+            const newParent = prevCategories.find((c) => c.id === cat.parentCategoryId);
+            if (newParent && !newParent.children.includes(cat.id)) {
+              newParent.children = [...newParent.children, cat.id];
+            }
+          }
 
-      const promise = upsert(buildRequestCategoryUpsertArgs(cat, tenantId, String(selectedHierarchy.value)));
-      if (cat.executionSteps) {
-        upsertExecutionFlow(cat.executionSteps, cat.id);
+          return prevCategories;
+        });
+      } catch (error) {
+        const errorMessage = typeof error === 'object' && error !== null && 'message' in error ? (error as { message: string }).message : String(error);
+        toast.error(t('category.error', { error: errorMessage }));
       }
-
-      toast.promise(promise, {
-        loading: t('category.loading'),
-        success: (response) => {
-          if (response) {
-            setCurrentState((prev) => prev.map((c) => (c.id === response.id ? { ...c, ...response } : c)));
-          }
-          setMode('none');
-          return t('category.success');
-        },
-        error: (error) => {
-          setCurrentState((prev) => [...prev]);
-          return t('category.error', { error: error.message });
-        },
-      });
     });
   };
 
@@ -203,17 +199,17 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
               <Form {...form}>
                 <FormRoot className="h-full" onSubmit={form.handleSubmit(onSubmit)}>
                   <FormError error={error} />
-                  <CategoryForm formsOptions={formsOptions} requirementsOptions={requirementsOptions} mode={mode} isPending={isPending} handleCancelForm={handleCancelForm} />
+                  <CategoryForm locale={locale} formsOptions={formsOptions} requirementsOptions={requirementsOptions} mode={mode} isPending={isPending} handleCancelForm={handleCancelForm} />
                 </FormRoot>
               </Form>
             ) : (
               <EmptyState
-                title="Manage Request Categories"
-                description='Select a category from the sidebar to edit or click "Add New" to create a new category.'
+                title={t('manageTitle')}
+                description={t('manageDescription')}
                 icons={[FileStackIcon, BookCopyIcon, ContainerIcon]}
                 actions={[
                   {
-                    label: 'Create New Category',
+                    label: t('manageAction'),
                     onClick: () => handleAddCategory(firstLevelId),
                   },
                 ]}
@@ -221,12 +217,12 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
             )
           ) : (
             <EmptyState
-              title="Select a Hierarchy"
-              description="Please select a hierarchy from the sidebar to manage its categories."
+              title={t('selectTitle')}
+              description={t('selectDescription')}
               icons={[PackageOpenIcon, FileCogIcon, BookIcon]}
               actions={[
                 {
-                  label: 'Create New Hierarchy',
+                  label: t('selectAction'),
                   href: {
                     pathname: '/admin/[tenantId]/configurations/request-hierarchies/new',
                     params: { tenantId },

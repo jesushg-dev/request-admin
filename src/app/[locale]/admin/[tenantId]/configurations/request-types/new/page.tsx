@@ -17,7 +17,7 @@ const NewPage: FC<NewPageProps> = async ({ params }) => {
   const requirements = await getRequirementsAsOptions(tenantId);
   const hierarchies = await getRequestHierarchiesAndLevelsByTenantId(locale, tenantId);
 
-  return <RequestTypeForm forms={forms} requirements={requirements} requestHierarchies={hierarchies} tenantId={tenantId} />;
+  return <RequestTypeForm locale={locale} forms={forms} requirements={requirements} requestHierarchies={hierarchies} tenantId={tenantId} />;
 };
 
 export default NewPage;

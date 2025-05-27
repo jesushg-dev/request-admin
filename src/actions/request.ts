@@ -5,8 +5,10 @@ import { PermissionActions } from '@/constants/permissions';
 import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-server';
 
+import { ExecutionFlowDefaultArgs } from '@/types/prisma/execution-flow';
 import { RequestDefaultArgs, RequestDetailsType, RequestType } from '@/types/prisma/request';
 import { UserAreaWithRoleType, UserTenantWithAreaDefaultArgs } from '@/types/prisma/user';
+import { transformExecutionFlowToZodSchema } from '@/lib/execution-flow';
 import { normalizeValue } from '@/lib/utils';
 import { RequestFormStepperType } from '@/components/common/request/request-form-stepper';
 
@@ -99,6 +101,17 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
         dataroom: {
           connect: {
             id: newDataroom.id,
+          },
+        },
+        executionModelInstance: {
+          create: {
+            flow: {
+              connect: {
+                requestCategoryId: data.requestCategory.slice(-1)[0].value,
+              },
+            },
+            tenant: { connect: { id: tenantId } },
+            status: 'idle',
           },
         },
       },
@@ -453,10 +466,12 @@ export const getRequestDetailsByRequest = async (tenantId: string, request: Requ
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
-  // Get total submissions count
+  const requestCategoryId = request.requestCategory.slice(-1)[0].value;
+  const assignmentCategoryId = request.assignmentCategory.slice(-1)[0].value;
+  const requestCategoryIds = request.requestCategory.map((rc) => rc.value);
+
   // todo: we can improve this by using a single query
   const submissions = await db.formSubmission.count({ where: { requestId: request.id, tenantId } });
-  const requestCategoryIds = request.requestCategory.map((rc) => rc.value);
   const forms = await db.requestCategoryForm.count({ where: { categoryId: { in: requestCategoryIds }, tenantId } });
   const satisfactionSurvey = await db.customerSatisfactionSurvey.findFirst({
     where: { requestId: request.id },
@@ -508,11 +523,23 @@ export const getRequestDetailsByRequest = async (tenantId: string, request: Requ
   });
 
   const relatedRequestCount = await db.requestAssignment.count({
-    where: { requestCategoryId: request.requestCategory[0].value, requestId: { not: request.id }, tenantId, isActive: true },
+    where: { requestCategoryId, requestId: { not: request.id }, tenantId, isActive: true },
   });
 
   const relatedAssignmentCount = await db.requestAssignment.count({
-    where: { assignmentCategoryId: request.assignmentCategory[0].value, requestId: { not: request.id }, tenantId, isActive: true },
+    where: { assignmentCategoryId, requestId: { not: request.id }, tenantId, isActive: true },
+  });
+
+  // todo: we should bring the last execution flow but at the same time respect the migration
+  const executionFlow = await db.executionFlowDefinition.findFirst({
+    where: { requestCategoryId, tenantId, isActive: true },
+    ...ExecutionFlowDefaultArgs,
+  });
+
+  const executionId = await db.executionModelInstance.findFirst({
+    //todo: check if status is correct
+    where: { requestId: request.id, tenantId, status: { notIn: ['completed', 'failed'] } },
+    select: { id: true },
   });
 
   return {
@@ -541,6 +568,13 @@ export const getRequestDetailsByRequest = async (tenantId: string, request: Requ
     })),
     relatedAssignmentCount,
     relatedRequestCount,
+    executionFlow:
+      executionFlow && executionId
+        ? {
+            executionId: executionId.id,
+            diagram: transformExecutionFlowToZodSchema(executionFlow),
+          }
+        : undefined,
   };
 };
 

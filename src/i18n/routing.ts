@@ -2,7 +2,7 @@ import { ComponentProps } from 'react';
 import { createNavigation } from 'next-intl/navigation';
 import { defineRouting, Pathnames } from 'next-intl/routing';
 
-export type Locale = 'en' | 'es';
+type Locale = 'en' | 'es';
 export const defaultLocale = 'en';
 export const locales = ['en', 'es'] as const;
 export const localePrefix = process.env.NEXT_PUBLIC_LOCALE_PREFIX === 'never' ? 'never' : 'as-needed';

@@ -13,6 +13,7 @@ type MockDbType = {
     create: jest.Mock;
     update: jest.Mock;
     findUniqueOrThrow: jest.Mock;
+    findFirst: jest.Mock;
   };
   requestCategoryRequirement: {
     findMany: jest.Mock;
@@ -61,6 +62,9 @@ type MockDbType = {
   assignmentCategory: {
     findMany: jest.Mock;
   };
+  executionFlowDefinition: {
+    findFirst: jest.Mock;
+  };
   $transaction: jest.Mock;
   $: jest.Mock;
   $queryRawUnsafe: jest.Mock;
@@ -92,6 +96,7 @@ jest.mock('@/server/db-server', () => {
         create: jest.fn() as jest.Mock,
         update: jest.fn() as jest.Mock,
         findUniqueOrThrow: jest.fn() as jest.Mock,
+        findFirst: jest.fn() as jest.Mock,
       },
       requestCategoryRequirement: {
         findMany: jest.fn() as jest.Mock,
@@ -139,6 +144,9 @@ jest.mock('@/server/db-server', () => {
       },
       assignmentCategory: {
         findMany: jest.fn() as jest.Mock,
+      },
+      executionFlowDefinition: {
+        findFirst: jest.fn() as jest.Mock,
       },
       $transaction: jest.fn() as jest.Mock,
       $: jest.fn() as jest.Mock,
@@ -380,6 +388,7 @@ describe('Request Actions', () => {
         ],
         complianceTrackings: [],
         formSubmission: [],
+        executionFlowDefinitions: [],
       };
 
       (db.request.findUniqueOrThrow as jest.Mock).mockResolvedValue(mockRequest);
@@ -415,6 +424,7 @@ describe('Request Actions', () => {
           { requirementId: 'req-2', isFulfilled: false },
         ],
         formSubmission: [],
+        executionFlowDefinitions: [],
       };
 
       (db.request.findUniqueOrThrow as jest.Mock).mockResolvedValue(mockRequest);
@@ -452,6 +462,7 @@ describe('Request Actions', () => {
             ],
           },
         ],
+        executionFlowDefinitions: [],
       };
 
       (db.request.findUniqueOrThrow as jest.Mock).mockResolvedValue(mockRequest);
@@ -479,6 +490,7 @@ describe('Request Actions', () => {
         ],
         complianceTrackings: [],
         formSubmission: [],
+        executionFlowDefinitions: [],
       };
 
       (db.request.findUniqueOrThrow as jest.Mock).mockResolvedValue(mockRequest);

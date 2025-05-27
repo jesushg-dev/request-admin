@@ -19,7 +19,7 @@ import {
 // Shared base schema for `data`
 const baseData = z.object({
   label: z.string(),
-  linkedGuides: z.array(z.string()),
+  linkedGuides: z.array(z.string()).optional(),
   isExecuting: z.boolean().optional(),
   isCompleted: z.boolean().optional(),
 });
