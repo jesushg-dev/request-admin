@@ -367,10 +367,7 @@ export function useSuspenseCountDomain<
 }
 
 export function useCheckDomain<TError = DefaultError>(
-  args: {
-    operation: PolicyCrudKind;
-    where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; slug?: string; userTenantId?: string; verified?: boolean; isDefault?: boolean };
-  },
+  args: { operation: PolicyCrudKind; where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; slug?: string; verified?: boolean; isDefault?: boolean } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

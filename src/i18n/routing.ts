@@ -40,6 +40,10 @@ const basePathnames = {
     en: '/admin/[tenantId]',
     es: '/admin/[tenantId]',
   },
+  '/admin/[tenantId]/notifications': {
+    en: '/admin/[tenantId]/notifications',
+    es: '/admin/[tenantId]/notificaciones',
+  },
 } satisfies Pathnames<Locale[]>;
 
 const requestsPathnames = {

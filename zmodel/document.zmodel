@@ -199,15 +199,12 @@ model LinkPreset extends TenantScoped, Auditable {
 model Domain extends TenantScoped, Auditable {
   id           String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for domain
   slug         String @unique
-  userTenantId String? 
-  userTenant   UserTenant?   @relation(fields: [userTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   verified     Boolean @default(false) // Domain verification status
   isDefault    Boolean @default(false) // Primary domain flag
   lastChecked  DateTime @default(now()) // Timestamp of last check
 
   links   Link[] // Links associated with this domain
 
-  @@index([userTenantId])
   @@index([tenantId])
 }
 
@@ -502,18 +499,6 @@ model Webhook extends TenantScoped, Auditable {
   secret String // Signing secret for the webhook
   triggers String   //@db.NVarChar(Max)
 
-  @@index([tenantId])
-}
-
-model YearInReview extends TenantScoped, Auditable {
-  id            String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for year in review
-  status        String @default("pending") // Status: pending, processing, completed, failed
-  attempts      Int    @default(0)
-  lastAttempted DateTime?
-  error         String?
-  stats         String   //@db.NVarChar(Max)
-
-  @@index([status, attempts])
   @@index([tenantId])
 }
 

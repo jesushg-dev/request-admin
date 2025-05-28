@@ -457,6 +457,13 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
+        notifications: {
+          name: 'notifications',
+          type: 'Notification',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
         userTenants: {
           name: 'userTenants',
           type: 'UserTenant',
@@ -660,13 +667,6 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
-        yearInReviews: {
-          name: 'yearInReviews',
-          type: 'YearInReview',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
         customFields: {
           name: 'customFields',
           type: 'CustomField',
@@ -734,6 +734,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'userTenants',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -777,6 +779,7 @@ const metadata = {
           isDataModel: true,
           backLink: 'userTenants',
           isRelationOwner: true,
+          onDeleteAction: 'Cascade',
           foreignKeyMapping: { id: 'userId' },
         },
         personId: {
@@ -840,9 +843,9 @@ const metadata = {
           isArray: true,
           backLink: 'userTenantTwo',
         },
-        domains: {
-          name: 'domains',
-          type: 'Domain',
+        notifications: {
+          name: 'notifications',
+          type: 'Notification',
           isDataModel: true,
           isArray: true,
           backLink: 'userTenant',
@@ -921,6 +924,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'invitations',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -957,6 +962,7 @@ const metadata = {
           isDataModel: true,
           backLink: 'invitations',
           isRelationOwner: true,
+          onDeleteAction: 'Cascade',
           foreignKeyMapping: { id: 'inviterId' },
         },
       },
@@ -1490,6 +1496,7 @@ const metadata = {
           isDataModel: true,
           backLink: 'sessions',
           isRelationOwner: true,
+          onDeleteAction: 'Cascade',
           foreignKeyMapping: { id: 'userId' },
         },
         activeTenantId: {
@@ -1542,6 +1549,7 @@ const metadata = {
           isDataModel: true,
           backLink: 'accounts',
           isRelationOwner: true,
+          onDeleteAction: 'Cascade',
           foreignKeyMapping: { id: 'userId' },
         },
         accessToken: {
@@ -1665,6 +1673,7 @@ const metadata = {
           isDataModel: true,
           backLink: 'twofactors',
           isRelationOwner: true,
+          onDeleteAction: 'Cascade',
           foreignKeyMapping: { id: 'userId' },
         },
       },
@@ -1739,6 +1748,7 @@ const metadata = {
           isOptional: true,
           backLink: 'ssoproviders',
           isRelationOwner: true,
+          onDeleteAction: 'Cascade',
           foreignKeyMapping: { id: 'userId' },
         },
         providerId: {
@@ -1995,6 +2005,7 @@ const metadata = {
           isDataModel: true,
           backLink: 'apikeys',
           isRelationOwner: true,
+          onDeleteAction: 'Cascade',
           foreignKeyMapping: { id: 'userId' },
         },
         refillInterval: {
@@ -2107,6 +2118,7 @@ const metadata = {
           isDataModel: true,
           backLink: 'passkeys',
           isRelationOwner: true,
+          onDeleteAction: 'Cascade',
           foreignKeyMapping: { id: 'userId' },
         },
         credentialID: {
@@ -2184,6 +2196,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'requests',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -2346,6 +2360,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'requestAssignments',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -2381,6 +2397,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'requestAssignments',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'requestId' },
         },
         assignedUsers: {
@@ -2417,6 +2435,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'requestAssignments',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'areaId' },
         },
         statusId: {
@@ -2431,6 +2451,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'assignments',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'statusId' },
         },
         typeId: {
@@ -2445,6 +2467,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'assignments',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'typeId' },
         },
         priorityId: {
@@ -2459,6 +2483,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'assignments',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'priorityId' },
         },
         isActive: {
@@ -2478,6 +2504,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'requests',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'requestCategoryId' },
         },
         assignmentCategoryId: {
@@ -2492,6 +2520,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'assignmentRequests',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'assignmentCategoryId' },
         },
       },
@@ -2543,6 +2573,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'assignedUsers',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -2557,6 +2589,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'assignedUsers',
           isRelationOwner: true,
+          onDeleteAction: 'Cascade',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'requestAssignmentId' },
         },
         requestAssignmentId: {
@@ -2577,6 +2611,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'assignedUsers',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'userTenantId' },
         },
         role: {
@@ -2662,6 +2698,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'requestPriorityTypes',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         primaryColor: {
@@ -2757,6 +2795,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'assignmentTypes',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         systemName: {
@@ -2843,6 +2883,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'requestWorkflows',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         isDefault: {
@@ -2950,6 +2992,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'requestWorkflowStatuses',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         color: {
@@ -2980,6 +3024,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'requestWorkflowStatus',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'workflowId' },
         },
         assignments: {
@@ -3072,6 +3118,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'requestWorkflowTransitions',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         priority: {
@@ -3111,6 +3159,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'requestWorkflowTransition',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'workflowId' },
         },
         fromStatusId: {
@@ -3131,6 +3181,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'fromTransitions',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'fromStatusId' },
         },
         toStatus: {
@@ -3139,6 +3191,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'toTransitions',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'toStatusId' },
         },
       },
@@ -3194,6 +3248,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'requirementComplianceTrackings',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -3214,6 +3270,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'complianceTrackings',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'requestId' },
         },
         requirementId: {
@@ -3228,6 +3286,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'requirementComplianceTracking',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'requirementId' },
         },
         isFulfilled: {
@@ -3300,6 +3360,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'customerSatisfactionSurveys',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -3333,6 +3395,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'satisfactionSurvey',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'requestId' },
         },
       },
@@ -3388,6 +3452,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'requestChangeLogs',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -3408,11 +3474,9 @@ const metadata = {
           isDataModel: true,
           backLink: 'changeLog',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'requestId' },
-        },
-        changedBy: {
-          name: 'changedBy',
-          type: 'String',
         },
         fieldName: {
           name: 'fieldName',
@@ -3427,10 +3491,6 @@ const metadata = {
           name: 'newValue',
           type: 'String',
           isOptional: true,
-        },
-        changedAt: {
-          name: 'changedAt',
-          type: 'DateTime',
         },
         metadata: {
           name: 'metadata',
@@ -3486,6 +3546,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'documents',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -3569,6 +3631,8 @@ const metadata = {
           isOptional: true,
           backLink: 'documents',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'ownerId' },
         },
         folderId: {
@@ -3585,6 +3649,8 @@ const metadata = {
           isOptional: true,
           backLink: 'documents',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'folderId' },
         },
         dataroomId: {
@@ -3601,6 +3667,8 @@ const metadata = {
           isOptional: true,
           backLink: 'documents',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'dataroomId' },
         },
         orderIndex: {
@@ -3622,6 +3690,8 @@ const metadata = {
           isOptional: true,
           backLink: 'document',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'requirementComplianceTrackingId' },
         },
         links: {
@@ -3701,6 +3771,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'documentVersions',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -3726,6 +3798,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'versions',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'documentId' },
         },
         file: {
@@ -3845,6 +3919,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'documentPages',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -3865,6 +3941,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'pages',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'versionId' },
         },
         pageNumber: {
@@ -3945,6 +4023,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'links',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -3967,6 +4047,8 @@ const metadata = {
           isOptional: true,
           backLink: 'links',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'documentId' },
         },
         dataroomId: {
@@ -3983,6 +4065,8 @@ const metadata = {
           isOptional: true,
           backLink: 'links',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'dataroomId' },
         },
         linkType: {
@@ -4102,6 +4186,8 @@ const metadata = {
           isOptional: true,
           backLink: 'links',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'agreementId' },
         },
         domainId: {
@@ -4118,6 +4204,8 @@ const metadata = {
           isOptional: true,
           backLink: 'links',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'domainId' },
         },
         domainSlug: {
@@ -4170,6 +4258,8 @@ const metadata = {
           isOptional: true,
           backLink: 'links',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'groupId' },
         },
         enableWatermark: {
@@ -4246,6 +4336,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'linkPresets',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -4333,6 +4425,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'domains',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -4344,22 +4438,6 @@ const metadata = {
         slug: {
           name: 'slug',
           type: 'String',
-        },
-        userTenantId: {
-          name: 'userTenantId',
-          type: 'String',
-          isOptional: true,
-          isForeignKey: true,
-          relationField: 'userTenant',
-        },
-        userTenant: {
-          name: 'userTenant',
-          type: 'UserTenant',
-          isDataModel: true,
-          isOptional: true,
-          backLink: 'domains',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'userTenantId' },
         },
         verified: {
           name: 'verified',
@@ -4436,6 +4514,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'views',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -4472,6 +4552,8 @@ const metadata = {
           isOptional: true,
           backLink: 'views',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'documentId' },
         },
         dataroomId: {
@@ -4488,6 +4570,8 @@ const metadata = {
           isOptional: true,
           backLink: 'views',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'dataroomId' },
         },
         dataroomViewId: {
@@ -4546,6 +4630,8 @@ const metadata = {
           isOptional: true,
           backLink: 'views',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'viewerId' },
         },
         groupId: {
@@ -4562,6 +4648,8 @@ const metadata = {
           isOptional: true,
           backLink: 'views',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'groupId' },
         },
         feedbackResponse: {
@@ -4639,6 +4727,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'viewers',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -4679,6 +4769,8 @@ const metadata = {
           isOptional: true,
           backLink: 'viewers',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'dataroomId' },
         },
         views: {
@@ -4748,6 +4840,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'documentReactions',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -4768,6 +4862,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'reactions',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'viewId' },
         },
         pageNumber: {
@@ -4827,6 +4923,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'invitation',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         email: {
@@ -4895,6 +4993,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'sentEmails',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -4970,6 +5070,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'documentConversations',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -4994,6 +5096,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'conversations',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'userTenantId' },
         },
         documentId: {
@@ -5008,6 +5112,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'conversations',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'documentId' },
         },
       },
@@ -5091,6 +5197,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'dataroons',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         pId: {
@@ -5160,6 +5268,8 @@ const metadata = {
           isOptional: true,
           backLink: 'dataroom',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'requestId' },
         },
       },
@@ -5219,6 +5329,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'dataroomFolders',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -5263,6 +5375,8 @@ const metadata = {
           isOptional: true,
           backLink: 'childFolders',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'parentId' },
         },
         dataroomId: {
@@ -5277,6 +5391,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'folders',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'dataroomId' },
         },
         orderIndex: {
@@ -5337,6 +5453,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'dataroomBrands',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -5377,6 +5495,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'brand',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'dataroomId' },
         },
       },
@@ -5432,6 +5552,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'documentFeedbaks',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -5452,6 +5574,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'feedback',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'linkId' },
         },
         data: {
@@ -5518,6 +5642,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'feedbackResponses',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -5538,6 +5664,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'responses',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'feedbackId' },
         },
         data: {
@@ -5556,6 +5684,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'feedbackResponse',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'viewId' },
         },
       },
@@ -5631,6 +5761,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'agreements',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         content: {
@@ -5705,6 +5837,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'agreementResponses',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -5725,6 +5859,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'responses',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'agreementId' },
         },
         viewId: {
@@ -5739,6 +5875,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'agreementResponse',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'viewId' },
         },
       },
@@ -5794,6 +5932,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'viewerGroup',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -5848,6 +5988,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'viewerGroups',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'dataroomId' },
         },
         views: {
@@ -5906,6 +6048,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'viewerGroupMemberships',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -5926,6 +6070,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'groups',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'viewerId' },
         },
         groupId: {
@@ -5940,6 +6086,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'members',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'groupId' },
         },
       },
@@ -5995,6 +6143,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'viewerGroupAccessControls',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -6015,6 +6165,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'accessControls',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'groupId' },
         },
         itemId: {
@@ -6088,6 +6240,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'incomingWeebhooks',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -6187,6 +6341,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'restrictedTokens',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -6239,6 +6395,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'restrictedTokens',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'userTenantId' },
         },
       },
@@ -6294,6 +6452,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'webhooks',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -6331,87 +6491,6 @@ const metadata = {
         pId: {
           name: 'pId',
           fields: ['pId'],
-        },
-      },
-    },
-    yearInReview: {
-      name: 'YearInReview',
-      fields: {
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
-        },
-        deletedAt: {
-          name: 'deletedAt',
-          type: 'DateTime',
-          isOptional: true,
-        },
-        createdBy: {
-          name: 'createdBy',
-          type: 'String',
-          isOptional: true,
-        },
-        updatedBy: {
-          name: 'updatedBy',
-          type: 'String',
-          isOptional: true,
-        },
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'yearInReviews',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'tenantId' },
-        },
-        id: {
-          name: 'id',
-          type: 'String',
-          isId: true,
-          attributes: [{ name: '@default', args: [] }],
-        },
-        status: {
-          name: 'status',
-          type: 'String',
-          attributes: [{ name: '@default', args: [{ value: 'pending' }] }],
-        },
-        attempts: {
-          name: 'attempts',
-          type: 'Int',
-          attributes: [{ name: '@default', args: [{ value: 0 }] }],
-        },
-        lastAttempted: {
-          name: 'lastAttempted',
-          type: 'DateTime',
-          isOptional: true,
-        },
-        error: {
-          name: 'error',
-          type: 'String',
-          isOptional: true,
-        },
-        stats: {
-          name: 'stats',
-          type: 'String',
-        },
-      },
-      uniqueConstraints: {
-        id: {
-          name: 'id',
-          fields: ['id'],
         },
       },
     },
@@ -6456,6 +6535,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'customFields',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -6503,6 +6584,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'customField',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'linkId' },
         },
         orderIndex: {
@@ -6559,6 +6642,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'customFieldResponse',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -6583,6 +6668,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'customFieldResponse',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'viewId' },
         },
       },
@@ -6658,6 +6745,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'areas',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         requestAssignments: {
@@ -6748,6 +6837,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'userAreas',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -6785,6 +6876,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'userAreas',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'userTenantId' },
         },
         area: {
@@ -6793,6 +6886,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'userAreas',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'areaId' },
         },
         role: {
@@ -6801,6 +6896,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'userAreas',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'roleId' },
         },
       },
@@ -6876,6 +6973,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'areaRoles',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         areaId: {
@@ -6959,6 +7058,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'areaRoleFeatures',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -7073,6 +7174,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'requestHierarchies',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         levels: {
@@ -7162,6 +7265,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'requestHierarchyLevels',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         hierarchyId: {
@@ -7176,6 +7281,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'levels',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'hierarchyId' },
         },
         categories: {
@@ -7270,18 +7377,13 @@ const metadata = {
           isDataModel: true,
           backLink: 'requestCategories',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         sla: {
           name: 'sla',
           type: 'SLA',
-          isDataModel: true,
-          isOptional: true,
-          backLink: 'requestCategory',
-        },
-        executionFlowDefinition: {
-          name: 'executionFlowDefinition',
-          type: 'ExecutionFlowDefinition',
           isDataModel: true,
           isOptional: true,
           backLink: 'requestCategory',
@@ -7303,6 +7405,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'categories',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'hierarchyLevelId' },
         },
         hierarchyId: {
@@ -7317,6 +7421,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'categories',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'hierarchyId' },
         },
         parentCategoryId: {
@@ -7333,6 +7439,8 @@ const metadata = {
           isOptional: true,
           backLink: 'subcategories',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'parentCategoryId' },
         },
         requestWorkflow: {
@@ -7350,6 +7458,13 @@ const metadata = {
           isOptional: true,
           isForeignKey: true,
           relationField: 'requestWorkflow',
+        },
+        executionFlowDefinitions: {
+          name: 'executionFlowDefinitions',
+          type: 'ExecutionFlowDefinition',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'requestCategory',
         },
         subcategories: {
           name: 'subcategories',
@@ -7439,6 +7554,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'requestCategoryForms',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -7470,6 +7587,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'categoryForms',
           isRelationOwner: true,
+          onDeleteAction: 'Cascade',
+          onUpdateAction: 'Cascade',
           foreignKeyMapping: { id: 'categoryId' },
         },
         form: {
@@ -7478,6 +7597,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'requestCategoryForms',
           isRelationOwner: true,
+          onDeleteAction: 'Cascade',
+          onUpdateAction: 'Cascade',
           foreignKeyMapping: { id: 'formId' },
         },
       },
@@ -7533,6 +7654,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'slas',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -7564,6 +7687,8 @@ const metadata = {
           isOptional: true,
           backLink: 'sla',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'requestCategoryId' },
         },
         changeLogs: {
@@ -7626,6 +7751,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'sLAChangeLogs',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -7646,6 +7773,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'changeLogs',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'slaId' },
         },
         oldResolutionTime: {
@@ -7726,6 +7855,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'guideDocuments',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         fileType: {
@@ -7752,6 +7883,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'guideDocuments',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'requestCategoryId' },
         },
         nodeGuide: {
@@ -7834,6 +7967,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'requirements',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         isRequiredOnlyOnce: {
@@ -7867,6 +8002,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'requirements',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'requirementTypeId' },
         },
       },
@@ -7922,6 +8059,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'categoryRequirements',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -7942,6 +8081,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'requestCategoryRequirements',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'requirementId' },
         },
         categoryId: {
@@ -7956,6 +8097,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'requestCategoryRequirements',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'categoryId' },
         },
         isActive: {
@@ -8036,6 +8179,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'requirementTypes',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         requirements: {
@@ -8118,6 +8263,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'assignmentHierarchies',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         levels: {
@@ -8148,6 +8295,8 @@ const metadata = {
           isOptional: true,
           backLink: 'assignmentHierarchies',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'areaId' },
         },
       },
@@ -8223,6 +8372,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'assignmentHierarchyLevels',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         hierarchyId: {
@@ -8237,6 +8388,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'levels',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'hierarchyId' },
         },
         categories: {
@@ -8331,6 +8484,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'assignmentCategories',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         parentCategoryId: {
@@ -8347,6 +8502,8 @@ const metadata = {
           isOptional: true,
           backLink: 'subcategories',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'parentCategoryId' },
         },
         subcategories: {
@@ -8368,6 +8525,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'categories',
           isRelationOwner: true,
+          onDeleteAction: 'Cascade',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'hierarchyLevelId' },
         },
         hierarchyId: {
@@ -8382,6 +8541,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'categories',
           isRelationOwner: true,
+          onDeleteAction: 'Cascade',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'hierarchyId' },
         },
         areaId: {
@@ -8396,6 +8557,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'assignmentCategories',
           isRelationOwner: true,
+          onDeleteAction: 'Cascade',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'areaId' },
         },
         assignmentRequests: {
@@ -8465,6 +8628,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'assignmentCategoryForms',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -8496,6 +8661,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'assignmentCategoryForms',
           isRelationOwner: true,
+          onDeleteAction: 'Cascade',
+          onUpdateAction: 'Cascade',
           foreignKeyMapping: { id: 'categoryId' },
         },
         form: {
@@ -8504,6 +8671,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'assignmentCategoryForms',
           isRelationOwner: true,
+          onDeleteAction: 'Cascade',
+          onUpdateAction: 'Cascade',
           foreignKeyMapping: { id: 'formId' },
         },
       },
@@ -8579,6 +8748,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'forms',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         content: {
@@ -8689,6 +8860,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'formSubmissions',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -8720,6 +8893,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'formSubmissions',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'formId' },
         },
         requestId: {
@@ -8736,6 +8911,8 @@ const metadata = {
           isOptional: true,
           backLink: 'formSubmission',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'requestId' },
         },
       },
@@ -8753,32 +8930,6 @@ const metadata = {
     formSubmissionKey: {
       name: 'FormSubmissionKey',
       fields: {
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
-        },
-        deletedAt: {
-          name: 'deletedAt',
-          type: 'DateTime',
-          isOptional: true,
-        },
-        createdBy: {
-          name: 'createdBy',
-          type: 'String',
-          isOptional: true,
-        },
-        updatedBy: {
-          name: 'updatedBy',
-          type: 'String',
-          isOptional: true,
-        },
         tenantId: {
           name: 'tenantId',
           type: 'String',
@@ -8791,6 +8942,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'formSubmissionKeys',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -8819,6 +8972,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'keys',
           isRelationOwner: true,
+          onDeleteAction: 'Cascade',
+          onUpdateAction: 'Cascade',
           foreignKeyMapping: { id: 'submissionId' },
         },
       },
@@ -8832,32 +8987,6 @@ const metadata = {
     menuItem: {
       name: 'MenuItem',
       fields: {
-        createdAt: {
-          name: 'createdAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
-        updatedAt: {
-          name: 'updatedAt',
-          type: 'DateTime',
-          isOptional: true,
-          attributes: [{ name: '@updatedAt', args: [] }],
-        },
-        deletedAt: {
-          name: 'deletedAt',
-          type: 'DateTime',
-          isOptional: true,
-        },
-        createdBy: {
-          name: 'createdBy',
-          type: 'String',
-          isOptional: true,
-        },
-        updatedBy: {
-          name: 'updatedBy',
-          type: 'String',
-          isOptional: true,
-        },
         tenantId: {
           name: 'tenantId',
           type: 'String',
@@ -8870,6 +8999,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'menuItems',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -8919,6 +9050,8 @@ const metadata = {
           isOptional: true,
           backLink: 'children',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'parentId' },
         },
         children: {
@@ -8977,6 +9110,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'executionFlowDefinitions',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -9042,8 +9177,10 @@ const metadata = {
           type: 'RequestCategory',
           isDataModel: true,
           isOptional: true,
-          backLink: 'executionFlowDefinition',
+          backLink: 'executionFlowDefinitions',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'requestCategoryId' },
         },
         viewportX: {
@@ -9118,6 +9255,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'executionNodeDefinitions',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -9233,6 +9372,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'executionEdgeDefinitions',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -9285,11 +9426,6 @@ const metadata = {
         },
         sourceHandle: {
           name: 'sourceHandle',
-          type: 'String',
-          isOptional: true,
-        },
-        condition: {
-          name: 'condition',
           type: 'String',
           isOptional: true,
         },
@@ -9352,6 +9488,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'executionNodeGuides',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -9456,6 +9594,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'executionModelInstances',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -9478,6 +9618,22 @@ const metadata = {
           isForeignKey: true,
           relationField: 'flow',
         },
+        requestId: {
+          name: 'requestId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'request',
+        },
+        request: {
+          name: 'request',
+          type: 'Request',
+          isDataModel: true,
+          backLink: 'executionModelInstance',
+          isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
+          foreignKeyMapping: { id: 'requestId' },
+        },
         status: {
           name: 'status',
           type: 'String',
@@ -9495,22 +9651,6 @@ const metadata = {
           isDataModel: true,
           isArray: true,
           backLink: 'execution',
-        },
-        requestId: {
-          name: 'requestId',
-          type: 'String',
-          isOptional: true,
-          isForeignKey: true,
-          relationField: 'request',
-        },
-        request: {
-          name: 'request',
-          type: 'Request',
-          isDataModel: true,
-          isOptional: true,
-          backLink: 'executionModelInstance',
-          isRelationOwner: true,
-          foreignKeyMapping: { id: 'requestId' },
         },
       },
       uniqueConstraints: {
@@ -9565,6 +9705,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'executionModelLogs',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -9667,6 +9809,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'executionModelHistory',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -9777,6 +9921,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'userRoles',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -9808,6 +9954,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'userRoles',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'userTenantId' },
         },
         role: {
@@ -9816,6 +9964,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'userRole',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'roleId' },
         },
       },
@@ -9887,6 +10037,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'roles',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         userRole: {
@@ -9976,6 +10128,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'modules',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         feature: {
@@ -10058,6 +10212,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'features',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         key: {
@@ -10081,6 +10237,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'feature',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'moduleId' },
         },
         roleFeature: {
@@ -10161,6 +10319,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'roleFeatures',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -10192,6 +10352,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'roleFeature',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'roleId' },
         },
         feature: {
@@ -10200,7 +10362,85 @@ const metadata = {
           isDataModel: true,
           backLink: 'roleFeature',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'featureId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    notification: {
+      name: 'Notification',
+      fields: {
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'notifications',
+          isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        type: {
+          name: 'type',
+          type: 'String',
+        },
+        title: {
+          name: 'title',
+          type: 'String',
+        },
+        body: {
+          name: 'body',
+          type: 'String',
+        },
+        read: {
+          name: 'read',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ value: false }] }],
+        },
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        userTenantId: {
+          name: 'userTenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'userTenant',
+        },
+        userTenant: {
+          name: 'userTenant',
+          type: 'UserTenant',
+          isDataModel: true,
+          backLink: 'notifications',
+          isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
+          foreignKeyMapping: { id: 'userTenantId' },
         },
       },
       uniqueConstraints: {
@@ -10251,6 +10491,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'channels',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -10284,6 +10526,8 @@ const metadata = {
           isOptional: true,
           backLink: 'channel',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'requestId' },
         },
       },
@@ -10317,6 +10561,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'conversations',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -10343,6 +10589,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'conversationsAsUserTenantOne',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'userTenantOneId' },
         },
         userTenantTwo: {
@@ -10351,6 +10599,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'conversationsAsUserTenantTwo',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'userTenantTwoId' },
         },
         messages: {
@@ -10413,6 +10663,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'messages',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -10463,6 +10715,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'messages',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'userTenantId' },
         },
         channel: {
@@ -10472,6 +10726,7 @@ const metadata = {
           isOptional: true,
           backLink: 'messages',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
           foreignKeyMapping: { id: 'channelId' },
         },
         parentMessage: {
@@ -10481,6 +10736,8 @@ const metadata = {
           isOptional: true,
           backLink: 'replies',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'parentMessageId' },
         },
         replies: {
@@ -10497,6 +10754,8 @@ const metadata = {
           isOptional: true,
           backLink: 'messages',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'conversationId' },
         },
         reactions: {
@@ -10529,6 +10788,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'reactions',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -10559,6 +10820,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'reactions',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'messageId' },
         },
         userTenant: {
@@ -10567,6 +10830,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'reactions',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'userTenantId' },
         },
       },
@@ -10622,6 +10887,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'persons',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         id: {
@@ -10667,6 +10934,8 @@ const metadata = {
           isOptional: true,
           backLink: 'person',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'userTenantId' },
         },
         identificationTypeId: {
@@ -10681,6 +10950,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'person',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'identificationTypeId' },
         },
       },
@@ -10768,6 +11039,8 @@ const metadata = {
           isDataModel: true,
           backLink: 'identificationTypes',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'tenantId' },
         },
         regex: {

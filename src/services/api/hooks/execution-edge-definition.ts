@@ -483,7 +483,6 @@ export function useCheckExecutionEdgeDefinition<TError = DefaultError>(
       sourceId?: string;
       targetId?: string;
       sourceHandle?: string;
-      condition?: string;
       style?: string;
       markerEnd?: string;
     };

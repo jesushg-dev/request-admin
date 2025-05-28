@@ -441,18 +441,7 @@ export function useSuspenseCountRequestChangeLog<
 export function useCheckRequestChangeLog<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
-    where?: {
-      createdBy?: string;
-      updatedBy?: string;
-      tenantId?: string;
-      id?: string;
-      requestId?: string;
-      changedBy?: string;
-      fieldName?: string;
-      oldValue?: string;
-      newValue?: string;
-      metadata?: string;
-    };
+    where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; requestId?: string; fieldName?: string; oldValue?: string; newValue?: string; metadata?: string };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {

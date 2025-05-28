@@ -603,11 +603,9 @@ erDiagram
   String tenantId FK
   String id PK
   String requestId FK
-  String changedBy
   String fieldName
   String oldValue "nullable"
   String newValue "nullable"
-  DateTime changedAt
   String metadata "nullable"
 }
 "Document" {
@@ -740,7 +738,6 @@ erDiagram
   String tenantId FK
   String id PK
   String slug UK
-  String userTenantId FK "nullable"
   Boolean verified
   Boolean isDefault
   DateTime lastChecked
@@ -1004,20 +1001,6 @@ erDiagram
   String url
   String secret
   String triggers
-}
-"YearInReview" {
-  DateTime createdAt
-  DateTime updatedAt "nullable"
-  DateTime deletedAt "nullable"
-  String createdBy "nullable"
-  String updatedBy "nullable"
-  String tenantId FK
-  String id PK
-  String status
-  Int attempts
-  DateTime lastAttempted "nullable"
-  String error "nullable"
-  String stats
 }
 "CustomField" {
   DateTime createdAt
@@ -1316,11 +1299,6 @@ erDiagram
   String requestId FK "nullable"
 }
 "FormSubmissionKey" {
-  DateTime createdAt
-  DateTime updatedAt "nullable"
-  DateTime deletedAt "nullable"
-  String createdBy "nullable"
-  String updatedBy "nullable"
   String tenantId FK
   String id PK
   String submissionId FK
@@ -1328,11 +1306,6 @@ erDiagram
   String value
 }
 "MenuItem" {
-  DateTime createdAt
-  DateTime updatedAt "nullable"
-  DateTime deletedAt "nullable"
-  String createdBy "nullable"
-  String updatedBy "nullable"
   String tenantId FK
   String id PK
   String title
@@ -1449,6 +1422,17 @@ erDiagram
   Boolean isActive
   String roleId FK
   String featureId FK
+}
+"Notification" {
+  String tenantId FK
+  String id PK
+  String type
+  String title
+  String body
+  Boolean read
+  DateTime createdAt
+  DateTime updatedAt
+  String userTenantId FK
 }
 "Channel" {
   DateTime createdAt
@@ -1579,7 +1563,6 @@ erDiagram
 "Link" }o--o| "DataroomViewerGroup" : group
 "LinkPreset" }o--|| "Tenant" : tenant
 "Domain" }o--|| "Tenant" : tenant
-"Domain" }o--o| "UserTenant" : userTenant
 "DocumentView" }o--|| "Tenant" : tenant
 "DocumentView" }o--|| "Link" : link
 "DocumentView" }o--o| "Document" : document
@@ -1622,7 +1605,6 @@ erDiagram
 "RestrictedToken" }o--|| "Tenant" : tenant
 "RestrictedToken" }o--|| "UserTenant" : userTenant
 "Webhook" }o--|| "Tenant" : tenant
-"YearInReview" }o--|| "Tenant" : tenant
 "CustomField" }o--|| "Tenant" : tenant
 "CustomField" }o--|| "Link" : link
 "CustomFieldResponse" }o--|| "Tenant" : tenant
@@ -1696,6 +1678,8 @@ erDiagram
 "RoleFeature" }o--|| "Tenant" : tenant
 "RoleFeature" }o--|| "Role" : role
 "RoleFeature" }o--|| "Feature" : feature
+"Notification" }o--|| "Tenant" : tenant
+"Notification" }o--|| "UserTenant" : userTenant
 "Channel" }o--|| "Tenant" : tenant
 "Channel" |o--o| "Request" : request
 "Conversation" }o--|| "Tenant" : tenant
@@ -2239,11 +2223,9 @@ Properties as follows:
 - `tenantId`:
 - `id`:
 - `requestId`:
-- `changedBy`:
 - `fieldName`:
 - `oldValue`:
 - `newValue`:
-- `changedAt`:
 - `metadata`:
 
 ### `Document`
@@ -2394,7 +2376,6 @@ Properties as follows:
 - `tenantId`:
 - `id`:
 - `slug`:
-- `userTenantId`:
 - `verified`:
 - `isDefault`:
 - `lastChecked`:
@@ -2715,23 +2696,6 @@ Properties as follows:
 - `url`:
 - `secret`:
 - `triggers`:
-
-### `YearInReview`
-
-Properties as follows:
-
-- `createdAt`:
-- `updatedAt`:
-- `deletedAt`:
-- `createdBy`:
-- `updatedBy`:
-- `tenantId`:
-- `id`:
-- `status`:
-- `attempts`:
-- `lastAttempted`:
-- `error`:
-- `stats`:
 
 ### `CustomField`
 
@@ -3134,11 +3098,6 @@ Properties as follows:
 
 Properties as follows:
 
-- `createdAt`:
-- `updatedAt`:
-- `deletedAt`:
-- `createdBy`:
-- `updatedBy`:
 - `tenantId`:
 - `id`:
 - `submissionId`:
@@ -3149,11 +3108,6 @@ Properties as follows:
 
 Properties as follows:
 
-- `createdAt`:
-- `updatedAt`:
-- `deletedAt`:
-- `createdBy`:
-- `updatedBy`:
 - `tenantId`:
 - `id`:
 - `title`:
@@ -3311,6 +3265,20 @@ Properties as follows:
 - `isActive`:
 - `roleId`:
 - `featureId`:
+
+### `Notification`
+
+Properties as follows:
+
+- `tenantId`:
+- `id`:
+- `type`:
+- `title`:
+- `body`:
+- `read`:
+- `createdAt`:
+- `updatedAt`:
+- `userTenantId`:
 
 ### `Channel`
 

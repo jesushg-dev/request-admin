@@ -373,19 +373,7 @@ export function useSuspenseCountMenuItem<
 export function useCheckMenuItem<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
-    where?: {
-      createdBy?: string;
-      updatedBy?: string;
-      tenantId?: string;
-      id?: string;
-      title?: string;
-      icon?: string;
-      position?: number;
-      isActive?: boolean;
-      pathname?: string;
-      slug?: string;
-      parentId?: string;
-    };
+    where?: { tenantId?: string; id?: string; title?: string; icon?: string; position?: number; isActive?: boolean; pathname?: string; slug?: string; parentId?: string };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {

@@ -4,8 +4,9 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 generator client {
@@ -89,6 +90,7 @@ model Tenant {
   conversations                  Conversation[]
   messages                       Message[]
   reactions                      Reaction[]
+  notifications                  Notification[]
   userTenants                    UserTenant[]
   invitations                    InvitationTenant[]
   subscriptions                  Subscription[]
@@ -118,7 +120,6 @@ model Tenant {
   incomingWeebhooks              IncomingWebhook[]
   restrictedTokens               RestrictedToken[]
   webhooks                       Webhook[]
-  yearInReviews                  YearInReview[]
   customFields                   CustomField[]
   customFieldResponse            CustomFieldResponse[]
 
@@ -150,7 +151,7 @@ model UserTenant {
   messages                     Message[]
   conversationsAsUserTenantOne Conversation[]         @relation("UserTenantOne")
   conversationsAsUserTenantTwo Conversation[]         @relation("UserTenantTwo")
-  domains                      Domain[]
+  notifications                Notification[]
   documents                    Document[]
   conversations                DocumentConversation[]
   restrictedTokens             RestrictedToken[]
@@ -709,15 +710,13 @@ model RequestChangeLog {
   id        String    @id() @default(uuid())
   requestId String
   request   Request   @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  changedBy String
   fieldName String
   oldValue  String?
   newValue  String?
-  changedAt DateTime
   metadata  String?
 
   @@index([requestId], name: "idx_change_log_request_id")
-  @@index([changedBy], name: "idx_change_log_changed_by")
+  @@index([updatedBy], name: "idx_change_log_changed_by")
 }
 
 model Document {
@@ -886,23 +885,20 @@ model LinkPreset {
 }
 
 model Domain {
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime?   @updatedAt()
-  deletedAt    DateTime?
-  createdBy    String?
-  updatedBy    String?
-  tenantId     String
-  tenant       Tenant      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id           String      @id() @default(uuid())
-  slug         String      @unique()
-  userTenantId String?
-  userTenant   UserTenant? @relation(fields: [userTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  verified     Boolean     @default(false)
-  isDefault    Boolean     @default(false)
-  lastChecked  DateTime    @default(now())
-  links        Link[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt()
+  deletedAt   DateTime?
+  createdBy   String?
+  updatedBy   String?
+  tenantId    String
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id          String    @id() @default(uuid())
+  slug        String    @unique()
+  verified    Boolean   @default(false)
+  isDefault   Boolean   @default(false)
+  lastChecked DateTime  @default(now())
+  links       Link[]
 
-  @@index([userTenantId])
   @@index([tenantId])
 }
 
@@ -1301,25 +1297,6 @@ model Webhook {
   secret    String
   triggers  String
 
-  @@index([tenantId])
-}
-
-model YearInReview {
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime? @updatedAt()
-  deletedAt     DateTime?
-  createdBy     String?
-  updatedBy     String?
-  tenantId      String
-  tenant        Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id            String    @id() @default(uuid())
-  status        String    @default("pending")
-  attempts      Int       @default(0)
-  lastAttempted DateTime?
-  error         String?
-  stats         String
-
-  @@index([status, attempts])
   @@index([tenantId])
 }
 
@@ -1811,11 +1788,6 @@ model FormSubmission {
 }
 
 model FormSubmissionKey {
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime?      @updatedAt()
-  deletedAt    DateTime?
-  createdBy    String?
-  updatedBy    String?
   tenantId     String
   tenant       Tenant         @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id           String         @id() @default(uuid())
@@ -1828,23 +1800,18 @@ model FormSubmissionKey {
 }
 
 model MenuItem {
-  createdAt DateTime   @default(now())
-  updatedAt DateTime?  @updatedAt()
-  deletedAt DateTime?
-  createdBy String?
-  updatedBy String?
-  tenantId  String
-  tenant    Tenant     @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id        String     @id() @default(uuid())
-  title     String
-  icon      String?
-  position  Int        @default(0)
-  isActive  Boolean    @default(false)
-  pathname  String
-  slug      String
-  parentId  String?
-  parent    MenuItem?  @relation("MenuItemToParent", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  children  MenuItem[] @relation("MenuItemToParent")
+  tenantId String
+  tenant   Tenant     @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id       String     @id() @default(uuid())
+  title    String
+  icon     String?
+  position Int        @default(0)
+  isActive Boolean    @default(false)
+  pathname String
+  slug     String
+  parentId String?
+  parent   MenuItem?  @relation("MenuItemToParent", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children MenuItem[] @relation("MenuItemToParent")
 }
 
 /// # Workflow Execution System
@@ -2129,6 +2096,22 @@ model RoleFeature {
   featureId String
   role      Role      @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   feature   Feature   @relation(fields: [featureId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Notification {
+  tenantId     String
+  tenant       Tenant     @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id           String     @id() @default(uuid())
+  type         String
+  title        String
+  body         String
+  read         Boolean    @default(false)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt()
+  userTenantId String
+  userTenant   UserTenant @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([userTenantId])
 }
 
 model Channel {

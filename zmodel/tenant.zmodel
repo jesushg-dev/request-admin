@@ -99,6 +99,7 @@ model Tenant extends Auditable {
   conversations                  Conversation[]
   messages                       Message[]
   reactions                      Reaction[]
+  notifications                Notification[]
 
   // --- User and Tenant Relationships ---
   userTenants                    UserTenant[]
@@ -134,7 +135,6 @@ model Tenant extends Auditable {
   incomingWeebhooks             IncomingWebhook[]
   restrictedTokens              RestrictedToken[]
   webhooks                      Webhook[]
-  yearInReviews                 YearInReview[]
   customFields                  CustomField[]
   customFieldResponse           CustomFieldResponse[]
 
@@ -164,8 +164,7 @@ model UserTenant extends TenantScoped, Auditable {
   messages                     Message[]      // Messages sent by the user
   conversationsAsUserTenantOne Conversation[]   @relation("UserTenantOne") // Conversations where this user is UserTenantOne
   conversationsAsUserTenantTwo Conversation[]   @relation("UserTenantTwo") // Conversations where this user is UserTenantTwo
-  
-  domains          Domain[]
+  notifications                Notification[] // Notifications for the user in the tenant
   documents        Document[]
   conversations    DocumentConversation[]
   restrictedTokens RestrictedToken[]
