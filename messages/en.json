@@ -3437,6 +3437,57 @@
       "refresh": "Refresh Page",
       "home": "Go back to home",
       "report": "Report"
+    },
+    "notification": {
+      "tooltipActive": "Real-time notifications enabled",
+      "tooltipIdle": "No new notifications",
+      "tooltipUnread": "You have {count} unread notification{count, plural, one {} other {s}}",
+      "tooltipDisabled": "Notifications disabled",
+      "tooltipError": "Connection lost. Notifications unavailable",
+      "tooltipDefault": "Notification status",
+      "connectionState": "Connection status: {state}",
+      "notifications": "Notifications",
+      "unreadCount": "{count} unread",
+      "markAllAsRead": "Mark all as read",
+      "markAsRead": "Mark as read",
+      "markAsUnread": "Mark as unread",
+      "delete": "Delete",
+      "body": {
+        "assignment": {
+          "title": "Request assigned",
+          "description": "Request {requestId} has been assigned to you."
+        },
+        "status": {
+          "title": "Status updated",
+          "description": "Request {requestId} status changed to {status}."
+        },
+        "comment": {
+          "title": "New comment",
+          "description": "{commenter} commented: \"{comment}\" on request {requestId}."
+        },
+        "system": {
+          "title": "System notification",
+          "description": "{message}"
+        }
+      },
+      "tab": {
+        "all": "All",
+        "assignment": "Assignments",
+        "status": "Status",
+        "comment": "Comments",
+        "system": "System"
+      },
+      "unknownTitle": "Notification",
+      "unknownDescription": "No details available.",
+      "noNotifications": "No notifications",
+      "viewAll": "View all notifications",
+      "searchPlaceholder": "Search notifications...",
+      "filter": "Filter notifications",
+      "showOnlyUnread": "Show only unread",
+      "showAll": "Show all",
+      "centerTitle": "Notification Center",
+      "centerDescription": "Manage all your system notifications in one place.",
+      "pagination": "Showing {start} - {end} of {total}"
     }
   }
 }

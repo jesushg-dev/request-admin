@@ -1427,12 +1427,16 @@ erDiagram
   String tenantId FK
   String id PK
   String type
-  String title
   String body
-  Boolean read
   DateTime createdAt
   DateTime updatedAt
+}
+"NotificationRecipient" {
+  String tenantId FK
+  String id PK
+  String notificationId FK
   String userTenantId FK
+  DateTime readAt "nullable"
 }
 "Channel" {
   DateTime createdAt
@@ -1679,7 +1683,9 @@ erDiagram
 "RoleFeature" }o--|| "Role" : role
 "RoleFeature" }o--|| "Feature" : feature
 "Notification" }o--|| "Tenant" : tenant
-"Notification" }o--|| "UserTenant" : userTenant
+"NotificationRecipient" }o--|| "Tenant" : tenant
+"NotificationRecipient" }o--|| "Notification" : notification
+"NotificationRecipient" }o--|| "UserTenant" : userTenant
 "Channel" }o--|| "Tenant" : tenant
 "Channel" |o--o| "Request" : request
 "Conversation" }o--|| "Tenant" : tenant
@@ -3273,12 +3279,19 @@ Properties as follows:
 - `tenantId`:
 - `id`:
 - `type`:
-- `title`:
 - `body`:
-- `read`:
 - `createdAt`:
 - `updatedAt`:
+
+### `NotificationRecipient`
+
+Properties as follows:
+
+- `tenantId`:
+- `id`:
+- `notificationId`:
 - `userTenantId`:
+- `readAt`:
 
 ### `Channel`
 

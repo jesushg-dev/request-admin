@@ -3438,6 +3438,57 @@
       "refresh": "Recargar página",
       "home": "Volver al inicio",
       "report": "Reportar"
+    },
+    "notification": {
+      "tooltipActive": "Notificaciones en tiempo real habilitadas",
+      "tooltipIdle": "No hay notificaciones nuevas",
+      "tooltipUnread": "Tienes {count} notificación{count, plural, one {} other {es}} sin leer",
+      "tooltipDisabled": "Notificaciones deshabilitadas",
+      "tooltipError": "Conexión perdida. Notificaciones no disponibles",
+      "tooltipDefault": "Estado de notificaciones",
+      "connectionState": "Estado de la conexión: {state}",
+      "notifications": "Notificaciones",
+      "unreadCount": "{count} no leídas",
+      "markAllAsRead": "Marcar todas como leídas",
+      "markAsRead": "Marcar como leída",
+      "markAsUnread": "Marcar como no leída",
+      "delete": "Eliminar",
+      "body": {
+        "assignment": {
+          "title": "Solicitud asignada",
+          "description": "La solicitud {requestId} ha sido asignada a ti."
+        },
+        "status": {
+          "title": "Estado actualizado",
+          "description": "El estado de la solicitud {requestId} cambió a {status}."
+        },
+        "comment": {
+          "title": "Nuevo comentario",
+          "description": "{commenter} comentó: \"{comment}\" en la solicitud {requestId}."
+        },
+        "system": {
+          "title": "Notificación del sistema",
+          "description": "{message}"
+        }
+      },
+      "tab": {
+        "all": "Todas",
+        "assignment": "Asignaciones",
+        "status": "Estados",
+        "comment": "Comentarios",
+        "system": "Sistema"
+      },
+      "unknownTitle": "Notificación",
+      "unknownDescription": "No hay detalles disponibles.",
+      "noNotifications": "No hay notificaciones",
+      "viewAll": "Ver todas las notificaciones",
+      "searchPlaceholder": "Buscar notificaciones...",
+      "filter": "Filtrar notificaciones",
+      "showOnlyUnread": "Mostrar solo no leídas",
+      "showAll": "Mostrar todas",
+      "centerTitle": "Centro de notificaciones",
+      "centerDescription": "Gestiona todas tus notificaciones del sistema en un solo lugar.",
+      "pagination": "Mostrando {start} - {end} de {total}"
     }
   }
 }

@@ -399,7 +399,7 @@ export function useSuspenseCountNotification<
 }
 
 export function useCheckNotification<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { tenantId?: string; id?: string; type?: string; title?: string; body?: string; read?: boolean; userTenantId?: string } },
+  args: { operation: PolicyCrudKind; where?: { tenantId?: string; id?: string; type?: string; body?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

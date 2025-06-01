@@ -148,6 +148,9 @@ jest.mock('@/server/db-server', () => {
       executionFlowDefinition: {
         findFirst: jest.fn() as jest.Mock,
       },
+      executionModelInstance: {
+        findFirst: jest.fn() as jest.Mock,
+      },
       $transaction: jest.fn() as jest.Mock,
       $: jest.fn() as jest.Mock,
       $queryRawUnsafe: jest.fn() as jest.Mock,
@@ -555,6 +558,16 @@ describe('Request Actions', () => {
       (db.dataroom.findFirst as jest.Mock).mockResolvedValue({
         id: 'dataroom-1',
         name: 'Test Dataroom',
+        createdAt: new Date(),
+      });
+      (db.executionFlowDefinition.findFirst as jest.Mock).mockResolvedValue({
+        id: 'flow-1',
+        name: 'Test Flow',
+        createdAt: new Date(),
+      });
+      (db.executionModelInstance.findFirst as jest.Mock).mockResolvedValue({
+        id: 'instance-1',
+        status: 'active',
         createdAt: new Date(),
       });
 

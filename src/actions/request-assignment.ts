@@ -4,11 +4,14 @@ import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-server';
 import { Prisma } from '@prisma/client';
 
+import { NotificationTypeEnum } from '@/types/notification';
 import { RequestMetadata } from '@/types/prisma/request';
 import { AuthorizationError, ConcurrentModificationError, ValidationError } from '@/lib/error';
 import { normalizeValue } from '@/lib/utils';
 import { AssignRequestFormValues } from '@/components/common/request/detail/assign-request-modal';
 import { ReassignAreaFormValues } from '@/components/common/request/detail/reassign-area-modal';
+
+import { publishNotification } from './notification';
 
 type UUID = string;
 type FieldName = 'status' | 'priority';
@@ -60,12 +63,12 @@ const handleAssignmentUpdate = async ({
         data: {
           tenantId,
           requestId,
-          changedBy: userId,
           fieldName,
           oldValue,
           newValue,
           metadata,
-          changedAt: new Date(),
+          updatedBy: userId,
+          updatedAt: new Date(),
         },
       }),
     ]);
@@ -186,6 +189,17 @@ export const updateCurrentAssignedUsers = async (tenantId: UUID, requestId: UUID
     newAssignmentData,
     oldValue: JSON.stringify(lastAssignment.assignedUsers),
     newValue: JSON.stringify(data.assignees),
+  });
+
+  await publishNotification({
+    tenantId,
+    body: {
+      type: NotificationTypeEnum.ASSIGNMENT,
+      data: {
+        requestId: lastAssignment.requestId,
+      },
+    },
+    recipients: data.assignees.map(({ user }) => ({ userTenantId: String(user.value), readAt: null })),
   });
 
   return { assignedUsers: data.assignees.map(({ user }) => String(user.value)) };

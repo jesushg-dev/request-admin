@@ -464,6 +464,13 @@ const metadata = {
           isArray: true,
           backLink: 'tenant',
         },
+        notificationRecipients: {
+          name: 'notificationRecipients',
+          type: 'NotificationRecipient',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
         userTenants: {
           name: 'userTenants',
           type: 'UserTenant',
@@ -845,7 +852,7 @@ const metadata = {
         },
         notifications: {
           name: 'notifications',
-          type: 'Notification',
+          type: 'NotificationRecipient',
           isDataModel: true,
           isArray: true,
           backLink: 'userTenant',
@@ -9662,6 +9669,10 @@ const metadata = {
           name: 'requestId',
           fields: ['requestId'],
         },
+        tenantId_flowId_requestId: {
+          name: 'tenantId_flowId_requestId',
+          fields: ['tenantId', 'flowId', 'requestId'],
+        },
       },
     },
     executionModelLog: {
@@ -10403,18 +10414,9 @@ const metadata = {
           name: 'type',
           type: 'String',
         },
-        title: {
-          name: 'title',
-          type: 'String',
-        },
         body: {
           name: 'body',
           type: 'String',
-        },
-        read: {
-          name: 'read',
-          type: 'Boolean',
-          attributes: [{ name: '@default', args: [{ value: false }] }],
         },
         createdAt: {
           name: 'createdAt',
@@ -10426,11 +10428,59 @@ const metadata = {
           type: 'DateTime',
           attributes: [{ name: '@updatedAt', args: [] }],
         },
-        userTenantId: {
-          name: 'userTenantId',
+        recipients: {
+          name: 'recipients',
+          type: 'NotificationRecipient',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'notification',
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    notificationRecipient: {
+      name: 'NotificationRecipient',
+      fields: {
+        tenantId: {
+          name: 'tenantId',
           type: 'String',
           isForeignKey: true,
-          relationField: 'userTenant',
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'notificationRecipients',
+          isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [] }],
+        },
+        notification: {
+          name: 'notification',
+          type: 'Notification',
+          isDataModel: true,
+          backLink: 'recipients',
+          isRelationOwner: true,
+          foreignKeyMapping: { id: 'notificationId' },
+        },
+        notificationId: {
+          name: 'notificationId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'notification',
         },
         userTenant: {
           name: 'userTenant',
@@ -10438,15 +10488,28 @@ const metadata = {
           isDataModel: true,
           backLink: 'notifications',
           isRelationOwner: true,
-          onDeleteAction: 'NoAction',
-          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'userTenantId' },
+        },
+        userTenantId: {
+          name: 'userTenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'userTenant',
+        },
+        readAt: {
+          name: 'readAt',
+          type: 'DateTime',
+          isOptional: true,
         },
       },
       uniqueConstraints: {
         id: {
           name: 'id',
           fields: ['id'],
+        },
+        notificationId_userTenantId: {
+          name: 'notificationId_userTenantId',
+          fields: ['notificationId', 'userTenantId'],
         },
       },
     },

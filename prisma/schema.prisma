@@ -91,6 +91,7 @@ model Tenant {
   messages                       Message[]
   reactions                      Reaction[]
   notifications                  Notification[]
+  notificationRecipients         NotificationRecipient[]
   userTenants                    UserTenant[]
   invitations                    InvitationTenant[]
   subscriptions                  Subscription[]
@@ -127,21 +128,21 @@ model Tenant {
 }
 
 model UserTenant {
-  createdAt                    DateTime               @default(now())
-  updatedAt                    DateTime?              @updatedAt()
+  createdAt                    DateTime                @default(now())
+  updatedAt                    DateTime?               @updatedAt()
   deletedAt                    DateTime?
   createdBy                    String?
   updatedBy                    String?
   tenantId                     String
-  tenant                       Tenant                 @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                           String                 @id()
-  isActive                     Boolean                @default(true)
-  isTermAccepted               Boolean                @default(false)
-  joinedAt                     DateTime               @default(now())
-  isTwoFactorRequired          Boolean                @default(false)
+  tenant                       Tenant                  @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                           String                  @id()
+  isActive                     Boolean                 @default(true)
+  isTermAccepted               Boolean                 @default(false)
+  joinedAt                     DateTime                @default(now())
+  isTwoFactorRequired          Boolean                 @default(false)
   role                         String
   userId                       String
-  user                         User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                         User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
   personId                     String?
   person                       Person?
   userAreas                    UserTenantArea[]
@@ -149,9 +150,9 @@ model UserTenant {
   assignedUsers                AssignedUser[]
   reactions                    Reaction[]
   messages                     Message[]
-  conversationsAsUserTenantOne Conversation[]         @relation("UserTenantOne")
-  conversationsAsUserTenantTwo Conversation[]         @relation("UserTenantTwo")
-  notifications                Notification[]
+  conversationsAsUserTenantOne Conversation[]          @relation("UserTenantOne")
+  conversationsAsUserTenantTwo Conversation[]          @relation("UserTenantTwo")
+  notifications                NotificationRecipient[]
   documents                    Document[]
   conversations                DocumentConversation[]
   restrictedTokens             RestrictedToken[]
@@ -1946,6 +1947,7 @@ model ExecutionModelInstance {
   logs      ExecutionModelLog[]
   history   ExecutionModelHistory[]
 
+  @@unique([tenantId, flowId, requestId])
   @@index([status])
   @@index([tenantId, flowId, requestId])
 }
@@ -2099,18 +2101,27 @@ model RoleFeature {
 }
 
 model Notification {
-  tenantId     String
-  tenant       Tenant     @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id           String     @id() @default(uuid())
-  type         String
-  title        String
-  body         String
-  read         Boolean    @default(false)
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt()
-  userTenantId String
-  userTenant   UserTenant @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tenantId   String
+  tenant     Tenant                  @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id         String                  @id() @default(uuid())
+  type       String
+  body       String
+  createdAt  DateTime                @default(now())
+  updatedAt  DateTime                @updatedAt()
+  recipients NotificationRecipient[]
+}
 
+model NotificationRecipient {
+  tenantId       String
+  tenant         Tenant       @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id             String       @id() @default(uuid())
+  notification   Notification @relation(fields: [notificationId], references: [id])
+  notificationId String
+  userTenant     UserTenant   @relation(fields: [userTenantId], references: [id])
+  userTenantId   String
+  readAt         DateTime?
+
+  @@unique([notificationId, userTenantId])
   @@index([userTenantId])
 }
 

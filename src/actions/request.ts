@@ -5,6 +5,7 @@ import { PermissionActions } from '@/constants/permissions';
 import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-server';
 
+import { NotificationTypeEnum } from '@/types/notification';
 import { ExecutionFlowDefaultArgs } from '@/types/prisma/execution-flow';
 import { RequestDefaultArgs, RequestDetailsType, RequestType } from '@/types/prisma/request';
 import { UserAreaWithRoleType, UserTenantWithAreaDefaultArgs } from '@/types/prisma/user';
@@ -12,6 +13,7 @@ import { transformExecutionFlowToZodSchema } from '@/lib/execution-flow';
 import { normalizeValue } from '@/lib/utils';
 import { RequestFormStepperType } from '@/components/common/request/request-form-stepper';
 
+import { publishNotification } from './notification';
 import { getInitialStatusFromDatabase } from './workflow';
 
 class UserNotFoundErr extends Error {}
@@ -22,6 +24,12 @@ type AssignmentWithRelations = {
   area: { id: string; name: string };
   requestCategory: { id: string; name: string };
   assignmentCategory: { id: string; name: string };
+  assignedUsers: {
+    userTenant: {
+      id: string;
+    };
+    role: string;
+  }[];
   isActive: boolean;
 };
 
@@ -39,13 +47,33 @@ export const upsertRequest = async (tenantId: string, data: RequestFormStepperTy
     where: { id: data.id, tenantId },
   });
 
-  return existingRequest ? await handleUpdate(existingRequest, tenantId, data, session.user.id) : await handleCreate(tenantId, data, session.user.id);
+  //check if flow exists
+  const flow = await db.executionFlowDefinition.findFirst({
+    where: { requestCategoryId: data.requestCategory.slice(-1)[0].value, tenantId, isActive: true },
+    select: { id: true },
+  });
+
+  const result = existingRequest ? await handleUpdate(existingRequest, tenantId, data, session.user.id, flow?.id) : await handleCreate(tenantId, data, session.user.id, flow?.id);
+  const recipients: string[] = result.requestAssignments.flatMap((assignment: AssignmentWithRelations) => assignment.assignedUsers.map((user) => user.userTenant.id));
+
+  await publishNotification({
+    tenantId,
+    body: {
+      type: NotificationTypeEnum.ASSIGNMENT,
+      data: {
+        requestId: data.id,
+      },
+    },
+    recipients: recipients.map((userTenantId) => ({ userTenantId, readAt: null })),
+  });
+
+  return result;
 };
 
 // ========================
 // CREATE REQUEST
 // ========================
-const handleCreate = async (tenantId: string, data: RequestFormStepperType, userId: string) => {
+const handleCreate = async (tenantId: string, data: RequestFormStepperType, userId: string, flowId: string | null = null) => {
   const [userAreas, requirementCompliances, assignmentType] = await Promise.all([
     getAreaWithSupervisors(tenantId, data.areaId.value),
     db.requestCategoryRequirement.findMany({
@@ -103,15 +131,35 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
             id: newDataroom.id,
           },
         },
-        executionModelInstance: {
-          create: {
-            flow: {
-              connect: {
-                requestCategoryId: data.requestCategory.slice(-1)[0].value,
+        executionModelInstance: flowId
+          ? {
+              create: {
+                tenantId,
+                flowId: flowId,
+                status: 'idle',
+              },
+            }
+          : undefined,
+      },
+      include: {
+        requestAssignments: {
+          where: { isActive: true },
+          include: {
+            status: true,
+            priority: true,
+            area: true,
+            requestCategory: true,
+            assignmentCategory: true,
+            assignedUsers: {
+              include: {
+                userTenant: {
+                  select: {
+                    role: true,
+                    id: true,
+                  },
+                },
               },
             },
-            tenant: { connect: { id: tenantId } },
-            status: 'idle',
           },
         },
       },
@@ -122,11 +170,11 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
       data: {
         tenantId,
         requestId: newRequest.id,
-        changedBy: userId,
+        updatedBy: userId,
+        updatedAt: new Date(),
         fieldName: 'request_created',
         oldValue: null,
         newValue: null,
-        changedAt: new Date(),
       },
     });
 
@@ -138,7 +186,7 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
 // ========================
 // UPDATE REQUEST
 // ========================
-const handleUpdate = async (existingRequest: RequestType, tenantId: string, data: RequestFormStepperType, userId: string) => {
+const handleUpdate = async (existingRequest: RequestType, tenantId: string, data: RequestFormStepperType, userId: string, flowId: string | null = null) => {
   const [area, requirementCompliances, assignmentType] = await Promise.all([
     getAreaWithSupervisors(tenantId, data.areaId.value),
     db.requestCategoryRequirement.findMany({
@@ -207,6 +255,22 @@ const handleUpdate = async (existingRequest: RequestType, tenantId: string, data
             },
           })),
         },
+        executionModelInstance: flowId
+          ? {
+              upsert: {
+                where: {},
+                create: {
+                  tenantId,
+                  flowId: flowId,
+                  status: 'idle',
+                },
+                update: {
+                  flowId: flowId,
+                  status: 'idle',
+                },
+              },
+            }
+          : undefined,
       },
       include: {
         requestAssignments: {
@@ -217,6 +281,16 @@ const handleUpdate = async (existingRequest: RequestType, tenantId: string, data
             area: true,
             requestCategory: true,
             assignmentCategory: true,
+            assignedUsers: {
+              include: {
+                userTenant: {
+                  select: {
+                    id: true,
+                    role: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
@@ -230,11 +304,11 @@ const handleUpdate = async (existingRequest: RequestType, tenantId: string, data
         data: {
           tenantId,
           requestId: updatedRequest.id,
-          changedBy: userId,
+          updatedBy: userId,
+          updatedAt: new Date(),
           fieldName: change.fieldName,
           oldValue: change.oldValue?.toString().substring(0, 500), // Limit to 500 characters
           newValue: change.newValue?.toString().substring(0, 500),
-          changedAt: new Date(),
         },
       });
     }
@@ -559,7 +633,7 @@ export const getRequestDetailsByRequest = async (tenantId: string, request: Requ
       name: requester?.person ? `${requester.person.firstName} ${requester.person.lastName}` : 'N/A',
       email: requester?.user ? requester.user.email : 'N/A',
     },
-    assignedUsers: assignedUsers.map((user) => ({
+    assignedUsers: (assignedUsers ?? []).map((user) => ({
       user: {
         value: user.userTenant.id,
         label: user.userTenant.person ? `${user.userTenant.person.firstName} ${user.userTenant.person.lastName} (${user.userTenant.user.email})` : user.userTenant.user.email,

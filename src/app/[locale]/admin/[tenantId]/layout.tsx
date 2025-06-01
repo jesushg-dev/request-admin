@@ -7,9 +7,11 @@ import { getTranslations } from 'next-intl/server';
 
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { ClipboardProvider } from '@/components/hoc/clipboard-context';
+import { TenantProvider } from '@/components/hoc/tenant-provider';
 import { AppSidebar } from '@/components/layouts/admin/app-sidebar';
 import { DndSubmissionProvider } from '@/components/layouts/admin/dnd-submission-provider';
 import { Navbar } from '@/components/layouts/admin/nav-bar';
+import NotificationProvider from '@/components/notification/notification-context';
 
 export async function generateMetadata(props: { params: { locale: Locale } }): Promise<Metadata> {
   const params = await props.params;
@@ -53,24 +55,37 @@ export default async function RootLayout({
     where: { userTenants: { some: { userId: { equals: session.user.id } } } },
   });
 
+  const userTenantId = await db.userTenant.findFirst({
+    select: { id: true },
+    where: { userId: session.user.id, tenantId },
+  });
+  if (!userTenantId) {
+    console.warn(`User with ID ${session.user.id} does not have access to tenant ${tenantId}`);
+    return redirect({ href: '/', locale: 'en' });
+  }
+
   const menuItems = await db.menuItem.findMany({
     where: { tenantId },
   });
 
   return (
-    <SidebarProvider>
-      <DndSubmissionProvider tenantId={tenantId} data={menuItems}>
-        <ClipboardProvider>
+    <TenantProvider tenantId={tenantId} userTenantId={userTenantId.id}>
+      <SidebarProvider>
+        <DndSubmissionProvider tenantId={tenantId} data={menuItems}>
           <AppSidebar tenants={tenants} user={session.user} tenantId={tenantId} />
           <main className="flex h-screen w-full flex-1 flex-col overflow-hidden">
-            <Navbar tenants={tenants} />
-            <div className="flex flex-1 overflow-hidden">
-              {children}
-              {modal}
-            </div>
+            <ClipboardProvider>
+              <NotificationProvider tenantId={tenantId} userTenantId={userTenantId.id}>
+                <Navbar tenants={tenants} />
+                <div className="flex flex-1 overflow-hidden">
+                  {children}
+                  {modal}
+                </div>
+              </NotificationProvider>
+            </ClipboardProvider>
           </main>
-        </ClipboardProvider>
-      </DndSubmissionProvider>
-    </SidebarProvider>
+        </DndSubmissionProvider>
+      </SidebarProvider>
+    </TenantProvider>
   );
 }
