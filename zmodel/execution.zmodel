@@ -137,8 +137,7 @@ model ExecutionModelHistory extends TenantScoped, Auditable {
   previousFlow   ExecutionFlowDefinition? @relation("PreviousFlowHistory", fields: [previousFlowId], references: [id])
   newFlowId      String
   newFlow        ExecutionFlowDefinition @relation("NewFlowHistory", fields: [newFlowId], references: [id])
-  changedAt      DateTime                   @default(now())
   reason         String
 
-  @@index([changedAt])
+  @@index([updatedAt])
 }

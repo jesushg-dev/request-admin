@@ -20,18 +20,16 @@ const RoomChatLayout = ({ children }: RoomChatLayoutProps) => {
     <>
       {children}
       <Sheet open={showPanel} onOpenChange={onClose}>
+        <SheetHeader>
+          <SheetTitle className="sr-only">Panel</SheetTitle>
+        </SheetHeader>
         <SheetContent side="right" className="w-full max-w-lg p-0">
-          <SheetHeader>
-            <SheetTitle className="sr-only">Panel</SheetTitle>
-          </SheetHeader>
           {parentMessageId ? (
             <Thread tenantId={tenantId} currentUserTenantId={userTenantId} messageId={parentMessageId} onClose={onClose} />
           ) : profileUserId ? (
             <Profile userTenantId={profileUserId} tenantId={tenantId} onClose={onClose} />
           ) : (
-            <>
-              <Spinner />
-            </>
+            <Spinner />
           )}
         </SheetContent>
       </Sheet>

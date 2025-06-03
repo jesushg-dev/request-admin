@@ -69,11 +69,11 @@ export const sendMagicLink = async (email: string, token: string, url: string) =
   });
 };
 
-export const sendNotificationEmail = async (email: string[], subject: string, message: string) => {
+export const sendNotificationEmail = async (email: string[] | string, subject: string, message: string) => {
   await resend.emails.send({
     from: `support@${emailDomain}`,
     to: email,
     subject,
-    html: `<p>${message}</p>`,
+    html: message,
   });
 };

@@ -1,6 +1,5 @@
-'use client';
-
 import { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -34,6 +33,8 @@ type ReactionsProps = {
 };
 
 export const Reactions = ({ currentUserTenantId, reactions, onChange }: ReactionsProps) => {
+  const t = useTranslations('component.chat.reactions');
+
   const processedReactions = useMemo(() => {
     return reactions.reduce<Record<string, ProcessedReaction>>((acc, reaction) => {
       const { value, userTenant } = reaction;
@@ -44,12 +45,12 @@ export const Reactions = ({ currentUserTenantId, reactions, onChange }: Reaction
 
       acc[value].count += 1;
       acc[value].memberIds.push(userTenant.id);
-      const name = userTenant.person ? `${userTenant.person.firstName} ${userTenant.person.lastName}` : 'Unknown User';
+      const name = userTenant.person ? `${userTenant.person.firstName} ${userTenant.person.lastName}` : t('unknownUser');
       acc[value].users.push({ id: userTenant.id, name });
 
       return acc;
     }, {});
-  }, [reactions]);
+  }, [reactions, t]);
 
   const reactionsArray = useMemo(() => Object.values(processedReactions), [processedReactions]);
 
@@ -71,7 +72,7 @@ export const Reactions = ({ currentUserTenantId, reactions, onChange }: Reaction
         <Tabs defaultValue="all">
           <TabsList className="w-full">
             <TabsTrigger value="all" className="flex-1">
-              All <span className="ml-1 text-xs">{totalReactions}</span>
+              {t('all')} <span className="ml-1 text-xs">{totalReactions}</span>
             </TabsTrigger>
             {reactionsArray.map((reaction) => (
               <TabsTrigger key={reaction.value} value={reaction.value} className="flex-1">
@@ -91,7 +92,7 @@ export const Reactions = ({ currentUserTenantId, reactions, onChange }: Reaction
                   reaction={reaction.value}
                   user={{
                     id: reaction.userTenant.id,
-                    name: reaction.userTenant.person ? `${reaction.userTenant.person.firstName} ${reaction.userTenant.person.lastName}` : 'Unknown User',
+                    name: reaction.userTenant.person ? `${reaction.userTenant.person.firstName} ${reaction.userTenant.person.lastName}` : t('unknownUser'),
                   }}
                 />
               ))}
@@ -125,6 +126,8 @@ const UserReactionItem = ({
   onChange: (reactionId: string) => void;
   user: { id: string; name: string };
 }) => {
+  const t = useTranslations('component.chat.reactions');
+
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -139,8 +142,8 @@ const UserReactionItem = ({
           <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
         </Avatar>
         <div className="flex flex-col items-start">
-          <span className="text-sm font-medium">{user.id === currentUserTenantId ? 'You' : user.name}</span>
-          {user.id === currentUserTenantId && <span className="text-xs text-muted-foreground">Tap to remove</span>}
+          <span className="text-sm font-medium">{user.id === currentUserTenantId ? t('you') : user.name}</span>
+          {user.id === currentUserTenantId && <span className="text-xs text-muted-foreground">{t('tapToRemove')}</span>}
         </div>
       </div>
       <span>{reaction}</span>

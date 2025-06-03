@@ -3489,6 +3489,129 @@
       "centerTitle": "Centro de notificaciones",
       "centerDescription": "Gestiona todas tus notificaciones del sistema en un solo lugar.",
       "pagination": "Mostrando {start} - {end} de {total}"
+    },
+    "chat": {
+      "message": {
+        "delete": {
+          "title": "Eliminar mensaje",
+          "confirm": "¿Estás seguro de que deseas eliminar este mensaje? Esta acción no se puede deshacer.",
+          "button": "Eliminar",
+          "cancel": "Cancelar",
+          "success": "Mensaje eliminado",
+          "error": "No se pudo eliminar el mensaje"
+        },
+        "update": {
+          "success": "Mensaje actualizado",
+          "error": "No se pudo actualizar el mensaje"
+        },
+        "toolbar": {
+          "edit": "Editar mensaje",
+          "delete": "Eliminar mensaje",
+          "reply": "Responder al mensaje",
+          "thread": "Ver hilo",
+          "addReaction": "Agregar reacción",
+          "replyThread": "Responder en el hilo",
+          "editMessage": "Editar mensaje",
+          "deleteMessage": "Eliminar mensaje"
+        },
+        "time": {
+          "today": "Hoy",
+          "yesterday": "Ayer",
+          "at": "a las"
+        }
+      },
+      "chatInput": {
+        "error": {
+          "empty": "El mensaje no puede estar vacío",
+          "tooLong": "El mensaje es demasiado largo",
+          "failedToSend": "No se pudo enviar el mensaje"
+        },
+        "placeholder": {
+          "paragraph": "Escribe un mensaje...",
+          "imageCaption": "Agrega un pie de foto..."
+        }
+      },
+      "thread": {
+        "title": "Hilo",
+        "error": {
+          "notFound": "Hilo no encontrado",
+          "loading": "Error al cargar el hilo"
+        },
+        "placeholder": "Escribe una respuesta...",
+        "input": {
+          "paragraph": "Responder al hilo...",
+          "imageCaption": "Presiona Enter para enviar el mensaje"
+        }
+      },
+      "messageList": {
+        "loading": {
+          "older": "Cargar mensajes anteriores",
+          "newer": "Cargar mensajes más recientes"
+        },
+        "loadNewer": "Cargar más recientes",
+        "loadingNewer": "Cargando más recientes...",
+        "noNewer": "No hay mensajes más recientes",
+        "loadOlder": "Cargar anteriores",
+        "loadingOlder": "Cargando anteriores...",
+        "noOlder": "No hay mensajes anteriores",
+        "errorLoading": "Error de carga de mensajes: {message}",
+        "noMessages": "No hay mensajes todavía"
+      },
+      "channelHero": {
+        "createdOn": "Este canal fue creado el {date}. Este es el comienzo del canal <bold>{name}</bold>.",
+        "channel": "canal"
+      },
+      "conversationHero": {
+        "description": "Esta conversación es solo entre tú y",
+        "defaultName": "Miembro"
+      },
+      "reactions": {
+        "all": "Todos",
+        "you": "Tú",
+        "tapToRemove": "Toca para quitar",
+        "unknownUser": "Usuario desconocido"
+      },
+      "updatedAt": {
+        "edited": "(editado)"
+      },
+      "userItem": {
+        "defaultLabel": "Miembro"
+      },
+      "editor": {
+        "addComment": "Agregar un comentario...",
+        "addEmoji": "Agregar emoji",
+        "addImage": "Agregar imagen",
+        "removeImage": "Eliminar imagen",
+        "submit": "Enviar contenido",
+        "save": "Guardar",
+        "cancel": "Cancelar",
+        "uploadImage": "Subir imagen",
+        "messageBody": "Cuerpo del mensaje",
+        "alt": "Vista previa del contenido subido",
+        "send": "Enviar",
+        "sendInApp": "Enviar en la app",
+        "sendInAppAndEmail": "Enviar en la app y por correo",
+        "sendInAppAndWhatsApp": "Enviar en la app y por WhatsApp",
+        "sendAll": "Enviar en la app, correo y WhatsApp",
+        "sendEmail": "Enviar correo",
+        "sendWhatsApp": "Enviar WhatsApp"
+      },
+      "profile": {
+        "title": "Perfil",
+        "notFound": "Perfil no encontrado",
+        "contactInfo": "Información de contacto",
+        "emailAddress": "Correo electrónico"
+      },
+      "threadBar": {
+        "close": "Cerrar hilo",
+        "lastReply": "Última respuesta",
+        "viewThreads": "Ver hilos",
+        "threads": "{count, plural, one {hilo} other {hilos}}"
+      },
+      "thumbnail": {
+        "remove": "Eliminar imagen",
+        "alt": "Imagen del mensaje"
+      }
     }
   }
 }

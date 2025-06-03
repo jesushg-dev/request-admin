@@ -3,14 +3,19 @@
 import { cookies } from 'next/headers';
 import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-client';
+import { Locale } from 'next-intl';
 
-import { NewNotificationType } from '@/types/notification';
-import { NotificationDbType, NotificationDefaultArgs } from '@/types/prisma/notification';
+import { InAppNotification, NotificationBody, NotificationTypeWithoutAll } from '@/types/notification';
+import { NotificationDefaultArgs } from '@/types/prisma/notification';
 import { UserNotFoundErr } from '@/lib/error';
+import { sendNotificationEmail } from '@/lib/mail';
+import { getNotificationTemplate } from '@/lib/notification-templates';
+import { sendSMS, sendWhatsApp } from '@/lib/twilio';
 
 type NotificationRecipient = {
   tenantId: string;
-} & NotificationDbType['recipients'][number];
+  userTenantId: string;
+};
 
 function getBaseUrl() {
   if (process.env.BETTER_AUTH_URL) return process.env.BETTER_AUTH_URL;
@@ -26,7 +31,7 @@ async function getCookies() {
  * Creates a notification and assigns recipients.
  * If no recipients are provided, the notification is sent to all active users in the tenant.
  */
-export const createNotification = async (notification: NewNotificationType) => {
+export const createNotification = async (notification: InAppNotification) => {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
@@ -77,7 +82,7 @@ export const createNotification = async (notification: NewNotificationType) => {
   }
 };
 
-export const publishNotification = async (notification: NewNotificationType) => {
+export const sendInAppNotification = async (notification: InAppNotification) => {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
@@ -103,6 +108,95 @@ export const publishNotification = async (notification: NewNotificationType) => 
   } catch (error) {
     console.error('Error publishing notification:', error);
     throw new Error('Failed to publish notification');
+  }
+};
+
+/**
+ * Sends an SMS notification
+ */
+export const sendSMSNotification = async (params: { tenantId: string; locale: Locale; type: NotificationTypeWithoutAll; data: NotificationBody['data']; recipients: { phoneNumber: string }[] }) => {
+  const session = await currentSession();
+  if (!session) throw new UserNotFoundErr('User not found');
+
+  const results = await Promise.allSettled(
+    params.recipients.map(async (recipient) => {
+      const message = getNotificationTemplate(params.type, params.data, params.locale);
+
+      try {
+        return await sendSMS(recipient.phoneNumber, message);
+      } catch (error) {
+        console.error(`Failed to send SMS to ${recipient.phoneNumber}:`, error);
+        throw error;
+      }
+    })
+  );
+
+  return results.map((result, index) => ({
+    recipient: params.recipients[index],
+    success: result.status === 'fulfilled',
+    error: result.status === 'rejected' ? result.reason : undefined,
+  }));
+};
+
+/**
+ * Sends a WhatsApp notification
+ */
+export const sendWhatsAppNotification = async (params: {
+  tenantId: string;
+  type: NotificationTypeWithoutAll;
+  data: NotificationBody['data'];
+  recipients: { phoneNumber: string; locale: Locale }[];
+}) => {
+  const session = await currentSession();
+  if (!session) throw new UserNotFoundErr('User not found');
+
+  const results = await Promise.allSettled(
+    params.recipients.map(async (recipient) => {
+      const message = getNotificationTemplate(params.type, params.data, recipient.locale);
+
+      try {
+        return await sendWhatsApp(recipient.phoneNumber, message);
+      } catch (error) {
+        console.error(`Failed to send WhatsApp message to ${recipient.phoneNumber}:`, error);
+        throw error;
+      }
+    })
+  );
+
+  return results.map((result, index) => ({
+    recipient: params.recipients[index],
+    success: result.status === 'fulfilled',
+    error: result.status === 'rejected' ? result.reason : undefined,
+  }));
+};
+
+/**
+ * Sends an email notification
+ */
+export const sendEmailNotification = async (params: {
+  tenantId: string;
+  locale: Locale;
+  type: NotificationTypeWithoutAll;
+  data: NotificationBody['data'];
+  recipients: { email: string }[];
+  subject?: string;
+}) => {
+  const session = await currentSession();
+  if (!session) throw new UserNotFoundErr('User not found');
+
+  try {
+    const message = getNotificationTemplate(params.type, params.data, params.locale);
+    const emails = params.recipients.map((recipient) => recipient.email);
+
+    await sendNotificationEmail(emails, params.subject || `Notification: ${params.type}`, message);
+
+    return params.recipients.map((recipient) => ({
+      recipient,
+      success: true,
+    }));
+  } catch (error) {
+    console.error('Error sending email notifications:', error);
+    throw new Error('Failed to send email notifications');
   }
 };
 

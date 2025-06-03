@@ -1,12 +1,11 @@
 'use client';
 
 import { useTransition, type FC } from 'react';
-import { useRouter } from 'next/navigation';
 import { useUpsertLink } from '@/services/api/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { ArrowLeft, Bell, Calendar, Copy, Download, FileText, Link, LinkIcon, MessageSquare } from 'lucide-react';
+import { Bell, Calendar, Download, FileText, LinkIcon, MessageSquare } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -15,7 +14,6 @@ import * as z from 'zod';
 import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -121,8 +119,8 @@ interface LinkFormProps {
   initialValues?: LinkFormValues;
 }
 
-export const LinkForm: FC<LinkFormProps> = ({ tenantId, initialValues, linkType, documentId, dataroomId, callbackUrl }) => {
-  const router = useRouter();
+export const LinkForm: FC<LinkFormProps> = ({ tenantId, initialValues, linkType, documentId, dataroomId }) => {
+  //const router = useRouter();
   const t = useTranslations('admin.link.form');
 
   const form = useForm({
@@ -132,9 +130,9 @@ export const LinkForm: FC<LinkFormProps> = ({ tenantId, initialValues, linkType,
   });
 
   const [isPending, startTransition] = useTransition();
-  const { mutateAsync: upsertLink, error, data } = useUpsertLink();
+  const { mutateAsync: upsertLink, error /*, data*/ } = useUpsertLink();
 
-  const handleCopyLink = (url: string) => {
+  /*const handleCopyLink = (url: string) => {
     navigator.clipboard
       .writeText(url)
       .then(() => toast.success(t('copy.success')))
@@ -143,7 +141,7 @@ export const LinkForm: FC<LinkFormProps> = ({ tenantId, initialValues, linkType,
 
   const handleGoBack = () => {
     router.push(callbackUrl);
-  };
+  };*/
 
   const onSubmit = (data: LinkFormValues) => {
     startTransition(() => {
@@ -176,7 +174,7 @@ export const LinkForm: FC<LinkFormProps> = ({ tenantId, initialValues, linkType,
     });
   };
 
-  if (data?.url) {
+  /*if (data?.url) {
     return (
       <Card className="w-full max-w-md mx-auto">
         <CardHeader>
@@ -203,7 +201,7 @@ export const LinkForm: FC<LinkFormProps> = ({ tenantId, initialValues, linkType,
         </CardFooter>
       </Card>
     );
-  }
+  }*/
 
   return (
     <Form {...form}>

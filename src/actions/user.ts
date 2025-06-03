@@ -175,10 +175,15 @@ export const getCurrentUserTenant = async (tenantId: string) => {
 
   const user = await db.userTenant.findUniqueOrThrow({
     where: { userId_tenantId: { userId: session.user.id, tenantId } },
-    select: { id: true },
+    select: {
+      id: true,
+      user: { select: { id: true, email: true, username: true } },
+      person: { select: { firstName: true, lastName: true } },
+    },
   });
 
   return {
     userTenantId: user.id,
+    name: user.person ? `${user.person.firstName} ${user.person.lastName}` : `@${user.user.username} (${user.user.email})`,
   };
 };

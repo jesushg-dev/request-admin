@@ -1,12 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useTransition } from 'react';
 import dynamic from 'next/dynamic';
-import { useCreateMessage } from '@/services/api/hooks';
-import { Prisma } from '@prisma/client';
+import { createMessage } from '@/actions/message';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
-const Editor = dynamic(() => import('@/components/chat/editor'), { ssr: false });
+import { Skeleton } from '../ui/skeleton';
+
+const Editor = dynamic(() => import('@/components/chat/editor'), {
+  ssr: false,
+  loading: () => <Skeleton className="h-16 w-full" />,
+});
 
 interface ChatInputProps {
   tenantId: string;
@@ -16,53 +21,39 @@ interface ChatInputProps {
     imageCaption?: string;
   };
   currentUserTenantId: string;
-  relatedType: 'conversation' | 'channel' | 'parentMessage';
+  variant: 'conversation' | 'channel' | 'thread';
+  enableEmail?: boolean;
+  enableWhatsApp?: boolean;
 }
 
-export const ChatInput = ({ placeholder, relatedId, relatedType, tenantId, currentUserTenantId }: ChatInputProps) => {
-  const [editorKey, setEditorKey] = useState(0);
-  const [isPending, setIsPending] = useState(false);
+export const ChatInput = ({ placeholder, relatedId, variant, tenantId, currentUserTenantId, enableEmail = false, enableWhatsApp = false }: ChatInputProps) => {
+  const t = useTranslations('component.chat.chatInput');
+  const [isPending, startTransition] = useTransition();
 
-  const { mutateAsync: createMessage } = useCreateMessage();
-
-  const handleSubmit = async ({ body, image }: { body: string; image: File | null }) => {
-    try {
-      setIsPending(true);
-
-      const values: Prisma.MessageCreateInput = {
-        body,
-        tenant: { connect: { id: tenantId } },
-        userTenant: { connect: { id: currentUserTenantId } },
-        ...getRelatedConnection(relatedType, relatedId),
-      };
-
-      if (image) {
-        // TODO: Upload image to storage and get the storageId here
-        // values.image = storageId;
+  const handleSubmit = async (value: { body: string; image: File | null; emailEnabled?: boolean; whatsAppEnabled?: boolean }) => {
+    startTransition(async () => {
+      try {
+        await createMessage({
+          body: value.body,
+          tenantId,
+          userTenantId: currentUserTenantId,
+          variant,
+          relatedId,
+          imageFile: value.image ?? undefined,
+          emailEnabled: value.emailEnabled,
+          whatsAppEnabled: value.whatsAppEnabled,
+        });
+      } catch (error) {
+        console.error('Failed to send message:', error);
+        toast.error(t('error.failedToSend'));
       }
-
-      await createMessage({ data: values });
-
-      setEditorKey((prevKey) => prevKey + 1);
-    } catch {
-      toast.error('Failed to send message');
-    } finally {
-      setIsPending(false);
-    }
+    });
   };
 
-  return <Editor key={editorKey} variant="create" placeholder={placeholder} onSubmit={handleSubmit} disabled={isPending} />;
-};
+  const defaultPlaceholder = {
+    paragraph: t('placeholder.paragraph'),
+    imageCaption: t('placeholder.imageCaption'),
+  };
 
-const getRelatedConnection = (relatedType: 'conversation' | 'channel' | 'parentMessage', relatedId: string) => {
-  switch (relatedType) {
-    case 'conversation':
-      return { conversation: { connect: { id: relatedId } } };
-    case 'channel':
-      return { channel: { connect: { id: relatedId } } };
-    case 'parentMessage':
-      return { parentMessage: { connect: { id: relatedId } } };
-    default:
-      throw new Error('Invalid related type');
-  }
+  return <Editor variant="create" placeholder={placeholder || defaultPlaceholder} onSubmit={handleSubmit} disabled={isPending} emailEnabled={enableEmail} whatsAppEnabled={enableWhatsApp} />;
 };

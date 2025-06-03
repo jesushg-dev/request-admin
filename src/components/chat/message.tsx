@@ -1,24 +1,22 @@
+import { useTransition, type FC } from 'react';
 import dynamic from 'next/dynamic';
-import { useDeleteMessage, useDeleteReaction, useUpdateMessage, useUpsertReaction } from '@/services/api/hooks';
-import { format, isToday, isYesterday } from 'date-fns';
+import { deleteReaction, removeMessage, updateMessage, upsertReaction } from '@/actions/message';
 import { EmojiClickData } from 'emoji-picker-react';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 import { MessageType } from '@/types/prisma/message';
 import useMessage from '@/lib/message';
 import { cn } from '@/lib/utils';
+import { useFormatTime } from '@/hooks/use-format-time';
 import { usePanel } from '@/hooks/use-panel';
 
 import { Hint } from '../hint';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Reactions } from './message-reactions';
-import { ThreadBar } from './thread-bar';
-import { Thumbnail } from './thumbnail';
+import { MessageContent } from './message-content';
 import { Toolbar } from './toolbar';
-import { UpdatedAtText } from './updated-at-text';
 
 const Editor = dynamic(() => import('@/components/chat/editor'), { ssr: false });
-const Renderer = dynamic(() => import('@/components/chat/renderer'), { ssr: false });
 
 interface MessageProps {
   id: string;
@@ -42,11 +40,7 @@ interface MessageProps {
   threadTimestamp?: number;
 }
 
-const formatFullTime = (date: Date) => {
-  return `${isToday(date) ? 'Today' : isYesterday(date) ? 'Yesterday' : format(date, 'MMM d, yyyy')} at ${format(date, 'h:mm:ss a')}`;
-};
-
-export const Message = ({
+export const Message: FC<MessageProps> = ({
   id,
   tenantId,
   body,
@@ -66,163 +60,146 @@ export const Message = ({
   threadCount,
   reactions,
   threadName,
-}: MessageProps) => {
+}) => {
+  const t = useTranslations('component.chat.message');
   const message = useMessage();
+  const { now, format } = useFormatTime();
   const { onOpenMessage, onClose, parentMessageId, onOpenProfile } = usePanel();
 
   const avatarFallback = authorName.charAt(0).toUpperCase();
 
-  const { mutateAsync: updateMessage, isPending: isUpdatingMessage } = useUpdateMessage();
-  const { mutateAsync: removeMessage, isPending: isRemovingMessage } = useDeleteMessage();
-  const { mutateAsync: upsertReaction, isPending: isUpsertingReaction } = useUpsertReaction();
-  const { mutateAsync: deleteReaction, isPending: isDeletingReaction } = useDeleteReaction();
-
-  const isPending = isUpdatingMessage || isRemovingMessage || isUpsertingReaction || isDeletingReaction;
+  const [isPending, startTransition] = useTransition();
+  const [isRemovingMessage, startRemovingTransition] = useTransition();
 
   const handleReaction = (value: EmojiClickData) => {
-    try {
-      upsertReaction({
-        create: { value: value.emoji, messageId: id, tenantId, userTenantId: currentUserTenantId },
-        update: { value: value.emoji },
-        where: { messageId_userTenantId: { messageId: id, userTenantId: currentUserTenantId } },
-      });
-    } catch (error) {
-      console.error(error);
-    }
+    startTransition(() => {
+      try {
+        upsertReaction({
+          messageId: id,
+          userTenantId: currentUserTenantId,
+          tenantId,
+          value: value.emoji,
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    });
   };
 
   const handleRemoveReaction = (reactionId: string) => {
-    try {
-      deleteReaction({ where: { id: reactionId } });
-    } catch (error) {
-      console.error(error);
-    }
+    startTransition(() => {
+      try {
+        deleteReaction({ id: reactionId });
+      } catch (error) {
+        console.error(error);
+      }
+    });
   };
 
   const handleRemove = async () => {
-    const ok = await message.confirm('Are you sure you want to delete this message? This action cannot be undone.', {
-      title: 'Delete Message',
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
+    const ok = await message.confirm(t('delete.confirm'), {
+      title: t('delete.title'),
+      confirmText: t('delete.button'),
+      cancelText: t('delete.cancel'),
     });
 
     if (!ok) return;
-
-    try {
-      await removeMessage({ where: { id } });
-      toast.success('Message deleted');
-
-      if (parentMessageId === id) onClose();
-    } catch (error) {
-      console.error('Error deleting message:', error);
-      toast.error('Failed to delete message');
-    }
+    startRemovingTransition(async () => {
+      try {
+        await removeMessage({ id });
+        toast.success(t('delete.success'));
+        if (parentMessageId === id) onClose();
+      } catch (error) {
+        console.error('Error deleting message:', error);
+        toast.error(t('delete.error'));
+      }
+    });
   };
 
   const handleUpdate = async ({ body }: { body: string }) => {
-    try {
-      await updateMessage({
-        data: { body },
-        where: { id },
-      });
-      toast.success('Message updated');
-      setEditingId(null);
-    } catch (error) {
-      console.error('Error updating message:', error);
-      toast.error('Failed to update message');
-    }
+    startTransition(async () => {
+      try {
+        await updateMessage({ id, body });
+        toast.success(t('update.success'));
+        setEditingId(null);
+      } catch (error) {
+        console.error('Error updating message:', error);
+        toast.error(t('update.error'));
+      }
+    });
   };
 
-  if (isCompact) {
-    return (
-      <div
-        className={cn(
-          'hover:border-muted hover:border rounded-sm group relative flex flex-col gap-2 p-1.5 px-5',
-          isEditing && 'bg-secondary hover:bg-secondary',
-          isRemovingMessage && 'origin-bottom scale-y-0 transform bg-rose-500/50 transition-all duration-200'
-        )}>
-        <div className="flex items-start gap-2">
-          <Hint label={createdAt ? formatFullTime(createdAt) : 'N/A'}>
-            <button className="text-muted-foreground w-[40px] text-center text-xs leading-[22px] opacity-0 group-hover:opacity-100 hover:underline">
-              {createdAt ? format(createdAt, 'hh:mm') : 'N/A'}
-            </button>
-          </Hint>
-          {isEditing ? (
-            <div className="size-full">
-              <Editor onSubmit={handleUpdate} disabled={isPending} defaultValue={body} onCancel={() => setEditingId(null)} variant="update" />
-            </div>
-          ) : (
-            <div className="flex w-full flex-col overflow-hidden items-start">
-              <Renderer value={body} />
-              <Thumbnail url={image} />
-              <UpdatedAtText createdAt={createdAt} updatedAt={updatedAt} />
-              <Reactions reactions={reactions} onChange={handleRemoveReaction} currentUserTenantId={currentUserTenantId} />
-              <ThreadBar count={threadCount} image={threadImage} timestamp={threadTimestamp} name={threadName} onClick={() => onOpenMessage(id)} />
-            </div>
-          )}
-        </div>
-        {!isEditing && (
-          <Toolbar
-            isPending={isPending}
-            isAuthor={currentUserTenantId === userTenantId}
-            handelEdit={() => setEditingId(id)}
-            handleThread={() => onOpenMessage(id)}
-            handleDelete={handleRemove}
-            handleReaction={handleReaction}
-            hideThreadButton={hideThreadButton}
-          />
-        )}
-      </div>
-    );
-  }
+  const containerClasses = cn(
+    'w-full hover:border-muted border border-transparent rounded-sm group relative flex flex-col gap-2 p-1.5 px-5',
+    isEditing && 'bg-secondary hover:bg-secondary',
+    isRemovingMessage && 'origin-bottom scale-y-0 transform bg-rose-500/50 transition-all duration-200'
+  );
 
-  // ELSE
+  const timestamp = createdAt
+    ? format.dateTime(createdAt, isCompact ? { hour: 'numeric', minute: 'numeric' } : { hour: 'numeric', minute: 'numeric', month: 'short', day: 'numeric', year: 'numeric' })
+    : 'N/A';
+
   return (
-    <div
-      className={cn(
-        'hover:border-muted hover:border group relative flex flex-col gap-2 p-1.5 px-5',
-        isEditing && 'bg-secondary hover:bg-secondary',
-        isRemovingMessage && 'origin-bottom scale-y-0 transform bg-rose-500/50 transition-all duration-200'
-      )}>
-      <div className="flex items-center gap-2">
-        <button onClick={() => onOpenProfile(userTenantId)}>
-          <Avatar>
-            <AvatarImage src={authorImage || ''} alt={authorName} />
-            <AvatarFallback>{avatarFallback}</AvatarFallback>
-          </Avatar>
-        </button>
-        {isEditing ? (
-          <div className="size-full">
-            <Editor onSubmit={handleUpdate} disabled={isPending} defaultValue={body} onCancel={() => setEditingId(null)} variant="update" />
-          </div>
+    <div className={containerClasses}>
+      <div className="flex items-start gap-2">
+        {isCompact ? (
+          <Hint label={createdAt ? format.relativeTime(createdAt, now) : 'N/A'}>
+            <span className="text-muted-foreground w-[40px] text-center text-xs leading-[22px] opacity-0 group-hover:opacity-100 hover:underline">{timestamp}</span>
+          </Hint>
         ) : (
-          //  IS NOT EDITING
-          <div className="flex w-full flex-col overflow-hidden items-start">
+          <button type="button" onClick={() => onOpenProfile(userTenantId)}>
+            <Avatar>
+              <AvatarImage src={authorImage || ''} alt={authorName} />
+              <AvatarFallback>{avatarFallback}</AvatarFallback>
+            </Avatar>
+          </button>
+        )}
+
+        <div className="flex w-full flex-col overflow-hidden items-start">
+          {!isCompact && (
             <div className="text-sm">
-              <button onClick={() => onOpenProfile(userTenantId)} className="text-primary font-semibold hover:underline">
+              <button type="button" onClick={() => onOpenProfile(userTenantId)} className="text-primary font-semibold hover:underline">
                 {authorName}
               </button>
               <span>&nbsp;&nbsp;</span>
-              <Hint label={createdAt ? formatFullTime(createdAt) : 'N/A'}>
-                <button className="text-muted-foreground text-xs hover:underline">{createdAt ? format(createdAt, 'h:mm a') : 'N/A'}</button>
+              <Hint label={createdAt ? format.relativeTime(createdAt, now) : 'N/A'}>
+                <button type="button" className="text-muted-foreground text-xs hover:underline">
+                  {timestamp}
+                </button>
               </Hint>
             </div>
-            <Renderer value={body} />
-            <Thumbnail url={image} />
-            <UpdatedAtText createdAt={createdAt} updatedAt={updatedAt} />
-            <Reactions currentUserTenantId={currentUserTenantId} reactions={reactions} onChange={handleRemoveReaction} />
-            <ThreadBar count={threadCount} image={threadImage} name={threadName} timestamp={threadTimestamp} onClick={() => onOpenMessage(id)} />
-          </div>
-        )}
+          )}
+
+          {isEditing ? (
+            <Editor onSubmit={handleUpdate} disabled={isPending} defaultValue={body} onCancel={() => setEditingId(null)} variant="update" />
+          ) : (
+            <MessageContent
+              id={id}
+              body={body}
+              image={image}
+              createdAt={createdAt}
+              updatedAt={updatedAt}
+              reactions={reactions}
+              threadCount={threadCount}
+              threadImage={threadImage}
+              threadName={threadName}
+              threadTimestamp={threadTimestamp}
+              currentUserTenantId={currentUserTenantId}
+              onOpenMessage={onOpenMessage}
+              handleRemoveReaction={handleRemoveReaction}
+            />
+          )}
+        </div>
       </div>
+
       {!isEditing && (
         <Toolbar
           isPending={isPending}
-          isAuthor={currentUserTenantId === userTenantId}
-          handelEdit={() => setEditingId(id)}
-          handleThread={() => onOpenMessage(id)}
           handleDelete={handleRemove}
           handleReaction={handleReaction}
+          handelEdit={() => setEditingId(id)}
+          handleThread={() => onOpenMessage(id)}
+          isAuthor={currentUserTenantId === userTenantId}
           hideThreadButton={hideThreadButton}
         />
       )}

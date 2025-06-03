@@ -1,5 +1,3 @@
-'use client';
-
 import { useMemo, useRef, useState, useTransition } from 'react';
 import { updateCurrentAssignedUsers } from '@/actions/request-assignment';
 import { useFindManyUserTenantArea } from '@/services/api/hooks';

@@ -70,7 +70,7 @@ describe('Request Assignment Actions', () => {
         data: expect.objectContaining({
           tenantId: mockTenantId,
           requestId: mockRequestId,
-          changedBy: mockSession.user.id,
+          updatedBy: mockSession.user.id,
           fieldName: 'status',
           oldValue: mockLastAssignment.statusId,
           newValue: mockStatusId,

@@ -28,9 +28,3 @@ generator client {
   provider = "prisma-client-js"
   output   = "../node_modules/.prisma/client"
 }
-
-generator markdown {
-  provider = "prisma-markdown"
-  output   = "../docs/ERD.md"
-  title    = "Request Admin ERD"
-}

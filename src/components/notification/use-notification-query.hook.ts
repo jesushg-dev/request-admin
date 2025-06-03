@@ -139,7 +139,7 @@ export function useNotificationsQuery(tenantId: string, userTenantId: string): U
   useChannel(`notifications:${tenantId}`, (message) => {
     if (!isNotificationsEnabled) return;
     const data = message.data as NewNotificationType;
-    const isRecipient = data.recipients.length === 0 || data.recipients.some((r) => r.userTenantId === userTenantId);
+    const isRecipient = Array.isArray(data.recipients) && (data.recipients.length === 0 || data.recipients.some((r) => r.userTenantId === userTenantId));
 
     if (data.tenantId === tenantId && isRecipient) {
       queryClient.invalidateQueries({ queryKey: notificationsQueryKey, exact: true });

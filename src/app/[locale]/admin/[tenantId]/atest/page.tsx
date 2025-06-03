@@ -7,7 +7,6 @@ import IntegrationPanel from '@/components/process-flow/integrations/integration
 import MetricsDashboard from '@/components/process-flow/metrics/metrics-dashboard';
 
 const AuthenticationClient = dynamic(() => import('./_components/authentication-client'), { ssr: false });
-const PresenceClient = dynamic(() => import('./_components/presence-client'), { ssr: false });
 
 export default function ATestExperiments() {
   return (
@@ -20,7 +19,6 @@ export default function ATestExperiments() {
           </p>
           <TabsList className="">
             <TabsTrigger value="auth">Auth</TabsTrigger>
-            <TabsTrigger value="presence">Presence</TabsTrigger>
             <TabsTrigger value="metrics">Metrics</TabsTrigger>
             <TabsTrigger value="integrations">Integrations</TabsTrigger>
           </TabsList>
@@ -28,10 +26,6 @@ export default function ATestExperiments() {
 
         <TabsContent value="auth" className="flex-1 overflow-y-auto">
           <AuthenticationClient />
-        </TabsContent>
-
-        <TabsContent value="presence" className="flex-1 overflow-y-auto">
-          <PresenceClient />
         </TabsContent>
 
         <TabsContent value="metrics" className="flex-1 overflow-y-auto">

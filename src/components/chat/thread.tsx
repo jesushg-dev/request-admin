@@ -1,24 +1,28 @@
 import { useState } from 'react';
-import { useFindFirstMessage, useInfiniteFindManyMessage } from '@/services/api/hooks';
+import { useFindFirstMessage } from '@/services/api/hooks';
+import { ChatClientProvider, ChatRoomProvider } from '@ably/chat/react';
 import { AlertTriangle, XIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { MessageDefaultArgs } from '@/types/prisma/message';
-import useTenantId from '@/hooks/use-tenant-id';
+import { getAblyChatClient } from '@/lib/ablyClient';
 import { Button } from '@/components/ui/button';
 import { Message } from '@/components/chat/message';
 import { MessageList } from '@/components/chat/message-list';
 import { Spinner } from '@/components/spinner';
 
 import { ChatInput } from './chat-input';
+import { TypingIndicator } from './typing-indicator';
 
 interface ThreadProps {
+  tenantId: string;
   messageId: string;
   currentUserTenantId: string;
   onClose: () => void;
 }
 
-export const Thread = ({ messageId, currentUserTenantId, onClose }: ThreadProps) => {
-  const tenantId = useTenantId();
+export const Thread = ({ tenantId, messageId, currentUserTenantId, onClose }: ThreadProps) => {
+  const t = useTranslations('component.chat.thread');
 
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -27,16 +31,13 @@ export const Thread = ({ messageId, currentUserTenantId, onClose }: ThreadProps)
     where: { id: messageId },
   });
 
-  const { data, hasNextPage, hasPreviousPage, fetchNextPage, fetchPreviousPage, isFetchingNextPage, isFetchingPreviousPage, isFetching } = useInfiniteFindManyMessage({
-    ...MessageDefaultArgs,
-    where: { parentMessageId: messageId },
-  });
+  const chatClient = getAblyChatClient(currentUserTenantId);
 
   if (loadingThread) {
     return (
       <div className="flex h-full flex-col">
         <div className="flex h-[49px] items-center justify-between border-b border-gray-500/80 px-4">
-          <p className="text-lg font-bold">Thread</p>
+          <p className="text-lg font-bold">{t('title')}</p>
           <Button onClick={onClose} size="sm" variant="ghost">
             <XIcon className="stoke-[1.5] size-5" />
           </Button>
@@ -50,14 +51,14 @@ export const Thread = ({ messageId, currentUserTenantId, onClose }: ThreadProps)
     return (
       <div className="flex h-full flex-col">
         <div className="flex h-[49px] items-center justify-between border-b border-gray-500/80 px-4">
-          <p className="text-lg font-bold">Thread</p>
+          <p className="text-lg font-bold">{t('title')}</p>
           <Button onClick={onClose} size="sm" variant="ghost">
             <XIcon className="stoke-[1.5] size-5" />
           </Button>
         </div>
         <div className="flex h-full flex-col items-center justify-center gap-y-2">
           <AlertTriangle className="size-5 text-white" />
-          <p className="text-muted-foreground text-sm">Thread not found</p>
+          <p className="text-muted-foreground text-sm">{t('error.notFound')}</p>
         </div>
       </div>
     );
@@ -66,7 +67,7 @@ export const Thread = ({ messageId, currentUserTenantId, onClose }: ThreadProps)
   return (
     <div className="flex h-full flex-col">
       <div className="flex h-[49px] items-center justify-between border-b border-gray-500/80 px-4">
-        <p className="text-lg font-bold">Thread</p>
+        <p className="text-lg font-bold">{t('title')}</p>
         <Button onClick={onClose} size="sm" variant="ghost">
           <XIcon className="stoke-[1.5] size-5" />
         </Button>
@@ -90,31 +91,16 @@ export const Thread = ({ messageId, currentUserTenantId, onClose }: ThreadProps)
           createdAt={thread.createdAt}
         />
       </div>
-      {/* Thread Messages */}
-      <MessageList
-        data={data}
-        tenantId={tenantId}
-        hasNextPage={hasNextPage}
-        hasPreviousPage={hasPreviousPage}
-        fetchNextPage={fetchNextPage}
-        fetchPreviousPage={fetchPreviousPage}
-        isFetchingNextPage={isFetchingNextPage}
-        isFetchingPreviousPage={isFetchingPreviousPage}
-        isFetching={isFetching}
-        currentUserTenantId={currentUserTenantId}
-        variant="thread"
-      />
-      {/* Chat Input */}
-      <ChatInput
-        tenantId={tenantId}
-        relatedId={messageId}
-        relatedType="parentMessage"
-        currentUserTenantId={currentUserTenantId}
-        placeholder={{
-          paragraph: 'Reply to thread...',
-          imageCaption: 'Press Enter to send message',
-        }}
-      />
+
+      <ChatClientProvider client={chatClient}>
+        <ChatRoomProvider id={messageId} release={true} attach={true}>
+          {/* Thread Messages */}
+          <MessageList tenantId={tenantId} where={{ parentMessageId: messageId }} currentUserTenantId={currentUserTenantId} variant="thread" />
+          <TypingIndicator currentClientId={currentUserTenantId} />
+          {/* Chat Input */}
+          <ChatInput tenantId={tenantId} relatedId={messageId} variant="thread" currentUserTenantId={currentUserTenantId} />
+        </ChatRoomProvider>
+      </ChatClientProvider>
     </div>
   );
 };

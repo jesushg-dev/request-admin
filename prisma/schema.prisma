@@ -14,12 +14,6 @@ generator client {
   output   = "../node_modules/.prisma/client"
 }
 
-generator markdown {
-  provider = "prisma-markdown"
-  output   = "../docs/ERD.md"
-  title    = "Request Admin ERD"
-}
-
 model Tenant {
   createdAt                      DateTime                            @default(now())
   updatedAt                      DateTime?                           @updatedAt()
@@ -1994,10 +1988,9 @@ model ExecutionModelHistory {
   previousFlow   ExecutionFlowDefinition? @relation("PreviousFlowHistory", fields: [previousFlowId], references: [id])
   newFlowId      String
   newFlow        ExecutionFlowDefinition  @relation("NewFlowHistory", fields: [newFlowId], references: [id])
-  changedAt      DateTime                 @default(now())
   reason         String
 
-  @@index([changedAt])
+  @@index([updatedAt])
 }
 
 model UserTenantRole {

@@ -11,7 +11,7 @@ import { normalizeValue } from '@/lib/utils';
 import { AssignRequestFormValues } from '@/components/common/request/detail/assign-request-modal';
 import { ReassignAreaFormValues } from '@/components/common/request/detail/reassign-area-modal';
 
-import { publishNotification } from './notification';
+import { sendInAppNotification } from './notification';
 
 type UUID = string;
 type FieldName = 'status' | 'priority';
@@ -191,7 +191,7 @@ export const updateCurrentAssignedUsers = async (tenantId: UUID, requestId: UUID
     newValue: JSON.stringify(data.assignees),
   });
 
-  await publishNotification({
+  await sendInAppNotification({
     tenantId,
     body: {
       type: NotificationTypeEnum.ASSIGNMENT,
@@ -199,7 +199,7 @@ export const updateCurrentAssignedUsers = async (tenantId: UUID, requestId: UUID
         requestId: lastAssignment.requestId,
       },
     },
-    recipients: data.assignees.map(({ user }) => ({ userTenantId: String(user.value), readAt: null })),
+    recipients: data.assignees.map(({ user }) => ({ userTenantId: String(user.value) })),
   });
 
   return { assignedUsers: data.assignees.map(({ user }) => String(user.value)) };

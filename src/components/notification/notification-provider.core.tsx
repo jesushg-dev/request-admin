@@ -11,7 +11,7 @@ type NotificationState = 'active' | 'idle' | 'unread' | 'disabled' | 'error';
 interface NotificationContextType {
   connectionState: string;
   notificationState: NotificationState;
-  publishNotification: (notification: NewNotificationType) => Promise<void>;
+  sendInAppNotification: (notification: NewNotificationType) => Promise<void>;
   isNotificationsEnabled: boolean;
   setIsNotificationsEnabled: (enabled: boolean) => void;
 }
@@ -31,7 +31,7 @@ export function NotificationContent({ children, tenantId }: { children: ReactNod
 
   useConnectionStateListener(useCallback((stateChange) => setConnectionState(stateChange.current), []));
 
-  const publishNotification = useCallback(
+  const sendInAppNotification = useCallback(
     async (notification: NewNotificationType) => {
       try {
         await createNotification(notification);
@@ -49,10 +49,10 @@ export function NotificationContent({ children, tenantId }: { children: ReactNod
       connectionState,
       setIsNotificationsEnabled,
       notificationState,
-      publishNotification,
+      sendInAppNotification,
       isNotificationsEnabled,
     }),
-    [connectionState, notificationState, publishNotification, isNotificationsEnabled]
+    [connectionState, notificationState, sendInAppNotification, isNotificationsEnabled]
   );
 
   return <NotificationContext.Provider value={contextValue}>{children}</NotificationContext.Provider>;

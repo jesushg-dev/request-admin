@@ -1,5 +1,6 @@
 import { formatDistanceToNow } from 'date-fns';
 import { ChevronRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
@@ -12,6 +13,7 @@ interface ThreadBarProps {
 }
 
 export const ThreadBar = ({ count, image, onClick, timestamp, name = 'Member' }: ThreadBarProps) => {
+  const t = useTranslations('component.chat.threadBar');
   if (!count || !timestamp) return null;
   const avatarFallback = name.charAt(0).toUpperCase();
   return (
@@ -22,14 +24,12 @@ export const ThreadBar = ({ count, image, onClick, timestamp, name = 'Member' }:
           <AvatarFallback>{avatarFallback}</AvatarFallback>
         </Avatar>
         <span className="truncate text-xs font-bold text-sky-700 hover:underline">
-          {count} {count > 1 ? 'replies' : 'reply'}
+          {count} {t('threads', { count })}
         </span>
         <span className="text-muted-foreground block truncate text-xs group-hover/thread-bar:hidden">
-          <i>Last reply</i> {formatDistanceToNow(timestamp, { addSuffix: true })}
+          <i>{t('lastReply')}</i> {formatDistanceToNow(timestamp, { addSuffix: true })}
         </span>
-        <span className="text-muted-foreground hidden truncate text-xs group-hover/thread-bar:block">
-          View <i>threads</i>
-        </span>
+        <span className="text-muted-foreground hidden truncate text-xs group-hover/thread-bar:block">{t('viewThreads')}</span>
       </div>
       <ChevronRight className="text-muted-foreground ml-auto size-4 shrink-0 opacity-0 transition group-hover/thread-bar:opacity-100" />
     </button>

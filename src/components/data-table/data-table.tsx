@@ -65,16 +65,16 @@ export function DataTable<TData, TSubData>({ table, subComponent, emptyState, is
   const t = useTranslations('table.emptyState');
   const { listType } = useDataTable();
 
-  if (isLoading) {
-    return <DataTableSkeleton columnCount={10} cellWidths={['10rem', '40rem', '12rem', '12rem', '8rem', '8rem']} shrinkZero />;
-  }
-
   if (listType === 'grid') {
     return (
       <>
         {children}
         <div className="flex flex-1 overflow-auto">
-          {table.getRowModel().rows?.length ? (
+          {isLoading ? (
+            <div className="w-full flex justify-center items-center py-8">
+              <DataTableSkeleton columnCount={10} cellWidths={['10rem', '40rem', '12rem', '12rem', '8rem', '8rem']} shrinkZero />
+            </div>
+          ) : table.getRowModel().rows?.length ? (
             <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,max-content))] gap-4 w-fit">
               {table.getRowModel().rows.map((row) => (
                 <div key={row.id} className={`min-w-[280px] flex-1 flex ${table.getRowModel().rows.length === 1 ? 'items-start' : 'items-stretch'}`}>
@@ -117,7 +117,9 @@ export function DataTable<TData, TSubData>({ table, subComponent, emptyState, is
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              <DataTableSkeleton columnCount={10} cellWidths={['10rem', '40rem', '12rem', '12rem', '8rem', '8rem']} shrinkZero />
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <Fragment key={row.id}>
                   <TableRow data-state={row.getIsSelected() ? 'selected' : undefined}>
@@ -127,7 +129,6 @@ export function DataTable<TData, TSubData>({ table, subComponent, emptyState, is
                       </TableCell>
                     ))}
                   </TableRow>
-
                   {subComponent?.render && subComponent.render({ row, isExpanded: row.getIsExpanded(), columns: subComponent.columns })}
                 </Fragment>
               ))
@@ -144,7 +145,6 @@ export function DataTable<TData, TSubData>({ table, subComponent, emptyState, is
     </>
   );
 }
-
 export function useDataTable() {
   const context = useContext(DataTableStatsContext);
   if (!context) {

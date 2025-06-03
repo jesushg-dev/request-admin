@@ -169,6 +169,16 @@
   }
 }
 
+@keyframes typing-dot-bounce {
+  0%,
+  40% {
+    transform: translateY(0);
+  }
+  20% {
+    transform: translateY(-0.25rem);
+  }
+}
+
 @keyframes appear-zoom {
   0% {
     opacity: 0;
@@ -231,6 +241,10 @@
 
   .animate-appear-zoom {
     animation: appear-zoom 0.8s ease-out forwards;
+  }
+
+  .animate-typing-dot-bounce {
+    animation: typing-dot-bounce 1.25s ease-in-out infinite;
   }
 
   .caret-blink {

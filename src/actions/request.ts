@@ -13,7 +13,7 @@ import { transformExecutionFlowToZodSchema } from '@/lib/execution-flow';
 import { normalizeValue } from '@/lib/utils';
 import { RequestFormStepperType } from '@/components/common/request/request-form-stepper';
 
-import { publishNotification } from './notification';
+import { sendInAppNotification, sendSMSNotification } from './notification';
 import { getInitialStatusFromDatabase } from './workflow';
 
 class UserNotFoundErr extends Error {}
@@ -27,6 +27,8 @@ type AssignmentWithRelations = {
   assignedUsers: {
     userTenant: {
       id: string;
+      person: { phone: string | null } | null;
+      user: { email: string | null };
     };
     role: string;
   }[];
@@ -55,8 +57,12 @@ export const upsertRequest = async (tenantId: string, data: RequestFormStepperTy
 
   const result = existingRequest ? await handleUpdate(existingRequest, tenantId, data, session.user.id, flow?.id) : await handleCreate(tenantId, data, session.user.id, flow?.id);
   const recipients: string[] = result.requestAssignments.flatMap((assignment: AssignmentWithRelations) => assignment.assignedUsers.map((user) => user.userTenant.id));
+  const phones = result.requestAssignments.flatMap((assignment: AssignmentWithRelations) =>
+    assignment.assignedUsers.map((user) => user.userTenant.person?.phone).filter((phone): phone is string => typeof phone === 'string' && phone.trim() !== '')
+  );
+  const phoneNumbers = Array.from(new Set(phones));
 
-  await publishNotification({
+  await sendInAppNotification({
     tenantId,
     body: {
       type: NotificationTypeEnum.ASSIGNMENT,
@@ -64,7 +70,17 @@ export const upsertRequest = async (tenantId: string, data: RequestFormStepperTy
         requestId: data.id,
       },
     },
-    recipients: recipients.map((userTenantId) => ({ userTenantId, readAt: null })),
+    recipients: recipients.map((userTenantId) => ({ userTenantId })),
+  });
+
+  await sendSMSNotification({
+    tenantId,
+    locale: 'es',
+    type: NotificationTypeEnum.ASSIGNMENT,
+    data: {
+      requestId: data.id,
+    },
+    recipients: phoneNumbers.map((phone) => ({ phoneNumber: phone })),
   });
 
   return result;
@@ -154,8 +170,18 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
               include: {
                 userTenant: {
                   select: {
-                    role: true,
                     id: true,
+                    role: true,
+                    person: {
+                      select: {
+                        phone: true,
+                      },
+                    },
+                    user: {
+                      select: {
+                        email: true,
+                      },
+                    },
                   },
                 },
               },
@@ -287,6 +313,16 @@ const handleUpdate = async (existingRequest: RequestType, tenantId: string, data
                   select: {
                     id: true,
                     role: true,
+                    person: {
+                      select: {
+                        phone: true,
+                      },
+                    },
+                    user: {
+                      select: {
+                        email: true,
+                      },
+                    },
                   },
                 },
               },

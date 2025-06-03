@@ -1,86 +1,98 @@
-'use client';
-
-import { useEffect, useMemo, useState } from 'react';
-import { InfiniteData } from '@tanstack/react-query';
-import { differenceInMinutes, format } from 'date-fns';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useInfiniteFindManyMessage } from '@/services/api/hooks';
+import { Message as AblyMessage, MessageEvent, MessageEvents } from '@ably/chat';
+import { useMessages as useAblyMessages } from '@ably/chat/react';
+import type { Prisma } from '@prisma/client';
+import { format } from 'date-fns';
+import { useTranslations } from 'next-intl';
 import { useInView } from 'react-intersection-observer';
 
-import { MessageType } from '@/types/prisma/message';
-import { formatDateLabel, TIME_THRESHOLD } from '@/lib/utils';
+import { MessageDefaultArgs, MessageType } from '@/types/prisma/message';
 
 import { Spinner } from '../spinner';
 import { Button } from '../ui/button';
 import { ChannelHero } from './channel-hero';
 import { ConversationHero } from './conversation-hero';
-import { Message } from './message';
+import { MessageGroup } from './message-group';
 
 interface MessageListProps {
-  data: InfiniteData<Array<MessageType>> | undefined;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  fetchNextPage: () => void;
-  fetchPreviousPage: () => void;
-  isFetchingNextPage: boolean;
-  isFetchingPreviousPage: boolean;
-  isFetching: boolean;
+  where: Prisma.MessageWhereInput;
+  orderBy?: Prisma.MessageOrderByWithRelationInput | Prisma.MessageOrderByWithRelationInput[];
   currentUserTenantId: string;
-  variant?: 'channel' | 'thread' | 'conversation';
+  variant: 'channel' | 'thread' | 'conversation';
   channelCreatedAt?: Date;
   channelName?: string;
-  userImage?: string;
-  userName?: string;
+  userImage?: string | null;
+  userName?: string | null;
   userId?: string;
   tenantId: string;
 }
 
-export const MessageList = ({
-  data,
-  hasNextPage,
-  hasPreviousPage,
-  fetchNextPage,
-  fetchPreviousPage,
-  isFetchingNextPage,
-  isFetchingPreviousPage,
-  isFetching,
-  currentUserTenantId,
-  variant = 'channel',
-  channelCreatedAt,
-  channelName,
-  userImage,
-  userName,
-  userId,
-  tenantId,
-}: MessageListProps) => {
+export const MessageList = ({ where, orderBy, currentUserTenantId, variant, channelCreatedAt, channelName, userImage, userName, userId, tenantId }: MessageListProps) => {
+  const t = useTranslations('component.chat.messageList');
+
+  const [realTimeMessages, setRealTimeMessages] = useState<MessageType[]>([]);
+
+  /*const { send: sendAblyMessage, update: updateAblyMessage } = */ useAblyMessages({
+    listener: (event: MessageEvent) => {
+      if (event.type === MessageEvents.Created) {
+        const newMessage = convertAblyMessageToOurType(event.message);
+        setRealTimeMessages((prev) => [...prev, newMessage]);
+      }
+      if (event.type === MessageEvents.Updated) {
+        const updatedMessage = convertAblyMessageToOurType(event.message);
+        setRealTimeMessages((prev) => prev.map((msg) => (msg.id === updatedMessage.id ? updatedMessage : msg)));
+      }
+      if (event.type === MessageEvents.Deleted) {
+        const deletedMessage = convertAblyMessageToOurType(event.message);
+        setRealTimeMessages((prev) => prev.filter((msg) => msg.id !== deletedMessage.id));
+      }
+    },
+  });
+
+  const { data, hasNextPage, hasPreviousPage, fetchNextPage, fetchPreviousPage, isFetchingNextPage, isFetchingPreviousPage, isFetching, error } = useInfiniteFindManyMessage({
+    ...MessageDefaultArgs,
+    where,
+    orderBy: orderBy ? orderBy : { createdAt: 'desc' },
+  });
+
   const [editingId, setEditingId] = useState<string | null>(null);
   const { ref, inView } = useInView();
 
-  // Flatten messages from InfiniteData
-  const allMessages = useMemo(() => data?.pages.flat() || [], [data]);
+  const historicalMessages = useMemo(() => data?.pages.flat() || [], [data]);
+  const allMessages = useMemo(() => {
+    return [...historicalMessages, ...realTimeMessages];
+  }, [historicalMessages, realTimeMessages]);
 
-  // Group messages by date
   const groupedMessages = useMemo(() => {
-    return allMessages.reduce(
-      (groups, message) => {
-        const date = new Date(message.createdAt);
-        const dateKey = format(date, 'yyyy-MM-dd');
+    const groups: Record<string, MessageType[]> = {};
 
-        if (!groups[dateKey]) groups[dateKey] = [];
-        groups[dateKey].unshift(message);
+    for (const message of allMessages) {
+      const date = new Date(message.createdAt);
+      const dateKey = format(date, 'yyyy-MM-dd');
 
-        return groups;
-      },
-      {} as Record<string, MessageType[]>
-    );
+      if (!groups[dateKey]) groups[dateKey] = [];
+      groups[dateKey].unshift(message);
+    }
+
+    return groups;
   }, [allMessages]);
 
-  // Automatically load more when in view
   useEffect(() => {
-    if (inView && hasNextPage) {
-      fetchNextPage();
-    }
-  }, [inView, hasNextPage, fetchNextPage]);
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      const timer = setTimeout(() => {
+        fetchNextPage();
+      }, 300);
 
-  if (!data) {
+      return () => clearTimeout(timer);
+    }
+  }, [inView, hasNextPage, fetchNextPage, isFetchingNextPage]);
+
+  const handleSetEditingId = useCallback((id: string | null) => {
+    setEditingId(id);
+  }, []);
+
+  if (isFetching && !data) {
     return (
       <div className="flex h-full items-center justify-center">
         <Spinner />
@@ -88,61 +100,87 @@ export const MessageList = ({
     );
   }
 
-  return (
-    <div className="messages-scrollbar flex w-full flex-1 flex-col-reverse overflow-y-auto pb-4">
-      {/* Load Newer Messages */}
-      <Button ref={ref} onClick={fetchNextPage} disabled={!hasNextPage || isFetchingNextPage} size="sm" variant="ghost">
-        {isFetchingNextPage ? 'Loading Newer...' : hasNextPage ? 'Load Newer' : 'No Newer Messages'}
-      </Button>
-      {Object.entries(groupedMessages).map(([dateKey, messages]) => (
-        <div key={dateKey}>
-          <div className="relative my-2 text-center">
-            <hr className="absolute top-1/2 right-0 left-0 border-t " />
-            <span className="relative inline-block rounded-full border px-4 z-20 py-1 text-xs shadow-xs bg-accent">{formatDateLabel(dateKey)}</span>
-          </div>
-          {messages.map((message, index) => {
-            const prevMsg = messages[index - 1];
-            const isSameAuthor = prevMsg && prevMsg.userTenant.id === message.userTenant.id && differenceInMinutes(message.createdAt, prevMsg.createdAt) < TIME_THRESHOLD;
+  if (error) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <p className="text-red-500">{t('errorLoading', { message: error.message })}</p>
+      </div>
+    );
+  }
 
-            return (
-              <Message
-                key={message.id}
-                id={message.id}
-                tenantId={tenantId}
-                userTenantId={message.userTenant.id}
-                authorImage={message.userTenant.person?.image}
-                currentUserTenantId={currentUserTenantId}
-                authorName={message.userTenant.person ? `${message.userTenant.person.firstName} ${message.userTenant.person.lastName}` : message.userTenant.user.email}
-                reactions={message.reactions}
-                body={message.body}
-                image={message.imageId}
-                isEditing={editingId === message.id}
-                setEditingId={setEditingId}
-                updatedAt={message.updatedAt}
-                createdAt={message.createdAt}
-                //threadCount={message.threadCount}
-                //threadImage={message.threadImage}
-                //threadName={message.threadName}
-                //threadTimestamp={message.threadTimestamp}
-                hideThreadButton={variant === 'thread'}
-                isCompact={isSameAuthor}
-              />
-            );
-          })}
-        </div>
-      ))}
+  return (
+    <div className=" flex w-full flex-1 flex-col-reverse overflow-y-auto pb-4">
+      <Button ref={ref} onClick={() => fetchNextPage()} disabled={!hasNextPage || isFetchingNextPage} size="sm" variant="ghost">
+        {isFetchingNextPage ? t('loadingNewer') : hasNextPage ? t('loadNewer') : t('noNewer')}
+      </Button>
+
+      {!data || allMessages.length === 0 ? (
+        <p className="text-gray-500 mb-4 w-full text-center">{t('noMessages')}</p>
+      ) : (
+        <>
+          {Object.entries(groupedMessages).map(([dateKey, messages]) => (
+            <MessageGroup
+              key={dateKey}
+              dateKey={dateKey}
+              messages={messages}
+              tenantId={tenantId}
+              currentUserTenantId={currentUserTenantId}
+              editingId={editingId}
+              handleSetEditingId={handleSetEditingId}
+              variant={variant}
+            />
+          ))}
+        </>
+      )}
+
       {isFetching && !isFetchingNextPage && (
         <div className="relative my-2 text-center">
           <Spinner />
         </div>
       )}
-      {/* Load Older Messages */}
-      <Button onClick={fetchPreviousPage} disabled={!hasPreviousPage || isFetchingPreviousPage} size="sm" variant="ghost">
-        {isFetchingPreviousPage ? 'Loading Older...' : hasPreviousPage ? 'Load Older' : 'No Older Messages'}
+
+      <Button onClick={() => fetchPreviousPage()} disabled={!hasPreviousPage || isFetchingPreviousPage} size="sm" variant="ghost">
+        {isFetchingPreviousPage ? t('loadingOlder') : hasPreviousPage ? t('loadOlder') : t('noOlder')}
       </Button>
 
       {variant === 'channel' && channelName && channelCreatedAt && <ChannelHero name={channelName} creationTime={channelCreatedAt} />}
       {variant === 'conversation' && userId && <ConversationHero name={userName} image={userImage} userId={userId} />}
     </div>
   );
+};
+
+const convertAblyMessageToOurType = (ablyMessage: AblyMessage): MessageType => {
+  return {
+    id: ablyMessage.serial,
+    userTenant: {
+      id: ablyMessage.clientId,
+      person: {
+        firstName: String(ablyMessage.metadata?.firstName) || 'N/A',
+        lastName: String(ablyMessage.metadata?.lastName) || 'N/A',
+        image: String(ablyMessage.metadata?.image) || null,
+      },
+      user: {
+        id: String(ablyMessage.metadata?.userId) || '',
+        email: String(ablyMessage.metadata?.email) || '',
+      },
+    },
+    reactions: [],
+    body: ablyMessage.text || '',
+    imageId: null,
+    createdAt: ablyMessage.createdAt ?? null,
+    updatedAt: ablyMessage.updatedAt ?? null,
+  };
+};
+
+export const convertOurMessageToAbly = (message: MessageType): Partial<AblyMessage> => {
+  return {
+    text: message.body,
+    metadata: {
+      firstName: message.userTenant.person?.firstName,
+      lastName: message.userTenant.person?.lastName,
+      image: message.userTenant.person?.image,
+      userId: message.userTenant.user.id,
+      email: message.userTenant.user?.email,
+    },
+  };
 };

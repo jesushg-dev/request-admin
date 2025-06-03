@@ -9874,11 +9874,6 @@ const metadata = {
           isRelationOwner: true,
           foreignKeyMapping: { id: 'newFlowId' },
         },
-        changedAt: {
-          name: 'changedAt',
-          type: 'DateTime',
-          attributes: [{ name: '@default', args: [] }],
-        },
         reason: {
           name: 'reason',
           type: 'String',

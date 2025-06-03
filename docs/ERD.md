@@ -34,6 +34,7 @@ erDiagram
 # Workflow Execution System
 
 ## Core Workflow Definitions
+
 @namespace CoreWorkflow
 @erd CoreWorkflow
 Represents a versioned workflow template containing nodes and edges
@@ -83,6 +84,7 @@ erDiagram
 ### `ExecutionNodeGuide`
 
 ## Documentation System
+
 @namespace Documentation
 @erd Documentation
 Links procedural guides to workflow nodes
@@ -123,6 +125,7 @@ erDiagram
 ### `ExecutionModelInstance`
 
 ## Runtime Execution Tracking
+
 @namespace RuntimeExecution
 @erd RuntimeExecution
 Concrete instance of workflow execution
@@ -155,7 +158,7 @@ erDiagram
   String executionId FK
   String previousFlowId FK "nullable"
   String newFlowId FK
-  DateTime changedAt
+  DateTime updatedAt
   String reason
 }
 ```
@@ -163,6 +166,7 @@ erDiagram
 ### `ExecutionModelHistory`
 
 ## Version History Tracking
+
 @namespace VersionHistory
 @erd VersionHistory
 Records workflow template migrations during execution
@@ -179,7 +183,7 @@ Properties as follows:
 - `executionId`:
 - `previousFlowId`:
 - `newFlowId`:
-- `changedAt`:
+- `updatedAt`:
 - `reason`:
 
 ## default
@@ -3237,7 +3241,7 @@ Properties as follows:
 
 ### `Feature`
 
-Represents features in the system. 
+Represents features in the system.
 A single table handles both global features and area-specific features using the `scope` field.
 Features are linked to modules for better organization and can be assigned to global roles or area roles.
 

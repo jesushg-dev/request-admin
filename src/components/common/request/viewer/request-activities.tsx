@@ -17,10 +17,10 @@ import ErrorRetryFallback from '../../error-retry-fallback';
 export const FormSubmissionDefaultArgs = Prisma.validator<Prisma.RequestChangeLogFindManyArgs>()({
   select: {
     id: true,
-    changedAt: true,
+    updatedAt: true,
     fieldName: true,
     requestId: true,
-    changedBy: true,
+    updatedBy: true,
     tenantId: true,
     oldValue: true,
     newValue: true,
@@ -51,7 +51,7 @@ function RequestActivities({ requestId, tenantId }: TimelineProps) {
   const { data, isLoading, isError, error, refetch } = useFindManyRequestChangeLog({
     ...FormSubmissionDefaultArgs,
     where: { requestId, tenantId },
-    orderBy: { changedAt: 'desc' },
+    orderBy: { updatedAt: 'desc' },
   });
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
 
@@ -94,17 +94,29 @@ interface TimelineItemComponentProps {
 
 const TimelineItemComponent = memo(({ item, isExpanded, onToggle, t }: TimelineItemComponentProps) => {
   const displayData = useMemo(() => {
-    const date = new Date(item.changedAt);
-
-    if (isNaN(date.getTime())) {
-      console.error('Invalid date:', item.changedAt);
+    if (!item.updatedAt) {
+      console.error('Invalid date:', item.updatedAt);
       return {
         dayOfWeek: t('nA'),
         dayNumber: '00',
         title: item.fieldName,
         time: '00:00',
         fullDate: t('invalidDate'),
-        userId: item.changedBy?.substring(0, 8) || t('unknownUser'),
+        userId: item.updatedBy?.substring(0, 8) || t('unknownUser'),
+      };
+    }
+
+    const date = new Date(item.updatedAt);
+
+    if (isNaN(date.getTime())) {
+      console.error('Invalid date:', item.updatedAt);
+      return {
+        dayOfWeek: t('nA'),
+        dayNumber: '00',
+        title: item.fieldName,
+        time: '00:00',
+        fullDate: t('invalidDate'),
+        userId: item.updatedBy?.substring(0, 8) || t('unknownUser'),
       };
     }
 
@@ -121,9 +133,9 @@ const TimelineItemComponent = memo(({ item, isExpanded, onToggle, t }: TimelineI
       title: titleMap[item.fieldName] || item.fieldName,
       time: format(date, 'HH:mm'),
       fullDate: format(date, 'PPP', { locale: es }),
-      userId: item.changedBy || t('unknownUser'),
+      userId: item.updatedBy || t('unknownUser'),
     };
-  }, [item.changedAt, item.fieldName, item.changedBy, t]);
+  }, [item.updatedAt, item.fieldName, item.updatedBy, t]);
 
   const metadataContent = useMemo(() => {
     const metadataObj = tryParseJSON(item.metadata);

@@ -1,22 +1,29 @@
-import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog';
+import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 
-/* eslint-disable @next/next/no-img-element */
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+
 interface ThumbnailProps {
-  url: string | null | undefined;
+  src: string | null | undefined;
 }
 
-export const Thumbnail = ({ url }: ThumbnailProps) => {
-  if (!url) return null;
+export const Thumbnail = ({ src }: ThumbnailProps) => {
+  const t = useTranslations('component.chat.thumbnail');
+  if (!src) return null;
+
   return (
-    <Dialog>
-      <DialogTrigger>
-        <div className="relative my-2 max-w-[260px] cursor-zoom-in overflow-hidden rounded-lg border">
-          <img src={url} className="size-full rounded-md object-cover" alt="Message img" />
-        </div>
-      </DialogTrigger>
-      <DialogContent className="max-w-[800px] border-none bg-transparent p-0 shadow-none">
-        <img src={url} className="size-full rounded-md object-cover" alt="Message img" />
-      </DialogContent>
-    </Dialog>
+    <div className="group/thumbnail relative flex size-[62px] justify-center">
+      <Dialog>
+        <DialogTrigger asChild>
+          <div className="w-full h-full cursor-zoom-in">
+            <Image src={src} alt={t('alt')} fill className="overflow-hidden rounded-xl border object-cover" />
+          </div>
+        </DialogTrigger>
+        <DialogContent className="max-w-[800px] border-none bg-transparent p-0 shadow-none flex items-center justify-center">
+          {/* eslint-disable @next/next/no-img-element */}
+          <img src={src} alt={t('alt')} className="max-h-[80vh] max-w-full rounded-xl object-contain" />
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };

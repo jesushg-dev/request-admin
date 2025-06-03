@@ -92,7 +92,7 @@ export async function createExecutionFlow(processFlow: ExecutionFlowValues, requ
           previousFlowId: existingFlow?.id,
           newFlowId: newFlow.id,
           reason: 'Version update - Active execution migration',
-          changedAt: new Date(),
+          updatedAt: new Date(),
           executionId: exec.id,
         })),
       });

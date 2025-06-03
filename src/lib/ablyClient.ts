@@ -1,6 +1,8 @@
+import { ChatClient, LogLevel } from '@ably/chat';
 import * as Ably from 'ably';
 
 let client: Ably.Realtime | null = null;
+let chatClient: ChatClient | null = null;
 
 export function getAblyClient(clientId: string = ''): Ably.Realtime {
   if (!client) {
@@ -22,4 +24,14 @@ export function getAblyClient(clientId: string = ''): Ably.Realtime {
     });
   }*/
   return client;
+}
+
+export function getAblyChatClient(clientId: string = ''): ChatClient {
+  if (!chatClient) {
+    const realtimeClient = getAblyClient(clientId);
+    chatClient = new ChatClient(realtimeClient, {
+      logLevel: LogLevel.Info,
+    });
+  }
+  return chatClient;
 }

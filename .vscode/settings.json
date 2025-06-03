@@ -1,6 +1,6 @@
 {
   "i18n-ally.localesPaths": ["messages", "src/i18n"],
   "i18n-ally.keystyle": "nested",
-  "cSpell.words": ["Dataroom", "Nuqs", "reactflow", "sonner", "toploader", "xyflow"],
+  "cSpell.words": ["Dataroom", "Nuqs", "reactflow", "sonner", "toploader", "Upserting", "xyflow"],
   "typescript.tsdk": "node_modules\\typescript\\lib"
 }

@@ -119,7 +119,7 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
             </TabsContent>
 
             <TabsContent value="comments" className="flex-1 flex flex-col overflow-hidden">
-              <Messages currentUserTenantId={currentUser.userTenantId} channel={requestDetails.channel} tenantId={tenantId} />
+              <Messages name={currentUser.name} currentUserTenantId={currentUser.userTenantId} channel={requestDetails.channel} tenantId={tenantId} />
             </TabsContent>
 
             <TabsContent value="assignments" className="flex-1 flex flex-col overflow-hidden">
