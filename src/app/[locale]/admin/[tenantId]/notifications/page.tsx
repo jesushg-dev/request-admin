@@ -20,7 +20,7 @@ import { useNotificationsQuery } from '@/components/notification/use-notificatio
 const types: NotificationType[] = ['all', 'assignment', 'status', 'comment', 'system'];
 
 export default function NotificationsPage() {
-  const { tenantId, userTenantId } = useTenantContext();
+  const { tenantId, userTenant } = useTenantContext();
   const t = useTranslations('component.notification');
   const {
     notifications,
@@ -39,7 +39,7 @@ export default function NotificationsPage() {
     setPageSize,
     isLoading,
     totalItems,
-  } = useNotificationsQuery(tenantId, userTenantId);
+  } = useNotificationsQuery(tenantId, userTenant.userTenantId);
 
   const total = totalItems ?? notifications.length;
 
@@ -115,7 +115,7 @@ export default function NotificationsPage() {
                     <NotificationCard
                       key={notification.id}
                       notification={notification}
-                      userTenantId={userTenantId}
+                      userTenantId={userTenant.userTenantId}
                       markAsRead={markAsRead}
                       markAsUnread={markAsUnread}
                       deleteNotification={deleteNotification}

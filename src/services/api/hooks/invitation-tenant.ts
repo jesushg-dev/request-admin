@@ -439,7 +439,10 @@ export function useSuspenseCountInvitationTenant<
 }
 
 export function useCheckInvitationTenant<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; email?: string; role?: string; status?: string; inviterId?: string } },
+  args: {
+    operation: PolicyCrudKind;
+    where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; email?: string; role?: string; status?: string; inviterId?: string; metadata?: string };
+  },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

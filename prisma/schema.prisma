@@ -129,7 +129,7 @@ model UserTenant {
   updatedBy                    String?
   tenantId                     String
   tenant                       Tenant                  @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                           String                  @id()
+  id                           String                  @id() @default(uuid())
   isActive                     Boolean                 @default(true)
   isTermAccepted               Boolean                 @default(false)
   joinedAt                     DateTime                @default(now())
@@ -170,7 +170,8 @@ model InvitationTenant {
   status    String
   expiresAt DateTime
   inviterId String
-  user      User      @relation(fields: [inviterId], references: [id], onDelete: Cascade)
+  inviter   User      @relation(fields: [inviterId], references: [id], onDelete: Cascade)
+  metadata  String    @default("")
 }
 
 model Subscription {
@@ -252,7 +253,7 @@ model User {
   phoneNumber         String?
   phoneNumberVerified Boolean?
   isAnonymous         Boolean?
-  isGlobalAdmin       Boolean?
+  isGlobalAdmin       Boolean            @default(false)
   username            String?
   displayUsername     String?
   sessions            Session[]
@@ -313,6 +314,7 @@ model Verification {
   expiresAt  DateTime
   createdAt  DateTime?
   updatedAt  DateTime?
+  metadata   String?
 
   @@map("verification")
 }
@@ -2160,6 +2162,7 @@ model Message {
   tenant          Tenant        @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id              String        @id() @default(uuid())
   body            String
+  metadata        String        @default("{}")
   imageId         String?
   userTenantId    String
   channelId       String?
@@ -2194,27 +2197,25 @@ model Reaction {
 }
 
 model Person {
-  createdAt            DateTime           @default(now())
-  updatedAt            DateTime?          @updatedAt()
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime?           @updatedAt()
   deletedAt            DateTime?
   createdBy            String?
   updatedBy            String?
   tenantId             String
-  tenant               Tenant             @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                   String             @id() @default(uuid())
+  tenant               Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                   String              @id() @default(uuid())
   firstName            String
   lastName             String
   phone                String?
-  identificationNumber String             @default("")
+  identificationNumber String              @default("")
   image                String?
-  userTenantId         String?            @unique()
-  userTenant           UserTenant?        @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  identificationTypeId String
-  identificationType   IdentificationType @relation(fields: [identificationTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  identificationTypeId String?
+  identificationType   IdentificationType? @relation(fields: [identificationTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  userTenantId         String?             @unique()
+  userTenant           UserTenant?         @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([phone, tenantId])
   @@unique([userTenantId, tenantId])
-  @@unique([identificationNumber, tenantId])
 }
 
 model IdentificationType {

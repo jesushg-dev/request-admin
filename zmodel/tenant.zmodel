@@ -145,7 +145,7 @@ model Tenant extends Auditable {
 }
 
 model UserTenant extends TenantScoped, Auditable {
-  id                           String       @id
+  id                           String           @id @default(uuid()) //@db.UniqueIdentifier
   isActive                     Boolean          @default(true) // Indicates if the user is active in the tenant
   isTermAccepted               Boolean          @default(false) // Indicates if the user has accepted the terms of the tenant
   joinedAt                     DateTime         @default(now()) // Timestamp of when the user joined the tenant
@@ -182,7 +182,8 @@ model InvitationTenant extends TenantScoped, Auditable {
   status         String
   expiresAt      DateTime
   inviterId      String
-  user           User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
+  inviter        User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
+  metadata       String       @default("")  @omit
 }
 
 model Subscription {

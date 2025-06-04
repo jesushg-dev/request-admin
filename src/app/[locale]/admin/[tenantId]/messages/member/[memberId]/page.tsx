@@ -22,7 +22,7 @@ const UserIdPage = async ({ params }: UserIdPageProps) => {
     );
   }
 
-  return <Conversation id={conversation.id} userTenantId={userId} tenantId={tenantId} currentUserTenantId={currentUser.userTenantId} />;
+  return <Conversation id={conversation.id} userTenantId={userId} tenantId={tenantId} currentUserTenant={currentUser} />;
 };
 
 export default UserIdPage;

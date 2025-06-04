@@ -49,7 +49,7 @@ export function GuideTab() {
       update(currentGuideIndex, { ...guides[currentGuideIndex], ...data });
       toast.success(t('updateSuccess'));
     } else {
-      append({ ...data, id: crypto.randomUUID() });
+      append({ ...data, id: generateUuid() });
       toast.success(t('createSuccess'));
     }
     setModalOpen(false);

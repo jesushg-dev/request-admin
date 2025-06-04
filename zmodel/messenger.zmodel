@@ -51,6 +51,7 @@ model Conversation extends TenantScoped {
 model Message extends TenantScoped, Auditable {
   id              String        @id @default(uuid()) //@db.UniqueIdentifier
   body            String
+  metadata        String        @default("{}") // JSON string
   imageId         String?
   userTenantId    String
   channelId       String?       //@db.UniqueIdentifier

@@ -399,7 +399,7 @@ export function useSuspenseCountVerification<
 }
 
 export function useCheckVerification<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { id?: string; identifier?: string; value?: string } },
+  args: { operation: PolicyCrudKind; where?: { id?: string; identifier?: string; value?: string; metadata?: string } },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

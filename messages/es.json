@@ -184,8 +184,10 @@
         "emailInUse": "¡El correo ya está en uso con un proveedor diferente!",
         "unauthenticated": "Necesitas iniciar sesión para acceder a esta página",
         "unauthenticatedDescription": "Por favor, inicia sesión para continuar.",
-        "tenant": "No tienes permiso para acceder a este inquilino",
-        "tenantDescription": "Por favor, usa las credenciales asociadas con el inquilino que deseas acceder."
+        "tenant": "No tienes permiso para acceder a esta organización",
+        "tenantDescription": "Por favor, usa las credenciales asociadas con la organización que deseas acceder.",
+        "invitationRequired": "Autenticación requerida para aceptar la invitación",
+        "invitationRequiredDescription": "Para aceptar una invitación a un tenant, primero debes iniciar sesión. Si no tienes una cuenta, regístrate usando el mismo correo electrónico donde recibiste la invitación."
       },
       "loading": "Cargando...",
       "success": "¡Bienvenido de nuevo",
@@ -290,6 +292,24 @@
       "loading": "Cargando...",
       "success": "¡Correo de restablecimiento enviado!",
       "error": "Ha ocurrido un error: {error}"
+    },
+    "acceptInvitationForm": {
+      "headerTitle": "¡Te han invitado a unirte a una organización!",
+      "headerLabel": "Al aceptar esta invitación, aceptas nuestros Términos y Condiciones.",
+      "termsLink": "Leer Términos y Condiciones",
+      "acceptanceNotice": "Al hacer clic en 'Aceptar invitación', confirmas que has leído y aceptas los Términos y Condiciones.",
+      "actions": {
+        "acceptInvitation": "Aceptar invitación",
+        "cancelInvitation": "Cancelar invitación"
+      },
+      "readTermAndConditions": "Leer Términos y Condiciones",
+      "invitationIdNoFound": "No se encontró el ID de invitación.",
+      "loading": "Aceptando invitación...",
+      "success": "¡Invitación aceptada con éxito!",
+      "error": "No se pudo aceptar la invitación",
+      "cancelling": "Cancelando invitación...",
+      "cancelSuccess": "Invitación cancelada.",
+      "cancelError": "No se pudo cancelar la invitación"
     }
   },
   "tenants": {
@@ -336,8 +356,8 @@
     "tenants": {
       "brandName": "Motor de Solicitudes",
       "header": {
-        "messageLine1": "Tienes más de un inquilino asociado a tu cuenta.",
-        "messageLine2": "Selecciona un inquilino para gestionar."
+        "messageLine1": "Tienes más de una organización asociado a tu cuenta.",
+        "messageLine2": "Selecciona una organización para gestionar."
       }
     },
     "organization": {
@@ -458,7 +478,18 @@
         "label": {
           "tenants": "Inquilinos"
         },
-        "addTenant": "Agregar inquilino"
+        "addTenant": "Agregar organización"
+      },
+      "systemTitle": "Sistema",
+      "user": {
+        "avatarAlt": "usuario",
+        "noName": "Sin nombre",
+        "noEmail": "Sin correo",
+        "upgrade": "Mejorar a Pro",
+        "account": "Cuenta",
+        "billing": "Facturación",
+        "notifications": "Notificaciones",
+        "logout": "Cerrar sesión"
       }
     },
     "dashboard": {
@@ -1814,7 +1845,10 @@
         "active": "Activo",
         "activeDesc": "Marcar como activo o inactivo.",
         "enableTwoFactor": "Habilitar autenticación de dos factores",
-        "enableTwoFactorDesc": "Requiere autenticación de dos factores para mayor seguridad."
+        "enableTwoFactorDesc": "Requiere autenticación de dos factores para mayor seguridad.",
+        "adminDesc": "Otorga a este usuario privilegios administrativos para la organización.",
+        "admin": "Administración",
+        "gdprNotice": "Para cumplir con GDPR, algunos datos personales no se pueden almacenar al crear un usuario. \nUna vez que el usuario acepte la invitación, podrá completar y guardar su información personal."
       }
     },
     "form": {
@@ -3611,6 +3645,13 @@
       "thumbnail": {
         "remove": "Eliminar imagen",
         "alt": "Imagen del mensaje"
+      },
+      "header": {
+        "online": "En línea",
+        "offline": "Desconectado",
+        "usersConnected": "Usuarios conectados",
+        "more": "más",
+        "noUsers": "No hay usuarios conectados."
       }
     }
   }

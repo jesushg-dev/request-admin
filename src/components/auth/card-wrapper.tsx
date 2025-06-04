@@ -26,7 +26,7 @@ export const CardWrapper = ({ children, headerTitle, headerLabel, backButtonLabe
     <Card className="w-[400px] shadow-md rounded-xl z-50">
       <CardHeader>
         <div className="flex w-full flex-col items-center justify-center gap-y-4">
-          <h1 className={cn('text-3xl font-semibold', font.className)}>{headerTitle}</h1>
+          <h1 className={cn('text-3xl font-semibold text-center', font.className)}>{headerTitle}</h1>
           <p className="text-muted-foreground text-sm">{headerLabel}</p>
         </div>
       </CardHeader>

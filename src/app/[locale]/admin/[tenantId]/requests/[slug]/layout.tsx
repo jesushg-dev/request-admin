@@ -12,7 +12,7 @@ interface RoomChatLayoutProps {
 }
 
 const RoomChatLayout = ({ children }: RoomChatLayoutProps) => {
-  const { tenantId, userTenantId } = useTenantContext();
+  const { tenantId, userTenant } = useTenantContext();
   const { parentMessageId, onClose, profileUserId } = usePanel();
   const showPanel = !!parentMessageId || !!profileUserId;
 
@@ -25,7 +25,7 @@ const RoomChatLayout = ({ children }: RoomChatLayoutProps) => {
         </SheetHeader>
         <SheetContent side="right" className="w-full max-w-lg p-0">
           {parentMessageId ? (
-            <Thread tenantId={tenantId} currentUserTenantId={userTenantId} messageId={parentMessageId} onClose={onClose} />
+            <Thread tenantId={tenantId} roomId={parentMessageId} currentUserTenant={userTenant} messageId={parentMessageId} onClose={onClose} />
           ) : profileUserId ? (
             <Profile userTenantId={profileUserId} tenantId={tenantId} onClose={onClose} />
           ) : (

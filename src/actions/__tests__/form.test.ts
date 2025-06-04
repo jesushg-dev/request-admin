@@ -19,12 +19,6 @@ jest.mock('better-auth', () => ({
   username: jest.fn(),
 }));
 
-jest.mock('uncrypto', () => ({
-  getRandomValues: jest.fn(),
-  randomUUID: jest.fn(),
-  subtle: jest.fn(),
-}));
-
 jest.mock('@/server/db-server', () => ({
   db: {
     form: {

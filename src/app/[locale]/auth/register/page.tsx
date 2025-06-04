@@ -1,6 +1,7 @@
 'use client';
 
 import { useTransition } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 import { authClient } from '@/server/auth-client';
 import { RegisterSchema } from '@/services/schemas';
@@ -18,6 +19,8 @@ import { CardWrapper } from '@/components/auth/card-wrapper';
 const RegisterForm = () => {
   const t = useTranslations('auth.registerForm');
   const [isPending, startTransition] = useTransition();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl');
 
   const form = useForm({
     resolver: zodResolver(RegisterSchema),
@@ -37,7 +40,7 @@ const RegisterForm = () => {
           email: values.email,
           password: values.password,
           name: values.username,
-          callbackURL: DEFAULT_LOGIN_REDIRECT,
+          callbackURL: callbackUrl ?? DEFAULT_LOGIN_REDIRECT,
         },
         {
           onRequest: () => {

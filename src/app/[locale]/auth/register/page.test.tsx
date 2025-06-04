@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { authClient } from '@/server/auth-client';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
@@ -23,13 +24,25 @@ jest.mock('@/i18n/routing', () => ({
   Link: ({ children, href }: { children: ReactNode; href: string }) => <a href={href}>{children}</a>,
 }));
 
+// Mock useSearchParams
+jest.mock('next/navigation', () => ({
+  useSearchParams: jest.fn(),
+}));
+
+const renderWithProviders = (component: ReactNode) => {
+  return render(<>{component}</>);
+};
+
 describe('RegisterForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (useSearchParams as jest.Mock).mockReturnValue({
+      get: jest.fn().mockReturnValue(null),
+    });
   });
 
   it('renders form correctly', () => {
-    render(<RegisterForm />);
+    renderWithProviders(<RegisterForm />);
 
     expect(screen.getByPlaceholderText('placeholders.username')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('placeholders.email')).toBeInTheDocument();
@@ -40,7 +53,7 @@ describe('RegisterForm', () => {
   });
 
   it('submits form with valid data', async () => {
-    render(<RegisterForm />);
+    renderWithProviders(<RegisterForm />);
 
     const usernameInput = screen.getByPlaceholderText('placeholders.username');
     const emailInput = screen.getByPlaceholderText('placeholders.email');
@@ -70,7 +83,7 @@ describe('RegisterForm', () => {
   });
 
   it('validates required fields', async () => {
-    render(<RegisterForm />);
+    renderWithProviders(<RegisterForm />);
     const submitButton = screen.getByText('actions.createAccount');
 
     fireEvent.click(submitButton);
@@ -83,7 +96,7 @@ describe('RegisterForm', () => {
   });
 
   it('disables button during submission', async () => {
-    render(<RegisterForm />);
+    renderWithProviders(<RegisterForm />);
     const usernameInput = screen.getByPlaceholderText('placeholders.username');
     const emailInput = screen.getByPlaceholderText('placeholders.email');
     const passwordInput = screen.getByPlaceholderText('placeholders.password');
@@ -100,10 +113,37 @@ describe('RegisterForm', () => {
   });
 
   it('has correct back button link', () => {
-    render(<RegisterForm />);
+    renderWithProviders(<RegisterForm />);
 
     const backButton = screen.getByText('alreadyHaveAccount');
     expect(backButton).toBeInTheDocument();
     expect(backButton.closest('a')).toHaveAttribute('href', '/auth/login');
+  });
+
+  it('uses custom callback URL when provided', async () => {
+    (useSearchParams as jest.Mock).mockReturnValue({
+      get: jest.fn().mockReturnValue('/custom-callback'),
+    });
+
+    renderWithProviders(<RegisterForm />);
+
+    const usernameInput = screen.getByPlaceholderText('placeholders.username');
+    const emailInput = screen.getByPlaceholderText('placeholders.email');
+    const passwordInput = screen.getByPlaceholderText('placeholders.password');
+    const submitButton = screen.getByText('actions.createAccount');
+
+    fireEvent.change(usernameInput, { target: { value: 'testuser' } });
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'ValidPassword123!' } });
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(authClient.signUp.email).toHaveBeenCalledWith(
+        expect.objectContaining({
+          callbackURL: '/custom-callback',
+        }),
+        expect.any(Object)
+      );
+    });
   });
 });

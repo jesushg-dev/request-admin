@@ -502,6 +502,10 @@ const globalPathnames = {
     en: '/admin/global/tenants/[slug]/edit',
     es: '/admin/global/inquilinos/[slug]/editar',
   },
+  '/admin/global/tenants/[slug]/accept-invitation': {
+    en: '/admin/global/tenants/[slug]/accept-invitation',
+    es: '/admin/global/inquilinos/[slug]/aceptar-invitacion',
+  },
   // plans
   '/admin/global/plans': {
     en: '/admin/global/plans',

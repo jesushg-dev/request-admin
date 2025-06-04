@@ -13,6 +13,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
+import { LoginErrorCodeEnum } from '@/types/user';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -61,7 +62,7 @@ const LoginForm = () => {
             toast.success(t('success'), { id: toastId });
           },
           onError: (ctx) => {
-            toast.error(t('error', { error: ctx.error.message }), { id: toastId });
+            toast.error(t('error', { error: ctx.error.message ?? 'N/A' }), { id: toastId });
           },
         }
       );
@@ -70,12 +71,23 @@ const LoginForm = () => {
 
   return (
     <div className="flex flex-col gap-4 items-center">
-      {errorQuery === 'unauthenticated' && (
+      {errorQuery === LoginErrorCodeEnum.UNAUTHENTICATED && (
         <AlertBanner title={t('errors.unauthenticated')} description={t('errors.unauthenticatedDescription')} variant="error" icon={<OctagonAlert className="h-6 w-6 text-red-500" />} />
       )}
-      {errorQuery === 'tenant' && <AlertBanner title={t('errors.tenant')} description={t('errors.tenantDescription')} variant="error" icon={<OctagonAlert className="h-6 w-6 text-red-500" />} />}
+      {errorQuery === LoginErrorCodeEnum.TENANT_NOT_AUTHORIZED && (
+        <AlertBanner title={t('errors.tenant')} description={t('errors.tenantDescription')} variant="error" icon={<OctagonAlert className="h-6 w-6 text-red-500" />} />
+      )}
+      {errorQuery === LoginErrorCodeEnum.INVITATION_REQUIRED_AUTH && (
+        <AlertBanner title={t('errors.invitationRequired')} description={t('errors.invitationRequiredDescription')} variant="error" icon={<OctagonAlert className="h-6 w-6 text-red-500" />} />
+      )}
 
-      <CardWrapper headerTitle={t('headerTitle')} headerLabel={t('headerLabel')} backButtonLabel={t('noAccount')} backButtonHref="/auth/register">
+      <CardWrapper
+        headerTitle={t('headerTitle')}
+        headerLabel={t('headerLabel')}
+        backButtonLabel={t('noAccount')}
+        backButtonHref={
+          errorQuery === LoginErrorCodeEnum.INVITATION_REQUIRED_AUTH && callbackUrl ? { pathname: '/auth/register', query: { callbackUrl, invitationRequired: true } } : '/auth/register'
+        }>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-4">

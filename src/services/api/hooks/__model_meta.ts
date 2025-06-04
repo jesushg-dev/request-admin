@@ -749,6 +749,7 @@ const metadata = {
           name: 'id',
           type: 'String',
           isId: true,
+          attributes: [{ name: '@default', args: [] }],
         },
         isActive: {
           name: 'isActive',
@@ -961,16 +962,21 @@ const metadata = {
           name: 'inviterId',
           type: 'String',
           isForeignKey: true,
-          relationField: 'user',
+          relationField: 'inviter',
         },
-        user: {
-          name: 'user',
+        inviter: {
+          name: 'inviter',
           type: 'User',
           isDataModel: true,
           backLink: 'invitations',
           isRelationOwner: true,
           onDeleteAction: 'Cascade',
           foreignKeyMapping: { id: 'inviterId' },
+        },
+        metadata: {
+          name: 'metadata',
+          type: 'String',
+          attributes: [{ name: '@default', args: [{ value: '' }] }],
         },
       },
       uniqueConstraints: {
@@ -1373,7 +1379,7 @@ const metadata = {
         isGlobalAdmin: {
           name: 'isGlobalAdmin',
           type: 'Boolean',
-          isOptional: true,
+          attributes: [{ name: '@default', args: [{ value: false }] }],
         },
         username: {
           name: 'username',
@@ -1418,7 +1424,7 @@ const metadata = {
           type: 'InvitationTenant',
           isDataModel: true,
           isArray: true,
-          backLink: 'user',
+          backLink: 'inviter',
         },
         apikeys: {
           name: 'apikeys',
@@ -1642,6 +1648,11 @@ const metadata = {
         updatedAt: {
           name: 'updatedAt',
           type: 'DateTime',
+          isOptional: true,
+        },
+        metadata: {
+          name: 'metadata',
+          type: 'String',
           isOptional: true,
         },
       },
@@ -10735,6 +10746,11 @@ const metadata = {
           name: 'body',
           type: 'String',
         },
+        metadata: {
+          name: 'metadata',
+          type: 'String',
+          attributes: [{ name: '@default', args: [{ value: '{}' }] }],
+        },
         imageId: {
           name: 'imageId',
           type: 'String',
@@ -10978,6 +10994,24 @@ const metadata = {
           type: 'String',
           isOptional: true,
         },
+        identificationTypeId: {
+          name: 'identificationTypeId',
+          type: 'String',
+          isOptional: true,
+          isForeignKey: true,
+          relationField: 'identificationType',
+        },
+        identificationType: {
+          name: 'identificationType',
+          type: 'IdentificationType',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'person',
+          isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
+          foreignKeyMapping: { id: 'identificationTypeId' },
+        },
         userTenantId: {
           name: 'userTenantId',
           type: 'String',
@@ -10996,22 +11030,6 @@ const metadata = {
           onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'userTenantId' },
         },
-        identificationTypeId: {
-          name: 'identificationTypeId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'identificationType',
-        },
-        identificationType: {
-          name: 'identificationType',
-          type: 'IdentificationType',
-          isDataModel: true,
-          backLink: 'person',
-          isRelationOwner: true,
-          onDeleteAction: 'NoAction',
-          onUpdateAction: 'NoAction',
-          foreignKeyMapping: { id: 'identificationTypeId' },
-        },
       },
       uniqueConstraints: {
         id: {
@@ -11022,17 +11040,9 @@ const metadata = {
           name: 'userTenantId',
           fields: ['userTenantId'],
         },
-        phone_tenantId: {
-          name: 'phone_tenantId',
-          fields: ['phone', 'tenantId'],
-        },
         userTenantId_tenantId: {
           name: 'userTenantId_tenantId',
           fields: ['userTenantId', 'tenantId'],
-        },
-        identificationNumber_tenantId: {
-          name: 'identificationNumber_tenantId',
-          fields: ['identificationNumber', 'tenantId'],
         },
       },
     },

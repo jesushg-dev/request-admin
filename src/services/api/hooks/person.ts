@@ -379,8 +379,8 @@ export function useCheckPerson<TError = DefaultError>(
       phone?: string;
       identificationNumber?: string;
       image?: string;
-      userTenantId?: string;
       identificationTypeId?: string;
+      userTenantId?: string;
     };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions

@@ -3,6 +3,7 @@
 import { useFindFirstPerson } from '@/services/api/hooks';
 import { ChatClientProvider, ChatRoomProvider } from '@ably/chat/react';
 
+import { UserTenant } from '@/types/user';
 import { getAblyChatClient } from '@/lib/ablyClient';
 import { usePanel } from '@/hooks/use-panel';
 import { ChatInput } from '@/components/chat/chat-input';
@@ -16,16 +17,16 @@ interface ConversationProps {
   id: string;
   tenantId: string;
   userTenantId: string;
-  currentUserTenantId: string;
+  currentUserTenant: UserTenant;
 }
 
-export const Conversation = ({ id, tenantId, userTenantId, currentUserTenantId }: ConversationProps) => {
+export const Conversation = ({ id, tenantId, userTenantId, currentUserTenant }: ConversationProps) => {
   const { onOpenProfile } = usePanel();
   const { data: user, isLoading: userLoading } = useFindFirstPerson({
     where: { userTenantId },
   });
 
-  const chatClient = getAblyChatClient(currentUserTenantId);
+  const chatClient = getAblyChatClient(currentUserTenant.userTenantId);
 
   if (userLoading) return <Spinner />;
 
@@ -37,15 +38,16 @@ export const Conversation = ({ id, tenantId, userTenantId, currentUserTenantId }
         <ChatRoomProvider id={id} release={true} attach={true}>
           <MessageList
             variant="conversation"
+            roomId={id}
             userId={userTenantId}
             tenantId={tenantId}
             where={{ conversationId: id }}
-            currentUserTenantId={currentUserTenantId}
+            currentUserTenantId={currentUserTenant.userTenantId}
             userName={user ? `${user.firstName} ${user.lastName}` : undefined}
             userImage={user ? user.image : undefined}
           />
-          <TypingIndicator currentClientId={currentUserTenantId} />
-          <ChatInput tenantId={tenantId} relatedId={id} variant="conversation" currentUserTenantId={currentUserTenantId} />
+          <TypingIndicator currentClientId={currentUserTenant.userTenantId} />
+          <ChatInput tenantId={tenantId} relatedId={id} variant="conversation" currentUserTenant={currentUserTenant} />
         </ChatRoomProvider>
       </ChatClientProvider>
     </div>

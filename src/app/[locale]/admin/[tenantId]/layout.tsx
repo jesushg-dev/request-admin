@@ -1,10 +1,12 @@
 import type { Metadata } from 'next';
+import { getCurrentUserTenant } from '@/actions/user';
 import { redirect } from '@/i18n/routing';
 import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-server';
 import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
+import { LoginErrorCodeEnum } from '@/types/user';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { ClipboardProvider } from '@/components/hoc/clipboard-context';
 import { TenantProvider } from '@/components/hoc/tenant-provider';
@@ -55,13 +57,11 @@ export default async function RootLayout({
     where: { userTenants: { some: { userId: { equals: session.user.id } } } },
   });
 
-  const userTenantId = await db.userTenant.findFirst({
-    select: { id: true },
-    where: { userId: session.user.id, tenantId },
-  });
-  if (!userTenantId) {
+  const userTenant = await getCurrentUserTenant(tenantId);
+
+  if (!userTenant) {
     console.warn(`User with ID ${session.user.id} does not have access to tenant ${tenantId}`);
-    return redirect({ href: '/', locale: 'en' });
+    return redirect({ href: { pathname: '/auth/login', query: { error: LoginErrorCodeEnum.TENANT_NOT_AUTHORIZED } }, locale: 'en' });
   }
 
   const menuItems = await db.menuItem.findMany({
@@ -69,13 +69,13 @@ export default async function RootLayout({
   });
 
   return (
-    <TenantProvider tenantId={tenantId} userTenantId={userTenantId.id}>
+    <TenantProvider tenantId={tenantId} userTenant={userTenant}>
       <SidebarProvider>
         <DndSubmissionProvider tenantId={tenantId} data={menuItems}>
           <AppSidebar tenants={tenants} user={session.user} tenantId={tenantId} />
           <main className="flex h-screen w-full flex-1 flex-col overflow-hidden">
             <ClipboardProvider>
-              <NotificationProvider tenantId={tenantId} userTenantId={userTenantId.id}>
+              <NotificationProvider tenantId={tenantId} userTenantId={userTenant.userTenantId}>
                 <Navbar tenants={tenants} />
                 <div className="flex flex-1 overflow-hidden">
                   {children}

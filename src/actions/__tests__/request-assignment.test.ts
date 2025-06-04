@@ -25,6 +25,11 @@ jest.mock('@/server/auth-server', () => ({
   currentSession: jest.fn(),
 }));
 
+// Mock notification
+jest.mock('../notification', () => ({
+  sendInAppNotification: jest.fn(),
+}));
+
 describe('Request Assignment Actions', () => {
   const mockSession = {
     user: {
@@ -40,6 +45,12 @@ describe('Request Assignment Actions', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (currentSession as jest.Mock).mockResolvedValue(mockSession);
+    (db.$transaction as jest.Mock).mockImplementation(async (operations) => {
+      if (Array.isArray(operations)) {
+        return Promise.all(operations);
+      }
+      return operations();
+    });
   });
 
   describe('updateCurrentStatus', () => {
@@ -54,11 +65,11 @@ describe('Request Assignment Actions', () => {
       id: 'assignment-123',
       statusId: 'old-status-123',
       assignedUsers: [],
+      requestId: mockRequestId,
     };
 
     beforeEach(() => {
       (db.requestAssignment.findFirstOrThrow as jest.Mock).mockResolvedValue(mockLastAssignment);
-      (db.$transaction as jest.Mock).mockResolvedValue([]);
     });
 
     it('should update status successfully', async () => {
@@ -110,11 +121,11 @@ describe('Request Assignment Actions', () => {
       id: 'assignment-123',
       priorityId: 'old-priority-123',
       assignedUsers: [],
+      requestId: mockRequestId,
     };
 
     beforeEach(() => {
       (db.requestAssignment.findFirstOrThrow as jest.Mock).mockResolvedValue(mockLastAssignment);
-      (db.$transaction as jest.Mock).mockResolvedValue([]);
     });
 
     it('should update priority successfully', async () => {
@@ -138,11 +149,10 @@ describe('Request Assignment Actions', () => {
       const invalidMetadata = {
         type: 'PRIORITY_CHANGE' as const,
         notify: true,
-        reason: 'Test reason',
+        reason: '', // Empty reason should still trigger validation error
       };
 
-      const result = await updateCurrentPriority(mockTenantId, mockRequestId, mockPriorityId, invalidMetadata);
-      expect(result).toEqual({ priorityId: mockPriorityId });
+      await expect(updateCurrentPriority(mockTenantId, mockRequestId, mockPriorityId, invalidMetadata)).rejects.toThrow(ValidationError);
     });
 
     it('should handle transaction failure', async () => {
@@ -171,11 +181,11 @@ describe('Request Assignment Actions', () => {
     const mockLastAssignment = {
       id: 'assignment-123',
       assignedUsers: [{ id: 'old-user-1' }, { id: 'old-user-2' }],
+      requestId: mockRequestId,
     };
 
     beforeEach(() => {
       (db.requestAssignment.findFirstOrThrow as jest.Mock).mockResolvedValue(mockLastAssignment);
-      (db.$transaction as jest.Mock).mockResolvedValue([]);
     });
 
     it('should update assigned users successfully', async () => {
@@ -208,11 +218,11 @@ describe('Request Assignment Actions', () => {
       requestCategoryId: 'old-category-123',
       assignmentCategoryId: 'old-assignment-123',
       assignedUsers: [],
+      requestId: mockRequestId,
     };
 
     beforeEach(() => {
       (db.requestAssignment.findFirstOrThrow as jest.Mock).mockResolvedValue(mockLastAssignment);
-      (db.$transaction as jest.Mock).mockResolvedValue([]);
     });
 
     it('should update classification successfully', async () => {

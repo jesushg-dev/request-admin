@@ -15,15 +15,13 @@ model Person extends TenantScoped, Auditable {
   image                 String?    // User's profile image
 
   // Relationships
+  identificationTypeId  String?     //@db.UniqueIdentifier // Link to IdentificationType
+  identificationType    IdentificationType? @relation(fields: [identificationTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Type of identification
+
   userTenantId                String? @unique
   userTenant                  UserTenant?      @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Linked User entity
 
-  identificationTypeId  String     //@db.UniqueIdentifier // Link to IdentificationType
-  identificationType    IdentificationType @relation(fields: [identificationTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Type of identification
-
-  @@unique([phone, tenantId])
   @@unique([userTenantId, tenantId])
-  @@unique([identificationNumber, tenantId])
 }
 
 

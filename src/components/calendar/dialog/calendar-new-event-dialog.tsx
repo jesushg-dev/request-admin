@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -46,7 +47,7 @@ export default function CalendarNewEventDialog() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const newEvent = {
-      id: crypto.randomUUID(),
+      id: generateUuid(),
       title: values.title,
       start: new Date(values.start),
       end: new Date(values.end),

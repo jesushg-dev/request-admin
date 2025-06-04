@@ -183,7 +183,9 @@
         "unauthenticated": "You need to be authenticated to access this page!",
         "unauthenticatedDescription": "Please login to access this page.",
         "tenant": "You don't have access to this tenant!",
-        "tenantDescription": "Please, use the credential associated with the tenant you want to access."
+        "tenantDescription": "Please, use the credential associated with the tenant you want to access.",
+        "invitationRequired": "Authentication Required to Accept Invitation",
+        "invitationRequiredDescription": "To accept an invitation to a tenant, you must first log in. If you do not have an account, please register using the same email address where you received the invitation."
       },
       "loading": "Loading...",
       "success": "Welcome back!",
@@ -288,6 +290,24 @@
       "loading": "Loading...",
       "success": "Password reset email sent!",
       "error": "An error occurred: {error}"
+    },
+    "acceptInvitationForm": {
+      "headerTitle": "You have been invited to join a tenant!",
+      "headerLabel": "By accepting this invitation, you agree to our Terms and Conditions.",
+      "termsLink": "Read Terms and Conditions",
+      "acceptanceNotice": "By clicking 'Accept Invitation', you confirm that you have read and agree to the Terms and Conditions.",
+      "actions": {
+        "acceptInvitation": "Accept Invitation",
+        "cancelInvitation": "Cancel Invitation"
+      },
+      "readTermAndConditions": "Read Terms and Conditions",
+      "invitationIdNoFound": "Invitation ID not found.",
+      "loading": "Accepting invitation...",
+      "success": "Invitation accepted successfully!",
+      "error": "Failed to accept invitation",
+      "cancelling": "Cancelling invitation...",
+      "cancelSuccess": "Invitation cancelled.",
+      "cancelError": "Failed to cancel invitation"
     }
   },
   "tenants": {
@@ -457,6 +477,17 @@
           "tenants": "Tenants"
         },
         "addTenant": "Add tenant"
+      },
+      "systemTitle": "System",
+      "user": {
+        "avatarAlt": "user",
+        "noName": "No name",
+        "noEmail": "No email",
+        "upgrade": "Upgrade to Pro",
+        "account": "Account",
+        "billing": "Billing",
+        "notifications": "Notifications",
+        "logout": "Log out"
       }
     },
     "dashboard": {
@@ -1813,7 +1844,10 @@
         "error": {
           "usernameRequired": "Username is required.",
           "invalidEmail": "Please enter a valid email address."
-        }
+        },
+        "adminDesc": "Grants this user administrative privileges for the tenant.",
+        "admin": "Admin",
+        "gdprNotice": "To comply with GDPR, some personal data cannot be stored when creating a user. Once the user accepts the invitation, they will be able to complete and save their personal information."
       }
     },
     "form": {
@@ -3611,6 +3645,13 @@
       "thumbnail": {
         "remove": "Remove image",
         "alt": "Message image"
+      },
+      "header": {
+        "online": "Online",
+        "offline": "Offline",
+        "usersConnected": "Connected users",
+        "more": "more",
+        "noUsers": "No users connected."
       }
     }
   }

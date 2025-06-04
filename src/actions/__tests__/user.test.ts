@@ -2,17 +2,31 @@
 import { auth, currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-client';
 
-import { getCurrentUserTenant, getIdentityTypesAsOptions, getRolesAsOptions, getUsersAsOptions, upsertUser } from '../user';
+import { UserTenantScopedFormValues } from '@/components/common/user/user-tenant-scoped-form';
+
+import { getCurrentUserTenant, getIdentityTypesAsOptions, getRolesAsOptions, getUsersAsOptions, processInvitationAcceptance, upsertUser } from '../user';
+
+// Mock next/headers
+jest.mock('next/headers', () => ({
+  headers: jest.fn().mockReturnValue({}),
+}));
 
 // Mock external dependencies
-jest.mock('@/server/auth-server', () => ({
-  currentSession: jest.fn(),
-  auth: {
-    api: {
-      signUpEmail: jest.fn(),
+jest.mock('@/server/auth-server', () => {
+  const mockCreateInvitation = jest.fn().mockResolvedValue({ id: 'invitation-1' });
+  const mockAcceptInvitation = jest.fn().mockResolvedValue({ invitation: { organizationId: 'tenant-1' } });
+
+  return {
+    currentSession: jest.fn(),
+    auth: {
+      api: {
+        signUpEmail: jest.fn(),
+        createInvitation: mockCreateInvitation,
+        acceptInvitation: mockAcceptInvitation,
+      },
     },
-  },
-}));
+  };
+});
 
 jest.mock('@/server/db-client', () => ({
   db: {
@@ -22,13 +36,23 @@ jest.mock('@/server/db-client', () => ({
       update: jest.fn(),
     },
     userTenant: {
+      findMany: jest.fn(),
       findUniqueOrThrow: jest.fn(),
+      findUnique: jest.fn(),
+      update: jest.fn(),
     },
     identificationType: {
       findMany: jest.fn(),
     },
     role: {
       findMany: jest.fn(),
+    },
+    person: {
+      findFirst: jest.fn(),
+    },
+    invitationTenant: {
+      findUnique: jest.fn(),
+      update: jest.fn(),
     },
   },
 }));
@@ -49,81 +73,42 @@ describe('User Actions', () => {
     });
 
     it('should return formatted user options', async () => {
-      const mockUsers = [
+      const mockUserTenants = [
         {
-          id: 'user-1',
-          username: 'john.doe',
-          email: 'john@example.com',
-          userTenants: [
-            {
-              id: 'user-tenant-1',
-              person: {
-                firstName: 'John',
-                lastName: 'Doe',
-              },
-            },
-          ],
-        },
-      ];
-
-      (db.user.findMany as jest.Mock).mockResolvedValue(mockUsers);
-
-      const result = await getUsersAsOptions(mockTenantId);
-
-      expect(result).toEqual([
-        {
-          label: 'John Doe @john.doe',
-          value: 'user-tenant-1',
-        },
-      ]);
-
-      expect(db.user.findMany).toHaveBeenCalledWith({
-        select: {
-          id: true,
-          username: true,
-          email: true,
-          userTenants: {
-            select: {
-              id: true,
-              person: {
-                select: {
-                  firstName: true,
-                  lastName: true,
-                },
-              },
-            },
-            where: { tenantId: mockTenantId },
+          id: 'user-tenant-1',
+          user: {
+            id: 'user-1',
+            email: 'john@example.com',
+            username: 'john.doe',
+          },
+          person: {
+            firstName: 'John',
+            lastName: 'Doe',
+            image: null,
           },
         },
-        where: { userTenants: { every: { tenantId: mockTenantId } } },
-      });
-    });
-
-    it('should handle users without person data', async () => {
-      const mockUsers = [
-        {
-          id: 'user-1',
-          username: 'john.doe',
-          email: 'john@example.com',
-          userTenants: [
-            {
-              id: 'user-tenant-1',
-              person: null,
-            },
-          ],
-        },
       ];
 
-      (db.user.findMany as jest.Mock).mockResolvedValue(mockUsers);
+      (db.userTenant.findMany as jest.Mock).mockResolvedValue(mockUserTenants);
 
       const result = await getUsersAsOptions(mockTenantId);
 
       expect(result).toEqual([
         {
-          label: 'john.doe',
+          label: 'John Doe',
           value: 'user-tenant-1',
         },
       ]);
+
+      expect(db.userTenant.findMany).toHaveBeenCalledWith({
+        select: {
+          id: true,
+          user: { select: { id: true, email: true, username: true } },
+          person: { select: { image: true, firstName: true, lastName: true } },
+        },
+        where: { tenantId: mockTenantId, isActive: true },
+        orderBy: { user: { username: 'asc' } },
+      });
     });
   });
 
@@ -165,21 +150,40 @@ describe('User Actions', () => {
 
   describe('getCurrentUserTenant', () => {
     it('should return current user tenant ID', async () => {
-      const mockUserTenant = { id: 'user-tenant-1' };
+      const mockUserTenant = {
+        id: 'user-tenant-1',
+        user: {
+          id: 'user-1',
+          email: 'john@example.com',
+          username: 'john.doe',
+        },
+        person: {
+          id: null,
+          firstName: 'John',
+          lastName: 'Doe',
+          image: null,
+        },
+      };
       (db.userTenant.findUniqueOrThrow as jest.Mock).mockResolvedValue(mockUserTenant);
 
       const result = await getCurrentUserTenant(mockTenantId);
 
-      expect(result).toEqual({ userTenantId: 'user-tenant-1' });
-      expect(db.userTenant.findUniqueOrThrow).toHaveBeenCalledWith({
-        where: { userId_tenantId: { userId: mockSession.user.id, tenantId: mockTenantId } },
-        select: { id: true },
+      expect(result).toEqual({
+        userTenantId: 'user-tenant-1',
+        userId: 'user-1',
+        userEmail: 'john@example.com',
+        userUsername: 'john.doe',
+        personId: null,
+        personFirstName: 'John',
+        personLastName: 'Doe',
+        personImage: null,
+        displayUserName: 'John Doe',
       });
     });
   });
 
   describe('upsertUser', () => {
-    const mockUserData = {
+    const mockUserData: UserTenantScopedFormValues = {
       user: {
         id: 'user-tenant-1',
         email: 'john@example.com',
@@ -187,6 +191,8 @@ describe('User Actions', () => {
         lastName: 'Doe',
         isActive: true,
         isTwoFactorRequired: false,
+        isAdmin: false,
+        isEditing: false,
         phone: '',
         identificationNumber: '',
         identificationTypeId: { value: 'type-1', label: 'Passport' },
@@ -202,29 +208,47 @@ describe('User Actions', () => {
       ],
     };
 
-    it('should create new user when user does not exist', async () => {
+    it('should create invitation for new user', async () => {
       (db.user.findUnique as jest.Mock).mockResolvedValue(null);
-      (auth.api.signUpEmail as unknown as jest.Mock).mockResolvedValue({});
 
-      await upsertUser(mockTenantId, mockUserData);
+      const result = await upsertUser(mockTenantId, mockUserData);
 
-      expect(auth.api.signUpEmail).toHaveBeenCalledWith({
-        body: expect.objectContaining({
+      expect(result).toEqual({
+        isNewUser: true,
+        email: mockUserData.user.email,
+        invitationId: 'invitation-1',
+      });
+
+      expect(auth.api.createInvitation).toHaveBeenCalledWith({
+        headers: expect.any(Object),
+        body: {
+          resend: true,
           email: mockUserData.user.email,
-          name: expect.stringMatching(/john\.doe[a-f0-9]{4}/),
-        }),
+          role: 'member',
+          organizationId: mockTenantId,
+        },
+      });
+
+      expect(db.invitationTenant.update).toHaveBeenCalledWith({
+        where: { id: 'invitation-1' },
+        data: {
+          metadata: expect.stringContaining('"firstName":"John"'),
+        },
       });
     });
 
     it('should update existing user', async () => {
       const existingUser = { id: 'user-1' };
       (db.user.findUnique as jest.Mock).mockResolvedValue(existingUser);
+      (db.userTenant.findUnique as jest.Mock).mockResolvedValue({ personId: 'person-1' });
+      (db.person.findFirst as jest.Mock).mockResolvedValue(null);
       (db.user.update as jest.Mock).mockResolvedValue(existingUser);
 
       await upsertUser(mockTenantId, mockUserData);
 
       expect(db.user.update).toHaveBeenCalledWith({
-        where: { email: mockUserData.user.email },
+        select: { id: true, email: true, username: true },
+        where: { id: existingUser.id },
         data: expect.objectContaining({
           userTenants: {
             upsert: expect.objectContaining({
@@ -235,6 +259,74 @@ describe('User Actions', () => {
           },
         }),
       });
+    });
+
+    it('should throw error if phone number already exists', async () => {
+      const existingUser = { id: 'user-1' };
+      (db.user.findUnique as jest.Mock).mockResolvedValue(existingUser);
+      (db.userTenant.findUnique as jest.Mock).mockResolvedValue({ personId: 'person-1' });
+      (db.person.findFirst as jest.Mock).mockResolvedValue({ id: 'existing-person' });
+
+      await expect(
+        upsertUser(mockTenantId, {
+          ...mockUserData,
+          user: { ...mockUserData.user, phone: '1234567890' },
+        })
+      ).rejects.toThrow('Phone number is already registered in this tenant.');
+    });
+  });
+
+  describe('processInvitationAcceptance', () => {
+    const mockInvitationId = 'invitation-1';
+    const mockMetadata = {
+      firstName: 'John',
+      lastName: 'Doe',
+      isAdmin: false,
+      isTwoFactorRequired: false,
+      roles: [{ roleId: 'role-1', isActive: true }],
+      areaRoles: [{ areaId: 'area-1', roleId: 'role-1', isActive: true }],
+    };
+
+    it('should process invitation acceptance successfully', async () => {
+      (currentSession as jest.Mock).mockResolvedValue({
+        session: {
+          userId: 'user-123',
+        },
+      });
+
+      (db.invitationTenant.findUnique as jest.Mock).mockResolvedValue({
+        tenantId: mockTenantId,
+        metadata: JSON.stringify(mockMetadata),
+      });
+
+      const result = await processInvitationAcceptance(mockInvitationId);
+
+      expect(result).toEqual({ tenantId: mockTenantId });
+      expect(db.userTenant.update).toHaveBeenCalledWith({
+        where: { userId_tenantId: { userId: 'user-123', tenantId: mockTenantId } },
+        data: expect.objectContaining({
+          isTermAccepted: true,
+          role: 'member',
+          isTwoFactorRequired: false,
+          isActive: true,
+        }),
+      });
+    });
+
+    it('should throw error if invitation metadata not found', async () => {
+      (db.invitationTenant.findUnique as jest.Mock).mockResolvedValue(null);
+
+      await expect(processInvitationAcceptance(mockInvitationId)).rejects.toThrow('Invitation metadata not found');
+    });
+
+    it('should throw error if invitation acceptance fails', async () => {
+      (db.invitationTenant.findUnique as jest.Mock).mockResolvedValue({
+        tenantId: mockTenantId,
+        metadata: JSON.stringify(mockMetadata),
+      });
+      (auth.api.acceptInvitation as jest.Mock).mockResolvedValue(null);
+
+      await expect(processInvitationAcceptance(mockInvitationId)).rejects.toThrow('Failed to accept invitation');
     });
   });
 });

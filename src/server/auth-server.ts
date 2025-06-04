@@ -55,7 +55,7 @@ export const auth = betterAuth({
       isGlobalAdmin: {
         input: false,
         type: 'boolean',
-        required: true,
+        required: false,
         defaultValue: false,
       },
     },
@@ -84,7 +84,16 @@ export const auth = betterAuth({
         enabled: true,
         allowRemovingAllTeams: false,
       },
-      sendInvitationEmail,
+      sendInvitationEmail: async (data) => {
+        await sendInvitationEmail({
+          id: data.invitation.id,
+          role: data.role,
+          email: data.email,
+          organizationName: data.organization.name,
+          invitedByName: data.inviter.user.name,
+          invitedByEmail: data.inviter.user.email,
+        });
+      },
       schema: {
         organization: {
           modelName: 'Tenant',
@@ -146,7 +155,6 @@ export const auth = betterAuth({
     phoneNumber(),
     anonymous(),
     username(),
-    nextCookies(),
   ],
 });
 

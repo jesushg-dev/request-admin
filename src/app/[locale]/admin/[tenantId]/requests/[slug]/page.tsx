@@ -1,7 +1,6 @@
 import { getAuthContext } from '@/actions/authorization';
 import { getAssignmentHierarchyAndLevelsByCategoryId, getRequestHierarchyAndLevelsByCategoryId } from '@/actions/hierarchy';
 import { getPrioritiesAsOptions, getRequestById, getRequestDetailsByRequest } from '@/actions/request';
-import { getCurrentUserTenant } from '@/actions/user';
 import { getWorkflowWithTransitions } from '@/actions/workflow';
 import { PermissionActions } from '@/constants/permissions';
 import { getPathname, redirect } from '@/i18n/routing';
@@ -47,9 +46,8 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
   }
 
   // --- Data Preparation ---
-  const [requestDetails, currentUser, priorities, workflow, requestHierarchy, assignmentHierarchy] = await Promise.all([
+  const [requestDetails, priorities, workflow, requestHierarchy, assignmentHierarchy] = await Promise.all([
     getRequestDetailsByRequest(tenantId, request),
-    getCurrentUserTenant(tenantId),
     getPrioritiesAsOptions(tenantId),
     getWorkflowWithTransitions(tenantId, request.requestCategory.slice(-1)[0].value),
     getRequestHierarchyAndLevelsByCategoryId(locale, tenantId, request.requestCategory.slice(-1)[0].value),
@@ -119,7 +117,7 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
             </TabsContent>
 
             <TabsContent value="comments" className="flex-1 flex flex-col overflow-hidden">
-              <Messages name={currentUser.name} currentUserTenantId={currentUser.userTenantId} channel={requestDetails.channel} tenantId={tenantId} />
+              <Messages channel={requestDetails.channel} tenantId={tenantId} />
             </TabsContent>
 
             <TabsContent value="assignments" className="flex-1 flex flex-col overflow-hidden">

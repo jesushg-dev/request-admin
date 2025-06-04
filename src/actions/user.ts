@@ -1,49 +1,305 @@
 'use server';
 
+import { headers } from 'next/headers';
 import { auth, currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-client';
 
-import { generateUuid } from '@/lib/id';
-//import { sendVerificationEmailWithPassword } from '@/lib/mail';
-import { generateTempPassword } from '@/lib/password';
+import { UserTenant } from '@/types/user';
+import { convertUserTenantTypeToUserTenant, getUserName } from '@/lib/user';
 import { UserTenantScopedFormValues } from '@/components/common/user/user-tenant-scoped-form';
 
 class UserNotFoundErr extends Error {}
 
+// Type definition for safe invitation metadata
+type SafeInvitationMetadata = {
+  firstName: string;
+  lastName: string;
+  isAdmin: boolean;
+  isTwoFactorRequired?: boolean;
+  roles?: Array<{ roleId: string; isActive: boolean }>;
+  areaRoles?: Array<{ areaId: string; roleId: string; isActive: boolean }>;
+};
+
+// Sanitizes data before saving it in metadata
+const sanitizeInvitationData = (data: UserTenantScopedFormValues): SafeInvitationMetadata => {
+  return {
+    firstName: data.user.firstName,
+    lastName: data.user.lastName,
+    isAdmin: data.user.isAdmin,
+    isTwoFactorRequired: data.user.isTwoFactorRequired,
+    roles: data.roles?.map((role) => ({
+      roleId: role.roleId.value,
+      isActive: role.isActive,
+    })),
+    areaRoles: data.areaRoles?.map((area) => ({
+      areaId: area.areaId.value,
+      roleId: area.roleId.value,
+      isActive: area.isActive,
+    })),
+  };
+};
+
+// Updates an existing user
+const updateExistingUser = async (tenantId: string, data: UserTenantScopedFormValues, existingUserId: string) => {
+  // Find the current Person record for this user and tenant
+  const currentUserTenant = await db.userTenant.findUnique({
+    where: { userId_tenantId: { userId: existingUserId, tenantId } },
+    select: { personId: true },
+  });
+
+  // Uniqueness check for phone
+  if (data.user.phone) {
+    const phoneExists = await db.person.findFirst({
+      where: {
+        phone: data.user.phone,
+        tenantId,
+        // Exclude the current person's record (if exists)
+        id: currentUserTenant?.personId ? { not: currentUserTenant.personId } : undefined,
+      },
+      select: { id: true },
+    });
+    if (phoneExists) {
+      throw new Error('Phone number is already registered in this tenant.');
+    }
+  }
+
+  // Uniqueness check for identificationNumber
+  if (data.user.identificationNumber) {
+    const idNumberExists = await db.person.findFirst({
+      where: {
+        identificationNumber: data.user.identificationNumber,
+        tenantId,
+        id: currentUserTenant?.personId ? { not: currentUserTenant.personId } : undefined,
+      },
+      select: { id: true },
+    });
+    if (idNumberExists) {
+      throw new Error('Identification number is already registered in this tenant.');
+    }
+  }
+
+  return await db.user.update({
+    select: { id: true, email: true, username: true },
+    where: { id: existingUserId },
+    data: {
+      userTenants: {
+        upsert: {
+          where: { userId_tenantId: { userId: existingUserId, tenantId } },
+          create: {
+            tenantId,
+            id: data.user.id,
+            isActive: data.user.isActive,
+            isTwoFactorRequired: data.user.isTwoFactorRequired,
+            person: {
+              create: {
+                tenantId,
+                firstName: data.user.firstName,
+                lastName: data.user.lastName,
+                phone: data.user.phone,
+                identificationNumber: data.user.identificationNumber,
+                identificationTypeId: data.user.identificationTypeId?.value,
+              },
+            },
+            userRoles: data.roles
+              ? {
+                  create: data.roles.map((role) => ({
+                    tenantId,
+                    roleId: role.roleId.value,
+                    isActive: role.isActive,
+                  })),
+                }
+              : undefined,
+            userAreas: data.areaRoles
+              ? {
+                  create: data.areaRoles.map((area) => ({
+                    tenantId,
+                    areaId: area.areaId.value,
+                    roleId: area.roleId.value,
+                    isActive: area.isActive,
+                  })),
+                }
+              : undefined,
+            role: data.user.isAdmin ? 'admin' : 'member',
+          },
+          update: {
+            isActive: data.user.isActive,
+            isTwoFactorRequired: data.user.isTwoFactorRequired,
+            person: {
+              update: {
+                firstName: data.user.firstName,
+                lastName: data.user.lastName,
+                phone: data.user.phone,
+                identificationNumber: data.user.identificationNumber,
+                identificationTypeId: data.user.identificationTypeId?.value,
+              },
+            },
+            userRoles: {
+              deleteMany: {},
+              create: (data.roles || []).map((role) => ({
+                tenantId,
+                roleId: role.roleId.value,
+                isActive: role.isActive,
+              })),
+            },
+            userAreas: {
+              deleteMany: {},
+              create: (data.areaRoles || []).map((area) => ({
+                tenantId,
+                areaId: area.areaId.value,
+                roleId: area.roleId.value,
+                isActive: area.isActive,
+              })),
+            },
+            role: data.user.isAdmin ? 'admin' : 'member',
+          },
+        },
+      },
+    },
+  });
+};
+
+// Creates an invitation with safe metadata
+const createUserInvitation = async (tenantId: string, data: UserTenantScopedFormValues) => {
+  const session = await currentSession();
+  if (!session) throw new UserNotFoundErr();
+
+  // Sanitize data before saving
+  const safeMetadata = sanitizeInvitationData(data);
+
+  // Create invitation in the authentication system
+  const invitationResult = await auth.api.createInvitation({
+    headers: await headers(),
+    body: {
+      resend: true,
+      email: data.user.email,
+      role: data.user.isAdmin ? 'admin' : 'member',
+      organizationId: tenantId,
+    },
+  });
+
+  // Save safe metadata in the database
+  await db.invitationTenant.update({
+    where: { id: invitationResult.id },
+    data: { metadata: JSON.stringify(safeMetadata) },
+  });
+
+  return {
+    isNewUser: true,
+    email: data.user.email,
+    invitationId: invitationResult.id,
+  };
+};
+
+// Processes the acceptance of an invitation
+export const processInvitationAcceptance = async (invitationId: string) => {
+  const session = await currentSession();
+  if (!session) throw new UserNotFoundErr();
+
+  // 1. Retrieve invitation metadata
+  const invitationRecord = await db.invitationTenant.findUnique({
+    select: { tenantId: true, metadata: true },
+    where: { id: invitationId },
+  });
+  if (!invitationRecord) throw new Error('Invitation metadata not found');
+
+  // 2. Parse metadata (with basic validation)
+  let metadata: SafeInvitationMetadata;
+  try {
+    metadata = JSON.parse(invitationRecord.metadata);
+  } catch {
+    throw new Error('Invalid invitation format, you may need to ask the administrator to resend the invitation');
+  }
+
+  // 3. Accept the invitation in the authentication system
+  const authResult = await auth.api.acceptInvitation({
+    headers: await headers(),
+    body: { invitationId },
+  });
+
+  if (!authResult) throw new Error('Failed to accept invitation, you may need to ask the administrator to resend the invitation');
+
+  // 4. Apply tenant configuration
+  await db.userTenant.update({
+    where: { userId_tenantId: { userId: session.session.userId, tenantId: invitationRecord.tenantId } },
+    data: {
+      isTermAccepted: true, // Default value
+      userId: session.session.userId,
+      tenantId: invitationRecord.tenantId,
+      role: metadata.isAdmin ? 'admin' : 'member',
+      isTwoFactorRequired: metadata.isTwoFactorRequired ?? false,
+      isActive: true,
+      person: {
+        create: {
+          tenantId: invitationRecord.tenantId,
+          firstName: metadata.firstName,
+          lastName: metadata.lastName,
+        },
+      },
+      userRoles: metadata.roles
+        ? {
+            create: metadata.roles.map((role) => ({
+              tenantId: invitationRecord.tenantId,
+              roleId: role.roleId,
+              isActive: role.isActive,
+            })),
+          }
+        : undefined,
+      userAreas: metadata.areaRoles
+        ? {
+            create: metadata.areaRoles.map((area) => ({
+              tenantId: invitationRecord.tenantId,
+              areaId: area.areaId,
+              roleId: area.roleId,
+              isActive: area.isActive,
+            })),
+          }
+        : undefined,
+    },
+  });
+
+  return { tenantId: authResult.invitation.organizationId };
+};
+
+// Main function to create/update users
+export const upsertUser = async (tenantId: string, data: UserTenantScopedFormValues) => {
+  const session = await currentSession();
+  if (!session) throw new UserNotFoundErr();
+
+  // Check if the user already exists
+  const existingUser = await db.user.findUnique({
+    select: { id: true },
+    where: { email: data.user.email },
+  });
+
+  if (existingUser) {
+    return await updateExistingUser(tenantId, data, existingUser.id);
+  } else {
+    return await createUserInvitation(tenantId, data);
+  }
+};
+
+// Get users as options for selects
 export const getUsersAsOptions = async (tenantId: string) => {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
-  const users = await db.user.findMany({
+  const userTenants = await db.userTenant.findMany({
     select: {
       id: true,
-      username: true,
-      email: true,
-      userTenants: {
-        select: {
-          id: true,
-          person: {
-            select: {
-              firstName: true,
-              lastName: true,
-            },
-          },
-        },
-        where: { tenantId },
-      },
+      user: { select: { id: true, email: true, username: true } },
+      person: { select: { image: true, firstName: true, lastName: true } },
     },
-    where: { userTenants: { every: { tenantId } } },
+    where: { tenantId, isActive: true },
+    orderBy: { user: { username: 'asc' } },
   });
 
-  return users.map((user) => ({
-    label:
-      user.userTenants[0].person?.firstName && user.userTenants[0].person?.lastName
-        ? `${user.userTenants[0].person?.firstName} ${user.userTenants[0].person?.lastName} @${user.username}`
-        : user.username || user.email,
-    value: user.userTenants[0].id,
+  return userTenants.map((userTenant) => ({
+    label: getUserName(userTenant),
+    value: userTenant.id,
   }));
 };
 
+// Get identification types as options
 export const getIdentityTypesAsOptions = async (tenantId: string) => {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
@@ -53,9 +309,14 @@ export const getIdentityTypesAsOptions = async (tenantId: string) => {
     where: { tenantId },
   });
 
-  return identityTypes.map(({ name, id, regex }) => ({ label: name, value: id, regex }));
+  return identityTypes.map(({ name, id, regex }) => ({
+    label: name,
+    value: id,
+    regex,
+  }));
 };
 
+// Get roles as options
 export const getRolesAsOptions = async (tenantId: string) => {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
@@ -65,125 +326,25 @@ export const getRolesAsOptions = async (tenantId: string) => {
     where: { tenantId },
   });
 
-  return roles.map(({ name, id }) => ({ label: name, value: id }));
+  return roles.map(({ name, id }) => ({
+    label: name,
+    value: id,
+  }));
 };
 
-export const upsertUser = async (tenantId: string, data: UserTenantScopedFormValues) => {
+// Get the current user's tenant
+export const getCurrentUserTenant = async (tenantId: string): Promise<UserTenant> => {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
-  // 1️⃣ Check if the user already exists by email
-  const existingUser = await db.user.findUnique({
-    where: { email: data.user.email },
-  });
-
-  // 2️⃣ Generate base data for user creation
-  const newUserData = {
-    username: `${data.user.firstName.toLowerCase()}.${data.user.lastName.toLowerCase() + generateUuid().slice(0, 4)}`,
-    email: data.user.email,
-    password: generateTempPassword(),
-    isTemporalPassword: true,
-  };
-
-  // 3️⃣ If the user does NOT exist, create it and send an invitation email
-  let user;
-  let isNewUser = false;
-
-  if (!existingUser) {
-    await auth.api.signUpEmail({
-      body: {
-        email: newUserData.email,
-        password: newUserData.password,
-        name: newUserData.username,
-      },
-    });
-
-    isNewUser = true;
-  } else {
-    // 4️⃣ If the user already exists, update their information
-
-    user = await db.user.update({
-      where: { email: data.user.email },
-      data: {
-        userTenants: {
-          upsert: {
-            where: { userId_tenantId: { userId: existingUser.id, tenantId } },
-            create: {
-              tenantId,
-              id: data.user.id,
-              isActive: data.user.isActive,
-              isTwoFactorRequired: data.user.isTwoFactorRequired,
-              userRoles: data.roles
-                ? {
-                    create: data.roles.map((role) => ({
-                      tenantId,
-                      roleId: role.roleId.value,
-                      isActive: role.isActive,
-                    })),
-                  }
-                : undefined,
-              userAreas: data.areaRoles
-                ? {
-                    create: data.areaRoles.map((area) => ({
-                      tenantId,
-                      areaId: area.areaId.value,
-                      roleId: area.roleId.value,
-                      isActive: area.isActive,
-                    })),
-                  }
-                : undefined,
-              role: 'user',
-            },
-            update: {
-              isTwoFactorRequired: data.user.isTwoFactorRequired,
-              isActive: data.user.isActive,
-              userRoles: {
-                deleteMany: {},
-                create: (data.roles || []).map((role) => ({
-                  tenantId,
-                  roleId: role.roleId.value,
-                  isActive: role.isActive,
-                })),
-              },
-              userAreas: {
-                deleteMany: {},
-                create: (data.areaRoles || []).map((area) => ({
-                  tenantId,
-                  areaId: area.areaId.value,
-                  roleId: area.roleId.value,
-                  isActive: area.isActive,
-                })),
-              },
-            },
-          },
-        },
-      },
-    });
-  }
-
-  // 5️⃣ If the user is new, send an invitation email
-  if (isNewUser) {
-    // todo: send email
-  }
-
-  return user;
-};
-
-export const getCurrentUserTenant = async (tenantId: string) => {
-  const session = await currentSession();
-  if (!session) throw new UserNotFoundErr();
-
-  const user = await db.userTenant.findUniqueOrThrow({
+  const result = await db.userTenant.findUniqueOrThrow({
     where: { userId_tenantId: { userId: session.user.id, tenantId } },
     select: {
       id: true,
       user: { select: { id: true, email: true, username: true } },
-      person: { select: { firstName: true, lastName: true } },
+      person: { select: { id: true, image: true, firstName: true, lastName: true } },
     },
   });
 
-  return {
-    userTenantId: user.id,
-    name: user.person ? `${user.person.firstName} ${user.person.lastName}` : `@${user.user.username} (${user.user.email})`,
-  };
+  return convertUserTenantTypeToUserTenant(result);
 };

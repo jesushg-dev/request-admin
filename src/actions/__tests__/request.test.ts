@@ -6,6 +6,12 @@ import { RequestFormStepperType } from '@/components/common/request/request-form
 
 import { getPrioritiesAsOptions, getRequestById, getRequestDetailsByRequest, upsertRequest } from '../request';
 
+// Mock notification module
+jest.mock('../notification', () => ({
+  sendInAppNotification: jest.fn().mockResolvedValue(undefined),
+  sendSMSNotification: jest.fn().mockResolvedValue(undefined),
+}));
+
 // Define mock types
 type MockDbType = {
   request: {
@@ -43,6 +49,7 @@ type MockDbType = {
   };
   channel: {
     findFirst: jest.Mock;
+    create: jest.Mock;
   };
   requestPriorityType: {
     findMany: jest.Mock;
@@ -63,6 +70,9 @@ type MockDbType = {
     findMany: jest.Mock;
   };
   executionFlowDefinition: {
+    findFirst: jest.Mock;
+  };
+  executionModelInstance: {
     findFirst: jest.Mock;
   };
   $transaction: jest.Mock;
@@ -126,6 +136,7 @@ jest.mock('@/server/db-server', () => {
       },
       channel: {
         findFirst: jest.fn() as jest.Mock,
+        create: jest.fn() as jest.Mock,
       },
       requestPriorityType: {
         findMany: jest.fn() as jest.Mock,
@@ -156,7 +167,13 @@ jest.mock('@/server/db-server', () => {
       $queryRawUnsafe: jest.fn() as jest.Mock,
     };
 
-    db.$transaction.mockImplementation((callback) => callback(db));
+    db.$transaction.mockImplementation(async (callback) => {
+      if (typeof callback === 'function') {
+        return callback(db);
+      }
+      return Promise.all(callback);
+    });
+
     return db;
   };
 
@@ -196,13 +213,44 @@ describe('Request Actions', () => {
 
   describe('upsertRequest', () => {
     describe('create request', () => {
+      const mockCreatedRequest = {
+        id: mockRequestId,
+        requestAssignments: [
+          {
+            assignedUsers: [
+              {
+                userTenant: {
+                  id: 'user-1',
+                  person: { phone: '1234567890' },
+                  user: { email: 'test@example.com' },
+                },
+              },
+            ],
+          },
+        ],
+        complianceTrackings: [],
+        formSubmission: [],
+        executionFlowDefinitions: [],
+      };
+
       beforeEach(() => {
         (db.request.findUnique as jest.Mock).mockResolvedValue(null);
         (db.assignmentType.findFirstOrThrow as jest.Mock).mockResolvedValue({ id: 'type-1' });
         (db.requestCategoryRequirement.findMany as jest.Mock).mockResolvedValue([]);
-        (db.userTenant.findMany as jest.Mock).mockResolvedValue([]);
+        (db.userTenant.findMany as jest.Mock).mockResolvedValue([
+          {
+            id: 'user-1',
+            userAreas: [
+              {
+                areaId: 'area-1',
+                role: { name: 'User' },
+              },
+            ],
+          },
+        ]);
         (db.dataroom.create as jest.Mock).mockResolvedValue({ id: 'dataroom-1' });
-        (db.request.create as jest.Mock).mockResolvedValue({ id: mockRequestId });
+        (db.request.create as jest.Mock).mockResolvedValue(mockCreatedRequest);
+        (db.channel.create as jest.Mock).mockResolvedValue({ id: 'channel-1' });
       });
 
       it('should create a new request when it does not exist', async () => {
@@ -293,6 +341,9 @@ describe('Request Actions', () => {
             assignmentCategory: { id: 'old-assign-cat', name: 'Old Assignment Category' },
           },
         ],
+        complianceTrackings: [],
+        formSubmission: [],
+        executionFlowDefinitions: [],
       };
 
       const updatedRequest = {
@@ -306,15 +357,37 @@ describe('Request Actions', () => {
             area: { id: 'area-1', name: 'Area 1' },
             requestCategory: { id: 'cat-1', name: 'Category 1' },
             assignmentCategory: { id: 'assign-cat-1', name: 'Assignment Category 1' },
+            assignedUsers: [
+              {
+                userTenant: {
+                  id: 'user-1',
+                  person: { phone: '1234567890' },
+                  user: { email: 'test@example.com' },
+                },
+              },
+            ],
           },
         ],
+        complianceTrackings: [],
+        formSubmission: [],
+        executionFlowDefinitions: [],
       };
 
       beforeEach(() => {
         (db.request.findUnique as jest.Mock).mockResolvedValue(existingRequest);
         (db.assignmentType.findFirstOrThrow as jest.Mock).mockResolvedValue({ id: 'type-1' });
         (db.requestCategoryRequirement.findMany as jest.Mock).mockResolvedValue([]);
-        (db.userTenant.findMany as jest.Mock).mockResolvedValue([]);
+        (db.userTenant.findMany as jest.Mock).mockResolvedValue([
+          {
+            id: 'user-1',
+            userAreas: [
+              {
+                areaId: 'area-1',
+                role: { name: 'User' },
+              },
+            ],
+          },
+        ]);
         (db.request.update as jest.Mock).mockResolvedValue(updatedRequest);
       });
 
@@ -527,9 +600,13 @@ describe('Request Actions', () => {
       issueSubject: 'Test subject',
       priorityId: { value: 'priority-1', label: 'Priority 1' },
       isDraft: false,
+      description: '',
+      statusId: { value: 'status-1', label: 'Status 1' },
+      submissions: {},
     };
 
     beforeEach(() => {
+      jest.clearAllMocks();
       (db.formSubmission.count as jest.Mock).mockResolvedValue(2);
       (db.requestCategoryForm.count as jest.Mock).mockResolvedValue(3);
       (db.customerSatisfactionSurvey.findFirst as jest.Mock).mockResolvedValue(null);
@@ -542,40 +619,57 @@ describe('Request Actions', () => {
       });
       (db.assignedUser.findMany as jest.Mock).mockResolvedValue([]);
       (db.requestAssignment.count as jest.Mock).mockResolvedValue(0);
+      (db.executionFlowDefinition.findFirst as jest.Mock).mockResolvedValue(null);
+      (db.executionModelInstance.findFirst as jest.Mock).mockResolvedValue(null);
     });
 
     it('should return request details with all optional fields', async () => {
-      (db.customerSatisfactionSurvey.findFirst as jest.Mock).mockResolvedValue({
+      const mockSatisfactionSurvey = {
         rating: 5,
         feedback: 'Great service',
         submittedAt: new Date(),
-      });
-      (db.channel.findFirst as jest.Mock).mockResolvedValue({
+      };
+
+      const mockChannel = {
         id: 'channel-1',
         name: 'Test Channel',
         createdAt: new Date(),
-      });
-      (db.dataroom.findFirst as jest.Mock).mockResolvedValue({
+      };
+
+      const mockDataroom = {
         id: 'dataroom-1',
         name: 'Test Dataroom',
         createdAt: new Date(),
-      });
-      (db.executionFlowDefinition.findFirst as jest.Mock).mockResolvedValue({
+      };
+
+      const mockExecutionFlow = {
         id: 'flow-1',
         name: 'Test Flow',
         createdAt: new Date(),
-      });
-      (db.executionModelInstance.findFirst as jest.Mock).mockResolvedValue({
+        nodes: [],
+        edges: [],
+        variables: [],
+        metadata: {},
+      };
+
+      const mockExecutionInstance = {
         id: 'instance-1',
         status: 'active',
         createdAt: new Date(),
-      });
+      };
+
+      (db.customerSatisfactionSurvey.findFirst as jest.Mock).mockResolvedValue(mockSatisfactionSurvey);
+      (db.channel.findFirst as jest.Mock).mockResolvedValue(mockChannel);
+      (db.dataroom.findFirst as jest.Mock).mockResolvedValue(mockDataroom);
+      (db.executionFlowDefinition.findFirst as jest.Mock).mockResolvedValue(mockExecutionFlow);
+      (db.executionModelInstance.findFirst as jest.Mock).mockResolvedValue(mockExecutionInstance);
 
       const result = await getRequestDetailsByRequest(mockTenantId, mockRequestDetails);
 
       expect(result.satisfactionSurvey).toBeDefined();
       expect(result.channel).toBeDefined();
       expect(result.dataroom).toBeDefined();
+      expect(result.executionFlow).toBeDefined();
     });
 
     it('should return request details with assigned users', async () => {
@@ -646,19 +740,6 @@ describe('Request Actions', () => {
     });
 
     it('should handle request with inactive requirements', async () => {
-      (db.formSubmission.count as jest.Mock).mockResolvedValue(2);
-      (db.requestCategoryForm.count as jest.Mock).mockResolvedValue(3);
-      (db.customerSatisfactionSurvey.findFirst as jest.Mock).mockResolvedValue(null);
-      (db.channel.findFirst as jest.Mock).mockResolvedValue(null);
-      (db.dataroom.findFirst as jest.Mock).mockResolvedValue(null);
-      (db.guideDocument.findMany as jest.Mock).mockResolvedValue([]);
-      (db.userTenant.findFirst as jest.Mock).mockResolvedValue({
-        person: { firstName: 'John', lastName: 'Doe' },
-        user: { email: 'john@example.com' },
-      });
-      (db.assignedUser.findMany as jest.Mock).mockResolvedValue([]);
-      (db.requestAssignment.count as jest.Mock).mockResolvedValue(0);
-
       const requestWithInactiveReqs = {
         ...mockRequestDetails,
         requirementCompliances: {
