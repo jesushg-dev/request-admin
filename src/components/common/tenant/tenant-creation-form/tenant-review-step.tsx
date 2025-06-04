@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Building, Check, FileText, ImageIcon, LinkIcon, Mail, MapPin, Package, Palette, Phone, Tag, ViewIcon } from 'lucide-react';
+import { Building, FileText, ImageIcon, LinkIcon, Mail, MapPin, Package, Palette, Phone, Tag, ViewIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useWatch } from 'react-hook-form';
 
-import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 
@@ -16,6 +16,7 @@ interface TenantReviewStepProps {
 }
 
 const TenantReviewStep = ({ plans }: TenantReviewStepProps) => {
+  const t = useTranslations('tenants.form.tenantReviewStep');
   const data = useWatch<TenantCreationValues>();
 
   const selectedPlan = useMemo(() => {
@@ -30,20 +31,20 @@ const TenantReviewStep = ({ plans }: TenantReviewStepProps) => {
   }, [data.logo]);
 
   return (
-    <Card>
+    <Card className="flex-1 flex flex-col overflow-hidden">
       <CardHeader>
-        <CardTitle>Review Your Tenant Information</CardTitle>
-        <CardDescription>Please review the information below before creating your tenant.</CardDescription>
+        <CardTitle>{t('title')}</CardTitle>
+        <CardDescription>{t('description')}</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4">
+      <CardContent className="flex-1 flex-col flex overflow-hidden gap-4">
         {/* Basic Information */}
         <div>
-          <h3 className="text-lg font-medium mb-3">Basic Information</h3>
+          <h3 className="text-lg font-medium mb-3">{t('basicInfo.title')}</h3>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="flex items-start gap-2">
               <Building className="h-5 w-5 text-muted-foreground mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Organization Name</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('basicInfo.orgName')}</p>
                 <p className="font-medium">{data.name}</p>
               </div>
             </div>
@@ -51,7 +52,7 @@ const TenantReviewStep = ({ plans }: TenantReviewStepProps) => {
             <div className="flex items-start gap-2">
               <Tag className="h-5 w-5 text-muted-foreground mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Slug</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('basicInfo.slug')}</p>
                 <p className="font-medium">{data.slug}</p>
               </div>
             </div>
@@ -59,11 +60,12 @@ const TenantReviewStep = ({ plans }: TenantReviewStepProps) => {
             <div className="flex items-start gap-2 md:col-span-2">
               <ImageIcon className="h-5 w-5 text-muted-foreground mt-0.5" />
               <div className="w-full">
-                <p className="text-sm font-medium text-muted-foreground">Logo</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('basicInfo.logo')}</p>
                 <div className="mt-1 flex items-start gap-3">
                   {data.logo ? (
                     <div className="relative border rounded-md overflow-hidden h-16 w-16 bg-muted/30 flex items-center justify-center">
                       {!logoPreviewError ? (
+                        // eslint-disable-next-line @next/next/no-img-element
                         <img src={data.logo ?? '/placeholder.svg'} alt={`${data.name} logo`} className="object-contain p-1" onError={() => setLogoPreviewError(true)} />
                       ) : (
                         <ImageIcon className="h-6 w-6 text-muted-foreground" />
@@ -76,7 +78,7 @@ const TenantReviewStep = ({ plans }: TenantReviewStepProps) => {
                   )}
                   <div className="flex-1">
                     <p className="font-medium break-all text-sm">{data.logo ?? '—'}</p>
-                    {logoPreviewError && data.logo && <p className="text-xs text-destructive mt-1">Unable to load logo preview</p>}
+                    {logoPreviewError && data.logo && <p className="text-xs text-destructive mt-1">{t('basicInfo.unableToLoadLogo')}</p>}
                   </div>
                 </div>
               </div>
@@ -85,7 +87,7 @@ const TenantReviewStep = ({ plans }: TenantReviewStepProps) => {
             <div className="flex items-start gap-2 md:col-span-2">
               <LinkIcon className="h-5 w-5 text-muted-foreground mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Website URL</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('basicInfo.websiteUrl')}</p>
                 <p className="font-medium break-all">{data.websiteUrl ?? '—'}</p>
               </div>
             </div>
@@ -96,12 +98,12 @@ const TenantReviewStep = ({ plans }: TenantReviewStepProps) => {
 
         {/* Content Information */}
         <div>
-          <h3 className="text-lg font-medium mb-3">Content Information</h3>
+          <h3 className="text-lg font-medium mb-3">{t('contentInfo.contentInfoTitle')}</h3>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="flex items-start gap-2 md:col-span-2">
               <FileText className="h-5 w-5 text-muted-foreground mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Title</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('contentInfo.title')}</p>
                 <p className="font-medium">{data.title ?? '—'}</p>
               </div>
             </div>
@@ -109,7 +111,7 @@ const TenantReviewStep = ({ plans }: TenantReviewStepProps) => {
             <div className="flex items-start gap-2 md:col-span-2">
               <FileText className="h-5 w-5 text-muted-foreground mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Description</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('contentInfo.description')}</p>
                 <p className="font-medium">{data.description ?? '—'}</p>
               </div>
             </div>
@@ -120,12 +122,12 @@ const TenantReviewStep = ({ plans }: TenantReviewStepProps) => {
 
         {/* Branding */}
         <div className="flex flex-col gap-4">
-          <h3 className="text-lg font-medium mb-3">Branding</h3>
+          <h3 className="text-lg font-medium mb-3">{t('branding.title')}</h3>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="flex items-start gap-2">
               <Palette className="h-5 w-5 text-muted-foreground mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Primary Color</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('branding.primaryColor')}</p>
                 <div className="flex items-center gap-2 mt-1">
                   <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: data.primaryColor }} />
                   <span className="font-medium">{data.primaryColor}</span>
@@ -136,7 +138,7 @@ const TenantReviewStep = ({ plans }: TenantReviewStepProps) => {
             <div className="flex items-start gap-2">
               <Palette className="h-5 w-5 text-muted-foreground mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Secondary Color</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('branding.secondaryColor')}</p>
                 <div className="flex items-center gap-2 mt-1">
                   <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: data.secondaryColor }} />
                   <span className="font-medium">{data.secondaryColor}</span>
@@ -147,7 +149,7 @@ const TenantReviewStep = ({ plans }: TenantReviewStepProps) => {
           <div className="flex flex-col gap-2 w-full">
             <div className="flex items-center gap-2">
               <ViewIcon className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <p className="text-sm font-medium text-muted-foreground">Preview</p>
+              <p className="text-sm font-medium text-muted-foreground">{t('branding.preview')}</p>
             </div>
             <div>
               <div className="border rounded-lg overflow-hidden shadow-lg">
@@ -195,7 +197,7 @@ const TenantReviewStep = ({ plans }: TenantReviewStepProps) => {
                   <p className="text-gray-600 mb-6 max-w-md">{data.description ?? 'Open Source Document Sharing Infrastructure'}</p>
 
                   <div className="px-4 py-2 rounded-md text-white font-medium" style={{ backgroundColor: data.secondaryColor ?? '#297dd6' }}>
-                    Get Started
+                    {t('branding.getStarted')}
                   </div>
 
                   <div className="mt-12 grid grid-cols-4 gap-8">
@@ -214,12 +216,12 @@ const TenantReviewStep = ({ plans }: TenantReviewStepProps) => {
 
         {/* Contact Information */}
         <div>
-          <h3 className="text-lg font-medium mb-3">Contact Information</h3>
+          <h3 className="text-lg font-medium mb-3">{t('contactInfo.title')}</h3>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="flex items-start gap-2">
               <Mail className="h-5 w-5 text-muted-foreground mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Email</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('contactInfo.email')}</p>
                 <p className="font-medium">{data.contactEmail ?? '—'}</p>
               </div>
             </div>
@@ -227,7 +229,7 @@ const TenantReviewStep = ({ plans }: TenantReviewStepProps) => {
             <div className="flex items-start gap-2">
               <Phone className="h-5 w-5 text-muted-foreground mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Phone</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('contactInfo.phone')}</p>
                 <p className="font-medium">{data.contactPhone ?? '—'}</p>
               </div>
             </div>
@@ -235,7 +237,7 @@ const TenantReviewStep = ({ plans }: TenantReviewStepProps) => {
             <div className="flex items-start gap-2 md:col-span-2">
               <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Address</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('contactInfo.address')}</p>
                 <p className="font-medium">{data.address ?? '—'}</p>
               </div>
             </div>
@@ -246,88 +248,30 @@ const TenantReviewStep = ({ plans }: TenantReviewStepProps) => {
 
         {/* Subscription Plan */}
         <div>
-          <h3 className="text-lg font-medium mb-3">Selected Plan</h3>
+          <h3 className="text-lg font-medium mb-3">{t('subscription.title')}</h3>
           {selectedPlan ? (
-            <div className="border rounded-lg p-4 bg-primary/5">
-              <div className="flex items-center justify-between mb-2">
+            <div className="flex items-start gap-2">
+              <Package className="h-5 w-5 text-muted-foreground mt-0.5" />
+              <div>
                 <div className="flex items-center gap-2">
-                  <Package className="h-5 w-5 text-primary" />
-                  <h4 className="font-medium text-lg">{selectedPlan.name}</h4>
+                  <p className="text-sm font-medium text-muted-foreground">{selectedPlan.name}</p>
+                  {selectedPlan.popular && <span className="ml-2 px-2 py-0.5 rounded bg-primary/10 text-primary text-xs font-semibold">{t('subscription.popular')}</span>}
                 </div>
-                <Badge variant="secondary" className="ml-auto">
-                  {selectedPlan.price === 0 ? 'Free' : `$${selectedPlan.price.toFixed(2)}`}
-                  {selectedPlan.durationInDays && selectedPlan.price > 0 && ` / ${selectedPlan.durationInDays} days`}
-                </Badge>
-              </div>
-              <p className="text-sm text-muted-foreground">{selectedPlan.description}</p>
-
-              <div className="mt-3 grid gap-2">
-                {selectedPlan.id === '1' && (
-                  <>
-                    <div className="flex items-center gap-2 text-sm">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span>Basic authentication features</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span>Up to 1,000 monthly active users</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span>Community support</span>
-                    </div>
-                  </>
-                )}
-
-                {selectedPlan.id === '2' && (
-                  <>
-                    <div className="flex items-center gap-2 text-sm">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span>All Basic features</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span>Up to 10,000 monthly active users</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span>Priority email support</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span>Advanced security features</span>
-                    </div>
-                  </>
-                )}
-
-                {selectedPlan.id === '3' && (
-                  <>
-                    <div className="flex items-center gap-2 text-sm">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span>All Pro features</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span>Unlimited monthly active users</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span>24/7 dedicated support</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span>Custom integrations</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span>SLA guarantees</span>
-                    </div>
-                  </>
-                )}
+                <p className="text-sm text-muted-foreground">{selectedPlan.description}</p>
+                <div className="mt-1 space-y-1">
+                  <p className="text-sm">
+                    <span className="font-medium">{t('subscription.price')}:</span> {selectedPlan.price === 0 ? t('subscription.free') : `$${selectedPlan.price}`}
+                  </p>
+                  {selectedPlan.durationInDays && (
+                    <p className="text-sm">
+                      <span className="font-medium">{t('subscription.duration')}:</span> {selectedPlan.durationInDays} {t('subscription.days')}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           ) : (
-            <p className="text-muted-foreground">No plan selected</p>
+            <p className="text-sm text-muted-foreground">{t('subscription.noPlan')}</p>
           )}
         </div>
       </CardContent>

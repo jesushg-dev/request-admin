@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { ChevronDown, CircleAlertIcon, HelpCircle } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import { useTranslations } from 'next-intl';
 import { useWatch } from 'react-hook-form';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -14,6 +15,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { RoleFormStepperType } from './role-form-stepper';
 
 export default function RoleFormReview() {
+  const t = useTranslations('component.rolesForm.roleFormReview');
   const { roles, userRoles } = useWatch<RoleFormStepperType>();
   const [hiddenRoles, setHiddenRoles] = useState<{ [key: string]: boolean }>({});
 
@@ -44,8 +46,8 @@ export default function RoleFormReview() {
     <div className="flex flex-col flex-1 gap-4">
       <Alert variant="warning">
         <CircleAlertIcon className="h-4 w-4" />
-        <AlertTitle>Review and Confirm</AlertTitle>
-        <AlertDescription>Please review the role and user assignments before confirming.</AlertDescription>
+        <AlertTitle>{t('reviewTitle')}</AlertTitle>
+        <AlertDescription>{t('reviewDescription')}</AlertDescription>
       </Alert>
 
       <div className="space-y-6">
@@ -71,12 +73,12 @@ export default function RoleFormReview() {
                     transition={{ duration: 0.2 }}
                     style={{ overflow: 'hidden' }}>
                     <CardContent>
-                      <p className="mb-4 text-sm text-muted-foreground">Users with the role {role.name} will have access to the following features:</p>
+                      <p className="mb-4 text-sm text-muted-foreground">{t('featuresAccess', { roleName: role.name })}</p>
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead className="w-[200px]">Module</TableHead>
-                            <TableHead>Features</TableHead>
+                            <TableHead className="w-[200px]">{t('module')}</TableHead>
+                            <TableHead>{t('features')}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -91,7 +93,7 @@ export default function RoleFormReview() {
                                         <HelpCircle className="h-4 w-4 text-muted-foreground" />
                                       </TooltipTrigger>
                                       <TooltipContent>
-                                        <p>Features available for {moduleName}</p>
+                                        <p>{t('moduleFeaturesTooltip', { moduleName })}</p>
                                       </TooltipContent>
                                     </Tooltip>
                                   </TooltipProvider>
@@ -122,15 +124,15 @@ export default function RoleFormReview() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.2 }}>
         <Card>
           <CardHeader>
-            <CardTitle>Assigned Users</CardTitle>
+            <CardTitle>{t('assignedUsers')}</CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>User</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>{t('user')}</TableHead>
+                  <TableHead>{t('role')}</TableHead>
+                  <TableHead>{t('status')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -139,7 +141,7 @@ export default function RoleFormReview() {
                     <TableCell>{userRole.userId?.label}</TableCell>
                     <TableCell>{userRole.roleId?.label}</TableCell>
                     <TableCell>
-                      <Badge variant={userRole.isActive ? 'success' : 'secondary'}>{userRole.isActive ? 'Active' : 'Inactive'}</Badge>
+                      <Badge variant={userRole.isActive ? 'success' : 'secondary'}>{userRole.isActive ? t('active') : t('inactive')}</Badge>
                     </TableCell>
                   </motion.tr>
                 ))}

@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { getRequestPriorityTypeAsFormById } from '@/actions/priority';
 import { type Locale } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
 import PriorityForm from '@/components/common/priority/priority-form';
 import { PageCardWrapper } from '@/components/shared/page-container';
@@ -11,11 +12,12 @@ interface UpdatePriorityPageProps {
 
 const UpdatePriorityPage: FC<UpdatePriorityPageProps> = async ({ params }) => {
   const { tenantId, slug } = await params;
+  const t = await getTranslations('admin.requestPriorityType.form');
 
   const priority = await getRequestPriorityTypeAsFormById(slug, tenantId);
 
   return (
-    <PageCardWrapper title="Priority Information" description="Please fill in the required fields to update the priority.">
+    <PageCardWrapper title={t('header.title')} description={t('header.descriptionUpdate')}>
       <PriorityForm tenantId={tenantId} initialValues={{ ...priority, id: slug }} />
     </PageCardWrapper>
   );

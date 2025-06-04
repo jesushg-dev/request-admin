@@ -203,7 +203,7 @@ export default function UserProfileForm() {
       setEmailVerified(data.user.emailVerified);
       setPhoneVerified(data.user.phoneNumberVerified ?? false);
     }
-  }, [data]);
+  }, [data, form]);
 
   return (
     <Card>

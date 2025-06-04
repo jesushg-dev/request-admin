@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { getTranslations } from 'next-intl/server';
 
 import RequirementTypeForm from '@/components/common/requirement-type/requirement-type-form';
 import { PageDialogWrapper } from '@/components/shared/page-container';
@@ -9,9 +10,10 @@ interface NewRequirementTypePageProps {
 
 const NewRequirementTypePage: FC<NewRequirementTypePageProps> = async ({ params }) => {
   const { tenantId } = await params;
+  const t = await getTranslations('admin.requirementType.form');
 
   return (
-    <PageDialogWrapper title="Requirement Type Information" description="Please fill in the required fields to create a new requirement type.">
+    <PageDialogWrapper title={t('header.title')} description={t('header.descriptionCreate')}>
       <RequirementTypeForm tenantId={tenantId} />
     </PageDialogWrapper>
   );

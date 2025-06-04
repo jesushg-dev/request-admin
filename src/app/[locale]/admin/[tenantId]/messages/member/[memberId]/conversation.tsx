@@ -47,7 +47,7 @@ export const Conversation = ({ id, tenantId, userTenantId, currentUserTenant }: 
             userImage={user ? user.image : undefined}
           />
           <TypingIndicator currentClientId={currentUserTenant.userTenantId} />
-          <ChatInput tenantId={tenantId} relatedId={id} variant="conversation" currentUserTenant={currentUserTenant} />
+          <ChatInput tenantId={tenantId} relatedId={id} variant="conversation" currentUserTenant={currentUserTenant} enableEmail enableWhatsApp />
         </ChatRoomProvider>
       </ChatClientProvider>
     </div>

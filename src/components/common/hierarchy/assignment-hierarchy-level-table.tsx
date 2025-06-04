@@ -1,4 +1,3 @@
-import React from 'react';
 import { Prisma } from '@prisma/client';
 import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 

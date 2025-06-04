@@ -3,14 +3,13 @@
 import { useTransition, type FC } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { defineStepper } from '@stepperize/react';
-import { Locale } from 'next-intl';
+import { Locale, useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { Card } from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
-import { StepNavigation } from '@/components/stepper/step-navigation';
+import { StepNavigationModern } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 
 import { getDefaultHierarchyFormValues, HierarchyForm, hierarchySchema } from '../hierarchy-form';
@@ -18,9 +17,9 @@ import { levelsSchema, LevelsStep } from './levels-step';
 import { SummaryStep } from './summary-step';
 
 const { useStepper, utils } = defineStepper(
-  { id: 'hierarchy', label: 'Hierarchy', schema: hierarchySchema },
-  { id: 'levels', label: 'Levels', schema: levelsSchema },
-  { id: 'summary', label: 'Summary', schema: z.object({}) }
+  { id: 'hierarchy', label: 'steps.hierarchy', schema: hierarchySchema },
+  { id: 'levels', label: 'steps.levels', schema: levelsSchema },
+  { id: 'summary', label: 'steps.summary', schema: z.object({}) }
 );
 
 export type HierarchyFormStepperValues = z.infer<typeof hierarchySchema> & z.infer<typeof levelsSchema>;
@@ -36,6 +35,7 @@ interface HierarchyFormStepperProps {
 const HierarchyFormStepper: FC<HierarchyFormStepperProps> = ({ tenantId, locale, defaultValues, isInUse = false, upsertAction }) => {
   const stepper = useStepper();
   const [isPending, startTransition] = useTransition();
+  const t = useTranslations('admin.hierarchy');
 
   const form = useForm({
     resolver: zodResolver(stepper.current.schema),
@@ -55,31 +55,27 @@ const HierarchyFormStepper: FC<HierarchyFormStepperProps> = ({ tenantId, locale,
       const promise = upsertAction(data, tenantId, locale);
 
       toast.promise(promise, {
-        loading: 'Saving hierarchy...',
-        success: () => 'Hierarchy saved successfully',
-        error: (error) => {
-          return `Failed to save hierarchy: ${error.message}`;
-        },
+        loading: t('messages.saving'),
+        success: () => t('messages.success'),
+        error: (error) => t('messages.error', { error: error.message }),
       });
     });
   };
 
   return (
-    <Card className="w-full flex flex-col flex-1 overflow-hidden">
+    <div className="flex flex-col flex-1 p-4">
+      <StepNavigationModern t={t as typeof t & ((key: string) => string)} steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between space-y-6 overflow-hidden p-6">
-          <StepNavigation steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
-          <div className="flex flex-1 overflow-y-hidden">
-            {stepper.switch({
-              hierarchy: () => <HierarchyForm />,
-              levels: () => <LevelsStep isInUse={isInUse} />,
-              summary: () => <SummaryStep />,
-            })}
-          </div>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between gap-4 overflow-hidden">
+          {stepper.switch({
+            hierarchy: () => <HierarchyForm />,
+            levels: () => <LevelsStep isInUse={isInUse} />,
+            summary: () => <SummaryStep />,
+          })}
           <StepperNavigationButtons isPending={isPending} isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onReset={stepper.reset} />
         </form>
       </Form>
-    </Card>
+    </div>
   );
 };
 

@@ -13,7 +13,6 @@ import { TenantProvider } from '@/components/hoc/tenant-provider';
 import { AppSidebar } from '@/components/layouts/admin/app-sidebar';
 import { DndSubmissionProvider } from '@/components/layouts/admin/dnd-submission-provider';
 import { Navbar } from '@/components/layouts/admin/nav-bar';
-import NotificationProvider from '@/components/notification/notification-context';
 
 export async function generateMetadata(props: { params: { locale: Locale } }): Promise<Metadata> {
   const params = await props.params;
@@ -75,13 +74,11 @@ export default async function RootLayout({
           <AppSidebar tenants={tenants} user={session.user} tenantId={tenantId} />
           <main className="flex h-screen w-full flex-1 flex-col overflow-hidden">
             <ClipboardProvider>
-              <NotificationProvider tenantId={tenantId} userTenantId={userTenant.userTenantId}>
-                <Navbar tenants={tenants} />
-                <div className="flex flex-1 overflow-hidden">
-                  {children}
-                  {modal}
-                </div>
-              </NotificationProvider>
+              <Navbar tenants={tenants} tenantId={tenantId} userTenantId={userTenant.userTenantId} />
+              <div className="flex flex-1 overflow-hidden">
+                {children}
+                {modal}
+              </div>
             </ClipboardProvider>
           </main>
         </DndSubmissionProvider>

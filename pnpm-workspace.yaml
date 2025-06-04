@@ -2,3 +2,14 @@ ignoredBuiltDependencies:
   - '@prisma/client'
   - prisma
   - zenstack
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - '@prisma/engines'
+  - '@tailwindcss/oxide'
+  - core-js
+  - cypress
+  - esbuild
+  - msgpackr-extract
+  - sharp
+  - unrs-resolver
+  - yarn

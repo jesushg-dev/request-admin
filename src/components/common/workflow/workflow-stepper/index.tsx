@@ -7,15 +7,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { defineStepper } from '@stepperize/react';
 import { ReactFlowProvider } from '@xyflow/react';
 import { omit, pick } from 'lodash';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { Card } from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
-import { StepNavigation } from '@/components/stepper/step-navigation';
+import { StepNavigationModern } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 
 import { RequestFlowDiagramEditor, type WorkflowData } from './flow-diagram-editor';
@@ -24,9 +23,9 @@ import WorkflowReview from './workflow-review';
 
 // Stepper definition
 const { useStepper, utils } = defineStepper(
-  { id: 'description', label: 'Description', schema: workflowFormSchema },
-  { id: 'transitions', label: 'Transitions', schema: z.object({}) },
-  { id: 'finish', label: 'Finish', schema: z.object({}) }
+  { id: 'description', label: 'steps.description', schema: workflowFormSchema },
+  { id: 'transitions', label: 'steps.transitions', schema: z.object({}) },
+  { id: 'finish', label: 'steps.review', schema: z.object({}) }
 );
 
 export type WorkflowFormStepperType = z.infer<typeof workflowFormSchema>;
@@ -43,6 +42,7 @@ const WorkflowFormStepper: FC<WorkflowFormStepperProps> = ({ tenantId, defaultVa
   const [isPending, startTransition] = useTransition();
   const { mutateAsync: upsert, error } = useUpsertRequestWorkflow();
   const [state, setState] = useState<WorkflowData>({ nodes: [], edges: [] });
+  const t = useTranslations('admin.workflow.form');
 
   // Initialize React Hook Form with current step schema
   const form = useForm({
@@ -172,13 +172,13 @@ const WorkflowFormStepper: FC<WorkflowFormStepperProps> = ({ tenantId, defaultVa
       });
 
       toast.promise(promise, {
-        loading: 'Saving workflow...',
+        loading: t('messages.saving'),
         success: (upsertResponse) => {
           router.push({ pathname: '/admin/[tenantId]/configurations/workflows', params: { tenantId } });
-          return `Workflow ${upsertResponse?.name} created successfully`;
+          return t('messages.success', { name: upsertResponse?.name ?? 'N/A' });
         },
         error: (error) => {
-          return `Failed to save workflow: ${error.message}`;
+          return t('messages.error', { error: error.message });
         },
       });
     });
@@ -191,41 +191,22 @@ const WorkflowFormStepper: FC<WorkflowFormStepperProps> = ({ tenantId, defaultVa
 
   return (
     <div className="flex flex-col flex-1 p-4" id="workflow-form-stepper">
-      <Card className="w-full flex flex-col flex-1 overflow-hidden">
-        <ReactFlowProvider>
-          <div className="flex flex-1 flex-col justify-between space-y-6 overflow-hidden p-6">
-            <StepNavigation steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
-            {/* Step Content */}
+      <ReactFlowProvider>
+        <StepNavigationModern t={t as (key: string) => string} steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between gap-4 overflow-hidden">
+            {error && <PrismaErrorAlert error={error} />}
             {stepper.switch({
-              description: () => (
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between space-y-4 overflow-hidden">
-                    {error && <PrismaErrorAlert error={error} />}
-                    <div className="flex flex-1 overflow-y-hidden">
-                      <ScrollArea className="w-full flex-1 overflow-y-hidden">
-                        <RequestWorkflowForm />
-                      </ScrollArea>
-                    </div>
-                    <StepperNavigationButtons isPending={isPending} isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onReset={stepper.reset} />
-                  </form>
-                </Form>
-              ),
+              description: () => <RequestWorkflowForm />,
               transitions: () => <RequestFlowDiagramEditor onBack={stepper.prev} onSubmit={onDiagramSubmit} defaultValues={defaultValues ? pick(defaultValues, ['nodes', 'edges']) : undefined} />,
-              finish: () => (
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between space-y-4 overflow-hidden">
-                    {error && <PrismaErrorAlert error={error} />}
-                    <div className="flex flex-1 overflow-y-hidden">
-                      <WorkflowReview data={form.getValues() as WorkflowFormStepperType} state={state} />
-                    </div>
-                    <StepperNavigationButtons isPending={isPending} isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onReset={stepper.reset} />
-                  </form>
-                </Form>
-              ),
+              finish: () => <WorkflowReview data={form.getValues() as WorkflowFormStepperType} state={state} />,
             })}
-          </div>
-        </ReactFlowProvider>
-      </Card>
+            {stepper.current.id !== 'transitions' && (
+              <StepperNavigationButtons isPending={isPending} isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onReset={stepper.reset} />
+            )}
+          </form>
+        </Form>
+      </ReactFlowProvider>
     </div>
   );
 };

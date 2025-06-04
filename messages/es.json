@@ -430,6 +430,125 @@
         "createSuccess": "Organización creada exitosamente",
         "error": "Error {action} organización: {error}"
       }
+    },
+    "form": {
+      "planSelectionStep": {
+        "title": "Selecciona un Plan",
+        "description": "Elige el plan que mejor se adapte a tus necesidades.",
+        "popular": "Popular",
+        "days": "días",
+        "selectPlan": "Selecciona un plan",
+        "required": "La selección de un plan es obligatoria"
+      },
+      "steps": {
+        "tenant": "Organización",
+        "plan": "Plan",
+        "finish": "Revisión"
+      },
+      "messages": {
+        "saving": "Creando organización...",
+        "success": "Organización creada exitosamente",
+        "error": "No se pudo crear la organización: {error}"
+      },
+      "tenantReviewStep": {
+        "title": "Revisa la Información de tu Organización",
+        "description": "Por favor revisa la información a continuación antes de crear tu organización.",
+        "basicInfo": {
+          "title": "Información Básica",
+          "orgName": "Nombre de la Organización",
+          "slug": "Slug",
+          "logo": "Logo",
+          "websiteUrl": "URL del sitio web",
+          "unableToLoadLogo": "No se pudo cargar la vista previa del logo"
+        },
+        "contentInfo": {
+          "contentInfoTitle": "Información de Contenido",
+          "title": "Título",
+          "description": "Descripción"
+        },
+        "branding": {
+          "title": "Marca",
+          "primaryColor": "Color Primario",
+          "secondaryColor": "Color Secundario",
+          "preview": "Vista previa",
+          "getStarted": "Comenzar"
+        },
+        "contactInfo": {
+          "title": "Información de Contacto",
+          "email": "Correo electrónico",
+          "phone": "Teléfono",
+          "address": "Dirección"
+        },
+        "subscription": {
+          "title": "Plan Seleccionado",
+          "price": "Precio",
+          "duration": "Duración",
+          "features": "Características",
+          "noPlan": "Ningún plan seleccionado",
+          "free": "Gratis",
+          "days": "Días",
+          "popular": "Popular"
+        }
+      }
+    }
+  },
+  "plans": {
+    "form": {
+      "steps": {
+        "planInfo": "Información del Plan",
+        "planFeatures": "Características del Plan",
+        "summary": "Resumen"
+      },
+      "featuresStep": {
+        "header": {
+          "title": "Características del Plan",
+          "description": "Configura las características y límites para este plan."
+        },
+        "selectFeature": "Selecciona una característica",
+        "dailyLimit": "Límite Diario",
+        "totalLimit": "Límite Total",
+        "resetInterval": "Intervalo de Reinicio",
+        "resetIntervals": {
+          "daily": "Diario",
+          "weekly": "Semanal",
+          "monthly": "Mensual",
+          "yearly": "Anual"
+        },
+        "remove": "Eliminar",
+        "addFeature": "Agregar Característica"
+      },
+      "planStep": {
+        "header": {
+          "title": "Información del Plan",
+          "description": "Ingresa la información básica para el plan."
+        },
+        "name": "Nombre del Plan",
+        "namePlaceholder": "Ingresa el nombre del plan",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Ingresa la descripción del plan",
+        "descriptionHelp": "Por favor proporciona una descripción para el plan",
+        "price": "Precio",
+        "priceHelp": "Ingresa 0 para un plan gratuito",
+        "duration": "Duración (en días)",
+        "durationHelp": "Déjalo vacío para duración ilimitada"
+      },
+      "summaryStep": {
+        "header": {
+          "title": "Resumen del Plan",
+          "description": "Revisa los detalles del plan antes de guardar."
+        },
+        "name": "Nombre",
+        "description": "Descripción",
+        "price": "Precio",
+        "duration": "Duración",
+        "unlimited": "Ilimitado",
+        "days": "días",
+        "features": "Características",
+        "unknownFeature": "Característica Desconocida",
+        "dailyLimit": "Límite Diario",
+        "totalLimit": "Límite Total",
+        "reset": "Reiniciar"
+      }
     }
   },
   "admin": {
@@ -535,23 +654,38 @@
         "title": "Categoría de Asignación",
         "subtitle": "Crea una nueva categoría de asignación. Una categoría puede tener múltiples subcategorías recursivas según las necesidades de tu negocio.",
         "steps": {
-          "navigationLabel": "Pasos de Progreso",
-          "area": "Área",
-          "assignmentCategory": "Categoría de Asignación",
-          "user": "Usuario",
-          "finish": "Finalizar",
-          "areaStep": "Ir al paso de Área",
-          "assignmentCategoryStep": "Ir al paso de Categoría de Asignación",
-          "userStep": "Ir al paso de Usuario",
-          "finishStep": "Ir al paso Finalizar",
-          "backButton": "Atrás",
-          "nextButton": "Siguiente",
-          "finishButton": "Finalizar",
-          "userTitle": "Paso de Usuario",
-          "userDescription": "Por favor, complete los detalles relacionados con el usuario aquí.",
-          "continueButton": "Continuar",
-          "finishTitle": "Todos los pasos completados",
-          "finishDescription": "Su formulario ha sido completado con éxito."
+          "description": "Descripción",
+          "assignmentCategory": "Categorías de Asignación",
+          "role": "Roles",
+          "user": "Usuarios",
+          "finish": "Revisión"
+        },
+        "form": {
+          "nameLabel": "Nombre",
+          "namePlaceholder": "Ingresa tu nombre",
+          "nameDescription": "Este es tu nombre público.",
+          "descriptionLabel": "Descripción",
+          "descriptionPlaceholder": "Ingresa una descripción",
+          "descriptionDescription": "Agrega detalles adicionales o una descripción aquí.",
+          "hierarchyLabel": "Jerarquía",
+          "hierarchyDescription": "Selecciona la jerarquía que regirá esta área.",
+          "hierarchyPlaceholder": "Selecciona una jerarquía",
+          "isActiveLabel": "Activo",
+          "isActiveDescription": "Marcar como activo o inactivo.",
+          "submitButton": "Enviar",
+          "errorToast": "Error al enviar el formulario. Inténtalo de nuevo.",
+          "requiredName": "El nombre es obligatorio",
+          "minName": "El nombre debe tener al menos 3 caracteres",
+          "Required": "Este campo es obligatorio",
+          "header": {
+            "title": "Detalles del área",
+            "description": "Administre la información y la jerarquía asociada para esta área."
+          }
+        },
+        "messages": {
+          "saving": "Guardando área...",
+          "success": "Área {name} creada exitosamente",
+          "error": "No se pudo guardar el área: {error}"
         }
       }
     },
@@ -694,7 +828,9 @@
         "saveSuccess": "¡Sala de datos guardada con éxito!",
         "saveChanges": "Guardar cambios",
         "create": "Crear",
-        "saveError": "Ocurrió un error: {message}"
+        "saveError": "Ocurrió un error: {message}",
+        "title": "Crear sala de datos",
+        "subtitle": "Administre sus documentos y enlaces en un solo lugar."
       },
       "branding": {
         "title": "Personalización del Dataroom",
@@ -1713,7 +1849,12 @@
         "create": "Crear",
         "savingChanges": "Guardando cambios...",
         "successSave": "Requisito '{name}' guardado exitosamente.",
-        "errorSave": "Error al guardar el requisito: {message}"
+        "errorSave": "Error al guardar el requisito: {message}",
+        "header": {
+          "title": "Información de requisito",
+          "descriptionUpdate": "Complete los campos requeridos para actualizar el requisito.",
+          "descriptionCreate": "Complete los campos requeridos para crear un nuevo requisito."
+        }
       }
     },
     "requirementType": {
@@ -1743,7 +1884,12 @@
         "isDefault": "Predeterminado",
         "isDefaultPlaceholder": "Marca si es predeterminado",
         "update": "Actualizar",
-        "create": "Crear"
+        "create": "Crear",
+        "header": {
+          "title": "Información de tipo de requisito",
+          "descriptionUpdate": "Complete los campos requeridos para actualizar el tipo de requisito.",
+          "descriptionCreate": "Complete los campos requeridos para crear un nuevo tipo de requisito."
+        }
       }
     },
     "security": {
@@ -1792,6 +1938,68 @@
           "type": "Tipo",
           "description": "Descripción"
         }
+      },
+      "steps": {
+        "hierarchy": "Jerarquía",
+        "levels": "Niveles",
+        "summary": "Resumen"
+      },
+      "messages": {
+        "saving": "Guardando jerarquía...",
+        "success": "Jerarquía guardada exitosamente",
+        "error": "No se pudo guardar la jerarquía: {error}"
+      },
+      "hierarchyForm": {
+        "hierarchyDetails": "Detalles de la Jerarquía",
+        "hierarchyDetailsDescription": "Proporcione un nombre y una descripción para su jerarquía.",
+        "hierarchyName": "Nombre de la Jerarquía",
+        "hierarchyNameDescription": "El nombre de su jerarquía (por ejemplo, 'Jerarquía del Canal de Ventas')",
+        "hierarchyNamePlaceholder": "Ingrese el nombre de la jerarquía",
+        "description": "Descripción",
+        "descriptionDescription": "Opcional: Proporcione una breve descripción de la jerarquía",
+        "descriptionPlaceholder": "Ingrese una descripción para esta jerarquía",
+        "isActive": "Está Activo",
+        "isActiveDescription": "Si la jerarquía está activa, estará disponible para su uso en la aplicación.",
+        "saveChanges": "Guardar Cambios",
+        "create": "Crear",
+        "header": {
+          "title": "Gestión de la jerarquía",
+          "description": "Una jerarquía organiza categorías en niveles como padre, hijo o nieto, lo que facilita la estructura y clasificación de una solicitud"
+        }
+      },
+      "stepsForm": {
+        "title": "Niveles de la Jerarquía",
+        "description": "La jerarquía es fija. No puedes eliminar ni reordenar los niveles cuando está en uso.",
+        "inUseTitle": "Jerarquía en Uso",
+        "inUseDescription": "No puedes modificar la estructura, pero puedes editar los nombres y descripciones.",
+        "levelLabel": "Nivel {number}",
+        "levelPlaceholder": "Ej: Canal de Ventas",
+        "levelDescriptionLabel": "Descripción para el Nivel {number}",
+        "levelDescriptionPlaceholder": "Ej: Especificaciones para {name}",
+        "thisLevel": "este nivel",
+        "add": "Agregar nuevo nivel",
+        "addDisabled": "No se pueden agregar nuevos niveles"
+      },
+      "summaryStep": {
+        "title": "Revisar Jerarquía",
+        "description": "Revisa los detalles y niveles de la jerarquía antes de guardar.",
+        "summaryTitle": "Resumen de la Jerarquía",
+        "noDescription": "No se proporcionó descripción",
+        "viewFlat": "Ver como lista plana",
+        "viewHierarchy": "Ver como jerarquía",
+        "levels": "Niveles",
+        "level": "Nivel {number}",
+        "levelDescription": "Descripción para {name}",
+        "noLevels": "No hay niveles definidos",
+        "active": "Activo",
+        "inactive": "Inactivo",
+        "levelsTitle": "Niveles de jerarquía"
+      },
+      "requestHierarchyLevelTable": {
+        "columns": {
+          "position": "Posición",
+          "name": "Nombre"
+        }
       }
     },
     "user": {
@@ -1826,6 +2034,23 @@
         }
       },
       "form": {
+        "steps": {
+          "user": "Usuario",
+          "globalRole": "Rol Global",
+          "areaRole": "Rol de Área",
+          "summary": "Resumen"
+        },
+        "messages": {
+          "saving": "Guardando usuario...",
+          "invitationSent": "Invitación enviada a {email}.",
+          "success": "Usuario \"{username}\" guardado exitosamente.",
+          "saved": "Usuario con correo \"{email}\" guardado exitosamente.",
+          "error": "No se pudo guardar el usuario: {error}"
+        },
+        "header": {
+          "title": "Gestión de Usuarios",
+          "description": "Administra usuarios, asigna roles y configura los ajustes de usuario."
+        },
         "username": "Nombre de usuario",
         "usernamePlaceholder": "JuanPerez",
         "usernameDesc": "Introduce un nombre de usuario único.",
@@ -2620,7 +2845,12 @@
         "update": "Actualizar",
         "savingChanges": "Guardando cambios…",
         "successSave": "Guardado exitosamente \"{name}\"",
-        "errorSave": "Error al guardar: {message}"
+        "errorSave": "Error al guardar: {message}",
+        "header": {
+          "title": "Detalles de la Prioridad",
+          "descriptionUpdate": "Complete los campos requeridos para actualizar la prioridad.",
+          "descriptionCreate": "Complete los campos requeridos para crear una nueva prioridad."
+        }
       },
       "actions": {
         "cancel": "Cancelar",
@@ -2677,6 +2907,20 @@
         }
       },
       "form": {
+        "header": {
+          "title": "Información del Flujo de Trabajo",
+          "subtitle": "Configura los detalles de tu flujo de trabajo."
+        },
+        "messages": {
+          "saving": "Guardando flujo de trabajo...",
+          "success": "Flujo de trabajo \"{name}\" creado exitosamente.",
+          "error": "No se pudo guardar el flujo de trabajo: {error}"
+        },
+        "steps": {
+          "description": "Descripción",
+          "transitions": "Transiciones",
+          "review": "Revisión"
+        },
         "workflowName": "Nombre del Flujo de Trabajo",
         "workflowNameDescription": "El nombre de tu flujo de trabajo",
         "workflowNamePlaceholder": "Ingrese nombre del flujo",
@@ -2736,6 +2980,10 @@
           "states": {
             "add": "Agregar estado",
             "edit": "Editar estado"
+          },
+          "header": {
+            "title": "Editor de diagrama de flujo de trabajo",
+            "description": "Diseñe y configure los estados y transiciones de flujo de trabajo. \nAgregue, edite o elimine los estados y las transiciones para definir su proceso."
           }
         },
         "state": {
@@ -2787,6 +3035,10 @@
             "indigo": "Índigo",
             "green": "Verde",
             "red": "Rojo"
+          },
+          "header": {
+            "title": "Revisión de flujo de trabajo",
+            "description": "Revise los detalles del flujo de trabajo antes de guardar."
           }
         },
         "validateWorkflow": "Validar el flujo de trabajo",
@@ -2850,6 +3102,129 @@
         "typeLabel": "Tipo",
         "typeDescription": "Tipo de estado"
       }
+    },
+    "helpPage": {
+      "title": "Centro de Ayuda",
+      "subtitle": "Encuentra respuestas a tus preguntas y guías de uso del sistema",
+      "searchPlaceholder": "Buscar guías y preguntas frecuentes...",
+      "tabs": {
+        "guides": "Guías",
+        "videos": "Videos",
+        "faqs": "Preguntas frecuentes",
+        "contact": "Contacto"
+      },
+      "guides": {
+        "firstSteps": {
+          "title": "Primeros Pasos",
+          "description": "Aprende lo básico para comenzar a usar el sistema",
+          "links": ["Introducción al sistema", "Crea tu primera solicitud", "Navegación por el panel", "Configura tu perfil"],
+          "viewAll": "Ver todas las guías básicas"
+        },
+        "requestManagement": {
+          "title": "Gestión de Solicitudes",
+          "description": "Aprende a gestionar solicitudes eficientemente",
+          "links": ["Estados de las solicitudes", "Asignación de solicitudes", "Cambios de prioridad", "Comentarios y seguimiento"],
+          "viewAll": "Ver todas las guías de gestión"
+        },
+        "communication": {
+          "title": "Comunicación",
+          "description": "Aprende a comunicarte eficazmente en el sistema",
+          "links": ["Sistema de mensajería", "Notificaciones y alertas", "Menciones y etiquetas", "Compartir archivos"],
+          "viewAll": "Ver todas las guías de comunicación"
+        },
+        "reports": {
+          "title": "Reportes y Analítica",
+          "description": "Aprende a usar las herramientas de análisis",
+          "links": ["Generación de reportes", "Análisis de métricas", "Exportación de datos", "Tableros personalizados"],
+          "viewAll": "Ver todas las guías de reportes"
+        },
+        "administration": {
+          "title": "Administración",
+          "description": "Guías para administradores del sistema",
+          "links": ["Gestión de usuarios", "Configuración de flujos de trabajo", "Personalización del sistema", "Seguridad y permisos"],
+          "viewAll": "Ver todas las guías de administración"
+        },
+        "workflows": {
+          "title": "Flujos de Trabajo",
+          "description": "Aprende a configurar y usar flujos de trabajo",
+          "links": ["Creación de flujos personalizados", "Reglas de transición de estados", "Automatización de procesos", "Plantillas de flujos de trabajo"],
+          "viewAll": "Ver todas las guías de flujos de trabajo"
+        }
+      },
+      "videos": {
+        "watchButton": "Ver video",
+        "introduction": {
+          "title": "Introducción al Sistema",
+          "description": "Resumen de las funciones principales",
+          "duration": "5:32",
+          "detail": "Este video te da una visión general del sistema y sus principales características."
+        },
+        "requestCreation": {
+          "title": "Creación de Solicitudes",
+          "description": "Aprende a crear y gestionar solicitudes",
+          "duration": "4:15",
+          "detail": "Este tutorial te muestra paso a paso cómo crear y gestionar solicitudes en el sistema."
+        },
+        "workflows": {
+          "title": "Flujos de Trabajo",
+          "description": "Configuración de flujos de trabajo personalizados",
+          "duration": "7:48",
+          "detail": "Aprende a configurar flujos de trabajo personalizados para diferentes tipos de solicitudes."
+        },
+        "reports": {
+          "title": "Reportes y Análisis",
+          "description": "Generación de reportes personalizados",
+          "duration": "6:22",
+          "detail": "Este tutorial te muestra cómo generar reportes personalizados y analizar datos en el sistema."
+        },
+        "userManagement": {
+          "title": "Gestión de Usuarios",
+          "description": "Gestión de usuarios y permisos",
+          "duration": "5:55",
+          "detail": "Aprende a gestionar usuarios, roles y permisos en el sistema."
+        },
+        "notifications": {
+          "title": "Notificaciones y Alertas",
+          "description": "Configuración de notificaciones personalizadas",
+          "duration": "3:47",
+          "detail": "Este tutorial te muestra cómo configurar notificaciones personalizadas en el sistema."
+        }
+      },
+      "contact": {
+        "support": {
+          "title": "Contacto de Soporte",
+          "description": "Ponte en contacto con nuestro equipo de soporte",
+          "emailLabel": "Correo electrónico",
+          "email": "support@example.com",
+          "phoneLabel": "Teléfono",
+          "phone": "+505 2222-3333",
+          "hoursLabel": "Horario de atención",
+          "hours": "Lunes a viernes de 8:00 AM a 5:00 PM",
+          "button": "Enviar mensaje a soporte"
+        },
+        "training": {
+          "title": "Solicitar Capacitación",
+          "description": "Solicita una sesión de capacitación para tu equipo",
+          "detail": "Ofrecemos sesiones de capacitación personalizadas para equipos de todos los tamaños. Nuestros expertos pueden ayudarte a sacar el máximo provecho del sistema.",
+          "typesLabel": "Tipos de capacitación",
+          "types": "Capacitación básica para nuevos usuarios, Capacitación avanzada para administradores, Capacitación por módulo, Capacitación en generación de reportes",
+          "button": "Solicitar capacitación"
+        }
+      },
+      "fAQs": {
+        "answerPanel": {
+          "title": "Selecciona una pregunta",
+          "description": "Haz clic en una pregunta de la lista para ver su respuesta aquí",
+          "emptyMessage": "Selecciona una pregunta para ver su respuesta"
+        },
+        "questions": {
+          "q1": "¿Cómo puedo cambiar mi contraseña?",
+          "q2": "¿Qué debo hacer si mi solicitud está atascada en un estado?",
+          "q3": "¿Puedo cancelar una solicitud que ya ha sido enviada?",
+          "q4": "¿Cómo puedo ver todas mis solicitudes pendientes?",
+          "q5": "¿Cómo funcionan los flujos de trabajo?"
+        }
+      }
     }
   },
   "component": {
@@ -2912,24 +3287,6 @@
         "escalationTimeLabel": "Tiempo de escalamiento (horas)",
         "escalationTimeDescription": "Tiempo en horas antes de escalar (0 significa sin escalamiento)"
       }
-    },
-    "areaForm": {
-      "nameLabel": "Nombre",
-      "namePlaceholder": "Ingresa tu nombre",
-      "nameDescription": "Este es tu nombre público.",
-      "descriptionLabel": "Descripción",
-      "descriptionPlaceholder": "Ingresa una descripción",
-      "descriptionDescription": "Agrega detalles adicionales o una descripción aquí.",
-      "hierarchyLabel": "Jerarquía",
-      "hierarchyDescription": "Selecciona la jerarquía que regirá esta área.",
-      "hierarchyPlaceholder": "Selecciona una jerarquía",
-      "isActiveLabel": "Activo",
-      "isActiveDescription": "Marcar como activo o inactivo.",
-      "submitButton": "Enviar",
-      "errorToast": "Error al enviar el formulario. Inténtalo de nuevo.",
-      "requiredName": "El nombre es obligatorio",
-      "minName": "El nombre debe tener al menos 3 caracteres",
-      "Required": "Este campo es obligatorio"
     },
     "requirementDialogCell": {
       "dialogTitle": "Requirementos asociados con {entity}",
@@ -3001,21 +3358,11 @@
       "formElements": "Elementos del formulario",
       "layoutElements": "Elementos de diseño"
     },
-    "hierarchyForm": {
-      "hierarchyDetails": "Detalles de la Jerarquía",
-      "hierarchyDetailsDescription": "Proporcione un nombre y una descripción para su jerarquía.",
-      "hierarchyName": "Nombre de la Jerarquía",
-      "hierarchyNameDescription": "El nombre de su jerarquía (por ejemplo, 'Jerarquía del Canal de Ventas')",
-      "hierarchyNamePlaceholder": "Ingrese el nombre de la jerarquía",
-      "description": "Descripción",
-      "descriptionDescription": "Opcional: Proporcione una breve descripción de la jerarquía",
-      "descriptionPlaceholder": "Ingrese una descripción para esta jerarquía",
-      "isActive": "Está Activo",
-      "isActiveDescription": "Si la jerarquía está activa, estará disponible para su uso en la aplicación.",
-      "saveChanges": "Guardar Cambios",
-      "create": "Crear"
-    },
     "rolesForm": {
+      "header": {
+        "title": "Roles",
+        "description": "Crea y gestiona roles para controlar el acceso a las funciones y funcionalidades dentro del sistema."
+      },
       "roleName": "Nombre del Rol",
       "roleNamePlaceholder": "Nombre del Rol",
       "roleNameDescription": "El nombre del rol debe tener al menos 3 caracteres y no exceder los 100 caracteres",
@@ -3036,6 +3383,30 @@
         "featuresHelp": "Selecciona las funciones a las que los usuarios con este rol deben tener acceso. Si una función no está seleccionada, los usuarios con este rol no tendrán acceso a ella.",
         "activeLabel": "Activo",
         "activeHelp": "Si el rol está activo, los usuarios asignados a este rol tendrán acceso a las funciones seleccionadas."
+      },
+      "roleFormReview": {
+        "reviewTitle": "Revisar y Confirmar",
+        "reviewDescription": "Por favor revisa el rol y la asignación de usuarios antes de confirmar.",
+        "featuresAccess": "Los usuarios con el rol {roleName} tendrán acceso a las siguientes funcionalidades:",
+        "module": "Módulo",
+        "features": "Funcionalidades",
+        "moduleFeaturesTooltip": "Funcionalidades disponibles para {moduleName}",
+        "assignedUsers": "Usuarios Asignados",
+        "user": "Usuario",
+        "role": "Rol",
+        "status": "Estado",
+        "active": "Activo",
+        "inactive": "Inactivo"
+      },
+      "steps": {
+        "role": "Rol",
+        "user": "Usuarios",
+        "finish": "Revisión"
+      },
+      "messages": {
+        "saving": "Guardando roles...",
+        "success": "{count, plural, one {Rol \"{names}\" guardado exitosamente.} other {Roles \"{names}\" guardados exitosamente.}}",
+        "error": "No se pudieron guardar los roles: {error}"
       }
     },
     "userRoleAssignmentForm": {
@@ -3060,6 +3431,10 @@
       "role": {
         "label": "Rol",
         "description": "Selecciona un rol para el usuario"
+      },
+      "header": {
+        "description": "Gestionar a los usuarios y sus roles asignados dentro del área.",
+        "title": "Asignación de roles de usuario"
       }
     },
     "categoryTreeView": {
@@ -3079,12 +3454,26 @@
       }
     },
     "stepper": {
+      "steps": {
+        "description": "Descripción",
+        "assignmentCategory": "Categoría de Asignación",
+        "role": "Rol",
+        "user": "Usuario",
+        "finish": "Finalizar",
+        "hierarchy": "Jerarquía",
+        "levels": "Niveles",
+        "summary": "Resumen",
+        "planInfo": "Información del Plan",
+        "planFeatures": "Características del Plan",
+        "tenant": "Detalles del Inquilino",
+        "plan": "Selección de Plan",
+        "transitions": "Transiciones"
+      },
       "navigationButtons": {
         "next": "Siguiente",
-        "back": "Anterior",
+        "back": "Atrás",
         "finish": "Finalizar",
-        "reset": "Reiniciar",
-        "cancel": "Cancelar"
+        "reset": "Reiniciar"
       }
     },
     "fileUploader": {

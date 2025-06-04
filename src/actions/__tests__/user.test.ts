@@ -324,7 +324,7 @@ describe('User Actions', () => {
         tenantId: mockTenantId,
         metadata: JSON.stringify(mockMetadata),
       });
-      (auth.api.acceptInvitation as jest.Mock).mockResolvedValue(null);
+      (auth.api.acceptInvitation as unknown as jest.Mock).mockResolvedValue(null);
 
       await expect(processInvitationAcceptance(mockInvitationId)).rejects.toThrow('Failed to accept invitation');
     });

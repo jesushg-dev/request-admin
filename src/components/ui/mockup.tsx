@@ -1,4 +1,4 @@
-import React from 'react';
+import { forwardRef } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '@/lib/utils';
@@ -17,7 +17,7 @@ const mockupVariants = cva('flex relative z-10 overflow-hidden shadow-2xl border
 
 export interface MockupProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof mockupVariants> {}
 
-const Mockup = React.forwardRef<HTMLDivElement, MockupProps>(({ className, type, ...props }, ref) => <div ref={ref} className={cn(mockupVariants({ type, className }))} {...props} />);
+const Mockup = forwardRef<HTMLDivElement, MockupProps>(({ className, type, ...props }, ref) => <div ref={ref} className={cn(mockupVariants({ type, className }))} {...props} />);
 Mockup.displayName = 'Mockup';
 
 const frameVariants = cva('bg-accent/5 flex relative z-10 overflow-hidden rounded-2xl', {
@@ -34,7 +34,7 @@ const frameVariants = cva('bg-accent/5 flex relative z-10 overflow-hidden rounde
 
 export interface MockupFrameProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof frameVariants> {}
 
-const MockupFrame = React.forwardRef<HTMLDivElement, MockupFrameProps>(({ className, size, ...props }, ref) => <div ref={ref} className={cn(frameVariants({ size, className }))} {...props} />);
+const MockupFrame = forwardRef<HTMLDivElement, MockupFrameProps>(({ className, size, ...props }, ref) => <div ref={ref} className={cn(frameVariants({ size, className }))} {...props} />);
 MockupFrame.displayName = 'MockupFrame';
 
 export { Mockup, MockupFrame };

@@ -9,8 +9,10 @@ import { z } from 'zod';
 import { ModuleWithFeaturesType } from '@/types/prisma/module';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Hint } from '@/components/hint';
 
 import { generateUuid } from '../../../../../prisma/util';
@@ -82,46 +84,55 @@ const RolesForm: FC<RolesFormProps> = ({ moduleWithFeatures, isBatch }) => {
   const addRole = () => appendRole(getDefaultRole());
 
   return (
-    <div className="mx-1 mr-4 flex flex-col gap-2">
-      {roles.map((role, roleIndex) => (
-        <div key={role.id || roleIndex} className={`relative flex ${isBatch ? 'items-center rounded border p-4' : 'flex-col'} gap-2`}>
-          {/* Role Name */}
-          <FormField
-            control={control}
-            name={`roles.${roleIndex}.name` as const}
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>{t('roleName')}</FormLabel>
-                <FormControl>
-                  <Input className="h-8 w-full rounded" placeholder={t('roleNamePlaceholder')} {...field} />
-                </FormControl>
-                <div className="flex w-full justify-between gap-4 items-center">
-                  <div>
-                    <FormMessage />
-                    <FormDescription>{t('roleNameDescription')}</FormDescription>
-                  </div>
-                  <RoleCategoryBadges roleIndex={roleIndex} />
-                </div>
-              </FormItem>
-            )}
-          />
+    <Card className="flex-1 flex flex-col overflow-hidden">
+      <CardHeader>
+        <CardTitle>{t('header.title')}</CardTitle>
+        <CardDescription>{t('header.description')}</CardDescription>
+      </CardHeader>
+      <CardContent className="flex-1 flex-col flex overflow-hidden gap-4">
+        <ScrollArea className="w-full flex-1 overflow-y-hidden">
+          <div className="mx-1 mr-4 flex flex-col gap-2">
+            {roles.map((role, roleIndex) => (
+              <div key={role.id || roleIndex} className={`relative flex ${isBatch ? 'items-center rounded border p-4' : 'flex-col'} gap-2`}>
+                <FormField
+                  control={control}
+                  name={`roles.${roleIndex}.name` as const}
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>{t('roleName')}</FormLabel>
+                      <FormControl>
+                        <Input className="h-8 w-full rounded" placeholder={t('roleNamePlaceholder')} {...field} />
+                      </FormControl>
+                      <div className="flex w-full justify-between gap-4 items-center">
+                        <div>
+                          <FormMessage />
+                          <FormDescription>{t('roleNameDescription')}</FormDescription>
+                        </div>
+                        <RoleCategoryBadges roleIndex={roleIndex} />
+                      </div>
+                    </FormItem>
+                  )}
+                />
 
-          <FeatureRoleFormDialog roleIndex={roleIndex} modules={moduleWithFeatures} isBatch={isBatch} />
+                <FeatureRoleFormDialog roleIndex={roleIndex} modules={moduleWithFeatures} isBatch={isBatch} />
 
-          {isBatch && (
-            <Button type="button" className="relative" variant="destructive" size="sm" onClick={() => removeRole(roleIndex)}>
-              <Trash className="size-4" />
-            </Button>
-          )}
-        </div>
-      ))}
-      {isBatch && (
-        <Button type="button" variant="outline" role="combobox" size="sm" className="border-2 border-dashed" onClick={addRole}>
-          <Plus className="mr-2 size-4" />
-          {t('addRole')}
-        </Button>
-      )}
-    </div>
+                {isBatch && (
+                  <Button type="button" className="relative" variant="destructive" size="sm" onClick={() => removeRole(roleIndex)}>
+                    <Trash className="size-4" />
+                  </Button>
+                )}
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
+        {isBatch && (
+          <Button type="button" variant="outline" role="combobox" size="sm" className="border-2 border-dashed" onClick={addRole}>
+            <Plus className="mr-2 size-4" />
+            {t('addRole')}
+          </Button>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 

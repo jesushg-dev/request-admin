@@ -1,14 +1,15 @@
 'use client';
 
-import React from 'react';
+import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { defineStepper } from '@stepperize/react';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { StepNavigation } from '@/components/stepper/step-navigation';
+import { StepNavigationModern } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 
 import { PlanFeaturesStep } from './plan-feature-step';
@@ -22,14 +23,15 @@ type PlanInfoFormValues = z.infer<typeof planInfoSchema>;
 type PlanFeatureFormValues = z.infer<typeof planFeatureSchema>;
 
 const { useStepper, utils } = defineStepper(
-  { id: 'planInfo', label: 'Plan Information', schema: planInfoSchema },
-  { id: 'planFeatures', label: 'Plan Features', schema: planFeatureSchema },
-  { id: 'summary', label: 'Summary', schema: summarySchema }
+  { id: 'planInfo', label: 'plans.form.steps.planInfo', schema: planInfoSchema },
+  { id: 'planFeatures', label: 'plans.form.steps.planFeatures', schema: planFeatureSchema },
+  { id: 'summary', label: 'plans.form.steps.summary', schema: summarySchema }
 );
 
 export default function PlanCreationForm() {
   const stepper = useStepper();
-  const [planData, setPlanData] = React.useState<PlanInfoFormValues & PlanFeatureFormValues>({
+  const t = useTranslations('plans.form');
+  const [planData, setPlanData] = useState<PlanInfoFormValues & PlanFeatureFormValues>({
     name: '',
     description: '',
     price: 0,
@@ -56,7 +58,7 @@ export default function PlanCreationForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between space-y-6 overflow-hidden p-6">
-        <StepNavigation steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
+        <StepNavigationModern t={t as (key: string) => string} steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
         <div className="flex flex-1 overflow-y-hidden">
           <ScrollArea className="w-full flex-1 overflow-y-hidden">
             {stepper.switch({

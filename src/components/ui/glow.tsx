@@ -1,4 +1,4 @@
-import React from 'react';
+import { forwardRef } from 'react';
 import { cva, VariantProps } from 'class-variance-authority';
 
 import { cn } from '@/lib/utils';
@@ -18,7 +18,7 @@ const glowVariants = cva('absolute w-full', {
   },
 });
 
-const Glow = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof glowVariants>>(({ className, variant, ...props }, ref) => (
+const Glow = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof glowVariants>>(({ className, variant, ...props }, ref) => (
   <div ref={ref} className={cn(glowVariants({ variant }), className)} {...props}>
     <div
       className={cn(

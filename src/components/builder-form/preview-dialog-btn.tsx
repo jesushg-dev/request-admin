@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'; // Import VisuallyHidden if not already part of your components
 
 import { View } from 'lucide-react';

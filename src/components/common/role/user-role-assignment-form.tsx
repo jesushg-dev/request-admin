@@ -9,8 +9,10 @@ import { z } from 'zod';
 
 import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import Select, { OptionType } from '@/components/custom-ui/select';
 
 export const userRoleAssignmentFormSchema = z.object({
@@ -65,39 +67,49 @@ export const UserRoleAssignmentForm: FC<UserRoleAssignmentFormProps> = ({ userOp
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      {fields.map((row, index) => (
-        <div key={row._id || index} className="flex w-full items-center gap-4 border rounded-md p-4">
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4 flex-1 items-center">
-            <UserSelectField index={index} userArray={userOptions} selectedUsers={fields.map((u) => u.userId.value)} control={control} errors={formState.errors} />
-            {roleOptions.length > 1 && <RoleSelectField index={index} roleArray={roleOptions} control={control} errors={formState.errors} />}
-            <FormField
-              control={control}
-              name={`userRoles.${index}.isActive`}
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
-                  <FormControl>
-                    <Checkbox checked={field.value} onCheckedChange={field.onChange} id={`userRoles.${index}.isActive`} />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel htmlFor={`userRoles.${index}.isActive`}>{t('user.active.label')}</FormLabel>
-                    <FormDescription>{field.value ? t('user.active.description.true') : t('user.active.description.false')}</FormDescription>
-                    <FormMessage />
-                  </div>
-                </FormItem>
-              )}
-            />
+    <Card className="flex-1 flex flex-col overflow-hidden">
+      <CardHeader>
+        <CardTitle>{t('header.title')}</CardTitle>
+        <CardDescription>{t('header.description')}</CardDescription>
+      </CardHeader>
+      <CardContent className="flex-1 flex-col flex overflow-hidden gap-4">
+        <ScrollArea className="w-full flex-1 overflow-y-hidden">
+          <div className="mx-1 mr-4 flex flex-col gap-2">
+            {fields.map((row, index) => (
+              <div key={row._id || index} className="flex w-full items-center gap-4 border rounded-md p-4">
+                <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4 flex-1 items-center">
+                  <UserSelectField index={index} userArray={userOptions} selectedUsers={fields.map((u) => u.userId.value)} control={control} errors={formState.errors} />
+                  {roleOptions.length > 1 && <RoleSelectField index={index} roleArray={roleOptions} control={control} errors={formState.errors} />}
+                  <FormField
+                    control={control}
+                    name={`userRoles.${index}.isActive`}
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
+                        <FormControl>
+                          <Checkbox checked={field.value} onCheckedChange={field.onChange} id={`userRoles.${index}.isActive`} />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel htmlFor={`userRoles.${index}.isActive`}>{t('user.active.label')}</FormLabel>
+                          <FormDescription>{field.value ? t('user.active.description.true') : t('user.active.description.false')}</FormDescription>
+                          <FormMessage />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <Button type="button" variant="destructive" size="sm" onClick={() => remove(index)}>
+                  <Trash className="size-4" />
+                </Button>
+              </div>
+            ))}
           </div>
-          <Button type="button" variant="destructive" size="sm" onClick={() => remove(index)}>
-            <Trash className="size-4" />
-          </Button>
-        </div>
-      ))}
-      <Button type="button" variant="outline" role="combobox" size="sm" className="border-2 border-dashed" onClick={onAppendUser}>
-        <Plus className="mr-2 size-4" />
-        {t('user.add')}
-      </Button>
-    </div>
+        </ScrollArea>
+        <Button type="button" variant="outline" role="combobox" size="sm" className="border-2 border-dashed" onClick={onAppendUser}>
+          <Plus className="mr-2 size-4" />
+          {t('user.add')}
+        </Button>
+      </CardContent>
+    </Card>
   );
 };
 

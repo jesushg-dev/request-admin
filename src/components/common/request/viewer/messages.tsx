@@ -36,7 +36,7 @@ export default function Messages({ tenantId, channel }: MessagesProps) {
               channelName={channel.name}
             />
             <TypingIndicator currentClientId={userTenant.userTenantId} />
-            <ChatInput tenantId={tenantId} relatedId={channel.id} variant="channel" currentUserTenant={userTenant} />
+            <ChatInput tenantId={tenantId} relatedId={channel.id} variant="channel" currentUserTenant={userTenant} enableEmail enableWhatsApp />
           </ChatRoomProvider>
         ) : (
           <p className="rounded-md bg-red-100 p-4 text-center text-red-500">Channel not found</p>

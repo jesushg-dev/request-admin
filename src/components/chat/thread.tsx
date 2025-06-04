@@ -82,7 +82,7 @@ export const Thread = ({ tenantId, roomId, messageId, currentUserTenant, onClose
           <MessageList roomId={messageId} tenantId={tenantId} where={{ parentMessageId: messageId }} currentUserTenantId={currentUserTenant.userTenantId} variant="thread" />
           <TypingIndicator currentClientId={currentUserTenant.userTenantId} />
           {/* Chat Input */}
-          <ChatInput tenantId={tenantId} relatedId={messageId} variant="thread" currentUserTenant={currentUserTenant} />
+          <ChatInput tenantId={tenantId} relatedId={messageId} variant="thread" currentUserTenant={currentUserTenant} enableEmail enableWhatsApp />
         </ChatRoomProvider>
       </ChatClientProvider>
     </div>

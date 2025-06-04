@@ -42,7 +42,7 @@ export default function CookieConsent({ variant = 'default', demo = false, onAcc
     } catch (e) {
       console.log('Error: ', e);
     }
-  }, []);
+  }, [demo]);
 
   return variant == 'default' ? (
     <div

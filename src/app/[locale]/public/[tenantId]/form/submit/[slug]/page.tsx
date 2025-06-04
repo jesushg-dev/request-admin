@@ -1,4 +1,3 @@
-import React from 'react';
 import { GetFormContentByUrl } from '@/actions/form';
 
 import { FormElementInstance } from '@/components/builder-form/form-elements';

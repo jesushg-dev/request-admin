@@ -6,6 +6,7 @@ import { useRouter } from '@/i18n/routing';
 import { useUpsertArea } from '@/services/api/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { defineStepper } from '@stepperize/react';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -13,7 +14,6 @@ import { z } from 'zod';
 import { AssignmentHierarchyWithLevelsType } from '@/types/prisma/hierarchy';
 import { ModuleWithFeaturesType } from '@/types/prisma/module';
 import { RequirementOptionType } from '@/types/prisma/requirement';
-import { Card } from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import AreaForm, { areaFormSchema, getAreaDefaultValue } from '@/components/common/area/area-form';
@@ -22,7 +22,7 @@ import RolesForm, { rolesFormSchema } from '@/components/common/role/role-form';
 import UserRoleAssignmentForm, { userRoleAssignmentFormSchema } from '@/components/common/role/user-role-assignment-form';
 import { OptionType } from '@/components/custom-ui/select';
 import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
-import { StepNavigation } from '@/components/stepper/step-navigation';
+import { StepNavigationModern } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 
 import AssignmentCategoriesReview from '../category/assignment-categories-review';
@@ -30,11 +30,11 @@ import RoleFormReview from '../role/role-form-review';
 
 // Stepper definition
 const { useStepper, utils } = defineStepper(
-  { id: 'description', label: 'Description', schema: areaFormSchema },
-  { id: 'assignmentCategory', label: 'Assignment Category', schema: categoriesSchema },
-  { id: 'role', label: 'Role', schema: rolesFormSchema },
-  { id: 'user', label: 'User', schema: userRoleAssignmentFormSchema },
-  { id: 'finish', label: 'Finish', schema: z.object({}) }
+  { id: 'description', label: 'steps.description', schema: areaFormSchema },
+  { id: 'assignmentCategory', label: 'steps.assignmentCategory', schema: categoriesSchema },
+  { id: 'role', label: 'steps.role', schema: rolesFormSchema },
+  { id: 'user', label: 'steps.user', schema: userRoleAssignmentFormSchema },
+  { id: 'finish', label: 'steps.finish', schema: z.object({}) }
 );
 
 export type AreaFormStepperType = z.infer<typeof areaFormSchema> & z.infer<typeof categoriesSchema> & z.infer<typeof rolesFormSchema> & z.infer<typeof userRoleAssignmentFormSchema>;
@@ -55,6 +55,7 @@ const AreaFormStepper: FC<AreaFormStepperProps> = ({ tenantId, assignmentHierarc
   const [isPending, startTransition] = useTransition();
   const { mutateAsync: upsert, error } = useUpsertArea();
   const [selectedHierarchy, setSelectedHierarchy] = useState<AssignmentHierarchyWithLevelsType | null>(null);
+  const t = useTranslations('admin.area.create');
 
   // Initialize React Hook Form with current step schema
   const form = useForm({
@@ -177,13 +178,13 @@ const AreaFormStepper: FC<AreaFormStepperProps> = ({ tenantId, assignmentHierarc
       });
 
       toast.promise(Promise.all([promise, upsertCategoriesPromise]), {
-        loading: 'Saving area...',
+        loading: t('messages.saving'),
         success: ([upsertResponse]) => {
           router.push({ pathname: '/admin/[tenantId]/configurations/areas', params: { tenantId } });
-          return `Area ${upsertResponse?.name} created successfully`;
+          return t('messages.success', { name: upsertResponse?.name ?? 'N/A' });
         },
         error: (error) => {
-          return `Failed to save area: ${error.message}`;
+          return t('messages.error', { error: error.message });
         },
       });
     });
@@ -191,35 +192,29 @@ const AreaFormStepper: FC<AreaFormStepperProps> = ({ tenantId, assignmentHierarc
 
   return (
     <div className="flex flex-col flex-1 p-4">
-      <Card className="w-full flex flex-col flex-1 overflow-hidden">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between space-y-6 overflow-hidden p-6">
-            {error && <PrismaErrorAlert error={error} />}
-
-            <StepNavigation steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
-
-            {/* Step Content */}
-            <div className="flex flex-1 overflow-y-hidden">
+      <StepNavigationModern t={t as typeof t & ((key: string) => string)} steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between gap-4 overflow-hidden">
+          {error && <PrismaErrorAlert error={error} />}
+          {stepper.switch({
+            description: () => <AreaForm assignmentHierarchies={assignmentHierarchies} />,
+            assignmentCategory: () => (
               <ScrollArea className="w-full flex-1 overflow-y-hidden">
-                {stepper.switch({
-                  description: () => <AreaForm assignmentHierarchies={assignmentHierarchies} />,
-                  assignmentCategory: () => <div className="m-1 mr-4 flex flex-1 flex-col gap-2">{selectedHierarchy && <AssignmentCategoryForm levels={selectedHierarchy.levels} />}</div>,
-                  role: () => <RolesForm moduleWithFeatures={moduleWithFeatures} isBatch={true} />,
-                  user: () => <UserRoleAssignmentForm userOptions={userOptions} roleOptions={roleOptions} />,
-                  finish: () => (
-                    <div className="flex flex-col gap-4">
-                      <AssignmentCategoriesReview />
-                      <RoleFormReview />
-                    </div>
-                  ),
-                })}
+                <div className="m-1 mr-4 flex flex-1 flex-col gap-2">{selectedHierarchy && <AssignmentCategoryForm levels={selectedHierarchy.levels} />}</div>
               </ScrollArea>
-            </div>
-
-            <StepperNavigationButtons isPending={isPending} isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onReset={stepper.reset} />
-          </form>
-        </Form>
-      </Card>
+            ),
+            role: () => <RolesForm moduleWithFeatures={moduleWithFeatures} isBatch={true} />,
+            user: () => <UserRoleAssignmentForm userOptions={userOptions} roleOptions={roleOptions} />,
+            finish: () => (
+              <ScrollArea className="w-full flex-1 overflow-y-hidden">
+                <AssignmentCategoriesReview />
+                <RoleFormReview />
+              </ScrollArea>
+            ),
+          })}
+          <StepperNavigationButtons isPending={isPending} isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onReset={stepper.reset} />
+        </form>
+      </Form>
     </div>
   );
 };

@@ -196,7 +196,7 @@ const KanbanBoard: React.FC = () => {
         return `Dragging ${active.data.current?.type} cancelled.`;
       },
     }),
-    [columnsId, getDraggingTaskData]
+    [columns, columnsId, getDraggingTaskData]
   );
 
   const onDragStart = useCallback((event: DragStartEvent) => {

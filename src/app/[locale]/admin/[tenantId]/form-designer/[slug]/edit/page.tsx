@@ -1,4 +1,3 @@
-import React from 'react';
 import { GetFormById } from '@/actions/form';
 import { redirect } from '@/i18n/routing';
 import { type Locale } from 'next-intl';

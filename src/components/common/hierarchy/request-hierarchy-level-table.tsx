@@ -1,6 +1,6 @@
-import React from 'react';
 import { Prisma } from '@prisma/client';
 import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { useTranslations } from 'next-intl';
 
 import { TableCell, TableRow } from '@/components/ui/table';
 import { DataTable } from '@/components/data-table/data-table';
@@ -43,15 +43,17 @@ export function RequestHierarchyLevelTable({ levels, columns, isExpanded }: Requ
 }
 
 export const useRequestLevelTableColumns = () => {
+  const t = useTranslations('admin.hierarchy.requestHierarchyLevelTable');
+
   const columns: ColumnDef<RequestLevel>[] = [
     {
       accessorKey: 'name',
-      header: () => 'Name',
+      header: () => t('columns.name'),
       cell: ({ cell }) => cell.getValue(),
     },
     {
       accessorKey: 'position',
-      header: () => 'Position',
+      header: () => t('columns.position'),
       cell: ({ cell }) => cell.getValue(),
     },
   ];

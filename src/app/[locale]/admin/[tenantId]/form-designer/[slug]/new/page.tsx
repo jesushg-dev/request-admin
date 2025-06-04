@@ -1,4 +1,3 @@
-import React from 'react';
 import { GetFormContentById } from '@/actions/form';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';

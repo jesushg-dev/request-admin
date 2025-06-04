@@ -108,7 +108,7 @@ function FlowBuilderNonContext({ onSave, value, locale }: FlowBuilderProps) {
 
       setNodes((nds) => nds.concat(newNode));
     },
-    [reactFlowWrapper.current, reactFlow, setNodes]
+    [reactFlow, locale, setNodes]
   );
 
   const onNodeClick = useCallback((_: React.MouseEvent, node: FlowNode) => {
@@ -239,7 +239,7 @@ function FlowBuilderNonContext({ onSave, value, locale }: FlowBuilderProps) {
       onSave(flow as ExecutionFlowValues);
       toast.success(t('hint.saveSuccess'));
     }
-  }, [nodes, edges, validateFlow, reactFlow, onSave]);
+  }, [validateFlow, nodes, edges, reactFlow, onSave, t]);
 
   useEffect(() => {
     setNodes((value?.nodes as FlowNode[]) ?? getDefaultNodes());

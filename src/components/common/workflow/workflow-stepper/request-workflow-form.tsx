@@ -5,11 +5,12 @@ import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { generateUuid } from '@/lib/id';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { FormCheckboxItem, FormContent, FormItem } from '@/components/shared/form-root';
+import { FormCheckboxItem, FormItem } from '@/components/shared/form-root';
 
 export const workflowFormSchema = z.object({
   id: z.string(),
@@ -36,62 +37,68 @@ export default function RequestWorkflowForm() {
   const { control } = useFormContext<WorkflowFormValues>();
 
   return (
-    <FormContent>
-      {/* Name Field */}
-      <FormField
-        control={control}
-        name="name"
-        render={({ field }) => (
-          <FormItem label={t('workflowName')} description={t('workflowNameDescription')}>
-            <Input placeholder={t('workflowNamePlaceholder')} {...field} />
-          </FormItem>
-        )}
-      />
-
-      {/* Description Field */}
-      <FormField
-        control={control}
-        name="description"
-        render={({ field }) => (
-          <FormItem label={t('description')} description={t('descriptionDescription')}>
-            <Textarea placeholder={t('descriptionPlaceholder')} {...field} value={field.value ?? ''} />
-          </FormItem>
-        )}
-      />
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {/* Default Workflow Switch */}
+    <Card className="flex-1 flex flex-col overflow-hidden">
+      <CardHeader>
+        <CardTitle>{t('header.title')}</CardTitle>
+        <CardDescription>{t('header.description')}</CardDescription>
+      </CardHeader>
+      <CardContent className="flex-1 flex-col flex overflow-hidden gap-4">
+        {/* Name Field */}
         <FormField
           control={control}
-          name="isDefault"
+          name="name"
           render={({ field }) => (
-            <FormCheckboxItem label={t('defaultWorkflow')} description={t('defaultWorkflowDesc')}>
-              <Switch checked={field.value} onCheckedChange={field.onChange} />
-            </FormCheckboxItem>
+            <FormItem label={t('workflowName')} description={t('workflowNameDescription')}>
+              <Input placeholder={t('workflowNamePlaceholder')} {...field} />
+            </FormItem>
           )}
         />
 
-        {/* Require Comments Switch */}
+        {/* Description Field */}
         <FormField
           control={control}
-          name="requireComments"
+          name="description"
           render={({ field }) => (
-            <FormCheckboxItem label={t('requireComments')} description={t('requireCommentsDesc')}>
-              <Switch checked={field.value} onCheckedChange={field.onChange} />
-            </FormCheckboxItem>
+            <FormItem label={t('description')} description={t('descriptionDescription')}>
+              <Textarea placeholder={t('descriptionPlaceholder')} {...field} value={field.value ?? ''} />
+            </FormItem>
           )}
         />
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {/* Default Workflow Switch */}
+          <FormField
+            control={control}
+            name="isDefault"
+            render={({ field }) => (
+              <FormCheckboxItem label={t('defaultWorkflow')} description={t('defaultWorkflowDesc')}>
+                <Switch checked={field.value} onCheckedChange={field.onChange} />
+              </FormCheckboxItem>
+            )}
+          />
 
-        {/* Notify Changes Switch */}
-        <FormField
-          control={control}
-          name="notifyChanges"
-          render={({ field }) => (
-            <FormCheckboxItem label={t('notifyChanges')} description={t('notifyChangesDesc')}>
-              <Switch checked={field.value} onCheckedChange={field.onChange} />
-            </FormCheckboxItem>
-          )}
-        />
-      </div>
-    </FormContent>
+          {/* Require Comments Switch */}
+          <FormField
+            control={control}
+            name="requireComments"
+            render={({ field }) => (
+              <FormCheckboxItem label={t('requireComments')} description={t('requireCommentsDesc')}>
+                <Switch checked={field.value} onCheckedChange={field.onChange} />
+              </FormCheckboxItem>
+            )}
+          />
+
+          {/* Notify Changes Switch */}
+          <FormField
+            control={control}
+            name="notifyChanges"
+            render={({ field }) => (
+              <FormCheckboxItem label={t('notifyChanges')} description={t('notifyChangesDesc')}>
+                <Switch checked={field.value} onCheckedChange={field.onChange} />
+              </FormCheckboxItem>
+            )}
+          />
+        </div>
+      </CardContent>
+    </Card>
   );
 }

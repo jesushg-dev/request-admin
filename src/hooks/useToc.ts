@@ -60,7 +60,7 @@ export default function useToc(options: UseTocOptions) {
     return () => {
       elements.forEach((element) => observer.unobserve(element));
     };
-  }, [items]);
+  }, [items, observerOptions]);
 
   return { items, activeId };
 }

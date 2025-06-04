@@ -33,7 +33,7 @@ export function NavFormSubmissions({ currentPath }: NavFormSubmissionsProps) {
   const dataProvider = useMemo(() => {
     const customData = new CustomDataProviderImplementation<ConvertedMenuItem>(formMenuItems, updateMenuItemsParentAndPosition);
     return customData;
-  }, [formMenuItems]);
+  }, [formMenuItems, updateMenuItemsParentAndPosition]);
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">

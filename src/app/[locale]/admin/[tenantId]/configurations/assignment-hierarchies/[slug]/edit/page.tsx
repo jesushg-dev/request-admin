@@ -14,11 +14,7 @@ const UpdateAssignmentHierarchyPage: FC<UpdateAssignmentHierarchyPageProps> = as
   const defaultValues = await getAssignmentHierarchyAndLevelsById(tenantId, slug);
   const isInUse = defaultValues.categoriesCount > 0;
 
-  return (
-    <div className="flex-1 flex flex-col p-4 overflow-hidden">
-      <HierarchyFormStepper defaultValues={defaultValues} locale={locale} isInUse={isInUse} tenantId={tenantId} upsertAction={upsertAssignmentHierarchy} />
-    </div>
-  );
+  return <HierarchyFormStepper defaultValues={defaultValues} locale={locale} isInUse={isInUse} tenantId={tenantId} upsertAction={upsertAssignmentHierarchy} />;
 };
 
 export default UpdateAssignmentHierarchyPage;

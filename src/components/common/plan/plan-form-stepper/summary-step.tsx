@@ -1,4 +1,7 @@
+import { useTranslations } from 'next-intl';
 import { z } from 'zod';
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { planFeatureSchema, planInfoSchema } from './schemas';
 
@@ -17,36 +20,45 @@ const features = [
 ];
 
 export function SummaryStep({ planData }: SummaryStepProps) {
+  const t = useTranslations('plans.form.summaryStep');
+
   return (
-    <div className="space-y-4">
-      <h3 className="text-lg font-medium">Plan Summary</h3>
-      <div>
-        <p>
-          <strong>Name:</strong> {planData.name}
-        </p>
-        <p>
-          <strong>Description:</strong> {planData.description}
-        </p>
-        <p>
-          <strong>Price:</strong> ${planData.price}
-        </p>
-        <p>
-          <strong>Duration:</strong> {planData.durationInDays ? `${planData.durationInDays} days` : 'Unlimited'}
-        </p>
-      </div>
-      <div>
-        <h4 className="text-md font-medium">Features:</h4>
-        <ul className="list-inside list-disc">
-          {planData.features.map((feature, index) => (
-            <li key={index}>
-              {features.find((f) => f.id === feature.featureId)?.name || 'Unknown Feature'}
-              {feature.dailyLimit && ` - Daily Limit: ${feature.dailyLimit}`}
-              {feature.totalLimit && ` - Total Limit: ${feature.totalLimit}`}
-              {feature.resetInterval && ` - Reset: ${feature.resetInterval}`}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
+    <Card className="flex-1 flex flex-col overflow-hidden">
+      <CardHeader>
+        <CardTitle>{t('header.title')}</CardTitle>
+        <CardDescription>{t('header.description')}</CardDescription>
+      </CardHeader>
+      <CardContent className="flex-1 flex-col flex overflow-hidden gap-4">
+        <div className="space-y-4">
+          <div>
+            <p>
+              <strong>{t('name')}:</strong> {planData.name}
+            </p>
+            <p>
+              <strong>{t('description')}:</strong> {planData.description}
+            </p>
+            <p>
+              <strong>{t('price')}:</strong> ${planData.price}
+            </p>
+            <p>
+              <strong>{t('duration')}:</strong> {planData.durationInDays ? `${planData.durationInDays} ${t('days')}` : t('unlimited')}
+            </p>
+          </div>
+          <div>
+            <h4 className="text-md font-medium">{t('features')}:</h4>
+            <ul className="list-inside list-disc">
+              {planData.features.map((feature, index) => (
+                <li key={index}>
+                  {features.find((f) => f.id === feature.featureId)?.name || t('unknownFeature')}
+                  {feature.dailyLimit && ` - ${t('dailyLimit')}: ${feature.dailyLimit}`}
+                  {feature.totalLimit && ` - ${t('totalLimit')}: ${feature.totalLimit}`}
+                  {feature.resetInterval && ` - ${t('reset')}: ${feature.resetInterval}`}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

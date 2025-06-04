@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { useFindFirstRequestHierarchyLevel, useFindManyRequestCategory } from '@/services/api/hooks';
 import { Prisma } from '@prisma/client';
 import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';

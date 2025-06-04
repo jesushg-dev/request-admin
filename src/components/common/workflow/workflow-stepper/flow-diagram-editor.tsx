@@ -1,5 +1,3 @@
-'use client';
-
 import { useCallback, useReducer } from 'react';
 import { nodeColors } from '@/constants/workflow';
 import {
@@ -26,6 +24,7 @@ import { toast } from 'sonner';
 import { generateUuid } from '@/lib/id';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 
 import { StateModal, type StateValues } from '../state-modal';
@@ -277,60 +276,66 @@ export function RequestFlowDiagramEditor({ onSubmit, onBack, defaultValues }: Re
   };
 
   return (
-    <div className="flex flex-1 flex-col overflow-y-hidden">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        onSelectionChange={onSelectionChange}
-        fitView
-        attributionPosition="bottom-left"
-        colorMode={theme.theme === 'dark' ? 'dark' : 'light'}>
-        <Controls />
-        <MiniMap />
-        <Background gap={12} size={1} />
+    <>
+      <Card className="flex-1 flex flex-col overflow-hidden">
+        <CardHeader>
+          <CardTitle>{t('header.title')}</CardTitle>
+          <CardDescription>{t('header.description')}</CardDescription>
+        </CardHeader>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          onSelectionChange={onSelectionChange}
+          fitView
+          attributionPosition="bottom-left"
+          colorMode={theme.theme === 'dark' ? 'dark' : 'light'}>
+          <Controls />
+          <MiniMap />
+          <Background gap={12} size={1} />
 
-        <Panel position="top-right">
-          <Button size="icon" type="button" onClick={handleAddNode}>
-            <Plus className="h-4 w-4" />
-          </Button>
-        </Panel>
+          <Panel position="top-right">
+            <Button size="icon" type="button" onClick={handleAddNode}>
+              <Plus className="h-4 w-4" />
+            </Button>
+          </Panel>
 
-        {isEditingNode && (
-          <Panel position="top-left" className="bg-background border rounded-md p-4 shadow-md w-64">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="font-medium">{isAddingNode ? t('states.add') : t('states.edit')}</h3>
-              {!isAddingNode && (
-                <Button variant="destructive" size="icon" onClick={handleDeleteNode} aria-label={t('actions.deleteState')}>
+          {isEditingNode && (
+            <Panel position="top-left" className="bg-background border rounded-md p-4 shadow-md w-64">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-medium">{isAddingNode ? t('states.add') : t('states.edit')}</h3>
+                {!isAddingNode && (
+                  <Button variant="destructive" size="icon" onClick={handleDeleteNode} aria-label={t('actions.deleteState')}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+              <StateModal defaultValues={selectedNode?.data} onClose={() => dispatch({ type: 'SAVE_NODE' })} onSave={handleSaveNode} />
+            </Panel>
+          )}
+
+          {isEditingEdge && (
+            <Panel position="top-left" className="bg-background border rounded-md p-4 shadow-md w-64">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-medium">{t('transitions.edit')}</h3>
+                <Button variant="destructive" size="icon" onClick={handleDeleteEdge} aria-label={t('actions.deleteTransition')}>
                   <Trash2 className="h-4 w-4" />
                 </Button>
-              )}
-            </div>
-            <StateModal defaultValues={selectedNode?.data} onClose={() => dispatch({ type: 'SAVE_NODE' })} onSave={handleSaveNode} />
-          </Panel>
-        )}
-
-        {isEditingEdge && (
-          <Panel position="top-left" className="bg-background border rounded-md p-4 shadow-md w-64">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="font-medium">{t('transitions.edit')}</h3>
-              <Button variant="destructive" size="icon" onClick={handleDeleteEdge} aria-label={t('actions.deleteTransition')}>
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
-            <TransitionModal defaultValues={selectedEdge?.data} onClose={() => dispatch({ type: 'SAVE_EDGE' })} onSave={handleSaveEdge} />
-          </Panel>
-        )}
-      </ReactFlow>
-      <div className="flex w-full justify-between">
-        <div className="flex items-center gap-2">
-          <Badge variant="outline">{t('statesCounter', { count: nodes.length })}</Badge>
-          <Badge variant="outline">{t('transitionsCounter', { count: edges.length })}</Badge>
-        </div>
-        <StepperNavigationButtons isFirstStep={false} isLastStep={false} onPrev={handleBack} onNext={handleSubmit} />
-      </div>
-    </div>
+              </div>
+              <TransitionModal defaultValues={selectedEdge?.data} onClose={() => dispatch({ type: 'SAVE_EDGE' })} onSave={handleSaveEdge} />
+            </Panel>
+          )}
+        </ReactFlow>
+        <CardContent>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline">{t('statesCounter', { count: nodes.length })}</Badge>
+            <Badge variant="outline">{t('transitionsCounter', { count: edges.length })}</Badge>
+          </div>
+        </CardContent>
+      </Card>
+      <StepperNavigationButtons isFirstStep={false} isLastStep={false} onPrev={handleBack} onNext={handleSubmit} />
+    </>
   );
 }

@@ -1,4 +1,3 @@
-import React from 'react';
 import { LoaderCircleIcon } from 'lucide-react';
 
 function Loading() {

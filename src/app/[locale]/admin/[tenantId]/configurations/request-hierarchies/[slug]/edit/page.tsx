@@ -14,11 +14,7 @@ const UpdateRequestHierarchyPage: FC<UpdateRequestHierarchyPageProps> = async ({
   const defaultValues = await getRequestHierarchyAndLevelsById(tenantId, slug);
   const isInUse = defaultValues.categoriesCount > 0;
 
-  return (
-    <div className="flex-1 flex flex-col p-4 overflow-hidden">
-      <HierarchyFormStepper defaultValues={defaultValues} isInUse={isInUse} tenantId={tenantId} locale={locale} upsertAction={upsertRequestHierarchy} />
-    </div>
-  );
+  return <HierarchyFormStepper defaultValues={defaultValues} isInUse={isInUse} tenantId={tenantId} locale={locale} upsertAction={upsertRequestHierarchy} />;
 };
 
 export default UpdateRequestHierarchyPage;

@@ -428,6 +428,125 @@
         "createSuccess": "Organization created successfully",
         "error": "Error {action} organization: {error}"
       }
+    },
+    "form": {
+      "planSelectionStep": {
+        "title": "Select a Plan",
+        "description": "Choose the plan that best fits your needs.",
+        "popular": "Popular",
+        "days": "days",
+        "selectPlan": "Select a plan",
+        "required": "Plan selection is required"
+      },
+      "steps": {
+        "tenant": "Organization",
+        "plan": "Plan",
+        "finish": "Review"
+      },
+      "messages": {
+        "saving": "Creating organization...",
+        "success": "Organization created successfully",
+        "error": "Failed to create organization: {error}"
+      },
+      "tenantReviewStep": {
+        "title": "Review Your Tenant Information",
+        "description": "Please review the information below before creating your tenant.",
+        "basicInfo": {
+          "title": "Basic Information",
+          "orgName": "Organization Name",
+          "slug": "Slug",
+          "logo": "Logo",
+          "websiteUrl": "Website URL",
+          "unableToLoadLogo": "Unable to load logo preview"
+        },
+        "contentInfo": {
+          "contentInfoTitle": "Content Information",
+          "title": "Title",
+          "description": "Description"
+        },
+        "branding": {
+          "title": "Branding",
+          "primaryColor": "Primary Color",
+          "secondaryColor": "Secondary Color",
+          "preview": "Preview",
+          "getStarted": "Get Started"
+        },
+        "contactInfo": {
+          "title": "Contact Information",
+          "email": "Email",
+          "phone": "Phone",
+          "address": "Address"
+        },
+        "subscription": {
+          "title": "Selected Plan",
+          "price": "Price",
+          "duration": "Duration",
+          "features": "Features",
+          "noPlan": "No plan selected",
+          "free": "Free",
+          "days": "Days",
+          "popular": "Popular"
+        }
+      }
+    }
+  },
+  "plans": {
+    "form": {
+      "steps": {
+        "planInfo": "Plan Information",
+        "planFeatures": "Plan Features",
+        "summary": "Summary"
+      },
+      "featuresStep": {
+        "header": {
+          "title": "Plan Features",
+          "description": "Select the features that will be included in this plan."
+        },
+        "selectFeature": "Select a feature",
+        "dailyLimit": "Daily Limit",
+        "totalLimit": "Total Limit",
+        "resetInterval": "Reset Interval",
+        "resetIntervals": {
+          "daily": "Daily",
+          "weekly": "Weekly",
+          "monthly": "Monthly",
+          "yearly": "Yearly"
+        },
+        "remove": "Remove",
+        "addFeature": "Add Feature"
+      },
+      "planStep": {
+        "header": {
+          "title": "Plan Information",
+          "description": "Enter the basic information for the plan."
+        },
+        "name": "Plan Name",
+        "namePlaceholder": "Enter plan name",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter plan description",
+        "descriptionHelp": "Please provide a description for the plan",
+        "price": "Price",
+        "priceHelp": "Enter 0 for a free plan",
+        "duration": "Duration (in days)",
+        "durationHelp": "Leave empty for unlimited duration"
+      },
+      "summaryStep": {
+        "header": {
+          "title": "Plan Summary",
+          "description": "Review the plan details before saving."
+        },
+        "name": "Name",
+        "description": "Description",
+        "price": "Price",
+        "duration": "Duration",
+        "unlimited": "Unlimited",
+        "days": "days",
+        "features": "Features",
+        "unknownFeature": "Unknown Feature",
+        "dailyLimit": "Daily Limit",
+        "totalLimit": "Total Limit",
+        "reset": "Reset"
+      }
     }
   },
   "admin": {
@@ -530,26 +649,39 @@
         }
       },
       "create": {
-        "title": "Request Category",
-        "subtitle": "Create a new request category. A category can have multiple and recursive subcategories according to your business needs.",
         "steps": {
-          "navigationLabel": "Progress Steps",
-          "area": "Area",
-          "assignmentCategory": "Assignment Category",
-          "user": "User",
-          "finish": "Finish",
-          "areaStep": "Go to Area Step",
-          "assignmentCategoryStep": "Go to Assignment Category Step",
-          "userStep": "Go to User Step",
-          "finishStep": "Go to Finish Step",
-          "backButton": "Back",
-          "nextButton": "Next",
-          "finishButton": "Finish",
-          "userTitle": "User Step",
-          "userDescription": "Please fill in user-related details here.",
-          "continueButton": "Continue",
-          "finishTitle": "All Steps Completed",
-          "finishDescription": "Your form has been successfully completed."
+          "description": "Description",
+          "assignmentCategory": "Assignment Categories",
+          "role": "Roles",
+          "user": "Users",
+          "finish": "Review"
+        },
+        "form": {
+          "nameLabel": "Name",
+          "namePlaceholder": "Enter your name",
+          "nameDescription": "This is your public display name.",
+          "descriptionLabel": "Description",
+          "descriptionPlaceholder": "Enter a description",
+          "descriptionDescription": "Add additional details or a description here.",
+          "hierarchyLabel": "Hierarchy",
+          "hierarchyDescription": "Select the hierarchy that will govern this area.",
+          "hierarchyPlaceholder": "Select a hierarchy",
+          "isActiveLabel": "Active",
+          "isActiveDescription": "Mark as active or inactive.",
+          "submitButton": "Submit",
+          "errorToast": "Failed to submit the form. Please try again.",
+          "requiredName": "Name is required",
+          "minName": "Name must be at least 3 characters",
+          "Required": "This field is required",
+          "header": {
+            "title": "Area Details",
+            "description": "Manage the information and associated hierarchy for this area."
+          }
+        },
+        "messages": {
+          "saving": "Saving area...",
+          "success": "Area {name} created successfully",
+          "error": "Failed to save area: {error}"
         }
       }
     },
@@ -1689,7 +1821,12 @@
         "create": "Create",
         "savingChanges": "Saving changes...",
         "successSave": "Requirement '{name}' saved successfully.",
-        "errorSave": "Failed to save requirement: {error}"
+        "errorSave": "Failed to save requirement: {error}",
+        "header": {
+          "title": "Requirement Information",
+          "descriptionUpdate": "Please fill in the required fields to update the requirement.",
+          "descriptionCreate": "Please fill in the required fields to create a new requirement."
+        }
       }
     },
     "requirementType": {
@@ -1719,7 +1856,12 @@
         "isDefault": "Default",
         "isDefaultPlaceholder": "Check if default",
         "update": "Update",
-        "create": "Create"
+        "create": "Create",
+        "header": {
+          "title": "Requirement Type Information",
+          "descriptionUpdate": "Please fill in the required fields to update the requirement type.",
+          "descriptionCreate": "Please fill in the required fields to create a new requirement type."
+        }
       }
     },
     "role": {
@@ -1787,6 +1929,68 @@
           "type": "Type",
           "description": "Description"
         }
+      },
+      "steps": {
+        "hierarchy": "Hierarchy",
+        "levels": "Levels",
+        "summary": "Summary"
+      },
+      "messages": {
+        "saving": "Saving hierarchy...",
+        "success": "Hierarchy saved successfully",
+        "error": "Failed to save hierarchy: {error}"
+      },
+      "hierarchyForm": {
+        "hierarchyDetails": "Hierarchy Details",
+        "hierarchyDetailsDescription": "Provide a name and description for your hierarchy.",
+        "hierarchyName": "Hierarchy Name",
+        "hierarchyNameDescription": "The name of your hierarchy (e.g., 'Sales Channel Hierarchy')",
+        "hierarchyNamePlaceholder": "Enter hierarchy name",
+        "description": "Description",
+        "descriptionDescription": "Optional: Provide a brief description of the hierarchy",
+        "descriptionPlaceholder": "Enter a description for this hierarchy",
+        "isActive": "Is Active",
+        "isActiveDescription": "If the hierarchy is active, it will be available for use in the application.",
+        "saveChanges": "Save Changes",
+        "create": "Create",
+        "header": {
+          "title": "Hierarchy Management",
+          "description": "A hierarchy organizes categories into levels such as parent, child, or grandchild, making it easier to structure and classify a request"
+        }
+      },
+      "stepsForm": {
+        "title": "Hierarchy Levels",
+        "description": "The hierarchy is fixed. You cannot remove or reorder levels when in use.",
+        "inUseTitle": "Hierarchy In Use",
+        "inUseDescription": "You cannot modify the structure, but you can edit names and descriptions.",
+        "levelLabel": "Level {number}",
+        "levelPlaceholder": "E.g. Sales Channel",
+        "levelDescriptionLabel": "Description for Level {number}",
+        "levelDescriptionPlaceholder": "E.g. Specifications for {name}",
+        "thisLevel": "this level",
+        "add": "Add new level",
+        "addDisabled": "Cannot add new levels"
+      },
+      "summaryStep": {
+        "title": "Review Hierarchy",
+        "description": "Review the hierarchy details and levels before saving.",
+        "summaryTitle": "Hierarchy Summary",
+        "noDescription": "No description provided",
+        "viewFlat": "View as flat list",
+        "viewHierarchy": "View as hierarchy",
+        "levels": "Levels",
+        "level": "Level {number}",
+        "levelDescription": "Description for {name}",
+        "noLevels": "No levels defined",
+        "active": "Active",
+        "inactive": "Inactive",
+        "levelsTitle": "Hierarchy Levels"
+      },
+      "requestHierarchyLevelTable": {
+        "columns": {
+          "name": "Name",
+          "position": "Position"
+        }
       }
     },
     "user": {
@@ -1821,6 +2025,23 @@
         }
       },
       "form": {
+        "steps": {
+          "user": "User",
+          "globalRole": "Global Role",
+          "areaRole": "Area Role",
+          "summary": "Summary"
+        },
+        "messages": {
+          "saving": "Saving user...",
+          "invitationSent": "Invitation sent to {email}.",
+          "success": "User \"{username}\" saved successfully.",
+          "saved": "User with email \"{email}\" saved successfully.",
+          "error": "Failed to save user: {error}"
+        },
+        "header": {
+          "title": "User Management",
+          "description": "Manage users, assign roles, and configure user settings."
+        },
         "username": "Username",
         "usernamePlaceholder": "JohnDoe",
         "usernameDesc": "This is your public display name.",
@@ -2619,7 +2840,12 @@
         "update": "Update",
         "savingChanges": "Saving changes…",
         "successSave": "Successfully saved \"{name}\"",
-        "errorSave": "Error saving: {message}"
+        "errorSave": "Error saving: {message}",
+        "header": {
+          "title": "Priority Details",
+          "descriptionUpdate": "Please fill in the required fields to update the priority.",
+          "descriptionCreate": "Please fill in the required fields to create a new priority."
+        }
       },
       "actions": {
         "cancel": "Cancel",
@@ -2676,6 +2902,20 @@
         }
       },
       "form": {
+        "header": {
+          "title": "Workflow Information",
+          "description": "Enter the workflow details."
+        },
+        "messages": {
+          "saving": "Saving workflow...",
+          "success": "Workflow \"{name}\" created successfully.",
+          "error": "Failed to save workflow: {error}"
+        },
+        "steps": {
+          "description": "Description",
+          "transitions": "Transitions",
+          "review": "Review"
+        },
         "workflowName": "Workflow Name",
         "workflowNameDescription": "The name of your workflow",
         "workflowNamePlaceholder": "Enter workflow name",
@@ -2735,6 +2975,10 @@
           "states": {
             "add": "Add state",
             "edit": "Edit state"
+          },
+          "header": {
+            "title": "Workflow Diagram Editor",
+            "description": "Design and configure the workflow states and transitions. Add, edit, or remove states and transitions to define your process."
           }
         },
         "state": {
@@ -2757,6 +3001,10 @@
           "deletedMessage": "The transition has been successfully deleted."
         },
         "review": {
+          "header": {
+            "title": "Workflow Review",
+            "description": "Review the workflow details before saving."
+          },
           "noName": "Unnamed",
           "noDescription": "No description",
           "isDefault": "Default",
@@ -2845,6 +3093,129 @@
         "cancel": "Cancel",
         "save": "Save"
       }
+    },
+    "helpPage": {
+      "title": "Help Center",
+      "subtitle": "Find answers to your questions and system usage guides",
+      "searchPlaceholder": "Search guides and FAQs...",
+      "tabs": {
+        "guides": "Guides",
+        "videos": "Videos",
+        "faqs": "FAQs",
+        "contact": "Contact"
+      },
+      "guides": {
+        "firstSteps": {
+          "title": "Getting Started",
+          "description": "Learn the basics to start using the system",
+          "links": ["System Introduction", "Create your first request", "Dashboard navigation", "Configure your profile"],
+          "viewAll": "View all basic guides"
+        },
+        "requestManagement": {
+          "title": "Request Management",
+          "description": "Learn to manage requests efficiently",
+          "links": ["Request statuses", "Request assignment", "Priority changes", "Comments and tracking"],
+          "viewAll": "View all management guides"
+        },
+        "communication": {
+          "title": "Communication",
+          "description": "Learn to communicate effectively in the system",
+          "links": ["Messaging system", "Notifications and alerts", "Mentions and tags", "File sharing"],
+          "viewAll": "View all communication guides"
+        },
+        "reports": {
+          "title": "Reports and Analytics",
+          "description": "Learn to use the analysis tools",
+          "links": ["Report generation", "Metrics analysis", "Data export", "Custom dashboards"],
+          "viewAll": "View all reports guides"
+        },
+        "administration": {
+          "title": "Administration",
+          "description": "Guides for system administrators",
+          "links": ["User management", "Workflow configuration", "System customization", "Security and permissions"],
+          "viewAll": "View all administration guides"
+        },
+        "workflows": {
+          "title": "Workflows",
+          "description": "Learn to configure and use workflows",
+          "links": ["Creating custom workflows", "State transition rules", "Process automation", "Workflow templates"],
+          "viewAll": "View all workflow guides"
+        }
+      },
+      "videos": {
+        "watchButton": "Watch video",
+        "introduction": {
+          "title": "System Introduction",
+          "description": "Overview of main features",
+          "duration": "5:32",
+          "detail": "This video gives you an overview of the system and its main features."
+        },
+        "requestCreation": {
+          "title": "Creating Requests",
+          "description": "Learn to create and manage requests",
+          "duration": "4:15",
+          "detail": "This tutorial shows you step by step how to create and manage requests in the system."
+        },
+        "workflows": {
+          "title": "Workflows",
+          "description": "Configuration of custom workflows",
+          "duration": "7:48",
+          "detail": "Learn to configure custom workflows for different types of requests."
+        },
+        "reports": {
+          "title": "Reports and Analysis",
+          "description": "Generation of custom reports",
+          "duration": "6:22",
+          "detail": "This tutorial shows you how to generate custom reports and analyze data in the system."
+        },
+        "userManagement": {
+          "title": "User Management",
+          "description": "User and permissions management",
+          "duration": "5:55",
+          "detail": "Learn to manage users, roles and permissions in the system."
+        },
+        "notifications": {
+          "title": "Notifications and Alerts",
+          "description": "Configuration of custom notifications",
+          "duration": "3:47",
+          "detail": "This tutorial shows you how to configure custom notifications in the system."
+        }
+      },
+      "contact": {
+        "support": {
+          "title": "Support Contact",
+          "description": "Get in touch with our support team",
+          "emailLabel": "Email",
+          "email": "support@example.com",
+          "phoneLabel": "Phone",
+          "phone": "+505 2222-3333",
+          "hoursLabel": "Business hours",
+          "hours": "Monday to Friday from 8:00 AM to 5:00 PM",
+          "button": "Send message to support"
+        },
+        "training": {
+          "title": "Request Training",
+          "description": "Request a training session for your team",
+          "detail": "We offer customized training sessions for teams of all sizes. Our experts can help you get the most out of the system.",
+          "typesLabel": "Training types",
+          "types": "Basic training for new users, Advanced training for administrators, Module-specific training, Report generation training",
+          "button": "Request training"
+        }
+      },
+      "fAQs": {
+        "answerPanel": {
+          "title": "Select a question",
+          "description": "Click on a question from the list to see its answer here",
+          "emptyMessage": "Select a question to see its answer"
+        },
+        "questions": {
+          "q1": "How can I change my password?",
+          "q2": "What should I do if my request is stuck in a state?",
+          "q3": "Can I cancel a request that has already been sent?",
+          "q4": "How can I view all my pending requests?",
+          "q5": "How do workflows work?"
+        }
+      }
     }
   },
   "component": {
@@ -2907,24 +3278,6 @@
         "escalationTimeLabel": "Escalation Time (hours)",
         "escalationTimeDescription": "The time in hours before escalation (0 means no escalation)"
       }
-    },
-    "areaForm": {
-      "nameLabel": "Name",
-      "namePlaceholder": "Enter your name",
-      "nameDescription": "This is your public display name.",
-      "descriptionLabel": "Description",
-      "descriptionPlaceholder": "Enter a description",
-      "descriptionDescription": "Add additional details or a description here.",
-      "hierarchyLabel": "Hierarchy",
-      "hierarchyDescription": "Select the hierarchy that will govern this area.",
-      "hierarchyPlaceholder": "Select a hierarchy",
-      "isActiveLabel": "Active",
-      "isActiveDescription": "Mark as active or inactive.",
-      "submitButton": "Submit",
-      "errorToast": "Failed to submit the form. Please try again.",
-      "requiredName": "Name is required",
-      "minName": "Name must be at least 3 characters",
-      "Required": "This field is required"
     },
     "requirementDialogCell": {
       "dialogTitle": "Requirements associated with {entity}",
@@ -2996,21 +3349,11 @@
       "formElements": "Form elements",
       "layoutElements": "Layout elements"
     },
-    "hierarchyForm": {
-      "hierarchyDetails": "Hierarchy Details",
-      "hierarchyDetailsDescription": "Provide a name and description for your hierarchy.",
-      "hierarchyName": "Hierarchy Name",
-      "hierarchyNameDescription": "The name of your hierarchy (e.g., 'Sales Channel Hierarchy')",
-      "hierarchyNamePlaceholder": "Enter hierarchy name",
-      "description": "Description",
-      "descriptionDescription": "Optional: Provide a brief description of the hierarchy",
-      "descriptionPlaceholder": "Enter a description for this hierarchy",
-      "isActive": "Is Active",
-      "isActiveDescription": "If the hierarchy is active, it will be available for use in the application.",
-      "saveChanges": "Save Changes",
-      "create": "Create"
-    },
     "rolesForm": {
+      "header": {
+        "title": "Roles",
+        "description": "Create and manage roles to control access to features and functionalities within the system."
+      },
       "roleName": "Role Name",
       "roleNamePlaceholder": "Role Name",
       "roleNameDescription": "Role Name must be at least 3 characters and not exceed 100 characters",
@@ -3031,6 +3374,30 @@
         "featuresHelp": "Select the features that users with this role should have access to. If a feature is not selected, users with this role will not have access to it.",
         "activeLabel": "Active",
         "activeHelp": "If the role is active, users assigned to this role will have access to the selected features."
+      },
+      "roleFormReview": {
+        "reviewTitle": "Review and Confirm",
+        "reviewDescription": "Please review the role and user assignments before confirming.",
+        "featuresAccess": "Users with the role {roleName} will have access to the following features:",
+        "module": "Module",
+        "features": "Features",
+        "moduleFeaturesTooltip": "Features available for {moduleName}",
+        "assignedUsers": "Assigned Users",
+        "user": "User",
+        "role": "Role",
+        "status": "Status",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "steps": {
+        "role": "Role",
+        "user": "Users",
+        "finish": "Review"
+      },
+      "messages": {
+        "saving": "Saving roles...",
+        "success": "{count, plural, one {Role \"{names}\" saved successfully.} other {Roles \"{names}\" saved successfully.}}",
+        "error": "Failed to save roles: {error}"
       }
     },
     "userRoleAssignmentForm": {
@@ -3055,6 +3422,10 @@
       "role": {
         "label": "Role",
         "description": "Select a role for the user"
+      },
+      "header": {
+        "title": "User Role Assignment",
+        "description": "Manage users and their assigned roles within the area."
       }
     },
     "categoryTreeView": {

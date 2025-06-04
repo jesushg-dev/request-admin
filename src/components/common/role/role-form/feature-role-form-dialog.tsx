@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { FileCogIcon, HelpCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useFormContext, useWatch } from 'react-hook-form';

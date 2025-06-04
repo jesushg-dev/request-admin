@@ -13,7 +13,7 @@ import { transformExecutionFlowToZodSchema } from '@/lib/execution-flow';
 import { normalizeValue } from '@/lib/utils';
 import { RequestFormStepperType } from '@/components/common/request/request-form-stepper';
 
-import { sendInAppNotification, sendSMSNotification } from './notification';
+import { sendInAppNotification /*, sendSMSNotification*/ } from './notification';
 import { getInitialStatusFromDatabase } from './workflow';
 
 class UserNotFoundErr extends Error {}
@@ -57,10 +57,6 @@ export const upsertRequest = async (tenantId: string, data: RequestFormStepperTy
 
   const result = existingRequest ? await handleUpdate(existingRequest, tenantId, data, session.user.id, flow?.id) : await handleCreate(tenantId, data, session.user.id, flow?.id);
   const recipients: string[] = result.requestAssignments.flatMap((assignment: AssignmentWithRelations) => assignment.assignedUsers.map((user) => user.userTenant.id));
-  const phones = result.requestAssignments.flatMap((assignment: AssignmentWithRelations) =>
-    assignment.assignedUsers.map((user) => user.userTenant.person?.phone).filter((phone): phone is string => typeof phone === 'string' && phone.trim() !== '')
-  );
-  const phoneNumbers = Array.from(new Set(phones));
 
   await sendInAppNotification({
     tenantId,
@@ -73,6 +69,11 @@ export const upsertRequest = async (tenantId: string, data: RequestFormStepperTy
     recipients: recipients.map((userTenantId) => ({ userTenantId })),
   });
 
+  /*
+  const phones = result.requestAssignments.flatMap((assignment: AssignmentWithRelations) =>
+    assignment.assignedUsers.map((user) => user.userTenant.person?.phone).filter((phone): phone is string => typeof phone === 'string' && phone.trim() !== '')
+  );
+  const phoneNumbers = Array.from(new Set(phones));
   await sendSMSNotification({
     tenantId,
     locale: 'es',
@@ -81,7 +82,7 @@ export const upsertRequest = async (tenantId: string, data: RequestFormStepperTy
       requestId: data.id,
     },
     recipients: phoneNumbers.map((phone) => ({ phoneNumber: phone })),
-  });
+  });*/
 
   return result;
 };

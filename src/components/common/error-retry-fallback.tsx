@@ -1,4 +1,3 @@
-import React from 'react';
 import { QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
 import { BugIcon, CircleAlertIcon, RotateCcwIcon } from 'lucide-react';
 

@@ -11,11 +11,7 @@ interface CreateAssignmentHierarchyPageProps {
 const CreateAssignmentHierarchyPage: FC<CreateAssignmentHierarchyPageProps> = async ({ params }) => {
   const { locale, tenantId } = await params;
 
-  return (
-    <div className="flex-1 flex flex-col p-4 overflow-hidden">
-      <HierarchyFormStepper tenantId={tenantId} locale={locale} upsertAction={upsertAssignmentHierarchy} />
-    </div>
-  );
+  return <HierarchyFormStepper tenantId={tenantId} locale={locale} upsertAction={upsertAssignmentHierarchy} />;
 };
 
 export default CreateAssignmentHierarchyPage;

@@ -7,6 +7,7 @@ import { z } from 'zod';
 
 import { AssignmentHierarchyWithLevelsType } from '@/types/prisma/hierarchy';
 import { generateUuid } from '@/lib/id';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
@@ -35,7 +36,7 @@ export const getAreaDefaultValue = (): AreaFormValues => ({
 });
 
 export default function AreaForm({ assignmentHierarchies = [], disableHierarchyChange = false }: { assignmentHierarchies: AssignmentHierarchyWithLevelsType[]; disableHierarchyChange?: boolean }) {
-  const t = useTranslations('component.areaForm');
+  const t = useTranslations('admin.area.create.form');
   const { control, setValue, getValues } = useFormContext<AreaFormValues>();
 
   const hierarchyOptions = useMemo(() => {
@@ -56,60 +57,68 @@ export default function AreaForm({ assignmentHierarchies = [], disableHierarchyC
   }, [hierarchyOptions, setValue, getValues]);
 
   return (
-    <FormContent>
-      {/* Name Field */}
-      <FormField
-        control={control}
-        name="name"
-        render={({ field }) => (
-          <FormItem label={t('nameLabel')} description={t('nameDescription')}>
-            <Input placeholder={t('namePlaceholder')} {...field} />
-          </FormItem>
-        )}
-      />
+    <Card className="flex-1 flex flex-col overflow-hidden">
+      <CardHeader>
+        <CardTitle>{t('header.title')}</CardTitle>
+        <CardDescription>{t('header.description')}</CardDescription>
+      </CardHeader>
+      <CardContent className="flex-1 flex-col flex overflow-hidden gap-4">
+        <FormContent>
+          {/* Name Field */}
+          <FormField
+            control={control}
+            name="name"
+            render={({ field }) => (
+              <FormItem label={t('nameLabel')} description={t('nameDescription')}>
+                <Input placeholder={t('namePlaceholder')} {...field} />
+              </FormItem>
+            )}
+          />
 
-      <FormField
-        control={control}
-        name="hierarchyId"
-        render={({ field }) => (
-          <FormItem label={t('hierarchyLabel')} description={t('hierarchyDescription')}>
-            <Select
-              menuPortalTarget={null}
-              isSearchable
-              isClearable={!disableHierarchyChange && hierarchyOptions.length > 1}
-              options={hierarchyOptions}
-              isDisabled={disableHierarchyChange || hierarchyOptions.length === 1}
-              {...field}
-            />
-          </FormItem>
-        )}
-      />
+          <FormField
+            control={control}
+            name="hierarchyId"
+            render={({ field }) => (
+              <FormItem label={t('hierarchyLabel')} description={t('hierarchyDescription')}>
+                <Select
+                  menuPortalTarget={null}
+                  isSearchable
+                  isClearable={!disableHierarchyChange && hierarchyOptions.length > 1}
+                  options={hierarchyOptions}
+                  isDisabled={disableHierarchyChange || hierarchyOptions.length === 1}
+                  {...field}
+                />
+              </FormItem>
+            )}
+          />
 
-      {/* Hierarchy View */}
-      <HierarchyView control={control} assignmentHierarchies={assignmentHierarchies} />
+          {/* Hierarchy View */}
+          <HierarchyView control={control} assignmentHierarchies={assignmentHierarchies} />
 
-      {/* Description Field */}
-      <FormField
-        control={control}
-        name="description"
-        render={({ field }) => (
-          <FormItem label={t('descriptionLabel')} description={t('descriptionDescription')}>
-            <Textarea placeholder={t('descriptionPlaceholder')} {...field} value={field.value ?? ''} />
-          </FormItem>
-        )}
-      />
+          {/* Description Field */}
+          <FormField
+            control={control}
+            name="description"
+            render={({ field }) => (
+              <FormItem label={t('descriptionLabel')} description={t('descriptionDescription')}>
+                <Textarea placeholder={t('descriptionPlaceholder')} {...field} value={field.value ?? ''} />
+              </FormItem>
+            )}
+          />
 
-      {/* Active Checkbox */}
-      <FormField
-        control={control}
-        name="isActive"
-        render={({ field }) => (
-          <FormCheckboxItem label={t('isActiveLabel')} description={t('isActiveDescription')}>
-            <Switch checked={field.value} onCheckedChange={field.onChange} />
-          </FormCheckboxItem>
-        )}
-      />
-    </FormContent>
+          {/* Active Checkbox */}
+          <FormField
+            control={control}
+            name="isActive"
+            render={({ field }) => (
+              <FormCheckboxItem label={t('isActiveLabel')} description={t('isActiveDescription')}>
+                <Switch checked={field.value} onCheckedChange={field.onChange} />
+              </FormCheckboxItem>
+            )}
+          />
+        </FormContent>
+      </CardContent>
+    </Card>
   );
 }
 

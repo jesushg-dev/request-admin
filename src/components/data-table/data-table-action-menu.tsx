@@ -1,4 +1,3 @@
-import React from 'react';
 import { I18Link, Link } from '@/i18n/routing';
 import { Row } from '@tanstack/react-table';
 import { Ellipsis, EyeIcon, PencilIcon, Trash2Icon } from 'lucide-react';

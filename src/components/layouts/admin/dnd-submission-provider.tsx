@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, ReactNode, useContext, useOptimistic, useState, useTransition } from 'react';
+import { createContext, ReactNode, useCallback, useContext, useMemo, useOptimistic, useState, useTransition } from 'react';
 import { I18Link } from '@/i18n/routing';
 import { useCreateMenuItem, useDeleteMenuItem, useFindManyMenuItem, useUpdateManyMenuItem } from '@/services/api/hooks';
 import { Active, DndContext, DragEndEvent, DragOverlay } from '@dnd-kit/core';
@@ -150,50 +150,60 @@ export function DndSubmissionProvider({ children, tenantId }: { children: ReactN
     }
   };
 
-  const updateMenuItemsParentAndPosition = async (itemId: string, newChildren: string[]) => {
-    startTransition(async () => {
-      updateOptimisticMenuItems({ type: 'updatePositions', itemId, newChildren });
+  const updateMenuItemsParentAndPosition = useCallback(
+    async (itemId: string, newChildren: string[]) => {
+      startTransition(async () => {
+        updateOptimisticMenuItems({ type: 'updatePositions', itemId, newChildren });
 
-      try {
-        await Promise.all(
-          newChildren.map((childId, index) =>
-            updateMenuItem({
-              where: { id: childId },
-              data: {
-                parentId: itemId === 'root' ? null : itemId,
-                position: index,
-              },
-            })
-          )
-        );
-      } catch (error) {
-        console.error('Failed to update menu items:', error);
-      }
-    });
-  };
+        try {
+          await Promise.all(
+            newChildren.map((childId, index) =>
+              updateMenuItem({
+                where: { id: childId },
+                data: {
+                  parentId: itemId === 'root' ? null : itemId,
+                  position: index,
+                },
+              })
+            )
+          );
+        } catch (error) {
+          console.error('Failed to update menu items:', error);
+        }
+      });
+    },
+    [updateOptimisticMenuItems, updateMenuItem]
+  );
 
-  const deleteMenuItemById = async (id: string) => {
-    startTransition(async () => {
-      updateOptimisticMenuItems({ type: 'delete', id });
-      try {
-        await updateMenuItem({ where: { parentId: id }, data: { parentId: null } });
-        await deleteMenuItem({ where: { id } });
-      } catch (error) {
-        console.error(`Failed to delete menu item with ID ${id}:`, error);
-      }
-    });
-  };
+  const deleteMenuItemById = useCallback(
+    async (id: string) => {
+      startTransition(async () => {
+        updateOptimisticMenuItems({ type: 'delete', id });
+        try {
+          await updateMenuItem({ where: { parentId: id }, data: { parentId: null } });
+          await deleteMenuItem({ where: { id } });
+        } catch (error) {
+          console.error(`Failed to delete menu item with ID ${id}:`, error);
+        }
+      });
+    },
+    [updateOptimisticMenuItems, updateMenuItem, deleteMenuItem]
+  );
+
+  const values = useMemo(
+    () => ({
+      isLoading: isPending,
+      formMenuItems: optimisticMenuItems,
+      currentForm,
+      setCurrentForm,
+      deleteMenuItemById,
+      updateMenuItemsParentAndPosition,
+    }),
+    [isPending, optimisticMenuItems, currentForm, setCurrentForm, deleteMenuItemById, updateMenuItemsParentAndPosition]
+  );
 
   return (
-    <DndSubmissionContext.Provider
-      value={{
-        isLoading: isPending,
-        formMenuItems: optimisticMenuItems,
-        currentForm,
-        setCurrentForm,
-        deleteMenuItemById,
-        updateMenuItemsParentAndPosition,
-      }}>
+    <DndSubmissionContext.Provider value={values}>
       <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         {children}
         <ClientOnlyPortal selector="#body">

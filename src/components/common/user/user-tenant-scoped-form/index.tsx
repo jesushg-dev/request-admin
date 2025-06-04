@@ -5,16 +5,16 @@ import { upsertUser } from '@/actions/user';
 import { useRouter } from '@/i18n/routing';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { defineStepper } from '@stepperize/react';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { AreaRoleOptionType } from '@/types/prisma/user';
-import { Card } from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { OptionType } from '@/components/custom-ui/select';
-import { StepNavigation } from '@/components/stepper/step-navigation';
+import { StepNavigationModern } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 
 import AreaRoleAssignmentForm, { areaRoleAssignmentFormSchema, AreaRoleAssignmentFormValues, getDefaultAreaRoleAssignment } from './area-role-assignment-form';
@@ -23,10 +23,10 @@ import UserRoleForm, { getDefaultUserRole, userRoleFormSchema, UserRoleFormValue
 import UserTenantScopedReview from './user-tenant-scoped-review';
 
 const { useStepper, utils } = defineStepper(
-  { id: 'user', label: 'User Details', schema: userFormSchema },
-  { id: 'globalRole', label: 'Global Role Assignment', schema: userRoleFormSchema },
-  { id: 'areaRole', label: 'Area Role Assignment', schema: areaRoleAssignmentFormSchema },
-  { id: 'summary', label: 'Summary', schema: z.object({}) }
+  { id: 'user', label: 'steps.user', schema: userFormSchema },
+  { id: 'globalRole', label: 'steps.globalRole', schema: userRoleFormSchema },
+  { id: 'areaRole', label: 'steps.areaRole', schema: areaRoleAssignmentFormSchema },
+  { id: 'summary', label: 'steps.summary', schema: z.object({}) }
 );
 
 export type UserTenantScopedFormValues = UserFormValues & AreaRoleAssignmentFormValues & UserRoleFormValues;
@@ -47,6 +47,7 @@ const UserTenantScopedForm: FC<UserTenantScopedFormProps> = ({ defaultValues, te
   const router = useRouter();
   const stepper = useStepper();
   const [isPending, startTransition] = useTransition();
+  const t = useTranslations('admin.user.form');
 
   const form = useForm({
     mode: 'onTouched',
@@ -70,52 +71,40 @@ const UserTenantScopedForm: FC<UserTenantScopedFormProps> = ({ defaultValues, te
       const promise = upsertUser(tenantId, data);
 
       toast.promise(promise, {
-        loading: 'Saving user...',
+        loading: t('messages.saving'),
         success: (response) => {
           router.push({ pathname: '/admin/[tenantId]/security/users', params: { tenantId } });
           if ('isNewUser' in response && response.isNewUser) {
-            return `An invitation was sent to ${response.email}`;
+            return t('messages.invitationSent', { email: response.email });
           }
           if ('username' in response && response.username) {
-            return `User saved successfully: ${response.username}`;
+            return t('messages.success', { username: response.username });
           }
-          return `User saved successfully: ${response.email}`;
+          return t('messages.saved', { email: response.email });
         },
-        error: (error) => {
-          return `Failed to save user: ${error.message}`;
-        },
+        error: (error) => t('messages.error', { error: error.message }),
       });
     });
   };
 
   return (
     <div className="flex flex-col flex-1 p-4">
-      <Card className="w-full flex flex-col flex-1 overflow-hidden">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between space-y-6 overflow-hidden p-6">
-            <StepNavigation steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
-            <div className="flex flex-1 overflow-y-hidden">
-              <ScrollArea className="w-full flex-1 overflow-y-hidden">
-                {stepper.switch({
-                  user: () => <UserForm identificationTypes={identificationTypes} />,
-                  globalRole: () => <UserRoleForm tenantId={tenantId} roleOptions={roles} />,
-                  areaRole: () => <AreaRoleAssignmentForm areaOptions={areas} />,
-                  summary: () => <UserTenantScopedReview />,
-                })}
-              </ScrollArea>
-            </div>
-            <StepperNavigationButtons
-              isPending={isPending}
-              isFirstStep={stepper.isFirst}
-              isLastStep={stepper.isLast}
-              onPrev={stepper.prev}
-              onReset={stepper.reset}
-              nextText="Next"
-              submitText="Finish"
-            />
-          </form>
-        </Form>
-      </Card>
+      <StepNavigationModern t={t as typeof t & ((key: string) => string)} steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between gap-4 overflow-hidden">
+          <div className="flex flex-1 overflow-y-hidden">
+            <ScrollArea className="w-full flex-1 overflow-y-hidden">
+              {stepper.switch({
+                user: () => <UserForm identificationTypes={identificationTypes} isEditing={stepper.current.id !== 'user' ? false : undefined} />,
+                globalRole: () => <UserRoleForm tenantId={tenantId} roleOptions={roles} />,
+                areaRole: () => <AreaRoleAssignmentForm areaOptions={areas} />,
+                summary: () => <UserTenantScopedReview />,
+              })}
+            </ScrollArea>
+          </div>
+          <StepperNavigationButtons isPending={isPending} isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onReset={stepper.reset} />
+        </form>
+      </Form>
     </div>
   );
 };

@@ -11,11 +11,7 @@ interface CreateRequestHierarchyPageProps {
 const CreateRequestHierarchyPage: FC<CreateRequestHierarchyPageProps> = async ({ params }) => {
   const { tenantId, locale } = await params;
 
-  return (
-    <div className="flex-1 flex flex-col p-4 overflow-hidden">
-      <HierarchyFormStepper tenantId={tenantId} locale={locale} upsertAction={upsertRequestHierarchy} />
-    </div>
-  );
+  return <HierarchyFormStepper tenantId={tenantId} locale={locale} upsertAction={upsertRequestHierarchy} />;
 };
 
 export default CreateRequestHierarchyPage;

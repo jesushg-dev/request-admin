@@ -10,12 +10,15 @@ import { AdvancedBreadcrumb } from '@/components/advanced-breadcrumb';
 import ClientOnly from '@/components/client-only';
 import LocaleSwitcherSelect from '@/components/locale-switcher-select';
 import { NotificationCenter } from '@/components/notification/notification-center';
+import NotificationProvider from '@/components/notification/notification-context';
 
 interface NavbarProps {
+  tenantId: string;
+  userTenantId: string;
   tenants: Array<{ id: string; name: string }>;
 }
 
-const Navbar = ({ tenants = [] }: NavbarProps) => {
+const Navbar = ({ tenants = [], tenantId, userTenantId }: NavbarProps) => {
   const { setTheme, theme } = useTheme();
   const { toggleSidebar } = useSidebar();
 
@@ -47,7 +50,9 @@ const Navbar = ({ tenants = [] }: NavbarProps) => {
           </Button>
 
           {/* Notifications */}
-          <NotificationCenter />
+          <NotificationProvider tenantId={tenantId} userTenantId={userTenantId}>
+            <NotificationCenter />
+          </NotificationProvider>
         </div>
       </div>
     </header>
