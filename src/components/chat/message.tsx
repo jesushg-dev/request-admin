@@ -1,12 +1,15 @@
-import { useTransition, type FC } from 'react';
+import { useState, useTransition, type FC } from 'react';
 import dynamic from 'next/dynamic';
 import { deleteReaction, removeMessage, updateMessage, upsertReaction } from '@/actions/message';
+import { useMessages as useAblyMessages } from '@ably/chat/react';
 import { EmojiClickData } from 'emoji-picker-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 import { MessageType } from '@/types/prisma/message';
+import { convertOurMessageToAbly } from '@/lib/ablyChat';
 import useMessage from '@/lib/message';
+import { getUserName } from '@/lib/user';
 import { cn } from '@/lib/utils';
 import { useFormatTime } from '@/hooks/use-format-time';
 import { usePanel } from '@/hooks/use-panel';
@@ -19,50 +22,26 @@ import { Toolbar } from './toolbar';
 const Editor = dynamic(() => import('@/components/chat/editor'), { ssr: false });
 
 interface MessageProps {
-  id: string;
+  roomId: string;
   tenantId: string;
-  authorName?: string;
-  authorImage?: string | null;
-  userTenantId: string;
-  currentUserTenantId: string;
-  reactions: MessageType['reactions'];
-  body: string;
-  image: string | null | undefined;
-  createdAt?: Date | null;
-  updatedAt?: Date | null;
-  isEditing: boolean;
+  message: MessageType;
   isCompact?: boolean;
-  setEditingId: (id: string | null) => void;
   hideThreadButton?: boolean;
-  threadCount?: number;
-  threadImage?: string;
+  currentUserTenantId: string;
   threadName?: string;
+  threadImage?: string;
   threadTimestamp?: number;
 }
 
-export const Message: FC<MessageProps> = ({
-  id,
-  tenantId,
-  body,
-  createdAt,
-  updatedAt,
-  image,
-  threadTimestamp,
-  threadImage,
-  userTenantId,
-  currentUserTenantId,
-  authorImage,
-  authorName = 'user',
-  isEditing,
-  isCompact,
-  setEditingId,
-  hideThreadButton,
-  threadCount,
-  reactions,
-  threadName,
-}) => {
+export const Message: FC<MessageProps> = ({ message, tenantId, roomId, currentUserTenantId, isCompact, hideThreadButton, threadImage, threadName, threadTimestamp }) => {
+  const { id, body, createdAt, userTenant } = message;
+  const authorName = getUserName(message.userTenant);
+
+  const authorImage = userTenant.person?.image;
+  const userTenantId = userTenant.id;
+
   const t = useTranslations('component.chat.message');
-  const message = useMessage();
+  const messageHook = useMessage();
   const { now, format } = useFormatTime();
   const { onOpenMessage, onClose, parentMessageId, onOpenProfile } = usePanel();
 
@@ -70,6 +49,44 @@ export const Message: FC<MessageProps> = ({
 
   const [isPending, startTransition] = useTransition();
   const [isRemovingMessage, startRemovingTransition] = useTransition();
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+
+  const { update: updateAblyMessage, deleteMessage: deleteAblyMessage /*addReaction: addAblyReaction, deleteReaction: deleteAblyReaction*/ } = useAblyMessages();
+
+  const handleUpdate = async ({ body }: { body: string }) => {
+    startTransition(async () => {
+      try {
+        await updateAblyMessage(convertOurMessageToAbly(roomId, message).copy({ text: body }));
+        await updateMessage({ id, body });
+        toast.success(t('update.success'));
+        setIsEditing(false);
+      } catch (error) {
+        console.error('Error updating message:', error);
+        toast.error(t('update.error'));
+      }
+    });
+  };
+
+  const handleRemove = async () => {
+    const ok = await messageHook.confirm(t('delete.confirm'), {
+      title: t('delete.title'),
+      confirmText: t('delete.button'),
+      cancelText: t('delete.cancel'),
+    });
+
+    if (!ok) return;
+    startRemovingTransition(async () => {
+      try {
+        await deleteAblyMessage(convertOurMessageToAbly(roomId, message), { description: 'deleteMessage' });
+        await removeMessage({ id });
+        toast.success(t('delete.success'));
+        if (parentMessageId === id) onClose();
+      } catch (error) {
+        console.error('Error deleting message:', error);
+        toast.error(t('delete.error'));
+      }
+    });
+  };
 
   const handleReaction = (value: EmojiClickData) => {
     startTransition(() => {
@@ -92,39 +109,6 @@ export const Message: FC<MessageProps> = ({
         deleteReaction({ id: reactionId });
       } catch (error) {
         console.error(error);
-      }
-    });
-  };
-
-  const handleRemove = async () => {
-    const ok = await message.confirm(t('delete.confirm'), {
-      title: t('delete.title'),
-      confirmText: t('delete.button'),
-      cancelText: t('delete.cancel'),
-    });
-
-    if (!ok) return;
-    startRemovingTransition(async () => {
-      try {
-        await removeMessage({ id });
-        toast.success(t('delete.success'));
-        if (parentMessageId === id) onClose();
-      } catch (error) {
-        console.error('Error deleting message:', error);
-        toast.error(t('delete.error'));
-      }
-    });
-  };
-
-  const handleUpdate = async ({ body }: { body: string }) => {
-    startTransition(async () => {
-      try {
-        await updateMessage({ id, body });
-        toast.success(t('update.success'));
-        setEditingId(null);
-      } catch (error) {
-        console.error('Error updating message:', error);
-        toast.error(t('update.error'));
       }
     });
   };
@@ -171,18 +155,12 @@ export const Message: FC<MessageProps> = ({
           )}
 
           {isEditing ? (
-            <Editor onSubmit={handleUpdate} disabled={isPending} defaultValue={body} onCancel={() => setEditingId(null)} variant="update" />
+            <Editor onSubmit={handleUpdate} disabled={isPending} defaultValue={body} onCancel={() => setIsEditing(false)} variant="update" />
           ) : (
             <MessageContent
-              id={id}
-              body={body}
-              image={image}
-              createdAt={createdAt}
-              updatedAt={updatedAt}
-              reactions={reactions}
-              threadCount={threadCount}
-              threadImage={threadImage}
+              message={message}
               threadName={threadName}
+              threadImage={threadImage}
               threadTimestamp={threadTimestamp}
               currentUserTenantId={currentUserTenantId}
               onOpenMessage={onOpenMessage}
@@ -197,7 +175,7 @@ export const Message: FC<MessageProps> = ({
           isPending={isPending}
           handleDelete={handleRemove}
           handleReaction={handleReaction}
-          handelEdit={() => setEditingId(id)}
+          handelEdit={() => setIsEditing(false)}
           handleThread={() => onOpenMessage(id)}
           isAuthor={currentUserTenantId === userTenantId}
           hideThreadButton={hideThreadButton}

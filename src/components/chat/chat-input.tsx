@@ -3,8 +3,14 @@
 import { useTransition } from 'react';
 import dynamic from 'next/dynamic';
 import { createMessage } from '@/actions/message';
+import { useMessages as useAblyMessages } from '@ably/chat/react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
+
+import { UserTenant } from '@/types/user';
+import { ConvertAblyDataToOurMetadata } from '@/lib/ablyChat';
+import { generateUuid } from '@/lib/id';
+import { EditorValue } from '@/components/chat/editor';
 
 import { Skeleton } from '../ui/skeleton';
 
@@ -20,28 +26,32 @@ interface ChatInputProps {
     paragraph?: string;
     imageCaption?: string;
   };
-  currentUserTenantId: string;
+  currentUserTenant: UserTenant;
   variant: 'conversation' | 'channel' | 'thread';
   enableEmail?: boolean;
   enableWhatsApp?: boolean;
 }
 
-export const ChatInput = ({ placeholder, relatedId, variant, tenantId, currentUserTenantId, enableEmail = false, enableWhatsApp = false }: ChatInputProps) => {
+export const ChatInput = ({ placeholder, relatedId, variant, tenantId, currentUserTenant, enableEmail = false, enableWhatsApp = false }: ChatInputProps) => {
   const t = useTranslations('component.chat.chatInput');
   const [isPending, startTransition] = useTransition();
 
-  const handleSubmit = async (value: { body: string; image: File | null; emailEnabled?: boolean; whatsAppEnabled?: boolean }) => {
+  const { send: sendAblyMessage } = useAblyMessages();
+
+  const handleSubmit = async (value: EditorValue) => {
     startTransition(async () => {
       try {
+        const id = generateUuid();
+        const ablyResult = await sendAblyMessage({ text: value.body, metadata: { id: id, ...currentUserTenant } });
         await createMessage({
-          body: value.body,
-          tenantId,
-          userTenantId: currentUserTenantId,
+          id,
           variant,
+          ...value,
+          tenantId,
           relatedId,
+          userTenantId: currentUserTenant.userTenantId,
           imageFile: value.image ?? undefined,
-          emailEnabled: value.emailEnabled,
-          whatsAppEnabled: value.whatsAppEnabled,
+          metadata: ConvertAblyDataToOurMetadata(ablyResult),
         });
       } catch (error) {
         console.error('Failed to send message:', error);

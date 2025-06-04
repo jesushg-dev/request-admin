@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 interface ConversationHeroProps {
   name?: string | null;
   image?: string | null;
-  userId: string;
+  userId?: string;
 }
 
 export const ConversationHero = ({ name, image, userId }: ConversationHeroProps) => {
@@ -15,10 +15,16 @@ export const ConversationHero = ({ name, image, userId }: ConversationHeroProps)
   const avatarImageFallback = (name || t('defaultName')).charAt(0).toUpperCase();
   const { onOpenProfile } = usePanel();
 
+  const handleClick = () => {
+    if (userId) {
+      onOpenProfile(userId);
+    }
+  };
+
   return (
     <div className="mx-5 mt-[88px] mb-4">
       <div className="mb-2 flex items-center gap-x-1">
-        <Avatar onClick={() => onOpenProfile(userId)} className="mr-2 size-14 hover:cursor-pointer">
+        <Avatar onClick={handleClick} className="mr-2 size-14 hover:cursor-pointer">
           <AvatarImage src={image || undefined} alt={name || t('defaultName')} />
           <AvatarFallback className="text-lg">{avatarImageFallback}</AvatarFallback>
         </Avatar>

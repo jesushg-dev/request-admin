@@ -12,9 +12,9 @@ import { Hint } from '../hint';
 import { EmojiPopover } from './emoji-popover';
 import { ImagePreview } from './image-preview';
 
-type EditorValue = {
-  image: File | null;
+export type EditorValue = {
   body: string;
+  image: File | null;
   emailEnabled?: boolean;
   whatsAppEnabled?: boolean;
 };

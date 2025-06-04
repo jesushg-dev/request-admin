@@ -44,7 +44,7 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     name?: string | null;
     email?: string | null;
     image?: string | null;
-    isGlobalAdmin: boolean;
+    isGlobalAdmin?: boolean | null;
   };
   tenants: {
     id: string;
@@ -220,9 +220,9 @@ export function AppSidebar({ tenantId, tenants, user, ...props }: AppSidebarProp
         <TenantSwitcher isGlobalAdmin={user.isGlobalAdmin} tenants={tenants} tenantId={tenantId} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain title="Request" items={navMain} currentPath={pathname} />
+        <NavMain title={t('request')} items={navMain} currentPath={pathname} />
         {/*<NavFormSubmissions tenantId={tenantId} currentPath={pathname} /> */}
-        <NavMain title="System" items={systemMain} currentPath={pathname} />
+        <NavMain title={t('systemTitle')} items={systemMain} currentPath={pathname} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />

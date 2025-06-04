@@ -23,9 +23,12 @@ const types: NotificationType[] = ['all', 'assignment', 'status', 'comment', 'sy
 export function NotificationCenter() {
   const [open, setOpen] = useState(false);
   const t = useTranslations('component.notification');
-  const { tenantId, userTenantId } = useTenantContext();
+  const { tenantId, userTenant } = useTenantContext();
   const { notificationState, connectionState } = useNotifications();
-  const { notifications, unreadCount, markAllAsRead, markAsRead, markAsUnread, deleteNotification, notificationType, setNotificationType, isLoading } = useNotificationsQuery(tenantId, userTenantId);
+  const { notifications, unreadCount, markAllAsRead, markAsRead, markAsUnread, deleteNotification, notificationType, setNotificationType, isLoading } = useNotificationsQuery(
+    tenantId,
+    userTenant.userTenantId
+  );
 
   const getNotificationIconState = () => {
     const baseIconProps = { className: 'h-5 w-5' };
@@ -111,7 +114,7 @@ export function NotificationCenter() {
                     <NotificationCard
                       key={notification.id}
                       notification={notification}
-                      userTenantId={userTenantId}
+                      userTenantId={userTenant.userTenantId}
                       markAsRead={markAsRead}
                       markAsUnread={markAsUnread}
                       deleteNotification={deleteNotification}

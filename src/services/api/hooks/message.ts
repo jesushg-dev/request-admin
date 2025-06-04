@@ -377,6 +377,7 @@ export function useCheckMessage<TError = DefaultError>(
       tenantId?: string;
       id?: string;
       body?: string;
+      metadata?: string;
       imageId?: string;
       userTenantId?: string;
       channelId?: string;

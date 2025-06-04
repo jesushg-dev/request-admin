@@ -4,9 +4,11 @@
 import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-client';
 
+import { OurMessageMetadata } from '@/lib/ablyChat';
 import { UserNotFoundErr } from '@/lib/error';
 
 type NewMessageType = {
+  id: string;
   body: string;
   tenantId: string;
   userTenantId: string;
@@ -15,6 +17,7 @@ type NewMessageType = {
   imageFile?: File;
   emailEnabled?: boolean;
   whatsAppEnabled?: boolean;
+  metadata?: OurMessageMetadata;
 };
 
 async function handleImageUpload(imageFile?: File): Promise<string | undefined> {
@@ -34,7 +37,7 @@ async function handleWhatsApp(message: unknown, imageUrl?: string) {
   // await sendWhatsAppWithMessage({ message, imageUrl });
 }
 
-export async function createMessage({ body, tenantId, userTenantId, relatedId, variant, imageFile, emailEnabled, whatsAppEnabled }: NewMessageType) {
+export async function createMessage({ id, body, tenantId, userTenantId, relatedId, variant, imageFile, emailEnabled, whatsAppEnabled }: NewMessageType) {
   let relatedField;
   switch (variant) {
     case 'conversation':
@@ -59,13 +62,8 @@ export async function createMessage({ body, tenantId, userTenantId, relatedId, v
   }
 
   const message = await db.message.create({
-    data: {
-      body,
-      tenantId,
-      userTenantId,
-      ...(imageUrl && { imageId: imageUrl }),
-      ...relatedField,
-    },
+    select: { id: true },
+    data: { id, body, tenantId, userTenantId, ...(imageUrl && { imageId: imageUrl }), ...relatedField },
   });
 
   if (emailEnabled) await handleEmail(message, imageUrl);
@@ -78,6 +76,7 @@ export async function updateMessage({ id, body, imageFile, emailEnabled, whatsAp
   const imageUrl = await handleImageUpload(imageFile);
 
   const message = await db.message.update({
+    select: { id: true },
     where: { id },
     data: {
       body,

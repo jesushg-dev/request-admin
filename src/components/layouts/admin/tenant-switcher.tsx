@@ -16,7 +16,7 @@ interface TenantUser {
   description: string | null;
 }
 
-export function TenantSwitcher({ tenants, tenantId, isGlobalAdmin }: { tenants: TenantUser[]; tenantId: string; isGlobalAdmin: boolean }) {
+export function TenantSwitcher({ tenants, tenantId, isGlobalAdmin = false }: { tenants: TenantUser[]; tenantId: string; isGlobalAdmin?: boolean | null }) {
   const t = useTranslations('admin.sidebar.tenantSwitcher');
   const { isMobile } = useSidebar();
   const currentTenant = React.useMemo(() => tenants.find((tenant) => tenant.id === tenantId), [tenants, tenantId]);

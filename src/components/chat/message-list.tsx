@@ -1,13 +1,13 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useInfiniteFindManyMessage } from '@/services/api/hooks';
-import { Message as AblyMessage, MessageEvent, MessageEvents } from '@ably/chat';
+import { MessageEvent, MessageEvents } from '@ably/chat';
 import { useMessages as useAblyMessages } from '@ably/chat/react';
 import type { Prisma } from '@prisma/client';
-import { format } from 'date-fns';
 import { useTranslations } from 'next-intl';
 import { useInView } from 'react-intersection-observer';
 
 import { MessageDefaultArgs, MessageType } from '@/types/prisma/message';
+import { convertAblyMessageToOurType } from '@/lib/ablyChat';
 
 import { Spinner } from '../spinner';
 import { Button } from '../ui/button';
@@ -20,6 +20,7 @@ interface MessageListProps {
   orderBy?: Prisma.MessageOrderByWithRelationInput | Prisma.MessageOrderByWithRelationInput[];
   currentUserTenantId: string;
   variant: 'channel' | 'thread' | 'conversation';
+  roomId: string;
   channelCreatedAt?: Date;
   channelName?: string;
   userImage?: string | null;
@@ -28,12 +29,12 @@ interface MessageListProps {
   tenantId: string;
 }
 
-export const MessageList = ({ where, orderBy, currentUserTenantId, variant, channelCreatedAt, channelName, userImage, userName, userId, tenantId }: MessageListProps) => {
+export const MessageList = ({ roomId, where, orderBy, currentUserTenantId, variant, channelCreatedAt, channelName, userImage, userName, userId, tenantId }: MessageListProps) => {
   const t = useTranslations('component.chat.messageList');
 
   const [realTimeMessages, setRealTimeMessages] = useState<MessageType[]>([]);
 
-  /*const { send: sendAblyMessage, update: updateAblyMessage } = */ useAblyMessages({
+  useAblyMessages({
     listener: (event: MessageEvent) => {
       if (event.type === MessageEvents.Created) {
         const newMessage = convertAblyMessageToOurType(event.message);
@@ -56,7 +57,6 @@ export const MessageList = ({ where, orderBy, currentUserTenantId, variant, chan
     orderBy: orderBy ? orderBy : { createdAt: 'desc' },
   });
 
-  const [editingId, setEditingId] = useState<string | null>(null);
   const { ref, inView } = useInView();
 
   const historicalMessages = useMemo(() => data?.pages.flat() || [], [data]);
@@ -68,8 +68,7 @@ export const MessageList = ({ where, orderBy, currentUserTenantId, variant, chan
     const groups: Record<string, MessageType[]> = {};
 
     for (const message of allMessages) {
-      const date = new Date(message.createdAt);
-      const dateKey = format(date, 'yyyy-MM-dd');
+      const dateKey = message.createdAt.toDateString();
 
       if (!groups[dateKey]) groups[dateKey] = [];
       groups[dateKey].unshift(message);
@@ -87,18 +86,6 @@ export const MessageList = ({ where, orderBy, currentUserTenantId, variant, chan
       return () => clearTimeout(timer);
     }
   }, [inView, hasNextPage, fetchNextPage, isFetchingNextPage]);
-
-  const handleSetEditingId = useCallback((id: string | null) => {
-    setEditingId(id);
-  }, []);
-
-  if (isFetching && !data) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <Spinner />
-      </div>
-    );
-  }
 
   if (error) {
     return (
@@ -119,16 +106,7 @@ export const MessageList = ({ where, orderBy, currentUserTenantId, variant, chan
       ) : (
         <>
           {Object.entries(groupedMessages).map(([dateKey, messages]) => (
-            <MessageGroup
-              key={dateKey}
-              dateKey={dateKey}
-              messages={messages}
-              tenantId={tenantId}
-              currentUserTenantId={currentUserTenantId}
-              editingId={editingId}
-              handleSetEditingId={handleSetEditingId}
-              variant={variant}
-            />
+            <MessageGroup key={dateKey} dateKey={dateKey} messages={messages} roomId={roomId} tenantId={tenantId} currentUserTenantId={currentUserTenantId} variant={variant} />
           ))}
         </>
       )}
@@ -143,44 +121,8 @@ export const MessageList = ({ where, orderBy, currentUserTenantId, variant, chan
         {isFetchingPreviousPage ? t('loadingOlder') : hasPreviousPage ? t('loadOlder') : t('noOlder')}
       </Button>
 
-      {variant === 'channel' && channelName && channelCreatedAt && <ChannelHero name={channelName} creationTime={channelCreatedAt} />}
-      {variant === 'conversation' && userId && <ConversationHero name={userName} image={userImage} userId={userId} />}
+      {variant === 'channel' && <ChannelHero name={channelName} creationTime={channelCreatedAt} />}
+      {variant === 'conversation' && <ConversationHero name={userName} image={userImage} userId={userId} />}
     </div>
   );
-};
-
-const convertAblyMessageToOurType = (ablyMessage: AblyMessage): MessageType => {
-  return {
-    id: ablyMessage.serial,
-    userTenant: {
-      id: ablyMessage.clientId,
-      person: {
-        firstName: String(ablyMessage.metadata?.firstName) || 'N/A',
-        lastName: String(ablyMessage.metadata?.lastName) || 'N/A',
-        image: String(ablyMessage.metadata?.image) || null,
-      },
-      user: {
-        id: String(ablyMessage.metadata?.userId) || '',
-        email: String(ablyMessage.metadata?.email) || '',
-      },
-    },
-    reactions: [],
-    body: ablyMessage.text || '',
-    imageId: null,
-    createdAt: ablyMessage.createdAt ?? null,
-    updatedAt: ablyMessage.updatedAt ?? null,
-  };
-};
-
-export const convertOurMessageToAbly = (message: MessageType): Partial<AblyMessage> => {
-  return {
-    text: message.body,
-    metadata: {
-      firstName: message.userTenant.person?.firstName,
-      lastName: message.userTenant.person?.lastName,
-      image: message.userTenant.person?.image,
-      userId: message.userTenant.user.id,
-      email: message.userTenant.user?.email,
-    },
-  };
 };

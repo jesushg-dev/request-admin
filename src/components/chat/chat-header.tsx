@@ -1,7 +1,7 @@
 import { type FC } from 'react';
 import { useChatConnection, usePresence, usePresenceListener } from '@ably/chat/react';
 import { Clock, Users, Wifi, WifiOff } from 'lucide-react';
-import { useFormatter, useNow } from 'next-intl';
+import { useFormatter, useNow, useTranslations } from 'next-intl';
 
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -24,10 +24,13 @@ interface ChatHeaderProps {
 }
 
 export const ChatHeader: FC<ChatHeaderProps> = ({ name }) => {
+  const t = useTranslations('component.chat.header');
+
   usePresence({
-    enterWithData: { name, status: 'En línea' },
-    leaveWithData: { name, status: 'Desconectado' },
+    enterWithData: { name, status: t('online') },
+    leaveWithData: { name, status: t('offline') },
   });
+
   const { currentStatus } = useChatConnection();
   const { presenceData } = usePresenceListener();
 
@@ -46,22 +49,26 @@ export const ChatHeader: FC<ChatHeaderProps> = ({ name }) => {
         <div className="flex items-center gap-3">
           <Sheet>
             <SheetTrigger asChild>
-              <Badge variant="secondary" title="Usuarios conectados" className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium cursor-pointer" tabIndex={0}>
+              <Badge variant="secondary" title={t('usersConnected')} className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium cursor-pointer" tabIndex={0}>
                 <Users className="h-3.5 w-3.5" />
                 {activeUsers
                   .slice(0, 3)
                   .map((user) => user.data?.name || user.clientId)
                   .join(', ')}
-                {activeUsers.length > 3 && <span className="ml-1 text-muted-foreground">+{activeUsers.length - 3} más</span>}
+                {activeUsers.length > 3 && (
+                  <span className="ml-1 text-muted-foreground">
+                    +{activeUsers.length - 3} {t('more')}
+                  </span>
+                )}
               </Badge>
             </SheetTrigger>
             <SheetContent side="right" className="max-w-xs sm:max-w-md">
               <SheetHeader>
-                <SheetTitle>Usuarios conectados</SheetTitle>
+                <SheetTitle>{t('usersConnected')}</SheetTitle>
               </SheetHeader>
               <div className="space-y-2 mt-2">
-                {activeUsers.map((user) => (
-                  <div key={user.clientId} className="flex items-center justify-between gap-4">
+                {activeUsers.map((user, idx) => (
+                  <div key={user.clientId + idx} className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-medium">{user.data?.name || user.clientId}</span>
                       {user.data?.status && (
@@ -76,7 +83,7 @@ export const ChatHeader: FC<ChatHeaderProps> = ({ name }) => {
                     </div>
                   </div>
                 ))}
-                {activeUsers.length === 0 && <div className="text-xs text-muted-foreground/70">No hay usuarios conectados.</div>}
+                {activeUsers.length === 0 && <div className="text-xs text-muted-foreground/70">{t('noUsers')}</div>}
               </div>
             </SheetContent>
           </Sheet>
@@ -92,7 +99,7 @@ export const ChatHeader: FC<ChatHeaderProps> = ({ name }) => {
             currentStatus === 'connected' ? 'border-green-500/20 bg-green-500/10 text-green-600' : 'border-red-500/20 bg-red-500/10 text-red-600'
           )}>
           {currentStatus === 'connected' ? <Wifi className="h-3.5 w-3.5" /> : <WifiOff className="h-3.5 w-3.5" />}
-          {currentStatus === 'connected' ? 'En línea' : 'Desconectado'}
+          {currentStatus === 'connected' ? t('online') : t('offline')}
         </Badge>
       </div>
     </div>

@@ -2,15 +2,17 @@
 
 import { createContext, useContext } from 'react';
 
+import { UserTenant } from '@/types/user';
+
 type TenantContextType = {
   tenantId: string;
-  userTenantId: string;
+  userTenant: UserTenant;
 };
 
 const TenantContext = createContext<TenantContextType | undefined>(undefined);
 
-export const TenantProvider = ({ children, tenantId, userTenantId }: { children: React.ReactNode; tenantId: string; userTenantId: string }) => {
-  return <TenantContext.Provider value={{ tenantId, userTenantId }}>{children}</TenantContext.Provider>;
+export const TenantProvider = ({ children, tenantId, userTenant }: { children: React.ReactNode; tenantId: string; userTenant: UserTenant }) => {
+  return <TenantContext.Provider value={{ tenantId, userTenant }}>{children}</TenantContext.Provider>;
 };
 
 export const useTenantContext = (): TenantContextType => {

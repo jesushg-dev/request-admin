@@ -1,11 +1,14 @@
 'use client';
 
 import { logout } from '@/actions/logout';
+import { Link } from '@/i18n/routing';
 import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 
 export function NavUser({
   user,
@@ -17,6 +20,8 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
+  const { tenantId } = useTenantContext();
+  const t = useTranslations('admin.sidebar.user');
 
   const onLogout = () => {
     logout();
@@ -29,12 +34,12 @@ export function NavUser({
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.image || undefined} alt={user.name ?? 'user'} style={{ objectFit: 'contain', objectPosition: 'center' }} />
+                <AvatarImage src={user.image || undefined} alt={user.name ?? t('avatarAlt')} style={{ objectFit: 'contain', objectPosition: 'center' }} />
                 <AvatarFallback className="rounded-lg"> {getAvatarFallback(user.name)}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{user.name}</span>
-                <span className="truncate text-xs">{user.email}</span>
+                <span className="truncate font-semibold">{user.name ?? t('noName')}</span>
+                <span className="truncate text-xs">{user.email ?? t('noEmail')}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -43,12 +48,12 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.image || undefined} alt={user.name ?? 'user'} style={{ objectFit: 'contain', objectPosition: 'center' }} />
+                  <AvatarImage src={user.image || undefined} alt={user.name ?? t('avatarAlt')} style={{ objectFit: 'contain', objectPosition: 'center' }} />
                   <AvatarFallback className="rounded-lg"> {getAvatarFallback(user.name)}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                  <span className="truncate font-semibold">{user.name ?? t('noName')}</span>
+                  <span className="truncate text-xs">{user.email ?? t('noEmail')}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -56,28 +61,34 @@ export function NavUser({
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <Sparkles />
-                Upgrade to Pro
+                {t('upgrade')}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
+              <DropdownMenuItem asChild>
+                <Link href={{ pathname: '/admin/[tenantId]/settings/account', params: { tenantId } }}>
+                  <BadgeCheck />
+                  {t('account')}
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
+              <DropdownMenuItem asChild>
+                <Link href={{ pathname: '/admin/[tenantId]/settings/organization/subscription', params: { tenantId } }}>
+                  <CreditCard />
+                  {t('billing')}
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
+              <DropdownMenuItem asChild>
+                <Link href={{ pathname: '/admin/[tenantId]/notifications', params: { tenantId } }}>
+                  <Bell />
+                  {t('notifications')}
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={onLogout}>
               <LogOut />
-              Log out
+              {t('logout')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -87,7 +98,7 @@ export function NavUser({
 }
 
 const getAvatarFallback = (name?: string | null) => {
-  if (!name) return 'CN'; // Default fallback
+  if (!name) return 'RA'; // Default fallback
   const nameParts = name.trim().split(' '); // Split the name by spaces
   return nameParts.length > 1
     ? `${nameParts[0]?.[0] ?? ''}${nameParts[1]?.[0] ?? ''}`.toUpperCase() // Use initials of the first and last name

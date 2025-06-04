@@ -94,7 +94,7 @@ export const Profile = ({ userTenantId, tenantId, onClose }: ProfileProps) => {
             </div>
             <div className="flex flex-col">
               <p className="text-accent-foreground text-[13px] font-semibold">{t('emailAddress')}</p>
-              <Link href={`mailto:${user.userTenant?.user.email}`} className="text-seablue-300 text-sm hover:underline">
+              <Link href={`mailto:${user.userTenant?.user.email}`} className="text-blue-300 text-sm hover:underline">
                 {user.userTenant?.user.email}
               </Link>
             </div>

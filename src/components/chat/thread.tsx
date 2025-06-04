@@ -1,10 +1,10 @@
-import { useState } from 'react';
 import { useFindFirstMessage } from '@/services/api/hooks';
 import { ChatClientProvider, ChatRoomProvider } from '@ably/chat/react';
 import { AlertTriangle, XIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { MessageDefaultArgs } from '@/types/prisma/message';
+import { UserTenant } from '@/types/user';
 import { getAblyChatClient } from '@/lib/ablyClient';
 import { Button } from '@/components/ui/button';
 import { Message } from '@/components/chat/message';
@@ -16,22 +16,21 @@ import { TypingIndicator } from './typing-indicator';
 
 interface ThreadProps {
   tenantId: string;
+  roomId: string;
   messageId: string;
-  currentUserTenantId: string;
+  currentUserTenant: UserTenant;
   onClose: () => void;
 }
 
-export const Thread = ({ tenantId, messageId, currentUserTenantId, onClose }: ThreadProps) => {
+export const Thread = ({ tenantId, roomId, messageId, currentUserTenant, onClose }: ThreadProps) => {
   const t = useTranslations('component.chat.thread');
-
-  const [editingId, setEditingId] = useState<string | null>(null);
 
   const { data: thread, isLoading: loadingThread } = useFindFirstMessage({
     ...MessageDefaultArgs,
     where: { id: messageId },
   });
 
-  const chatClient = getAblyChatClient(currentUserTenantId);
+  const chatClient = getAblyChatClient(currentUserTenant.userTenantId);
 
   if (loadingThread) {
     return (
@@ -72,33 +71,18 @@ export const Thread = ({ tenantId, messageId, currentUserTenantId, onClose }: Th
           <XIcon className="stoke-[1.5] size-5" />
         </Button>
       </div>
-      {/* Root Message */}
-      <div className="border-b border-gray-500/80 p-4">
-        <Message
-          key={thread.id}
-          tenantId={tenantId}
-          id={thread.id}
-          userTenantId={thread.userTenant.id}
-          authorImage={thread.userTenant.person?.image}
-          currentUserTenantId={currentUserTenantId}
-          authorName={thread.userTenant.person ? `${thread.userTenant.person.firstName} ${thread.userTenant.person.lastName}` : thread.userTenant.user.email}
-          reactions={thread.reactions}
-          body={thread.body}
-          image={thread.imageId}
-          isEditing={editingId === thread.id}
-          setEditingId={setEditingId}
-          updatedAt={thread.updatedAt}
-          createdAt={thread.createdAt}
-        />
-      </div>
-
       <ChatClientProvider client={chatClient}>
         <ChatRoomProvider id={messageId} release={true} attach={true}>
+          {/* Root Message */}
+          <div className="border-b border-gray-500/80 p-4">
+            <Message message={thread} tenantId={tenantId} currentUserTenantId={currentUserTenant.userTenantId} roomId={roomId} />
+          </div>
+
           {/* Thread Messages */}
-          <MessageList tenantId={tenantId} where={{ parentMessageId: messageId }} currentUserTenantId={currentUserTenantId} variant="thread" />
-          <TypingIndicator currentClientId={currentUserTenantId} />
+          <MessageList roomId={messageId} tenantId={tenantId} where={{ parentMessageId: messageId }} currentUserTenantId={currentUserTenant.userTenantId} variant="thread" />
+          <TypingIndicator currentClientId={currentUserTenant.userTenantId} />
           {/* Chat Input */}
-          <ChatInput tenantId={tenantId} relatedId={messageId} variant="thread" currentUserTenantId={currentUserTenantId} />
+          <ChatInput tenantId={tenantId} relatedId={messageId} variant="thread" currentUserTenant={currentUserTenant} />
         </ChatRoomProvider>
       </ChatClientProvider>
     </div>

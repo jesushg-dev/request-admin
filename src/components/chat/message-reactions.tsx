@@ -135,6 +135,7 @@ const UserReactionItem = ({
       .join('')
       .toUpperCase();
   };
+
   return (
     <Button variant="ghost" className="w-full justify-between px-2 py-1 h-auto text-left" onClick={() => onChange(reactionId)}>
       <div className="flex items-center gap-2">

@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
 import { Form, FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -47,7 +48,7 @@ export function StateModal({ onClose, defaultValues, onSave, showDescription }: 
   });
 
   const onSubmit = (data: StateValues) => {
-    onSave({ ...data, id: defaultValues?.id || crypto.randomUUID() });
+    onSave({ ...data, id: defaultValues?.id || generateUuid() });
   };
 
   useEffect(() => {
