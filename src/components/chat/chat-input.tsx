@@ -8,7 +8,7 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 import { UserTenant } from '@/types/user';
-import { ConvertAblyDataToOurMetadata } from '@/lib/ablyChat';
+import { ablyToAppMetadata } from '@/lib/ablyChat';
 import { generateUuid } from '@/lib/id';
 import { EditorValue } from '@/components/chat/editor';
 
@@ -51,7 +51,7 @@ export const ChatInput = ({ placeholder, relatedId, variant, tenantId, currentUs
           relatedId,
           userTenantId: currentUserTenant.userTenantId,
           imageFile: value.image ?? undefined,
-          metadata: ConvertAblyDataToOurMetadata(ablyResult),
+          metadata: ablyToAppMetadata(ablyResult),
         });
       } catch (error) {
         console.error('Failed to send message:', error);

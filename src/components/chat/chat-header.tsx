@@ -35,7 +35,6 @@ export const ChatHeader: FC<ChatHeaderProps> = ({ name }) => {
   const { presenceData } = usePresenceListener();
 
   const activeUsers = presenceData
-    .filter((user) => user.action !== 'leave')
     .sort((a, b) => b.updatedAt - a.updatedAt)
     .map((user) => ({
       ...user,

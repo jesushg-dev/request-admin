@@ -11,8 +11,8 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CalendarTab from '@/components/common/request/calendar-tab';
+import { KanbanTab } from '@/components/common/request/kanban-tab';
 import TableTab from '@/components/common/request/table-tab';
-import KanbanBoard from '@/components/kanban/kanban-board';
 
 const RequestMainPage: React.FC = () => {
   const tenantId = useTenantId();
@@ -61,7 +61,7 @@ const RequestMainPage: React.FC = () => {
         <TableTab />
       </TabsContent>
       <TabsContent value="kanban" className={`mt-0 ${view === 'kanban' ? 'flex flex-1' : ''}`}>
-        <KanbanBoard />
+        <KanbanTab />
       </TabsContent>
       <TabsContent value="calendar" className={`mt-0 ${view === 'calendar' ? 'flex flex-1' : ''}`}>
         <CalendarTab />

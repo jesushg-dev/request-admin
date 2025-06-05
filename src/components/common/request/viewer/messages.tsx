@@ -24,11 +24,10 @@ export default function Messages({ tenantId, channel }: MessagesProps) {
     <ChatClientProvider client={chatClient}>
       <Card className="flex-1 flex flex-col overflow-hidden">
         {channel ? (
-          <ChatRoomProvider id={channel.id} release={true} attach={true}>
+          <ChatRoomProvider name={channel.id} release={true} attach={true}>
             <ChatHeader name={userTenant.displayUserName} />
             <MessageList
               variant="channel"
-              roomId={channel.id}
               tenantId={tenantId}
               where={{ channelId: channel.id }}
               currentUserTenantId={userTenant.userTenantId}

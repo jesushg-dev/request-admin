@@ -8,14 +8,13 @@ import { Message } from './message';
 
 interface MessageGroupProps {
   dateKey: string;
-  roomId: string;
   messages: MessageType[];
   tenantId: string;
   currentUserTenantId: string;
   variant: 'channel' | 'thread' | 'conversation';
 }
 
-export const MessageGroup = ({ dateKey, messages, tenantId, roomId, currentUserTenantId, variant }: MessageGroupProps) => {
+export const MessageGroup = ({ dateKey, messages, tenantId, currentUserTenantId, variant }: MessageGroupProps) => {
   const { now, format } = useFormatTime();
   const date = new Date(dateKey);
 
@@ -28,9 +27,7 @@ export const MessageGroup = ({ dateKey, messages, tenantId, roomId, currentUserT
       {messages.map((message, index) => {
         const prevMsg = messages[index - 1];
         const isSameAuthor = prevMsg && prevMsg.userTenant.id === message.userTenant.id && differenceInMinutes(new Date(message.createdAt), new Date(prevMsg.createdAt)) < TIME_THRESHOLD;
-        return (
-          <Message key={message.id} message={message} roomId={roomId} tenantId={tenantId} currentUserTenantId={currentUserTenantId} hideThreadButton={variant === 'thread'} isCompact={isSameAuthor} />
-        );
+        return <Message key={message.id} message={message} tenantId={tenantId} currentUserTenantId={currentUserTenantId} hideThreadButton={variant === 'thread'} isCompact={isSameAuthor} />;
       })}
     </div>
   );

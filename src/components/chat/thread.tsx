@@ -22,7 +22,7 @@ interface ThreadProps {
   onClose: () => void;
 }
 
-export const Thread = ({ tenantId, roomId, messageId, currentUserTenant, onClose }: ThreadProps) => {
+export const Thread = ({ tenantId, messageId, currentUserTenant, onClose }: ThreadProps) => {
   const t = useTranslations('component.chat.thread');
 
   const { data: thread, isLoading: loadingThread } = useFindFirstMessage({
@@ -72,14 +72,14 @@ export const Thread = ({ tenantId, roomId, messageId, currentUserTenant, onClose
         </Button>
       </div>
       <ChatClientProvider client={chatClient}>
-        <ChatRoomProvider id={messageId} release={true} attach={true}>
+        <ChatRoomProvider name={messageId} release={true} attach={true}>
           {/* Root Message */}
           <div className="border-b border-gray-500/80 p-4">
-            <Message message={thread} tenantId={tenantId} currentUserTenantId={currentUserTenant.userTenantId} roomId={roomId} />
+            <Message message={thread} tenantId={tenantId} currentUserTenantId={currentUserTenant.userTenantId} />
           </div>
 
           {/* Thread Messages */}
-          <MessageList roomId={messageId} tenantId={tenantId} where={{ parentMessageId: messageId }} currentUserTenantId={currentUserTenant.userTenantId} variant="thread" />
+          <MessageList tenantId={tenantId} where={{ parentMessageId: messageId }} currentUserTenantId={currentUserTenant.userTenantId} variant="thread" />
           <TypingIndicator currentClientId={currentUserTenant.userTenantId} />
           {/* Chat Input */}
           <ChatInput tenantId={tenantId} relatedId={messageId} variant="thread" currentUserTenant={currentUserTenant} enableEmail enableWhatsApp />

@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 import { MessageType } from '@/types/prisma/message';
-import { convertOurMessageToAbly } from '@/lib/ablyChat';
+import { parseAppMetadataFromString } from '@/lib/ablyChat';
 import useMessage from '@/lib/message';
 import { getUserName } from '@/lib/user';
 import { cn } from '@/lib/utils';
@@ -22,7 +22,6 @@ import { Toolbar } from './toolbar';
 const Editor = dynamic(() => import('@/components/chat/editor'), { ssr: false });
 
 interface MessageProps {
-  roomId: string;
   tenantId: string;
   message: MessageType;
   isCompact?: boolean;
@@ -33,7 +32,7 @@ interface MessageProps {
   threadTimestamp?: number;
 }
 
-export const Message: FC<MessageProps> = ({ message, tenantId, roomId, currentUserTenantId, isCompact, hideThreadButton, threadImage, threadName, threadTimestamp }) => {
+export const Message: FC<MessageProps> = ({ message, tenantId, currentUserTenantId, isCompact, hideThreadButton, threadImage, threadName, threadTimestamp }) => {
   const { id, body, createdAt, userTenant } = message;
   const authorName = getUserName(message.userTenant);
 
@@ -56,7 +55,8 @@ export const Message: FC<MessageProps> = ({ message, tenantId, roomId, currentUs
   const handleUpdate = async ({ body }: { body: string }) => {
     startTransition(async () => {
       try {
-        await updateAblyMessage(convertOurMessageToAbly(roomId, message).copy({ text: body }));
+        const metadata = parseAppMetadataFromString(message.metadata);
+        await updateAblyMessage(metadata, { text: body }, { description: 'updateMessage' });
         await updateMessage({ id, body });
         toast.success(t('update.success'));
         setIsEditing(false);
@@ -77,7 +77,8 @@ export const Message: FC<MessageProps> = ({ message, tenantId, roomId, currentUs
     if (!ok) return;
     startRemovingTransition(async () => {
       try {
-        await deleteAblyMessage(convertOurMessageToAbly(roomId, message), { description: 'deleteMessage' });
+        const metadata = parseAppMetadataFromString(message.metadata);
+        deleteAblyMessage(metadata, { description: 'deleteMessage' });
         await removeMessage({ id });
         toast.success(t('delete.success'));
         if (parentMessageId === id) onClose();

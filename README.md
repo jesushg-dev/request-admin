@@ -90,7 +90,6 @@ Develop a web system for managing service requests efficiently while adhering to
 
 - Seed database: npx prisma db seed
 - All types error: npx tsc --noEmit --pretty
-- https://www.diceui.com/docs/components/kanban
 
 ## Useful Links
 

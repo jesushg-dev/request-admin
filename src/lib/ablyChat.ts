@@ -1,9 +1,6 @@
-import { Message as AblyMessage, ChatMessageActions, MessageReactions } from '@ably/chat';
+import { Message as AblyMessage, MessageReactions } from '@ably/chat';
 
 import { MessageType } from '@/types/prisma/message';
-
-import { DefaultMessage } from './DefaultMessage';
-import { convertUserTenantTypeToUserTenant } from './user';
 
 /**
  * Metadata structure for Ably messages.
@@ -40,17 +37,8 @@ export interface AblyMessageWithMetadata extends AblyMessage {
   metadata: AblyMessageMetadata;
 }
 
-/**
- * Type guard to ensure a value is a valid ChatMessageActions enum value.
- */
-function isChatMessageAction(value: unknown): value is ChatMessageActions {
-  return Object.values(ChatMessageActions).includes(value as ChatMessageActions);
-}
-
-/**
- * Converts an Ably message to our internal MessageType.
- */
-export const convertAblyMessageToOurType = (ablyMessage: AblyMessageWithMetadata): MessageType => {
+// Converts an Ably message (with metadata) to your app's MessageType
+export const ablyToAppMessage = (ablyMessage: AblyMessageWithMetadata): MessageType => {
   if (!ablyMessage.metadata.id) {
     throw new Error('Ably message metadata must contain an id');
   }
@@ -83,64 +71,8 @@ export const convertAblyMessageToOurType = (ablyMessage: AblyMessageWithMetadata
   };
 };
 
-/**
- * Converts our internal MessageType to an Ably message with metadata.
- */
-export const convertOurMessageToAbly = (roomId: string, message: MessageType): DefaultMessage => {
-  // Start with default metadata
-  let ourMetadata: OurMessageMetadata = {
-    serial: message.id,
-    headers: {},
-    action: ChatMessageActions.MessageCreate,
-    version: '',
-    createdAt: message.createdAt,
-    timestamp: message.createdAt,
-    reactions: {
-      unique: {},
-      distinct: {},
-      multiple: {},
-    },
-  };
-
-  // If message.metadata is a stringified object, merge it in
-  try {
-    if (message.metadata) {
-      const parsed = JSON.parse(message.metadata);
-      ourMetadata = { ...ourMetadata, ...parsed };
-    }
-  } catch {
-    // If parsing fails, use defaults
-  }
-
-  // Ensure action is a valid enum value
-  const action: ChatMessageActions = isChatMessageAction(ourMetadata.action) ? ourMetadata.action : ChatMessageActions.MessageCreate;
-
-  // Build the DefaultMessageParams
-  const params = {
-    serial: ourMetadata.serial ?? message.id,
-    roomId,
-    clientId: message.userTenant.id,
-    text: message.body,
-    metadata: {
-      id: message.id,
-      ...convertUserTenantTypeToUserTenant(message.userTenant),
-    },
-    headers: (ourMetadata.headers ?? {}) as Record<string, string | number | boolean | null | undefined>,
-    action,
-    version: ourMetadata.version,
-    createdAt: message.createdAt,
-    timestamp: ourMetadata.timestamp,
-    reactions: ourMetadata.reactions,
-  };
-
-  // Return an instance of your DefaultMessage class
-  return new DefaultMessage(params);
-};
-
-/**
- * Converts an Ably message to our metadata format.
- */
-export const ConvertAblyDataToOurMetadata = (data: AblyMessage): OurMessageMetadata => {
+// Converts a raw Ably message to your app's metadata structure
+export const ablyToAppMetadata = (data: AblyMessage): OurMessageMetadata => {
   return {
     serial: data.serial,
     headers: data.headers,
@@ -150,4 +82,25 @@ export const ConvertAblyDataToOurMetadata = (data: AblyMessage): OurMessageMetad
     timestamp: data.timestamp,
     reactions: data.reactions,
   };
+};
+
+// Parses a JSON string (from Ably) into your app's metadata structure
+export const parseAppMetadataFromString = (metadata: string): OurMessageMetadata => {
+  try {
+    const parsed = JSON.parse(metadata);
+    if (typeof parsed !== 'object' || parsed === null) {
+      throw new Error('Parsed metadata is not an object');
+    }
+    return {
+      serial: parsed.serial || '',
+      headers: parsed.headers || {},
+      action: parsed.action || '',
+      version: parsed.version || '',
+      createdAt: new Date(parsed.createdAt || Date.now()),
+      timestamp: new Date(parsed.timestamp || Date.now()),
+      reactions: parsed.reactions || {},
+    };
+  } catch (error) {
+    throw new Error(`Failed to parse metadata: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
 };

@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useInfiniteFindManyMessage } from '@/services/api/hooks';
-import { MessageEvent, MessageEvents } from '@ably/chat';
+import { ChatMessageEventType } from '@ably/chat';
 import { useMessages as useAblyMessages } from '@ably/chat/react';
 import type { Prisma } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 import { useInView } from 'react-intersection-observer';
 
 import { MessageDefaultArgs, MessageType } from '@/types/prisma/message';
-import { convertAblyMessageToOurType } from '@/lib/ablyChat';
+import { ablyToAppMessage } from '@/lib/ablyChat';
 
 import { Spinner } from '../spinner';
 import { Button } from '../ui/button';
@@ -20,7 +20,6 @@ interface MessageListProps {
   orderBy?: Prisma.MessageOrderByWithRelationInput | Prisma.MessageOrderByWithRelationInput[];
   currentUserTenantId: string;
   variant: 'channel' | 'thread' | 'conversation';
-  roomId: string;
   channelCreatedAt?: Date;
   channelName?: string;
   userImage?: string | null;
@@ -29,23 +28,23 @@ interface MessageListProps {
   tenantId: string;
 }
 
-export const MessageList = ({ roomId, where, orderBy, currentUserTenantId, variant, channelCreatedAt, channelName, userImage, userName, userId, tenantId }: MessageListProps) => {
+export const MessageList = ({ where, orderBy, currentUserTenantId, variant, channelCreatedAt, channelName, userImage, userName, userId, tenantId }: MessageListProps) => {
   const t = useTranslations('component.chat.messageList');
 
   const [realTimeMessages, setRealTimeMessages] = useState<MessageType[]>([]);
 
   useAblyMessages({
-    listener: (event: MessageEvent) => {
-      if (event.type === MessageEvents.Created) {
-        const newMessage = convertAblyMessageToOurType(event.message);
+    listener: (event) => {
+      if (event.type === ChatMessageEventType.Created) {
+        const newMessage = ablyToAppMessage(event.message);
         setRealTimeMessages((prev) => [...prev, newMessage]);
       }
-      if (event.type === MessageEvents.Updated) {
-        const updatedMessage = convertAblyMessageToOurType(event.message);
+      if (event.type === ChatMessageEventType.Updated) {
+        const updatedMessage = ablyToAppMessage(event.message);
         setRealTimeMessages((prev) => prev.map((msg) => (msg.id === updatedMessage.id ? updatedMessage : msg)));
       }
-      if (event.type === MessageEvents.Deleted) {
-        const deletedMessage = convertAblyMessageToOurType(event.message);
+      if (event.type === ChatMessageEventType.Deleted) {
+        const deletedMessage = ablyToAppMessage(event.message);
         setRealTimeMessages((prev) => prev.filter((msg) => msg.id !== deletedMessage.id));
       }
     },
@@ -106,7 +105,7 @@ export const MessageList = ({ roomId, where, orderBy, currentUserTenantId, varia
       ) : (
         <>
           {Object.entries(groupedMessages).map(([dateKey, messages]) => (
-            <MessageGroup key={dateKey} dateKey={dateKey} messages={messages} roomId={roomId} tenantId={tenantId} currentUserTenantId={currentUserTenantId} variant={variant} />
+            <MessageGroup key={dateKey} dateKey={dateKey} messages={messages} tenantId={tenantId} currentUserTenantId={currentUserTenantId} variant={variant} />
           ))}
         </>
       )}
