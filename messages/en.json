@@ -609,20 +609,6 @@
         "logout": "Log out"
       }
     },
-    "dashboard": {
-      "totalRequests": "Solicitudes Totales",
-      "openRequests": "Solicitudes Abiertas",
-      "overdue": "Vencidas",
-      "avgResolutionTime": "Tiempo Promedio de Resolución",
-      "assignmentTrends": {
-        "assignmentTrends": "Tendencias de Asignaciones",
-        "last3Months": "Últimos 3 meses",
-        "last30Days": "Últimos 30 días",
-        "last7Days": "Últimos 7 días",
-        "cardDescription": "Un resumen de la cantidad de asignaciones realizadas a lo largo del tiempo por usuarios y áreas.",
-        "selectTimeRange": "Selecciona un rango de tiempo"
-      }
-    },
     "area": {
       "main": {
         "entityLabel": "area",

@@ -98,7 +98,7 @@ Develop a web system for managing service requests efficiently while adhering to
 - [tableau](https://www.tableau.com/)
 - [Gestion de niveles de servicio](https://blog.invgate.com/es/topic/gesti%C3%B3n-de-niveles-de-servicio)
 - [Prisma Markdown](https://github.com/samchon/prisma-markdown?tab=readme-ov-file)
-
--- otros: agregar asignamiento masivo: seria selecionar varios casos, y asignarlos a una misma persona
+- [Magic](https://magicui.design/docs/components/file-tree)
+  -- otros: agregar asignamiento masivo: seria selecionar varios casos, y asignarlos a una misma persona
 
 el coordinador solo ve las solicitudes de sus areas y el colaborador solicitudes asignadas

@@ -16,7 +16,6 @@ import { VideosTab } from './_components/videos-tab';
 
 export default function HelpPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('guides');
   const [, startTransition] = useTransition();
 
   const t = useTranslations('admin.helpPage');
@@ -28,50 +27,44 @@ export default function HelpPage() {
     });
   };
 
-  const handleTabChange = (value: string) => {
-    startTransition(() => {
-      setActiveTab(value);
-    });
-  };
-
   return (
-    <div className="container py-6 flex flex-col h-full">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
-          <p className="text-muted-foreground">{t('subtitle')}</p>
+    <ScrollArea className="flex-grow min-h-0">
+      <div className="container py-6 flex flex-col h-full">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
+            <p className="text-muted-foreground">{t('subtitle')}</p>
+          </div>
         </div>
-      </div>
 
-      <div className="mt-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input placeholder={t('searchPlaceholder')} className="pl-10" value={searchQuery} onChange={handleSearch} />
+        <div className="mt-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input placeholder={t('searchPlaceholder')} className="pl-10" value={searchQuery} onChange={handleSearch} />
+          </div>
         </div>
-      </div>
 
-      <div className="mt-8 flex flex-col flex-grow min-h-0">
-        <Tabs value={activeTab} onValueChange={handleTabChange} className="flex flex-col flex-grow min-h-0">
-          <TabsList className="mb-4">
-            <TabsTrigger value="guides">
-              <BookOpen className="mr-2 h-4 w-4" />
-              {t('tabs.guides')}
-            </TabsTrigger>
-            <TabsTrigger value="videos">
-              <Video className="mr-2 h-4 w-4" />
-              {t('tabs.videos')}
-            </TabsTrigger>
-            <TabsTrigger value="faqs">
-              <HelpCircle className="mr-2 h-4 w-4" />
-              {t('tabs.faqs')}
-            </TabsTrigger>
-            <TabsTrigger value="contact">
-              <MessageSquare className="mr-2 h-4 w-4" />
-              {t('tabs.contact')}
-            </TabsTrigger>
-          </TabsList>
+        <div className="mt-8 flex flex-col flex-grow min-h-0">
+          <Tabs defaultValue="guides" className="flex flex-col flex-grow min-h-0">
+            <TabsList className="mb-4">
+              <TabsTrigger value="guides">
+                <BookOpen className="mr-2 h-4 w-4" />
+                {t('tabs.guides')}
+              </TabsTrigger>
+              <TabsTrigger value="videos">
+                <Video className="mr-2 h-4 w-4" />
+                {t('tabs.videos')}
+              </TabsTrigger>
+              <TabsTrigger value="faqs">
+                <HelpCircle className="mr-2 h-4 w-4" />
+                {t('tabs.faqs')}
+              </TabsTrigger>
+              <TabsTrigger value="contact">
+                <MessageSquare className="mr-2 h-4 w-4" />
+                {t('tabs.contact')}
+              </TabsTrigger>
+            </TabsList>
 
-          <ScrollArea className="flex-grow min-h-0">
             <TabsContent value="guides" className="h-full overflow-y-auto">
               <GuidesTab />
             </TabsContent>
@@ -87,9 +80,9 @@ export default function HelpPage() {
             <TabsContent value="faqs" className="h-full overflow-y-auto">
               <FaqsTab />
             </TabsContent>
-          </ScrollArea>
-        </Tabs>
+          </Tabs>
+        </div>
       </div>
-    </div>
+    </ScrollArea>
   );
 }

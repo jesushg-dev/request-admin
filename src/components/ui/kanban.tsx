@@ -679,7 +679,7 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>((props,
   const items = React.useMemo(() => {
     const items = context.items[value] ?? [];
     return items.map((item) => context.getItemValue(item));
-  }, [context.items, value, context.getItemValue]);
+  }, [context, value]);
 
   const columnContext = React.useMemo<KanbanColumnContextValue>(
     () => ({

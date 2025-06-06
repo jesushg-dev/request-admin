@@ -1,61 +1,179 @@
-import dynamic from 'next/dynamic';
-import { getDashboardAssignmentTrends, getDashboardRequestCounts, getDashboardRequestTrends } from '@/actions/dashboard';
-import { Calendar, Clock, FileWarningIcon } from 'lucide-react';
-import { getTranslations } from 'next-intl/server';
+'use client';
 
+import { useState } from 'react';
+import { Link } from '@/i18n/routing';
+import { AlertTriangle, ArrowRight, PlusCircle } from 'lucide-react';
+import { toast } from 'sonner';
+
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import ClientOnly from '@/components/client-only';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { GeneralMetrics } from '@/components/common/dashboard/dashboard-metrics';
+import DashboardStats from '@/components/common/dashboard/dashboard-stats';
+import RecentRequests from '@/components/common/dashboard/recent-requests';
+import { SLADashboard } from '@/components/common/dashboard/sla-dashboard';
+import { SLAFilters, SLAFilterValues } from '@/components/common/dashboard/sla-filters';
+import { WorkflowSelector } from '@/components/common/dashboard/workflow-selector';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 
-const StatCard = dynamic(() => import('@/components/stat-card'));
-const RequestTrends = dynamic(() => import('@/components/common/dashboard/request-trends'));
-const SlaCompliance = dynamic(() => import('@/components/common/dashboard/sla-compliance'));
-const ResolutionTime = dynamic(() => import('@/components/common/dashboard/resolution-time'));
-const AssignmentTrends = dynamic(() => import('@/components/common/dashboard/assignment-trends'));
-const AssignmentDashboard = dynamic(() => import('@/components/common/dashboard/assignment-dashboard'));
-const PriorityDistribution = dynamic(() => import('@/components/common/dashboard/priority-distribution'));
-const RequestStatusDistribution = dynamic(() => import('@/components/common/dashboard/request-status-distribution'));
+export default function Home() {
+  const { tenantId } = useTenantContext();
+  const [selectedWorkflow, setSelectedWorkflow] = useState<string | null>(null);
 
-interface DashboardPageProps {
-  params: Promise<{
-    locale: string;
-    tenantId: string;
-  }>;
-}
+  const handleSearch = (filters: SLAFilterValues): void => {
+    console.log('Searching with filters:', filters);
+    toast.info('Búsqueda aplicada', {
+      description: 'Los filtros han sido aplicados correctamente',
+    });
+  };
 
-const DashboardPage = async ({ params }: DashboardPageProps) => {
-  const { tenantId } = await params;
-  const t = await getTranslations('admin.dashboard');
-  const timeRange = /*searchParams.timeRange ||*/ '90d';
+  const handleWorkflowChange = (workflowId: string | null): void => {
+    setSelectedWorkflow(workflowId);
+    console.log('Selected workflow:', workflowId);
 
-  const trends = await getDashboardRequestTrends(tenantId);
-  const assignmentTrends = await getDashboardAssignmentTrends(tenantId, timeRange);
+    if (workflowId) {
+      toast.success('Flujo de trabajo seleccionado', {
+        description: `Se ha seleccionado el flujo: ${workflowId}`,
+      });
+    }
+  };
 
-  const { totalRequests, openRequests, overdueRequests, avgResolutionTime } = await getDashboardRequestCounts(tenantId);
   return (
-    <ScrollArea className="w-full">
-      <div className="flex flex-1 flex-col gap-4 p-4">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <StatCard title={t('totalRequests')} value={totalRequests} icon={<Calendar className="h-5 w-5" />} />
-          <StatCard title={t('openRequests')} value={openRequests} icon={<Clock className="h-5 w-5" />} />
-          <StatCard title={t('overdue')} value={overdueRequests} icon={<FileWarningIcon className="h-5 w-5" />} />
-          <StatCard title={t('avgResolutionTime')} value={`${avgResolutionTime}h`} icon={<Clock className="h-5 w-5" />} />
+    <ScrollArea className="flex-grow min-h-0">
+      <div className="container py-6 flex flex-col h-full">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+            <p className="text-muted-foreground">Bienvenido al sistema de gestión de solicitudes de Claro-Nicaragua</p>
+          </div>
+          <Button className="w-full md:w-auto">
+            <Link className="flex gap-2 items-center" href={{ pathname: '/admin/[tenantId]/requests/new', params: { tenantId } }}>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Nueva Solicitud
+            </Link>
+          </Button>
         </div>
-        <AssignmentTrends initialData={assignmentTrends} initialRange={timeRange} />
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <SlaCompliance />
-          <RequestStatusDistribution />
-          <PriorityDistribution />
-        </div>
-        <AssignmentDashboard />
-        <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
-          <ClientOnly>
-            <ResolutionTime />
-            <RequestTrends trends={trends} />
-          </ClientOnly>
+
+        <div className="mt-8 flex flex-col flex-grow min-h-0">
+          <Tabs defaultValue="general" className="flex flex-col flex-grow min-h-0">
+            <TabsList>
+              <TabsTrigger value="general">General</TabsTrigger>
+              <TabsTrigger value="workflow">Flujo de Trabajo</TabsTrigger>
+              <TabsTrigger value="sla">SLAs</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="general" className="h-full overflow-y-auto">
+              <div className="mt-8">
+                <GeneralMetrics />
+              </div>
+
+              <div className="mt-8">
+                <DashboardStats />
+              </div>
+
+              <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle>Solicitudes Pendientes</CardTitle>
+                    <CardDescription>Solicitudes que requieren atención</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-4xl font-bold">12</div>
+                    <div className="mt-2 flex items-center text-sm text-muted-foreground">
+                      <span>4 con prioridad alta</span>
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                    <Button variant="ghost" size="sm" className="w-full" asChild>
+                      <Link className="flex items-center gap-1" href={{ pathname: '/admin/[tenantId]/requests', params: { tenantId }, query: { status: 'pending' } }}>
+                        Ver todas
+                        <ArrowRight className="ml-1 h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </CardFooter>
+                </Card>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle>Solicitudes Completadas</CardTitle>
+                    <CardDescription>Solicitudes resueltas este mes</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-4xl font-bold">48</div>
+                    <div className="mt-2 flex items-center text-sm text-muted-foreground">
+                      <span>Tiempo promedio: 2.3 días</span>
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                    <Button variant="ghost" size="sm" className="w-full" asChild>
+                      <Link className="flex items-center gap-1" href={{ pathname: '/admin/[tenantId]/requests', params: { tenantId }, query: { status: 'completed' } }}>
+                        Ver todas
+                        <ArrowRight className="ml-1 h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </CardFooter>
+                </Card>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle>Reportes</CardTitle>
+                    <CardDescription>Análisis de desempeño</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-4xl font-bold">
+                      <AlertTriangle className="h-8 w-8" />
+                    </div>
+                    <div className="mt-2 flex items-center text-sm text-muted-foreground">
+                      <span>Accede a reportes detallados</span>
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                    <Button variant="ghost" size="sm" className="w-full" asChild>
+                      <Link className="flex items-center gap-1" href={{ pathname: '/admin/[tenantId]/reports', params: { tenantId } }}>
+                        Ver reportes
+                        <ArrowRight className="ml-1 h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </div>
+
+              <div className="mt-8">
+                <h2 className="text-xl font-bold">Solicitudes Recientes</h2>
+                <div className="mt-4">
+                  <RecentRequests />
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="workflow" className="h-full overflow-y-auto">
+              <div className="mt-8">
+                <WorkflowSelector selectedWorkflow={selectedWorkflow} onWorkflowChange={handleWorkflowChange} />
+              </div>
+
+              <div className="mt-8">
+                <DashboardStats />
+              </div>
+
+              <div className="mt-8">
+                <h2 className="text-xl font-bold">Solicitudes Recientes {selectedWorkflow && `- ${selectedWorkflow}`}</h2>
+                <div className="mt-4">
+                  <RecentRequests workflowFilter={selectedWorkflow} />
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="sla" className="h-full overflow-y-auto">
+              <div className="mt-6">
+                <SLAFilters onSearch={handleSearch} />
+              </div>
+
+              <div className="mt-8">
+                <SLADashboard />
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </ScrollArea>
   );
-};
-
-export default DashboardPage;
+}
