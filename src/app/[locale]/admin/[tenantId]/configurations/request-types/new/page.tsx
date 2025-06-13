@@ -4,6 +4,7 @@ import { getRequestHierarchiesAndLevelsByTenantId } from '@/actions/hierarchy';
 import { getRequirementsAsOptions } from '@/actions/requirement';
 import { type Locale } from 'next-intl';
 
+import { HierarchicalResourceProvider } from '@/components/common/request-type/hierarchical-category-provider';
 import RequestTypeForm from '@/components/common/request-type/request-type-form';
 
 interface NewPageProps {
@@ -17,7 +18,11 @@ const NewPage: FC<NewPageProps> = async ({ params }) => {
   const requirements = await getRequirementsAsOptions(tenantId);
   const hierarchies = await getRequestHierarchiesAndLevelsByTenantId(locale, tenantId);
 
-  return <RequestTypeForm locale={locale} forms={forms} requirements={requirements} requestHierarchies={hierarchies} tenantId={tenantId} />;
+  return (
+    <HierarchicalResourceProvider>
+      <RequestTypeForm forms={forms} requirements={requirements} requestHierarchies={hierarchies} tenantId={tenantId} />
+    </HierarchicalResourceProvider>
+  );
 };
 
 export default NewPage;

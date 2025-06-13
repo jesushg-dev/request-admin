@@ -76,6 +76,7 @@ export const RequestCategoryFields: FC<CategoryFieldsProps> = ({ menuPortalTarge
               }}
               value={field.value}
               menuPortalTarget={menuPortalTarget}
+              dataTestId={`select-${requestLevelTypes[0]?.name?.toLowerCase().replace(/\s+/g, '-')}`}
             />
           </FormItem>
         )}
@@ -128,6 +129,7 @@ export const AssignmentCategoryFields: FC<CategoryFieldsProps> = ({ menuPortalTa
               onChange={field.onChange}
               value={field.value}
               menuPortalTarget={menuPortalTarget}
+              dataTestId="select-area"
             />
           </FormItem>
         )}
@@ -153,6 +155,7 @@ export const AssignmentCategoryFields: FC<CategoryFieldsProps> = ({ menuPortalTa
               isDisabled={!areaId}
               placeholder={areaId ? t('assignmentCategory.selectPlaceholder') : t('assignmentCategory.areaFirstPlaceholder')}
               menuPortalTarget={menuPortalTarget}
+              dataTestId="select-assignment-category"
             />
           </FormItem>
         )}

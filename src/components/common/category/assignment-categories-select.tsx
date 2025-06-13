@@ -136,6 +136,7 @@ const SingleAssignmentCategorySelect: React.FC<SingleAssignmentCategorySelectPro
     <>
       <FormControl>
         <Select
+          dataTestId={`select-${hierarchyLevelName.toLowerCase().replace(/\s+/g, '-')}`}
           isClearable
           isSearchable
           options={options}

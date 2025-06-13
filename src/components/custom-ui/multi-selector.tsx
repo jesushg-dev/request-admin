@@ -1,22 +1,19 @@
 'use client';
-
 import { Plus, X } from 'lucide-react';
 
+import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { OptionType } from '@/components/custom-ui/select';
 
 type MultiSelectorProps = {
+  className?: string;
   options: OptionType[];
   value: OptionType[];
   onChange: (value: OptionType[]) => void;
-  messages: {
-    title: string;
-    addTitle: string;
-    empty: string;
-  };
+  messages: { title?: string; addTitle: string; removeTitle: string; empty: string };
 };
 
-export function MultiSelector({ options, value, onChange, messages }: MultiSelectorProps) {
+export function MultiSelector({ options, value, onChange, messages, className }: MultiSelectorProps) {
   const addRequirement = (requirement: OptionType) => {
     const newRequirements = [...value, requirement];
     onChange(newRequirements);
@@ -28,13 +25,13 @@ export function MultiSelector({ options, value, onChange, messages }: MultiSelec
   };
 
   return (
-    <div className="flex-1 flex flex-col overflow-y-auto">
-      <h3 className="text-sm font-medium mb-2">{messages.title}</h3>
+    <div className={cn('flex-1 flex flex-col', className)}>
+      {messages.title && <h3 className="text-sm font-medium mb-2">{messages.title}</h3>}
       <div className="flex flex-wrap gap-2 mb-4">
         {value.map((req) => (
           <Badge key={req.value} variant="secondary" className="flex items-center gap-1">
             {req.label}
-            <button type="button" onClick={() => removeRequirement(req.value)} className="ml-1 rounded-full cursor-pointer hover:bg-gray-200 p-0.5">
+            <button type="button" aria-label={messages.removeTitle} onClick={() => removeRequirement(req.value)} className="ml-1 rounded-full cursor-pointer hover:bg-gray-200 p-0.5">
               <X className="h-3 w-3" />
             </button>
           </Badge>

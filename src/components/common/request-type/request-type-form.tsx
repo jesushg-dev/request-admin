@@ -5,7 +5,7 @@ import { createExecutionFlow } from '@/actions/execution-flow';
 import { useUpsertRequestCategory } from '@/services/api/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { BookCopyIcon, BookIcon, ChevronLeft, ChevronRight, ContainerIcon, FileCogIcon, FileStackIcon, PackageOpenIcon } from 'lucide-react';
-import { Locale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { ImperativePanelHandle } from 'react-resizable-panels';
 import { SingleValue } from 'react-select';
@@ -30,7 +30,6 @@ export interface RequestTypeFormValues {
 }
 
 interface RequestTypeFormProps {
-  locale: Locale;
   tenantId: string;
   forms: OptionType[];
   requirements: OptionType[];
@@ -39,7 +38,7 @@ interface RequestTypeFormProps {
   disableHierarchyChange?: boolean;
 }
 
-const RequestTypeForm: FC<RequestTypeFormProps> = ({ locale, initialValues, requirements, forms, requestHierarchies, tenantId, disableHierarchyChange = false }) => {
+const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements, forms, requestHierarchies, tenantId, disableHierarchyChange = false }) => {
   const t = useTranslations('admin.requestType.create');
 
   const ref = useRef<ImperativePanelHandle>(null);
@@ -55,12 +54,10 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ locale, initialValues, requ
     resolver: zodResolver(requestCategorySchema),
   });
 
-  const hierarchyOptions = useMemo(() => requestHierarchies.map((h) => ({ label: h.name, value: h.id })), [requestHierarchies]);
-
-  const selectedHierarchyData = useMemo(() => requestHierarchies.find((h) => h.id === selectedHierarchy?.value), [requestHierarchies, selectedHierarchy]);
-
   const formsOptions = useMemo(() => forms, [forms]);
   const requirementsOptions = useMemo(() => requirements, [requirements]);
+  const hierarchyOptions = useMemo(() => requestHierarchies.map((h) => ({ label: h.name, value: h.id })), [requestHierarchies]);
+  const selectedHierarchyData = useMemo(() => requestHierarchies.find((h) => h.id === selectedHierarchy?.value), [requestHierarchies, selectedHierarchy]);
 
   const toggleSidebar = () => {
     if (ref.current) {
@@ -168,7 +165,7 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ locale, initialValues, requ
   return (
     <ResizablePanelGroup direction="horizontal" className="flex-1">
       <ResizablePanel defaultSize={30} collapsible ref={ref} minSize={0}>
-        {!initialValues && (
+        <div className="flex flex-col h-full overflow-hidden">
           <div className="flex flex-col border-b bg-background/50 px-4 py-2">
             <h2 className="text-sm font-medium mb-2">{t('hierarchyLabel')}</h2>
             <Select
@@ -182,9 +179,8 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ locale, initialValues, requ
             />
             <span className="text-xs text-muted-foreground">{t('hierarchyDescription')}</span>
           </div>
-        )}
-
-        {selectedHierarchyData && <CategoryTreeView categories={currentState} onAddCategory={handleAddCategory} onEditCategory={handleEditCategory} hierarchy={selectedHierarchyData} />}
+          {selectedHierarchyData && <CategoryTreeView categories={currentState} onAddCategory={handleAddCategory} onEditCategory={handleEditCategory} hierarchy={selectedHierarchyData} />}
+        </div>
       </ResizablePanel>
       <ResizableHandle />
 
@@ -199,7 +195,15 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ locale, initialValues, requ
               <Form {...form}>
                 <FormRoot className="h-full" onSubmit={form.handleSubmit(onSubmit)}>
                   <FormError error={error} />
-                  <CategoryForm locale={locale} formsOptions={formsOptions} requirementsOptions={requirementsOptions} mode={mode} isPending={isPending} handleCancelForm={handleCancelForm} />
+                  <CategoryForm
+                    mode={mode}
+                    isPending={isPending}
+                    formsOptions={formsOptions}
+                    currentState={currentState}
+                    levels={selectedHierarchyData.levels}
+                    requirementsOptions={requirementsOptions}
+                    handleCancelForm={handleCancelForm}
+                  />
                 </FormRoot>
               </Form>
             ) : (

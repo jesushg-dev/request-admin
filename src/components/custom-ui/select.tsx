@@ -205,7 +205,10 @@ export const MenuList = (props: MenuListProps<OptionType>) => {
   );
 };
 
-const BaseSelect = <IsMulti extends boolean = false>(props: Props<OptionType, IsMulti> & { isMulti?: IsMulti }, ref: React.Ref<SelectInstance<OptionType, IsMulti, GroupBase<OptionType>>>) => {
+const BaseSelect = <IsMulti extends boolean = false>(
+  props: Props<OptionType, IsMulti> & { isMulti?: IsMulti; dataTestId?: string },
+  ref: React.Ref<SelectInstance<OptionType, IsMulti, GroupBase<OptionType>>>
+) => {
   const [mounted, setMounted] = useState(false);
 
   const { styles = defaultStyles, classNames = defaultClassNames, components = {}, ...rest } = props;
@@ -238,6 +241,7 @@ const BaseSelect = <IsMulti extends boolean = false>(props: Props<OptionType, Is
       }}
       styles={styles}
       classNames={classNames}
+      data-testid={props.dataTestId}
       {...rest}
     />
   );
@@ -247,5 +251,6 @@ export default React.forwardRef(BaseSelect) as <IsMulti extends boolean = false>
   p: Props<OptionType, IsMulti> & {
     ref?: Ref<React.RefAttributes<SelectInstance<OptionType, IsMulti, GroupBase<OptionType>>>>;
     isMulti?: IsMulti;
+    dataTestId?: string;
   }
 ) => ReactElement;

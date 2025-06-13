@@ -35,3 +35,30 @@
 //     }
 //   }
 // }
+
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      loginIfNeeded(): void;
+      selectReactSelectOption(selector: string, optionText: string): Chainable<void>;
+    }
+  }
+}
+
+Cypress.Commands.add('loginIfNeeded', () => {
+  cy.visit('/auth/login');
+  cy.url().then((url) => {
+    if (url.includes('/auth/login')) {
+      cy.get('input[type="email"]').type(Cypress.env('TEST_USER_EMAIL'));
+      cy.get('input[type="password"]').type(Cypress.env('TEST_USER_PASSWORD'));
+      cy.get('button[type="submit"]').click();
+      cy.url().should('not.include', '/auth/login');
+    }
+  });
+});
+
+Cypress.Commands.add('selectReactSelectOption', (selector: string, optionText: string) => {
+  cy.get(selector).click().find('input').first().type(optionText, { force: true }).type('{enter}', { force: true });
+});
+
+export {};

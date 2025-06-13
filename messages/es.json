@@ -1707,6 +1707,10 @@
           "guides": "Guías"
         },
         "basicTab": {
+          "header": {
+            "title": "Información general",
+            "description": "Esta información se utiliza para identificar el tipo de solicitud y su flujo de trabajo."
+          },
           "name": "Nombre",
           "namePlaceholder": "Nombre de la categoría",
           "description": "Descripción",
@@ -1719,22 +1723,46 @@
           "descriptionDescription": "Esta descripción ayudará a otros usuarios a comprender el propósito y el alcance de la categoría."
         },
         "requirementsTab": {
-          "title": "Requisitos",
+          "header": {
+            "title": "Requisitos",
+            "description": "Estos requisitos son documentos necesarios antes de que la solicitud pueda ser procesada."
+          },
+          "blockedTitle": "Requisitos utilizados en subcategorías",
+          "blockedLabel": "requisitos",
+          "inheritedTitle": "Requisitos heredados de categorías superiores",
+          "title": "Requisitos seleccionables",
           "empty": "No hay requisitos seleccionados",
-          "addTitle": "Agregar Requisitos"
+          "addTitle": "Agregar Requisitos",
+          "removeTitle": "Eliminar requisito"
         },
         "formsTab": {
-          "title": "Formularios",
+          "header": {
+            "title": "Formularios asociados",
+            "description": "Estos formularios se utilizan para recopilar información del usuario antes de que la solicitud pueda ser procesada."
+          },
+          "blockedTitle": "Formularios utilizados en subcategorías",
+          "blockedLabel": "formularios",
+          "inheritedTitle": "Formularios heredados de categorías superiores",
+          "title": "Formularios seleccionables",
           "empty": "No hay formularios seleccionados",
-          "addTitle": "Agregar Formularios"
+          "addTitle": "Agregar Formularios",
+          "removeTitle": "Eliminar la forma"
         },
         "slaTab": {
+          "header": {
+            "title": "Acuerdo de Nivel de Servicio (SLA)",
+            "description": "El SLA se utiliza para monitorear el desempeño del tipo de solicitud y asegurar que cumpla con los niveles de servicio acordados."
+          },
           "resolutionTime": "Tiempo de Resolución (horas)",
           "resolutionDescription": "Tiempo máximo para resolver solicitudes en esta categoría",
           "escalationTime": "Tiempo de Escalación (horas)",
           "escalationDescription": "Tiempo antes de que la solicitud sea escalada"
         },
         "guidesTab": {
+          "header": {
+            "title": "Guías de usuario",
+            "description": "Las guías de usuario proporcionan instrucciones detalladas sobre cómo resolver el tipo de solicitud."
+          },
           "guidesTitle": "Guías y Documentación",
           "guidesDescription": "Administra las guías y documentos relacionados",
           "addGuide": "Agregar Guía",
@@ -1776,6 +1804,16 @@
           "success": "Changes saved successfully",
           "error": "Error saving changes: {error}",
           "executionLoading": "Guardar flujo de ejecución ..."
+        },
+        "blockedResourcesInfo": {
+          "blockedTitle": "{title}",
+          "blockedDescription": "Requisitos bloqueados",
+          "blockedAlert": "{count} {label} están asignados en subcategorías. Al seleccionar estos recursos aquí, se eliminarán de las subcategorías y todos los niveles inferiores los heredarán automáticamente.",
+          "promoteTitle": "Promover a este nivel",
+          "promoteAriaLabel": "Promover {label} a este nivel",
+          "inheritedTitle": "{title}",
+          "inheritedDescription": "Preseleccionados automáticamente",
+          "inheritedAlert": "Estos recursos no se pueden modificar aquí. Son heredados automáticamente del nivel superior."
         },
         "manageTitle": "Gestionar categorías de solicitud",
         "manageDescription": "Selecciona una categoría en la barra lateral para editarla o haz clic en \\\"Agregar nueva\\\" para crear una nueva categoría.",

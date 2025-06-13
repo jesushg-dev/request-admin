@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ExecutionFlowValues } from '@/services/schemas/execution-flow';
 import type { Connection } from '@xyflow/react';
 import { addEdge, Background, BackgroundVariant, Controls, MarkerType, Panel, ReactFlow, ReactFlowProvider, useEdgesState, useNodesState, useReactFlow } from '@xyflow/react';
-import { Locale, useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 import { toast } from 'sonner';
 
@@ -40,12 +40,12 @@ const getDefaultNodes: () => FlowNode[] = () => [
 const initialEdges: FlowEdge[] = [];
 
 interface FlowBuilderProps {
-  locale: Locale;
   value?: ExecutionFlowValues | null;
   onSave: (flow: ExecutionFlowValues) => void;
 }
 
-function FlowBuilderNonContext({ onSave, value, locale }: FlowBuilderProps) {
+function FlowBuilderNonContext({ onSave, value }: FlowBuilderProps) {
+  const locale = useLocale();
   const t = useTranslations('component.flowExecution.build');
   const theme = useTheme();
   const reactFlow = useReactFlow<FlowNode, FlowEdge>();

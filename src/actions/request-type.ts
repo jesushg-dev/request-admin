@@ -32,12 +32,14 @@ export async function getRequestCategoriesByIds(rootIds: string[], tenantId: str
             requirementId: true,
             requirement: { select: { name: true } },
           },
+          orderBy: { requirement: { name: 'asc' } },
         },
         categoryForms: {
           select: {
             formId: true,
             form: { select: { name: true } },
           },
+          orderBy: { form: { name: 'asc' } },
         },
         sla: {
           select: {
@@ -57,6 +59,7 @@ export async function getRequestCategoriesByIds(rootIds: string[], tenantId: str
             updatedAt: true,
             isActive: true,
           },
+          orderBy: { updatedAt: 'desc' },
         },
         executionFlowDefinitions: {
           ...ExecutionFlowDefaultArgs,

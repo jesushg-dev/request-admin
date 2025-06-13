@@ -1,8 +1,10 @@
+// category-form/index.tsx
 import { executionFlowSchema } from '@/services/schemas/execution-flow';
-import { Locale, useTranslations } from 'next-intl';
-import { useFormContext } from 'react-hook-form';
+import { useTranslations } from 'next-intl';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 
+import { RequestLevelType } from '@/types/prisma/hierarchy';
 import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
@@ -12,6 +14,9 @@ import { optionSchema, OptionType } from '@/components/custom-ui/select';
 import FlowBuilder from '@/components/process-flow/flow-builder/flow-builder';
 import { TabSection } from '@/components/shared/tab-section';
 
+import { BlockedResourcesInfo } from '../blocked-resources-info';
+import { useHierarchicalResourceContext } from '../hierarchical-category-provider';
+import { RequestTypeFormValues } from '../request-type-form';
 import { BasicInfoTab } from './basic-info-tab';
 import { guideSchema, GuideTab } from './guides-tab';
 import { SlaTab } from './sla-tab';
@@ -58,18 +63,59 @@ export const getDefaultCategory = (hierarchyLevelId: string, parentCategoryId?: 
 });
 
 interface CategoryFormProps {
-  locale: Locale;
   formsOptions: OptionType[];
   requirementsOptions: OptionType[];
   handleCancelForm: () => void;
   isPending: boolean;
   mode: 'add' | 'edit';
+  currentState: RequestTypeFormValues['categories'];
+  levels: RequestLevelType[];
 }
 
-export function CategoryForm({ locale, formsOptions = [], requirementsOptions = [], handleCancelForm, isPending, mode }: CategoryFormProps) {
+export function CategoryForm({ levels, formsOptions = [], requirementsOptions = [], handleCancelForm, isPending, mode }: CategoryFormProps) {
   const t = useTranslations('admin.requestType.create');
-  const { control } = useFormContext<RequestCategoryValues>();
+  const { control, setValue } = useFormContext<RequestCategoryValues>();
   const formTitle = mode === 'add' ? t('create') : t('update');
+  const currentCategoryId = useWatch({ control, name: 'id' });
+
+  const { getInheritedGroups, getChildGroups, promoteResource } = useHierarchicalResourceContext();
+
+  // Helper para filtrar seleccionables
+  function getSelectableResources(allOptions: OptionType[], currentSelected: OptionType[], inheritedGroups: { resources: OptionType[] }[], childGroups: { resource: OptionType }[]): OptionType[] {
+    const inheritedValues = new Set(inheritedGroups.flatMap((group) => group.resources.map((r) => r.value)));
+    const blockedValues = new Set(childGroups.map((group) => group.resource.value));
+    const selectedValues = new Set(currentSelected.map((r) => r.value));
+    return allOptions.filter((r) => !inheritedValues.has(r.value) && !blockedValues.has(r.value) && !selectedValues.has(r.value));
+  }
+
+  // Obtener los valores actuales del formulario
+  const currentRequirements = useWatch({ control, name: 'requirements' }) ?? [];
+  const currentForms = useWatch({ control, name: 'forms' }) ?? [];
+
+  // Requirements
+  const requirementInheritedGroups = getInheritedGroups(currentCategoryId, 'requirements', levels);
+  const requirementChildGroups = getChildGroups(currentCategoryId, 'requirements', levels);
+  const requirementBlockedCount = requirementChildGroups.reduce((total, group) => total + (group.resource ? 1 : 0), 0);
+  const selectableRequirements = getSelectableResources(requirementsOptions, currentRequirements, requirementInheritedGroups, requirementChildGroups);
+  const onPromoteRequirement = (resource: OptionType) => {
+    promoteResource(currentCategoryId, 'requirements', resource);
+    // Agregar el recurso promovido al campo del formulario si no está
+    if (!currentRequirements.some((r) => r.value === resource.value)) {
+      setValue('requirements', [...currentRequirements, resource]);
+    }
+  };
+
+  // Forms
+  const formInheritedGroups = getInheritedGroups(currentCategoryId, 'forms', levels);
+  const formChildGroups = getChildGroups(currentCategoryId, 'forms', levels);
+  const formBlockedCount = formChildGroups.reduce((total, group) => total + (group.resource ? 1 : 0), 0);
+  const selectableForms = getSelectableResources(formsOptions, currentForms, formInheritedGroups, formChildGroups);
+  const onPromoteForm = (resource: OptionType) => {
+    promoteResource(currentCategoryId, 'forms', resource);
+    if (!currentForms.some((r) => r.value === resource.value)) {
+      setValue('forms', [...currentForms, resource]);
+    }
+  };
 
   return (
     <Tabs defaultValue="basic" className="h-full overflow-hidden flex flex-col gap-2">
@@ -84,8 +130,8 @@ export function CategoryForm({ locale, formsOptions = [], requirementsOptions = 
 
       <TabSection
         value="basic"
-        title="General Information"
-        description="This information is used to identify the request type and its workflow."
+        title={t('basicTab.header.title')}
+        description={t('basicTab.header.description')}
         formTitle={formTitle}
         isPending={isPending}
         footerChildren={
@@ -98,8 +144,9 @@ export function CategoryForm({ locale, formsOptions = [], requirementsOptions = 
 
       <TabSection
         value="requirements"
-        title="Requirements"
-        description="These requirements are documents that are needed before the request can be processed."
+        title={t('requirementsTab.header.title')}
+        description={t('requirementsTab.header.description')}
+        className="overflow-y-auto gap-4"
         formTitle={formTitle}
         isPending={isPending}
         footerChildren={
@@ -107,20 +154,31 @@ export function CategoryForm({ locale, formsOptions = [], requirementsOptions = 
             {t('cancel')}
           </Button>
         }>
+        <BlockedResourcesInfo
+          blockedCount={requirementBlockedCount}
+          blockedGroups={requirementChildGroups}
+          inheritedGroups={requirementInheritedGroups}
+          blockedTitle={t('requirementsTab.blockedTitle')}
+          blockedLabel={t('requirementsTab.blockedLabel')}
+          inheritedTitle={t('requirementsTab.inheritedTitle')}
+          onPromoteResource={onPromoteRequirement}
+        />
+
         <FormField
           control={control}
           name="requirements"
           render={({ field }) => (
-            <FormItem className="flex-1 flex overflow-hidden">
+            <FormItem>
               <FormControl>
                 <MultiSelector
                   value={field.value ?? []}
                   onChange={field.onChange}
-                  options={requirementsOptions}
+                  options={selectableRequirements}
                   messages={{
                     title: t('requirementsTab.title'),
                     addTitle: t('requirementsTab.addTitle'),
                     empty: t('requirementsTab.empty'),
+                    removeTitle: t('requirementsTab.removeTitle'),
                   }}
                 />
               </FormControl>
@@ -132,8 +190,9 @@ export function CategoryForm({ locale, formsOptions = [], requirementsOptions = 
 
       <TabSection
         value="forms"
-        title="Associated Forms"
-        description="These forms are used to collect information from the user before the request can be processed."
+        title={t('formsTab.header.title')}
+        description={t('formsTab.header.description')}
+        className="overflow-y-auto"
         formTitle={formTitle}
         isPending={isPending}
         footerChildren={
@@ -141,20 +200,31 @@ export function CategoryForm({ locale, formsOptions = [], requirementsOptions = 
             {t('cancel')}
           </Button>
         }>
+        <BlockedResourcesInfo
+          blockedCount={formBlockedCount}
+          blockedGroups={formChildGroups}
+          inheritedGroups={formInheritedGroups}
+          blockedTitle={t('formsTab.blockedTitle')}
+          blockedLabel={t('formsTab.blockedLabel')}
+          inheritedTitle={t('formsTab.inheritedTitle')}
+          onPromoteResource={onPromoteForm}
+        />
+
         <FormField
           control={control}
           name="forms"
           render={({ field }) => (
-            <FormItem className="flex-1 flex overflow-hidden">
+            <FormItem>
               <FormControl>
                 <MultiSelector
                   value={field.value ?? []}
                   onChange={field.onChange}
-                  options={formsOptions}
+                  options={selectableForms}
                   messages={{
                     title: t('formsTab.title'),
                     addTitle: t('formsTab.addTitle'),
                     empty: t('formsTab.empty'),
+                    removeTitle: t('formsTab.removeTitle'),
                   }}
                 />
               </FormControl>
@@ -166,8 +236,8 @@ export function CategoryForm({ locale, formsOptions = [], requirementsOptions = 
 
       <TabSection
         value="sla"
-        title="Service Level Agreement (SLA)"
-        description="The SLA is used to track the performance of the request type and ensure that it meets the agreed-upon service levels."
+        title={t('slaTab.header.title')}
+        description={t('slaTab.header.description')}
         formTitle={formTitle}
         isPending={isPending}
         footerChildren={
@@ -185,7 +255,7 @@ export function CategoryForm({ locale, formsOptions = [], requirementsOptions = 
           render={({ field }) => (
             <FormItem className="flex-1 flex overflow-hidden">
               <FormControl>
-                <FlowBuilder value={field.value} onSave={field.onChange} locale={locale} />
+                <FlowBuilder value={field.value} onSave={field.onChange} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -195,8 +265,8 @@ export function CategoryForm({ locale, formsOptions = [], requirementsOptions = 
 
       <TabSection
         value="guides"
-        title="User Guides"
-        description="The User Guides provide detailed instructions on how to resolve the request type."
+        title={t('guidesTab.header.title')}
+        description={t('guidesTab.header.description')}
         formTitle={formTitle}
         isPending={isPending}
         footerChildren={

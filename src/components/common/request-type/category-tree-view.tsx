@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useCallback, useMemo } from 'react';
 import {
   createOnDropHandler,
@@ -190,43 +188,41 @@ export const CategoryTreeView: React.FC<CategoryTreeViewProps> = ({ onAddCategor
                 <Hint label={levelName.name} side="right">
                   <div
                     className={cn(
-                      'group relative cursor-pointer flex w-full items-center justify-start space-x-2 rounded-md px-3 py-2 text-sm font-medium min-w-[100px] flex-shrink-0',
-                      item.isSelected() ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'
+                      'group relative flex w-full items-center justify-start space-x-2 rounded-md text-sm font-medium min-w-[100px] flex-shrink-0 transition-colors',
+                      item.isSelected() ? 'bg-primary text-primary-foreground' : 'hover:bg-accent hover:text-accent-foreground'
                     )}>
                     {item.isFolder() && (
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-6 w-6"
+                        className="ml-1 h-6 w-6"
                         onClick={(e) => {
                           e.stopPropagation();
                           // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                           item.isExpanded() ? item.collapse() : item.expand();
                         }}>
-                        {item.isExpanded() ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                        {item.isExpanded() ? <ChevronDown className="h-4 w-4 text-inherit" /> : <ChevronRight className="h-4 w-4 text-inherit" />}
                       </Button>
                     )}
 
                     {item.isRenaming() ? (
-                      <div className="flex w-full items-center gap-2 rounded-md bg-muted/50 px-3 py-2">
-                        {item.isFolder() ? <Folder className="h-4 w-4 text-muted-foreground" /> : <File className="h-4 w-4 text-muted-foreground" />}
+                      <div className="flex w-full items-center gap-2 rounded-md bg-muted/50 px-3 py-2 cursor-pointer">
+                        {item.isFolder() ? <Folder className="h-4 w-4 text-inherit" /> : <File className="h-4 w-4 text-inherit" />}
                         <input {...item.getRenameInputProps()} className="w-full bg-transparent outline-none" />
                       </div>
                     ) : (
-                      <>
-                        <button
-                          className="flex-1 text-sm flex items-center space-x-2"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            tree.setSelectedItems([item.getId()]);
-                            onEditCategory(item.getItemData());
-                          }}>
-                          {item.isFolder() ? <Folder className="h-4 w-4 text-muted-foreground" /> : <File className="h-4 w-4 text-muted-foreground" />}
-                          <span>{item.getItemName()}</span>
-                        </button>
-                      </>
+                      <button
+                        type="button"
+                        className="flex-1 text-sm flex items-center space-x-2 px-3 py-2 cursor-pointer bg-transparent"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          tree.setSelectedItems([item.getId()]);
+                          onEditCategory(item.getItemData());
+                        }}>
+                        {item.isFolder() ? <Folder className="h-4 w-4 text-inherit" /> : <File className="h-4 w-4 text-inherit" />}
+                        <span>{item.getItemName()}</span>
+                      </button>
                     )}
-
                     <div className="absolute right-1 top-1/2 flex -translate-y-1/2 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                       {nextLevel && (
                         <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => onAddCategory(nextLevel.id, item.getId())} title={t('addSubcategory', { levelName: nextLevel.name })}>

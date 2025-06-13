@@ -8,6 +8,7 @@ const badgeVariants = cva('focus:ring-ring inline-flex items-center rounded-md b
     variant: {
       default: 'bg-primary text-primary-foreground hover:bg-primary/80 border-transparent shadow-sm',
       secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80 border-transparent',
+      warning: 'bg-yellow-400 dark:bg-yellow-800 text-warning-foreground hover:bg-yellow-500/80 border-transparent shadow-sm',
       destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/80 border-transparent shadow-sm',
       outline: 'text-textPrimary',
       success: 'bg-green-400 dark:bg-green-800 text-success-foreground hover:bg-green-500/80 border-transparent shadow-sm',

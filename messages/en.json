@@ -1698,6 +1698,10 @@
           "guides": "Guides"
         },
         "basicTab": {
+          "header": {
+            "title": "General Information",
+            "description": "This information is used to identify the request type and its workflow."
+          },
           "name": "Name",
           "namePlaceholder": "Category name",
           "description": "Description",
@@ -1710,22 +1714,46 @@
           "descriptionDescription": "This description will help other users understand the purpose and scope of the category."
         },
         "requirementsTab": {
-          "title": "Requirements",
+          "header": {
+            "title": "Requirements",
+            "description": "These requirements are documents that are needed before the request can be processed."
+          },
+          "blockedTitle": "Requirements used in subcategories",
+          "blockedLabel": "requirements",
+          "inheritedTitle": "Requirements inherited from upper categories",
+          "title": "Selectable Requirements",
           "empty": "No requirements selected",
-          "addTitle": "Add Requirements"
+          "addTitle": "Add Requirements",
+          "removeTitle": "Remove requirement"
         },
         "formsTab": {
-          "title": "Forms",
+          "header": {
+            "title": "Associated Forms",
+            "description": "These forms are used to collect information from the user before the request can be processed."
+          },
+          "blockedTitle": "Forms used in subcategories",
+          "blockedLabel": "forms",
+          "inheritedTitle": "Forms inherited from upper categories",
+          "title": "Selectable Forms",
           "empty": "No forms selected",
-          "addTitle": "Add Forms"
+          "addTitle": "Add Forms",
+          "removeTitle": "Remove Form"
         },
         "slaTab": {
+          "header": {
+            "title": "Service Level Agreement (SLA)",
+            "description": "The SLA is used to track the performance of the request type and ensure that it meets the agreed-upon service levels."
+          },
           "resolutionTime": "Resolution Time (hours)",
           "resolutionDescription": "Maximum time to resolve requests in this category",
           "escalationTime": "Escalation Time (hours)",
           "escalationDescription": "Time before the request is escalated"
         },
         "guidesTab": {
+          "header": {
+            "title": "User Guides",
+            "description": "The User Guides provide detailed instructions on how to resolve the request type."
+          },
           "guidesTitle": "Guides and Documentation",
           "guidesDescription": "Manage related guides and documents",
           "addGuide": "Add Guide",
@@ -1767,6 +1795,16 @@
           "success": "Cambios guardados con éxito",
           "error": "Error al guardar los cambios: {error}",
           "executionLoading": "Saving execution flow..."
+        },
+        "blockedResourcesInfo": {
+          "blockedTitle": "{title}",
+          "blockedDescription": "Blocked requirements",
+          "blockedAlert": "{count} {label} are assigned in subcategories. By selecting these resources here, they will be removed from subcategories and all lower levels will inherit them automatically.",
+          "promoteTitle": "Promote to this level",
+          "promoteAriaLabel": "Promote {label} to this level",
+          "inheritedTitle": "{title}",
+          "inheritedDescription": "Automatically preselected",
+          "inheritedAlert": "These resources cannot be modified here. They are automatically inherited from the upper level."
         },
         "manageTitle": "Manage Request Categories",
         "manageDescription": "Select a category from the sidebar to edit or click \\\"Add New\\\" to create a new category.",
