@@ -508,7 +508,7 @@ export default function ReportsPage() {
                   <div className="h-[300px]">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
-                        <Pie data={areaData} cx="50%" cy="50%" outerRadius={100} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+                        <Pie data={areaData} cx="50%" cy="50%" outerRadius={100} dataKey="value" label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}>
                           {areaData.map((entry, index) => {
                             const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
                             return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />;
@@ -599,7 +599,7 @@ export default function ReportsPage() {
                 <div className="h-[400px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
-                      <Pie data={statusData} cx="50%" cy="50%" outerRadius={150} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+                      <Pie data={statusData} cx="50%" cy="50%" outerRadius={150} dataKey="value" label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}>
                         {statusData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
@@ -661,7 +661,7 @@ export default function ReportsPage() {
                   <div className="h-[400px]">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
-                        <Pie data={getWorkflowStates()} cx="50%" cy="50%" outerRadius={150} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+                        <Pie data={getWorkflowStates()} cx="50%" cy="50%" outerRadius={150} dataKey="value" label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}>
                           {getWorkflowStates().map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
                           ))}

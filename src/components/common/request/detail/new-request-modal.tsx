@@ -117,7 +117,11 @@ export function NewRequestModal({ isOpen, onClose }: NewRequestModalProps) {
                   <div className="ml-3">
                     <h3 className="text-sm font-medium text-yellow-800">Requisitos para este departamento</h3>
                     <div className="mt-2 text-sm text-yellow-700">
-                      <ul className="list-disc pl-5 space-y-1">{areaRequirements[selectedArea]?.map((requirement, index) => <li key={index}>{requirement}</li>)}</ul>
+                      <ul className="list-disc pl-5 space-y-1">
+                        {areaRequirements[selectedArea]?.map((requirement, index) => (
+                          <li key={index}>{requirement}</li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
                 </div>

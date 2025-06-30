@@ -2,7 +2,7 @@
 
 import type * as React from 'react';
 import { Bell, Home, Settings, User } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, type Transition, type Variants } from 'motion/react';
 import { useTheme } from 'next-themes';
 
 interface MenuItem {
@@ -44,40 +44,40 @@ const menuItems: MenuItem[] = [
   },
 ];
 
-const itemVariants = {
+const itemVariants: Variants = {
   initial: { rotateX: 0, opacity: 1 },
   hover: { rotateX: -90, opacity: 0 },
 };
 
-const backVariants = {
+const backVariants: Variants = {
   initial: { rotateX: 90, opacity: 0 },
   hover: { rotateX: 0, opacity: 1 },
 };
 
-const glowVariants = {
+const glowVariants: Variants = {
   initial: { opacity: 0, scale: 0.8 },
   hover: {
     opacity: 1,
     scale: 2,
     transition: {
-      opacity: { duration: 0.5, ease: [0.4, 0, 0.2, 1] },
+      opacity: { duration: 0.5, ease: 'easeInOut' },
       scale: { duration: 0.5, type: 'spring', stiffness: 300, damping: 25 },
     },
   },
 };
 
-const navGlowVariants = {
+const navGlowVariants: Variants = {
   initial: { opacity: 0 },
   hover: {
     opacity: 1,
     transition: {
       duration: 0.5,
-      ease: [0.4, 0, 0.2, 1],
+      ease: 'easeInOut',
     },
   },
 };
 
-const sharedTransition = {
+const sharedTransition: Transition = {
   type: 'spring',
   stiffness: 100,
   damping: 20,

@@ -234,7 +234,9 @@ export function FileUploader(props: FileUploaderProps) {
       {files?.length ? (
         <ScrollArea className="flex-1 px-3">
           <div className="flex max-h-48 flex-col gap-4">
-            {files?.map((file, index) => <FileCard key={index} removeText={t('removeFile')} file={file} onRemove={() => onRemove(index)} progress={progresses?.[file.name]} />)}
+            {files?.map((file, index) => (
+              <FileCard key={index} removeText={t('removeFile')} file={file} onRemove={() => onRemove(index)} progress={progresses?.[file.name]} />
+            ))}
           </div>
         </ScrollArea>
       ) : null}

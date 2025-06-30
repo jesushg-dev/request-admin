@@ -1,6 +1,6 @@
 import { FormHTMLAttributes, ReactNode } from 'react';
 import { AlertCircle, CheckCircle2, LoaderCircleIcon } from 'lucide-react';
-import { AnimatePresence, AnimationProps, motion } from 'motion/react';
+import { AnimatePresence, motion, type TargetAndTransition, type Transition } from 'motion/react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -63,6 +63,13 @@ export const FormValidationStatus = ({ isValid, validText, invalidText }: { isVa
     <span>{isValid ? validText : invalidText}</span>
   </div>
 );
+
+type AnimationProps = {
+  initial: TargetAndTransition;
+  animate: TargetAndTransition;
+  exit: TargetAndTransition;
+  transition?: Transition;
+};
 
 type AnimatedVisibilityProps = {
   isVisible: boolean;

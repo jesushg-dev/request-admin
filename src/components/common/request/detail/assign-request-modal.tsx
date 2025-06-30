@@ -138,7 +138,11 @@ export function AssignRequestModal({ enableAssignmentChange, isAssignModalOpen, 
                     <Layers className="h-4 w-4" />
                   </AvatarFallback>
                 </Avatar>
-                <div className="space-y-1 flex-1">{defaultAssignedUsers?.map((u) => <UserItem key={u.user.value} user={u.user} isCoordinator={u.isCoordinator} t={t} />)}</div>
+                <div className="space-y-1 flex-1">
+                  {defaultAssignedUsers?.map((u) => (
+                    <UserItem key={u.user.value} user={u.user} isCoordinator={u.isCoordinator} t={t} />
+                  ))}
+                </div>
               </div>
             </HoverCardContent>
           </HoverCard>

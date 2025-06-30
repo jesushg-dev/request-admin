@@ -2,9 +2,16 @@
 
 import { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { AnimatePresence, AnimationProps, motion } from 'motion/react';
+import { AnimatePresence, motion, type TargetAndTransition, type Transition } from 'motion/react';
 
 import { cn } from '@/lib/utils';
+
+type AnimationProps = {
+  initial: TargetAndTransition;
+  animate: TargetAndTransition;
+  exit: TargetAndTransition;
+  transition?: Transition;
+};
 
 // Section component with collapsible functionality
 interface AccordionSectionProps {

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { AlertTriangle, ArrowDown, InfoIcon } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, type Variants } from 'motion/react';
 import { useTranslations } from 'next-intl';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -226,7 +226,7 @@ export function BlockedResourcesInfo({
 }
 
 // Animation variants for the components
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
@@ -238,7 +238,7 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, x: -10 },
   visible: {
     opacity: 1,
@@ -247,7 +247,7 @@ const itemVariants = {
   },
 };
 
-const badgeVariants = {
+const badgeVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -255,7 +255,7 @@ const badgeVariants = {
   },
 };
 
-const buttonVariants = {
+const buttonVariants: Variants = {
   hover: {
     scale: 1.1,
     transition: { duration: 0.2 },
@@ -266,7 +266,7 @@ const buttonVariants = {
   },
 };
 
-const collapseVariants = {
+const collapseVariants: Variants = {
   open: {
     opacity: 1,
     height: 'auto',
