@@ -1,8 +1,8 @@
 'use client';
 
 import { useTransition } from 'react';
+import { CreateRequestPriorityType, UpdateRequestPriorityType } from '@/actions/priority';
 import { useRouter } from '@/i18n/routing';
-import { useUpsertRequestPriorityType } from '@/services/api/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Tag } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -51,7 +51,6 @@ export default function PriorityForm({ tenantId, initialValues }: RequestPriorit
   const t = useTranslations('admin.requestPriorityType.form');
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const { mutateAsync: upsert, error } = useUpsertRequestPriorityType();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -60,43 +59,38 @@ export default function PriorityForm({ tenantId, initialValues }: RequestPriorit
 
   const onSubmit = (values: RequestPriorityTypeFormValues) => {
     startTransition(async () => {
-      const promise = upsert({
-        create: {
-          tenantId,
+      try {
+        const formData = {
           name: values.name,
           primaryColor: values.primaryColor,
           description: values.description,
           level: values.level,
           isActive: values.isActive,
-          //isDefault: values.isDefault,
-        },
-        update: {
-          tenantId,
-          name: values.name,
-          primaryColor: values.primaryColor,
-          description: values.description,
-          level: values.level,
-          isActive: values.isActive,
-          //isDefault: values.isDefault,
-        },
-        where: { id: values.id },
-      });
+        };
 
-      toast.promise(promise, {
-        loading: t('savingChanges'),
-        success: (response) => {
-          router.push({ pathname: '/admin/[tenantId]/configurations/priorities', params: { tenantId } });
-          return t('successSave', { name: response?.name ?? '-' });
-        },
-        error: (err) => t('errorSave', { message: err.message }),
-      });
+        let result;
+
+        if (initialValues) {
+          // Update existing priority
+          result = await UpdateRequestPriorityType(values.id, formData, tenantId);
+        } else {
+          // Create new priority
+          result = await CreateRequestPriorityType(formData, tenantId);
+        }
+
+        toast.success(t('successSave', { name: result?.name ?? '-' }));
+        router.push({ pathname: '/admin/[tenantId]/configurations/priorities', params: { tenantId } });
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+        toast.error(t('errorSave', { message: errorMessage }));
+      }
     });
   };
 
   return (
     <Form {...form}>
       <FormRoot onSubmit={form.handleSubmit(onSubmit)}>
-        <FormContent error={error}>
+        <FormContent>
           <FormSection>
             <div className="flex gap-1">
               {/* Name field */}

@@ -1,7 +1,7 @@
 import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-client';
 
-import { getRequestPriorityTypeAsFormById, getRequestPriorityTypesAsOptions } from '../priority';
+import { CreateRequestPriorityType, getRequestPriorityTypeAsFormById, getRequestPriorityTypesAsOptions, UpdateRequestPriorityType } from '../priority';
 
 // Mock the dependencies
 jest.mock('@/server/auth-server', () => ({
@@ -13,6 +13,9 @@ jest.mock('@/server/db-client', () => ({
     requestPriorityType: {
       findMany: jest.fn(),
       findFirstOrThrow: jest.fn(),
+      findFirst: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
     },
   },
 }));
@@ -111,6 +114,169 @@ describe('Priority Actions', () => {
       const result = await getRequestPriorityTypeAsFormById(mockPriorityId, mockTenantId);
 
       expect(result.description).toBe('');
+    });
+  });
+
+  describe('CreateRequestPriorityType', () => {
+    const validData = {
+      name: 'High Priority',
+      primaryColor: '#FF0000',
+      description: 'Urgent matters',
+      level: 1,
+      isActive: true,
+    };
+
+    it('should throw error when user is not found', async () => {
+      (currentSession as jest.Mock).mockResolvedValue(null);
+
+      await expect(CreateRequestPriorityType(validData, mockTenantId)).rejects.toThrow('User not found');
+    });
+
+    it('should create priority type successfully', async () => {
+      const mockCreatedPriority = {
+        id: 'new-priority-1',
+        ...validData,
+        tenantId: mockTenantId,
+        createdBy: mockSession.user.id,
+      };
+
+      (db.requestPriorityType.findFirst as jest.Mock).mockResolvedValue(null);
+      (db.requestPriorityType.create as jest.Mock).mockResolvedValue(mockCreatedPriority);
+
+      const result = await CreateRequestPriorityType(validData, mockTenantId);
+
+      expect(result).toEqual(mockCreatedPriority);
+      expect(db.requestPriorityType.findFirst).toHaveBeenCalledWith({
+        where: { name: validData.name, tenantId: mockTenantId },
+      });
+      expect(db.requestPriorityType.create).toHaveBeenCalledWith({
+        data: {
+          ...validData,
+          description: validData.description,
+          level: validData.level,
+          isActive: validData.isActive,
+          tenantId: mockTenantId,
+          createdBy: mockSession.user.id,
+        },
+      });
+    });
+
+    it('should throw error when name already exists', async () => {
+      (db.requestPriorityType.findFirst as jest.Mock).mockResolvedValue({ id: 'existing-priority' });
+
+      await expect(CreateRequestPriorityType(validData, mockTenantId)).rejects.toThrow('A priority type with this name already exists');
+    });
+
+    it('should throw error when name is missing', async () => {
+      const invalidData = { ...validData, name: '' };
+
+      await expect(CreateRequestPriorityType(invalidData, mockTenantId)).rejects.toThrow('Name and color are required');
+    });
+
+    it('should throw error when color is missing', async () => {
+      const invalidData = { ...validData, primaryColor: '' };
+
+      await expect(CreateRequestPriorityType(invalidData, mockTenantId)).rejects.toThrow('Name and color are required');
+    });
+
+    it('should handle empty description', async () => {
+      const dataWithEmptyDescription = { ...validData, description: '' };
+      const mockCreatedPriority = {
+        id: 'new-priority-1',
+        ...dataWithEmptyDescription,
+        tenantId: mockTenantId,
+        createdBy: mockSession.user.id,
+      };
+
+      (db.requestPriorityType.findFirst as jest.Mock).mockResolvedValue(null);
+      (db.requestPriorityType.create as jest.Mock).mockResolvedValue(mockCreatedPriority);
+
+      await CreateRequestPriorityType(dataWithEmptyDescription, mockTenantId);
+
+      expect(db.requestPriorityType.create).toHaveBeenCalledWith({
+        data: {
+          ...dataWithEmptyDescription,
+          description: '',
+          level: dataWithEmptyDescription.level,
+          isActive: dataWithEmptyDescription.isActive,
+          tenantId: mockTenantId,
+          createdBy: mockSession.user.id,
+        },
+      });
+    });
+  });
+
+  describe('UpdateRequestPriorityType', () => {
+    const validData = {
+      name: 'Updated Priority',
+      primaryColor: '#00FF00',
+      description: 'Updated description',
+      level: 2,
+      isActive: false,
+    };
+
+    it('should throw error when user is not found', async () => {
+      (currentSession as jest.Mock).mockResolvedValue(null);
+
+      await expect(UpdateRequestPriorityType(mockPriorityId, validData, mockTenantId)).rejects.toThrow('User not found');
+    });
+
+    it('should update priority type successfully', async () => {
+      const mockExistingPriority = { id: mockPriorityId, name: 'Old Priority' };
+      const mockUpdatedPriority = {
+        id: mockPriorityId,
+        ...validData,
+        tenantId: mockTenantId,
+        updatedBy: mockSession.user.id,
+      };
+
+      (db.requestPriorityType.findFirst as jest.Mock)
+        .mockResolvedValueOnce(mockExistingPriority) // First call for existence check
+        .mockResolvedValueOnce(null); // Second call for duplicate name check
+      (db.requestPriorityType.update as jest.Mock).mockResolvedValue(mockUpdatedPriority);
+
+      const result = await UpdateRequestPriorityType(mockPriorityId, validData, mockTenantId);
+
+      expect(result).toEqual(mockUpdatedPriority);
+      expect(db.requestPriorityType.update).toHaveBeenCalledWith({
+        where: { id: mockPriorityId, tenantId: mockTenantId },
+        data: {
+          ...validData,
+          description: validData.description,
+          level: validData.level,
+          isActive: validData.isActive,
+          updatedBy: mockSession.user.id,
+        },
+      });
+    });
+
+    it('should throw error when priority type not found', async () => {
+      (db.requestPriorityType.findFirst as jest.Mock).mockResolvedValue(null);
+
+      await expect(UpdateRequestPriorityType(mockPriorityId, validData, mockTenantId)).rejects.toThrow('Priority type not found');
+    });
+
+    it('should throw error when name already exists for another priority', async () => {
+      const mockExistingPriority = { id: mockPriorityId, name: 'Old Priority' };
+      const mockDuplicatePriority = { id: 'other-priority', name: validData.name };
+
+      (db.requestPriorityType.findFirst as jest.Mock)
+        .mockResolvedValueOnce(mockExistingPriority) // First call for existence check
+        .mockResolvedValueOnce(mockDuplicatePriority); // Second call for duplicate name check
+
+      await expect(UpdateRequestPriorityType(mockPriorityId, validData, mockTenantId)).rejects.toThrow('A priority type with this name already exists');
+    });
+
+    it('should throw error when name is missing', async () => {
+      const invalidData = { ...validData, name: '' };
+
+      await expect(UpdateRequestPriorityType(mockPriorityId, invalidData, mockTenantId)).rejects.toThrow('Name and color are required');
+    });
+
+    it('should throw error when color is missing', async () => {
+      const invalidData = { ...validData, primaryColor: '' };
+
+      await expect(UpdateRequestPriorityType(mockPriorityId, invalidData, mockTenantId)).rejects.toThrow('Name and color are required');
     });
   });
 });

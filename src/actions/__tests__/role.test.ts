@@ -2,7 +2,7 @@
 import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-client';
 
-import { getRoleAsFormById } from '../role';
+import { CreateRole, getRoleAsFormById, UpdateRole } from '../role';
 
 // Mock external dependencies
 jest.mock('@/server/auth-server', () => ({
@@ -13,6 +13,13 @@ jest.mock('@/server/db-client', () => ({
   db: {
     role: {
       findMany: jest.fn(),
+      findFirst: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+    },
+    userTenantRole: {
+      create: jest.fn(),
+      deleteMany: jest.fn(),
     },
   },
 }));
@@ -56,6 +63,43 @@ describe('Role Actions', () => {
           user: {
             username: 'johndoe',
           },
+        },
+      },
+    ],
+  };
+
+  const mockRoleFormData = {
+    roles: [
+      {
+        id: 'role-1',
+        name: 'Test Role',
+        description: 'Test Description',
+        isActive: true,
+        features: [
+          {
+            id: 'feature-1',
+            moduleId: 'module-1',
+            moduleName: 'Test Module',
+            moduleDescription: 'Module Description',
+            featureId: 'feature-1',
+            featureName: 'Test Feature',
+            featureDescription: 'Feature Description',
+            isActive: true,
+          },
+        ],
+      },
+    ],
+    userRoles: [
+      {
+        id: 'user-role-1',
+        isActive: true,
+        userId: {
+          value: 'user-tenant-1',
+          label: 'John Doe @johndoe',
+        },
+        roleId: {
+          value: 'role-1',
+          label: 'Test Role',
         },
       },
     ],
@@ -213,6 +257,250 @@ describe('Role Actions', () => {
       const result = await getRoleAsFormById(mockRoleIds, mockTenantId);
 
       expect(result.userRoles[0].userId.label).toBe('johndoe');
+    });
+  });
+
+  describe('CreateRole', () => {
+    it('should throw error when user is not found', async () => {
+      (currentSession as jest.Mock).mockResolvedValue(null);
+
+      await expect(CreateRole(mockRoleFormData, mockTenantId)).rejects.toThrow('User not found');
+    });
+
+    it('should create roles successfully', async () => {
+      const mockCreatedRole = {
+        id: 'new-role-1',
+        name: 'Test Role',
+        description: 'Test Description',
+        isActive: true,
+        roleFeature: [
+          {
+            id: 'new-feature-1',
+            isActive: true,
+            feature: {
+              id: 'feature-1',
+              moduleId: 'module-1',
+              name: 'Test Feature',
+              module: {
+                name: 'Test Module',
+              },
+            },
+          },
+        ],
+      };
+
+      (db.role.findFirst as jest.Mock).mockResolvedValue(null);
+      (db.role.create as jest.Mock).mockResolvedValue(mockCreatedRole);
+      (db.userTenantRole.create as jest.Mock).mockResolvedValue({});
+
+      const result = await CreateRole(mockRoleFormData, mockTenantId);
+
+      expect(result).toEqual([mockCreatedRole]);
+      expect(db.role.create).toHaveBeenCalledWith({
+        data: {
+          name: mockRoleFormData.roles[0].name,
+          description: mockRoleFormData.roles[0].description,
+          isActive: mockRoleFormData.roles[0].isActive,
+          tenantId: mockTenantId,
+          createdBy: mockSession.user.id,
+          roleFeature: {
+            create: mockRoleFormData.roles[0].features.map((feature) => ({
+              tenantId: mockTenantId,
+              isActive: feature.isActive,
+              featureId: feature.featureId,
+              createdBy: mockSession.user.id,
+            })),
+          },
+        },
+        include: {
+          roleFeature: {
+            include: {
+              feature: {
+                include: {
+                  module: true,
+                },
+              },
+            },
+          },
+        },
+      });
+    });
+
+    it('should throw error when no roles provided', async () => {
+      const emptyData = { roles: [], userRoles: [] };
+
+      await expect(CreateRole(emptyData, mockTenantId)).rejects.toThrow('At least one role is required');
+    });
+
+    it('should throw error when role name is missing', async () => {
+      const invalidData = {
+        ...mockRoleFormData,
+        roles: [{ ...mockRoleFormData.roles[0], name: '' }],
+      };
+
+      await expect(CreateRole(invalidData, mockTenantId)).rejects.toThrow('Role name is required');
+    });
+
+    it('should throw error when role name already exists', async () => {
+      (db.role.findFirst as jest.Mock).mockResolvedValue({ id: 'existing-role' });
+
+      await expect(CreateRole(mockRoleFormData, mockTenantId)).rejects.toThrow('A role with the name "Test Role" already exists');
+    });
+
+    it('should handle user role assignments', async () => {
+      const mockCreatedRole = {
+        id: 'role-1',
+        name: 'Test Role',
+        roleFeature: [],
+      };
+
+      (db.role.findFirst as jest.Mock).mockResolvedValue(null);
+      (db.role.create as jest.Mock).mockResolvedValue(mockCreatedRole);
+      (db.userTenantRole.create as jest.Mock).mockResolvedValue({});
+
+      await CreateRole(mockRoleFormData, mockTenantId);
+
+      expect(db.userTenantRole.create).toHaveBeenCalledWith({
+        data: {
+          tenantId: mockTenantId,
+          isActive: mockRoleFormData.userRoles[0].isActive,
+          userTenantId: mockRoleFormData.userRoles[0].userId.value,
+          roleId: mockCreatedRole.id,
+          createdBy: mockSession.user.id,
+        },
+      });
+    });
+  });
+
+  describe('UpdateRole', () => {
+    it('should throw error when user is not found', async () => {
+      (currentSession as jest.Mock).mockResolvedValue(null);
+
+      await expect(UpdateRole(mockRoleFormData, mockTenantId)).rejects.toThrow('User not found');
+    });
+
+    it('should update roles successfully', async () => {
+      const mockUpdatedRole = {
+        id: 'role-1',
+        name: 'Updated Role',
+        description: 'Updated Description',
+        isActive: false,
+        roleFeature: [
+          {
+            id: 'updated-feature-1',
+            isActive: false,
+            feature: {
+              id: 'feature-1',
+              moduleId: 'module-1',
+              name: 'Updated Feature',
+              module: {
+                name: 'Updated Module',
+              },
+            },
+          },
+        ],
+      };
+
+      (db.role.findFirst as jest.Mock)
+        .mockResolvedValueOnce({ id: 'role-1', name: 'Old Role' }) // First call for existence check
+        .mockResolvedValueOnce(null); // Second call for duplicate name check
+      (db.role.update as jest.Mock).mockResolvedValue(mockUpdatedRole);
+      (db.userTenantRole.deleteMany as jest.Mock).mockResolvedValue({});
+      (db.userTenantRole.create as jest.Mock).mockResolvedValue({});
+
+      const result = await UpdateRole(mockRoleFormData, mockTenantId);
+
+      expect(result).toEqual([mockUpdatedRole]);
+      expect(db.role.update).toHaveBeenCalledWith({
+        where: { id: 'role-1', tenantId: mockTenantId },
+        data: {
+          name: mockRoleFormData.roles[0].name,
+          description: mockRoleFormData.roles[0].description,
+          isActive: mockRoleFormData.roles[0].isActive,
+          updatedBy: mockSession.user.id,
+          roleFeature: {
+            deleteMany: { tenantId: mockTenantId, roleId: 'role-1' },
+            create: mockRoleFormData.roles[0].features.map((feature) => ({
+              tenantId: mockTenantId,
+              isActive: feature.isActive,
+              featureId: feature.featureId,
+              createdBy: mockSession.user.id,
+            })),
+          },
+        },
+        include: {
+          roleFeature: {
+            include: {
+              feature: {
+                include: {
+                  module: true,
+                },
+              },
+            },
+          },
+        },
+      });
+    });
+
+    it('should throw error when no roles provided', async () => {
+      const emptyData = { roles: [], userRoles: [] };
+
+      await expect(UpdateRole(emptyData, mockTenantId)).rejects.toThrow('At least one role is required');
+    });
+
+    it('should throw error when role name is missing', async () => {
+      const invalidData = {
+        ...mockRoleFormData,
+        roles: [{ ...mockRoleFormData.roles[0], name: '' }],
+      };
+
+      await expect(UpdateRole(invalidData, mockTenantId)).rejects.toThrow('Role name is required');
+    });
+
+    it('should throw error when role not found', async () => {
+      (db.role.findFirst as jest.Mock).mockResolvedValue(null);
+
+      await expect(UpdateRole(mockRoleFormData, mockTenantId)).rejects.toThrow('Role with ID "role-1" not found');
+    });
+
+    it('should throw error when role name already exists for another role', async () => {
+      (db.role.findFirst as jest.Mock)
+        .mockResolvedValueOnce({ id: 'role-1', name: 'Old Role' }) // First call for existence check
+        .mockResolvedValueOnce({ id: 'other-role', name: 'Test Role' }); // Second call for duplicate name check
+
+      await expect(UpdateRole(mockRoleFormData, mockTenantId)).rejects.toThrow('A role with the name "Test Role" already exists');
+    });
+
+    it('should handle user role assignments update', async () => {
+      const mockUpdatedRole = {
+        id: 'role-1',
+        name: 'Test Role',
+        roleFeature: [],
+      };
+
+      (db.role.findFirst as jest.Mock).mockResolvedValueOnce({ id: 'role-1', name: 'Old Role' }).mockResolvedValueOnce(null);
+      (db.role.update as jest.Mock).mockResolvedValue(mockUpdatedRole);
+      (db.userTenantRole.deleteMany as jest.Mock).mockResolvedValue({});
+      (db.userTenantRole.create as jest.Mock).mockResolvedValue({});
+
+      await UpdateRole(mockRoleFormData, mockTenantId);
+
+      expect(db.userTenantRole.deleteMany).toHaveBeenCalledWith({
+        where: {
+          tenantId: mockTenantId,
+          roleId: { in: ['role-1'] },
+        },
+      });
+
+      expect(db.userTenantRole.create).toHaveBeenCalledWith({
+        data: {
+          tenantId: mockTenantId,
+          isActive: mockRoleFormData.userRoles[0].isActive,
+          userTenantId: mockRoleFormData.userRoles[0].userId.value,
+          roleId: mockUpdatedRole.id,
+          createdBy: mockSession.user.id,
+        },
+      });
     });
   });
 });

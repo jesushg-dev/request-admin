@@ -1,8 +1,8 @@
 'use client';
 
 import { useTransition } from 'react';
+import { CreateRequirementType, UpdateRequirementType } from '@/actions/requirementType';
 import { useRouter } from '@/i18n/routing';
-import { useUpsertRequirementType } from '@/services/api/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
@@ -46,7 +46,6 @@ export default function RequirementTypeForm({ tenantId, initialValues }: Require
   const t = useTranslations('admin.requirementType.form');
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const { mutateAsync: upsert, error } = useUpsertRequirementType();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -55,39 +54,36 @@ export default function RequirementTypeForm({ tenantId, initialValues }: Require
 
   const onSubmit = (values: RequirementTypeFormValues) => {
     startTransition(async () => {
-      const promise = upsert({
-        create: {
-          tenantId,
+      try {
+        const formData = {
           name: values.name,
           description: values.description,
           isActive: values.isActive,
-          //isDefault: values.isDefault,
-        },
-        update: {
-          tenantId,
-          name: values.name,
-          description: values.description,
-          isActive: values.isActive,
-          //isDefault: values.isDefault,
-        },
-        where: { id: values.id },
-      });
+        };
 
-      toast.promise(promise, {
-        loading: t('savingChanges'),
-        success: (response) => {
-          router.push({ pathname: '/admin/[tenantId]/configurations/priorities', params: { tenantId } });
-          return t('successSave', { name: response?.name ?? '-' });
-        },
-        error: (err) => t('errorSave', { message: err.message }),
-      });
+        let result;
+
+        if (initialValues) {
+          // Update existing requirement type
+          result = await UpdateRequirementType(values.id, formData, tenantId);
+        } else {
+          // Create new requirement type
+          result = await CreateRequirementType(formData, tenantId);
+        }
+
+        toast.success(t('successSave', { name: result?.name ?? '-' }));
+        router.push({ pathname: '/admin/[tenantId]/configurations/requirement-types', params: { tenantId } });
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+        toast.error(t('errorSave', { message: errorMessage }));
+      }
     });
   };
 
   return (
     <Form {...form}>
       <FormRoot onSubmit={form.handleSubmit(onSubmit)}>
-        <FormContent error={error}>
+        <FormContent>
           <FormSection>
             {/* Name field */}
             <FormField

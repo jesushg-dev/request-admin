@@ -2,7 +2,7 @@
 import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-client';
 
-import { getRequirementTypeAsFormById, getRequirementTypesAsOptions } from '../requirementType';
+import { CreateRequirementType, getRequirementTypeAsFormById, getRequirementTypesAsOptions, UpdateRequirementType } from '../requirementType';
 
 // Mock external dependencies
 jest.mock('@/server/auth-server', () => ({
@@ -14,6 +14,9 @@ jest.mock('@/server/db-client', () => ({
     requirementType: {
       findMany: jest.fn(),
       findFirstOrThrow: jest.fn(),
+      findFirst: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
     },
   },
 }));
@@ -97,6 +100,150 @@ describe('RequirementType Actions', () => {
       const result = await getRequirementTypeAsFormById('req-type-1', mockTenantId);
 
       expect(result.description).toBe('');
+    });
+  });
+
+  describe('CreateRequirementType', () => {
+    const validData = {
+      name: 'New Requirement Type',
+      description: 'New Description',
+      isActive: true,
+    };
+
+    it('should throw error when user is not found', async () => {
+      (currentSession as jest.Mock).mockResolvedValue(null);
+
+      await expect(CreateRequirementType(validData, mockTenantId)).rejects.toThrow('User not found');
+    });
+
+    it('should create requirement type successfully', async () => {
+      const mockCreatedRequirementType = {
+        id: 'new-req-type-1',
+        ...validData,
+        tenantId: mockTenantId,
+        createdBy: mockSession.user.id,
+      };
+
+      (db.requirementType.findFirst as jest.Mock).mockResolvedValue(null);
+      (db.requirementType.create as jest.Mock).mockResolvedValue(mockCreatedRequirementType);
+
+      const result = await CreateRequirementType(validData, mockTenantId);
+
+      expect(result).toEqual(mockCreatedRequirementType);
+      expect(db.requirementType.findFirst).toHaveBeenCalledWith({
+        where: { name: validData.name, tenantId: mockTenantId },
+      });
+      expect(db.requirementType.create).toHaveBeenCalledWith({
+        data: {
+          ...validData,
+          description: validData.description,
+          isActive: validData.isActive,
+          tenantId: mockTenantId,
+          createdBy: mockSession.user.id,
+        },
+      });
+    });
+
+    it('should throw error when name already exists', async () => {
+      (db.requirementType.findFirst as jest.Mock).mockResolvedValue({ id: 'existing-req-type' });
+
+      await expect(CreateRequirementType(validData, mockTenantId)).rejects.toThrow('A requirement type with this name already exists');
+    });
+
+    it('should throw error when name is missing', async () => {
+      const invalidData = { ...validData, name: '' };
+
+      await expect(CreateRequirementType(invalidData, mockTenantId)).rejects.toThrow('Name is required');
+    });
+
+    it('should handle empty description', async () => {
+      const dataWithEmptyDescription = { ...validData, description: '' };
+      const mockCreatedRequirementType = {
+        id: 'new-req-type-1',
+        ...dataWithEmptyDescription,
+        tenantId: mockTenantId,
+        createdBy: mockSession.user.id,
+      };
+
+      (db.requirementType.findFirst as jest.Mock).mockResolvedValue(null);
+      (db.requirementType.create as jest.Mock).mockResolvedValue(mockCreatedRequirementType);
+
+      await CreateRequirementType(dataWithEmptyDescription, mockTenantId);
+
+      expect(db.requirementType.create).toHaveBeenCalledWith({
+        data: {
+          ...dataWithEmptyDescription,
+          description: '',
+          isActive: dataWithEmptyDescription.isActive,
+          tenantId: mockTenantId,
+          createdBy: mockSession.user.id,
+        },
+      });
+    });
+  });
+
+  describe('UpdateRequirementType', () => {
+    const validData = {
+      name: 'Updated Requirement Type',
+      description: 'Updated Description',
+      isActive: false,
+    };
+
+    it('should throw error when user is not found', async () => {
+      (currentSession as jest.Mock).mockResolvedValue(null);
+
+      await expect(UpdateRequirementType('req-type-1', validData, mockTenantId)).rejects.toThrow('User not found');
+    });
+
+    it('should update requirement type successfully', async () => {
+      const mockExistingRequirementType = { id: 'req-type-1', name: 'Old Requirement Type' };
+      const mockUpdatedRequirementType = {
+        id: 'req-type-1',
+        ...validData,
+        tenantId: mockTenantId,
+        updatedBy: mockSession.user.id,
+      };
+
+      (db.requirementType.findFirst as jest.Mock)
+        .mockResolvedValueOnce(mockExistingRequirementType) // First call for existence check
+        .mockResolvedValueOnce(null); // Second call for duplicate name check
+      (db.requirementType.update as jest.Mock).mockResolvedValue(mockUpdatedRequirementType);
+
+      const result = await UpdateRequirementType('req-type-1', validData, mockTenantId);
+
+      expect(result).toEqual(mockUpdatedRequirementType);
+      expect(db.requirementType.update).toHaveBeenCalledWith({
+        where: { id: 'req-type-1', tenantId: mockTenantId },
+        data: {
+          ...validData,
+          description: validData.description,
+          isActive: validData.isActive,
+          updatedBy: mockSession.user.id,
+        },
+      });
+    });
+
+    it('should throw error when requirement type not found', async () => {
+      (db.requirementType.findFirst as jest.Mock).mockResolvedValue(null);
+
+      await expect(UpdateRequirementType('req-type-1', validData, mockTenantId)).rejects.toThrow('Requirement type not found');
+    });
+
+    it('should throw error when name already exists for another requirement type', async () => {
+      const mockExistingRequirementType = { id: 'req-type-1', name: 'Old Requirement Type' };
+      const mockDuplicateRequirementType = { id: 'other-req-type', name: validData.name };
+
+      (db.requirementType.findFirst as jest.Mock)
+        .mockResolvedValueOnce(mockExistingRequirementType) // First call for existence check
+        .mockResolvedValueOnce(mockDuplicateRequirementType); // Second call for duplicate name check
+
+      await expect(UpdateRequirementType('req-type-1', validData, mockTenantId)).rejects.toThrow('A requirement type with this name already exists');
+    });
+
+    it('should throw error when name is missing', async () => {
+      const invalidData = { ...validData, name: '' };
+
+      await expect(UpdateRequirementType('req-type-1', invalidData, mockTenantId)).rejects.toThrow('Name is required');
     });
   });
 });

@@ -36,3 +36,82 @@ export const getRequirementTypeAsFormById = async (id: string, tenantId: string)
     description: requirementType.description ?? '',
   };
 };
+
+export const CreateRequirementType = async (data: Omit<RequirementTypeFormValues, 'id' | 'isDefault'>, tenantId: string) => {
+  const session = await currentSession();
+  if (!session) throw new UserNotFoundErr('User not found');
+
+  const { name, description, isActive } = data;
+
+  // Validate required fields
+  if (!name) {
+    throw new Error('Name is required');
+  }
+
+  // Check if name already exists for this tenant
+  const existingRequirementType = await db.requirementType.findFirst({
+    where: { name, tenantId },
+  });
+
+  if (existingRequirementType) {
+    throw new Error('A requirement type with this name already exists');
+  }
+
+  const requirementType = await db.requirementType.create({
+    data: {
+      name,
+      description: description || '',
+      isActive: isActive ?? true,
+      tenantId,
+      createdBy: session.user.id,
+    },
+  });
+
+  return requirementType;
+};
+
+export const UpdateRequirementType = async (id: string, data: Omit<RequirementTypeFormValues, 'id' | 'isDefault'>, tenantId: string) => {
+  const session = await currentSession();
+  if (!session) throw new UserNotFoundErr('User not found');
+
+  const { name, description, isActive } = data;
+
+  // Validate required fields
+  if (!name) {
+    throw new Error('Name is required');
+  }
+
+  // Check if requirement type exists and belongs to tenant
+  const existingRequirementType = await db.requirementType.findFirst({
+    where: { id, tenantId },
+  });
+
+  if (!existingRequirementType) {
+    throw new Error('Requirement type not found');
+  }
+
+  // Check if name already exists for this tenant (excluding current requirement type)
+  const duplicateName = await db.requirementType.findFirst({
+    where: {
+      name,
+      tenantId,
+      id: { not: id },
+    },
+  });
+
+  if (duplicateName) {
+    throw new Error('A requirement type with this name already exists');
+  }
+
+  const requirementType = await db.requirementType.update({
+    where: { id, tenantId },
+    data: {
+      name,
+      description: description || '',
+      isActive: isActive ?? true,
+      updatedBy: session.user.id,
+    },
+  });
+
+  return requirementType;
+};

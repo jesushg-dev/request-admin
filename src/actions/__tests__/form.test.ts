@@ -1,5 +1,5 @@
 // __tests__/formActions.test.ts
-import { CreateForm, GetFormById, getFormsAsOptions, GetFormStats, SubmitForm } from '@/actions/form';
+import { CreateForm, GetFormById, GetFormContentById, GetFormContentByUrl, GetForms, getFormsAsOptions, GetFormStats, PublishForm, SubmitForm, UpdateFormContent } from '@/actions/form';
 import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-server';
 import { formSchemaType } from '@/services/schemas/form';
@@ -254,4 +254,174 @@ describe('SubmitForm', () => {
   });
 });
 
-// Add similar test suites for other functions (PublishForm, GetFormContentByUrl, etc.)
+describe('GetForms', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (currentSession as jest.Mock).mockResolvedValue(mockSession);
+  });
+
+  test('should retrieve all forms for tenant', async () => {
+    const mockForms = [
+      { id: 'form-1', name: 'Form 1', createdAt: new Date('2023-01-01') },
+      { id: 'form-2', name: 'Form 2', createdAt: new Date('2023-01-02') },
+    ];
+    (db.form.findMany as jest.Mock).mockResolvedValueOnce(mockForms);
+
+    const result = await GetForms('tenant-123');
+
+    expect(result).toEqual(mockForms);
+    expect(db.form.findMany).toHaveBeenCalledWith({
+      where: { tenantId: 'tenant-123' },
+      orderBy: { createdAt: 'desc' },
+    });
+  });
+
+  test('should return empty array when no forms exist', async () => {
+    (db.form.findMany as jest.Mock).mockResolvedValueOnce([]);
+
+    const result = await GetForms('tenant-123');
+    expect(result).toEqual([]);
+  });
+
+  test('should throw error when database query fails', async () => {
+    const dbError = new Error('Database connection failed');
+    (db.form.findMany as jest.Mock).mockRejectedValueOnce(dbError);
+
+    await expect(GetForms('tenant-123')).rejects.toThrow('Database connection failed');
+  });
+});
+
+describe('UpdateFormContent', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (currentSession as jest.Mock).mockResolvedValue(mockSession);
+  });
+
+  test('should update form content successfully', async () => {
+    const jsonContent = '{"fields": [{"type": "text", "label": "Name"}]}';
+    const mockUpdatedForm = { id: 'form-123', content: jsonContent };
+    (db.form.update as jest.Mock).mockResolvedValueOnce(mockUpdatedForm);
+
+    const result = await UpdateFormContent('form-123', jsonContent);
+
+    expect(result).toEqual(mockUpdatedForm);
+    expect(db.form.update).toHaveBeenCalledWith({
+      where: { id: 'form-123' },
+      data: { content: jsonContent },
+    });
+  });
+
+  test('should throw error when database update fails', async () => {
+    const jsonContent = '{"fields": []}';
+    const dbError = new Error('Update failed');
+    (db.form.update as jest.Mock).mockRejectedValueOnce(dbError);
+
+    await expect(UpdateFormContent('form-123', jsonContent)).rejects.toThrow('Update failed');
+  });
+});
+
+describe('PublishForm', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (currentSession as jest.Mock).mockResolvedValue(mockSession);
+  });
+
+  test('should publish form successfully', async () => {
+    const mockPublishedForm = { id: 'form-123', published: true };
+    (db.form.update as jest.Mock).mockResolvedValueOnce(mockPublishedForm);
+
+    const result = await PublishForm('form-123', 'tenant-123');
+
+    expect(result).toEqual(mockPublishedForm);
+    expect(db.form.update).toHaveBeenCalledWith({
+      data: { published: true },
+      where: { tenantId: 'tenant-123', id: 'form-123' },
+    });
+  });
+
+  test('should throw error when database update fails', async () => {
+    const dbError = new Error('Publish failed');
+    (db.form.update as jest.Mock).mockRejectedValueOnce(dbError);
+
+    await expect(PublishForm('form-123', 'tenant-123')).rejects.toThrow('Publish failed');
+  });
+});
+
+describe('GetFormContentByUrl', () => {
+  test('should retrieve form content by URL and increment visits', async () => {
+    const mockForm = {
+      id: 'form-123',
+      name: 'Test Form',
+      content: '{"fields": []}',
+    };
+    (db.form.update as jest.Mock).mockResolvedValueOnce(mockForm);
+
+    const result = await GetFormContentByUrl('test-form-url', 'tenant-123');
+
+    expect(result).toEqual(mockForm);
+    expect(db.form.update).toHaveBeenCalledWith({
+      select: { id: true, name: true, content: true },
+      data: { visits: { increment: 1 } },
+      where: {
+        tenantId: 'tenant-123',
+        shareURL: 'test-form-url',
+        published: true,
+        isPublic: true,
+      },
+    });
+  });
+
+  test('should return null when form not found by URL', async () => {
+    (db.form.update as jest.Mock).mockResolvedValueOnce(null);
+
+    const result = await GetFormContentByUrl('non-existent-url', 'tenant-123');
+    expect(result).toBeNull();
+  });
+
+  test('should throw error when database query fails', async () => {
+    const dbError = new Error('Database error');
+    (db.form.update as jest.Mock).mockRejectedValueOnce(dbError);
+
+    await expect(GetFormContentByUrl('test-url', 'tenant-123')).rejects.toThrow('Database error');
+  });
+});
+
+describe('GetFormContentById', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (currentSession as jest.Mock).mockResolvedValue(mockSession);
+  });
+
+  test('should retrieve form content by ID and increment visits', async () => {
+    const mockForm = {
+      id: 'form-123',
+      name: 'Test Form',
+      description: 'Test Description',
+      content: '{"fields": []}',
+    };
+    (db.form.update as jest.Mock).mockResolvedValueOnce(mockForm);
+
+    const result = await GetFormContentById('form-123', 'tenant-123');
+
+    expect(result).toEqual(mockForm);
+    expect(db.form.update).toHaveBeenCalledWith({
+      select: { id: true, name: true, description: true, content: true },
+      data: { visits: { increment: 1 } },
+      where: { tenantId: 'tenant-123', id: 'form-123', published: true },
+    });
+  });
+
+  test('should return null when form not found by ID', async () => {
+    (db.form.update as jest.Mock).mockResolvedValueOnce(null);
+
+    const result = await GetFormContentById('non-existent-id', 'tenant-123');
+    expect(result).toBeNull();
+  });
+
+  test('should throw error when database query fails', async () => {
+    const dbError = new Error('Database error');
+    (db.form.update as jest.Mock).mockRejectedValueOnce(dbError);
+
+    await expect(GetFormContentById('form-123', 'tenant-123')).rejects.toThrow('Database error');
+  });
+});

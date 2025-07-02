@@ -38,3 +38,86 @@ export const getRequestPriorityTypeAsFormById = async (id: string, tenantId: str
     description: priority.description ?? '',
   };
 };
+
+export const CreateRequestPriorityType = async (data: Omit<RequestPriorityTypeFormValues, 'id' | 'isDefault'>, tenantId: string) => {
+  const session = await currentSession();
+  if (!session) throw new UserNotFoundErr('User not found');
+
+  const { name, description, primaryColor, level, isActive } = data;
+
+  // Validate required fields
+  if (!name || !primaryColor) {
+    throw new Error('Name and color are required');
+  }
+
+  // Check if name already exists for this tenant
+  const existingPriority = await db.requestPriorityType.findFirst({
+    where: { name, tenantId },
+  });
+
+  if (existingPriority) {
+    throw new Error('A priority type with this name already exists');
+  }
+
+  const priority = await db.requestPriorityType.create({
+    data: {
+      name,
+      description: description || '',
+      primaryColor,
+      level: level || 0,
+      isActive: isActive ?? true,
+      tenantId,
+      createdBy: session.user.id,
+    },
+  });
+
+  return priority;
+};
+
+export const UpdateRequestPriorityType = async (id: string, data: Omit<RequestPriorityTypeFormValues, 'id' | 'isDefault'>, tenantId: string) => {
+  const session = await currentSession();
+  if (!session) throw new UserNotFoundErr('User not found');
+
+  const { name, description, primaryColor, level, isActive } = data;
+
+  // Validate required fields
+  if (!name || !primaryColor) {
+    throw new Error('Name and color are required');
+  }
+
+  // Check if priority exists and belongs to tenant
+  const existingPriority = await db.requestPriorityType.findFirst({
+    where: { id, tenantId },
+  });
+
+  if (!existingPriority) {
+    throw new Error('Priority type not found');
+  }
+
+  // Check if name already exists for this tenant (excluding current priority)
+  const duplicateName = await db.requestPriorityType.findFirst({
+    where: {
+      name,
+      tenantId,
+      id: { not: id },
+    },
+  });
+
+  if (duplicateName) {
+    throw new Error('A priority type with this name already exists');
+  }
+
+  const priority = await db.requestPriorityType.update({
+    where: { id, tenantId },
+    data: {
+      name,
+      description: description || '',
+      primaryColor,
+      level: level || 0,
+      isActive: isActive ?? true,
+      updatedBy: session.user.id,
+    },
+  });
+
+  return priority;
+};

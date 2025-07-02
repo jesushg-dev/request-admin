@@ -37,6 +37,7 @@ describe('Dashboard Actions', () => {
         { date: '2024-01-01', count: 5 },
         { date: '2024-01-02', count: 3 },
       ]);
+
       expect(db.requestAssignment.groupBy).toHaveBeenCalledWith({
         by: ['createdAt'],
         where: {
@@ -103,13 +104,7 @@ describe('Dashboard Actions', () => {
 
       const result = await getDashboardAssignmentTrends(mockTenantId, '7d');
 
-      expect(result).toEqual([
-        {
-          date: '2024-01-01',
-          user: 3,
-          area: 2,
-        },
-      ]);
+      expect(result).toEqual([{ date: '2024-01-01', user: 3, area: 2 }]);
     });
 
     it('should use default 90 days when no time range is specified', async () => {

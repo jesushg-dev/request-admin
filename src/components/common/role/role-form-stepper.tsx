@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useTransition, type FC } from 'react';
+import { CreateRole, UpdateRole } from '@/actions/role';
 import { useRouter } from '@/i18n/routing';
-import { useUpsertRole } from '@/services/api/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { defineStepper } from '@stepperize/react';
 import { useTranslations } from 'next-intl';
@@ -15,7 +15,6 @@ import { RequirementOptionType } from '@/types/prisma/requirement';
 import { Form } from '@/components/ui/form';
 import UserRoleAssignmentForm, { userRoleAssignmentFormSchema } from '@/components/common/role/user-role-assignment-form';
 import { OptionType } from '@/components/custom-ui/select';
-import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
 import { StepNavigationModern } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 
@@ -42,7 +41,6 @@ const RoleFormStepper: FC<RoleFormStepperProps> = ({ tenantId, userOptions, modu
   const router = useRouter();
   const stepper = useStepper();
   const [isPending, startTransition] = useTransition();
-  const { mutateAsync: upsert, error } = useUpsertRole();
   const t = useTranslations('component.rolesForm');
 
   const [roles, setRoles] = useState<OptionType[]>([]);
@@ -65,53 +63,26 @@ const RoleFormStepper: FC<RoleFormStepperProps> = ({ tenantId, userOptions, modu
     }
 
     startTransition(async () => {
-      const data = form.getValues() as RoleFormStepperType;
+      try {
+        const data = form.getValues() as RoleFormStepperType;
 
-      const promises = Promise.all(
-        data.roles.map((role) => {
-          const userRole = data.userRoles.filter((item) => item.roleId.value === role.id);
+        let result;
 
-          return upsert({
-            update: {
-              tenantId,
-              name: role.name,
-              description: role.description,
-              isActive: role.isActive,
-              userRole: {
-                deleteMany: { tenantId, roleId: role.id },
-                create: userRole.map((item) => ({ tenantId, id: item.id, isActive: item.isActive, userTenantId: item.userId.value })),
-              },
-              roleFeature: {
-                deleteMany: { tenantId, roleId: role.id },
-                create: role.features.map((feature) => ({ tenantId, id: feature.id, isActive: feature.isActive, featureId: feature.featureId })),
-              },
-            },
-            create: {
-              tenantId,
-              name: role.name,
-              description: role.description,
-              isActive: role.isActive,
-              userRole: {
-                create: userRole.map((item) => ({ tenantId, isActive: item.isActive, userTenantId: item.userId.value })),
-              },
-              roleFeature: {
-                create: role.features.map((feature) => ({ tenantId, isActive: feature.isActive, featureId: feature.featureId })),
-              },
-            },
-            where: { tenantId, id: role.id },
-          });
-        })
-      );
+        if (initialValues) {
+          // Update existing roles
+          result = await UpdateRole(data, tenantId);
+        } else {
+          // Create new roles
+          result = await CreateRole(data, tenantId);
+        }
 
-      toast.promise(promises, {
-        loading: t('messages.saving'),
-        success: (responses) => {
-          const names = responses.map((r) => r?.name).join(', ');
-          router.push({ pathname: '/admin/[tenantId]/security/roles', params: { tenantId } });
-          return t('messages.success', { names, count: responses.length });
-        },
-        error: (error) => t('messages.error', { error: error.message }),
-      });
+        const names = result.map((r) => r?.name).join(', ');
+        toast.success(t('messages.success', { names, count: result.length }));
+        router.push({ pathname: '/admin/[tenantId]/security/roles', params: { tenantId } });
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+        toast.error(t('messages.error', { error: errorMessage }));
+      }
     });
   };
 
@@ -120,7 +91,6 @@ const RoleFormStepper: FC<RoleFormStepperProps> = ({ tenantId, userOptions, modu
       <StepNavigationModern t={t as typeof t & ((key: string) => string)} steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between gap-4 overflow-hidden">
-          {error && <PrismaErrorAlert error={error} />}
           {stepper.switch({
             role: () => <RoleForm moduleWithFeatures={moduleWithFeatures} />,
             user: () => <UserRoleAssignmentForm userOptions={userOptions} roleOptions={roles} />,
