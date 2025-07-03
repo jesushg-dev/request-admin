@@ -3132,37 +3132,67 @@
         "firstSteps": {
           "title": "Getting Started",
           "description": "Learn the basics to start using the system",
-          "links": ["System Introduction", "Create your first request", "Dashboard navigation", "Configure your profile"],
+          "links": [
+            "System Introduction",
+            "Create your first request",
+            "Dashboard navigation",
+            "Configure your profile"
+          ],
           "viewAll": "View all basic guides"
         },
         "requestManagement": {
           "title": "Request Management",
           "description": "Learn to manage requests efficiently",
-          "links": ["Request statuses", "Request assignment", "Priority changes", "Comments and tracking"],
+          "links": [
+            "Request statuses",
+            "Request assignment",
+            "Priority changes",
+            "Comments and tracking"
+          ],
           "viewAll": "View all management guides"
         },
         "communication": {
           "title": "Communication",
           "description": "Learn to communicate effectively in the system",
-          "links": ["Messaging system", "Notifications and alerts", "Mentions and tags", "File sharing"],
+          "links": [
+            "Messaging system",
+            "Notifications and alerts",
+            "Mentions and tags",
+            "File sharing"
+          ],
           "viewAll": "View all communication guides"
         },
         "reports": {
           "title": "Reports and Analytics",
           "description": "Learn to use the analysis tools",
-          "links": ["Report generation", "Metrics analysis", "Data export", "Custom dashboards"],
+          "links": [
+            "Report generation",
+            "Metrics analysis",
+            "Data export",
+            "Custom dashboards"
+          ],
           "viewAll": "View all reports guides"
         },
         "administration": {
           "title": "Administration",
           "description": "Guides for system administrators",
-          "links": ["User management", "Workflow configuration", "System customization", "Security and permissions"],
+          "links": [
+            "User management",
+            "Workflow configuration",
+            "System customization",
+            "Security and permissions"
+          ],
           "viewAll": "View all administration guides"
         },
         "workflows": {
           "title": "Workflows",
           "description": "Learn to configure and use workflows",
-          "links": ["Creating custom workflows", "State transition rules", "Process automation", "Workflow templates"],
+          "links": [
+            "Creating custom workflows",
+            "State transition rules",
+            "Process automation",
+            "Workflow templates"
+          ],
           "viewAll": "View all workflow guides"
         }
       },
@@ -3371,7 +3401,8 @@
       "saveError": "Something went wrong",
       "dragDropElements": "Drag and drop elements",
       "formElements": "Form elements",
-      "layoutElements": "Layout elements"
+      "layoutElements": "Layout elements",
+      "savingChanges": "Saving form..."
     },
     "rolesForm": {
       "header": {
