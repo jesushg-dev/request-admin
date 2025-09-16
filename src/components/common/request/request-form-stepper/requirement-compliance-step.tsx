@@ -88,7 +88,11 @@ const RequirementComplianceStep: FC<RequirementComplianceStepProps> = ({ request
   }, [requirements, currentRequirements, setValue]);
 
   const handleSelectAll = () => {
-    const allSelected = Object.values(currentRequirements).every(Boolean);
+    // Fix: Check if we have requirements and if all of them are selected
+    // Only consider requirements that exist in the current list
+    const allSelected = requirementIds.length > 0 && 
+      requirementIds.every(id => currentRequirements[id] === true);
+    
     const newValues = requirementIds.reduce(
       (acc, id) => {
         acc[id] = !allSelected;
@@ -104,6 +108,10 @@ const RequirementComplianceStep: FC<RequirementComplianceStepProps> = ({ request
     if (filter.value === 'unselected') return !currentRequirements[req.id];
     return true;
   });
+
+  // Fix: Determine button text based on actual requirement IDs
+  const allRequirementsSelected = requirementIds.length > 0 && 
+    requirementIds.every(id => currentRequirements[id] === true);
 
   if (isLoading) return <RequirementCompliancePlaceholder />;
   if (!requirements?.length) return <EmptyState title={t('emptyTitle')} description={t('emptyDescription')} />;
@@ -140,7 +148,7 @@ const RequirementComplianceStep: FC<RequirementComplianceStepProps> = ({ request
             </div>
 
             <Button type="button" onClick={handleSelectAll} variant="outline" size="sm">
-              {Object.values(currentRequirements).every(Boolean) ? t('deselectAll') : t('selectAll')}
+              {allRequirementsSelected ? t('deselectAll') : t('selectAll')}
             </Button>
           </div>
         </div>

@@ -33,29 +33,87 @@ interface DynamicFormStepProps {
 }
 
 export const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds, assignmentCategoryIds, onPrev, onNext }) => {
+  console.log({ requestCategoryIds, assignmentCategoryIds });
   const t = useTranslations('admin.request.form.dynamicFormStep');
   const formRef = useRef<FormRendererRef>(null);
   const { control, formState } = useFormContext<FormResponsesValues>();
 
   const { steps, currentChildStepIndex, setChildrenSteps, updateChildStepStatus, setCurrentChildStepIndex } = useChildSteps();
 
-  const { data = [], isLoading } = useFindManyForm({
+  // Build where condition based on available category IDs
+  const buildWhereCondition = () => {
+    const conditions = [];
+    
+    if (requestCategoryIds.length > 0) {
+      conditions.push({
+        requestCategoryForms: { 
+          some: { categoryId: { in: requestCategoryIds } } 
+        }
+      });
+    }
+    
+    if (assignmentCategoryIds.length > 0) {
+      conditions.push({
+        assignmentCategoryForms: { 
+          some: { categoryId: { in: assignmentCategoryIds } } 
+        }
+      });
+    }
+
+    // If no conditions, return a condition that will return no results
+    if (conditions.length === 0) {
+      return { id: { equals: 'no-match' } }; // This will return empty array
+    }
+    
+    // If only one condition, return it directly
+    if (conditions.length === 1) {
+      return conditions[0];
+    }
+    
+    // If multiple conditions, use OR
+    return { OR: conditions };
+  };
+
+  const { data = [], isLoading, isError, error } = useFindManyForm({
     orderBy: { name: 'asc' },
     select: { id: true, name: true, description: true, content: true },
-    where: {
-      requestCategoryForms: { some: { categoryId: { in: requestCategoryIds } } },
-      assignmentCategoryForms: { some: { categoryId: { in: assignmentCategoryIds } } },
-    },
+    where: buildWhereCondition(),
+  }, {
+    // Only enable query if we have at least one category ID
+    enabled: requestCategoryIds.length > 0 || assignmentCategoryIds.length > 0
   });
 
+  console.log({ data, isLoading, isError });
+
+  // FIX: Only execute effects after query completes (not loading and not error)
   useEffect(() => {
-    if (data) {
-      if (!data.length && !steps['dynamicForm']) {
-        onNext();
-      }
+    // Don't do anything while loading or if there's an error
+    if (isLoading || isError) {
+      return;
+    }
 
-      if (steps['dynamicForm']) return;
+    // If no categories provided, skip to next step immediately
+    if (requestCategoryIds.length === 0 && assignmentCategoryIds.length === 0) {
+      console.log('No categories provided, skipping to next step');
+      onNext();
+      return;
+    }
 
+    // If query completed but no forms found, skip to next step
+    if (data.length === 0 && !steps['dynamicForm']) {
+      console.log('No forms found for categories, skipping to next step');
+      onNext();
+      return;
+    }
+
+    // If we already have steps configured, don't reconfigure
+    if (steps['dynamicForm']) {
+      return;
+    }
+
+    // Configure child steps with the forms
+    if (data.length > 0) {
+      console.log('Setting up child steps for forms:', data.map(f => f.name));
       setChildrenSteps(
         'dynamicForm',
         data.map((form) => ({
@@ -66,7 +124,7 @@ export const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds, 
         }))
       );
     }
-  }, [data, onNext, setChildrenSteps, steps]);
+  }, [data, isLoading, isError, onNext, setChildrenSteps, steps, requestCategoryIds.length, assignmentCategoryIds.length]);
 
   const onBack = () => {
     if (currentChildStepIndex === 0) {
@@ -82,30 +140,60 @@ export const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds, 
     }
   };
 
+  // Show error state if query failed
+  if (isError) {
+    return (
+      <>
+        <Card className="flex-1 flex flex-col overflow-hidden">
+         {error instanceof Error ? (
+            <div className="p-6">
+              <p className="mt-2 text-sm text-red-500">{error.message}</p>
+            </div>
+          ) : (
+            <div className="p-6">
+              <p className="mt-2 text-sm text-red-500">An unknown error occurred while loading forms.</p>
+            </div>
+          )}
+        </Card>
+      </>
+    );
+  }
+
   return (
     <>
       <Card className="flex-1 flex flex-col overflow-hidden">
         {isLoading ? (
-          <div className="space-y-4 flex-1 overflow-hidden">
-            <Skeleton className="h-15" />
-            {Array.from({ length: 15 }).map((_, index) => (
-              <Skeleton key={index} className="h-10" />
-            ))}
+          <div className="space-y-4 flex-1 overflow-hidden p-6">
+            <div className="space-y-2">
+              <Skeleton className="h-8 w-1/3" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+            <div className="space-y-3">
+              {Array.from({ length: 8 }).map((_, index) => (
+                <Skeleton key={index} className="h-12 w-full" />
+              ))}
+            </div>
           </div>
         ) : data.length === 0 ? (
-          <EmptyState title={t('emptyState.title')} icons={[FileText]} description={t('emptyState.description')} />
+          <EmptyState 
+            title={t('emptyState.title')} 
+            icons={[FileText]} 
+            description={t('emptyState.description')} 
+          />
         ) : (
           <>
-            <div className="flex justify-between items-center w-full">
+            <div className="flex justify-between items-center w-full p-6 pb-0">
               <div>
                 <CardTitle>{data[currentChildStepIndex]?.name}</CardTitle>
                 <CardDescription>{data[currentChildStepIndex]?.description}</CardDescription>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">{t('stepCounter', { current: currentChildStepIndex + 1, total: data.length })}</span>
+                <span className="text-sm text-muted-foreground">
+                  {t('stepCounter', { current: currentChildStepIndex + 1, total: data.length })}
+                </span>
               </div>
             </div>
-            <div className="flex flex-col gap-4 flex-1 overflow-y-hidden">
+            <div className="flex flex-col gap-4 flex-1 overflow-y-hidden p-6 pt-4">
               <div className="flex flex-1 flex-col gap-4 overflow-y-hidden">
                 <ZodErrorAlert />
                 <ScrollArea className="flex flex-1 gap-4">
@@ -138,7 +226,9 @@ export const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds, 
                   </div>
                 </ScrollArea>
                 {formState.errors?.submissions?.[data[currentChildStepIndex]?.id]?.response?.message && (
-                  <p className="text-red-500 text-sm">{formState.errors.submissions?.[data[currentChildStepIndex]?.id]?.response?.message?.toString() ?? ''}</p>
+                  <p className="text-red-500 text-sm">
+                    {formState.errors.submissions?.[data[currentChildStepIndex]?.id]?.response?.message?.toString() ?? ''}
+                  </p>
                 )}
               </div>
             </div>

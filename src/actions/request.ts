@@ -90,7 +90,11 @@ export const upsertRequest = async (tenantId: string, data: RequestFormStepperTy
 // ========================
 // CREATE REQUEST
 // ========================
+// ========================
+// BETTER SOLUTION: Handle form submissions after request creation
+// ========================
 const handleCreate = async (tenantId: string, data: RequestFormStepperType, userId: string, flowId: string | null = null) => {
+  // Move data preparation OUTSIDE the transaction
   const [userAreas, requirementCompliances, assignmentType] = await Promise.all([
     getAreaWithSupervisors(tenantId, data.areaId.value),
     db.requestCategoryRequirement.findMany({
@@ -102,6 +106,16 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
       select: { id: true },
     }),
   ]);
+
+  // Pre-process assignment data outside transaction
+  const assignmentData = await createAssignmentData(tenantId, data, assignmentType.id, userAreas);
+  const formSubmissionData = processFormSubmissions(data.submissions, tenantId);
+  const complianceData = requirementCompliances.map((rc) => ({
+    tenantId,
+    isArchived: !rc.isActive,
+    requirementId: rc.requirementId,
+    isFulfilled: data.requirementCompliances[rc.requirementId] ?? false,
+  }));
 
   return db.$transaction(async (tx) => {
     // Create Dataroom
@@ -124,18 +138,13 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
         description: data.description,
         isDraft: data.isDraft,
         requestAssignments: {
-          create: await createAssignmentData(tenantId, data, assignmentType.id, userAreas),
+          create: assignmentData,
         },
         complianceTrackings: {
-          create: requirementCompliances.map((rc) => ({
-            tenantId,
-            isArchived: !rc.isActive,
-            requirementId: rc.requirementId,
-            isFulfilled: data.requirementCompliances[rc.requirementId] ?? false,
-          })),
-        },
-        formSubmission: {
-          create: processFormSubmissions(data.submissions, tenantId),
+          createMany: {
+            data: complianceData,
+            skipDuplicates: true,
+          },
         },
         channel: {
           create: {
@@ -192,6 +201,39 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
       },
     });
 
+    // Handle form submissions separately with upsert
+    for (const submission of formSubmissionData) {
+      await tx.formSubmission.upsert({
+        where: {
+          formId_tenantId_requestId: {
+            tenantId: submission.tenantId,
+            formId: submission.formId,
+            requestId: data.id,
+          },
+        },
+        create: {
+          formId: submission.formId,
+          tenantId: submission.tenantId,
+          requestId: data.id,
+          content: submission.content,
+          keys: {
+            createMany: {
+              data: submission.keys.createMany.data,
+            },
+          },
+        },
+        update: {
+          content: submission.content,
+          keys: {
+            deleteMany: {},
+            createMany: {
+              data: submission.keys.createMany.data,
+            },
+          },
+        },
+      });
+    }
+
     // Log the change in request creation
     await tx.requestChangeLog.create({
       data: {
@@ -207,13 +249,19 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
 
     // Return the request with the dataroomId
     return { ...newRequest, dataroomId: newDataroom.id };
+  }, {
+    // Increase timeout to 15 seconds
+    timeout: 15000,
+    // Set isolation level if needed
+    isolationLevel: 'ReadCommitted'
   });
 };
 
 // ========================
-// UPDATE REQUEST
+// UPDATE REQUEST (Alternative approach - Split transactions)
 // ========================
 const handleUpdate = async (existingRequest: RequestType, tenantId: string, data: RequestFormStepperType, userId: string, flowId: string | null = null) => {
+  // Move data preparation OUTSIDE the transaction
   const [area, requirementCompliances, assignmentType] = await Promise.all([
     getAreaWithSupervisors(tenantId, data.areaId.value),
     db.requestCategoryRequirement.findMany({
@@ -226,6 +274,47 @@ const handleUpdate = async (existingRequest: RequestType, tenantId: string, data
     }),
   ]);
 
+  // Pre-process all data outside transaction
+  const assignmentData = await createAssignmentData(tenantId, data, assignmentType.id, area);
+  const formSubmissionData = processFormSubmissions(data.submissions, tenantId);
+  const complianceUpsertData = requirementCompliances.map((rc) => ({
+    where: {
+      unique_compliance_tracking: {
+        tenantId,
+        requirementId: rc.requirementId,
+        requestId: data.id,
+      },
+    },
+    create: {
+      tenantId,
+      isArchived: !rc.isActive,
+      requirementId: rc.requirementId,
+      isFulfilled: data.requirementCompliances[rc.requirementId] ?? false,
+    },
+    update: {
+      isArchived: !rc.isActive,
+      isFulfilled: data.requirementCompliances[rc.requirementId] ?? false,
+    },
+  }));
+
+  const formUpsertData = formSubmissionData.map((s) => ({
+    where: {
+      formId_tenantId_requestId: {
+        tenantId,
+        formId: s.formId,
+        requestId: data.id,
+      },
+    },
+    create: s,
+    update: {
+      content: s.content,
+      keys: {
+        deleteMany: {},
+        createMany: { data: s.keys.createMany.data },
+      },
+    },
+  }));
+
   return db.$transaction(async (tx) => {
     // Update main request
     const updatedRequest = await tx.request.update({
@@ -233,59 +322,26 @@ const handleUpdate = async (existingRequest: RequestType, tenantId: string, data
       data: {
         issueSubject: data.issueSubject,
         description: data.description,
-
         isDraft: data.isDraft,
         requestAssignments: {
           updateMany: {
             where: { isActive: true },
             data: { isActive: false },
           },
-          create: await createAssignmentData(tenantId, data, assignmentType.id, area),
+          create: assignmentData,
         },
         complianceTrackings: {
-          upsert: requirementCompliances.map((rc) => ({
-            where: {
-              unique_compliance_tracking: {
-                tenantId,
-                requirementId: rc.requirementId,
-                requestId: data.id,
-              },
-            },
-            create: {
-              tenantId,
-              isArchived: !rc.isActive,
-              requirementId: rc.requirementId,
-              isFulfilled: data.requirementCompliances[rc.requirementId] ?? false,
-            },
-            update: {
-              isArchived: !rc.isActive,
-              isFulfilled: data.requirementCompliances[rc.requirementId] ?? false,
-            },
-          })),
+          upsert: complianceUpsertData,
         },
         formSubmission: {
-          upsert: processFormSubmissions(data.submissions, tenantId).map((s) => ({
-            where: {
-              formId_tenantId_requestId: {
-                tenantId,
-                formId: s.formId,
-                requestId: data.id,
-              },
-            },
-            create: s,
-            update: {
-              content: s.content,
-              keys: {
-                deleteMany: {},
-                createMany: { data: s.keys.createMany.data },
-              },
-            },
-          })),
+          upsert: formUpsertData,
         },
         executionModelInstance: flowId
           ? {
               upsert: {
-                where: {},
+                where: {
+                  requestId: data.id, // Add proper where clause
+                },
                 create: {
                   tenantId,
                   flowId: flowId,
@@ -336,23 +392,30 @@ const handleUpdate = async (existingRequest: RequestType, tenantId: string, data
     // Detect and log changes
     const changes = detectChanges(existingRequest, updatedRequest);
 
-    for (const change of changes) {
-      await tx.requestChangeLog.create({
-        data: {
+    // Batch create change logs if there are many
+    if (changes.length > 0) {
+      await tx.requestChangeLog.createMany({
+        data: changes.map(change => ({
           tenantId,
           requestId: updatedRequest.id,
           updatedBy: userId,
           updatedAt: new Date(),
           fieldName: change.fieldName,
-          oldValue: change.oldValue?.toString().substring(0, 500), // Limit to 500 characters
+          oldValue: change.oldValue?.toString().substring(0, 500),
           newValue: change.newValue?.toString().substring(0, 500),
-        },
+        }))
       });
     }
 
     return updatedRequest;
+  }, {
+    // Increase timeout to 15 seconds
+    timeout: 15000,
+    // Set isolation level if needed
+    isolationLevel: 'ReadCommitted'
   });
 };
+
 
 // ========================
 // HELPER FUNCTIONS
