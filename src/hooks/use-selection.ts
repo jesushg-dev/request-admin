@@ -1,30 +1,33 @@
-import { useEffect, useState } from 'react';
+import { useMemo } from "react";
 
 interface UseSelectionParams<T> {
-  defaultValue?: T | null;
+  defaultValue?: T;
   pageSize: number;
-  idExtractor: (item: T) => string | number; // Function to extract the identifier from the data item
+  idExtractor: (item: T) => string | number;
 }
 
 function useSelection<T>(dataList: T[], { defaultValue, pageSize, idExtractor }: UseSelectionParams<T>) {
-  const [isInitialised, setIsInitialised] = useState(false);
-  const [initialRowIndex, setInitialRowIndex] = useState<number>();
-  const [initialPageIndex, setInitialPageIndex] = useState<number>();
-
-  useEffect(() => {
+  const initialSelection = useMemo(() => {
     if (defaultValue && dataList) {
       const selected = dataList.findIndex((item) => idExtractor(item) === idExtractor(defaultValue));
-      const page = Math.floor(selected / pageSize) + 1;
-      const selectedPosition = selected % pageSize;
-      setInitialPageIndex(page);
-      setInitialRowIndex(selectedPosition);
-      setIsInitialised(true);
-    } else if (dataList) {
-      setIsInitialised(true);
+      if (selected !== -1) {
+        const page = Math.floor(selected / pageSize) + 1;
+        const selectedPosition = selected % pageSize;
+        return {
+          isInitialised: true,
+          initialRowIndex: selectedPosition,
+          initialPageIndex: page,
+        };
+      }
     }
-  }, [defaultValue, dataList, pageSize, idExtractor]);
+    return {
+      isInitialised: !!dataList,
+      initialRowIndex: undefined,
+      initialPageIndex: undefined,
+    };
+  }, [dataList, defaultValue, pageSize, idExtractor]);
 
-  return { isInitialised, initialRowIndex, initialPageIndex };
+  return initialSelection;
 }
 
 export default useSelection;

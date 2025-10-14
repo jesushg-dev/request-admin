@@ -30,6 +30,7 @@ import { comparePassword, hashPassword } from '@/lib/password';
 import { db } from './db-server';
 
 export const auth = betterAuth({
+  trustedOrigins: ['http://localhost:3000', 'http://127.0.0.1:3000'],
   database: prismaAdapter(db, {
     provider: 'sqlserver',
   }),

@@ -90,9 +90,8 @@ const RequirementComplianceStep: FC<RequirementComplianceStepProps> = ({ request
   const handleSelectAll = () => {
     // Fix: Check if we have requirements and if all of them are selected
     // Only consider requirements that exist in the current list
-    const allSelected = requirementIds.length > 0 && 
-      requirementIds.every(id => currentRequirements[id] === true);
-    
+    const allSelected = requirementIds.length > 0 && requirementIds.every((id) => currentRequirements[id] === true);
+
     const newValues = requirementIds.reduce(
       (acc, id) => {
         acc[id] = !allSelected;
@@ -110,8 +109,7 @@ const RequirementComplianceStep: FC<RequirementComplianceStepProps> = ({ request
   });
 
   // Fix: Determine button text based on actual requirement IDs
-  const allRequirementsSelected = requirementIds.length > 0 && 
-    requirementIds.every(id => currentRequirements[id] === true);
+  const allRequirementsSelected = requirementIds.length > 0 && requirementIds.every((id) => currentRequirements[id] === true);
 
   if (isLoading) return <RequirementCompliancePlaceholder />;
   if (!requirements?.length) return <EmptyState title={t('emptyTitle')} description={t('emptyDescription')} />;

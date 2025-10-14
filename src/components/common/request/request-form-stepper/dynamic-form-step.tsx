@@ -43,20 +43,20 @@ export const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds, 
   // Build where condition based on available category IDs
   const buildWhereCondition = () => {
     const conditions = [];
-    
+
     if (requestCategoryIds.length > 0) {
       conditions.push({
-        requestCategoryForms: { 
-          some: { categoryId: { in: requestCategoryIds } } 
-        }
+        requestCategoryForms: {
+          some: { categoryId: { in: requestCategoryIds } },
+        },
       });
     }
-    
+
     if (assignmentCategoryIds.length > 0) {
       conditions.push({
-        assignmentCategoryForms: { 
-          some: { categoryId: { in: assignmentCategoryIds } } 
-        }
+        assignmentCategoryForms: {
+          some: { categoryId: { in: assignmentCategoryIds } },
+        },
       });
     }
 
@@ -64,24 +64,32 @@ export const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds, 
     if (conditions.length === 0) {
       return { id: { equals: 'no-match' } }; // This will return empty array
     }
-    
+
     // If only one condition, return it directly
     if (conditions.length === 1) {
       return conditions[0];
     }
-    
+
     // If multiple conditions, use OR
     return { OR: conditions };
   };
 
-  const { data = [], isLoading, isError, error } = useFindManyForm({
-    orderBy: { name: 'asc' },
-    select: { id: true, name: true, description: true, content: true },
-    where: buildWhereCondition(),
-  }, {
-    // Only enable query if we have at least one category ID
-    enabled: requestCategoryIds.length > 0 || assignmentCategoryIds.length > 0
-  });
+  const {
+    data = [],
+    isLoading,
+    isError,
+    error,
+  } = useFindManyForm(
+    {
+      orderBy: { name: 'asc' },
+      select: { id: true, name: true, description: true, content: true },
+      where: buildWhereCondition(),
+    },
+    {
+      // Only enable query if we have at least one category ID
+      enabled: requestCategoryIds.length > 0 || assignmentCategoryIds.length > 0,
+    }
+  );
 
   console.log({ data, isLoading, isError });
 
@@ -113,7 +121,10 @@ export const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds, 
 
     // Configure child steps with the forms
     if (data.length > 0) {
-      console.log('Setting up child steps for forms:', data.map(f => f.name));
+      console.log(
+        'Setting up child steps for forms:',
+        data.map((f) => f.name)
+      );
       setChildrenSteps(
         'dynamicForm',
         data.map((form) => ({
@@ -145,7 +156,7 @@ export const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds, 
     return (
       <>
         <Card className="flex-1 flex flex-col overflow-hidden">
-         {error instanceof Error ? (
+          {error instanceof Error ? (
             <div className="p-6">
               <p className="mt-2 text-sm text-red-500">{error.message}</p>
             </div>
@@ -175,11 +186,7 @@ export const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds, 
             </div>
           </div>
         ) : data.length === 0 ? (
-          <EmptyState 
-            title={t('emptyState.title')} 
-            icons={[FileText]} 
-            description={t('emptyState.description')} 
-          />
+          <EmptyState title={t('emptyState.title')} icons={[FileText]} description={t('emptyState.description')} />
         ) : (
           <>
             <div className="flex justify-between items-center w-full p-6 pb-0">
@@ -188,9 +195,7 @@ export const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds, 
                 <CardDescription>{data[currentChildStepIndex]?.description}</CardDescription>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">
-                  {t('stepCounter', { current: currentChildStepIndex + 1, total: data.length })}
-                </span>
+                <span className="text-sm text-muted-foreground">{t('stepCounter', { current: currentChildStepIndex + 1, total: data.length })}</span>
               </div>
             </div>
             <div className="flex flex-col gap-4 flex-1 overflow-y-hidden p-6 pt-4">
@@ -226,9 +231,7 @@ export const DynamicFormStep: FC<DynamicFormStepProps> = ({ requestCategoryIds, 
                   </div>
                 </ScrollArea>
                 {formState.errors?.submissions?.[data[currentChildStepIndex]?.id]?.response?.message && (
-                  <p className="text-red-500 text-sm">
-                    {formState.errors.submissions?.[data[currentChildStepIndex]?.id]?.response?.message?.toString() ?? ''}
-                  </p>
+                  <p className="text-red-500 text-sm">{formState.errors.submissions?.[data[currentChildStepIndex]?.id]?.response?.message?.toString() ?? ''}</p>
                 )}
               </div>
             </div>

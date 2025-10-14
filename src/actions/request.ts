@@ -117,79 +117,81 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
     isFulfilled: data.requirementCompliances[rc.requirementId] ?? false,
   }));
 
-  return db.$transaction(async (tx) => {
-    // Create Dataroom
-    const newDataroom = await tx.dataroom.create({
-      data: {
-        tenantId,
-        pId: `request-${data.id}`,
-        name: `Request ${data.id}`,
-        description: data.description,
-        createdBy: userId,
-      },
-    });
+  return db.$transaction(
+    async (tx) => {
+      // Create Dataroom
+      const newDataroom = await tx.dataroom.create({
+        data: {
+          tenantId,
+          pId: `request-${data.id}`,
+          name: `Request ${data.id}`,
+          description: data.description,
+          createdBy: userId,
+        },
+      });
 
-    // Create Request and associate with Dataroom
-    const newRequest = await tx.request.create({
-      data: {
-        id: data.id,
-        tenantId,
-        issueSubject: data.issueSubject,
-        description: data.description,
-        isDraft: data.isDraft,
-        requestAssignments: {
-          create: assignmentData,
-        },
-        complianceTrackings: {
-          createMany: {
-            data: complianceData,
-            skipDuplicates: true,
+      // Create Request and associate with Dataroom
+      const newRequest = await tx.request.create({
+        data: {
+          id: data.id,
+          tenantId,
+          issueSubject: data.issueSubject,
+          description: data.description,
+          isDraft: data.isDraft,
+          requestAssignments: {
+            create: assignmentData,
           },
-        },
-        channel: {
-          create: {
-            tenantId,
-            name: `Request ${data.id}`,
+          complianceTrackings: {
+            createMany: {
+              data: complianceData,
+              skipDuplicates: true,
+            },
           },
-        },
-        dataroom: {
-          connect: {
-            id: newDataroom.id,
+          channel: {
+            create: {
+              tenantId,
+              name: `Request ${data.id}`,
+            },
           },
+          dataroom: {
+            connect: {
+              id: newDataroom.id,
+            },
+          },
+          executionModelInstance: flowId
+            ? {
+                create: {
+                  tenantId,
+                  flowId: flowId,
+                  status: 'idle',
+                },
+              }
+            : undefined,
         },
-        executionModelInstance: flowId
-          ? {
-              create: {
-                tenantId,
-                flowId: flowId,
-                status: 'idle',
-              },
-            }
-          : undefined,
-      },
-      include: {
-        requestAssignments: {
-          where: { isActive: true },
-          include: {
-            status: true,
-            priority: true,
-            area: true,
-            requestCategory: true,
-            assignmentCategory: true,
-            assignedUsers: {
-              include: {
-                userTenant: {
-                  select: {
-                    id: true,
-                    role: true,
-                    person: {
-                      select: {
-                        phone: true,
+        include: {
+          requestAssignments: {
+            where: { isActive: true },
+            include: {
+              status: true,
+              priority: true,
+              area: true,
+              requestCategory: true,
+              assignmentCategory: true,
+              assignedUsers: {
+                include: {
+                  userTenant: {
+                    select: {
+                      id: true,
+                      role: true,
+                      person: {
+                        select: {
+                          phone: true,
+                        },
                       },
-                    },
-                    user: {
-                      select: {
-                        email: true,
+                      user: {
+                        select: {
+                          email: true,
+                        },
                       },
                     },
                   },
@@ -198,63 +200,64 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
             },
           },
         },
-      },
-    });
+      });
 
-    // Handle form submissions separately with upsert
-    for (const submission of formSubmissionData) {
-      await tx.formSubmission.upsert({
-        where: {
-          formId_tenantId_requestId: {
-            tenantId: submission.tenantId,
+      // Handle form submissions separately with upsert
+      for (const submission of formSubmissionData) {
+        await tx.formSubmission.upsert({
+          where: {
+            formId_tenantId_requestId: {
+              tenantId: submission.tenantId,
+              formId: submission.formId,
+              requestId: data.id,
+            },
+          },
+          create: {
             formId: submission.formId,
+            tenantId: submission.tenantId,
             requestId: data.id,
-          },
-        },
-        create: {
-          formId: submission.formId,
-          tenantId: submission.tenantId,
-          requestId: data.id,
-          content: submission.content,
-          keys: {
-            createMany: {
-              data: submission.keys.createMany.data,
+            content: submission.content,
+            keys: {
+              createMany: {
+                data: submission.keys.createMany.data,
+              },
             },
           },
-        },
-        update: {
-          content: submission.content,
-          keys: {
-            deleteMany: {},
-            createMany: {
-              data: submission.keys.createMany.data,
+          update: {
+            content: submission.content,
+            keys: {
+              deleteMany: {},
+              createMany: {
+                data: submission.keys.createMany.data,
+              },
             },
           },
+        });
+      }
+
+      // Log the change in request creation
+      await tx.requestChangeLog.create({
+        data: {
+          tenantId,
+          requestId: newRequest.id,
+          updatedBy: userId,
+          updatedAt: new Date(),
+          fieldName: 'request_created',
+          oldValue: null,
+          newValue: null,
         },
       });
+
+      // Return the request with the dataroomId
+      return { ...newRequest, dataroomId: newDataroom.id };
+    },
+    {
+      // Increase timeout to 15 seconds
+      timeout: 15000,
+      // Set isolation level if needed
+      isolationLevel: 'ReadCommitted',
     }
-
-    // Log the change in request creation
-    await tx.requestChangeLog.create({
-      data: {
-        tenantId,
-        requestId: newRequest.id,
-        updatedBy: userId,
-        updatedAt: new Date(),
-        fieldName: 'request_created',
-        oldValue: null,
-        newValue: null,
-      },
-    });
-
-    // Return the request with the dataroomId
-    return { ...newRequest, dataroomId: newDataroom.id };
-  }, {
-    // Increase timeout to 15 seconds
-    timeout: 15000,
-    // Set isolation level if needed
-    isolationLevel: 'ReadCommitted'
-  });
+  );
 };
 
 // ========================
@@ -315,69 +318,71 @@ const handleUpdate = async (existingRequest: RequestType, tenantId: string, data
     },
   }));
 
-  return db.$transaction(async (tx) => {
-    // Update main request
-    const updatedRequest = await tx.request.update({
-      where: { id: existingRequest.id, tenantId },
-      data: {
-        issueSubject: data.issueSubject,
-        description: data.description,
-        isDraft: data.isDraft,
-        requestAssignments: {
-          updateMany: {
-            where: { isActive: true },
-            data: { isActive: false },
+  return db.$transaction(
+    async (tx) => {
+      // Update main request
+      const updatedRequest = await tx.request.update({
+        where: { id: existingRequest.id, tenantId },
+        data: {
+          issueSubject: data.issueSubject,
+          description: data.description,
+          isDraft: data.isDraft,
+          requestAssignments: {
+            updateMany: {
+              where: { isActive: true },
+              data: { isActive: false },
+            },
+            create: assignmentData,
           },
-          create: assignmentData,
-        },
-        complianceTrackings: {
-          upsert: complianceUpsertData,
-        },
-        formSubmission: {
-          upsert: formUpsertData,
-        },
-        executionModelInstance: flowId
-          ? {
-              upsert: {
-                where: {
-                  requestId: data.id, // Add proper where clause
+          complianceTrackings: {
+            upsert: complianceUpsertData,
+          },
+          formSubmission: {
+            upsert: formUpsertData,
+          },
+          executionModelInstance: flowId
+            ? {
+                upsert: {
+                  where: {
+                    requestId: data.id, // Add proper where clause
+                  },
+                  create: {
+                    tenantId,
+                    flowId: flowId,
+                    status: 'idle',
+                  },
+                  update: {
+                    flowId: flowId,
+                    status: 'idle',
+                  },
                 },
-                create: {
-                  tenantId,
-                  flowId: flowId,
-                  status: 'idle',
-                },
-                update: {
-                  flowId: flowId,
-                  status: 'idle',
-                },
-              },
-            }
-          : undefined,
-      },
-      include: {
-        requestAssignments: {
-          where: { isActive: true },
-          include: {
-            status: true,
-            priority: true,
-            area: true,
-            requestCategory: true,
-            assignmentCategory: true,
-            assignedUsers: {
-              include: {
-                userTenant: {
-                  select: {
-                    id: true,
-                    role: true,
-                    person: {
-                      select: {
-                        phone: true,
+              }
+            : undefined,
+        },
+        include: {
+          requestAssignments: {
+            where: { isActive: true },
+            include: {
+              status: true,
+              priority: true,
+              area: true,
+              requestCategory: true,
+              assignmentCategory: true,
+              assignedUsers: {
+                include: {
+                  userTenant: {
+                    select: {
+                      id: true,
+                      role: true,
+                      person: {
+                        select: {
+                          phone: true,
+                        },
                       },
-                    },
-                    user: {
-                      select: {
-                        email: true,
+                      user: {
+                        select: {
+                          email: true,
+                        },
                       },
                     },
                   },
@@ -386,36 +391,36 @@ const handleUpdate = async (existingRequest: RequestType, tenantId: string, data
             },
           },
         },
-      },
-    });
-
-    // Detect and log changes
-    const changes = detectChanges(existingRequest, updatedRequest);
-
-    // Batch create change logs if there are many
-    if (changes.length > 0) {
-      await tx.requestChangeLog.createMany({
-        data: changes.map(change => ({
-          tenantId,
-          requestId: updatedRequest.id,
-          updatedBy: userId,
-          updatedAt: new Date(),
-          fieldName: change.fieldName,
-          oldValue: change.oldValue?.toString().substring(0, 500),
-          newValue: change.newValue?.toString().substring(0, 500),
-        }))
       });
+
+      // Detect and log changes
+      const changes = detectChanges(existingRequest, updatedRequest);
+
+      // Batch create change logs if there are many
+      if (changes.length > 0) {
+        await tx.requestChangeLog.createMany({
+          data: changes.map((change) => ({
+            tenantId,
+            requestId: updatedRequest.id,
+            updatedBy: userId,
+            updatedAt: new Date(),
+            fieldName: change.fieldName,
+            oldValue: change.oldValue?.toString().substring(0, 500),
+            newValue: change.newValue?.toString().substring(0, 500),
+          })),
+        });
+      }
+
+      return updatedRequest;
+    },
+    {
+      // Increase timeout to 15 seconds
+      timeout: 15000,
+      // Set isolation level if needed
+      isolationLevel: 'ReadCommitted',
     }
-
-    return updatedRequest;
-  }, {
-    // Increase timeout to 15 seconds
-    timeout: 15000,
-    // Set isolation level if needed
-    isolationLevel: 'ReadCommitted'
-  });
+  );
 };
-
 
 // ========================
 // HELPER FUNCTIONS

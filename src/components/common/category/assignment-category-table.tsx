@@ -139,24 +139,8 @@ function AssignmentCategorySubTable({ referenceId, visibleCellsCount, columns, i
   );
 }
 
-export function AssignmentCategoryTable({ 
-  referenceId, 
-  visibleCellsCount, 
-  columns, 
-  isExpanded, 
-  parentType,
-  areaId 
-}: IAssignmentCategoryBaseProps) {
-  return (
-    <AssignmentCategorySubTable 
-      referenceId={referenceId} 
-      visibleCellsCount={visibleCellsCount} 
-      columns={columns} 
-      isExpanded={isExpanded} 
-      parentType={parentType}
-      areaId={areaId}
-    />
-  );
+export function AssignmentCategoryTable({ referenceId, visibleCellsCount, columns, isExpanded, parentType, areaId }: IAssignmentCategoryBaseProps) {
+  return <AssignmentCategorySubTable referenceId={referenceId} visibleCellsCount={visibleCellsCount} columns={columns} isExpanded={isExpanded} parentType={parentType} areaId={areaId} />;
 }
 
 export function useAssignmentCategoryTableConfiguration({}: { entity?: string }) {
@@ -170,65 +154,37 @@ export function useAssignmentCategoryTableConfiguration({}: { entity?: string })
       cell: ({ row }) => (
         <div className="flex items-center">
           {row.getCanExpand() && (
-            <button 
-              onClick={row.getToggleExpandedHandler()} 
-              className="mr-2 p-1 hover:bg-muted rounded transition-colors"
-              aria-label={row.getIsExpanded() ? 'Collapse' : 'Expand'}
-            >
-              {row.getIsExpanded() ? (
-                <ChevronUp className="w-4 h-4" />
-              ) : (
-                <ChevronDown className="w-4 h-4" />
-              )}
+            <button onClick={row.getToggleExpandedHandler()} className="mr-2 p-1 hover:bg-muted rounded transition-colors" aria-label={row.getIsExpanded() ? 'Collapse' : 'Expand'}>
+              {row.getIsExpanded() ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </button>
           )}
           <span className="font-medium">{row.original.name}</span>
-          {row.original._count.subcategories > 0 && (
-            <span className="ml-2 text-xs bg-muted text-muted-foreground px-1.5 py-0.5 rounded">
-              {row.original._count.subcategories}
-            </span>
-          )}
+          {row.original._count.subcategories > 0 && <span className="ml-2 text-xs bg-muted text-muted-foreground px-1.5 py-0.5 rounded">{row.original._count.subcategories}</span>}
         </div>
       ),
     },
     {
       accessorKey: 'description',
       header: () => t('columns.description'),
-      cell: ({ cell }) => (
-        <span className="text-sm text-muted-foreground">
-          {String(cell.getValue() || 'N/A')}
-        </span>
-      ),
+      cell: ({ cell }) => <span className="text-sm text-muted-foreground">{String(cell.getValue() || 'N/A')}</span>,
     },
     {
       header: () => t('columns.area'),
       accessorFn: (row) => row.area?.name,
       id: 'area.name',
-      cell: ({ getValue }) => (
-        <span className="text-sm">
-          {String(getValue() ?? 'N/A')}
-        </span>
-      ),
+      cell: ({ getValue }) => <span className="text-sm">{String(getValue() ?? 'N/A')}</span>,
     },
     {
       header: () => t('columns.subcategories'),
       accessorFn: (row) => row._count?.subcategories,
       id: '_count.subcategories',
-      cell: ({ getValue }) => (
-        <span className="text-sm font-mono">
-          {String(getValue() ?? 0)}
-        </span>
-      ),
+      cell: ({ getValue }) => <span className="text-sm font-mono">{String(getValue() ?? 0)}</span>,
     },
     {
       header: () => t('columns.requests'),
       accessorFn: (row) => row._count?.assignmentRequests,
       id: '_count.assignmentRequests',
-      cell: ({ getValue }) => (
-        <span className="text-sm font-mono">
-          {String(getValue() ?? 0)}
-        </span>
-      ),
+      cell: ({ getValue }) => <span className="text-sm font-mono">{String(getValue() ?? 0)}</span>,
     },
   ];
 

@@ -118,14 +118,16 @@ const RoleSelectField: FC<RoleSelectFieldProps> = ({ index, roleOptions, tenantI
         />
       </FormControl>
       <FormDescription>
+        {field.value?.value ?
         <Link
           target="_blank"
           href={{
             pathname: '/admin/[tenantId]/security/roles/[slug]',
-            params: { tenantId, slug: field.value?.value },
+            params: { tenantId, slug: field.value?.value  },
           }}>
           See role details
         </Link>
+        : 'No role selected'}
       </FormDescription>
       <FormMessage>{errors.roles?.[index]?.roleId?.value?.message || errors.roles?.[index]?.roleId?.label?.message || errors.roles?.[index]?.roleId?.message}</FormMessage>
     </FormItem>
