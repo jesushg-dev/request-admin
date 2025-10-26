@@ -26,12 +26,14 @@ const RequestMainPage: React.FC = () => {
           <TabsTrigger value="table" className="h-7 text-xs">
             Table
           </TabsTrigger>
-          <TabsTrigger value="kanban" className="h-7 text-xs">
+          {/* TODO: Enable Kanban view once implementation is complete */}
+          {/* <TabsTrigger value="kanban" className="h-7 text-xs">
             Kanban
-          </TabsTrigger>
-          <TabsTrigger value="calendar" className="h-7 text-xs">
+          </TabsTrigger> */}
+          {/* TODO: Enable Calendar view once implementation is complete */}
+          {/* <TabsTrigger value="calendar" className="h-7 text-xs">
             Calendar
-          </TabsTrigger>
+          </TabsTrigger> */}
         </TabsList>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" asChild>
@@ -60,12 +62,14 @@ const RequestMainPage: React.FC = () => {
       <TabsContent value="table" className={`mt-0 ${view === 'table' ? 'flex flex-1' : ''}`}>
         <TableTab />
       </TabsContent>
-      <TabsContent value="kanban" className={`mt-0 ${view === 'kanban' ? 'flex flex-1' : ''}`}>
+      {/* TODO: Enable Kanban tab content once implementation is complete */}
+      {/* <TabsContent value="kanban" className={`mt-0 ${view === 'kanban' ? 'flex flex-1' : ''}`}>
         <KanbanTab />
-      </TabsContent>
-      <TabsContent value="calendar" className={`mt-0 ${view === 'calendar' ? 'flex flex-1' : ''}`}>
+      </TabsContent> */}
+      {/* TODO: Enable Calendar tab content once implementation is complete */}
+      {/* <TabsContent value="calendar" className={`mt-0 ${view === 'calendar' ? 'flex flex-1' : ''}`}>
         <CalendarTab />
-      </TabsContent>
+      </TabsContent> */}
     </Tabs>
   );
 };

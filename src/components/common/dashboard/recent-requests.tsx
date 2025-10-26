@@ -1,6 +1,11 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { getRecentRequests } from '@/actions/dashboard';
+import { Link } from '@/i18n/routing';
 
 interface Request {
   id: string;
@@ -14,82 +19,10 @@ interface Request {
 }
 
 interface RecentRequestsProps {
+  tenantId: string;
   workflowFilter?: string | null;
 }
 
-// Datos de ejemplo para la tabla de solicitudes recientes
-const allRecentRequests: Request[] = [
-  {
-    id: 'REQ-2023-001',
-    title: 'Activación de servicio móvil',
-    requester: 'Juan Pérez',
-    department: 'Activaciones',
-    workflow: 'Activaciones',
-    status: 'En progreso',
-    priority: 'Alta',
-    created: '2023-06-15',
-  },
-  {
-    id: 'REQ-2023-002',
-    title: 'Reclamo de comisión no pagada',
-    requester: 'María López',
-    department: 'Comisiones',
-    workflow: 'Comisiones',
-    status: 'En revisión',
-    priority: 'Media',
-    created: '2023-06-14',
-  },
-  {
-    id: 'REQ-2023-003',
-    title: 'Soporte técnico para router',
-    requester: 'Carlos Ruiz',
-    department: 'Soporte',
-    workflow: 'Soporte Técnico',
-    status: 'Cerrado',
-    priority: 'Baja',
-    created: '2023-06-13',
-  },
-  {
-    id: 'REQ-2023-004',
-    title: 'Activación de plan corporativo',
-    requester: 'Empresa XYZ',
-    department: 'Activaciones',
-    workflow: 'Activaciones',
-    status: 'Borrador',
-    priority: 'Alta',
-    created: '2023-06-12',
-  },
-  {
-    id: 'REQ-2023-005',
-    title: 'Ajuste de facturación',
-    requester: 'Ana Martínez',
-    department: 'Facturación',
-    workflow: 'Facturación',
-    status: 'Cancelado',
-    priority: 'Media',
-    created: '2023-06-11',
-  },
-  {
-    id: 'REQ-2023-006',
-    title: 'Cambio de plan empresarial',
-    requester: 'Tech Corp',
-    department: 'Activaciones',
-    workflow: 'Cambios de Plan',
-    status: 'Aprobando cambio',
-    priority: 'Alta',
-    created: '2023-06-10',
-  },
-  {
-    id: 'REQ-2023-007',
-    title: 'Reclamo por facturación incorrecta',
-    requester: 'Luis García',
-    department: 'Reclamos',
-    workflow: 'Reclamos',
-    status: 'Investigando',
-    priority: 'Media',
-    created: '2023-06-09',
-  },
-];
 
 // Función para determinar el color de la insignia de estado
 function getStatusBadgeVariant(status: string): 'default' | 'secondary' | 'destructive' | 'outline' {
@@ -125,9 +58,84 @@ function getPriorityBadgeVariant(priority: string): 'default' | 'secondary' | 'd
   }
 }
 
-export default function RecentRequests({ workflowFilter }: RecentRequestsProps) {
-  // Filtrar solicitudes por workflow si se proporciona un filtro
-  const filteredRequests = workflowFilter ? allRecentRequests.filter((request) => request.workflow === workflowFilter) : allRecentRequests;
+export default function RecentRequests({ tenantId, workflowFilter }: RecentRequestsProps) {
+  const [requests, setRequests] = useState<Request[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchRecentRequests() {
+      try {
+        const recentRequests = await getRecentRequests(tenantId, workflowFilter, 10);
+        setRequests(recentRequests);
+      } catch (error) {
+        console.error('Error fetching recent requests:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchRecentRequests();
+  }, [tenantId, workflowFilter]);
+
+  if (loading) {
+    return (
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>ID</TableHead>
+              <TableHead>Título</TableHead>
+              <TableHead>Solicitante</TableHead>
+              <TableHead>Departamento</TableHead>
+              {!workflowFilter && <TableHead>Workflow</TableHead>}
+              <TableHead>Estado</TableHead>
+              <TableHead>Prioridad</TableHead>
+              <TableHead>Fecha</TableHead>
+              <TableHead className="text-right">Acciones</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {[...Array(5)].map((_, i) => (
+              <TableRow key={i}>
+                <TableCell colSpan={9} className="text-center py-4">
+                  Cargando...
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    );
+  }
+
+  if (requests.length === 0) {
+    return (
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>ID</TableHead>
+              <TableHead>Título</TableHead>
+              <TableHead>Solicitante</TableHead>
+              <TableHead>Departamento</TableHead>
+              {!workflowFilter && <TableHead>Workflow</TableHead>}
+              <TableHead>Estado</TableHead>
+              <TableHead>Prioridad</TableHead>
+              <TableHead>Fecha</TableHead>
+              <TableHead className="text-right">Acciones</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell colSpan={9} className="text-center py-4 text-muted-foreground">
+                No hay solicitudes recientes
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-md border">
@@ -146,9 +154,9 @@ export default function RecentRequests({ workflowFilter }: RecentRequestsProps) 
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredRequests.map((request) => (
+          {requests.map((request) => (
             <TableRow key={request.id}>
-              <TableCell className="font-medium">{request.id}</TableCell>
+              <TableCell className="font-medium">{request.id.slice(0, 13)}...</TableCell>
               <TableCell>{request.title}</TableCell>
               <TableCell>{request.requester}</TableCell>
               <TableCell>{request.department}</TableCell>
@@ -161,8 +169,10 @@ export default function RecentRequests({ workflowFilter }: RecentRequestsProps) 
               </TableCell>
               <TableCell>{request.created}</TableCell>
               <TableCell className="text-right">
-                <Button variant="ghost" size="sm">
-                  Ver
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href={{ pathname: '/admin/[tenantId]/requests/[slug]', params: { tenantId, slug: request.id }}}>
+                    Ver
+                  </Link>
                 </Button>
               </TableCell>
             </TableRow>

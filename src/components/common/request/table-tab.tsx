@@ -170,6 +170,7 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.assignmentCategory')} />,
       cell: ({ cell }) => cell.getValue(),
     },
+    // TODO: Add client column once client data is available in the query
     /*{
       accessorKey: 'client.person',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.client')} />,
@@ -198,6 +199,7 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
       cell: ({ row }) => (
         <ActionCell
           row={row}
+          // TODO: Implement delete functionality for requests
           onDelete={() => console.log('Delete', row.original)}
           viewLink={{
             pathname: '/admin/[tenantId]/requests/[slug]',
@@ -211,11 +213,13 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
 
   const filterFields: DataTableFilterField<RequestWithRelations>[] = [
     { id: 'issueSubject', label: t('filters.issueSubject'), placeholder: t('filters.issueSubjectPlaceholder') },
+    // TODO: Add priority filter once filter logic is implemented
     // { id: 'priority', label: t('filters.priority'), placeholder: t('filters.priorityPlaceholder') },
   ];
 
   const advancedFilterFields: DataTableAdvancedFilterField<RequestWithRelations>[] = [
     { id: 'issueSubject', label: t('filters.issueSubject'), type: 'text' },
+    // TODO: Add advanced filters once filter logic is implemented for nested fields
     //   { id: 'priority', label: t('filters.priority'), type: 'text' },
     //  { id: 'status', label: t('filters.status'), type: 'text' },
     // { id: 'requestCategory', label: t('filters.requestCategory'), type: 'text' },

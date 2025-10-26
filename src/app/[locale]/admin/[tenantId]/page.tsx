@@ -2,15 +2,15 @@
 
 import { useState } from 'react';
 import { Link } from '@/i18n/routing';
-import { AlertTriangle, ArrowRight, PlusCircle } from 'lucide-react';
+import { PlusCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { GeneralMetrics } from '@/components/common/dashboard/dashboard-metrics';
+import DashboardMetricsClient from '@/components/common/dashboard/dashboard-metrics-client';
 import DashboardStats from '@/components/common/dashboard/dashboard-stats';
+import QuickStatsCards from '@/components/common/dashboard/quick-stats-cards';
 import RecentRequests from '@/components/common/dashboard/recent-requests';
 import { SLADashboard } from '@/components/common/dashboard/sla-dashboard';
 import { SLAFilters, SLAFilterValues } from '@/components/common/dashboard/sla-filters';
@@ -65,99 +65,42 @@ export default function Home() {
 
             <TabsContent value="general" className="h-full overflow-y-auto">
               <div className="mt-8">
-                <GeneralMetrics />
+                <DashboardMetricsClient tenantId={tenantId} workflowId={null} />
               </div>
 
               <div className="mt-8">
-                <DashboardStats />
+                <DashboardStats tenantId={tenantId} workflowId={null} />
               </div>
 
-              <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle>Solicitudes Pendientes</CardTitle>
-                    <CardDescription>Solicitudes que requieren atención</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-4xl font-bold">12</div>
-                    <div className="mt-2 flex items-center text-sm text-muted-foreground">
-                      <span>4 con prioridad alta</span>
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button variant="ghost" size="sm" className="w-full" asChild>
-                      <Link className="flex items-center gap-1" href={{ pathname: '/admin/[tenantId]/requests', params: { tenantId }, query: { status: 'pending' } }}>
-                        Ver todas
-                        <ArrowRight className="ml-1 h-4 w-4" />
-                      </Link>
-                    </Button>
-                  </CardFooter>
-                </Card>
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle>Solicitudes Completadas</CardTitle>
-                    <CardDescription>Solicitudes resueltas este mes</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-4xl font-bold">48</div>
-                    <div className="mt-2 flex items-center text-sm text-muted-foreground">
-                      <span>Tiempo promedio: 2.3 días</span>
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button variant="ghost" size="sm" className="w-full" asChild>
-                      <Link className="flex items-center gap-1" href={{ pathname: '/admin/[tenantId]/requests', params: { tenantId }, query: { status: 'completed' } }}>
-                        Ver todas
-                        <ArrowRight className="ml-1 h-4 w-4" />
-                      </Link>
-                    </Button>
-                  </CardFooter>
-                </Card>
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle>Reportes</CardTitle>
-                    <CardDescription>Análisis de desempeño</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-4xl font-bold">
-                      <AlertTriangle className="h-8 w-8" />
-                    </div>
-                    <div className="mt-2 flex items-center text-sm text-muted-foreground">
-                      <span>Accede a reportes detallados</span>
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button variant="ghost" size="sm" className="w-full" asChild>
-                      <Link className="flex items-center gap-1" href={{ pathname: '/admin/[tenantId]/reports', params: { tenantId } }}>
-                        Ver reportes
-                        <ArrowRight className="ml-1 h-4 w-4" />
-                      </Link>
-                    </Button>
-                  </CardFooter>
-                </Card>
+              <div className="mt-8">
+                <QuickStatsCards tenantId={tenantId} workflowId={null} />
               </div>
 
               <div className="mt-8">
                 <h2 className="text-xl font-bold">Solicitudes Recientes</h2>
                 <div className="mt-4">
-                  <RecentRequests />
+                  <RecentRequests tenantId={tenantId} />
                 </div>
               </div>
             </TabsContent>
 
             <TabsContent value="workflow" className="h-full overflow-y-auto">
               <div className="mt-8">
-                <WorkflowSelector selectedWorkflow={selectedWorkflow} onWorkflowChange={handleWorkflowChange} />
+                <WorkflowSelector tenantId={tenantId} selectedWorkflow={selectedWorkflow} onWorkflowChange={handleWorkflowChange} />
               </div>
 
               <div className="mt-8">
-                <DashboardStats />
+                <DashboardMetricsClient tenantId={tenantId} workflowId={selectedWorkflow} />
+              </div>
+
+              <div className="mt-8">
+                <DashboardStats tenantId={tenantId} workflowId={selectedWorkflow} />
               </div>
 
               <div className="mt-8">
                 <h2 className="text-xl font-bold">Solicitudes Recientes {selectedWorkflow && `- ${selectedWorkflow}`}</h2>
                 <div className="mt-4">
-                  <RecentRequests workflowFilter={selectedWorkflow} />
+                  <RecentRequests tenantId={tenantId} workflowFilter={selectedWorkflow} />
                 </div>
               </div>
             </TabsContent>
