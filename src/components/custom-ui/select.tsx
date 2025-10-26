@@ -1,4 +1,5 @@
-import React, { ReactElement, Ref, useEffect, useState } from 'react';
+import React, { ReactElement, Ref, useEffect, useRef, useState } from 'react';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { Check, ChevronDown, X } from 'lucide-react';
 import SelectComponent, {
   ClassNamesConfig,
@@ -15,7 +16,6 @@ import SelectComponent, {
   SelectInstance,
   StylesConfig,
 } from 'react-select';
-import { FixedSizeList as List } from 'react-window';
 import { z } from 'zod';
 
 import { cn } from '@/lib/utils';
@@ -181,27 +181,48 @@ export const MenuList = (props: MenuListProps<OptionType>) => {
   const { children, maxHeight } = props;
 
   const childrenArray = React.Children.toArray(children);
+  const parentRef = useRef<HTMLDivElement | null>(null);
 
-  const calculateHeight = () => {
-    // When using children it resizes correctly
-    const totalHeight = childrenArray.length * 35; // Adjust item height if different
-    return totalHeight < maxHeight ? totalHeight : maxHeight;
-  };
+  const rowVirtualizer = useVirtualizer({
+    count: childrenArray.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 35, // item height estimate; adjust if needed
+    overscan: 5,
+  });
 
-  const height = calculateHeight();
+  const totalSize = rowVirtualizer.getTotalSize();
 
-  // Ensure childrenArray has length. Even when childrenArray is empty there is one element left
-  if (!childrenArray || childrenArray.length - 1 === 0) {
+  // If there are no children, fallback to default menu list
+  if (!childrenArray || childrenArray.length === 0) {
     return <components.MenuList {...props} />;
   }
+  const virtualItems = rowVirtualizer.getVirtualItems();
+
+  const height = totalSize < (maxHeight ?? 200) ? totalSize : maxHeight;
+
   return (
-    <List
-      height={height}
-      itemCount={childrenArray.length}
-      itemSize={35} // Adjust item height if different
-      width="100%">
-      {({ index, style }) => <div style={style}>{childrenArray[index]}</div>}
-    </List>
+    <components.MenuList {...props}>
+      <div ref={parentRef} style={{ height, overflow: 'auto' }}>
+        <div style={{ height: totalSize, width: '100%', position: 'relative' }}>
+          {virtualItems.map((virtualItem) => {
+            const child = childrenArray[virtualItem.index] as React.ReactNode;
+            return (
+              <div
+                key={virtualItem.key}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  transform: `translateY(${virtualItem.start}px)`,
+                }}>
+                {child}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </components.MenuList>
   );
 };
 

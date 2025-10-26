@@ -34,8 +34,9 @@ export const brandingSchema = z.object({
     .default(null),
 });
 
-export const getInitialValues = () => ({
+export const getInitialValues = (dataroomId: string = '') => ({
   id: generateUuid(),
+  dataroomId,
   logo: null,
   banner: null,
   brandColor: '#4f46e5',

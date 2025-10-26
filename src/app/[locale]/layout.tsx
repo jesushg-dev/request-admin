@@ -2,7 +2,7 @@ import { type Metadata } from 'next';
 import localFont from 'next/font/local';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
-import { Locale, NextIntlClientProvider } from 'next-intl';
+import { NextIntlClientProvider, type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import { ThemeProvider } from 'next-themes';
 import NextTopLoader from 'nextjs-toploader';
@@ -26,10 +26,10 @@ const geistMono = localFont({
 });
 
 // Metadata configuration with localization support
-export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const params = await props.params;
   const { locale } = params;
-  const t = await getTranslations({ locale, namespace: 'home' });
+  const t = await getTranslations({ locale: locale as Locale, namespace: 'home' });
 
   return {
     title: t('title'),
@@ -58,7 +58,7 @@ export function generateStaticParams() {
 // Define the component props
 type Props = {
   children: React.ReactNode;
-  params: Promise<{ locale: Locale }>;
+  params: Promise<{ locale: string }>;
 };
 
 // RootLayout component
@@ -66,7 +66,8 @@ export default async function RootLayout({ children, params }: Props) {
   const { locale } = await params;
 
   // Validate the incoming locale
-  if (!routing.locales.includes(locale)) {
+  const validLocale = locale as Locale;
+  if (!routing.locales.includes(validLocale)) {
     notFound();
   }
 
@@ -74,7 +75,7 @@ export default async function RootLayout({ children, params }: Props) {
     <html lang={locale} suppressHydrationWarning>
       <body id="body" className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <NextIntlClientProvider locale={locale}>
+          <NextIntlClientProvider locale={locale as Locale}>
             <NextTopLoader />
             <TanstackQueryProvider>
               <NuqsAdapter>

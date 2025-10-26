@@ -14,10 +14,10 @@ import { AppSidebar } from '@/components/layouts/admin/app-sidebar';
 import { DndSubmissionProvider } from '@/components/layouts/admin/dnd-submission-provider';
 import { Navbar } from '@/components/layouts/admin/nav-bar';
 
-export async function generateMetadata(props: { params: { locale: Locale } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: { locale: string } }): Promise<Metadata> {
   const params = await props.params;
   const { locale } = params;
-  const t = await getTranslations({ locale, namespace: 'admin' });
+  const t = await getTranslations({ locale: locale as Locale, namespace: 'admin' });
 
   return {
     title: t('title'),
