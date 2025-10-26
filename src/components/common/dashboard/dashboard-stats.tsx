@@ -1,10 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { BarChart2, FileText, TrendingUp } from 'lucide-react';
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { getWorkflowStatsByMonth } from '@/actions/dashboard';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import EmptyState from '@/components/shared/empty-state';
 
 // Generar colores consistentes para workflows
 const generateColor = (index: number, total: number): string => {
@@ -15,6 +18,48 @@ const generateColor = (index: number, total: number): string => {
 interface DashboardStatsProps {
   tenantId: string;
   workflowId?: string | null;
+}
+
+function DashboardStatsSkeleton() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          <Skeleton className="h-6 w-64" />
+        </CardTitle>
+        <CardDescription>
+          <Skeleton className="h-4 w-96 mt-2" />
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="h-[300px] flex flex-col gap-4 justify-center items-center">
+          {/* Simula barras del gráfico */}
+          <div className="w-full flex items-end justify-around gap-2">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="flex-1 flex flex-col items-center gap-2">
+                <Skeleton className="w-full" style={{ height: `${Math.random() * 100 + 100}px` }} />
+              </div>
+            ))}
+          </div>
+          {/* Simula las etiquetas del eje X */}
+          <div className="w-full flex justify-around">
+            {[...Array(6)].map((_, i) => (
+              <Skeleton key={i} className="h-3 w-16" />
+            ))}
+          </div>
+        </div>
+        {/* Skeleton para la leyenda */}
+        <div className="mt-4 flex flex-wrap gap-2">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <Skeleton className="h-3 w-3 rounded-full" />
+              <Skeleton className="h-4 w-20" />
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
 }
 
 export default function DashboardStats({ tenantId, workflowId }: DashboardStatsProps) {
@@ -39,33 +84,16 @@ export default function DashboardStats({ tenantId, workflowId }: DashboardStatsP
   }, [tenantId, workflowId]);
 
   if (loading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Cargando estadísticas...</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[300px] flex items-center justify-center">
-            <p className="text-muted-foreground">Cargando datos...</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
+    return <DashboardStatsSkeleton />;
   }
 
   if (chartData.length === 0) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Análisis de Solicitudes por Workflow</CardTitle>
-          <CardDescription>No hay datos disponibles para mostrar</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[300px] flex items-center justify-center">
-            <p className="text-muted-foreground">No hay solicitudes en los últimos 6 meses</p>
-          </div>
-        </CardContent>
-      </Card>
+      <EmptyState
+        title="No hay estadísticas disponibles"
+        description="Aún no se han registrado solicitudes.\nLas estadísticas aparecerán aquí una vez que se creen solicitudes."
+        icons={[FileText, BarChart2, TrendingUp]}
+      />
     );
   }
 

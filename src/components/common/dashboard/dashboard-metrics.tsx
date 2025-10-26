@@ -44,6 +44,7 @@ interface MetricsData {
   totalRequests: { value: number; trend: { value: number; isPositive: boolean } };
   draftRequests: { value: number; trend: { value: number; isPositive: boolean } };
   avgResolutionTime: number;
+  avgResolutionTimeTrend?: { value: number; isPositive: boolean };
   resolutionRate: { value: number; trend: { value: number; isPositive: boolean } };
   pendingRequests: { value: number; trend: { value: number; isPositive: boolean }; highPriority?: number };
   completedRequests: { value: number; avgResolutionTime: number };
@@ -67,7 +68,7 @@ export function GeneralMetrics({ data }: { data: MetricsData }) {
       id: 'avg-resolution',
       title: 'Tiempo Promedio de Resolución',
       value: data.avgResolutionTime > 0 ? `${data.avgResolutionTime.toFixed(1)} días` : 'N/A',
-      trend: { value: 8.1, isPositive: true, text: 'últimos 30 días' },
+      trend: data.avgResolutionTimeTrend ? { ...data.avgResolutionTimeTrend, text: 'vs. mes anterior' } : undefined,
       icon: <Clock className="h-4 w-4" />,
       iconColor: 'text-indigo-500',
     },

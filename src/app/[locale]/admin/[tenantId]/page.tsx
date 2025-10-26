@@ -20,8 +20,10 @@ import { useTenantContext } from '@/components/hoc/tenant-provider';
 export default function Home() {
   const { tenantId } = useTenantContext();
   const [selectedWorkflow, setSelectedWorkflow] = useState<string | null>(null);
+  const [slaFilters, setSlaFilters] = useState<SLAFilterValues | null>(null);
 
   const handleSearch = (filters: SLAFilterValues): void => {
+    setSlaFilters(filters);
     console.log('Searching with filters:', filters);
     toast.info('Búsqueda aplicada', {
       description: 'Los filtros han sido aplicados correctamente',
@@ -107,11 +109,11 @@ export default function Home() {
 
             <TabsContent value="sla" className="h-full overflow-y-auto">
               <div className="mt-6">
-                <SLAFilters onSearch={handleSearch} />
+                <SLAFilters tenantId={tenantId} onSearch={handleSearch} />
               </div>
 
               <div className="mt-8">
-                <SLADashboard />
+                <SLADashboard tenantId={tenantId} filters={slaFilters} />
               </div>
             </TabsContent>
           </Tabs>

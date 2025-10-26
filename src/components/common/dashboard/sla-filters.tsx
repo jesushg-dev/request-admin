@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AlertTriangle, CheckCircle, Clock, Search } from 'lucide-react';
+import { getWorkflows } from '@/actions/dashboard';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -20,14 +21,37 @@ export interface SLAFilterValues {
 }
 
 interface SLAFiltersProps {
+  tenantId: string;
   onSearch: (filters: SLAFilterValues) => void;
 }
 
-export function SLAFilters({ onSearch }: SLAFiltersProps) {
+interface Workflow {
+  id: string;
+  name: string;
+  _count: {
+    requestCategory: number;
+  };
+}
+
+export function SLAFilters({ tenantId, onSearch }: SLAFiltersProps) {
   const [slaStatus, setSlaStatus] = useState<string>('all');
   const [slaPercentage, setSlaPercentage] = useState<number[]>([0, 100]);
   const [slaTimeRange, setSlaTimeRange] = useState<string>('all');
   const [workflowType, setWorkflowType] = useState<string>('all');
+  const [workflows, setWorkflows] = useState<Workflow[]>([]);
+
+  useEffect(() => {
+    async function fetchWorkflows() {
+      try {
+        const workflowsData = await getWorkflows(tenantId);
+        setWorkflows(workflowsData as Workflow[]);
+      } catch (error) {
+        console.error('Error fetching workflows:', error);
+      }
+    }
+
+    fetchWorkflows();
+  }, [tenantId]);
 
   const handleSearch = () => {
     onSearch({
@@ -132,10 +156,11 @@ export function SLAFilters({ onSearch }: SLAFiltersProps) {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos los workflows</SelectItem>
-              <SelectItem value="Activaciones">Activaciones</SelectItem>
-              <SelectItem value="Soporte">Soporte Técnico</SelectItem>
-              <SelectItem value="Comisiones">Comisiones</SelectItem>
-              <SelectItem value="Facturación">Facturación</SelectItem>
+              {workflows.map((workflow) => (
+                <SelectItem key={workflow.id} value={workflow.id}>
+                  {workflow.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
