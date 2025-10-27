@@ -1,11 +1,11 @@
 'use client';
 
-import { MetricsCards } from './metrics-cards';
-import { MonthlyTrendsChart } from './charts/monthly-trends-chart';
 import { AreaDistributionChart } from './charts/area-distribution-chart';
-import { StatusDistributionChart } from './charts/status-distribution-chart';
+import { MonthlyTrendsChart } from './charts/monthly-trends-chart';
 import { SLAComplianceChart } from './charts/sla-compliance-chart';
-import type { OverviewData, MonthlyTrend, AreaDistribution, StatusDistribution, SLACompliance } from './types';
+import { StatusDistributionChart } from './charts/status-distribution-chart';
+import { MetricsCards } from './metrics-cards';
+import type { AreaDistribution, MonthlyTrend, OverviewData, SLACompliance, StatusDistribution } from './types';
 
 interface OverviewTabProps {
   overviewData: OverviewData | null;
@@ -16,14 +16,7 @@ interface OverviewTabProps {
   loading: boolean;
 }
 
-export function OverviewTab({
-  overviewData,
-  monthlyTrends,
-  areaDistribution,
-  statusDistribution,
-  slaCompliance,
-  loading,
-}: OverviewTabProps) {
+export function OverviewTab({ overviewData, monthlyTrends, areaDistribution, statusDistribution, slaCompliance, loading }: OverviewTabProps) {
   return (
     <>
       <MetricsCards
@@ -51,4 +44,3 @@ export function OverviewTab({
     </>
   );
 }
-

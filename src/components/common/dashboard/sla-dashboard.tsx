@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import type React from 'react';
+import { getSLADashboardData } from '@/actions/dashboard';
 import { AlertTriangle, ArrowDown, ArrowUp, Calendar, CheckCircle, Clock, FileText, Target, TrendingUp, Users } from 'lucide-react';
 import { Area, AreaChart, Bar, BarChart, Cell, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
@@ -9,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import EmptyState from '@/components/shared/empty-state';
-import { getSLADashboardData } from '@/actions/dashboard';
+
 import type { SLAFilterValues } from './sla-filters';
 
 interface SLADashboardProps {
@@ -295,13 +296,7 @@ export function SLADashboard({ tenantId, filters }: SLADashboardProps) {
     <div className="space-y-6">
       {/* Métricas principales de SLA */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <MetricCard
-          title="Cumplimiento de SLA"
-          value={`${data.compliance.toFixed(1)}%`}
-          trend={data.trends.complianceTrend}
-          icon={<CheckCircle className="h-4 w-4" />}
-          iconColor="text-emerald-500"
-        />
+        <MetricCard title="Cumplimiento de SLA" value={`${data.compliance.toFixed(1)}%`} trend={data.trends.complianceTrend} icon={<CheckCircle className="h-4 w-4" />} iconColor="text-emerald-500" />
         <MetricCard
           title="Tiempo Promedio de Resolución"
           value={`${data.avgResolutionTime.toFixed(1)} días`}
@@ -309,34 +304,28 @@ export function SLADashboard({ tenantId, filters }: SLADashboardProps) {
           icon={<Clock className="h-4 w-4" />}
           iconColor="text-blue-500"
         />
-        <MetricCard 
-          title="Solicitudes en Riesgo" 
-          value={data.atRisk.toString()} 
-          trend={data.trends.atRiskTrend}
-          icon={<AlertTriangle className="h-4 w-4" />} 
-          iconColor="text-amber-500" 
-        />
-        <MetricCard 
-          title="Solicitudes Vencidas" 
-          value={data.overdue.toString()} 
-          trend={data.trends.overdueTrend}
-          icon={<AlertTriangle className="h-4 w-4" />} 
-          iconColor="text-red-500" 
-        />
+        <MetricCard title="Solicitudes en Riesgo" value={data.atRisk.toString()} trend={data.trends.atRiskTrend} icon={<AlertTriangle className="h-4 w-4" />} iconColor="text-amber-500" />
+        <MetricCard title="Solicitudes Vencidas" value={data.overdue.toString()} trend={data.trends.overdueTrend} icon={<AlertTriangle className="h-4 w-4" />} iconColor="text-red-500" />
       </div>
 
       {/* Segunda fila de métricas */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <MetricCard title="SLA Promedio por Solicitud" value={`${data.avgSlaHours}h`} description="Tiempo asignado promedio" icon={<Calendar className="h-4 w-4" />} iconColor="text-purple-500" />
+        <MetricCard title="Escalaciones por SLA" value="0" trend={{ value: 0, isPositive: true, text: 'N/A' }} icon={<TrendingUp className="h-4 w-4" />} iconColor="text-orange-500" />
         <MetricCard
-          title="Escalaciones por SLA"
-          value="0"
-          trend={{ value: 0, isPositive: true, text: 'N/A' }}
-          icon={<TrendingUp className="h-4 w-4" />}
-          iconColor="text-orange-500"
+          title="Equipos con Mejor SLA"
+          value={data.bestWorkflow.name}
+          description={`${data.bestWorkflow.compliance.toFixed(1)}% de cumplimiento`}
+          icon={<Users className="h-4 w-4" />}
+          iconColor="text-green-500"
         />
-        <MetricCard title="Equipos con Mejor SLA" value={data.bestWorkflow.name} description={`${data.bestWorkflow.compliance.toFixed(1)}% de cumplimiento`} icon={<Users className="h-4 w-4" />} iconColor="text-green-500" />
-        <MetricCard title="Alertas Activas" value={data.alerts.length.toString()} description="Solicitudes que requieren atención" icon={<AlertTriangle className="h-4 w-4" />} iconColor="text-red-500" />
+        <MetricCard
+          title="Alertas Activas"
+          value={data.alerts.length.toString()}
+          description="Solicitudes que requieren atención"
+          icon={<AlertTriangle className="h-4 w-4" />}
+          iconColor="text-red-500"
+        />
       </div>
 
       {/* Gráficos principales */}
@@ -378,8 +367,8 @@ export function SLADashboard({ tenantId, filters }: SLADashboardProps) {
           </CardHeader>
           <CardContent>
             <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data.slaWorkflowData}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={data.slaWorkflowData}>
                   <XAxis dataKey="name" />
                   <YAxis />
                   <Tooltip />
@@ -502,23 +491,17 @@ export function SLADashboard({ tenantId, filters }: SLADashboardProps) {
           <CardContent>
             <div className="space-y-4">
               {data.alerts.length === 0 ? (
-                <div className="text-center text-sm text-muted-foreground py-4">
-                  No hay alertas de SLA
-                </div>
+                <div className="text-center text-sm text-muted-foreground py-4">No hay alertas de SLA</div>
               ) : (
                 data.alerts.map((alert: SLAAlert) => (
                   <div
                     key={alert.id}
                     className={`rounded-md border p-3 ${
-                      alert.level === 'danger'
-                        ? 'bg-red-50 border-red-200 dark:bg-red-900/30 dark:border-red-900/60'
-                        : 'bg-amber-50 border-amber-200 dark:bg-amber-900/30 dark:border-amber-900/60'
+                      alert.level === 'danger' ? 'bg-red-50 border-red-200 dark:bg-red-900/30 dark:border-red-900/60' : 'bg-amber-50 border-amber-200 dark:bg-amber-900/30 dark:border-amber-900/60'
                     }`}>
                     <div className="flex items-center">
                       <AlertTriangle className={`h-4 w-4 mr-2 ${alert.level === 'danger' ? 'text-red-500' : 'text-amber-500'}`} />
-                      <span className={`font-medium ${alert.level === 'danger' ? 'text-red-800 dark:text-red-200' : 'text-amber-800 dark:text-amber-200'}`}>
-                        {alert.requestId.slice(0, 13)}...
-                      </span>
+                      <span className={`font-medium ${alert.level === 'danger' ? 'text-red-800 dark:text-red-200' : 'text-amber-800 dark:text-amber-200'}`}>{alert.requestId.slice(0, 13)}...</span>
                     </div>
                     <div className={`mt-1 text-sm ${alert.level === 'danger' ? 'text-red-700 dark:text-red-100' : 'text-amber-700 dark:text-amber-100'}`}>
                       <p>{alert.message}</p>

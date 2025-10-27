@@ -463,9 +463,7 @@ export async function getAlerts(tenantId: string, filters?: ReportFilters) {
 
     // Calculate percentage of SLA
     const totalTime = deadlineTime - startTime;
-    const elapsed = isCompleted && assignment.slaEnd
-      ? new Date(assignment.slaEnd).getTime() - startTime
-      : currentTime - startTime;
+    const elapsed = isCompleted && assignment.slaEnd ? new Date(assignment.slaEnd).getTime() - startTime : currentTime - startTime;
     const percentage = (elapsed / totalTime) * 100;
 
     // Days in current status
@@ -511,30 +509,26 @@ export async function getAlerts(tenantId: string, filters?: ReportFilters) {
   const summaryAlerts: { type: string; count: number; statusName: string; alerts: AlertData[] }[] = [];
 
   statusGroups.forEach((data, statusName) => {
-    const criticalCount = data.alerts.filter(a => a.type === 'critical').length;
-    const warningCount = data.alerts.filter(a => a.type === 'warning').length;
+    const criticalCount = data.alerts.filter((a) => a.type === 'critical').length;
+    const warningCount = data.alerts.filter((a) => a.type === 'warning').length;
 
     if (criticalCount > 0) {
-      const avgDays = data.alerts
-        .filter(a => a.type === 'critical')
-        .reduce((sum, a) => sum + a.daysInStatus, 0) / criticalCount;
+      const avgDays = data.alerts.filter((a) => a.type === 'critical').reduce((sum, a) => sum + a.daysInStatus, 0) / criticalCount;
       summaryAlerts.push({
         type: 'critical',
         count: criticalCount,
         statusName,
-        alerts: data.alerts.filter(a => a.type === 'critical'),
+        alerts: data.alerts.filter((a) => a.type === 'critical'),
       });
     }
 
     if (warningCount > 0) {
-      const avgDays = data.alerts
-        .filter(a => a.type === 'warning')
-        .reduce((sum, a) => sum + a.daysInStatus, 0) / warningCount;
+      const avgDays = data.alerts.filter((a) => a.type === 'warning').reduce((sum, a) => sum + a.daysInStatus, 0) / warningCount;
       summaryAlerts.push({
         type: 'warning',
         count: warningCount,
         statusName,
-        alerts: data.alerts.filter(a => a.type === 'warning'),
+        alerts: data.alerts.filter((a) => a.type === 'warning'),
       });
     }
   });
@@ -634,8 +628,7 @@ export async function getExecutionFlows(tenantId: string) {
             return (endTime - startTime) / (1000 * 60 * 60 * 24); // Convert to days
           })
           .filter((t) => t > 0);
-        avgCompletionTime =
-          completionTimes.length > 0 ? completionTimes.reduce((a, b) => a + b, 0) / completionTimes.length : 0;
+        avgCompletionTime = completionTimes.length > 0 ? completionTimes.reduce((a, b) => a + b, 0) / completionTimes.length : 0;
       }
 
       return {
@@ -738,9 +731,7 @@ export async function getExecutionFlowDetails(tenantId: string, flowId: string) 
   flow.nodes.forEach((node) => {
     const count = nodeTypeCounts.get(node.id) || 0;
     const complianceArray = nodeTypeCompliance.get(node.id) || [];
-    const avgCompliance = complianceArray.length > 0 
-      ? (complianceArray.reduce<number>((a, b) => Number(a) + Number(b), 0) / complianceArray.length) * 100 
-      : 0;
+    const avgCompliance = complianceArray.length > 0 ? (complianceArray.reduce<number>((a, b) => Number(a) + Number(b), 0) / complianceArray.length) * 100 : 0;
     const avgTime = count > 0 ? 0.5 : 0;
 
     try {
@@ -793,4 +784,3 @@ function buildWhereClause(tenantId: string, filters?: ReportFilters) {
 
   return baseWhere;
 }
-

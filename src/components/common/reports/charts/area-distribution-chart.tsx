@@ -1,7 +1,9 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+
 import type { AreaDistribution } from '../types';
 
 interface AreaDistributionChartProps {
@@ -54,14 +56,7 @@ export function AreaDistributionChart({ data, loading }: AreaDistributionChartPr
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <Pie 
-                data={data} 
-                cx="50%" 
-                cy="50%" 
-                outerRadius={100} 
-                dataKey="value" 
-                label={(entry) => `${(entry.name as string)} ${(((entry.percent as number) ?? 0) * 100).toFixed(0)}%`}
-              >
+              <Pie data={data} cx="50%" cy="50%" outerRadius={100} dataKey="value" label={(entry) => `${entry.name as string} ${(((entry.percent as number) ?? 0) * 100).toFixed(0)}%`}>
                 {data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
                 ))}
@@ -75,4 +70,3 @@ export function AreaDistributionChart({ data, loading }: AreaDistributionChartPr
     </Card>
   );
 }
-

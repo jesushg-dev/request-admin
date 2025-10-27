@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { getRecentRequests } from '@/actions/dashboard';
+import { Link } from '@/i18n/routing';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { getRecentRequests } from '@/actions/dashboard';
-import { Link } from '@/i18n/routing';
 
 interface Request {
   id: string;
@@ -22,7 +23,6 @@ interface RecentRequestsProps {
   tenantId: string;
   workflowFilter?: string | null;
 }
-
 
 // Función para determinar el color de la insignia de estado
 function getStatusBadgeVariant(status: string): 'default' | 'secondary' | 'destructive' | 'outline' {
@@ -170,9 +170,7 @@ export default function RecentRequests({ tenantId, workflowFilter }: RecentReque
               <TableCell>{request.created}</TableCell>
               <TableCell className="text-right">
                 <Button variant="ghost" size="sm" asChild>
-                  <Link href={{ pathname: '/admin/[tenantId]/requests/[slug]', params: { tenantId, slug: request.id }}}>
-                    Ver
-                  </Link>
+                  <Link href={{ pathname: '/admin/[tenantId]/requests/[slug]', params: { tenantId, slug: request.id } }}>Ver</Link>
                 </Button>
               </TableCell>
             </TableRow>

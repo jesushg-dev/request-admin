@@ -1,7 +1,8 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Area, AreaChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface SLACompliance {
   name: string;
@@ -45,13 +46,7 @@ export function SLAComplianceChart({ data, loading }: SLAComplianceChartProps) {
               <YAxis domain={[0, 100]} />
               <Tooltip />
               <Legend />
-              <Area 
-                type="monotone" 
-                dataKey="cumplimiento" 
-                name="% Cumplimiento" 
-                stroke="#10b981" 
-                fill="#10b981" 
-              />
+              <Area type="monotone" dataKey="cumplimiento" name="% Cumplimiento" stroke="#10b981" fill="#10b981" />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -59,4 +54,3 @@ export function SLAComplianceChart({ data, loading }: SLAComplianceChartProps) {
     </Card>
   );
 }
-

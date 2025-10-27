@@ -12,14 +12,7 @@ interface MetricsCardsProps {
   loading: boolean;
 }
 
-export function MetricsCards({
-  totalRequests,
-  avgResolutionTime,
-  openRequests,
-  closedRequests,
-  overdueRequests,
-  loading,
-}: MetricsCardsProps) {
+export function MetricsCards({ totalRequests, avgResolutionTime, openRequests, closedRequests, overdueRequests, loading }: MetricsCardsProps) {
   if (loading) {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -99,4 +92,3 @@ export function MetricsCards({
     </div>
   );
 }
-

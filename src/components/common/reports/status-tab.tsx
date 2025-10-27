@@ -1,10 +1,12 @@
 'use client';
 
 import { FileText } from 'lucide-react';
+import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import EmptyState from '@/components/shared/empty-state';
-import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
+
 import type { StatusDistribution } from './types';
 
 interface StatusTabProps {
@@ -51,14 +53,7 @@ export function StatusTab({ statusDistribution, loading }: StatusTabProps) {
         <div className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <Pie 
-                data={statusDistribution} 
-                cx="50%" 
-                cy="50%" 
-                outerRadius={150} 
-                dataKey="value" 
-                label={(entry) => `${(entry.name as string)} ${(((entry.percent as number) ?? 0) * 100).toFixed(0)}%`}
-              >
+              <Pie data={statusDistribution} cx="50%" cy="50%" outerRadius={150} dataKey="value" label={(entry) => `${entry.name as string} ${(((entry.percent as number) ?? 0) * 100).toFixed(0)}%`}>
                 {statusDistribution.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color || '#6b7280'} />
                 ))}
@@ -72,4 +67,3 @@ export function StatusTab({ statusDistribution, loading }: StatusTabProps) {
     </Card>
   );
 }
-

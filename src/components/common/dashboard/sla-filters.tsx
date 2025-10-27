@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AlertTriangle, CheckCircle, Clock, Search } from 'lucide-react';
 import { getWorkflows } from '@/actions/dashboard';
+import { AlertTriangle, CheckCircle, Clock, Search } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';

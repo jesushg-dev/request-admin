@@ -1,10 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { DashboardMetrics } from './dashboard-metrics';
 import { getDashboardMetrics } from '@/actions/dashboard';
-import { Skeleton } from '@/components/ui/skeleton';
+
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+
+import { DashboardMetrics } from './dashboard-metrics';
 
 interface MetricsData {
   totalRequests: { value: number; trend: { value: number; isPositive: boolean } };
@@ -12,6 +14,7 @@ interface MetricsData {
   avgResolutionTime: number;
   resolutionRate: { value: number; trend: { value: number; isPositive: boolean } };
   pendingRequests: { value: number; trend: { value: number; isPositive: boolean } };
+  completedRequests: { value: number; avgResolutionTime: number };
   slaOverdue: { value: number; trend: { value: number; isPositive: boolean } };
   slaCompliance: { value: number; trend: { value: number; isPositive: boolean } };
   slaAtRisk: { value: number; trend: { value: number; isPositive: boolean } };

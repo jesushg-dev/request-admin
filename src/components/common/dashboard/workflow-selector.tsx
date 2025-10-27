@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { getWorkflows } from '@/actions/dashboard';
 import { ChevronDown } from 'lucide-react';
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { getWorkflows } from '@/actions/dashboard';
 
 interface WorkflowSelectorProps {
   tenantId: string;

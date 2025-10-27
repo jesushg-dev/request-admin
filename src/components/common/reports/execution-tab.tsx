@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import type { ExecutionFlowInfo, ExecutionStep } from '@/actions/report';
+import { getExecutionFlowDetails, getExecutionFlows } from '@/actions/report';
 import { ArrowRight, CheckCircle2, Clock, FileText } from 'lucide-react';
-import { LineChart, CartesianGrid, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -13,9 +15,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
-import type { ExecutionFlowInfo, ExecutionStep } from '@/actions/report';
-import { getExecutionFlows, getExecutionFlowDetails } from '@/actions/report';
 import EmptyState from '@/components/shared/empty-state';
 
 interface ExecutionTabProps {
@@ -139,9 +138,7 @@ export function ExecutionTab({ tenantId, loading: initialLoading }: ExecutionTab
             {flows.map((flow) => (
               <div
                 key={flow.id}
-                className={`cursor-pointer rounded-lg border p-4 transition-colors hover:bg-muted ${
-                  selectedFlow?.id === flow.id ? 'border-primary bg-muted/50' : ''
-                }`}
+                className={`cursor-pointer rounded-lg border p-4 transition-colors hover:bg-muted ${selectedFlow?.id === flow.id ? 'border-primary bg-muted/50' : ''}`}
                 onClick={() => handleFlowSelect(flow.id)}>
                 <div className="flex items-center justify-between">
                   <h3 className="font-medium">{flow.name}</h3>
@@ -156,9 +153,7 @@ export function ExecutionTab({ tenantId, loading: initialLoading }: ExecutionTab
                     <CheckCircle2 className="h-4 w-4" />
                     <span>Tasa de éxito: {flow.successRate}%</span>
                   </div>
-                  <div className="mt-1 text-xs">
-                    {flow.executionCount} ejecuciones
-                  </div>
+                  <div className="mt-1 text-xs">{flow.executionCount} ejecuciones</div>
                 </div>
               </div>
             ))}
@@ -166,142 +161,142 @@ export function ExecutionTab({ tenantId, loading: initialLoading }: ExecutionTab
         </CardContent>
       </Card>
 
-      {selectedFlow && (loadingDetails ? (
-        <Card className="md:col-span-2">
-          <CardHeader>
-            <Skeleton className="h-6 w-64 mb-2" />
-            <Skeleton className="h-4 w-96" />
-          </CardHeader>
-          <CardContent>
-            <div className="h-[400px] flex items-center justify-center">
-              <Skeleton className="h-64 w-full" />
-            </div>
-          </CardContent>
-        </Card>
-      ) : flowDetails ? (
-        <Card className="md:col-span-2">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>{selectedFlow.name}</CardTitle>
-                <CardDescription>
-                  Versión {selectedFlow.version} | {selectedFlow.nodeCount} nodos | {selectedFlow.executionCount} ejecuciones
-                </CardDescription>
+      {selectedFlow &&
+        (loadingDetails ? (
+          <Card className="md:col-span-2">
+            <CardHeader>
+              <Skeleton className="h-6 w-64 mb-2" />
+              <Skeleton className="h-4 w-96" />
+            </CardHeader>
+            <CardContent>
+              <div className="h-[400px] flex items-center justify-center">
+                <Skeleton className="h-64 w-full" />
               </div>
-              <Badge variant="outline" className="px-3 py-1">
-                {selectedFlow.successRate}% de éxito
-              </Badge>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="steps">
-              <TabsList className="mb-4">
-                <TabsTrigger value="steps">Pasos del Proceso</TabsTrigger>
-                <TabsTrigger value="metrics">Métricas de Ejecución</TabsTrigger>
-              </TabsList>
-              <TabsContent value="steps">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-medium">Pasos del proceso de ejecución</h3>
-                    <span className="text-sm text-muted-foreground">Total: {selectedFlow.avgCompletionTime} días</span>
-                  </div>
-
-                  <div className="space-y-4">
-                    {flowDetails.steps.map((step, index) => (
-                      <div key={step.id} className="rounded-lg border p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">{index + 1}</div>
-                            <h4 className="font-medium">{step.name}</h4>
-                          </div>
-                          <Badge variant="outline">{step.avgTime.toFixed(1)} días</Badge>
-                        </div>
-                        <div className="mt-2">
-                          <div className="flex items-center justify-between text-sm">
-                            <span>Cumplimiento del proceso:</span>
-                            <span>{step.compliance.toFixed(1)}%</span>
-                          </div>
-                          <Progress value={step.compliance} className="mt-1" />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+            </CardContent>
+          </Card>
+        ) : flowDetails ? (
+          <Card className="md:col-span-2">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>{selectedFlow.name}</CardTitle>
+                  <CardDescription>
+                    Versión {selectedFlow.version} | {selectedFlow.nodeCount} nodos | {selectedFlow.executionCount} ejecuciones
+                  </CardDescription>
                 </div>
-              </TabsContent>
-              <TabsContent value="metrics">
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="mb-2 font-medium">Ejecuciones por mes</h3>
-                    <div className="h-[300px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={[]}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="month" />
-                          <YAxis yAxisId="left" />
-                          <Tooltip />
-                          <Legend />
-                          <Line yAxisId="left" type="monotone" dataKey="count" name="Ejecuciones" stroke="#8884d8" />
-                        </LineChart>
-                      </ResponsiveContainer>
-                      <div className="text-center text-sm text-muted-foreground mt-4">Datos de ejecuciones por mes en desarrollo</div>
+                <Badge variant="outline" className="px-3 py-1">
+                  {selectedFlow.successRate}% de éxito
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Tabs defaultValue="steps">
+                <TabsList className="mb-4">
+                  <TabsTrigger value="steps">Pasos del Proceso</TabsTrigger>
+                  <TabsTrigger value="metrics">Métricas de Ejecución</TabsTrigger>
+                </TabsList>
+                <TabsContent value="steps">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-medium">Pasos del proceso de ejecución</h3>
+                      <span className="text-sm text-muted-foreground">Total: {selectedFlow.avgCompletionTime} días</span>
+                    </div>
+
+                    <div className="space-y-4">
+                      {flowDetails.steps.map((step, index) => (
+                        <div key={step.id} className="rounded-lg border p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">{index + 1}</div>
+                              <h4 className="font-medium">{step.name}</h4>
+                            </div>
+                            <Badge variant="outline">{step.avgTime.toFixed(1)} días</Badge>
+                          </div>
+                          <div className="mt-2">
+                            <div className="flex items-center justify-between text-sm">
+                              <span>Cumplimiento del proceso:</span>
+                              <span>{step.compliance.toFixed(1)}%</span>
+                            </div>
+                            <Progress value={step.compliance} className="mt-1" />
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
+                </TabsContent>
+                <TabsContent value="metrics">
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="mb-2 font-medium">Ejecuciones por mes</h3>
+                      <div className="h-[300px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={[]}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="month" />
+                            <YAxis yAxisId="left" />
+                            <Tooltip />
+                            <Legend />
+                            <Line yAxisId="left" type="monotone" dataKey="count" name="Ejecuciones" stroke="#8884d8" />
+                          </LineChart>
+                        </ResponsiveContainer>
+                        <div className="text-center text-sm text-muted-foreground mt-4">Datos de ejecuciones por mes en desarrollo</div>
+                      </div>
+                    </div>
 
-                  <div className="grid gap-4 md:grid-cols-3">
-                    <Card>
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium">Tiempo promedio</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">{selectedFlow.avgCompletionTime} días</div>
-                        <p className="text-xs text-muted-foreground">{selectedFlow.avgCompletionTime < 2.5 ? 'Por debajo del promedio' : 'Por encima del promedio'}</p>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium">Tasa de éxito</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">{selectedFlow.successRate}%</div>
-                        <p className="text-xs text-muted-foreground">{selectedFlow.successRate > 90 ? 'Excelente rendimiento' : 'Necesita mejoras'}</p>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium">Ejecuciones totales</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">{selectedFlow.executionCount}</div>
-                        <p className="text-xs text-muted-foreground">{selectedFlow.executionCount > 10 ? 'Proceso establecido' : 'Proceso nuevo'}</p>
-                      </CardContent>
-                    </Card>
+                    <div className="grid gap-4 md:grid-cols-3">
+                      <Card>
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-sm font-medium">Tiempo promedio</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="text-2xl font-bold">{selectedFlow.avgCompletionTime} días</div>
+                          <p className="text-xs text-muted-foreground">{selectedFlow.avgCompletionTime < 2.5 ? 'Por debajo del promedio' : 'Por encima del promedio'}</p>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-sm font-medium">Tasa de éxito</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="text-2xl font-bold">{selectedFlow.successRate}%</div>
+                          <p className="text-xs text-muted-foreground">{selectedFlow.successRate > 90 ? 'Excelente rendimiento' : 'Necesita mejoras'}</p>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-sm font-medium">Ejecuciones totales</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="text-2xl font-bold">{selectedFlow.executionCount}</div>
+                          <p className="text-xs text-muted-foreground">{selectedFlow.executionCount > 10 ? 'Proceso establecido' : 'Proceso nuevo'}</p>
+                        </CardContent>
+                      </Card>
+                    </div>
                   </div>
-                </div>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <Button variant="outline">Ver historial de ejecuciones</Button>
-            <Button asChild>
-              <Link href={`/admin/${tenantId}/workflows`}>
-                Gestionar workflows
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </CardFooter>
-        </Card>
-      ) : (
-        <Card className="flex items-center justify-center md:col-span-2">
-          <CardContent className="py-12 text-center">
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-              <FileText className="h-6 w-6 text-muted-foreground" />
-            </div>
-            <h3 className="mb-2 text-lg font-medium">Seleccione un modelo de ejecución</h3>
-            <p className="text-sm text-muted-foreground">Elija un modelo de la lista para ver sus detalles de ejecución</p>
-          </CardContent>
-        </Card>
-      ))}
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+            <CardFooter className="flex justify-between">
+              <Button variant="outline">Ver historial de ejecuciones</Button>
+              <Button asChild>
+                <Link href={`/admin/${tenantId}/workflows`}>
+                  Gestionar workflows
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </CardFooter>
+          </Card>
+        ) : (
+          <Card className="flex items-center justify-center md:col-span-2">
+            <CardContent className="py-12 text-center">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                <FileText className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <h3 className="mb-2 text-lg font-medium">Seleccione un modelo de ejecución</h3>
+              <p className="text-sm text-muted-foreground">Elija un modelo de la lista para ver sus detalles de ejecución</p>
+            </CardContent>
+          </Card>
+        ))}
     </div>
   );
 }
-

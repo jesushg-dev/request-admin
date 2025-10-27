@@ -1,10 +1,11 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import type { Area, Status, Priority } from './types';
+
+import type { Area, Priority, Status } from './types';
 
 interface ReportFiltersProps {
   areas: Area[];
@@ -44,11 +45,7 @@ export function ReportFilters({
             <div className="space-y-2 max-h-60 overflow-y-auto">
               {areas.map((area) => (
                 <div key={area.id} className="flex items-center space-x-2">
-                  <Checkbox 
-                    id={`area-${area.id}`} 
-                    checked={selectedAreas.includes(area.id)} 
-                    onCheckedChange={() => onAreaToggle(area.id)} 
-                  />
+                  <Checkbox id={`area-${area.id}`} checked={selectedAreas.includes(area.id)} onCheckedChange={() => onAreaToggle(area.id)} />
                   <Label htmlFor={`area-${area.id}`}>{area.name}</Label>
                 </div>
               ))}
@@ -59,11 +56,7 @@ export function ReportFilters({
             <div className="space-y-2 max-h-60 overflow-y-auto">
               {statuses.map((status) => (
                 <div key={status.id} className="flex items-center space-x-2">
-                  <Checkbox 
-                    id={`status-${status.id}`} 
-                    checked={selectedStatuses.includes(status.id)}
-                    onCheckedChange={() => onStatusToggle(status.id)}
-                  />
+                  <Checkbox id={`status-${status.id}`} checked={selectedStatuses.includes(status.id)} onCheckedChange={() => onStatusToggle(status.id)} />
                   <Label htmlFor={`status-${status.id}`}>
                     <div className="flex items-center">
                       {status.name}
@@ -79,11 +72,7 @@ export function ReportFilters({
             <div className="space-y-2 max-h-60 overflow-y-auto">
               {priorities.map((priority) => (
                 <div key={priority.id} className="flex items-center space-x-2">
-                  <Checkbox 
-                    id={`priority-${priority.id}`} 
-                    checked={selectedPriorities.includes(priority.id)}
-                    onCheckedChange={() => onPriorityToggle(priority.id)}
-                  />
+                  <Checkbox id={`priority-${priority.id}`} checked={selectedPriorities.includes(priority.id)} onCheckedChange={() => onPriorityToggle(priority.id)} />
                   <Label htmlFor={`priority-${priority.id}`}>{priority.name}</Label>
                 </div>
               ))}
@@ -99,4 +88,3 @@ export function ReportFilters({
     </Card>
   );
 }
-

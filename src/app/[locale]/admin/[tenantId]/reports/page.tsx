@@ -2,12 +2,23 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import {
+  getAlerts,
+  getAreaDistribution,
+  getAreas,
+  getAverageResolutionTime,
+  getMonthlyTrends,
+  getOverviewReport,
+  getPriorities,
+  getSLACompliance,
+  getStatusDistribution,
+  getStatuses,
+  getWorkflowDistribution,
+} from '@/actions/report';
+import { endOfDay, startOfDay, subDays } from 'date-fns';
 import { ArrowRight, BarChart2, CheckCircle2, Clock, Download, FileJson, FileSpreadsheet, FileText, Filter, TrendingUp } from 'lucide-react';
 import { AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { toast } from 'sonner';
-import { subDays, startOfDay, endOfDay } from 'date-fns';
-
-import { getOverviewReport, getMonthlyTrends, getAreaDistribution, getStatusDistribution, getSLACompliance, getAreas, getStatuses, getPriorities, getAverageResolutionTime, getWorkflowDistribution, getAlerts } from '@/actions/report';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -20,25 +31,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import EmptyState from '@/components/shared/empty-state';
-
+import { AreasTab } from '@/components/common/reports/areas-tab';
+import { ExecutionTab } from '@/components/common/reports/execution-tab';
+import { OverviewTab } from '@/components/common/reports/overview-tab';
 // Report components
 import { ReportFilters } from '@/components/common/reports/report-filters';
-import { OverviewTab } from '@/components/common/reports/overview-tab';
-import { AreasTab } from '@/components/common/reports/areas-tab';
 import { StatusTab } from '@/components/common/reports/status-tab';
-import { ExecutionTab } from '@/components/common/reports/execution-tab';
-import type { 
-  OverviewData, 
-  MonthlyTrend, 
-  AreaDistribution, 
-  StatusDistribution, 
-  SLACompliance,
-  Area,
-  Status,
-  Priority,
-  ReportFilters as ReportFiltersType
-} from '@/components/common/reports/types';
+import type { Area, AreaDistribution, MonthlyTrend, OverviewData, Priority, ReportFilters as ReportFiltersType, SLACompliance, Status, StatusDistribution } from '@/components/common/reports/types';
+import EmptyState from '@/components/shared/empty-state';
 
 // Mock types for not-yet-implemented tabs
 type Step = {
@@ -188,7 +188,7 @@ export default function ReportsPage({ params }: ReportsPageProps) {
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('overview');
   const [selectedModel, setSelectedModel] = useState<RequestModel | undefined>(undefined);
-  
+
   // Real data states
   const [overviewData, setOverviewData] = useState<OverviewData | null>(null);
   const [monthlyTrends, setMonthlyTrends] = useState<MonthlyTrend[]>([]);
@@ -218,11 +218,7 @@ export default function ReportsPage({ params }: ReportsPageProps) {
 
     async function loadFilterOptions() {
       try {
-        const [areasData, statusesData, prioritiesData] = await Promise.all([
-          getAreas(tenantId),
-          getStatuses(tenantId),
-          getPriorities(tenantId),
-        ]);
+        const [areasData, statusesData, prioritiesData] = await Promise.all([getAreas(tenantId), getStatuses(tenantId), getPriorities(tenantId)]);
         setAreas(areasData);
         setStatuses(statusesData);
         setPriorities(prioritiesData);
@@ -241,9 +237,9 @@ export default function ReportsPage({ params }: ReportsPageProps) {
     async function loadData() {
       try {
         setLoading(true);
-        
+
         const filters = buildFilters();
-        
+
         const [overview, trends, areas, statuses, compliance, responseTime, workflows, alerts] = await Promise.all([
           getOverviewReport(tenantId, filters),
           getMonthlyTrends(tenantId, filters),
@@ -557,13 +553,7 @@ export default function ReportsPage({ params }: ReportsPageProps) {
                       <div className="h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
                           <PieChart>
-                            <Pie
-                              data={workflowData}
-                              cx="50%"
-                              cy="50%"
-                              outerRadius={150}
-                              dataKey="value"
-                              label={({ name, percent }) => `${name} ${(((percent as number) ?? 0) * 100).toFixed(0)}%`}>
+                            <Pie data={workflowData} cx="50%" cy="50%" outerRadius={150} dataKey="value" label={({ name, percent }) => `${name} ${(((percent as number) ?? 0) * 100).toFixed(0)}%`}>
                               {workflowData.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={entry.color} />
                               ))}
@@ -625,15 +615,17 @@ export default function ReportsPage({ params }: ReportsPageProps) {
                         const borderColor = alertGroup.type === 'critical' ? 'border-red-200' : alertGroup.type === 'warning' ? 'border-amber-200' : 'border-blue-200';
                         const bgColor = alertGroup.type === 'critical' ? 'bg-red-50' : alertGroup.type === 'warning' ? 'bg-amber-50' : 'bg-blue-50';
                         const title = alertGroup.type === 'critical' ? 'Crítico' : alertGroup.type === 'warning' ? 'Advertencia' : 'Información';
-                        const description = alertGroup.type === 'critical'
-                          ? 'Estas solicitudes han vencido su SLA y requieren atención inmediata.'
-                          : 'Estas solicitudes están en riesgo de vencer su SLA.';
-                        
+                        const description =
+                          alertGroup.type === 'critical' ? 'Estas solicitudes han vencido su SLA y requieren atención inmediata.' : 'Estas solicitudes están en riesgo de vencer su SLA.';
+
                         return (
                           <div key={index} className={`rounded-md border ${borderColor} ${bgColor} p-4`}>
                             <div className="flex items-center">
                               <Badge className={badgeColor}>{title}</Badge>
-                              <h3 className="ml-2 font-medium">{alertGroup.count} solicitud{alertGroup.count !== 1 ? 'es' : ''} en &quot;{alertGroup.statusName}&quot; con SLA {alertGroup.type === 'critical' ? 'vencido' : 'en riesgo'}</h3>
+                              <h3 className="ml-2 font-medium">
+                                {alertGroup.count} solicitud{alertGroup.count !== 1 ? 'es' : ''} en &quot;{alertGroup.statusName}&quot; con SLA{' '}
+                                {alertGroup.type === 'critical' ? 'vencido' : 'en riesgo'}
+                              </h3>
                             </div>
                             <p className="mt-1 text-sm text-muted-foreground">{description}</p>
                             <Button variant="outline" size="sm" className="mt-2">

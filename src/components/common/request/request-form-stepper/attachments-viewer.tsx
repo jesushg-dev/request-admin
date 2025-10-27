@@ -13,7 +13,7 @@ interface AttachmentsViewerProps {
 
 export default function AttachmentsViewer({ files }: AttachmentsViewerProps) {
   const t = useTranslations() as any;
-  
+
   const isImageFile = (file: File) => {
     return file.type.startsWith('image/');
   };
@@ -21,7 +21,9 @@ export default function AttachmentsViewer({ files }: AttachmentsViewerProps) {
   return (
     <Card className="flex-1 flex flex-col">
       <CardHeader>
-        <CardTitle>{t('admin.request.form.summaryStep.attachmentsViewer.filesToUpload')} ({files.length})</CardTitle>
+        <CardTitle>
+          {t('admin.request.form.summaryStep.attachmentsViewer.filesToUpload')} ({files.length})
+        </CardTitle>
         <CardDescription>{t('admin.request.form.summaryStep.attachmentsViewer.uploadDescription')}</CardDescription>
       </CardHeader>
       <CardContent>

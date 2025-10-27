@@ -1,7 +1,8 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface MonthlyTrend {
   month: string;
@@ -53,4 +54,3 @@ export function MonthlyTrendsChart({ data, loading }: MonthlyTrendsChartProps) {
     </Card>
   );
 }
-

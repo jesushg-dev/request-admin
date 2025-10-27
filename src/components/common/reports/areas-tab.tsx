@@ -1,10 +1,12 @@
 'use client';
 
 import { BarChart2 } from 'lucide-react';
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import EmptyState from '@/components/shared/empty-state';
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+
 import type { AreaDistribution } from './types';
 
 interface AreasTabProps {
@@ -73,4 +75,3 @@ export function AreasTab({ areaDistribution, loading }: AreasTabProps) {
     </Card>
   );
 }
-

@@ -131,7 +131,7 @@ interface RequestWhereClause {
 export async function getDashboardMetrics(tenantId: string, workflowId?: string | null) {
   const now = new Date();
   const lastMonth = subDays(now, 30);
-  
+
   // Build where condition for request assignments based on workflow
   const assignmentWhere: AssignmentWhereClause = {
     request: {
@@ -148,7 +148,7 @@ export async function getDashboardMetrics(tenantId: string, workflowId?: string 
 
   // Build where condition for requests based on workflow
   const requestWhere: RequestWhereClause = { tenantId };
-  
+
   if (workflowId && workflowId !== 'all') {
     requestWhere.requestAssignments = {
       some: {
@@ -167,7 +167,7 @@ export async function getDashboardMetrics(tenantId: string, workflowId?: string 
   // Total de solicitudes del mes anterior para comparación
   const totalRequestsLastMonthWhere = { ...requestWhere };
   totalRequestsLastMonthWhere.createdAt = { lt: lastMonth };
-  
+
   const totalRequestsLastMonth = await db.request.count({
     where: totalRequestsLastMonthWhere,
   });
@@ -175,14 +175,14 @@ export async function getDashboardMetrics(tenantId: string, workflowId?: string 
   // Solicitudes en borrador
   const draftRequestsWhere = { ...requestWhere };
   draftRequestsWhere.isDraft = true;
-  
+
   const draftRequests = await db.request.count({
     where: draftRequestsWhere,
   });
 
   const draftRequestsLastMonthWhere = { ...draftRequestsWhere };
   draftRequestsLastMonthWhere.createdAt = { lt: lastMonth };
-  
+
   const draftRequestsLastMonth = await db.request.count({
     where: draftRequestsLastMonthWhere,
   });
@@ -192,9 +192,9 @@ export async function getDashboardMetrics(tenantId: string, workflowId?: string 
     where: {
       ...assignmentWhere,
       slaStart: { not: null },
-      slaEnd: { 
+      slaEnd: {
         not: null,
-        gte: lastMonth 
+        gte: lastMonth,
       },
     },
     select: { slaStart: true, slaEnd: true },
@@ -210,30 +210,31 @@ export async function getDashboardMetrics(tenantId: string, workflowId?: string 
   // Calcular tiempo promedio de resolución del mes anterior para tendencia
   const lastTwoMonths = subDays(now, 60);
   const lastMonthStart = subDays(now, 30);
-  
+
   const lastMonthResolvedRequests = await db.requestAssignment.findMany({
     where: {
       ...assignmentWhere,
       slaStart: { not: null },
-      slaEnd: { 
+      slaEnd: {
         not: null,
         gte: lastTwoMonths,
-        lt: lastMonthStart
+        lt: lastMonthStart,
       },
     },
     select: { slaStart: true, slaEnd: true },
   });
 
-  const lastMonthAvgResolutionTime = lastMonthResolvedRequests.length > 0
-    ? lastMonthResolvedRequests.reduce((acc, req) => {
-        return acc + (new Date(req.slaEnd!).getTime() - new Date(req.slaStart!).getTime()) / (1000 * 60 * 60 * 24);
-      }, 0) / lastMonthResolvedRequests.length
-    : 0;
+  const lastMonthAvgResolutionTime =
+    lastMonthResolvedRequests.length > 0
+      ? lastMonthResolvedRequests.reduce((acc, req) => {
+          return acc + (new Date(req.slaEnd!).getTime() - new Date(req.slaStart!).getTime()) / (1000 * 60 * 60 * 24);
+        }, 0) / lastMonthResolvedRequests.length
+      : 0;
 
   // Solicitudes resueltas en el mes
   const resolvedRequestsCountWhere = { ...requestWhere };
   resolvedRequestsCountWhere.closedAt = { gte: lastMonth };
-  
+
   const resolvedRequestsCount = await db.request.count({
     where: resolvedRequestsCountWhere,
   });
@@ -245,7 +246,7 @@ export async function getDashboardMetrics(tenantId: string, workflowId?: string 
     slaEnd: null,
     isActive: true,
   };
-  
+
   const slaOverdue = await db.requestAssignment.count({
     where: slaOverdueWhere,
   });
@@ -257,7 +258,7 @@ export async function getDashboardMetrics(tenantId: string, workflowId?: string 
     slaEnd: null,
     isActive: true,
   };
-  
+
   const slaOverdueLastMonth = await db.requestAssignment.count({
     where: slaOverdueLastMonthWhere,
   });
@@ -290,7 +291,7 @@ export async function getDashboardMetrics(tenantId: string, workflowId?: string 
     slaEnd: null,
     isActive: true,
   };
-  
+
   const slaAtRiskLastMonth = await db.requestAssignment.findMany({
     where: slaAtRiskLastMonthWhere,
     select: { slaStart: true, slaDeadline: true },
@@ -311,7 +312,7 @@ export async function getDashboardMetrics(tenantId: string, workflowId?: string 
     slaStart: { not: null },
     slaDeadline: { not: null },
   };
-  
+
   const allSlaRequests = await db.requestAssignment.findMany({
     where: allSlaRequestsWhere,
     select: { slaEnd: true, slaDeadline: true },
@@ -333,7 +334,7 @@ export async function getDashboardMetrics(tenantId: string, workflowId?: string 
     },
     isActive: true,
   };
-  
+
   const pendingRequests = await db.requestAssignment.count({
     where: pendingRequestsWhere,
   });
@@ -352,7 +353,7 @@ export async function getDashboardMetrics(tenantId: string, workflowId?: string 
       level: { gte: 7 }, // Alta prioridad
     },
   };
-  
+
   const pendingHighPriority = await db.requestAssignment.count({
     where: pendingHighPriorityWhere,
   });
@@ -452,7 +453,7 @@ interface WorkflowQueryWhereClause {
 export async function getWorkflowStatsByMonth(tenantId: string, months: number = 6, workflowId?: string | null) {
   const now = new Date();
   const startDate = new Date(now.getFullYear(), now.getMonth() - months + 1, 1);
-  
+
   // Build where condition based on workflow
   const whereCondition: WorkflowWhereClause = {
     tenantId,
@@ -717,10 +718,9 @@ export async function getSLADashboardData(tenantId: string, filters?: SLAFilters
 
     const isCompleted = !!assignment.slaEnd;
     const isOverdue = !isCompleted && currentTime > deadlineTime;
-    
-    const percentage = isCompleted && assignment.slaEnd
-      ? ((new Date(assignment.slaEnd).getTime() - startTime) / (deadlineTime - startTime)) * 100
-      : ((currentTime - startTime) / (deadlineTime - startTime)) * 100;
+
+    const percentage =
+      isCompleted && assignment.slaEnd ? ((new Date(assignment.slaEnd).getTime() - startTime) / (deadlineTime - startTime)) * 100 : ((currentTime - startTime) / (deadlineTime - startTime)) * 100;
 
     // Aplicar filtro de porcentaje de SLA
     if (filters?.slaPercentage) {
@@ -742,7 +742,7 @@ export async function getSLADashboardData(tenantId: string, filters?: SLAFilters
     if (filters?.slaTimeRange && filters.slaTimeRange !== 'all') {
       const timeRemaining = deadlineTime - currentTime;
       const hoursRemaining = timeRemaining / (1000 * 60 * 60);
-      
+
       switch (filters.slaTimeRange) {
         case 'less-than-1h':
           if (!isOverdue && hoursRemaining >= 1) return;
@@ -823,9 +823,7 @@ export async function getSLADashboardData(tenantId: string, filters?: SLAFilters
     const end = new Date(a.slaEnd).getTime();
     return sum + (end - start) / (1000 * 60 * 60 * 24);
   }, 0);
-  const avgResolutionTime = completedAssignments.length > 0
-    ? totalResolutionDays / completedAssignments.length
-    : 0;
+  const avgResolutionTime = completedAssignments.length > 0 ? totalResolutionDays / completedAssignments.length : 0;
 
   // Solicitudes en riesgo
   const atRisk = slaStates.warning;
@@ -921,9 +919,7 @@ export async function getSLADashboardData(tenantId: string, filters?: SLAFilters
       const isOverdue = !isCompleted && currentTime > deadlineTime;
       const totalTime = deadlineTime - startTime;
       const endDate = assignment.slaEnd ? new Date(assignment.slaEnd) : null;
-      const elapsed = isCompleted && endDate
-        ? endDate.getTime() - startTime 
-        : currentTime - startTime;
+      const elapsed = isCompleted && endDate ? endDate.getTime() - startTime : currentTime - startTime;
       const percentage = (elapsed / totalTime) * 100;
 
       if (isOverdue) {
@@ -961,21 +957,23 @@ export async function getSLADashboardData(tenantId: string, filters?: SLAFilters
 
   // Calcular tiempo promedio por tipo (solo para completados)
   const avgTimeByType = new Map<string, { total: number; sum: number }>();
-  
-  assignmentsWithSLA.filter(a => a.slaEnd).forEach((assignment) => {
-    if (!assignment.slaStart || !assignment.slaEnd) return;
-    
-    const deptName = assignment.requestCategory?.name || 'Sin categoría';
-    const resolutionHours = (new Date(assignment.slaEnd).getTime() - new Date(assignment.slaStart).getTime()) / (1000 * 60 * 60);
-    
-    if (!avgTimeByType.has(deptName)) {
-      avgTimeByType.set(deptName, { total: 0, sum: 0 });
-    }
-    
-    const data = avgTimeByType.get(deptName)!;
-    data.total++;
-    data.sum += resolutionHours;
-  });
+
+  assignmentsWithSLA
+    .filter((a) => a.slaEnd)
+    .forEach((assignment) => {
+      if (!assignment.slaStart || !assignment.slaEnd) return;
+
+      const deptName = assignment.requestCategory?.name || 'Sin categoría';
+      const resolutionHours = (new Date(assignment.slaEnd).getTime() - new Date(assignment.slaStart).getTime()) / (1000 * 60 * 60);
+
+      if (!avgTimeByType.has(deptName)) {
+        avgTimeByType.set(deptName, { total: 0, sum: 0 });
+      }
+
+      const data = avgTimeByType.get(deptName)!;
+      data.total++;
+      data.sum += resolutionHours;
+    });
 
   const avgTimeByTypeData = Array.from(avgTimeByType.entries())
     .map(([name, data]) => ({
@@ -988,7 +986,7 @@ export async function getSLADashboardData(tenantId: string, filters?: SLAFilters
 
   // Calcular tiempo SLA promedio asignado
   const slaTotalTime = assignmentsWithSLA
-    .filter(a => a.slaStart && a.slaDeadline)
+    .filter((a) => a.slaStart && a.slaDeadline)
     .reduce((sum, a) => {
       const start = new Date(a.slaStart!).getTime();
       const deadline = new Date(a.slaDeadline!).getTime();
@@ -1019,20 +1017,23 @@ export async function getSLADashboardData(tenantId: string, filters?: SLAFilters
     },
   });
 
-  const lastMonthCompliancePercentage = lastMonthCompliance.length > 0
-    ? (lastMonthCompliance.filter(a => {
-        if (!a.slaStart || !a.slaDeadline) return false;
-        const isCompleted = !!a.slaEnd;
-        if (!isCompleted) return false;
-        const startTime = new Date(a.slaStart).getTime();
-        const deadlineTime = new Date(a.slaDeadline).getTime();
-        const endDate = a.slaEnd ? new Date(a.slaEnd) : null;
-        if (!endDate) return false;
-        const endTime = endDate.getTime();
-        const percentage = ((endTime - startTime) / (deadlineTime - startTime)) * 100;
-        return percentage <= 100;
-      }).length / lastMonthCompliance.length) * 100
-    : 0;
+  const lastMonthCompliancePercentage =
+    lastMonthCompliance.length > 0
+      ? (lastMonthCompliance.filter((a) => {
+          if (!a.slaStart || !a.slaDeadline) return false;
+          const isCompleted = !!a.slaEnd;
+          if (!isCompleted) return false;
+          const startTime = new Date(a.slaStart).getTime();
+          const deadlineTime = new Date(a.slaDeadline).getTime();
+          const endDate = a.slaEnd ? new Date(a.slaEnd) : null;
+          if (!endDate) return false;
+          const endTime = endDate.getTime();
+          const percentage = ((endTime - startTime) / (deadlineTime - startTime)) * 100;
+          return percentage <= 100;
+        }).length /
+          lastMonthCompliance.length) *
+        100
+      : 0;
 
   // Calcular tendencia de alertas
   const lastMonthAtRisk = await db.requestAssignment.count({
@@ -1071,7 +1072,7 @@ export async function getSLADashboardData(tenantId: string, filters?: SLAFilters
   for (let i = 5; i >= 0; i--) {
     const monthStart = new Date(now.getFullYear(), now.getMonth() - i, 1);
     const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 0);
-    
+
     const monthAssignments = await db.requestAssignment.findMany({
       where: {
         tenantId,
@@ -1090,7 +1091,7 @@ export async function getSLADashboardData(tenantId: string, filters?: SLAFilters
       },
     });
 
-    const monthComplianceCount = monthAssignments.filter(a => {
+    const monthComplianceCount = monthAssignments.filter((a) => {
       if (!a.slaStart || !a.slaDeadline) return false;
       const isCompleted = !!a.slaEnd;
       if (!isCompleted) return false;
@@ -1116,7 +1117,7 @@ export async function getSLADashboardData(tenantId: string, filters?: SLAFilters
   // Calcular tendencia de tiempo de resolución (mes anterior)
   const lastMonthCompletedStart = subDays(now, 60);
   const lastMonthCompletedEnd = subDays(now, 30);
-  
+
   const lastMonthCompletedAssignments = await db.requestAssignment.findMany({
     where: {
       ...baseWhere,
@@ -1132,14 +1133,15 @@ export async function getSLADashboardData(tenantId: string, filters?: SLAFilters
     },
   });
 
-  const lastMonthAvgResolution = lastMonthCompletedAssignments.length > 0
-    ? lastMonthCompletedAssignments.reduce((sum, a) => {
-        if (!a.slaStart || !a.slaEnd) return sum;
-        const start = new Date(a.slaStart).getTime();
-        const end = new Date(a.slaEnd).getTime();
-        return sum + (end - start) / (1000 * 60 * 60 * 24);
-      }, 0) / lastMonthCompletedAssignments.length
-    : 0;
+  const lastMonthAvgResolution =
+    lastMonthCompletedAssignments.length > 0
+      ? lastMonthCompletedAssignments.reduce((sum, a) => {
+          if (!a.slaStart || !a.slaEnd) return sum;
+          const start = new Date(a.slaStart).getTime();
+          const end = new Date(a.slaEnd).getTime();
+          return sum + (end - start) / (1000 * 60 * 60 * 24);
+        }, 0) / lastMonthCompletedAssignments.length
+      : 0;
 
   return {
     compliance: compliancePercentage,

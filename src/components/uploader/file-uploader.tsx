@@ -51,7 +51,7 @@ interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
    * @type { [key: string]: string[]}
    * @default
    * ```ts
-   * { 
+   * {
    *   "image/jpeg": [".jpg", ".jpeg"],
    *   "image/png": [".png"],
    *   "application/pdf": [".pdf"],

@@ -170,7 +170,11 @@ function CardView({ submissions, columnVisibility, t }: CardViewProps) {
         <Card key={submission.id}>
           <CardHeader>{columnVisibility.formName && <CardTitle>{submission.formName}</CardTitle>}</CardHeader>
           <CardContent>
-            {columnVisibility.submittedAt && <p className="mb-2 text-sm text-gray-500">{t('columns.submittedAt')}: {new Date(submission.submittedAt).toLocaleString()}</p>}
+            {columnVisibility.submittedAt && (
+              <p className="mb-2 text-sm text-gray-500">
+                {t('columns.submittedAt')}: {new Date(submission.submittedAt).toLocaleString()}
+              </p>
+            )}
             {columnVisibility.content && (
               <div className="space-y-2">
                 {Object.entries(submission.content).map(([key, value]) => (
