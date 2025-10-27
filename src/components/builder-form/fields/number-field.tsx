@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { HashIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -33,7 +34,7 @@ const propertiesSchema = z.object({
 export const NumberFieldFormElement: FormElement = {
   type,
   construct: (id: string) => ({ id, type, extraAttributes }),
-  designerBtnElement: { icon: HashIcon, label: 'Number Field' },
+  designerBtnElement: { icon: HashIcon, label: 'Campo Numérico' },
   designerComponent: DesignerComponent,
   formComponent: FormComponent,
   propertiesComponent: PropertiesComponent,
@@ -54,7 +55,13 @@ type CustomInstance = FormElementInstance & {
 
 function DesignerComponent({ elementInstance }: { elementInstance: FormElementInstance }) {
   const element = elementInstance as CustomInstance;
-  const { label, required, placeHolder, helperText } = element.extraAttributes;
+  const tDefaults = useTranslations('component.form.builderFields.defaults');
+  const { required, placeHolder } = element.extraAttributes;
+  
+  // Translate default values, otherwise use custom user values
+  const label = element.extraAttributes.label === extraAttributes.label ? tDefaults('numberFieldLabel') : element.extraAttributes.label;
+  const helperText = element.extraAttributes.helperText === extraAttributes.helperText ? tDefaults('numberFieldHelperText') : element.extraAttributes.helperText;
+  
   return (
     <div className="flex w-full flex-col gap-2">
       <Label>
@@ -69,6 +76,7 @@ function DesignerComponent({ elementInstance }: { elementInstance: FormElementIn
 
 function FormComponent({ elementInstance, submitValue, isInvalid, defaultValue }: { elementInstance: FormElementInstance; submitValue?: SubmitFunction; isInvalid?: boolean; defaultValue?: string }) {
   const element = elementInstance as CustomInstance;
+  const tDefaults = useTranslations('component.form.builderFields.defaults');
 
   const [value, setValue] = useState(defaultValue || '');
   const [error, setError] = useState(false);
@@ -77,7 +85,12 @@ function FormComponent({ elementInstance, submitValue, isInvalid, defaultValue }
     setError(isInvalid === true);
   }, [isInvalid]);
 
-  const { label, required, placeHolder, helperText } = element.extraAttributes;
+  const { required, placeHolder } = element.extraAttributes;
+  
+  // Translate default values, otherwise use custom user values
+  const label = element.extraAttributes.label === extraAttributes.label ? tDefaults('numberFieldLabel') : element.extraAttributes.label;
+  const helperText = element.extraAttributes.helperText === extraAttributes.helperText ? tDefaults('numberFieldHelperText') : element.extraAttributes.helperText;
+  
   return (
     <div className="flex w-full flex-col gap-2">
       <Label className={cn(error && 'text-red-500')}>
@@ -107,6 +120,7 @@ type propertiesFormSchemaType = z.infer<typeof propertiesSchema>;
 function PropertiesComponent({ elementInstance }: { elementInstance: FormElementInstance }) {
   const element = elementInstance as CustomInstance;
   const { updateElement } = useDesigner();
+  const t = useTranslations('component.form.builderFields.common');
   const form = useForm({
     resolver: zodResolver(propertiesSchema),
     mode: 'onBlur',
@@ -143,7 +157,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
           name="label"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Label</FormLabel>
+              <FormLabel>{t('label')}</FormLabel>
               <FormControl>
                 <Input
                   {...field}
@@ -153,7 +167,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                 />
               </FormControl>
               <FormDescription>
-                The label of the field. <br /> It will be displayed above the field
+                {t('labelDescription')}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -164,7 +178,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
           name="placeHolder"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>PlaceHolder</FormLabel>
+              <FormLabel>{t('placeholder')}</FormLabel>
               <FormControl>
                 <Input
                   {...field}
@@ -173,7 +187,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                   }}
                 />
               </FormControl>
-              <FormDescription>The placeholder of the field.</FormDescription>
+              <FormDescription>{t('placeholderDescription')}</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -183,7 +197,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
           name="helperText"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Helper text</FormLabel>
+              <FormLabel>{t('helperText')}</FormLabel>
               <FormControl>
                 <Input
                   {...field}
@@ -193,8 +207,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                 />
               </FormControl>
               <FormDescription>
-                The helper text of the field. <br />
-                It will be displayed below the field.
+                {t('helperTextDescription')}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -206,7 +219,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
           render={({ field }) => (
             <FormItem className="flex items-center justify-between rounded-lg border p-3 shadow-xs">
               <div className="space-y-0.5">
-                <FormLabel>Required</FormLabel>
+                <FormLabel>{t('required')}</FormLabel>
                 <FormDescription>
                   The helper text of the field. <br />
                   It will be displayed below the field.

@@ -1,6 +1,7 @@
 'use client';
 
 import { MinusIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
@@ -16,7 +17,7 @@ export const SeparatorFieldFormElement: FormElement = {
   }),
   designerBtnElement: {
     icon: MinusIcon,
-    label: 'Separator field',
+    label: 'Separador',
   },
   designerComponent: DesignerComponent,
   formComponent: FormComponent,
@@ -39,5 +40,6 @@ function FormComponent({}: { elementInstance: FormElementInstance }) {
 }
 
 function PropertiesComponent({}: { elementInstance: FormElementInstance }) {
-  return <p>No properties for this element</p>;
+  const t = useTranslations('component.form.builderFields.messages');
+  return <p>{t('noProperties')}</p>;
 }

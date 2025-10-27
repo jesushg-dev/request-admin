@@ -48,17 +48,8 @@ interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
 
   /**
    * Accepted file types for the uploader.
-   * @type { [key: string]: string[]}
-   * @default
-   * ```ts
-   * {
-   *   "image/jpeg": [".jpg", ".jpeg"],
-   *   "image/png": [".png"],
-   *   "application/pdf": [".pdf"],
-   *   "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
-   *   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"]
-   * }
-   * ```
+   * @type { [key: string]: string[]} | undefined
+   * @default undefined (accepts any file type)
    * @example accept={{ "image/*": [] }}
    */
   accept?: DropzoneProps['accept'];
@@ -66,8 +57,8 @@ interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
    * Maximum file size for the uploader.
    * @type number | undefined
-   * @default 1024 * 1024 * 4 // 4MB
-   * @example maxSize={1024 * 1024 * 4} // 4MB
+   * @default 1024 * 1024 * 8 // 8MB
+   * @example maxSize={1024 * 1024 * 8} // 8MB
    */
   maxSize?: DropzoneProps['maxSize'];
 
@@ -112,14 +103,8 @@ export function FileUploader(props: FileUploaderProps) {
     onValueChange,
     onUpload,
     progresses,
-    accept = {
-      'image/jpeg': ['.jpg', '.jpeg'],
-      'image/png': ['.png'],
-      'application/pdf': ['.pdf'],
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
-    },
-    maxSize = 1024 * 1024 * 4,
+    accept = undefined, // Accept any file type
+    maxSize = 1024 * 1024 * 8, // 8MB
     maxFileCount = 4,
     multiple = true,
     disabled = false,

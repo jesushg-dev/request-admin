@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Heading1Icon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -31,7 +32,7 @@ export const TitleFieldFormElement: FormElement = {
   }),
   designerBtnElement: {
     icon: Heading1Icon,
-    label: 'Title field',
+    label: 'Campo de Título',
   },
   designerComponent: DesignerComponent,
   formComponent: FormComponent,
@@ -67,6 +68,7 @@ type propertiesFormSchemaType = z.infer<typeof propertiesSchema>;
 function PropertiesComponent({ elementInstance }: { elementInstance: FormElementInstance }) {
   const element = elementInstance as CustomInstance;
   const { updateElement } = useDesigner();
+  const t = useTranslations('component.form.builderFields.common');
   const form = useForm({
     resolver: zodResolver(propertiesSchema),
     mode: 'onBlur',
@@ -102,7 +104,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Title</FormLabel>
+              <FormLabel>{t('text')}</FormLabel>
               <FormControl>
                 <Input
                   {...field}

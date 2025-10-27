@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { MousePointerClickIcon, PlusIcon, XIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -45,7 +46,7 @@ export const SelectFieldFormElement: FormElement = {
   }),
   designerBtnElement: {
     icon: MousePointerClickIcon,
-    label: 'Select Field',
+    label: 'Campo Selector',
   },
   designerComponent: DesignerComponent,
   formComponent: FormComponent,
@@ -86,6 +87,7 @@ function DesignerComponent({ elementInstance }: { elementInstance: FormElementIn
 
 function FormComponent({ elementInstance, submitValue, isInvalid, defaultValue }: { elementInstance: FormElementInstance; submitValue?: SubmitFunction; isInvalid?: boolean; defaultValue?: string }) {
   const element = elementInstance as CustomInstance;
+  const tDefaults = useTranslations('component.form.builderFields.defaults');
 
   const [value, setValue] = useState(defaultValue || '');
   const [error, setError] = useState(false);
@@ -94,7 +96,11 @@ function FormComponent({ elementInstance, submitValue, isInvalid, defaultValue }
     setError(isInvalid === true);
   }, [isInvalid]);
 
-  const { label, required, placeHolder, helperText, options } = element.extraAttributes;
+  const { required, placeHolder, options } = element.extraAttributes;
+  
+  // Translate default values, otherwise use custom user values
+  const label = element.extraAttributes.label === extraAttributes.label ? tDefaults('selectFieldLabel') : element.extraAttributes.label;
+  const helperText = element.extraAttributes.helperText === extraAttributes.helperText ? tDefaults('selectFieldHelperText') : element.extraAttributes.helperText;
   return (
     <div className="flex w-full flex-col gap-2">
       <Label className={cn(error && 'text-red-500')}>
@@ -130,6 +136,8 @@ type propertiesFormSchemaType = z.infer<typeof propertiesSchema>;
 function PropertiesComponent({ elementInstance }: { elementInstance: FormElementInstance }) {
   const element = elementInstance as CustomInstance;
   const { updateElement, setSelectedElement } = useDesigner();
+  const t = useTranslations('component.form.builderFields.common');
+  const toastMessages = useTranslations('component.form.builderFields.messages');
   const form = useForm({
     resolver: zodResolver(propertiesSchema),
     mode: 'onSubmit',
@@ -159,7 +167,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
       },
     });
 
-    toast.success('Success', { description: 'Properties saved successfully' });
+    toast.success(toastMessages('success'), { description: toastMessages('propertiesSaved') });
 
     setSelectedElement(null);
   }
@@ -172,7 +180,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
           name="label"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Label</FormLabel>
+              <FormLabel>{t('label')}</FormLabel>
               <FormControl>
                 <Input
                   {...field}
@@ -182,7 +190,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                 />
               </FormControl>
               <FormDescription>
-                The label of the field. <br /> It will be displayed above the field
+                {t('labelDescription')}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -193,7 +201,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
           name="placeHolder"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>PlaceHolder</FormLabel>
+              <FormLabel>{t('placeholder')}</FormLabel>
               <FormControl>
                 <Input
                   {...field}
@@ -202,7 +210,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                   }}
                 />
               </FormControl>
-              <FormDescription>The placeholder of the field.</FormDescription>
+              <FormDescription>{t('placeholderDescription')}</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -212,7 +220,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
           name="helperText"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Helper text</FormLabel>
+              <FormLabel>{t('helperText')}</FormLabel>
               <FormControl>
                 <Input
                   {...field}
@@ -222,8 +230,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                 />
               </FormControl>
               <FormDescription>
-                The helper text of the field. <br />
-                It will be displayed below the field.
+                {t('helperTextDescription')}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -236,17 +243,17 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
           render={({ field }) => (
             <FormItem>
               <div className="flex items-center justify-between">
-                <FormLabel>Options</FormLabel>
+                <FormLabel>{t('options')}</FormLabel>
                 <Button
                   variant={'outline'}
                   className="gap-2"
                   onClick={(e) => {
                     e.preventDefault(); // avoid submit
                     if (!field.value) return;
-                    form.setValue('options', field.value.concat('New option'));
+                    form.setValue('options', field.value.concat(toastMessages('newOption')));
                   }}>
                   <PlusIcon />
-                  Add
+                  {toastMessages('add')}
                 </Button>
               </div>
               <div className="flex flex-col gap-2">
@@ -278,8 +285,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
               </div>
 
               <FormDescription>
-                The helper text of the field. <br />
-                It will be displayed below the field.
+                {t('helperTextDescription')}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -292,7 +298,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
           render={({ field }) => (
             <FormItem className="flex items-center justify-between rounded-lg border p-3 shadow-xs">
               <div className="space-y-0.5">
-                <FormLabel>Required</FormLabel>
+                <FormLabel>{t('required')}</FormLabel>
                 <FormDescription>
                   The helper text of the field. <br />
                   It will be displayed below the field.
@@ -307,7 +313,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
         />
         <Separator />
         <Button className="w-full" type="submit">
-          Save
+          {toastMessages('save')}
         </Button>
       </form>
     </Form>

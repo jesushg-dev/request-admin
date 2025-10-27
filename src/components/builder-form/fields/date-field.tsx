@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { CalendarIcon } from '@radix-ui/react-icons';
 import { format } from 'date-fns';
 import { CalendarDaysIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -42,7 +43,7 @@ export const DateFieldFormElement: FormElement = {
   }),
   designerBtnElement: {
     icon: CalendarDaysIcon,
-    label: 'Date Field',
+    label: 'Campo de Fecha',
   },
   designerComponent: DesignerComponent,
   formComponent: FormComponent,
@@ -64,7 +65,13 @@ type CustomInstance = FormElementInstance & {
 
 function DesignerComponent({ elementInstance }: { elementInstance: FormElementInstance }) {
   const element = elementInstance as CustomInstance;
-  const { label, required, helperText } = element.extraAttributes;
+  const tDefaults = useTranslations('component.form.builderFields.defaults');
+  const { required } = element.extraAttributes;
+  
+  // Translate default values, otherwise use custom user values
+  const label = element.extraAttributes.label === extraAttributes.label ? tDefaults('dateFieldLabel') : element.extraAttributes.label;
+  const helperText = element.extraAttributes.helperText === extraAttributes.helperText ? tDefaults('dateFieldHelperText') : element.extraAttributes.helperText;
+  
   return (
     <div className="flex w-full flex-col gap-2">
       <Label>
@@ -73,7 +80,7 @@ function DesignerComponent({ elementInstance }: { elementInstance: FormElementIn
       </Label>
       <Button variant={'outline'} className="w-full justify-start text-left font-normal">
         <CalendarIcon className="mr-2 h-4 w-4" />
-        <span>Pick a date</span>
+        <span>{useTranslations('component.form.builderFields.messages')('pickADate')}</span>
       </Button>
       {helperText && <p className="text-muted-foreground text-[0.8rem]">{helperText}</p>}
     </div>
@@ -82,6 +89,7 @@ function DesignerComponent({ elementInstance }: { elementInstance: FormElementIn
 
 function FormComponent({ elementInstance, submitValue, isInvalid, defaultValue }: { elementInstance: FormElementInstance; submitValue?: SubmitFunction; isInvalid?: boolean; defaultValue?: string }) {
   const element = elementInstance as CustomInstance;
+  const t = useTranslations() as any;
 
   const [date, setDate] = useState<Date | undefined>(defaultValue ? new Date(defaultValue) : undefined);
 
@@ -102,7 +110,7 @@ function FormComponent({ elementInstance, submitValue, isInvalid, defaultValue }
         <PopoverTrigger asChild>
           <Button variant={'outline'} className={cn('w-full justify-start text-left font-normal', !date && 'text-muted-foreground', error && 'border-red-500')}>
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {date ? format(date, 'PPP') : <span>Pick a date</span>}
+            {date ? format(date, 'PPP') : <span>{useTranslations('component.form.builderFields.messages')('pickADate')}</span>}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
@@ -130,6 +138,7 @@ type propertiesFormSchemaType = z.infer<typeof propertiesSchema>;
 function PropertiesComponent({ elementInstance }: { elementInstance: FormElementInstance }) {
   const element = elementInstance as CustomInstance;
   const { updateElement } = useDesigner();
+  const t = useTranslations('component.form.builderFields.common');
   const form = useForm({
     resolver: zodResolver(propertiesSchema),
     mode: 'onBlur',
@@ -169,7 +178,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
           name="label"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Label</FormLabel>
+              <FormLabel>{t('label')}</FormLabel>
               <FormControl>
                 <Input
                   {...field}
@@ -179,7 +188,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                 />
               </FormControl>
               <FormDescription>
-                The label of the field. <br /> It will be displayed above the field
+                {t('labelDescription')}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -190,7 +199,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
           name="helperText"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Helper text</FormLabel>
+              <FormLabel>{t('helperText')}</FormLabel>
               <FormControl>
                 <Input
                   {...field}
@@ -200,8 +209,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                 />
               </FormControl>
               <FormDescription>
-                The helper text of the field. <br />
-                It will be displayed below the field.
+                {t('helperTextDescription')}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -213,10 +221,9 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
           render={({ field }) => (
             <FormItem className="flex items-center justify-between rounded-lg border p-3 shadow-xs">
               <div className="space-y-0.5">
-                <FormLabel>Required</FormLabel>
+                <FormLabel>{t('required')}</FormLabel>
                 <FormDescription>
-                  The helper text of the field. <br />
-                  It will be displayed below the field.
+                  {t('requiredDescription')}
                 </FormDescription>
               </div>
               <FormControl>

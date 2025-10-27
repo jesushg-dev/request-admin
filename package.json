@@ -69,7 +69,7 @@
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@ably/chat": "^0.8.0",
+    "@ably/chat": "^1.0.0",
     "@better-fetch/fetch": "^1.1.18",
     "@date-fns/utc": "^2.1.1",
     "@dnd-kit/core": "^6.3.1",

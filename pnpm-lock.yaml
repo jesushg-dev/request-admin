@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@ably/chat':
-        specifier: ^0.8.0
-        version: 0.8.0(ably@2.14.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: ^1.0.0
+        version: 1.0.0(ably@2.14.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@better-fetch/fetch':
         specifier: ^1.1.18
         version: 1.1.18
@@ -497,11 +497,11 @@ packages:
     peerDependencies:
       cypress: '>=2'
 
-  '@ably/chat@0.8.0':
-    resolution: {integrity: sha512-t85MfK+WepO3282QxolZ/BCwmO3QtIoOjOgmEYyDhUvW/SdexQsj//ZSWDrP0ZXsELV2q5fm14FO5cATwHd35Q==}
-    engines: {node: '>=18.0.0'}
+  '@ably/chat@1.0.0':
+    resolution: {integrity: sha512-001+DfhCFWTAD6CAZSltdIR9TMaznWsHOMyDN23vhPoFVGmM1nlXl9uTh3OE695pHfOrTuD/AqGC5J4qWYrrmA==}
+    engines: {node: '>=20.0.0'}
     peerDependencies:
-      ably: ^2.9.0
+      ably: ^2.14.0
       react: ^18.0.0 || ^19.0.0
       react-dom: ^18.0.0 || ^19.0.0
     peerDependenciesMeta:
@@ -7352,7 +7352,7 @@ snapshots:
     dependencies:
       cypress: 15.5.0
 
-  '@ably/chat@0.8.0(ably@2.14.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
+  '@ably/chat@1.0.0(ably@2.14.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
     dependencies:
       ably: 2.14.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       async-mutex: 0.5.0

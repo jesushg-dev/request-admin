@@ -3601,7 +3601,61 @@
       "dragDropElements": "Arrastra y suelta elementos",
       "formElements": "Elementos del formulario",
       "layoutElements": "Elementos de diseño",
-      "savingChanges": "Guardar forma ..."
+      "savingChanges": "Guardar forma ...",
+      "builderFields": {
+        "common": {
+          "label": "Etiqueta",
+          "placeholder": "Marcador de posición",
+          "helperText": "Texto de ayuda",
+          "required": "Requerido",
+          "labelDescription": "La etiqueta del campo. Se mostrará sobre el campo",
+          "placeholderDescription": "El marcador de posición del campo.",
+          "helperTextDescription": "El texto de ayuda del campo. Se mostrará debajo del campo.",
+          "requiredDescription": "Indica si el campo es obligatorio",
+          "rows": "Filas",
+          "height": "Altura",
+          "options": "Opciones",
+          "text": "Texto"
+        },
+        "defaults": {
+          "textFieldLabel": "Campo de texto",
+          "textFieldHelperText": "Texto de ayuda",
+          "textareaFieldLabel": "Área de texto",
+          "textareaFieldHelperText": "Texto de ayuda",
+          "numberFieldLabel": "Campo numérico",
+          "numberFieldHelperText": "Texto de ayuda",
+          "dateFieldLabel": "Campo de fecha",
+          "dateFieldHelperText": "Selecciona una fecha",
+          "checkboxFieldLabel": "Campo de casilla",
+          "checkboxFieldHelperText": "Texto de ayuda",
+          "selectFieldLabel": "Campo selector",
+          "selectFieldHelperText": "Texto de ayuda"
+        },
+        "types": {
+          "textField": "Campo de Texto",
+          "textareaField": "Área de Texto",
+          "numberField": "Campo Numérico",
+          "selectField": "Campo Selector",
+          "dateField": "Campo de Fecha",
+          "checkboxField": "Casilla de Verificación",
+          "titleField": "Campo de Título",
+          "subtitleField": "Campo de Subtítulo",
+          "paragraphField": "Párrafo",
+          "separatorField": "Separador",
+          "spacerField": "Espaciador"
+        },
+        "messages": {
+          "pickADate": "Selecciona una fecha",
+          "add": "Agregar",
+          "save": "Guardar",
+          "newOption": "Nueva opción",
+          "options": "Opciones",
+          "propertiesSaved": "Propiedades guardadas exitosamente",
+          "success": "Éxito",
+          "height": "Altura",
+          "noProperties": "No hay propiedades para este elemento"
+        }
+      }
     },
     "rolesForm": {
       "header": {

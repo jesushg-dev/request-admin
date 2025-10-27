@@ -1,12 +1,35 @@
 import { useDraggable } from '@dnd-kit/core';
+import { useTranslations } from 'next-intl';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
-import { FormElement } from './form-elements';
+import { ElementsType, FormElement } from './form-elements';
 
 function SidebarBtnElement({ formElement }: { formElement: FormElement }) {
-  const { label, icon: Icon } = formElement.designerBtnElement;
+  const t = useTranslations('component.form.builderFields.types');
+  const { icon: Icon } = formElement.designerBtnElement;
+  
+  // Map element type to translation key
+  const getTranslationKey = (type: ElementsType): string => {
+    const mapping: Record<ElementsType, string> = {
+      TextField: 'textField',
+      TextAreaField: 'textareaField',
+      NumberField: 'numberField',
+      DateField: 'dateField',
+      SelectField: 'selectField',
+      CheckboxField: 'checkboxField',
+      TitleField: 'titleField',
+      SubTitleField: 'subtitleField',
+      ParagraphField: 'paragraphField',
+      SeparatorField: 'separatorField',
+      SpacerField: 'spacerField',
+    };
+    return mapping[type];
+  };
+  
+  const label = t(getTranslationKey(formElement.type) as any);
+  
   const draggable = useDraggable({
     id: `designer-btn-${formElement.type}`,
     data: {
@@ -29,7 +52,28 @@ function SidebarBtnElement({ formElement }: { formElement: FormElement }) {
 }
 
 export function SidebarBtnElementDragOverlay({ formElement }: { formElement: FormElement }) {
-  const { label, icon: Icon } = formElement.designerBtnElement;
+  const t = useTranslations('component.form.builderFields.types');
+  const { icon: Icon } = formElement.designerBtnElement;
+  
+  // Map element type to translation key
+  const getTranslationKey = (type: ElementsType): string => {
+    const mapping: Record<ElementsType, string> = {
+      TextField: 'textField',
+      TextAreaField: 'textareaField',
+      NumberField: 'numberField',
+      DateField: 'dateField',
+      SelectField: 'selectField',
+      CheckboxField: 'checkboxField',
+      TitleField: 'titleField',
+      SubTitleField: 'subtitleField',
+      ParagraphField: 'paragraphField',
+      SeparatorField: 'separatorField',
+      SpacerField: 'spacerField',
+    };
+    return mapping[type];
+  };
+  
+  const label = t(getTranslationKey(formElement.type) as any);
 
   return (
     <Button variant={'outline'} className="flex h-[120px] w-[120px] cursor-grab flex-col gap-2">

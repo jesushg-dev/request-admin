@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SquareCheckIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -38,7 +39,7 @@ export const CheckboxFieldFormElement: FormElement = {
   }),
   designerBtnElement: {
     icon: SquareCheckIcon,
-    label: 'CheckBox Field',
+    label: 'Campo de Casilla',
   },
   designerComponent: DesignerComponent,
   formComponent: FormComponent,
@@ -60,8 +61,14 @@ type CustomInstance = FormElementInstance & {
 
 function DesignerComponent({ elementInstance }: { elementInstance: FormElementInstance }) {
   const element = elementInstance as CustomInstance;
-  const { label, required, helperText } = element.extraAttributes;
+  const tDefaults = useTranslations('component.form.builderFields.defaults');
+  const { required } = element.extraAttributes;
   const id = `checkbox-${element.id}`;
+  
+  // Translate default values, otherwise use custom user values
+  const label = element.extraAttributes.label === extraAttributes.label ? tDefaults('checkboxFieldLabel') : element.extraAttributes.label;
+  const helperText = element.extraAttributes.helperText === extraAttributes.helperText ? tDefaults('checkboxFieldHelperText') : element.extraAttributes.helperText;
+  
   return (
     <div className="items-top flex space-x-2">
       <Checkbox id={id} />
@@ -78,6 +85,7 @@ function DesignerComponent({ elementInstance }: { elementInstance: FormElementIn
 
 function FormComponent({ elementInstance, submitValue, isInvalid, defaultValue }: { elementInstance: FormElementInstance; submitValue?: SubmitFunction; isInvalid?: boolean; defaultValue?: string }) {
   const element = elementInstance as CustomInstance;
+  const tDefaults = useTranslations('component.form.builderFields.defaults');
 
   const [value, setValue] = useState<boolean>(defaultValue === 'true' ? true : false);
   const [error, setError] = useState(false);
@@ -86,7 +94,11 @@ function FormComponent({ elementInstance, submitValue, isInvalid, defaultValue }
     setError(isInvalid === true);
   }, [isInvalid]);
 
-  const { label, required, helperText } = element.extraAttributes;
+  const { required } = element.extraAttributes;
+  
+  // Translate default values, otherwise use custom user values
+  const label = element.extraAttributes.label === extraAttributes.label ? tDefaults('checkboxFieldLabel') : element.extraAttributes.label;
+  const helperText = element.extraAttributes.helperText === extraAttributes.helperText ? tDefaults('checkboxFieldHelperText') : element.extraAttributes.helperText;
   const id = `checkbox-${element.id}`;
   return (
     <div className="items-top flex space-x-2">
@@ -121,6 +133,7 @@ type propertiesFormSchemaType = z.infer<typeof propertiesSchema>;
 function PropertiesComponent({ elementInstance }: { elementInstance: FormElementInstance }) {
   const element = elementInstance as CustomInstance;
   const { updateElement } = useDesigner();
+  const t = useTranslations('component.form.builderFields.common');
   const form = useForm({
     resolver: zodResolver(propertiesSchema),
     mode: 'onBlur',
@@ -160,7 +173,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
           name="label"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Label</FormLabel>
+              <FormLabel>{t('label')}</FormLabel>
               <FormControl>
                 <Input
                   {...field}
@@ -170,7 +183,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                 />
               </FormControl>
               <FormDescription>
-                The label of the field. <br /> It will be displayed above the field
+                {t('labelDescription')}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -181,7 +194,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
           name="helperText"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Helper text</FormLabel>
+              <FormLabel>{t('helperText')}</FormLabel>
               <FormControl>
                 <Input
                   {...field}
@@ -191,8 +204,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                 />
               </FormControl>
               <FormDescription>
-                The helper text of the field. <br />
-                It will be displayed below the field.
+                {t('helperTextDescription')}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -204,7 +216,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
           render={({ field }) => (
             <FormItem className="flex items-center justify-between rounded-lg border p-3 shadow-xs">
               <div className="space-y-0.5">
-                <FormLabel>Required</FormLabel>
+                <FormLabel>{t('required')}</FormLabel>
                 <FormDescription>
                   The helper text of the field. <br />
                   It will be displayed below the field.

@@ -3592,7 +3592,61 @@
       "dragDropElements": "Drag and drop elements",
       "formElements": "Form elements",
       "layoutElements": "Layout elements",
-      "savingChanges": "Saving form..."
+      "savingChanges": "Saving form...",
+      "builderFields": {
+        "common": {
+          "label": "Label",
+          "placeholder": "Placeholder",
+          "helperText": "Helper text",
+          "required": "Required",
+          "labelDescription": "The label of the field. It will be displayed above the field",
+          "placeholderDescription": "The placeholder of the field.",
+          "helperTextDescription": "The helper text of the field. It will be displayed below the field.",
+          "requiredDescription": "Whether the field is required",
+          "rows": "Rows",
+          "height": "Height",
+          "options": "Options",
+          "text": "Text"
+        },
+        "defaults": {
+          "textFieldLabel": "Text field",
+          "textFieldHelperText": "Helper text",
+          "textareaFieldLabel": "Text area",
+          "textareaFieldHelperText": "Helper text",
+          "numberFieldLabel": "Number field",
+          "numberFieldHelperText": "Helper text",
+          "dateFieldLabel": "Date field",
+          "dateFieldHelperText": "Pick a date",
+          "checkboxFieldLabel": "Checkbox field",
+          "checkboxFieldHelperText": "Helper text",
+          "selectFieldLabel": "Select field",
+          "selectFieldHelperText": "Helper text"
+        },
+        "types": {
+          "textField": "Text Field",
+          "textareaField": "TextArea Field",
+          "numberField": "Number Field",
+          "selectField": "Select Field",
+          "dateField": "Date Field",
+          "checkboxField": "CheckBox Field",
+          "titleField": "Title Field",
+          "subtitleField": "SubTitle Field",
+          "paragraphField": "Paragraph Field",
+          "separatorField": "Separator Field",
+          "spacerField": "Spacer Field"
+        },
+        "messages": {
+          "pickADate": "Pick a date",
+          "add": "Add",
+          "save": "Save",
+          "newOption": "New option",
+          "options": "Options",
+          "propertiesSaved": "Properties saved successfully",
+          "success": "Success",
+          "height": "Height",
+          "noProperties": "No properties for this element"
+        }
+      }
     },
     "rolesForm": {
       "header": {
