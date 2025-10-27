@@ -36,7 +36,7 @@ export const ChatInput = ({ placeholder, relatedId, variant, tenantId, currentUs
   const t = useTranslations('component.chat.chatInput');
   const [isPending, startTransition] = useTransition();
 
-  const { send: sendAblyMessage } = useAblyMessages();
+  const { sendMessage: sendAblyMessage } = useAblyMessages();
 
   const handleSubmit = async (value: EditorValue) => {
     startTransition(async () => {

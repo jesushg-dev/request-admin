@@ -72,7 +72,7 @@ export const Thread = ({ tenantId, messageId, currentUserTenant, onClose }: Thre
         </Button>
       </div>
       <ChatClientProvider client={chatClient}>
-        <ChatRoomProvider name={messageId} release={true} attach={true}>
+        <ChatRoomProvider name={messageId}>
           {/* Root Message */}
           <div className="border-b border-gray-500/80 p-4">
             <Message message={thread} tenantId={tenantId} currentUserTenantId={currentUserTenant.userTenantId} />

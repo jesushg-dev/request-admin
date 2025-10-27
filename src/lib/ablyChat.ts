@@ -1,4 +1,4 @@
-import { Message as AblyMessage, MessageReactions } from '@ably/chat';
+import { Message as AblyMessage } from '@ably/chat';
 
 import { MessageType } from '@/types/prisma/message';
 
@@ -27,13 +27,13 @@ export interface OurMessageMetadata {
   version: string;
   createdAt: Date;
   timestamp: Date;
-  reactions: MessageReactions;
+  reactions: Record<string, unknown>;
 }
 
 /**
  * Extends AblyMessage to include our typed metadata.
  */
-export interface AblyMessageWithMetadata extends AblyMessage {
+export interface AblyMessageWithMetadata extends Omit<AblyMessage, 'metadata'> {
   metadata: AblyMessageMetadata;
 }
 
@@ -61,11 +61,11 @@ export const ablyToAppMessage = (ablyMessage: AblyMessageWithMetadata): MessageT
     reactions: [],
     body: ablyMessage.text || '',
     imageId: null,
-    createdAt: ablyMessage.createdAt ?? null,
-    updatedAt: ablyMessage.updatedAt ?? null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
     metadata: '', // You can fill this if you want to keep the original metadata as string
     _count: {
-      reactions: ablyMessage.reactions?.unique ? Object.keys(ablyMessage.reactions.unique).length : 0,
+      reactions: 0,
       replies: 0, // Assuming no replies in this context, adjust as needed
     },
   };
@@ -73,14 +73,19 @@ export const ablyToAppMessage = (ablyMessage: AblyMessageWithMetadata): MessageT
 
 // Converts a raw Ably message to your app's metadata structure
 export const ablyToAppMetadata = (data: AblyMessage): OurMessageMetadata => {
+  let reactions: Record<string, unknown> = {};
+  if (typeof data.reactions === 'object' && data.reactions !== null) {
+    reactions = data.reactions as unknown as Record<string, unknown>;
+  }
+
   return {
     serial: data.serial,
     headers: data.headers,
     action: data.action,
-    version: data.version,
-    createdAt: data.createdAt,
-    timestamp: data.timestamp,
-    reactions: data.reactions,
+    version: typeof data.version === 'string' ? data.version : String(data.version),
+    createdAt: new Date(data.timestamp),
+    timestamp: new Date(data.timestamp),
+    reactions,
   };
 };
 

@@ -50,13 +50,13 @@ export const Message: FC<MessageProps> = ({ message, tenantId, currentUserTenant
   const [isRemovingMessage, startRemovingTransition] = useTransition();
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
-  const { update: updateAblyMessage, deleteMessage: deleteAblyMessage /*addReaction: addAblyReaction, deleteReaction: deleteAblyReaction*/ } = useAblyMessages();
+  const { updateMessage: updateAblyMessage, deleteMessage: deleteAblyMessage /*addReaction: addAblyReaction, deleteReaction: deleteAblyReaction*/ } = useAblyMessages();
 
   const handleUpdate = async ({ body }: { body: string }) => {
     startTransition(async () => {
       try {
         const metadata = parseAppMetadataFromString(message.metadata);
-        await updateAblyMessage(metadata, { text: body }, { description: 'updateMessage' });
+        await updateAblyMessage(metadata.serial, { text: body });
         await updateMessage({ id, body });
         toast.success(t('update.success'));
         setIsEditing(false);
@@ -78,7 +78,7 @@ export const Message: FC<MessageProps> = ({ message, tenantId, currentUserTenant
     startRemovingTransition(async () => {
       try {
         const metadata = parseAppMetadataFromString(message.metadata);
-        deleteAblyMessage(metadata, { description: 'deleteMessage' });
+        deleteAblyMessage(metadata.serial);
         await removeMessage({ id });
         toast.success(t('delete.success'));
         if (parentMessageId === id) onClose();

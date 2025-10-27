@@ -43,7 +43,7 @@ const Editor = ({ onCancel, onSubmit, disabled = false, defaultValue = '', varia
   const textRef = useRef(text);
   const imageRef = useRef(image);
 
-  const { keystroke, stop, error: typingError } = useTyping();
+  const { keystroke, stop } = useTyping();
 
   // Sync refs with state
   useEffect(() => {
@@ -172,7 +172,6 @@ const Editor = ({ onCancel, onSubmit, disabled = false, defaultValue = '', varia
 
       <div className={cn('flex flex-col overflow-hidden gap-2', disabled && 'opacity-50')}>
         {imagePreview && <ImagePreview imagePreview={imagePreview} imageName={image?.name} disabled={disabled} onRemove={removeImage} removeImageLabel={t('removeImage')} altLabel={t('alt')} />}
-        {typingError && <div className="px-2 py-1 text-xs text-red-500">{t('typingError', { error: typingError.message })}</div>}
 
         <div className={cn('w-full flex gap-2 resize-none rounded-md transition-colors px-2 py-1.5 min-h-[40px]')}>
           <textarea

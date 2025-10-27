@@ -35,7 +35,7 @@ export const Conversation = ({ id, tenantId, userTenantId, currentUserTenant }: 
       {user && <Header userName={`${user.firstName} ${user.lastName}`} userImage={user.image ?? ''} onClick={() => onOpenProfile(userTenantId)} />}
 
       <ChatClientProvider client={chatClient}>
-        <ChatRoomProvider name={id} release={true} attach={true}>
+        <ChatRoomProvider name={id}>
           <MessageList
             variant="conversation"
             channelName={id}

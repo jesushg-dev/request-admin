@@ -27,7 +27,7 @@ export function NotificationContent({ children, tenantId }: { children: ReactNod
     return 'active';
   }, [isNotificationsEnabled, connectionState]);
 
-  const { publish } = useChannel(`notifications:${tenantId}`);
+  const { publish } = useChannel({ channelName: `notifications:${tenantId}` });
 
   useConnectionStateListener(useCallback((stateChange) => setConnectionState(stateChange.current), []));
 
@@ -35,13 +35,13 @@ export function NotificationContent({ children, tenantId }: { children: ReactNod
     async (notification: NewNotificationType) => {
       try {
         await createNotification(notification);
-        await publish(`notifications:${tenantId}`, notification);
+        await publish('notification', notification);
       } catch (error) {
         console.error('Error publishing notification:', error);
         throw error;
       }
     },
-    [publish, tenantId]
+    [publish]
   );
 
   const contextValue = useMemo<NotificationContextType>(

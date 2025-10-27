@@ -136,7 +136,7 @@ export function useNotificationsQuery(tenantId: string, userTenantId: string): U
 
   const { mutateAsync: updateRecipient } = useUpdateManyNotificationRecipient();
 
-  useChannel(`notifications:${tenantId}`, (message) => {
+  useChannel({ channelName: `notifications:${tenantId}` }, (message) => {
     if (!isNotificationsEnabled) return;
     const data = message.data as NewNotificationType;
     const isRecipient = Array.isArray(data.recipients) && (data.recipients.length === 0 || data.recipients.some((r) => r.userTenantId === userTenantId));

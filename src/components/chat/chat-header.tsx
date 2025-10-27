@@ -13,10 +13,11 @@ interface PresenceData {
   image?: string;
 }
 
-function RelativeTime({ date }: { date: number }) {
+function RelativeTime({ date }: { date: number | Date }) {
   const now = useNow();
   const format = useFormatter();
-  return <>{format.relativeTime(date, now)}</>;
+  const dateValue = typeof date === 'number' ? date : date.getTime();
+  return <>{format.relativeTime(dateValue, now)}</>;
 }
 
 interface ChatHeaderProps {
@@ -26,16 +27,17 @@ interface ChatHeaderProps {
 export const ChatHeader: FC<ChatHeaderProps> = ({ name }) => {
   const t = useTranslations('component.chat.header');
 
-  usePresence({
-    enterWithData: { name, status: t('online') },
-    leaveWithData: { name, status: t('offline') },
-  });
+  usePresence();
 
   const { currentStatus } = useChatConnection();
   const { presenceData } = usePresenceListener();
 
   const activeUsers = presenceData
-    .sort((a, b) => b.updatedAt - a.updatedAt)
+    .sort((a, b) => {
+      const aTime = typeof a.updatedAt === 'number' ? a.updatedAt : a.updatedAt?.getTime() ?? 0;
+      const bTime = typeof b.updatedAt === 'number' ? b.updatedAt : b.updatedAt?.getTime() ?? 0;
+      return bTime - aTime;
+    })
     .map((user) => ({
       ...user,
       data: user.data as PresenceData,
