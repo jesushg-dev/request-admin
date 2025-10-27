@@ -2225,8 +2225,8 @@ const metadata: ModelMeta = {
           isId: true,
           attributes: [{ name: '@default', args: [{ name: 'value' }] }],
         },
-        guid: {
-          name: 'guid',
+        slug: {
+          name: 'slug',
           type: 'Int',
           attributes: [{ name: '@default', args: [{ name: 'value' }] }],
           isAutoIncrement: true,

@@ -453,7 +453,7 @@ model Request {
   tenantId                 String
   tenant                   Tenant                          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id                       String                          @id() @default(uuid())
-  guid                     Int                             @default(autoincrement())
+  slug                     Int                             @default(autoincrement())
   issueSubject             String
   description              String?
   isDraft                  Boolean                         @default(true)

@@ -11,7 +11,7 @@ import './execution.zmodel' // execution model for requests
 model Request extends TenantScoped, Auditable {
   // Primary identifier
   id                   String   @id @default(uuid()) //@db.UniqueIdentifier // Request ID
-  guid        Int      @default(autoincrement())
+  slug        Int      @default(autoincrement())
 
   // Request details
   issueSubject         String   //@db.VarChar(255)    // Optional issue subject
