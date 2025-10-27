@@ -1,37 +1,46 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle2, Clock, Download, FileJson, FileSpreadsheet, FileText, Filter } from 'lucide-react';
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis, ZAxis } from 'recharts';
+import { ArrowRight, BarChart2, CheckCircle2, Clock, Download, FileJson, FileSpreadsheet, FileText, Filter, TrendingUp } from 'lucide-react';
+import { AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { toast } from 'sonner';
+import { subDays, startOfDay, endOfDay } from 'date-fns';
+
+import { getOverviewReport, getMonthlyTrends, getAreaDistribution, getStatusDistribution, getSLACompliance, getAreas, getStatuses, getPriorities, getAverageResolutionTime, getWorkflowDistribution, getAlerts } from '@/actions/report';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import EmptyState from '@/components/shared/empty-state';
 
-// Types
-type WorkflowType = {
-  id: number;
-  name: string;
-};
+// Report components
+import { ReportFilters } from '@/components/common/reports/report-filters';
+import { OverviewTab } from '@/components/common/reports/overview-tab';
+import { AreasTab } from '@/components/common/reports/areas-tab';
+import { StatusTab } from '@/components/common/reports/status-tab';
+import { ExecutionTab } from '@/components/common/reports/execution-tab';
+import type { 
+  OverviewData, 
+  MonthlyTrend, 
+  AreaDistribution, 
+  StatusDistribution, 
+  SLACompliance,
+  Area,
+  Status,
+  Priority,
+  ReportFilters as ReportFiltersType
+} from '@/components/common/reports/types';
 
-type WorkflowState = {
-  id: number;
-  name: string;
-  value: number;
-  color: string;
-};
-
+// Mock types for not-yet-implemented tabs
 type Step = {
   name: string;
   avgTime: number;
@@ -63,42 +72,11 @@ type RequestModel = {
   monthlyExecution: MonthlyExecution[];
 };
 
-type MonthlyData = {
-  name: string;
-  solicitudes?: number;
-  [key: string]: number | string | undefined;
-};
-
-type AreaData = {
+type WorkflowState = {
+  id: number;
   name: string;
   value: number;
-};
-
-type ResponseTimeData = {
-  name: string;
-  tiempo: number;
-};
-
-type SLACompliance = {
-  name: string;
-  cumplimiento: number;
-};
-
-type ProcessEfficiency = {
-  name: string;
-  eficiencia: number;
-  volumen: number;
-};
-
-// Simulación de API para obtener flujos de trabajo y estados
-const getWorkflowTypes = (): WorkflowType[] => {
-  return [
-    { id: 1, name: 'Activaciones' },
-    { id: 2, name: 'Comisiones' },
-    { id: 3, name: 'Soporte' },
-    { id: 4, name: 'Facturación' },
-    { id: 5, name: 'Otros' },
-  ];
+  color: string;
 };
 
 const getWorkflowStates = (): WorkflowState[] => {
@@ -111,7 +89,6 @@ const getWorkflowStates = (): WorkflowState[] => {
   ];
 };
 
-// Datos de ejemplo para los modelos de solicitud
 const requestModels: RequestModel[] = [
   {
     id: 1,
@@ -195,101 +172,164 @@ const requestModels: RequestModel[] = [
   },
 ];
 
-// Datos de ejemplo para los gráficos
-const generateMonthlyData = (selectedWorkflows: string[]): MonthlyData[] => {
-  const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+interface ReportsPageProps {
+  params: Promise<{
+    locale: string;
+    tenantId: string;
+  }>;
+}
 
-  if (selectedWorkflows.length === 0) {
-    return months.map((month) => ({
-      name: month,
-      solicitudes: Math.floor(Math.random() * 50) + 30,
-    }));
-  }
-
-  return months.map((month) => {
-    const result: MonthlyData = { name: month };
-    selectedWorkflows.forEach((workflow) => {
-      result[workflow] = Math.floor(Math.random() * 40) + 10;
-    });
-    return result;
-  });
-};
-
-const generateAreaData = (selectedWorkflows: string[]): AreaData[] => {
-  if (selectedWorkflows.length === 0) {
-    return getWorkflowTypes().map((type) => ({
-      name: type.name,
-      value: Math.floor(Math.random() * 30) + 5,
-    }));
-  }
-
-  return getWorkflowTypes()
-    .filter((type) => selectedWorkflows.includes(type.name))
-    .map((type) => ({
-      name: type.name,
-      value: Math.floor(Math.random() * 30) + 5,
-    }));
-};
-
-const generateResponseTimeData = (selectedWorkflows: string[]): ResponseTimeData[] => {
-  if (selectedWorkflows.length === 0) {
-    return getWorkflowTypes().map((type) => ({
-      name: type.name,
-      tiempo: Number.parseFloat((Math.random() * 3 + 1).toFixed(1)),
-    }));
-  }
-
-  return getWorkflowTypes()
-    .filter((type) => selectedWorkflows.includes(type.name))
-    .map((type) => ({
-      name: type.name,
-      tiempo: Number.parseFloat((Math.random() * 3 + 1).toFixed(1)),
-    }));
-};
-
-// Datos para el gráfico de cumplimiento de SLA
-const slaComplianceData: SLACompliance[] = [
-  { name: 'Ene', cumplimiento: 92 },
-  { name: 'Feb', cumplimiento: 94 },
-  { name: 'Mar', cumplimiento: 91 },
-  { name: 'Abr', cumplimiento: 95 },
-  { name: 'May', cumplimiento: 93 },
-  { name: 'Jun', cumplimiento: 96 },
-];
-
-// Datos para el gráfico de eficiencia de procesos
-const processEfficiencyData: ProcessEfficiency[] = [
-  { name: 'Activaciones', eficiencia: 87, volumen: 120 },
-  { name: 'Comisiones', eficiencia: 75, volumen: 80 },
-  { name: 'Soporte', eficiencia: 92, volumen: 150 },
-  { name: 'Facturación', eficiencia: 83, volumen: 100 },
-  { name: 'Otros', eficiencia: 79, volumen: 60 },
-];
-
-export default function ReportsPage() {
+export default function ReportsPage({ params }: ReportsPageProps) {
+  const [tenantId, setTenantId] = useState<string>('');
   const [dateRange, setDateRange] = useState<string>('year');
-  const [selectedWorkflows, setSelectedWorkflows] = useState<string[]>([]);
+  const [selectedAreas, setSelectedAreas] = useState<string[]>([]);
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+  const [selectedPriorities, setSelectedPriorities] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState<boolean>(false);
-  const [selectedModel, setSelectedModel] = useState<RequestModel | undefined>(undefined);
   const [selectedTab, setSelectedTab] = useState<string>('overview');
+  const [selectedModel, setSelectedModel] = useState<RequestModel | undefined>(undefined);
+  
+  // Real data states
+  const [overviewData, setOverviewData] = useState<OverviewData | null>(null);
+  const [monthlyTrends, setMonthlyTrends] = useState<MonthlyTrend[]>([]);
+  const [areaDistribution, setAreaDistribution] = useState<AreaDistribution[]>([]);
+  const [statusDistribution, setStatusDistribution] = useState<StatusDistribution[]>([]);
+  const [slaCompliance, setSlaCompliance] = useState<SLACompliance[]>([]);
+  const [areas, setAreas] = useState<Area[]>([]);
+  const [statuses, setStatuses] = useState<Status[]>([]);
+  const [priorities, setPriorities] = useState<Priority[]>([]);
+  const [responseTimeData, setResponseTimeData] = useState<{ name: string; tiempo: number }[]>([]);
+  const [workflowData, setWorkflowData] = useState<{ name: string; value: number; color: string }[]>([]);
+  const [alertsData, setAlertsData] = useState<{ type: string; count: number; statusName: string; alerts: any[] }[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const workflowTypes = getWorkflowTypes();
-  const statusData = getWorkflowStates();
-  const monthlyData = generateMonthlyData(selectedWorkflows);
-  const areaData = generateAreaData(selectedWorkflows);
-  const responseTimeData = generateResponseTimeData(selectedWorkflows);
+  // Initialize params
+  useEffect(() => {
+    async function initParams() {
+      const resolvedParams = await params;
+      setTenantId(resolvedParams.tenantId);
+    }
+    initParams();
+  }, [params]);
 
-  const handleWorkflowToggle = (workflow: string) => {
-    setSelectedWorkflows((prev) => (prev.includes(workflow) ? prev.filter((w) => w !== workflow) : [...prev, workflow]));
+  // Load filter options
+  useEffect(() => {
+    if (!tenantId) return;
+
+    async function loadFilterOptions() {
+      try {
+        const [areasData, statusesData, prioritiesData] = await Promise.all([
+          getAreas(tenantId),
+          getStatuses(tenantId),
+          getPriorities(tenantId),
+        ]);
+        setAreas(areasData);
+        setStatuses(statusesData);
+        setPriorities(prioritiesData);
+      } catch (error) {
+        console.error('Error loading filter options:', error);
+      }
+    }
+
+    loadFilterOptions();
+  }, [tenantId]);
+
+  // Load overview data
+  useEffect(() => {
+    if (!tenantId) return;
+
+    async function loadData() {
+      try {
+        setLoading(true);
+        
+        const filters = buildFilters();
+        
+        const [overview, trends, areas, statuses, compliance, responseTime, workflows, alerts] = await Promise.all([
+          getOverviewReport(tenantId, filters),
+          getMonthlyTrends(tenantId, filters),
+          getAreaDistribution(tenantId, filters),
+          getStatusDistribution(tenantId, filters),
+          getSLACompliance(tenantId, filters),
+          getAverageResolutionTime(tenantId, filters),
+          getWorkflowDistribution(tenantId, filters),
+          getAlerts(tenantId, filters),
+        ]);
+
+        setOverviewData(overview);
+        setMonthlyTrends(trends);
+        setAreaDistribution(areas);
+        setStatusDistribution(statuses);
+        setSlaCompliance(compliance);
+        setResponseTimeData(responseTime);
+        setWorkflowData(workflows);
+        setAlertsData(alerts);
+      } catch (error) {
+        console.error('Error loading report data:', error);
+        toast.error('Error al cargar los reportes');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadData();
+  }, [tenantId, dateRange, selectedAreas, selectedStatuses, selectedPriorities]);
+
+  function buildFilters(): ReportFiltersType {
+    const filters: ReportFiltersType = {};
+
+    // Date range filter
+    if (dateRange === 'month') {
+      filters.dateRange = {
+        from: startOfDay(subDays(new Date(), 30)),
+        to: endOfDay(new Date()),
+      };
+    } else if (dateRange === 'quarter') {
+      filters.dateRange = {
+        from: startOfDay(subDays(new Date(), 90)),
+        to: endOfDay(new Date()),
+      };
+    } else if (dateRange === 'year') {
+      filters.dateRange = {
+        from: startOfDay(subDays(new Date(), 365)),
+        to: endOfDay(new Date()),
+      };
+    }
+
+    // Area filter
+    if (selectedAreas.length > 0) {
+      filters.areas = selectedAreas;
+    }
+
+    // Status filter
+    if (selectedStatuses.length > 0) {
+      filters.statuses = selectedStatuses;
+    }
+
+    // Priority filter
+    if (selectedPriorities.length > 0) {
+      filters.priorities = selectedPriorities;
+    }
+
+    return filters;
+  }
+
+  const handleAreaToggle = (areaId: string) => {
+    setSelectedAreas((prev) => (prev.includes(areaId) ? prev.filter((a) => a !== areaId) : [...prev, areaId]));
+  };
+
+  const handleStatusToggle = (statusId: string) => {
+    setSelectedStatuses((prev) => (prev.includes(statusId) ? prev.filter((s) => s !== statusId) : [...prev, statusId]));
+  };
+
+  const handlePriorityToggle = (priorityId: string) => {
+    setSelectedPriorities((prev) => (prev.includes(priorityId) ? prev.filter((p) => p !== priorityId) : [...prev, priorityId]));
   };
 
   const handleExport = (format: string) => {
-    // Simulación de exportación
     toast.warning('Exportando reporte', {
       description: `El reporte se está exportando en formato ${format}`,
     });
 
-    // En una implementación real, aquí se generaría y descargaría el archivo
     setTimeout(() => {
       toast.success('Reporte exportado', {
         description: `El reporte ha sido exportado exitosamente en formato ${format}`,
@@ -300,6 +340,12 @@ export default function ReportsPage() {
   const handleModelSelect = (modelId: string) => {
     const model = requestModels.find((m) => m.id === Number.parseInt(modelId));
     setSelectedModel(model);
+  };
+
+  const clearFilters = () => {
+    setSelectedAreas([]);
+    setSelectedStatuses([]);
+    setSelectedPriorities([]);
   };
 
   return (
@@ -323,15 +369,8 @@ export default function ReportsPage() {
                 <SelectItem value="month">Último mes</SelectItem>
                 <SelectItem value="quarter">Último trimestre</SelectItem>
                 <SelectItem value="year">Último año</SelectItem>
-                <SelectItem value="custom">Personalizado</SelectItem>
               </SelectContent>
             </Select>
-            {dateRange === 'custom' && (
-              <div className="flex gap-2">
-                <Input type="date" className="w-[150px]" />
-                <Input type="date" className="w-[150px]" />
-              </div>
-            )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button>
@@ -360,73 +399,25 @@ export default function ReportsPage() {
         </div>
 
         {showFilters && (
-          <Card className="mt-4">
-            <CardHeader>
-              <CardTitle>Filtros</CardTitle>
-              <CardDescription>Personaliza los datos mostrados en los reportes</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                <div>
-                  <h3 className="mb-2 font-medium">Flujos de trabajo</h3>
-                  <div className="space-y-2">
-                    {workflowTypes.map((workflow) => (
-                      <div key={workflow.id} className="flex items-center space-x-2">
-                        <Checkbox id={`workflow-${workflow.id}`} checked={selectedWorkflows.includes(workflow.name)} onCheckedChange={() => handleWorkflowToggle(workflow.name)} />
-                        <Label htmlFor={`workflow-${workflow.id}`}>{workflow.name}</Label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <h3 className="mb-2 font-medium">Estados</h3>
-                  <div className="space-y-2">
-                    {statusData.map((status) => (
-                      <div key={status.id} className="flex items-center space-x-2">
-                        <Checkbox id={`status-${status.id}`} />
-                        <Label htmlFor={`status-${status.id}`}>
-                          <div className="flex items-center">
-                            {status.name}
-                            <span className="ml-2 inline-block h-3 w-3 rounded-full" style={{ backgroundColor: status.color }}></span>
-                          </div>
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <h3 className="mb-2 font-medium">Otros filtros</h3>
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="filter-priority" />
-                      <Label htmlFor="filter-priority">Prioridad alta</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="filter-overdue" />
-                      <Label htmlFor="filter-overdue">Vencidas</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="filter-assigned" />
-                      <Label htmlFor="filter-assigned">Asignadas a mí</Label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="mt-4 flex justify-end space-x-2">
-                <Button variant="outline" onClick={() => setSelectedWorkflows([])}>
-                  Limpiar filtros
-                </Button>
-                <Button>Aplicar filtros</Button>
-              </div>
-            </CardContent>
-          </Card>
+          <ReportFilters
+            areas={areas}
+            statuses={statuses}
+            priorities={priorities}
+            selectedAreas={selectedAreas}
+            selectedStatuses={selectedStatuses}
+            selectedPriorities={selectedPriorities}
+            onAreaToggle={handleAreaToggle}
+            onStatusToggle={handleStatusToggle}
+            onPriorityToggle={handlePriorityToggle}
+            onClearFilters={clearFilters}
+          />
         )}
 
         <div className="mt-8 flex flex-col flex-grow min-h-0">
           <Tabs defaultValue="overview" value={selectedTab} onValueChange={setSelectedTab} className="flex flex-col flex-grow min-h-0">
             <TabsList className="mb-4">
               <TabsTrigger value="overview">Resumen</TabsTrigger>
-              <TabsTrigger value="areas">Por Departamento</TabsTrigger>
+              <TabsTrigger value="areas">Por Area</TabsTrigger>
               <TabsTrigger value="status">Por Estado</TabsTrigger>
               <TabsTrigger value="performance">Desempeño</TabsTrigger>
               <TabsTrigger value="workflows">Flujos de Trabajo</TabsTrigger>
@@ -434,521 +425,227 @@ export default function ReportsPage() {
               <TabsTrigger value="alerts">Alertas</TabsTrigger>
             </TabsList>
             <TabsContent value="overview" className="h-full overflow-y-auto">
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium">Total de Solicitudes</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">1,248</div>
-                    <p className="text-xs text-muted-foreground">+12.5% respecto al período anterior</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium">Tiempo Promedio de Resolución</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">2.4 días</div>
-                    <p className="text-xs text-muted-foreground">-0.3 días respecto al período anterior</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium">Tasa de Resolución</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">94.2%</div>
-                    <p className="text-xs text-muted-foreground">+2.1% respecto al período anterior</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium">Solicitudes Pendientes</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">72</div>
-                    <p className="text-xs text-muted-foreground">-5 respecto al período anterior</p>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <div className="mt-4 grid gap-4 md:grid-cols-2">
-                <Card className="col-span-1">
-                  <CardHeader>
-                    <CardTitle>Solicitudes por Mes</CardTitle>
-                    <CardDescription>Evolución de solicitudes durante el último año</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-[300px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={monthlyData}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="name" />
-                          <YAxis />
-                          <Tooltip />
-                          <Legend />
-                          {selectedWorkflows.length > 0 ? (
-                            selectedWorkflows.map((workflow, index) => {
-                              const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
-                              return <Line key={workflow} type="monotone" dataKey={workflow} name={workflow} stroke={colors[index % colors.length]} strokeWidth={2} />;
-                            })
-                          ) : (
-                            <Line type="monotone" dataKey="solicitudes" stroke="#ef4444" strokeWidth={2} />
-                          )}
-                        </LineChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card className="col-span-1">
-                  <CardHeader>
-                    <CardTitle>Distribución por Departamento</CardTitle>
-                    <CardDescription>Porcentaje de solicitudes por área</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-[300px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie data={areaData} cx="50%" cy="50%" outerRadius={100} dataKey="value" label={({ name, percent }) => `${name} ${(((percent as number) ?? 0) * 100).toFixed(0)}%`}>
-                            {areaData.map((entry, index) => {
-                              const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
-                              return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />;
-                            })}
-                          </Pie>
-                          <Tooltip />
-                          <Legend />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <div className="mt-4 grid gap-4 md:grid-cols-2">
-                <Card className="col-span-1">
-                  <CardHeader>
-                    <CardTitle>Cumplimiento de SLA</CardTitle>
-                    <CardDescription>Porcentaje de solicitudes resueltas dentro del tiempo acordado</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-[300px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={slaComplianceData}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="name" />
-                          <YAxis domain={[80, 100]} />
-                          <Tooltip />
-                          <Legend />
-                          <Area type="monotone" dataKey="cumplimiento" name="% Cumplimiento" stroke="#8884d8" fill="#8884d8" />
-                        </AreaChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card className="col-span-1">
-                  <CardHeader>
-                    <CardTitle>Eficiencia de Procesos</CardTitle>
-                    <CardDescription>Relación entre eficiencia y volumen de solicitudes</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-[300px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <ScatterChart>
-                          <CartesianGrid />
-                          <XAxis type="number" dataKey="eficiencia" name="Eficiencia (%)" domain={[70, 100]} />
-                          <YAxis type="number" dataKey="volumen" name="Volumen" />
-                          <ZAxis range={[100, 500]} />
-                          <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                          <Legend />
-                          <Scatter name="Departamentos" data={processEfficiencyData} fill="#8884d8" shape="circle" label={({ name }) => name} />
-                        </ScatterChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+              <OverviewTab
+                overviewData={overviewData}
+                monthlyTrends={monthlyTrends}
+                areaDistribution={areaDistribution}
+                statusDistribution={statusDistribution}
+                slaCompliance={slaCompliance}
+                loading={loading}
+              />
             </TabsContent>
             <TabsContent value="areas" className="h-full overflow-y-auto">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Solicitudes por Departamento</CardTitle>
-                  <CardDescription>Análisis detallado por área</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[400px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={responseTimeData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey="tiempo" name="Tiempo promedio (días)" fill="#ef4444" radius={[4, 4, 0, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </CardContent>
-              </Card>
+              <AreasTab areaDistribution={areaDistribution} loading={loading} />
             </TabsContent>
             <TabsContent value="status" className="h-full overflow-y-auto">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Solicitudes por Estado</CardTitle>
-                  <CardDescription>Distribución actual de solicitudes según su estado</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[400px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie data={statusData} cx="50%" cy="50%" outerRadius={150} dataKey="value" label={({ name, percent }) => `${name} ${(((percent as number) ?? 0) * 100).toFixed(0)}%`}>
-                          {statusData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <Tooltip />
-                        <Legend />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                </CardContent>
-              </Card>
+              <StatusTab statusDistribution={statusDistribution} loading={loading} />
             </TabsContent>
             <TabsContent value="performance" className="h-full overflow-y-auto">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Tiempo de Respuesta por Departamento</CardTitle>
-                  <CardDescription>Tiempo promedio de resolución en días</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[400px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={responseTimeData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey="tiempo" name="Tiempo (días)" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            <TabsContent value="workflows" className="h-full overflow-y-auto">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Análisis de Flujos de Trabajo</CardTitle>
-                  <CardDescription>Tiempo promedio en cada estado del flujo</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-4 md:grid-cols-2">
+              {loading ? (
+                <Card>
+                  <CardHeader>
+                    <Skeleton className="h-6 w-64 mb-2" />
+                    <Skeleton className="h-4 w-96" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-[400px] flex flex-col gap-4 justify-center items-center">
+                      <div className="w-full flex items-end justify-around gap-2">
+                        {[...Array(6)].map((_, i) => (
+                          <div key={i} className="flex-1 flex flex-col items-center gap-2">
+                            <Skeleton className="w-full" style={{ height: `${Math.random() * 100 + 100}px` }} />
+                          </div>
+                        ))}
+                      </div>
+                      <div className="w-full flex justify-around">
+                        {[...Array(6)].map((_, i) => (
+                          <Skeleton key={i} className="h-3 w-16" />
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : responseTimeData.length === 0 ? (
+                <EmptyState
+                  title="No hay datos de desempeño disponibles"
+                  description="Aún no se han registrado datos de tiempo de resolución.\nLos datos aparecerán aquí una vez que haya solicitudes completadas."
+                  icons={[Clock, BarChart2, TrendingUp]}
+                />
+              ) : (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Tiempo de Respuesta por Area</CardTitle>
+                    <CardDescription>Tiempo promedio de resolución en días</CardDescription>
+                  </CardHeader>
+                  <CardContent>
                     <div className="h-[400px]">
                       <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={getWorkflowStates()}>
+                        <BarChart data={responseTimeData}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="name" />
                           <YAxis />
                           <Tooltip />
                           <Legend />
-                          <Bar dataKey="value" name="Solicitudes" radius={[4, 4, 0, 0]}>
-                            {getWorkflowStates().map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={entry.color} />
-                            ))}
-                          </Bar>
+                          <Bar dataKey="tiempo" name="Tiempo (días)" fill="#3b82f6" radius={[4, 4, 0, 0]} />
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
-                    <div className="h-[400px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie
-                            data={getWorkflowStates()}
-                            cx="50%"
-                            cy="50%"
-                            outerRadius={150}
-                            dataKey="value"
-                            label={({ name, percent }) => `${name} ${(((percent as number) ?? 0) * 100).toFixed(0)}%`}>
-                            {getWorkflowStates().map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={entry.color} />
-                            ))}
-                          </Pie>
-                          <Tooltip />
-                          <Legend />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              )}
             </TabsContent>
-            <TabsContent value="execution" className="h-full overflow-y-auto">
-              <div className="grid gap-4 md:grid-cols-3">
-                <Card className="md:col-span-1">
+            <TabsContent value="workflows" className="h-full overflow-y-auto">
+              {loading ? (
+                <Card>
                   <CardHeader>
-                    <CardTitle>Modelos de Solicitud</CardTitle>
-                    <CardDescription>Seleccione un modelo para ver detalles</CardDescription>
+                    <Skeleton className="h-6 w-64 mb-2" />
+                    <Skeleton className="h-4 w-96" />
                   </CardHeader>
                   <CardContent>
-                    <Select onValueChange={handleModelSelect}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleccionar modelo de solicitud" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {requestModels.map((model) => (
-                          <SelectItem key={model.id} value={model.id.toString()}>
-                            {model.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-
-                    <div className="mt-4 space-y-4">
-                      {requestModels.map((model) => (
-                        <div
-                          key={model.id}
-                          className={`cursor-pointer rounded-lg border p-4 transition-colors hover:bg-muted ${selectedModel?.id === model.id ? 'border-primary bg-muted/50' : ''}`}
-                          onClick={() => handleModelSelect(model.id.toString())}>
-                          <div className="flex items-center justify-between">
-                            <h3 className="font-medium">{model.name}</h3>
-                            <Badge>{model.area}</Badge>
-                          </div>
-                          <div className="mt-2 text-sm text-muted-foreground">
-                            <div className="flex items-center gap-2">
-                              <Clock className="h-4 w-4" />
-                              <span>Tiempo promedio: {model.avgCompletionTime} días</span>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div className="h-[400px] flex flex-col gap-4 justify-center items-center">
+                        <div className="w-full flex items-end justify-around gap-2">
+                          {[...Array(6)].map((_, i) => (
+                            <div key={i} className="flex-1 flex flex-col items-center gap-2">
+                              <Skeleton className="w-full" style={{ height: `${Math.random() * 100 + 100}px` }} />
                             </div>
-                            <div className="flex items-center gap-2">
-                              <CheckCircle2 className="h-4 w-4" />
-                              <span>Tasa de éxito: {model.successRate}%</span>
-                            </div>
-                          </div>
+                          ))}
                         </div>
+                        <div className="w-full flex justify-around">
+                          {[...Array(6)].map((_, i) => (
+                            <Skeleton key={i} className="h-3 w-16" />
+                          ))}
+                        </div>
+                      </div>
+                      <div className="h-[400px] flex items-center justify-center">
+                        <div className="w-64 h-64 rounded-full border-4 border-muted flex items-center justify-center">
+                          <Skeleton className="h-32 w-32 rounded-full" />
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : workflowData.length === 0 ? (
+                <EmptyState
+                  title="No hay datos de flujos de trabajo disponibles"
+                  description="Aún no se han registrado datos de workflows.\nLos datos aparecerán aquí una vez que haya solicitudes."
+                  icons={[FileText, BarChart2, TrendingUp]}
+                />
+              ) : (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Análisis de Flujos de Trabajo</CardTitle>
+                    <CardDescription>Tiempo promedio en cada estado del flujo</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div className="h-[400px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={workflowData}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" />
+                            <YAxis />
+                            <Tooltip />
+                            <Legend />
+                            <Bar dataKey="value" name="Solicitudes" radius={[4, 4, 0, 0]}>
+                              {workflowData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.color} />
+                              ))}
+                            </Bar>
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                      <div className="h-[400px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart>
+                            <Pie
+                              data={workflowData}
+                              cx="50%"
+                              cy="50%"
+                              outerRadius={150}
+                              dataKey="value"
+                              label={({ name, percent }) => `${name} ${(((percent as number) ?? 0) * 100).toFixed(0)}%`}>
+                              {workflowData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.color} />
+                              ))}
+                            </Pie>
+                            <Tooltip />
+                            <Legend />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
+            <TabsContent value="execution" className="h-full overflow-y-auto">
+              <ExecutionTab tenantId={tenantId} loading={loading} />
+            </TabsContent>
+            <TabsContent value="alerts" className="h-full overflow-y-auto">
+              {loading ? (
+                <Card>
+                  <CardHeader>
+                    <Skeleton className="h-6 w-64 mb-2" />
+                    <Skeleton className="h-4 w-96" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {[...Array(3)].map((_, i) => (
+                        <Skeleton key={i} className="h-32 w-full rounded-md" />
                       ))}
                     </div>
                   </CardContent>
                 </Card>
-
-                {selectedModel ? (
-                  <Card className="md:col-span-2">
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <CardTitle>{selectedModel.name}</CardTitle>
-                          <CardDescription>
-                            Departamento: {selectedModel.area} | Flujo: {selectedModel.workflow}
-                          </CardDescription>
-                        </div>
-                        <Badge variant="outline" className="px-3 py-1">
-                          {selectedModel.successRate}% de éxito
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <Tabs defaultValue="steps">
-                        <TabsList className="mb-4">
-                          <TabsTrigger value="steps">Pasos del Proceso</TabsTrigger>
-                          <TabsTrigger value="documents">Documentos Requeridos</TabsTrigger>
-                          <TabsTrigger value="metrics">Métricas de Ejecución</TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="steps">
-                          <div className="space-y-4">
-                            <div className="flex items-center justify-between">
-                              <h3 className="font-medium">Pasos del proceso estandarizado</h3>
-                              <span className="text-sm text-muted-foreground">Tiempo total: {selectedModel.avgCompletionTime} días</span>
-                            </div>
-
-                            <div className="space-y-4">
-                              {selectedModel.steps.map((step, index) => (
-                                <div key={index} className="rounded-lg border p-4">
-                                  <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">{index + 1}</div>
-                                      <h4 className="font-medium">{step.name}</h4>
-                                    </div>
-                                    <Badge variant="outline">{step.avgTime} días</Badge>
-                                  </div>
-                                  <div className="mt-2">
-                                    <div className="flex items-center justify-between text-sm">
-                                      <span>Cumplimiento del proceso:</span>
-                                      <span>{step.compliance}%</span>
-                                    </div>
-                                    <Progress value={step.compliance} className="mt-1" />
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </TabsContent>
-                        <TabsContent value="documents">
-                          <div className="space-y-4">
-                            <h3 className="font-medium">Documentos de referencia</h3>
-                            <Table>
-                              <TableHeader>
-                                <TableRow>
-                                  <TableHead>Nombre del documento</TableHead>
-                                  <TableHead>Tipo</TableHead>
-                                  <TableHead>Requerido</TableHead>
-                                  <TableHead className="text-right">Acciones</TableHead>
-                                </TableRow>
-                              </TableHeader>
-                              <TableBody>
-                                {selectedModel.documents.map((doc, index) => (
-                                  <TableRow key={index}>
-                                    <TableCell className="font-medium">{doc.name}</TableCell>
-                                    <TableCell>{doc.type}</TableCell>
-                                    <TableCell>{doc.required ? <Badge variant="default">Obligatorio</Badge> : <Badge variant="outline">Opcional</Badge>}</TableCell>
-                                    <TableCell className="text-right">
-                                      <Button variant="ghost" size="sm">
-                                        Ver plantilla
-                                      </Button>
-                                    </TableCell>
-                                  </TableRow>
-                                ))}
-                              </TableBody>
-                            </Table>
-                          </div>
-                        </TabsContent>
-                        <TabsContent value="metrics">
-                          <div className="space-y-6">
-                            <div>
-                              <h3 className="mb-2 font-medium">Ejecución mensual</h3>
-                              <div className="h-[300px]">
-                                <ResponsiveContainer width="100%" height="100%">
-                                  <LineChart data={selectedModel.monthlyExecution}>
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="month" />
-                                    <YAxis yAxisId="left" />
-                                    <YAxis yAxisId="right" orientation="right" domain={[80, 100]} />
-                                    <Tooltip />
-                                    <Legend />
-                                    <Line yAxisId="left" type="monotone" dataKey="count" name="Cantidad" stroke="#8884d8" activeDot={{ r: 8 }} />
-                                    <Line yAxisId="right" type="monotone" dataKey="compliance" name="Cumplimiento %" stroke="#82ca9d" />
-                                  </LineChart>
-                                </ResponsiveContainer>
-                              </div>
-                            </div>
-
-                            <div className="grid gap-4 md:grid-cols-3">
-                              <Card>
-                                <CardHeader className="pb-2">
-                                  <CardTitle className="text-sm font-medium">Tiempo promedio</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                  <div className="text-2xl font-bold">{selectedModel.avgCompletionTime} días</div>
-                                  <p className="text-xs text-muted-foreground">{selectedModel.avgCompletionTime < 2.5 ? 'Por debajo del promedio' : 'Por encima del promedio'}</p>
-                                </CardContent>
-                              </Card>
-                              <Card>
-                                <CardHeader className="pb-2">
-                                  <CardTitle className="text-sm font-medium">Tasa de éxito</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                  <div className="text-2xl font-bold">{selectedModel.successRate}%</div>
-                                  <p className="text-xs text-muted-foreground">{selectedModel.successRate > 90 ? 'Excelente rendimiento' : 'Necesita mejoras'}</p>
-                                </CardContent>
-                              </Card>
-                              <Card>
-                                <CardHeader className="pb-2">
-                                  <CardTitle className="text-sm font-medium">Documentos requeridos</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                  <div className="text-2xl font-bold">{selectedModel.documentCount}</div>
-                                  <p className="text-xs text-muted-foreground">{selectedModel.documentCount < 3 ? 'Proceso simplificado' : 'Proceso complejo'}</p>
-                                </CardContent>
-                              </Card>
-                            </div>
-                          </div>
-                        </TabsContent>
-                      </Tabs>
-                    </CardContent>
-                    <CardFooter className="flex justify-between">
-                      <Button variant="outline">Ver historial de ejecuciones</Button>
-                      <Button asChild>
-                        <Link href={`/settings/workflow-editor?id=${selectedModel.id}`}>
-                          Editar modelo
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Link>
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ) : (
-                  <Card className="flex items-center justify-center md:col-span-2">
-                    <CardContent className="py-12 text-center">
-                      <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-                        <FileText className="h-6 w-6 text-muted-foreground" />
-                      </div>
-                      <h3 className="mb-2 text-lg font-medium">Seleccione un modelo de solicitud</h3>
-                      <p className="text-sm text-muted-foreground">Elija un modelo de la lista para ver sus detalles de ejecución</p>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
-            </TabsContent>
-            <TabsContent value="alerts" className="h-full overflow-y-auto">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Alertas por Estado</CardTitle>
-                  <CardDescription>Solicitudes que requieren atención inmediata</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="rounded-md border border-red-200 bg-red-50 p-4">
-                      <div className="flex items-center">
-                        <Badge className="bg-red-500">Crítico</Badge>
-                        <h3 className="ml-2 font-medium">5 solicitudes en &quot;En revisión&quot; por más de 7 días</h3>
-                      </div>
-                      <p className="mt-1 text-sm text-muted-foreground">Estas solicitudes han excedido el tiempo máximo recomendado en este estado.</p>
-                      <Button variant="outline" size="sm" className="mt-2">
-                        Ver solicitudes
-                      </Button>
+              ) : alertsData.length === 0 ? (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Alertas por Estado</CardTitle>
+                    <CardDescription>Solicitudes que requieren atención inmediata</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center justify-center py-12">
+                      <EmptyState
+                        title="No hay alertas activas"
+                        description="Todas las solicitudes están en orden.\nNo se encontraron alertas de SLA vencido o en riesgo."
+                        icons={[CheckCircle2, Clock, TrendingUp]}
+                      />
                     </div>
-
-                    <div className="rounded-md border border-amber-200 bg-amber-50 p-4">
-                      <div className="flex items-center">
-                        <Badge className="bg-amber-500">Advertencia</Badge>
-                        <h3 className="ml-2 font-medium">12 solicitudes en &quot;En progreso&quot; por más de 3 días</h3>
-                      </div>
-                      <p className="mt-1 text-sm text-muted-foreground">Estas solicitudes están cerca de exceder el tiempo máximo recomendado en este estado.</p>
-                      <Button variant="outline" size="sm" className="mt-2">
-                        Ver solicitudes
-                      </Button>
-                    </div>
-
-                    <div className="rounded-md border border-blue-200 bg-blue-50 p-4">
-                      <div className="flex items-center">
-                        <Badge className="bg-blue-500">Información</Badge>
-                        <h3 className="ml-2 font-medium">3 solicitudes requieren aprobación para cambio de estado</h3>
-                      </div>
-                      <p className="mt-1 text-sm text-muted-foreground">Estas solicitudes están esperando tu aprobación para avanzar al siguiente estado.</p>
-                      <Button variant="outline" size="sm" className="mt-2">
-                        Ver solicitudes
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="mt-6">
-                    <h3 className="mb-4 font-medium">Configuración de alertas</h3>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Alertas por Estado</CardTitle>
+                    <CardDescription>Solicitudes que requieren atención inmediata</CardDescription>
+                  </CardHeader>
+                  <CardContent>
                     <div className="space-y-4">
-                      {getWorkflowStates().map((state) => (
-                        <div key={state.id} className="flex items-center justify-between rounded-lg border p-4">
-                          <div className="flex items-center">
-                            <span className="mr-2 inline-block h-3 w-3 rounded-full" style={{ backgroundColor: state.color }}></span>
-                            <span>{state.name}</span>
+                      {alertsData.map((alertGroup, index) => {
+                        const badgeColor = alertGroup.type === 'critical' ? 'bg-red-500' : alertGroup.type === 'warning' ? 'bg-amber-500' : 'bg-blue-500';
+                        const borderColor = alertGroup.type === 'critical' ? 'border-red-200' : alertGroup.type === 'warning' ? 'border-amber-200' : 'border-blue-200';
+                        const bgColor = alertGroup.type === 'critical' ? 'bg-red-50' : alertGroup.type === 'warning' ? 'bg-amber-50' : 'bg-blue-50';
+                        const title = alertGroup.type === 'critical' ? 'Crítico' : alertGroup.type === 'warning' ? 'Advertencia' : 'Información';
+                        const description = alertGroup.type === 'critical'
+                          ? 'Estas solicitudes han vencido su SLA y requieren atención inmediata.'
+                          : 'Estas solicitudes están en riesgo de vencer su SLA.';
+                        
+                        return (
+                          <div key={index} className={`rounded-md border ${borderColor} ${bgColor} p-4`}>
+                            <div className="flex items-center">
+                              <Badge className={badgeColor}>{title}</Badge>
+                              <h3 className="ml-2 font-medium">{alertGroup.count} solicitud{alertGroup.count !== 1 ? 'es' : ''} en &quot;{alertGroup.statusName}&quot; con SLA {alertGroup.type === 'critical' ? 'vencido' : 'en riesgo'}</h3>
+                            </div>
+                            <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+                            <Button variant="outline" size="sm" className="mt-2">
+                              Ver solicitudes
+                            </Button>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm text-muted-foreground">Alertar después de</span>
-                            <Input type="number" className="w-16" defaultValue={state.name === 'En revisión' ? '7' : state.name === 'En progreso' ? '3' : '5'} />
-                            <span className="text-sm text-muted-foreground">días</span>
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
-                    <Button className="mt-4">Guardar configuración</Button>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              )}
             </TabsContent>
           </Tabs>
         </div>
