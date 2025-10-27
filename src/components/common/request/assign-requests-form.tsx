@@ -1,63 +1,46 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { assignRequestsMassively, getAvailableRequestsForUser, getTenantUsers } from '@/actions/request-assignment';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PlusCircle, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useFieldArray, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import * as z from 'zod';
 
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Form, FormField } from '@/components/ui/form';
+import { Skeleton } from '@/components/ui/skeleton';
+import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
+import { Textarea } from '@/components/ui/textarea';
+import Select, { type OptionType } from '@/components/custom-ui/select';
 
 // ===================
 // Type Definitions
 // ===================
-export interface User {
-  id: string;
-  name: string;
-}
-
 export interface Request {
   id: string;
+  slug: number | null;
   title: string;
+  status: string;
+  priority: string;
 }
-
-// Updated to wrap requestId in an object
-export interface IFormInput {
-  userId: string;
-  requestIds: { requestId: string }[];
-}
-
-// ===================
-// Mock Data
-// ===================
-const users: User[] = [
-  { id: '1', name: 'User 1' },
-  { id: '2', name: 'User 2' },
-  { id: '3', name: 'User 3' },
-];
-
-const requests: Request[] = [
-  { id: '1', title: 'Request 1' },
-  { id: '2', title: 'Request 2' },
-  { id: '3', title: 'Request 3' },
-  { id: '4', title: 'Request 4' },
-  { id: '5', title: 'Request 5' },
-];
 
 // ===================
 // Zod Schema
 // ===================
 const formSchema = z.object({
-  userId: z.string().min(1, { message: 'error.userRequired' }),
+  userId: z.object({ label: z.string(), value: z.string() }),
   requestIds: z
     .array(
       z.object({
-        requestId: z.string().min(1, { message: 'error.requestRequired' }),
+        requestId: z.object({ label: z.string(), value: z.string() }),
       })
     )
     .min(1, { message: 'error.requestRequired' }),
+  comments: z.string().optional(),
 });
 
 export type AssignRequestsFormValues = z.infer<typeof formSchema>;
@@ -66,14 +49,21 @@ export type AssignRequestsFormValues = z.infer<typeof formSchema>;
 // Component
 // ===================
 export default function AssignRequestsForm() {
+  const { tenantId } = useTenantContext();
+  const t = useTranslations('admin.request.massiveAssign');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [users, setUsers] = useState<OptionType[]>([]);
+  const [availableRequests, setAvailableRequests] = useState<Request[]>([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
+  const [isLoadingRequests, setIsLoadingRequests] = useState(false);
 
   // Initialize the form with the Zod schema resolver and default values
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      userId: '',
-      requestIds: [{ requestId: '' }],
+      userId: { label: '', value: '' },
+      requestIds: [{ requestId: { label: '', value: '' } }],
+      comments: '',
     },
   });
 
@@ -82,95 +72,181 @@ export default function AssignRequestsForm() {
     name: 'requestIds',
   });
 
+  const selectedUserId = form.watch('userId');
+
+  // Load users on mount
+  useEffect(() => {
+    const loadUsers = async () => {
+      setIsLoadingUsers(true);
+      try {
+        const usersData = await getTenantUsers(tenantId);
+        setUsers(usersData);
+      } catch (error) {
+        toast.error('Error loading users');
+        console.error(error);
+      } finally {
+        setIsLoadingUsers(false);
+      }
+    };
+
+    loadUsers();
+  }, [tenantId]);
+
+  // Load available requests when user is selected
+  useEffect(() => {
+    if (!selectedUserId?.value) {
+      setAvailableRequests([]);
+      return;
+    }
+
+    const loadRequests = async () => {
+      setIsLoadingRequests(true);
+      try {
+        const requests = await getAvailableRequestsForUser(tenantId, selectedUserId.value);
+        setAvailableRequests(requests);
+      } catch (error) {
+        toast.error('Error loading available requests');
+        console.error(error);
+      } finally {
+        setIsLoadingRequests(false);
+      }
+    };
+
+    loadRequests();
+  }, [selectedUserId?.value, tenantId]);
+
   async function onSubmit(values: AssignRequestsFormValues) {
     setIsSubmitting(true);
-    console.log(values);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setIsSubmitting(false);
-    form.reset();
+    try {
+      const requestIds = values.requestIds.map((r) => r.requestId.value);
+      const results = await assignRequestsMassively(tenantId, values.userId.value, requestIds, values.comments);
+
+      const successCount = results.filter((r) => r.success).length;
+      const failCount = results.length - successCount;
+
+      if (failCount === 0) {
+        toast.success(`Successfully assigned ${successCount} request(s)`);
+      } else {
+        toast.warning(`Assigned ${successCount} request(s), ${failCount} failed`);
+      }
+
+      form.reset();
+      setAvailableRequests([]);
+    } catch (error) {
+      toast.error('Error assigning requests');
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
+
+  const selectedValues = fields.map((_, idx) => form.getValues(`requestIds.${idx}.requestId.value`));
+
+  const availableOptions = availableRequests.map((req) => ({
+    label: `#${req.slug ?? req.id.slice(0, 8)} - ${req.title}`,
+    value: req.id,
+    priority: req.priority,
+    status: req.status,
+  }));
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
-        {/*error && <PrismaErrorAlert error={error} />*/}
-        <div className="flex-1 overflow-auto">
-          <div className="flex flex-1 flex-col justify-between overflow-hidden px-1 gap-4">
+      <FormRoot onSubmit={form.handleSubmit(onSubmit)}>
+        <FormContent>
+          <FormSection>
             <FormField
               control={form.control}
               name="userId"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{'assignRequests.user'}</FormLabel>
-                  <FormControl>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="assignRequests.userPlaceholder" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {users.map((user) => (
-                          <SelectItem key={user.id} value={user.id}>
-                            {user.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
+                <FormItem label={t('user')} description={t('userDescription')} className="mb-2">
+                  <Select
+                    value={field.value}
+                    onChange={field.onChange}
+                    options={users}
+                    placeholder={t('userPlaceholder')}
+                    isSearchable
+                    isLoading={isLoadingUsers}  
+                  />
                 </FormItem>
               )}
             />
 
-            {/* Request Fields */}
-            {fields.map((field, index) => (
+            {isLoadingRequests && (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-1/4" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-1/4" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+              </div>
+            )}
+
+            {availableRequests.length > 0 && (
+              <>
+                {fields.map((field, index) => (
+                  <FormField
+                    key={field.id}
+                    control={form.control}
+                    name={`requestIds.${index}.requestId`}
+                    render={({ field }) => (
+                      <FormItem className="mb-2 w-full" label={index === 0 ? t('requests') : `${t('request')} ${index + 1}`}>
+                        <div className="flex items-center gap-2 w-full">
+                          <Select
+                            value={field.value}
+                            onChange={field.onChange}
+                            options={availableOptions.filter(
+                              (opt) => !selectedValues.includes(opt.value) || opt.value === field.value?.value
+                            )}
+                            placeholder={t('requestPlaceholder')}
+                            isSearchable
+                            className="w-full"
+                          />
+                          {fields.length > 1 && (
+                            <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}>
+                              <X className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                ))}
+
+                <Button
+                  type="button"
+                  variant="dashed-outline"
+                  size="sm"
+                  className="w-full"
+                  onClick={() => append({ requestId: { label: '', value: '' } })}
+                  disabled={selectedValues.length >= availableRequests.length}>
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  {t('addRequest')}
+                </Button>
+              </>
+            )}
+
+            {selectedUserId?.value && availableRequests.length === 0 && !isLoadingRequests && (
+              <div className="text-center text-muted-foreground py-8">{t('noRequests')}</div>
+            )}
+
+            {selectedUserId?.value && availableRequests.length > 0 && (
               <FormField
-                key={field.id}
                 control={form.control}
-                name={`requestIds.${index}.requestId`}
+                name="comments"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{index === 0 ? 'assignRequests.requests' : `assignRequests.request ${index + 1}`}</FormLabel>
-                    <div className="flex items-center space-x-2">
-                      <FormControl>
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="assignRequests.requestPlaceholder" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {requests.map((request) => (
-                              <SelectItem key={request.id} value={request.id}>
-                                {request.title}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      {index > 0 && (
-                        <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}>
-                          <X className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                    <FormMessage />
+                  <FormItem className="mb-2" label={t('comments')} description={t('commentsDescription')}>
+                    <Textarea placeholder={t('commentsPlaceholder')} rows={3} {...field} />
                   </FormItem>
                 )}
               />
-            ))}
-          </div>
-        </div>
-        <div className="mt-4 flex justify-end">
-          {/* Button to add another request */}
-          <Button type="button" variant="outline" size="sm" onClick={() => append({ requestId: '' })}>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            {'assignRequests.addRequest'}
-          </Button>
-
-          {/* Submit Button */}
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'assignRequests.saving' : 'assignRequests.submit'}
-          </Button>
-        </div>
-      </form>
+            )}
+          </FormSection>
+        </FormContent>
+        <FormActions isPending={isSubmitting} title={t('submit')} />
+      </FormRoot>
     </Form>
   );
 }

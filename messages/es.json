@@ -1810,6 +1810,26 @@
         "coordinator": "Coordinador",
         "addAssignee": "Agregar asignado"
       },
+      "massiveAssign": {
+        "title": "Asignación Masiva de Solicitudes",
+        "description": "Asigna múltiples solicitudes a un usuario seleccionado",
+        "user": "Usuario",
+        "userDescription": "Selecciona el usuario al que se asignarán las solicitudes",
+        "userPlaceholder": "Selecciona un usuario...",
+        "request": "Solicitud",
+        "requests": "Solicitudes",
+        "requestPlaceholder": "Selecciona una solicitud...",
+        "noRequests": "No hay solicitudes disponibles para este usuario o ya están todas asignadas",
+        "addRequest": "Agregar otra solicitud",
+        "comments": "Comentarios",
+        "commentsDescription": "Agrega comentarios sobre la asignación masiva",
+        "commentsPlaceholder": "Comentarios sobre la asignación...",
+        "submit": "Asignar solicitudes",
+        "error": {
+          "userRequired": "Debe seleccionar un usuario",
+          "requestRequired": "Debe seleccionar al menos una solicitud"
+        }
+      },
       "status": {
         "title": "Cambiar estado de la solicitud",
         "description": "Actualiza el estado de la solicitud #{requestId}",

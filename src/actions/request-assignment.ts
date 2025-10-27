@@ -259,3 +259,175 @@ export const updateCurrentClassification = async (tenantId: UUID, requestId: UUI
 
   return { areaId: newValues.areaId };
 };
+
+// ========================
+// MASSIVE ASSIGNMENT
+// ========================
+export const getTenantUsers = async (tenantId: UUID) => {
+  const session = await currentSession();
+  if (!session?.user?.id) throw new AuthorizationError('Authentication required');
+
+  const users = await db.userTenant.findMany({
+    where: { tenantId },
+    select: {
+      id: true,
+      person: { select: { firstName: true, lastName: true } },
+      user: { select: { email: true } },
+    },
+  });
+
+  return users.map((user) => ({
+    id: user.id,
+    label: user.person ? `${user.person.firstName} ${user.person.lastName} (${user.user.email})` : user.user.email,
+    value: user.id,
+  }));
+};
+
+export const getAvailableRequestsForUser = async (tenantId: UUID, userTenantId: UUID) => {
+  const session = await currentSession();
+  if (!session?.user?.id) throw new AuthorizationError('Authentication required');
+
+  // Get user's areas
+  const userAreas = await db.userTenantArea.findMany({
+    where: { userTenantId, tenantId },
+    select: { areaId: true },
+  });
+
+  const areaIds = userAreas.map((ua) => ua.areaId);
+
+  if (areaIds.length === 0) {
+    return [];
+  }
+
+  // Get requests that are in the user's areas and not already assigned to this user
+  const requests = await db.request.findMany({
+    where: {
+      tenantId,
+      isDraft: false,
+      requestAssignments: {
+        some: {
+          areaId: { in: areaIds },
+          isActive: true,
+          assignedUsers: {
+            none: {
+              userTenantId,
+              tenantId,
+            },
+          },
+        },
+      },
+    },
+    select: {
+      id: true,
+      slug: true,
+      issueSubject: true,
+      requestAssignments: {
+        where: { isActive: true },
+        take: 1,
+        select: {
+          status: { select: { name: true } },
+          priority: { select: { name: true } },
+        },
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+    take: 100,
+  });
+
+  return requests.map((request) => ({
+    id: request.id,
+    slug: request.slug,
+    title: request.issueSubject,
+    status: request.requestAssignments[0]?.status?.name || 'N/A',
+    priority: request.requestAssignments[0]?.priority?.name || 'N/A',
+  }));
+};
+
+export const assignRequestsMassively = async (tenantId: UUID, userTenantId: UUID, requestIds: UUID[], comments?: string) => {
+  const session = await currentSession();
+  if (!session?.user?.id) throw new AuthorizationError('Authentication required');
+
+  if (requestIds.length === 0) {
+    throw new ValidationError('Debe seleccionar al menos una solicitud');
+  }
+
+  const results = [];
+
+  for (const requestId of requestIds) {
+    try {
+      const lastAssignment = await db.requestAssignment.findFirstOrThrow({
+        where: { requestId, tenantId, isActive: true },
+        include: { assignedUsers: true },
+      });
+
+      // Check if user is already assigned
+      const alreadyAssigned = lastAssignment.assignedUsers.some((au) => au.userTenantId === userTenantId);
+      if (alreadyAssigned) {
+        results.push({ requestId, success: false, message: 'Usuario ya está asignado a esta solicitud' });
+        continue;
+      }
+
+      const newAssignmentData: Prisma.RequestAssignmentUncheckedCreateInput = {
+        ...lastAssignment,
+        id: undefined,
+        comment: comments,
+        assignedUsers: {
+          create: [
+            ...lastAssignment.assignedUsers.map((au) => ({
+              tenantId,
+              userTenantId: au.userTenantId,
+              role: au.role,
+              isCoordinator: au.isCoordinator,
+            })),
+            {
+              tenantId,
+              userTenantId,
+              role: 'User',
+              isCoordinator: false,
+            },
+          ],
+        },
+      };
+
+      await db.$transaction([
+        db.requestAssignment.updateMany({
+          where: { requestId, tenantId, isActive: true },
+          data: { isActive: false },
+        }),
+        db.requestAssignment.create({
+          data: { ...newAssignmentData, isActive: true, tenantId, requestId },
+        }),
+        db.requestChangeLog.create({
+          data: {
+            tenantId,
+            requestId,
+            fieldName: 'assignedUsers',
+            oldValue: JSON.stringify(lastAssignment.assignedUsers.map((au) => au.userTenantId)),
+            newValue: JSON.stringify([...lastAssignment.assignedUsers.map((au) => au.userTenantId), userTenantId]),
+            updatedBy: session.user.id,
+            updatedAt: new Date(),
+          },
+        }),
+      ]);
+
+      await sendInAppNotification({
+        tenantId,
+        body: {
+          type: NotificationTypeEnum.ASSIGNMENT,
+          data: { requestId },
+        },
+        recipients: [{ userTenantId }],
+      });
+
+      results.push({ requestId, success: true });
+    } catch (error) {
+      results.push({
+        requestId,
+        success: false,
+        message: error instanceof Error ? error.message : 'Error desconocido',
+      });
+    }
+  }
+
+  return results;
+};

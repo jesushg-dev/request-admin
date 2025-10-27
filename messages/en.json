@@ -1801,6 +1801,26 @@
         "coordinator": "Coordinator",
         "addAssignee": "Add Assignee"
       },
+      "massiveAssign": {
+        "title": "Massive Request Assignment",
+        "description": "Assign multiple requests to a selected user",
+        "user": "User",
+        "userDescription": "Select the user to assign the requests to",
+        "userPlaceholder": "Select a user...",
+        "request": "Request",
+        "requests": "Requests",
+        "requestPlaceholder": "Select a request...",
+        "noRequests": "No requests available for this user or all are already assigned",
+        "addRequest": "Add another request",
+        "comments": "Comments",
+        "commentsDescription": "Add comments about the massive assignment",
+        "commentsPlaceholder": "Comments about the assignment...",
+        "submit": "Assign requests",
+        "error": {
+          "userRequired": "Must select a user",
+          "requestRequired": "Must select at least one request"
+        }
+      },
       "status": {
         "title": "Change request status",
         "description": "Update the status of request #{requestId}",
