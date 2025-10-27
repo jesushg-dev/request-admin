@@ -158,6 +158,215 @@
     },
     "scheduleDemoButton": "Schedule a Demo"
   },
+  "about": {
+    "termsOfService": {
+      "title": "Terms of Service",
+      "lastUpdated": "Last updated",
+      "sections": {
+        "acceptance": {
+          "title": "Acceptance of Terms",
+          "content": "By accessing and using Request Engine (the \"Service\"), you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to abide by the above, please do not use this service."
+        },
+        "description": {
+          "title": "Description of Service",
+          "content": "Request Engine provides a comprehensive request management platform that enables organizations to create, manage, assign, and track requests through customized workflows.",
+          "includes": "The Service includes but is not limited to:",
+          "items": [
+            "Request submission and management",
+            "Workflow automation and customization",
+            "Team collaboration and assignment",
+            "Reporting and analytics",
+            "Integration with third-party services"
+          ]
+        },
+        "responsibilities": {
+          "title": "User Responsibilities",
+          "content": "As a user of the Service, you agree to:",
+          "items": [
+            "Provide accurate and complete information when creating an account",
+            "Maintain the security of your account credentials",
+            "Use the Service in compliance with all applicable laws and regulations",
+            "Not use the Service for any illegal, harmful, or fraudulent activities",
+            "Respect the intellectual property rights of others",
+            "Not attempt to gain unauthorized access to the Service or related systems"
+          ]
+        },
+        "privacy": {
+          "title": "Privacy and Data Protection",
+          "content": "Your use of the Service is also governed by our Privacy Policy. We are committed to protecting your privacy and ensuring the security of your data.",
+          "acknowledge": "You acknowledge that:",
+          "items": [
+            "We collect and process data as necessary to provide the Service",
+            "You are responsible for obtaining necessary consents from individuals whose data you submit",
+            "We implement industry-standard security measures to protect your data",
+            "Data is stored securely and encrypted in transit and at rest"
+          ]
+        },
+        "intellectualProperty": {
+          "title": "Intellectual Property",
+          "content": "The Service and its original content, features, and functionality are and will remain the exclusive property of Request Engine and its licensors. The Service is protected by copyright, trademark, and other laws.",
+          "userContent": "You retain ownership of all data and content you submit to the Service. By using the Service, you grant us a license to use, store, and process this data as necessary to provide the Service."
+        },
+        "billing": {
+          "title": "Subscription and Billing",
+          "content": "If you subscribe to a paid plan:",
+          "items": [
+            "Subscription fees are billed in advance on a recurring basis",
+            "You are responsible for all fees and taxes associated with your subscription",
+            "You may cancel your subscription at any time",
+            "Refunds are provided in accordance with our refund policy",
+            "We reserve the right to modify pricing with reasonable notice"
+          ]
+        },
+        "liability": {
+          "title": "Limitation of Liability",
+          "content": "To the maximum extent permitted by law, Request Engine shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other intangible losses resulting from your use of the Service."
+        },
+        "termination": {
+          "title": "Termination",
+          "content": "We may terminate or suspend your account and access to the Service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.",
+          "cease": "Upon termination, your right to use the Service will immediately cease. If you wish to terminate your account, you may simply discontinue using the Service or contact us to delete your account."
+        },
+        "changes": {
+          "title": "Changes to Terms",
+          "content": "We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material, we will provide at least 30 days notice prior to any new terms taking effect."
+        },
+        "contact": {
+          "title": "Contact Information",
+          "content": "If you have any questions about these Terms, please contact us at:",
+          "email": "support@requestengine.com",
+          "address": "Request Engine, Inc."
+        }
+      }
+    },
+    "privacyPolicy": {
+      "title": "Privacy Policy",
+      "lastUpdated": "Last updated",
+      "sections": {
+        "introduction": {
+          "title": "Introduction",
+          "content": "Request Engine (\"we\", \"our\", or \"us\") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our request management platform (the \"Service\")."
+        },
+        "informationWeCollect": {
+          "title": "Information We Collect",
+          "personalInfo": {
+            "title": "Personal Information",
+            "content": "We collect information that you provide directly to us, including:",
+            "items": [
+              "Name and contact information (email, phone number)",
+              "Company and job title",
+              "Account credentials (username, password)",
+              "Billing and payment information",
+              "Profile picture and preferences"
+            ]
+          },
+          "usageInfo": {
+            "title": "Usage Information",
+            "content": "We automatically collect certain information about your device and how you interact with our Service:",
+            "items": [
+              "Device information (IP address, browser type, operating system)",
+              "Usage data (pages visited, features used, time spent)",
+              "Log files and analytics data",
+              "Cookies and similar tracking technologies"
+            ]
+          },
+          "contentData": {
+            "title": "Content Data",
+            "content": "We store and process content you create or upload to the Service:",
+            "items": [
+              "Requests and associated data",
+              "Workflow configurations",
+              "Uploaded documents and files",
+              "Communications and messages"
+            ]
+          }
+        },
+        "howWeUse": {
+          "title": "How We Use Your Information",
+          "content": "We use the information we collect for the following purposes:",
+          "items": [
+            "To provide, maintain, and improve our Service",
+            "To process transactions and manage your account",
+            "To send you updates, notifications, and support messages",
+            "To personalize your experience and deliver relevant content",
+            "To detect, prevent, and address technical issues and fraud",
+            "To comply with legal obligations and enforce our terms",
+            "To conduct analytics and improve our Service"
+          ]
+        },
+        "sharing": {
+          "title": "Information Sharing and Disclosure",
+          "content": "We may share your information in the following circumstances:",
+          "items": [
+            "With service providers who assist us in operating our Service",
+            "Within your organization as part of normal Service functionality",
+            "When required by law or to protect our rights",
+            "In connection with a business transfer or merger",
+            "With your explicit consent"
+          ],
+          "note": "We do not sell, trade, or rent your personal information to third parties."
+        },
+        "security": {
+          "title": "Data Security",
+          "content": "We implement industry-standard security measures to protect your information:",
+          "items": [
+            "Encryption of data in transit (TLS/SSL) and at rest",
+            "Secure authentication and access controls",
+            "Regular security audits and monitoring",
+            "Employee training on data protection",
+            "Compliance with security frameworks and standards"
+          ],
+          "disclaimer": "However, no method of transmission over the Internet or electronic storage is 100% secure. While we strive to use commercially acceptable means to protect your information, we cannot guarantee absolute security."
+        },
+        "retention": {
+          "title": "Data Retention",
+          "content": "We retain your information for as long as necessary to fulfill the purposes outlined in this Privacy Policy, unless a longer retention period is required or permitted by law. When you delete your account, we will delete or anonymize your personal information within a reasonable timeframe, except where we are required to retain it by law."
+        },
+        "rights": {
+          "title": "Your Rights and Choices",
+          "content": "Depending on your location, you may have certain rights regarding your personal information:",
+          "items": [
+            "Access and review your personal information",
+            "Request correction of inaccurate data",
+            "Request deletion of your data",
+            "Object to or restrict certain processing activities",
+            "Data portability - receive your data in a structured format",
+            "Withdraw consent where processing is based on consent"
+          ],
+          "contact": "To exercise these rights, please contact us at privacy@requestengine.com."
+        },
+        "cookies": {
+          "title": "Cookies and Tracking Technologies",
+          "content": "We use cookies and similar tracking technologies to track activity on our Service and hold certain information. Types of cookies we use:",
+          "types": [
+            "Essential cookies: Required for the Service to function properly",
+            "Performance cookies: Help us understand how users interact with our Service",
+            "Functionality cookies: Remember your preferences and settings",
+            "Targeting cookies: Used to deliver relevant advertisements"
+          ],
+          "note": "You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our Service."
+        },
+        "international": {
+          "title": "International Data Transfers",
+          "content": "Your information may be transferred to and maintained on computers located outside of your state, province, country, or other governmental jurisdiction where data protection laws may differ. By using our Service, you consent to the transfer of your information to our facilities and those third parties with whom we share it as described in this Privacy Policy."
+        },
+        "children": {
+          "title": "Children's Privacy",
+          "content": "Our Service is not intended for individuals under the age of 16. We do not knowingly collect personal information from children. If you become aware that a child has provided us with personal information without parental consent, please contact us immediately."
+        },
+        "changes": {
+          "title": "Changes to This Privacy Policy",
+          "content": "We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the \"Last updated\" date. You are advised to review this Privacy Policy periodically for any changes."
+        },
+        "contact": {
+          "title": "Contact Us",
+          "content": "If you have any questions about this Privacy Policy, please contact us at:",
+          "email": "privacy@requestengine.com",
+          "address": "Request Engine, Inc."
+        }
+      }
+    }
+  },
   "auth": {
     "loginForm": {
       "welcome": "Welcome back!",

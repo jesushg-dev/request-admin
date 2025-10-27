@@ -12,8 +12,9 @@ interface MetricsData {
   totalRequests: { value: number; trend: { value: number; isPositive: boolean } };
   draftRequests: { value: number; trend: { value: number; isPositive: boolean } };
   avgResolutionTime: number;
+  avgResolutionTimeTrend?: { value: number; isPositive: boolean };
   resolutionRate: { value: number; trend: { value: number; isPositive: boolean } };
-  pendingRequests: { value: number; trend: { value: number; isPositive: boolean } };
+  pendingRequests: { value: number; trend: { value: number; isPositive: boolean }; highPriority?: number };
   completedRequests: { value: number; avgResolutionTime: number };
   slaOverdue: { value: number; trend: { value: number; isPositive: boolean } };
   slaCompliance: { value: number; trend: { value: number; isPositive: boolean } };
