@@ -375,6 +375,7 @@ export function useCheckRequest<TError = DefaultError>(
       updatedBy?: string;
       tenantId?: string;
       id?: string;
+      guid?: number;
       issueSubject?: string;
       description?: string;
       isDraft?: boolean;

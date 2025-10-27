@@ -10,11 +10,12 @@ import './execution.zmodel' // execution model for requests
 /// Represents a request that includes categorization for both request and assignment with ITIL compliance tracking
 model Request extends TenantScoped, Auditable {
   // Primary identifier
-  id                   String                          @id @default(uuid()) //@db.UniqueIdentifier // Request ID
+  id                   String   @id @default(uuid()) //@db.UniqueIdentifier // Request ID
+  guid        Int      @default(autoincrement())
 
   // Request details
-  issueSubject         String                         //@db.VarChar(255)    // Optional issue subject
-  description          String?                         //@db.VarChar(5000)   // Detailed request description
+  issueSubject         String   //@db.VarChar(255)    // Optional issue subject
+  description          String?  //@db.VarChar(5000)   // Detailed request description
   isDraft              Boolean                        @default(true)      // Indicates if the request is a draft
   closedAt             DateTime?
   closedBy             String?                         //@db.VarChar(50)     // User ID who closed the request
