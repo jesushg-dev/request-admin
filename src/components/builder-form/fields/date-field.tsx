@@ -89,7 +89,7 @@ function DesignerComponent({ elementInstance }: { elementInstance: FormElementIn
 
 function FormComponent({ elementInstance, submitValue, isInvalid, defaultValue }: { elementInstance: FormElementInstance; submitValue?: SubmitFunction; isInvalid?: boolean; defaultValue?: string }) {
   const element = elementInstance as CustomInstance;
-  const t = useTranslations() as any;
+  const tDefaults = useTranslations('component.form.builderFields.defaults');
 
   const [date, setDate] = useState<Date | undefined>(defaultValue ? new Date(defaultValue) : undefined);
 
@@ -99,7 +99,12 @@ function FormComponent({ elementInstance, submitValue, isInvalid, defaultValue }
     setError(isInvalid === true);
   }, [isInvalid]);
 
-  const { label, required, helperText } = element.extraAttributes;
+  const { required } = element.extraAttributes;
+  
+  // Translate default values, otherwise use custom user values
+  const label = element.extraAttributes.label === extraAttributes.label ? tDefaults('dateFieldLabel') : element.extraAttributes.label;
+  const helperText = element.extraAttributes.helperText === extraAttributes.helperText ? tDefaults('dateFieldHelperText') : element.extraAttributes.helperText;
+  
   return (
     <div className="flex w-full flex-col gap-2">
       <Label className={cn(error && 'text-red-500')}>
