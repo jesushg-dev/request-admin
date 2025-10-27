@@ -51,24 +51,30 @@ interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
    * @type { [key: string]: string[]}
    * @default
    * ```ts
-   * { "image/*": [] }
+   * { 
+   *   "image/jpeg": [".jpg", ".jpeg"],
+   *   "image/png": [".png"],
+   *   "application/pdf": [".pdf"],
+   *   "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
+   *   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"]
+   * }
    * ```
-   * @example accept={["image/png", "image/jpeg"]}
+   * @example accept={{ "image/*": [] }}
    */
   accept?: DropzoneProps['accept'];
 
   /**
    * Maximum file size for the uploader.
    * @type number | undefined
-   * @default 1024 * 1024 * 2 // 2MB
-   * @example maxSize={1024 * 1024 * 2} // 2MB
+   * @default 1024 * 1024 * 4 // 4MB
+   * @example maxSize={1024 * 1024 * 4} // 4MB
    */
   maxSize?: DropzoneProps['maxSize'];
 
   /**
    * Maximum number of files for the uploader.
    * @type number | undefined
-   * @default 1
+   * @default 4
    * @example maxFileCount={4}
    */
   maxFileCount?: DropzoneProps['maxFiles'];
@@ -76,7 +82,7 @@ interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
    * Whether the uploader should accept multiple files.
    * @type boolean
-   * @default false
+   * @default true
    * @example multiple
    */
   multiple?: boolean;
@@ -107,11 +113,15 @@ export function FileUploader(props: FileUploaderProps) {
     onUpload,
     progresses,
     accept = {
-      'image/*': [],
+      'image/jpeg': ['.jpg', '.jpeg'],
+      'image/png': ['.png'],
+      'application/pdf': ['.pdf'],
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
     },
-    maxSize = 1024 * 1024 * 2,
-    maxFileCount = 1,
-    multiple = false,
+    maxSize = 1024 * 1024 * 4,
+    maxFileCount = 4,
+    multiple = true,
     disabled = false,
     horizontal = false,
     className,

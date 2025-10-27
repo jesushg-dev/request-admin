@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useFindManyForm } from '@/services/api/hooks';
 import { InboxIcon, Settings } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,6 +29,7 @@ export interface FormSubmission {
 }
 
 export default function FormSubmissionsViewer({ submissions }: { submissions?: Record<string, Record<string, string | number | boolean>> }) {
+  const t = useTranslations('admin.request.view.submissions');
   const { data, isLoading } = useFindManyForm({
     select: { id: true, name: true, content: true },
     where: { id: { in: Object.keys(submissions || {}) } },
@@ -71,7 +73,7 @@ export default function FormSubmissionsViewer({ submissions }: { submissions?: R
     <Card className="flex-1 flex flex-col">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>Form Submissions</CardTitle>
+          <CardTitle>{t('title')}</CardTitle>
           <div className="flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -81,13 +83,13 @@ export default function FormSubmissionsViewer({ submissions }: { submissions?: R
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuCheckboxItem checked={columnVisibility.formName} onCheckedChange={() => toggleColumnVisibility('formName')}>
-                  Form Name
+                  {t('columns.formName')}
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem checked={columnVisibility.submittedAt} onCheckedChange={() => toggleColumnVisibility('submittedAt')}>
-                  Submitted At
+                  {t('columns.submittedAt')}
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem checked={columnVisibility.content} onCheckedChange={() => toggleColumnVisibility('content')}>
-                  Content
+                  {t('columns.content')}
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -103,25 +105,31 @@ export default function FormSubmissionsViewer({ submissions }: { submissions?: R
             <Skeleton className="w-32 h-6" />
           </div>
         ) : !formSubmissions.length ? (
-          <EmptyState title="No submissions available" icons={[InboxIcon]} description="No form submissions have been made yet." />
+          <EmptyState title={t('noSubmissions.title')} icons={[InboxIcon]} description={t('noSubmissions.description')} />
         ) : viewMode === 'table' ? (
-          <TableView submissions={formSubmissions} columnVisibility={columnVisibility} />
+          <TableView submissions={formSubmissions} columnVisibility={columnVisibility} t={t} />
         ) : (
-          <CardView submissions={formSubmissions} columnVisibility={columnVisibility} />
+          <CardView submissions={formSubmissions} columnVisibility={columnVisibility} t={t} />
         )}
       </CardContent>
     </Card>
   );
 }
 
-function TableView({ submissions, columnVisibility }: { submissions: FormSubmission[]; columnVisibility: ColumnVisibility }) {
+interface TableViewProps {
+  submissions: FormSubmission[];
+  columnVisibility: ColumnVisibility;
+  t: ReturnType<typeof useTranslations>;
+}
+
+function TableView({ submissions, columnVisibility, t }: TableViewProps) {
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          {columnVisibility.formName && <TableHead>Form Name</TableHead>}
-          {columnVisibility.submittedAt && <TableHead>Submitted At</TableHead>}
-          {columnVisibility.content && <TableHead>Content</TableHead>}
+          {columnVisibility.formName && <TableHead>{t('columns.formName')}</TableHead>}
+          {columnVisibility.submittedAt && <TableHead>{t('columns.submittedAt')}</TableHead>}
+          {columnVisibility.content && <TableHead>{t('columns.content')}</TableHead>}
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -149,14 +157,20 @@ function TableView({ submissions, columnVisibility }: { submissions: FormSubmiss
   );
 }
 
-function CardView({ submissions, columnVisibility }: { submissions: FormSubmission[]; columnVisibility: ColumnVisibility }) {
+interface CardViewProps {
+  submissions: FormSubmission[];
+  columnVisibility: ColumnVisibility;
+  t: ReturnType<typeof useTranslations>;
+}
+
+function CardView({ submissions, columnVisibility, t }: CardViewProps) {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       {submissions.map((submission) => (
         <Card key={submission.id}>
           <CardHeader>{columnVisibility.formName && <CardTitle>{submission.formName}</CardTitle>}</CardHeader>
           <CardContent>
-            {columnVisibility.submittedAt && <p className="mb-2 text-sm text-gray-500">Submitted: {new Date(submission.submittedAt).toLocaleString()}</p>}
+            {columnVisibility.submittedAt && <p className="mb-2 text-sm text-gray-500">{t('columns.submittedAt')}: {new Date(submission.submittedAt).toLocaleString()}</p>}
             {columnVisibility.content && (
               <div className="space-y-2">
                 {Object.entries(submission.content).map(([key, value]) => (

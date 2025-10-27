@@ -1,6 +1,7 @@
 'use client';
 
 import { FileIcon, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { formatBytes } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,8 @@ interface AttachmentsViewerProps {
 }
 
 export default function AttachmentsViewer({ files }: AttachmentsViewerProps) {
+  const t = useTranslations() as any;
+  
   const isImageFile = (file: File) => {
     return file.type.startsWith('image/');
   };
@@ -18,8 +21,8 @@ export default function AttachmentsViewer({ files }: AttachmentsViewerProps) {
   return (
     <Card className="flex-1 flex flex-col">
       <CardHeader>
-        <CardTitle>Files to upload ({files.length})</CardTitle>
-        <CardDescription>You can upload up to 4 files with a maximum size of 4MB each. Supported formats: .jpg, .png, .pdf, .docx, .xlsx.</CardDescription>
+        <CardTitle>{t('admin.request.form.summaryStep.attachmentsViewer.filesToUpload')} ({files.length})</CardTitle>
+        <CardDescription>{t('admin.request.form.summaryStep.attachmentsViewer.uploadDescription')}</CardDescription>
       </CardHeader>
       <CardContent>
         {files.length > 0 && (
@@ -28,7 +31,7 @@ export default function AttachmentsViewer({ files }: AttachmentsViewerProps) {
               <div key={index} className="p-4 relative">
                 <Button variant="destructive" size="icon" className="absolute top-2 right-2 h-6 w-6 z-10">
                   <X className="h-4 w-4" />
-                  <span className="sr-only">Remove file</span>
+                  <span className="sr-only">{t('admin.request.form.summaryStep.attachmentsViewer.removeFile')}</span>
                 </Button>
 
                 {isImageFile(file) ? (

@@ -1558,7 +1558,18 @@
             "submissions": "Envíos",
             "attachments": "Adjuntos"
           },
-          "requestDetails": "Detalles de solicitud"
+          "requestDetails": "Detalles de solicitud",
+          "requirementProgress": {
+            "totalRequirements": "Requisitos Totales",
+            "trackProgress": "Seguimiento del progreso de los requisitos de la solicitud",
+            "noRequirementsAvailable": "No hay requisitos disponibles",
+            "noRequirementsDescription": "No se encontraron requisitos para esta solicitud."
+          },
+          "attachmentsViewer": {
+            "filesToUpload": "Archivos a subir",
+            "uploadDescription": "Puede subir hasta 4 archivos con un tamaño máximo de 4MB cada uno. Formatos soportados: .jpg, .png, .pdf, .docx, .xlsx.",
+            "removeFile": "Eliminar archivo"
+          }
         }
       },
       "assign": {

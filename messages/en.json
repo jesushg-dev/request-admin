@@ -1549,7 +1549,18 @@
             "submissions": "Submissions",
             "attachments": "Attachments"
           },
-          "requestDetails": "Request Details"
+          "requestDetails": "Request Details",
+          "requirementProgress": {
+            "totalRequirements": "Total Requirements",
+            "trackProgress": "Track the progress of request requirements",
+            "noRequirementsAvailable": "No requirements available",
+            "noRequirementsDescription": "No requirements found for this request."
+          },
+          "attachmentsViewer": {
+            "filesToUpload": "Files to upload",
+            "uploadDescription": "You can upload up to 4 files with a maximum size of 4MB each. Supported formats: .jpg, .png, .pdf, .docx, .xlsx.",
+            "removeFile": "Remove file"
+          }
         }
       },
       "assign": {

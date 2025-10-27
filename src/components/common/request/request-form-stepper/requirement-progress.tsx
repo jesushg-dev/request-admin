@@ -1,6 +1,7 @@
 'use client';
 
 import { useFindManyRequirement } from '@/services/api/hooks';
+import { useTranslations } from 'next-intl';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -14,6 +15,7 @@ interface RequirementProgressProps {
 }
 
 export default function RequirementProgress({ tenantId, requirementCompliances }: RequirementProgressProps) {
+  const t = useTranslations('admin.request.form.summaryStep.requirementProgress');
   const { data, isLoading } = useFindManyRequirement(
     {
       select: { id: true, name: true },
@@ -27,7 +29,7 @@ export default function RequirementProgress({ tenantId, requirementCompliances }
   }
 
   if (!data || !requirementCompliances) {
-    return <EmptyState title="No requirements available" description="No requirements found for this request." />;
+    return <EmptyState title={t('noRequirementsAvailable')} description={t('noRequirementsDescription')} />;
   }
 
   const requirements = data.map((requirement) => ({
@@ -42,9 +44,9 @@ export default function RequirementProgress({ tenantId, requirementCompliances }
     <Card className="flex-1 flex flex-col">
       <CardHeader>
         <CardTitle>
-          Total Requirements ({completedRequirements}/{data.length})
+          {t('totalRequirements')} ({completedRequirements}/{data.length})
         </CardTitle>
-        <CardDescription>Track the progress of request requirements</CardDescription>
+        <CardDescription>{t('trackProgress')}</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 flex-col flex">
         <Progress value={progress} className="mb-4" />
