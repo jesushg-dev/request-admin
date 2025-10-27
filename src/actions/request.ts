@@ -583,7 +583,12 @@ export const getRequestById = async (tenantId: string, requestId: string): Promi
 
   const request = await db.request.findUniqueOrThrow({
     where: { id: requestId, tenantId },
-    include: {
+    select: {
+      id: true,
+      slug: true,
+      issueSubject: true,
+      description: true,
+      isDraft: true,
       requestAssignments: {
         select: {
           area: {
@@ -616,6 +621,7 @@ export const getRequestById = async (tenantId: string, requestId: string): Promi
 
   return {
     id: request.id,
+    slug: request.slug ?? undefined,
     requestCategory,
     assignmentCategory,
     isDraft: request.isDraft,

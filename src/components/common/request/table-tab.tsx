@@ -23,6 +23,7 @@ import { DataTableToolbarActions } from '@/components/data-table/data-table-tool
 const RequestDefaultArgs = Prisma.validator<Prisma.RequestDefaultArgs>()({
   select: {
     id: true,
+    slug: true,
     tenantId: true,
     issueSubject: true,
     description: true,
@@ -145,6 +146,14 @@ interface GetTableConfigurationProps {
 
 function getTableConfiguration({ t }: GetTableConfigurationProps) {
   const columns: ColumnDef<RequestWithRelations>[] = [
+    {
+      accessorKey: 'slug',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.id')} />,
+      cell: ({ row }) => {
+        const slug = row.original.slug;
+        return <span className="font-mono">#{slug ?? row.original.id.slice(0, 8)}</span>;
+      },
+    },
     {
       accessorKey: 'issueSubject',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.issueSubject')} />,

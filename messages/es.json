@@ -1454,6 +1454,7 @@
         "assignMassively": "Asignar Masivamente",
         "entityLabel": "Solicitudes",
         "columns": {
+          "id": "ID",
           "issueSubject": "Asunto",
           "priority": "Prioridad",
           "status": "Estado",
@@ -1479,6 +1480,7 @@
         "contact_support": "Por favor, vuelva más tarde o contacte al soporte si necesita asistencia inmediata.",
         "requestDetails": {
           "edit": "Editar",
+          "requestId": "ID de Solicitud",
           "submissions": "Formularios",
           "requirements": "Requisitos",
           "currentSla": "SLA Actual",

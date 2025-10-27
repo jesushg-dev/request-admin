@@ -1445,6 +1445,7 @@
         "assignMassively": "Assign Massively",
         "entityLabel": "Requests",
         "columns": {
+          "id": "ID",
           "issueSubject": "Issue Subject",
           "priority": "Priority",
           "status": "Status",
@@ -1470,6 +1471,7 @@
         "contact_support": "Please check back later or contact support if you need immediate assistance.",
         "requestDetails": {
           "edit": "Edit",
+          "requestId": "Request ID",
           "submissions": "Submissions",
           "requirements": "Requirements",
           "currentSla": "Current SLA",

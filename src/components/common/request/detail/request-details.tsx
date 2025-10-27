@@ -178,6 +178,13 @@ const RequestDetails: FC<RequestDetailsProps> = ({
           <CardContent>
             <div className="flex flex-col gap-2">
               <div className="flex flex-col">
+                <div className="text-sm font-medium text-muted-foreground">{t('requestId')}</div>
+                <p className="font-mono">#{request.slug ?? request.id}</p>
+              </div>
+
+              <Separator className="my-2" />
+
+              <div className="flex flex-col">
                 <div className="text-sm font-medium text-muted-foreground">{t('issueSubject')}</div>
                 <p>{request.issueSubject}</p>
               </div>

@@ -17,6 +17,7 @@ import { FormCheckboxItem, FormItem, FormSection } from '@/components/shared/for
 
 export const requestDetailSchema = z.object({
   id: z.string(),
+  slug: z.number().optional(),
   issueSubject: z.string().min(1).max(255),
   description: z.string().max(5000).optional(),
   priorityId: z.object({ value: z.string().min(1), label: z.string() }),
@@ -28,6 +29,7 @@ export type RequestDetailValues = z.infer<typeof requestDetailSchema>;
 
 export const getDefaultDetailsValues = (): RequestDetailValues => ({
   id: generateUuid(),
+  slug: undefined,
   issueSubject: '',
   description: '',
   priorityId: { value: '', label: '' },
