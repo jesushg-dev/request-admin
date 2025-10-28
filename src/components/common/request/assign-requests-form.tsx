@@ -165,7 +165,10 @@ export default function AssignRequestsForm() {
                     options={users}
                     placeholder={t('userPlaceholder')}
                     isSearchable
-                    isLoading={isLoadingUsers}  
+                    isLoading={isLoadingUsers}
+                    styles={{
+                      menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                    }}
                   />
                 </FormItem>
               )}
@@ -194,16 +197,19 @@ export default function AssignRequestsForm() {
                     render={({ field }) => (
                       <FormItem className="mb-2 w-full" label={index === 0 ? t('requests') : `${t('request')} ${index + 1}`}>
                         <div className="flex items-center gap-2 w-full">
-                          <Select
-                            value={field.value}
-                            onChange={field.onChange}
-                            options={availableOptions.filter(
-                              (opt) => !selectedValues.includes(opt.value) || opt.value === field.value?.value
-                            )}
-                            placeholder={t('requestPlaceholder')}
-                            isSearchable
-                            className="w-full"
-                          />
+                           <Select
+                             value={field.value}
+                             onChange={field.onChange}
+                             options={availableOptions.filter(
+                               (opt) => !selectedValues.includes(opt.value) || opt.value === field.value?.value
+                             )}
+                             placeholder={t('requestPlaceholder')}
+                             isSearchable
+                             className="w-full"
+                             styles={{
+                               menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                             }}
+                           />
                           {fields.length > 1 && (
                             <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}>
                               <X className="h-4 w-4" />

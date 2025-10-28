@@ -177,11 +177,11 @@ export function AppSidebar({ tenantId, tenants, user, ...props }: AppSidebarProp
         title: t('security'),
         icon: ShieldIcon,
         items: [
-          {
+          /*{
             title: t('dashboard'),
             url: { pathname: '/admin/[tenantId]/security', params: { tenantId } },
             icon: RadarIcon,
-          },
+          },*/
           {
             title: t('identificationTypes'),
             url: { pathname: '/admin/[tenantId]/security/identification-types', params: { tenantId } },
