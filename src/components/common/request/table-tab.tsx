@@ -1,6 +1,6 @@
 'use client';
 
-import React, { memo, useMemo } from 'react';
+import React, { memo, useMemo, useEffect, useState } from 'react';
 import { useCountRequest, useFindManyRequest } from '@/services/api/hooks';
 import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
 import { Prisma } from '@prisma/client';
@@ -13,6 +13,7 @@ import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
 import useTenantId from '@/hooks/use-tenant-id';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
+import { getRequestsFilteredByAreaAccess } from '@/actions/request';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
 import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-advanced-toolbar';
@@ -92,14 +93,39 @@ const RequestMainPage: React.FC = () => {
   const tenantId = useTenantId();
   const t = useTranslations('admin.request.main');
   const [search] = useQueryStates(searchParamsParsers);
+  const [baseWhereClause, setBaseWhereClause] = useState<any>(null);
+  const [isLoadingWhere, setIsLoadingWhere] = useState(true);
 
+  // Load filtered where clause from server ONCE on mount
+  useEffect(() => {
+    const loadWhereClause = async () => {
+      setIsLoadingWhere(true);
+      try {
+        const where = await getRequestsFilteredByAreaAccess(tenantId);
+        setBaseWhereClause(where);
+      } catch (error) {
+        console.error('Error loading where clause:', error);
+        // Set empty filter on error - user sees nothing
+        setBaseWhereClause({ id: { in: [] } });
+      } finally {
+        setIsLoadingWhere(false);
+      }
+    };
+
+    loadWhereClause();
+  }, [tenantId]);
+
+  // Wait for where clause before fetching data
   const { data, isLoading, isError, error, refetch, pageCount } = useFetchTableData<RequestWithRelations, Prisma.RequestFindManyArgs, Prisma.RequestCountArgs>({
     search,
     useCountHook: useCountRequest,
     useFindManyHook: useFindManyRequest,
-    defaultArgs: {
+    defaultArgs: baseWhereClause ? {
       ...RequestDefaultArgs,
-      where: { tenantId },
+      where: baseWhereClause,
+    } : {
+      ...RequestDefaultArgs,
+      where: { id: { in: [] } }, // Temporary empty filter while loading
     },
   });
 

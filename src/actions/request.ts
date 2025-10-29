@@ -2,6 +2,7 @@
 
 import { AssignmentTypeEnum } from '@/constants/assignment-type';
 import { PermissionActions } from '@/constants/permissions';
+import { getAuthContext } from '@/actions/authorization';
 import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-server';
 
@@ -48,6 +49,28 @@ export const upsertRequest = async (tenantId: string, data: RequestFormStepperTy
     ...RequestDefaultArgs,
     where: { id: data.id, tenantId },
   });
+
+  // RBAC checks
+  const auth = await getAuthContext(tenantId);
+  const targetAreaId = existingRequest
+    ? existingRequest.requestAssignments.find((ra) => ra.isActive)?.areaId || existingRequest.requestAssignments[0]?.areaId
+    : data.areaId.value;
+
+  if (existingRequest) {
+    const canEdit =
+      auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.EDIT]) ||
+      auth.hasAreaPermissions(targetAreaId, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_EDIT]);
+    if (!canEdit) {
+      throw new Error('Forbidden: lacking permissions to edit this request');
+    }
+  } else {
+    const canCreate =
+      auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.CREATE]) ||
+      auth.hasAreaPermissions(targetAreaId, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_CREATE]);
+    if (!canCreate) {
+      throw new Error('Forbidden: lacking permissions to create request in this area');
+    }
+  }
 
   //check if flow exists
   const flow = await db.executionFlowDefinition.findFirst({
@@ -812,3 +835,47 @@ async function getAncestorCategories(categoryId: string, tableName: 'RequestCate
     position: index,
   }));
 }
+
+export const getRequestsFilteredByAreaAccess = async (tenantId: string) => {
+  const session = await currentSession();
+  if (!session) throw new UserNotFoundErr('User not found');
+
+  const auth = await getAuthContext(tenantId);
+  
+  // Check if user has global VIEW permission
+  const hasGlobalView = auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.VIEW]);
+  
+  if (hasGlobalView) {
+    // User can see all requests, no filtering needed
+    return { tenantId };
+  }
+
+  // Get user's areas
+  const userAreas = await db.userTenant.findUnique({
+    where: { userId_tenantId: { userId: session.user.id, tenantId } },
+    select: {
+      userAreas: {
+        where: { isActive: true },
+        select: { areaId: true },
+      },
+    },
+  });
+
+  if (!userAreas || userAreas.userAreas.length === 0) {
+    // User has no assigned areas, return filter that matches nothing
+    return { tenantId, id: { in: [] } };
+  }
+
+  const areaIds = userAreas.userAreas.map((ua) => ua.areaId);
+
+  // Return filter with area restriction
+  return {
+    tenantId,
+    requestAssignments: {
+      some: {
+        isActive: true,
+        areaId: { in: areaIds },
+      },
+    },
+  };
+};

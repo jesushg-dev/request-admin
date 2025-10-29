@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { useQueryState } from 'nuqs';
 
 import useTenantId from '@/hooks/use-tenant-id';
+import { useAuthorization, PERMISSION } from '@/hooks/use-authorization';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -17,7 +18,11 @@ import TableTab from '@/components/common/request/table-tab';
 const RequestMainPage: React.FC = () => {
   const tenantId = useTenantId();
   const t = useTranslations('admin.request.main');
+  const tRoleErrors = useTranslations('system.roleGate.errors');
   const [view, setView] = useQueryState('view', { defaultValue: 'table' });
+  const { hasPermission } = useAuthorization(tenantId);
+  const canAssign = hasPermission(PERMISSION.REQUEST_MANAGEMENT.ASSIGN_USER);
+  const canCreate = hasPermission(PERMISSION.REQUEST_MANAGEMENT.CREATE);
 
   return (
     <Tabs defaultValue={view} onValueChange={setView} className="flex w-full flex-1 flex-col gap-4 overflow-auto p-4">
@@ -36,7 +41,7 @@ const RequestMainPage: React.FC = () => {
           </TabsTrigger> */}
         </TabsList>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" asChild>
+          <Button variant="outline" size="sm" asChild disabled={!canAssign} title={!canAssign ? tRoleErrors('noPermission') : undefined} aria-disabled={!canAssign}>
             <Link
               href={{
                 pathname: '/admin/[tenantId]/requests/assign-massively',
@@ -46,7 +51,7 @@ const RequestMainPage: React.FC = () => {
               {t('assignMassively')}
             </Link>
           </Button>
-          <Button variant="outline" size="sm" asChild>
+          <Button variant="outline" size="sm" asChild disabled={!canCreate} title={!canCreate ? tRoleErrors('noPermission') : undefined} aria-disabled={!canCreate}>
             <Link
               href={{
                 pathname: '/admin/[tenantId]/requests/new',

@@ -12,6 +12,8 @@ import { AssignRequestFormValues } from '@/components/common/request/detail/assi
 import { ReassignAreaFormValues } from '@/components/common/request/detail/reassign-area-modal';
 
 import { sendInAppNotification } from './notification';
+import { getAuthContext } from '@/actions/authorization';
+import { PermissionActions } from '@/constants/permissions';
 
 type UUID = string;
 type FieldName = 'status' | 'priority';
@@ -117,6 +119,14 @@ export const updateCurrentStatus = async (tenantId: UUID, requestId: UUID, statu
   const session = await currentSession();
   if (!session?.user?.id) throw new AuthorizationError('Authentication required');
 
+  // RBAC: require global or scoped permission to set status
+  const lastAssignment = await db.requestAssignment.findFirstOrThrow({ where: { requestId, tenantId, isActive: true }, select: { areaId: true } });
+  const auth = await getAuthContext(tenantId);
+  const canSetStatus =
+    auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_STATUS]) ||
+    auth.hasAreaPermissions(lastAssignment.areaId, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_STATUS]);
+  if (!canSetStatus) throw new AuthorizationError('Forbidden: insufficient permissions to change status');
+
   return updateRequestField({
     tenantId,
     requestId,
@@ -131,6 +141,14 @@ export const updateCurrentStatus = async (tenantId: UUID, requestId: UUID, statu
 export const updateCurrentPriority = async (tenantId: UUID, requestId: UUID, priorityId: UUID, metadata: RequestMetadata): Promise<{ priorityId: UUID }> => {
   const session = await currentSession();
   if (!session?.user?.id) throw new AuthorizationError('Authentication required');
+
+  // RBAC: require global or scoped permission to set priority
+  const lastAssignment = await db.requestAssignment.findFirstOrThrow({ where: { requestId, tenantId, isActive: true }, select: { areaId: true } });
+  const auth = await getAuthContext(tenantId);
+  const canSetPriority =
+    auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_PRIORITY]) ||
+    auth.hasAreaPermissions(lastAssignment.areaId, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_PRIORITY]);
+  if (!canSetPriority) throw new AuthorizationError('Forbidden: insufficient permissions to change priority');
 
   if (metadata.type !== 'PRIORITY_CHANGE') {
     throw new ValidationError('Invalid metadata type for priority change');
@@ -154,6 +172,14 @@ export const updateCurrentPriority = async (tenantId: UUID, requestId: UUID, pri
 export const updateCurrentAssignedUsers = async (tenantId: UUID, requestId: UUID, data: AssignRequestFormValues): Promise<{ assignedUsers: UUID[] }> => {
   const session = await currentSession();
   if (!session?.user?.id) throw new AuthorizationError('Authentication required');
+
+  // RBAC: require assign permissions
+  const lastAssignmentHeader = await db.requestAssignment.findFirstOrThrow({ where: { requestId, tenantId, isActive: true }, select: { areaId: true } });
+  const auth = await getAuthContext(tenantId);
+  const canAssign =
+    auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.ASSIGN_USER]) ||
+    auth.hasAreaPermissions(lastAssignmentHeader.areaId, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_ASSIGN_USER]);
+  if (!canAssign) throw new AuthorizationError('Forbidden: insufficient permissions to assign users');
 
   const lastAssignment = await db.requestAssignment.findFirstOrThrow({
     where: { requestId, tenantId, isActive: true },
@@ -208,6 +234,14 @@ export const updateCurrentAssignedUsers = async (tenantId: UUID, requestId: UUID
 export const updateCurrentClassification = async (tenantId: UUID, requestId: UUID, data: ReassignAreaFormValues) => {
   const session = await currentSession();
   if (!session?.user?.id) throw new AuthorizationError('Authentication required');
+
+  // RBAC: require scoped edit permission to reclassify (area/category)
+  const lastAssignmentHeader = await db.requestAssignment.findFirstOrThrow({ where: { requestId, tenantId, isActive: true }, select: { areaId: true } });
+  const auth = await getAuthContext(tenantId);
+  const canEdit =
+    auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.EDIT]) ||
+    auth.hasAreaPermissions(lastAssignmentHeader.areaId, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_EDIT]);
+  if (!canEdit) throw new AuthorizationError('Forbidden: insufficient permissions to reclassify request');
 
   const lastAssignment = await db.requestAssignment.findFirstOrThrow({
     where: { requestId, tenantId, isActive: true },
@@ -351,6 +385,7 @@ export const assignRequestsMassively = async (tenantId: UUID, userTenantId: UUID
     throw new ValidationError('Debe seleccionar al menos una solicitud');
   }
 
+  const auth = await getAuthContext(tenantId);
   const results = [];
 
   for (const requestId of requestIds) {
@@ -359,6 +394,15 @@ export const assignRequestsMassively = async (tenantId: UUID, userTenantId: UUID
         where: { requestId, tenantId, isActive: true },
         include: { assignedUsers: true },
       });
+
+      // RBAC per request: require global assign or scoped assign in this area
+      const canAssign =
+        auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.ASSIGN_USER]) ||
+        auth.hasAreaPermissions(lastAssignment.areaId, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_ASSIGN_USER]);
+      if (!canAssign) {
+        results.push({ requestId, success: false, message: 'Sin permisos para asignar en el área' });
+        continue;
+      }
 
       // Check if user is already assigned
       const alreadyAssigned = lastAssignment.assignedUsers.some((au) => au.userTenantId === userTenantId);
