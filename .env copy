@@ -1,0 +1,35 @@
+# Since the ".env" file is gitignored, you can use the ".env.example" file to
+# build a new ".env" file when you clone the repo. Keep this file up-to-date
+# when you add new variables to `.env`.
+
+# This file will be committed to version control, so make sure not to have any
+# secrets in it. If you are cloning this repo, create a copy of this file named
+# ".env" and populate it with your secrets.
+
+# When adding additional environment variables, the schema in "/src/env.js"
+# should be updated accordingly.
+
+# Next Auth
+# You can generate a new secret on the command line with:
+# npx auth secret
+# https://next-auth.js.org/configuration/options#secret
+APP_NAME="Request Admin"
+BETTER_AUTH_URL="http://127.0.0.1:3000"
+BETTER_AUTH_SECRET="6spFxZMLnkHtQk1gBNoFg9slYXXThSjA7C80Jc3KQYAdHrSze_QZs1mjq6yK5oWcbXT2Dn2XkHItYQv0KMdSlQ"
+AUTH_SECRET="6spFxZMLnkHtQk1gBNoFg9slYXXThSjA7C80Jc3KQYAdHrSze_QZs1mjq6yK5oWcbXT2Dn2XkHItYQv0KMdSlQ"
+AUTH_DISCORD_ID="1204622859037839450"
+AUTH_DISCORD_SECRET="pNWUV1Kn-jC2DyRsdNCQ-nnU7U7zoYUn"
+ABLY_API_KEY="eMy4ag.49yOdw:T6UmZ1bmwhbE5ryYISAc9Wh_ExD_7DlE4Tl2sDMtPgA"
+TWILIO_ACCOUNT_SID="AC3fbdc3fda8e1f7d1d968a58cad443885"
+TWILIO_AUTH_TOKEN="77c65179f33eee357a96309be14725b1"
+TWILIO_PHONE_NUMBER="+15075127399"
+TWILIO_WHATSAPP_NUMBER="+14155238886"
+GOOGLE_CLIENT_ID="876760713226-7tj8ibp7v79b7tvl47to5tb8l3vo8js9.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET="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"
+RESEND_EMAIL_DOMAIN="jesushg.com"
+RESEND_API_KEY="re_8sg6Bg6D_DbDejGojHeBDWnG6whUDDz4P"
+UPLOADTHING_TOKEN="eyJhcGlLZXkiOiJza19saXZlX2Q1NzA0MTgxNGFjMDg2NzAwZjAxODIyZjhmMGUxN2FjMTIyZTMwNDhiMjEzNTBhYTBiOWQ1ODMxMzIyOTY2YjEiLCJhcHBJZCI6Im15dGl3cnMwZ20iLCJyZWdpb25zIjpbInNlYTEiXX0="
+DATABASE_URL="postgresql://postgres.wzmcmtxjljzsmlddqlup:54sX7GTQBDG05U6A@aws-0-us-east-2.pooler.supabase.com:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://postgres.wzmcmtxjljzsmlddqlup:54sX7GTQBDG05U6A@aws-0-us-east-2.pooler.supabase.com:5432/postgres"
+NODE_ENV=""
+ON_PREMISE="false"

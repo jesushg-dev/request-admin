@@ -5,7 +5,7 @@ import './category.zmodel'
 
 model Form extends TenantScoped, Auditable, CatalogBase {
   // Form details
-  content         String           @default("[]") //@db.NVarChar(Max) // Structure of the form in JSON format
+  content         String           @default("[]") @db.NVarChar(Max) // Structure of the form in JSON format
   published       Boolean          @default(false) // Publication status of the form
   isPublic        Boolean          @default(false) // Indicates if the form is public
 
@@ -25,10 +25,10 @@ model Form extends TenantScoped, Auditable, CatalogBase {
 
 model FormSubmission extends TenantScoped, Auditable {
   // Primary identifier
-  id        String              @id @default(uuid()) //@db.UniqueIdentifier
+  id        String              @id @default(uuid()) @db.UniqueIdentifier
 
   // Submission details
-  formId    String              //@db.UniqueIdentifier // ID of the associated form
+  formId    String              @db.UniqueIdentifier // ID of the associated form
   content   String     // Submitted content in JSON format
 
   // Key-Value desnormalized data for quick access
@@ -37,7 +37,7 @@ model FormSubmission extends TenantScoped, Auditable {
   // Relationships
   form      Form                @relation(fields: [formId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Link to the associated form
 
-  requestId String?             //@db.UniqueIdentifier // ID of the associated request
+  requestId String?             @db.UniqueIdentifier // ID of the associated request
   request   Request?            @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Link to the associated request
 
   // Index for faster queries
@@ -47,12 +47,12 @@ model FormSubmission extends TenantScoped, Auditable {
 
 model FormSubmissionKey extends TenantScoped {
   // Primary identifier
-  id           String         @id @default(uuid()) //@db.UniqueIdentifier
+  id           String         @id @default(uuid()) @db.UniqueIdentifier
 
   // Key-value pair details
-  submissionId String         //@db.UniqueIdentifier // ID of the associated submission
-  key          String         //@db.VarChar(255)     // Name of the key
-  value        String         //@db.VarChar(255)     // Value of the key
+  submissionId String         @db.UniqueIdentifier // ID of the associated submission
+  key          String         @db.VarChar(255)     // Name of the key
+  value        String         @db.VarChar(255)     // Value of the key
 
   // Relationships
   submission   FormSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade, onUpdate: Cascade) // Link to the associated submission
@@ -62,14 +62,14 @@ model FormSubmissionKey extends TenantScoped {
 }
 
 model MenuItem extends TenantScoped {
-  id       String     @id @default(uuid()) //@db.UniqueIdentifier
+  id       String     @id @default(uuid()) @db.UniqueIdentifier
   title    String
   icon     String?
   position Int        @default(0)
   isActive Boolean    @default(false)
   pathname String
   slug     String
-  parentId String?    //@db.UniqueIdentifier
+  parentId String?    @db.UniqueIdentifier
   parent   MenuItem?  @relation("MenuItemToParent", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   children MenuItem[] @relation("MenuItemToParent")
 }

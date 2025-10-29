@@ -24,7 +24,7 @@ model ExecutionFlowDefinition extends TenantScoped, Auditable {
   executions          ExecutionModelInstance[]
   previousHistories   ExecutionModelHistory[]     @relation("PreviousFlowHistory")
   newHistories        ExecutionModelHistory[]     @relation("NewFlowHistory")
-  requestCategoryId   String?                     @unique
+  requestCategoryId   String?                     @unique @db.UniqueIdentifier
   requestCategory     RequestCategory?            @relation(fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   viewportX           Float?
   viewportY           Float?
@@ -38,7 +38,7 @@ model ExecutionFlowDefinition extends TenantScoped, Auditable {
 /// @minItems 1
 model ExecutionNodeDefinition extends TenantScoped, Auditable {
   id            String                     @id @default(uuid())
-  flow          ExecutionFlowDefinition     @relation(fields: [flowId], references: [id])
+  flow          ExecutionFlowDefinition     @relation(fields: [flowId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   flowId        String
   type          String
   positionX     Float
@@ -56,11 +56,11 @@ model ExecutionNodeDefinition extends TenantScoped, Auditable {
 /// @minItems 1
 model ExecutionEdgeDefinition extends TenantScoped, Auditable {
   id           String                    @id @default(uuid())
-  flow         ExecutionFlowDefinition @relation(fields: [flowId], references: [id])
+  flow         ExecutionFlowDefinition @relation(fields: [flowId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   flowId       String
-  source       ExecutionNodeDefinition @relation("SourceEdges", fields: [sourceId], references: [id])
+  source       ExecutionNodeDefinition @relation("SourceEdges", fields: [sourceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   sourceId     String
-  target       ExecutionNodeDefinition   @relation("TargetEdges", fields: [targetId], references: [id])
+  target       ExecutionNodeDefinition   @relation("TargetEdges", fields: [targetId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   targetId     String
   sourceHandle String?
   style        String?
@@ -79,7 +79,7 @@ model ExecutionNodeGuide extends TenantScoped, Auditable {
   applicationScope    String                   @default("full")
   customInstructions  String?
   order               Int                      @default(1)
-  guideId             String
+  guideId             String                   @db.UniqueIdentifier
   guide               GuideDocument            @relation(fields: [guideId], references: [id])
   nodeId              String
   node                ExecutionNodeDefinition  @relation(fields: [nodeId], references: [id])
@@ -94,9 +94,9 @@ model ExecutionNodeGuide extends TenantScoped, Auditable {
 /// Concrete instance of workflow execution
 model ExecutionModelInstance extends TenantScoped, Auditable {
   id          String                    @id @default(uuid())
-  flow        ExecutionFlowDefinition    @relation(fields: [flowId], references: [id])
+  flow        ExecutionFlowDefinition    @relation(fields: [flowId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   flowId      String
-  requestId   String   @unique //@db.UniqueIdentifier
+  requestId   String   @unique @db.UniqueIdentifier
   request     Request  @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   status      String
   logs        ExecutionModelLog[]
@@ -113,9 +113,9 @@ model ExecutionModelInstance extends TenantScoped, Auditable {
 model ExecutionModelLog extends TenantScoped, Auditable {
   id          String                     @id @default(uuid())
   executionId String
-  execution   ExecutionModelInstance @relation(fields: [executionId], references: [id])
+  execution   ExecutionModelInstance @relation(fields: [executionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   nodeId      String
-  node        ExecutionNodeDefinition    @relation(fields: [nodeId], references: [id])
+  node        ExecutionNodeDefinition    @relation(fields: [nodeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   timestamp   DateTime                   @default(now())
   eventType   String
   details     String
@@ -132,11 +132,11 @@ model ExecutionModelLog extends TenantScoped, Auditable {
 model ExecutionModelHistory extends TenantScoped, Auditable {
   id             String                     @id @default(uuid())
   executionId    String
-  execution      ExecutionModelInstance @relation(fields: [executionId], references: [id])
+  execution      ExecutionModelInstance @relation(fields: [executionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   previousFlowId String?
-  previousFlow   ExecutionFlowDefinition? @relation("PreviousFlowHistory", fields: [previousFlowId], references: [id])
+  previousFlow   ExecutionFlowDefinition? @relation("PreviousFlowHistory", fields: [previousFlowId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   newFlowId      String
-  newFlow        ExecutionFlowDefinition @relation("NewFlowHistory", fields: [newFlowId], references: [id])
+  newFlow        ExecutionFlowDefinition @relation("NewFlowHistory", fields: [newFlowId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   reason         String
 
   @@index([updatedAt])

@@ -31,11 +31,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Tenant$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Tenant$updatedBy,
         },
         id: {
           name: 'id',
@@ -724,11 +728,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$UserTenant$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$UserTenant$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -915,11 +923,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$InvitationTenant$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$InvitationTenant$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -2197,11 +2209,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Request$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Request$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -2367,11 +2383,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestAssignment$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestAssignment$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -2580,11 +2600,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$AssignedUser$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$AssignedUser$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -2705,11 +2729,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestPriorityType$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestPriorityType$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -2802,11 +2830,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$AssignmentType$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$AssignmentType$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -2890,11 +2922,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestWorkflow$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestWorkflow$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -2999,11 +3035,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestWorkflowStatus$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestWorkflowStatus$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -3125,11 +3165,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestWorkflowTransition$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestWorkflowTransition$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -3255,11 +3299,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequirementComplianceTracking$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequirementComplianceTracking$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -3367,11 +3415,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$CustomerSatisfactionSurvey$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$CustomerSatisfactionSurvey$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -3459,11 +3511,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestChangeLog$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestChangeLog$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -3553,11 +3609,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Document$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Document$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -3778,11 +3838,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$DocumentVersion$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$DocumentVersion$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -3926,11 +3990,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$DocumentPage$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$DocumentPage$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -4030,11 +4098,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Link$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Link$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -4343,11 +4415,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$LinkPreset$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$LinkPreset$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -4432,11 +4508,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Domain$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Domain$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -4521,11 +4601,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$DocumentView$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$DocumentView$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -4734,11 +4818,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Viewer$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Viewer$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -4847,11 +4935,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$DocumentReaction$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$DocumentReaction$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -4930,11 +5022,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$InvitationDocument$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$InvitationDocument$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -5000,11 +5096,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$SentEmail$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$SentEmail$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -5077,11 +5177,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$DocumentConversation$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$DocumentConversation$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -5204,11 +5308,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Dataroom$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Dataroom$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -5336,11 +5444,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$DataroomFolder$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$DataroomFolder$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -5460,11 +5572,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$DataroomBrand$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$DataroomBrand$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -5559,11 +5675,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$DocumentFeedback$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$DocumentFeedback$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -5649,11 +5769,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$FeedbackResponse$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$FeedbackResponse$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -5768,11 +5892,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Agreement$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Agreement$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -5844,11 +5972,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$AgreementResponse$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$AgreementResponse$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -5939,11 +6071,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$DataroomViewerGroup$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$DataroomViewerGroup$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -6055,11 +6191,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$DataroomViewerGroupMembership$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$DataroomViewerGroupMembership$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -6150,11 +6290,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$DataroomViewerGroupAccessControls$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$DataroomViewerGroupAccessControls$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -6247,11 +6391,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$IncomingWebhook$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$IncomingWebhook$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -6348,11 +6496,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RestrictedToken$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RestrictedToken$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -6459,11 +6611,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Webhook$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Webhook$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -6542,11 +6698,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$CustomField$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$CustomField$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -6649,11 +6809,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$CustomFieldResponse$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$CustomFieldResponse$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -6752,11 +6916,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Area$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Area$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -6844,11 +7012,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$UserTenantArea$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$UserTenantArea$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -6980,11 +7152,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$AreaRole$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$AreaRole$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -7065,11 +7241,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$AreaRoleFeature$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$AreaRoleFeature$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -7181,11 +7361,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestHierarchy$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestHierarchy$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -7272,11 +7456,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestHierarchyLevel$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestHierarchyLevel$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -7384,11 +7572,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestCategory$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestCategory$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -7561,11 +7753,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestCategoryForm$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestCategoryForm$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -7661,11 +7857,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$SLA$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$SLA$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -7758,11 +7958,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$SLAChangeLog$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$SLAChangeLog$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -7862,11 +8066,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$GuideDocument$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$GuideDocument$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -7974,11 +8182,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Requirement$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Requirement$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -8066,11 +8278,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestCategoryRequirement$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestCategoryRequirement$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -8186,11 +8402,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequirementType$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequirementType$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -8270,11 +8490,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$AssignmentHierarchy$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$AssignmentHierarchy$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -8379,11 +8603,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$AssignmentHierarchyLevel$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$AssignmentHierarchyLevel$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -8491,11 +8719,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$AssignmentCategory$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$AssignmentCategory$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -8635,11 +8867,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$AssignmentCategoryForm$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$AssignmentCategoryForm$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -8755,11 +8991,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Form$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Form$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -8867,11 +9107,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$FormSubmission$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$FormSubmission$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -9117,11 +9361,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$ExecutionFlowDefinition$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$ExecutionFlowDefinition$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -9262,11 +9510,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$ExecutionNodeDefinition$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$ExecutionNodeDefinition$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -9296,6 +9548,8 @@ const metadata: ModelMeta = {
           isDataModel: true,
           backLink: 'nodes',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'flowId' },
         },
         flowId: {
@@ -9379,11 +9633,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$ExecutionEdgeDefinition$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$ExecutionEdgeDefinition$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -9413,6 +9671,8 @@ const metadata: ModelMeta = {
           isDataModel: true,
           backLink: 'edges',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'flowId' },
         },
         flowId: {
@@ -9427,6 +9687,8 @@ const metadata: ModelMeta = {
           isDataModel: true,
           backLink: 'edgesFrom',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'sourceId' },
         },
         sourceId: {
@@ -9441,6 +9703,8 @@ const metadata: ModelMeta = {
           isDataModel: true,
           backLink: 'edgesTo',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'targetId' },
         },
         targetId: {
@@ -9495,11 +9759,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$ExecutionNodeGuide$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$ExecutionNodeGuide$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -9601,11 +9869,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$ExecutionModelInstance$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$ExecutionModelInstance$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -9635,6 +9907,8 @@ const metadata: ModelMeta = {
           isDataModel: true,
           backLink: 'executions',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'flowId' },
         },
         flowId: {
@@ -9716,11 +9990,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$ExecutionModelLog$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$ExecutionModelLog$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -9756,6 +10034,8 @@ const metadata: ModelMeta = {
           isDataModel: true,
           backLink: 'logs',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'executionId' },
         },
         nodeId: {
@@ -9770,6 +10050,8 @@ const metadata: ModelMeta = {
           isDataModel: true,
           backLink: 'executionLogs',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'nodeId' },
         },
         timestamp: {
@@ -9820,11 +10102,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$ExecutionModelHistory$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$ExecutionModelHistory$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -9860,6 +10146,8 @@ const metadata: ModelMeta = {
           isDataModel: true,
           backLink: 'history',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'executionId' },
         },
         previousFlowId: {
@@ -9876,6 +10164,8 @@ const metadata: ModelMeta = {
           isOptional: true,
           backLink: 'previousHistories',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'previousFlowId' },
         },
         newFlowId: {
@@ -9890,6 +10180,8 @@ const metadata: ModelMeta = {
           isDataModel: true,
           backLink: 'newHistories',
           isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'newFlowId' },
         },
         reason: {
@@ -9927,11 +10219,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$UserTenantRole$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$UserTenantRole$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -10043,11 +10339,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Role$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Role$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -10134,11 +10434,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Module$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Module$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -10218,11 +10522,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Feature$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Feature$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -10325,11 +10633,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RoleFeature$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RoleFeature$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -10549,11 +10861,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Channel$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Channel$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -10721,11 +11037,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Message$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Message$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -10950,11 +11270,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Person$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$Person$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -11096,11 +11420,15 @@ const metadata: ModelMeta = {
           name: 'createdBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$IdentificationType$createdBy,
         },
         updatedBy: {
           name: 'updatedBy',
           type: 'String',
           isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$IdentificationType$updatedBy,
         },
         tenantId: {
           name: 'tenantId',
@@ -11156,4 +11484,620 @@ const metadata: ModelMeta = {
   },
   authModel: 'User',
 };
+
+function $default$Tenant$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Tenant$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$UserTenant$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$UserTenant$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$InvitationTenant$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$InvitationTenant$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Request$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Request$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestAssignment$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestAssignment$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AssignedUser$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AssignedUser$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestPriorityType$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestPriorityType$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AssignmentType$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AssignmentType$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestWorkflow$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestWorkflow$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestWorkflowStatus$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestWorkflowStatus$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestWorkflowTransition$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestWorkflowTransition$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequirementComplianceTracking$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequirementComplianceTracking$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$CustomerSatisfactionSurvey$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$CustomerSatisfactionSurvey$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestChangeLog$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestChangeLog$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Document$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Document$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentVersion$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentVersion$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentPage$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentPage$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Link$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Link$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$LinkPreset$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$LinkPreset$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Domain$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Domain$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentView$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentView$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Viewer$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Viewer$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentReaction$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentReaction$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$InvitationDocument$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$InvitationDocument$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$SentEmail$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$SentEmail$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentConversation$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentConversation$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Dataroom$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Dataroom$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DataroomFolder$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DataroomFolder$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DataroomBrand$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DataroomBrand$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentFeedback$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DocumentFeedback$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$FeedbackResponse$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$FeedbackResponse$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Agreement$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Agreement$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AgreementResponse$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AgreementResponse$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DataroomViewerGroup$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DataroomViewerGroup$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DataroomViewerGroupMembership$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DataroomViewerGroupMembership$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DataroomViewerGroupAccessControls$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$DataroomViewerGroupAccessControls$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$IncomingWebhook$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$IncomingWebhook$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RestrictedToken$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RestrictedToken$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Webhook$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Webhook$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$CustomField$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$CustomField$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$CustomFieldResponse$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$CustomFieldResponse$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Area$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Area$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$UserTenantArea$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$UserTenantArea$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AreaRole$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AreaRole$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AreaRoleFeature$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AreaRoleFeature$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestHierarchy$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestHierarchy$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestHierarchyLevel$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestHierarchyLevel$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestCategory$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestCategory$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestCategoryForm$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestCategoryForm$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$SLA$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$SLA$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$SLAChangeLog$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$SLAChangeLog$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$GuideDocument$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$GuideDocument$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Requirement$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Requirement$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestCategoryRequirement$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestCategoryRequirement$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequirementType$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequirementType$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AssignmentHierarchy$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AssignmentHierarchy$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AssignmentHierarchyLevel$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AssignmentHierarchyLevel$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AssignmentCategory$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AssignmentCategory$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AssignmentCategoryForm$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$AssignmentCategoryForm$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Form$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Form$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$FormSubmission$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$FormSubmission$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$ExecutionFlowDefinition$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$ExecutionFlowDefinition$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$ExecutionNodeDefinition$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$ExecutionNodeDefinition$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$ExecutionEdgeDefinition$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$ExecutionEdgeDefinition$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$ExecutionNodeGuide$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$ExecutionNodeGuide$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$ExecutionModelInstance$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$ExecutionModelInstance$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$ExecutionModelLog$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$ExecutionModelLog$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$ExecutionModelHistory$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$ExecutionModelHistory$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$UserTenantRole$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$UserTenantRole$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Role$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Role$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Module$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Module$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Feature$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Feature$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RoleFeature$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RoleFeature$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Channel$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Channel$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Message$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Message$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Person$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$Person$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$IdentificationType$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$IdentificationType$updatedBy(user: any): unknown {
+  return user?.id;
+}
 export default metadata;
