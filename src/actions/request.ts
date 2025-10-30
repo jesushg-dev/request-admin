@@ -167,7 +167,6 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
           complianceTrackings: {
             createMany: {
               data: complianceData,
-              skipDuplicates: true,
             },
           },
           channel: {
