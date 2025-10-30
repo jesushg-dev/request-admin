@@ -11,16 +11,12 @@ import ClientOnly from '@/components/client-only';
 import LocaleSwitcherSelect from '@/components/locale-switcher-select';
 import { NotificationCenter } from '@/components/notification/notification-center';
 import NotificationProvider from '@/components/notification/notification-context';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 
-interface NavbarProps {
-  tenantId: string;
-  userTenantId: string;
-  tenants: Array<{ id: string; name: string }>;
-}
-
-const Navbar = ({ tenants = [], tenantId, userTenantId }: NavbarProps) => {
+const Navbar = () => {
   const { setTheme, theme } = useTheme();
   const { toggleSidebar } = useSidebar();
+  const { tenants, tenantId, userTenant } = useTenantContext();
 
   // Toggle theme function
   const toggleTheme = () => {
@@ -50,7 +46,7 @@ const Navbar = ({ tenants = [], tenantId, userTenantId }: NavbarProps) => {
           </Button>
 
           {/* Notifications */}
-          <NotificationProvider tenantId={tenantId} userTenantId={userTenantId}>
+          <NotificationProvider tenantId={tenantId} userTenantId={userTenant.userTenantId}>
             <NotificationCenter />
           </NotificationProvider>
         </div>

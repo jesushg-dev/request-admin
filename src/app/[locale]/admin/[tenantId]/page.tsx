@@ -18,7 +18,8 @@ import { WorkflowSelector } from '@/components/common/dashboard/workflow-selecto
 import { useTenantContext } from '@/components/hoc/tenant-provider';
 
 export default function Home() {
-  const { tenantId } = useTenantContext();
+  const { tenantId, userTenant, currentTenant } = useTenantContext();
+  
   const [selectedWorkflow, setSelectedWorkflow] = useState<string | null>(null);
   const [slaFilters, setSlaFilters] = useState<SLAFilterValues | null>(null);
 
@@ -47,7 +48,7 @@ export default function Home() {
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-            <p className="text-muted-foreground">Bienvenido al sistema de gestión de solicitudes de Claro-Nicaragua</p>
+            <p className="text-muted-foreground">Bienvenido {userTenant.displayUserName} al sistema de gestión de solicitudes de {currentTenant ? `${currentTenant.name}` : ''}</p>
           </div>
           <Button className="w-full md:w-auto">
             <Link className="flex gap-2 items-center" href={{ pathname: '/admin/[tenantId]/requests/new', params: { tenantId } }}>

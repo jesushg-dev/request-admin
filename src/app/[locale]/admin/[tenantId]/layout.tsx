@@ -68,13 +68,13 @@ export default async function RootLayout({
   });
 
   return (
-    <TenantProvider tenantId={tenantId} userTenant={userTenant}>
+    <TenantProvider tenantId={tenantId} userTenant={userTenant} tenants={tenants}>
       <SidebarProvider>
         <DndSubmissionProvider tenantId={tenantId} data={menuItems}>
-          <AppSidebar tenants={tenants} user={session.user} tenantId={tenantId} />
+          <AppSidebar user={session.user} />
           <main className="flex h-screen w-full flex-1 flex-col overflow-hidden">
             <ClipboardProvider>
-              <Navbar tenants={tenants} tenantId={tenantId} userTenantId={userTenant.userTenantId} />
+              <Navbar />
               <div className="flex flex-1 overflow-hidden">
                 {children}
                 {modal}

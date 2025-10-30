@@ -8,17 +8,12 @@ import { useTranslations } from 'next-intl';
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 
-interface TenantUser {
-  id: string;
-  name: string;
-  logo: string | null;
-  description: string | null;
-}
-
-export function TenantSwitcher({ tenants, tenantId, isGlobalAdmin = false }: { tenants: TenantUser[]; tenantId: string; isGlobalAdmin?: boolean | null }) {
+export function TenantSwitcher({ isGlobalAdmin = false }: { isGlobalAdmin?: boolean | null }) {
   const t = useTranslations('admin.sidebar.tenantSwitcher');
   const { isMobile } = useSidebar();
+  const { tenants, tenantId } = useTenantContext();
   const currentTenant = React.useMemo(() => tenants.find((tenant) => tenant.id === tenantId), [tenants, tenantId]);
 
   return (

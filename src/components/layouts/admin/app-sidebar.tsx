@@ -32,6 +32,7 @@ import {
 import { useTranslations } from 'next-intl';
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '@/components/ui/sidebar';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 
 //import { NavFormSubmissions } from './nav-form-submissions';
 import { MenuItem, NavMain } from './nav-main';
@@ -39,24 +40,18 @@ import { NavUser } from './nav-user';
 import { TenantSwitcher } from './tenant-switcher';
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  tenantId: string;
   user: {
     name?: string | null;
     email?: string | null;
     image?: string | null;
     isGlobalAdmin?: boolean | null;
   };
-  tenants: {
-    id: string;
-    name: string;
-    logo: string | null;
-    description: string | null;
-  }[];
 }
 
-export function AppSidebar({ tenantId, tenants, user, ...props }: AppSidebarProps) {
+export function AppSidebar({ user, ...props }: AppSidebarProps) {
   const pathname = usePathname();
   const t = useTranslations('admin.sidebar');
+  const { tenantId, tenants } = useTenantContext();
 
   const navMain = useMemo<MenuItem[]>(() => {
     return [
@@ -217,7 +212,7 @@ export function AppSidebar({ tenantId, tenants, user, ...props }: AppSidebarProp
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TenantSwitcher isGlobalAdmin={user.isGlobalAdmin} tenants={tenants} tenantId={tenantId} />
+        <TenantSwitcher isGlobalAdmin={user.isGlobalAdmin} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain title={t('request')} items={navMain} currentPath={pathname} />
