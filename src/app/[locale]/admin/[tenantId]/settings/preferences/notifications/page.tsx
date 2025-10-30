@@ -17,7 +17,7 @@ import { Switch } from '@/components/ui/switch';
 
 const notificationsFormSchema = z.object({
   notifyType: z.enum(['all', 'mentions', 'none'], {
-    required_error: 'You need to select a notification type.',
+    error: 'You need to select a notification type.',
   }),
   communicationEmails: z.boolean().default(false),
   marketingEmails: z.boolean().default(false),

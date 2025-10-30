@@ -31,7 +31,7 @@ export const config = {
   matcher: ['/((?!.+\\.[\\w]+$|_next|api/auth).*)', '/', '/(api)(.*)'],
 };
 
-export default async function middleware(req: NextRequest) {
+export default async function proxy(req: NextRequest) {
   if (req.nextUrl.pathname.startsWith('/api/uploadthing')) {
     return;
   }

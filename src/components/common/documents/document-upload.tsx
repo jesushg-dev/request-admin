@@ -29,11 +29,9 @@ const formSchema = z.object({
       for (const file of files) {
         if (file.size > 4 * 1024 * 1024) {
           ctx.addIssue({
+            path: ['files'],
             message: `File ${file.name} exceeds the maximum size of 4MB`,
-            code: z.ZodIssueCode.too_big,
-            inclusive: true,
-            type: 'number',
-            maximum: 4 * 1024 * 1024,
+            code: "custom",
           });
         }
       }

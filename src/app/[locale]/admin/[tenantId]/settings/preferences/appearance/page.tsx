@@ -15,13 +15,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 const appearanceFormSchema = z.object({
   font: z.string({
-    required_error: 'Please select a font.',
+    error: 'Please select a font.',
   }),
   theme: z.enum(['light', 'dark'], {
-    required_error: 'Please select a theme.',
+    error: 'Please select a theme.',
   }),
   language: z.string({
-    required_error: 'Please select a language.',
+    error: 'Please select a language.',
   }),
 });
 

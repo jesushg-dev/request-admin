@@ -18,7 +18,7 @@ import Select, { OptionType } from '@/components/custom-ui/select';
 import EmptyState from '@/components/shared/empty-state';
 
 export const requirementComplianceSchema = z.object({
-  requirementCompliances: z.record(z.boolean().default(false)),
+  requirementCompliances: z.record(z.string(), z.boolean()).default({}),
 });
 
 export type RequirementComplianceValues = z.infer<typeof requirementComplianceSchema>;

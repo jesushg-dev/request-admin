@@ -16,7 +16,7 @@ import { useChildSteps } from '@/components/stepper/child-steps-context';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
 
 export const formResponseSchema = z.object({
-  submissions: z.record(z.record(z.string())).optional(),
+  submissions: z.record(z.string(), z.record(z.string(), z.string())).optional(),
 });
 
 export type FormResponsesValues = z.infer<typeof formResponseSchema>;

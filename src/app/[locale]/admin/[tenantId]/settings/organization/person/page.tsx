@@ -27,7 +27,7 @@ const personFormSchema = z.object({
     message: 'Identification number is required.',
   }),
   identificationTypeId: z.string({
-    required_error: 'Please select an identification type.',
+    error: 'Please select an identification type.',
   }),
   image: z.string().optional(),
 });

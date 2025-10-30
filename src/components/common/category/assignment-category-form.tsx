@@ -38,7 +38,7 @@ export type AssignmentCategory = {
 
 export const assignmentCategoryFormSchema: z.ZodType<AssignmentCategory> = z.object({
   id: z.string(),
-  name: z.string({ required_error: 'requiredName' }).min(2, 'minName'),
+  name: z.string({ error: 'requiredName' }).min(2, 'minName'),
   description: z.string().optional(),
   isSubCategoryVisible: z.boolean().optional(),
   hierarchyLevelId: z.string(),
