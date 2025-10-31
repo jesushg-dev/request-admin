@@ -4,18 +4,20 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import type { ExecutionFlowInfo, ExecutionStep } from '@/actions/report';
 import { getExecutionFlowDetails, getExecutionFlows } from '@/actions/report';
-import { ArrowRight, CheckCircle2, Clock, FileText } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Clock, Download, FileJson, FileSpreadsheet, FileText } from 'lucide-react';
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { useTranslations } from 'next-intl';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import EmptyState from '@/components/shared/empty-state';
+import { useExecutionExport } from '@/hooks/use-execution-export';
 
 interface ExecutionTabProps {
   tenantId: string;
@@ -23,6 +25,8 @@ interface ExecutionTabProps {
 }
 
 export function ExecutionTab({ tenantId, loading: initialLoading }: ExecutionTabProps) {
+  const t = useTranslations('admin.reports.page.executionTab');
+  const { handleExport: handleExecutionExport } = useExecutionExport();
   const [flows, setFlows] = useState<ExecutionFlowInfo[]>([]);
   const [selectedFlow, setSelectedFlow] = useState<ExecutionFlowInfo | null>(null);
   const [flowDetails, setFlowDetails] = useState<{ flow: any; steps: ExecutionStep[] } | null>(null);
@@ -104,8 +108,8 @@ export function ExecutionTab({ tenantId, loading: initialLoading }: ExecutionTab
       <Card>
         <CardContent className="flex items-center justify-center py-12">
           <EmptyState
-            title="No hay modelos de ejecución disponibles"
-            description="Aún no se han creado modelos de ejecución.\nLos datos aparecerán aquí una vez que se definan workflows de ejecución."
+            title={t('empty.title')}
+            description={t('empty.description')}
             icons={[FileText, Clock, CheckCircle2]}
           />
         </CardContent>
@@ -117,13 +121,13 @@ export function ExecutionTab({ tenantId, loading: initialLoading }: ExecutionTab
     <div className="grid gap-4 md:grid-cols-3">
       <Card className="md:col-span-1">
         <CardHeader>
-          <CardTitle>Modelos de Ejecución</CardTitle>
-          <CardDescription>Seleccione un modelo para ver detalles</CardDescription>
+          <CardTitle>{t('models.title')}</CardTitle>
+          <CardDescription>{t('models.subtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Select onValueChange={handleFlowSelect}>
             <SelectTrigger>
-              <SelectValue placeholder="Seleccionar modelo de ejecución" />
+              <SelectValue placeholder={t('models.selectPlaceholder')} />
             </SelectTrigger>
             <SelectContent>
               {flows.map((flow) => (
@@ -147,13 +151,13 @@ export function ExecutionTab({ tenantId, loading: initialLoading }: ExecutionTab
                 <div className="mt-2 text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4" />
-                    <span>Tiempo promedio: {flow.avgCompletionTime} días</span>
+                    <span>{t('models.avgTime', { days: flow.avgCompletionTime })}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4" />
-                    <span>Tasa de éxito: {flow.successRate}%</span>
+                    <span>{t('models.successRate', { rate: flow.successRate })}</span>
                   </div>
-                  <div className="mt-1 text-xs">{flow.executionCount} ejecuciones</div>
+                  <div className="mt-1 text-xs">{t('models.executions', { count: flow.executionCount })}</div>
                 </div>
               </div>
             ))}
@@ -181,25 +185,25 @@ export function ExecutionTab({ tenantId, loading: initialLoading }: ExecutionTab
                 <div>
                   <CardTitle>{selectedFlow.name}</CardTitle>
                   <CardDescription>
-                    Versión {selectedFlow.version} | {selectedFlow.nodeCount} nodos | {selectedFlow.executionCount} ejecuciones
+                    {t('details.version', { version: selectedFlow.version })} | {t('details.nodes', { count: selectedFlow.nodeCount })} | {t('details.executions', { count: selectedFlow.executionCount })}
                   </CardDescription>
                 </div>
                 <Badge variant="outline" className="px-3 py-1">
-                  {selectedFlow.successRate}% de éxito
+                  {t('details.successRate', { rate: selectedFlow.successRate })}
                 </Badge>
               </div>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="steps">
                 <TabsList className="mb-4">
-                  <TabsTrigger value="steps">Pasos del Proceso</TabsTrigger>
-                  <TabsTrigger value="metrics">Métricas de Ejecución</TabsTrigger>
+                  <TabsTrigger value="steps">{t('tabs.steps')}</TabsTrigger>
+                  <TabsTrigger value="metrics">{t('tabs.metrics')}</TabsTrigger>
                 </TabsList>
                 <TabsContent value="steps">
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <h3 className="font-medium">Pasos del proceso de ejecución</h3>
-                      <span className="text-sm text-muted-foreground">Total: {selectedFlow.avgCompletionTime} días</span>
+                      <h3 className="font-medium">{t('steps.title')}</h3>
+                      <span className="text-sm text-muted-foreground">{t('steps.total', { days: selectedFlow.avgCompletionTime })}</span>
                     </div>
 
                     <div className="space-y-4">
@@ -210,11 +214,11 @@ export function ExecutionTab({ tenantId, loading: initialLoading }: ExecutionTab
                               <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">{index + 1}</div>
                               <h4 className="font-medium">{step.name}</h4>
                             </div>
-                            <Badge variant="outline">{step.avgTime.toFixed(1)} días</Badge>
+                            <Badge variant="outline">{t('steps.days', { days: step.avgTime.toFixed(1) })}</Badge>
                           </div>
                           <div className="mt-2">
                             <div className="flex items-center justify-between text-sm">
-                              <span>Cumplimiento del proceso:</span>
+                              <span>{t('steps.compliance')}:</span>
                               <span>{step.compliance.toFixed(1)}%</span>
                             </div>
                             <Progress value={step.compliance} className="mt-1" />
@@ -227,7 +231,7 @@ export function ExecutionTab({ tenantId, loading: initialLoading }: ExecutionTab
                 <TabsContent value="metrics">
                   <div className="space-y-6">
                     <div>
-                      <h3 className="mb-2 font-medium">Ejecuciones por mes</h3>
+                      <h3 className="mb-2 font-medium">{t('metrics.executionsByMonth.title')}</h3>
                       <div className="h-[300px]">
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart data={[]}>
@@ -236,39 +240,39 @@ export function ExecutionTab({ tenantId, loading: initialLoading }: ExecutionTab
                             <YAxis yAxisId="left" />
                             <Tooltip />
                             <Legend />
-                            <Line yAxisId="left" type="monotone" dataKey="count" name="Ejecuciones" stroke="#8884d8" />
+                            <Line yAxisId="left" type="monotone" dataKey="count" name={t('metrics.executionsByMonth.series')} stroke="#8884d8" />
                           </LineChart>
                         </ResponsiveContainer>
-                        <div className="text-center text-sm text-muted-foreground mt-4">Datos de ejecuciones por mes en desarrollo</div>
+                        <div className="text-center text-sm text-muted-foreground mt-4">{t('metrics.executionsByMonth.development')}</div>
                       </div>
                     </div>
 
                     <div className="grid gap-4 md:grid-cols-3">
                       <Card>
                         <CardHeader className="pb-2">
-                          <CardTitle className="text-sm font-medium">Tiempo promedio</CardTitle>
+                          <CardTitle className="text-sm font-medium">{t('metrics.cards.avgTime.title')}</CardTitle>
                         </CardHeader>
                         <CardContent>
-                          <div className="text-2xl font-bold">{selectedFlow.avgCompletionTime} días</div>
-                          <p className="text-xs text-muted-foreground">{selectedFlow.avgCompletionTime < 2.5 ? 'Por debajo del promedio' : 'Por encima del promedio'}</p>
+                          <div className="text-2xl font-bold">{t('metrics.cards.avgTime.value', { days: selectedFlow.avgCompletionTime })}</div>
+                          <p className="text-xs text-muted-foreground">{selectedFlow.avgCompletionTime < 2.5 ? t('metrics.cards.avgTime.below') : t('metrics.cards.avgTime.above')}</p>
                         </CardContent>
                       </Card>
                       <Card>
                         <CardHeader className="pb-2">
-                          <CardTitle className="text-sm font-medium">Tasa de éxito</CardTitle>
+                          <CardTitle className="text-sm font-medium">{t('metrics.cards.successRate.title')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                           <div className="text-2xl font-bold">{selectedFlow.successRate}%</div>
-                          <p className="text-xs text-muted-foreground">{selectedFlow.successRate > 90 ? 'Excelente rendimiento' : 'Necesita mejoras'}</p>
+                          <p className="text-xs text-muted-foreground">{selectedFlow.successRate > 90 ? t('metrics.cards.successRate.excellent') : t('metrics.cards.successRate.needsImprovement')}</p>
                         </CardContent>
                       </Card>
                       <Card>
                         <CardHeader className="pb-2">
-                          <CardTitle className="text-sm font-medium">Ejecuciones totales</CardTitle>
+                          <CardTitle className="text-sm font-medium">{t('metrics.cards.totalExecutions.title')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                           <div className="text-2xl font-bold">{selectedFlow.executionCount}</div>
-                          <p className="text-xs text-muted-foreground">{selectedFlow.executionCount > 10 ? 'Proceso establecido' : 'Proceso nuevo'}</p>
+                          <p className="text-xs text-muted-foreground">{selectedFlow.executionCount > 10 ? t('metrics.cards.totalExecutions.established') : t('metrics.cards.totalExecutions.new')}</p>
                         </CardContent>
                       </Card>
                     </div>
@@ -277,13 +281,63 @@ export function ExecutionTab({ tenantId, loading: initialLoading }: ExecutionTab
               </Tabs>
             </CardContent>
             <CardFooter className="flex justify-between">
-              <Button variant="outline">Ver historial de ejecuciones</Button>
-              <Button asChild>
-                <Link href={`/admin/${tenantId}/workflows`}>
-                  Gestionar workflows
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
+              <Button variant="outline">{t('footer.viewHistory')}</Button>
+              <div className="flex gap-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline">
+                      <Download className="mr-2 h-4 w-4" />
+                      {t('footer.export')}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>{t('footer.exportFormat')}</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => {
+                        const exportData = {
+                          flows,
+                          selectedFlow,
+                          flowDetails,
+                        };
+                        handleExecutionExport('PDF', exportData);
+                      }}>
+                      <FileText className="mr-2 h-4 w-4" />
+                      PDF
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        const exportData = {
+                          flows,
+                          selectedFlow,
+                          flowDetails,
+                        };
+                        handleExecutionExport('Excel', exportData);
+                      }}>
+                      <FileSpreadsheet className="mr-2 h-4 w-4" />
+                      Excel
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        const exportData = {
+                          flows,
+                          selectedFlow,
+                          flowDetails,
+                        };
+                        handleExecutionExport('JSON', exportData);
+                      }}>
+                      <FileJson className="mr-2 h-4 w-4" />
+                      JSON
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <Button asChild>
+                  <Link href={`/admin/${tenantId}/workflows`}>
+                    {t('footer.manageWorkflows')}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
             </CardFooter>
           </Card>
         ) : (
@@ -292,8 +346,8 @@ export function ExecutionTab({ tenantId, loading: initialLoading }: ExecutionTab
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
                 <FileText className="h-6 w-6 text-muted-foreground" />
               </div>
-              <h3 className="mb-2 text-lg font-medium">Seleccione un modelo de ejecución</h3>
-              <p className="text-sm text-muted-foreground">Elija un modelo de la lista para ver sus detalles de ejecución</p>
+              <h3 className="mb-2 text-lg font-medium">{t('selectModel.title')}</h3>
+              <p className="text-sm text-muted-foreground">{t('selectModel.description')}</p>
             </CardContent>
           </Card>
         ))}

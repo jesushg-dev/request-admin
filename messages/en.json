@@ -952,6 +952,129 @@
           }
         }
     },
+    "reports": {
+      "page": {
+        "title": "Reports",
+        "subtitle": "Service request analysis and statistics",
+        "buttons": { "showFilters": "Show filters", "hideFilters": "Hide filters" },
+        "period": { "placeholder": "Period", "label": "Period", "month": "Last month", "quarter": "Last quarter", "year": "Last year" },
+        "export": { "title": "Export", "format": "Export format", "pdf": "PDF", "excel": "Excel", "json": "JSON", "exporting": "Exporting report in {format} format...", "success": "Report exported successfully in {format} format", "error": "Error exporting report" },
+        "tabs": { "overview": "Overview", "areas": "By Area", "status": "By Status", "performance": "Performance", "workflows": "Workflows", "execution": "Model Execution", "alerts": "Alerts", "monthlyTrends": "Monthly Trends" },
+        "overview": {
+          "totalRequests": "Total Requests",
+          "openRequests": "Open Requests",
+          "closedRequests": "Closed Requests",
+          "overdueRequests": "Overdue Requests",
+          "avgResolutionTime": "Average Resolution Time",
+          "metric": "Metric",
+          "value": "Value",
+          "days": "days"
+        },
+        "monthlyTrends": {
+          "month": "Month",
+          "count": "Count"
+        },
+        "areas": {
+          "area": "Area",
+          "count": "Count"
+        },
+        "status": {
+          "status": "Status",
+          "count": "Count"
+        },
+        "sla": {
+          "title": "SLA Compliance",
+          "category": "Category",
+          "compliance": "Compliance"
+        },
+        "performance": {
+          "empty": { "title": "No performance data available", "description": "No resolution time data recorded yet.\nData will appear here once there are completed requests." },
+          "chart": { "title": "Response Time by Area", "description": "Average resolution time in days", "category": "Category", "timeDays": "Time (days)", "series": { "timeDays": "Time (days)" } }
+        },
+        "workflows": {
+          "empty": { "title": "No workflow data available", "description": "No workflow data recorded yet.\nData will appear here once there are requests." },
+          "chart": { "title": "Workflow Analysis", "description": "Average time at each workflow state", "workflow": "Workflow", "requests": "Requests", "series": { "requests": "Requests" } }
+        },
+        "alerts": {
+          "title": "Alerts by Status",
+          "subtitle": "Requests requiring immediate attention",
+          "empty": { "title": "No active alerts", "description": "All requests are in order.\nNo overdue or at-risk SLA alerts found." },
+          "levels": { "critical": "Critical", "warning": "Warning", "info": "Information", "type": "Type", "status": "Status", "count": "Count" },
+          "descriptions": { "critical": "These requests are overdue and require immediate attention.", "warning": "These requests are at risk of exceeding their SLA." },
+          "requestCount": "{count} {count, plural, one {request} other {requests}} in \"{status}\" with {type, select, vencido {overdue} enRiesgo {at-risk} other {SLA}} SLA",
+          "viewRequests": "View requests"
+        },
+        "metadata": {
+          "title": "Metadata",
+          "key": "Key",
+          "value": "Value",
+          "dateRange": "Date Range",
+          "exportDate": "Export Date"
+        },
+        "executionTab": {
+          "empty": { "title": "No execution models available", "description": "No execution models have been created yet.\nData will appear here once execution workflows are defined." },
+          "title": "Model Execution",
+          "models": {
+            "title": "Execution Models",
+            "subtitle": "Select a model to view details",
+            "selectPlaceholder": "Select execution model",
+            "name": "Name",
+            "version": "Version",
+            "avgTime": "Average time: {days} days",
+            "successRate": "Success rate: {rate}%",
+            "executions": "{count} {count, plural, one {execution} other {executions}}",
+            "days": "days"
+          },
+          "details": {
+            "title": "Details",
+            "version": "Version {version}",
+            "nodes": "{count} {count, plural, one {node} other {nodes}}",
+            "executions": "{count} {count, plural, one {execution} other {executions}}",
+            "successRate": "{rate}% success",
+            "avgTime": "Average Time",
+            "property": "Property",
+            "value": "Value"
+          },
+          "tabs": { "steps": "Process Steps", "metrics": "Execution Metrics" },
+          "steps": {
+            "title": "Process execution steps",
+            "order": "Order",
+            "name": "Name",
+            "avgTime": "Average Time",
+            "total": "Total: {days} days",
+            "days": "{days} days",
+            "compliance": "Process compliance"
+          },
+          "metrics": {
+            "executionsByMonth": {
+              "title": "Executions by month",
+              "series": "Executions",
+              "development": "Monthly execution data in development"
+            },
+            "cards": {
+              "avgTime": {
+                "title": "Average time",
+                "value": "{days} days",
+                "below": "Below average",
+                "above": "Above average"
+              },
+              "successRate": {
+                "title": "Success rate",
+                "excellent": "Excellent performance",
+                "needsImprovement": "Needs improvement"
+              },
+              "totalExecutions": {
+                "title": "Total executions",
+                "established": "Established process",
+                "new": "New process"
+              }
+            }
+          },
+          "footer": { "viewHistory": "View execution history", "manageWorkflows": "Manage workflows", "export": "Export", "exportFormat": "Export Format", "exportSuccess": "Report exported successfully in {format} format", "exportError": "Error exporting report" },
+          "selectModel": { "title": "Select an execution model", "description": "Choose a model from the list to view its execution details" }
+        }
+      }
+    },
     "area": {
       "main": {
         "entityLabel": "area",

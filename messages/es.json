@@ -954,6 +954,129 @@
           }
         }
     },
+    "reports": {
+      "page": {
+        "title": "Reportes",
+        "subtitle": "Análisis y estadísticas de solicitudes de servicios",
+        "buttons": { "showFilters": "Mostrar filtros", "hideFilters": "Ocultar filtros" },
+        "period": { "placeholder": "Período", "label": "Período", "month": "Último mes", "quarter": "Último trimestre", "year": "Último año" },
+        "export": { "title": "Exportar", "format": "Formato de exportación", "pdf": "PDF", "excel": "Excel", "json": "JSON", "exporting": "Exportando reporte en formato {format}...", "success": "Reporte exportado exitosamente en formato {format}", "error": "Error al exportar el reporte" },
+        "tabs": { "overview": "Resumen", "areas": "Por Área", "status": "Por Estado", "performance": "Desempeño", "workflows": "Flujos de Trabajo", "execution": "Ejecución de Modelos", "alerts": "Alertas", "monthlyTrends": "Tendencias Mensuales" },
+        "overview": {
+          "totalRequests": "Total de Solicitudes",
+          "openRequests": "Solicitudes Abiertas",
+          "closedRequests": "Solicitudes Cerradas",
+          "overdueRequests": "Solicitudes Vencidas",
+          "avgResolutionTime": "Tiempo Promedio de Resolución",
+          "metric": "Métrica",
+          "value": "Valor",
+          "days": "días"
+        },
+        "monthlyTrends": {
+          "month": "Mes",
+          "count": "Cantidad"
+        },
+        "areas": {
+          "area": "Área",
+          "count": "Cantidad"
+        },
+        "status": {
+          "status": "Estado",
+          "count": "Cantidad"
+        },
+        "sla": {
+          "title": "Cumplimiento SLA",
+          "category": "Categoría",
+          "compliance": "Cumplimiento"
+        },
+        "performance": {
+          "empty": { "title": "No hay datos de desempeño disponibles", "description": "Aún no se han registrado datos de tiempo de resolución.\nLos datos aparecerán aquí una vez que haya solicitudes completadas." },
+          "chart": { "title": "Tiempo de Respuesta por Área", "description": "Tiempo promedio de resolución en días", "category": "Categoría", "timeDays": "Tiempo (días)", "series": { "timeDays": "Tiempo (días)" } }
+        },
+        "workflows": {
+          "empty": { "title": "No hay datos de flujos de trabajo disponibles", "description": "Aún no se han registrado datos de workflows.\nLos datos aparecerán aquí una vez que haya solicitudes." },
+          "chart": { "title": "Análisis de Flujos de Trabajo", "description": "Tiempo promedio en cada estado del flujo", "workflow": "Workflow", "requests": "Solicitudes", "series": { "requests": "Solicitudes" } }
+        },
+        "alerts": {
+          "title": "Alertas por Estado",
+          "subtitle": "Solicitudes que requieren atención inmediata",
+          "empty": { "title": "No hay alertas activas", "description": "Todas las solicitudes están en orden.\nNo se encontraron alertas de SLA vencido o en riesgo." },
+          "levels": { "critical": "Crítico", "warning": "Advertencia", "info": "Información", "type": "Tipo", "status": "Estado", "count": "Cantidad" },
+          "descriptions": { "critical": "Estas solicitudes han vencido su SLA y requieren atención inmediata.", "warning": "Estas solicitudes están en riesgo de vencer su SLA." },
+          "requestCount": "{count} {count, plural, one {solicitud} other {solicitudes}} en \"{status}\" con SLA {type, select, vencido {vencido} enRiesgo {en riesgo} other {}}",
+          "viewRequests": "Ver solicitudes"
+        },
+        "metadata": {
+          "title": "Metadatos",
+          "key": "Clave",
+          "value": "Valor",
+          "dateRange": "Rango de Fechas",
+          "exportDate": "Fecha de Exportación"
+        },
+        "executionTab": {
+          "empty": { "title": "No hay modelos de ejecución disponibles", "description": "Aún no se han creado modelos de ejecución.\nLos datos aparecerán aquí una vez que se definan workflows de ejecución." },
+          "title": "Ejecución de Modelos",
+          "models": {
+            "title": "Modelos de Ejecución",
+            "subtitle": "Seleccione un modelo para ver detalles",
+            "selectPlaceholder": "Seleccionar modelo de ejecución",
+            "name": "Nombre",
+            "version": "Versión",
+            "avgTime": "Tiempo promedio: {days} días",
+            "successRate": "Tasa de éxito: {rate}%",
+            "executions": "{count} {count, plural, one {ejecución} other {ejecuciones}}",
+            "days": "días"
+          },
+          "details": {
+            "title": "Detalles",
+            "version": "Versión {version}",
+            "nodes": "{count} {count, plural, one {nodo} other {nodos}}",
+            "executions": "{count} {count, plural, one {ejecución} other {ejecuciones}}",
+            "successRate": "{rate}% de éxito",
+            "avgTime": "Tiempo Promedio",
+            "property": "Propiedad",
+            "value": "Valor"
+          },
+          "tabs": { "steps": "Pasos del Proceso", "metrics": "Métricas de Ejecución" },
+          "steps": {
+            "title": "Pasos del proceso de ejecución",
+            "order": "Orden",
+            "name": "Nombre",
+            "avgTime": "Tiempo Promedio",
+            "total": "Total: {days} días",
+            "days": "{days} días",
+            "compliance": "Cumplimiento del proceso"
+          },
+          "metrics": {
+            "executionsByMonth": {
+              "title": "Ejecuciones por mes",
+              "series": "Ejecuciones",
+              "development": "Datos de ejecuciones por mes en desarrollo"
+            },
+            "cards": {
+              "avgTime": {
+                "title": "Tiempo promedio",
+                "value": "{days} días",
+                "below": "Por debajo del promedio",
+                "above": "Por encima del promedio"
+              },
+              "successRate": {
+                "title": "Tasa de éxito",
+                "excellent": "Excelente rendimiento",
+                "needsImprovement": "Necesita mejoras"
+              },
+              "totalExecutions": {
+                "title": "Ejecuciones totales",
+                "established": "Proceso establecido",
+                "new": "Proceso nuevo"
+              }
+            }
+          },
+          "footer": { "viewHistory": "Ver historial de ejecuciones", "manageWorkflows": "Gestionar workflows", "export": "Exportar", "exportFormat": "Formato de Exportación", "exportSuccess": "Reporte exportado exitosamente en formato {format}", "exportError": "Error al exportar el reporte" },
+          "selectModel": { "title": "Seleccione un modelo de ejecución", "description": "Elija un modelo de la lista para ver sus detalles de ejecución" }
+        }
+      }
+    },
     "area": {
       "main": {
         "entityLabel": "área",
