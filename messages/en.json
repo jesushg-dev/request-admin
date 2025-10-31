@@ -818,6 +818,140 @@
         "logout": "Log out"
       }
     },
+    "dashboard": {
+      "page": {
+        "dashboardTitle": "Dashboard",
+        "welcome": "Welcome, {user}, to the {tenant} request management system.",
+        "newRequest": "New Request",
+        "tabs": {
+          "general": "General",
+          "workflow": "Workflow",
+          "sla": "SLAs"
+        },
+          "recentRequests": {
+            "title": "Recent Requests",
+            "titleWithWorkflow": "Recent Requests - {workflow}"
+          },
+        "searchApplied": {
+          "title": "Search applied",
+          "description": "Filters have been applied successfully"
+        },
+        "workflowSelected": {
+          "title": "Workflow selected",
+          "description": "Workflow selected: {workflowId}"
+        }
+      },
+      "slaDashboard": {
+        "empty": {
+          "title": "No SLA data available",
+          "description": "No requests with SLA information have been recorded yet.\nData will appear here once requests are created."
+        },
+        "cards": {
+          "compliance": { "title": "SLA Compliance" },
+          "avgResolutionTime": { "title": "Average Resolution Time", "unit": "days" },
+          "atRisk": { "title": "Requests at Risk" },
+          "overdue": { "title": "Overdue Requests" },
+          "avgSlaHours": { "title": "Average SLA per Request", "unit": "h", "description": "Assigned time average" },
+          "escalations": { "title": "SLA Escalations", "trendText": "N/A" },
+          "bestWorkflow": { "title": "Best Performing Team", "description": "{compliance}% compliance" },
+          "activeAlerts": { "title": "Active Alerts", "description": "Requests requiring attention" }
+        },
+        "charts": {
+          "pie": { "title": "SLA Status", "description": "Distribution of requests by SLA status", "tooltipUnit": "requests", "tooltipLabel": "Count" },
+          "workflow": {
+            "title": "SLA by Workflow",
+            "description": "SLA status distribution by workflow type",
+            "onTime": "On time",
+            "warning": "At risk",
+            "overdue": "Overdue",
+            "completed": "Completed"
+          },
+          "trend": {
+            "title": "SLA Compliance Trend",
+            "description": "Compliance percentage and request volume in the last 6 months",
+            "compliance": "% Compliance",
+            "target": "Target (85%)",
+            "totalRequests": "Total Requests"
+          },
+          "hourly": {
+            "title": "SLA Violations by Hour",
+            "description": "SLA breaches analysis during the day",
+            "violations": "SLA Violations",
+            "totalRequests": "Total Requests"
+          }
+        },
+        "panels": {
+          "dept": { "title": "SLA by Department", "description": "SLA compliance by department", "empty": "No data available" },
+          "avgTime": { "title": "Average Resolution Time", "description": "By request type (in hours)", "empty": "No data available" },
+          "alerts": { "title": "SLA Alerts", "description": "Requests requiring immediate attention", "empty": "No SLA alerts" }
+        }
+      },
+      "slaFilters": {
+        "labels": { "status": "SLA Status", "slaPercentage": "SLA Percentage Consumed", "timeRange": "Remaining SLA Time", "workflowType": "Workflow Type", "search": "Search by ID or description" },
+        "status": { "all": "All statuses", "onTime": "On time", "warning": "Approaching due", "overdue": "Overdue", "completed": "Completed" },
+        "badges": { "normal": "Normal" },
+        "placeholders": { "selectRange": "Select range", "selectWorkflow": "Select workflow", "search": "Search requests..." },
+        "timeRanges": { "all": "All ranges", "lessThan1h": "Less than 1 hour", "1to4h": "1 to 4 hours", "4to24h": "4 to 24 hours", "1to3d": "1 to 3 days", "moreThan3d": "More than 3 days", "overdue": "Overdue" },
+        "workflows": { "all": "All workflows" },
+        "buttons": { "search": "Search" }
+      },
+      "workflowSelector": {
+        "title": "Workflow Statistics",
+        "subtitle": "Select a workflow to view specific metrics",
+        "placeholders": { "select": "Select a workflow" },
+        "options": { "all": "All workflows", "categories": "categories" },
+        "helper": "Select a workflow or 'All workflows' to see overall metrics"
+      },
+      "recentRequests": {
+        "table": {
+          "id": "ID",
+          "title": "Title",
+          "requester": "Requester",
+          "department": "Department",
+          "workflow": "Workflow",
+          "status": "Status",
+          "priority": "Priority",
+          "date": "Date",
+          "actions": "Actions"
+        },
+        "loading": "Loading...",
+        "empty": "No recent requests",
+        "view": "View"
+      },
+      "quickStats": {
+        "pending": { "title": "Pending Requests", "description": "Requests requiring attention", "highPriority": "{count} high priority" },
+        "completed": { "title": "Completed Requests", "description": "Requests resolved this month", "avgResolution": "Average time: {days} days" },
+        "reports": { "title": "Reports", "description": "Performance analysis", "ctaHint": "Access detailed reports" },
+        "actions": { "viewAll": "View all", "viewReports": "View reports" }
+      },
+      "stats": {
+        "title": "Requests by Workflow Analysis",
+        "description": "Requests distribution by workflow type in the last 6 months",
+        "empty": { "title": "No statistics available", "description": "No requests have been recorded yet.\nStatistics will appear here once requests are created." },
+        "tooltip": { "requests": "requests", "month": "Month" }
+      },
+      "metricsClient": {
+        "loadError": { "title": "Error loading metrics" }
+        },
+        "metrics": {
+          "general": {
+            "title": "General Metrics",
+            "vsLastMonth": "vs. last month",
+            "totalRequests": { "title": "Total Requests" },
+            "avgResolutionTime": { "title": "Average Resolution Time", "unit": "days" },
+            "resolutionRate": { "title": "Resolution Rate" },
+            "pending": { "title": "Pending Requests" }
+          },
+          "sla": {
+            "title": "SLA Metrics and Fixed States",
+            "vsLastMonth": "vs. last month",
+            "overdue": { "title": "Overdue Requests (SLA)" },
+            "compliance": { "title": "Average SLA Met" },
+            "atRisk": { "title": "SLA At Risk" },
+            "draft": { "title": "Draft Requests" }
+          }
+        }
+    },
     "area": {
       "main": {
         "entityLabel": "area",

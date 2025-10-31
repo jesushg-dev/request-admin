@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
+import { useTranslations } from 'next-intl';
 
 export interface SLAFilterValues {
   slaStatus: string;
@@ -34,11 +35,13 @@ interface Workflow {
 }
 
 export function SLAFilters({ tenantId, onSearch }: SLAFiltersProps) {
+  const t = useTranslations('admin.dashboard.slaFilters');
   const [slaStatus, setSlaStatus] = useState<string>('all');
   const [slaPercentage, setSlaPercentage] = useState<number[]>([0, 100]);
   const [slaTimeRange, setSlaTimeRange] = useState<string>('all');
   const [workflowType, setWorkflowType] = useState<string>('all');
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
+  const [searchText, setSearchText] = useState<string>('');
 
   useEffect(() => {
     async function fetchWorkflows() {
@@ -66,20 +69,20 @@ export function SLAFilters({ tenantId, onSearch }: SLAFiltersProps) {
     <Card className="p-4">
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <div className="space-y-2">
-          <Label htmlFor="sla-status">Estado de SLA</Label>
+          <Label htmlFor="sla-status">{t('labels.status')}</Label>
           <RadioGroup id="sla-status" value={slaStatus} onValueChange={setSlaStatus} className="flex flex-col space-y-1">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="all" id="all" />
               <Label htmlFor="all" className="flex items-center">
-                Todos los estados
+                {t('status.all')}
               </Label>
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="on-time" id="on-time" />
               <Label htmlFor="on-time" className="flex items-center">
-                <Clock className="mr-1 h-4 w-4 text-blue-500" />A tiempo
+                <Clock className="mr-1 h-4 w-4 text-blue-500" />{t('status.onTime')}
                 <Badge variant="outline" className="ml-2 bg-blue-50 text-blue-700">
-                  Normal
+                  {t('badges.normal')}
                 </Badge>
               </Label>
             </div>
@@ -87,7 +90,7 @@ export function SLAFilters({ tenantId, onSearch }: SLAFiltersProps) {
               <RadioGroupItem value="warning" id="warning" />
               <Label htmlFor="warning" className="flex items-center">
                 <Clock className="mr-1 h-4 w-4 text-amber-500" />
-                Próximo a vencer
+                {t('status.warning')}
                 <Badge variant="outline" className="ml-2 bg-amber-50 text-amber-700">
                   &gt;75%
                 </Badge>
@@ -97,7 +100,7 @@ export function SLAFilters({ tenantId, onSearch }: SLAFiltersProps) {
               <RadioGroupItem value="overdue" id="overdue" />
               <Label htmlFor="overdue" className="flex items-center">
                 <AlertTriangle className="mr-1 h-4 w-4 text-red-500" />
-                Vencido
+                {t('status.overdue')}
                 <Badge variant="outline" className="ml-2 bg-red-50 text-red-700">
                   &gt;100%
                 </Badge>
@@ -107,14 +110,14 @@ export function SLAFilters({ tenantId, onSearch }: SLAFiltersProps) {
               <RadioGroupItem value="completed" id="completed" />
               <Label htmlFor="completed" className="flex items-center">
                 <CheckCircle className="mr-1 h-4 w-4 text-green-500" />
-                Completado
+                {t('status.completed')}
               </Label>
             </div>
           </RadioGroup>
         </div>
 
         <div className="space-y-2">
-          <Label>Porcentaje de SLA consumido</Label>
+          <Label>{t('labels.slaPercentage')}</Label>
           <div className="pt-6 px-2">
             <Slider value={slaPercentage} min={0} max={150} step={5} onValueChange={setSlaPercentage} className="mb-6" />
             <div className="flex justify-between text-xs text-muted-foreground">
@@ -131,31 +134,31 @@ export function SLAFilters({ tenantId, onSearch }: SLAFiltersProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="sla-time">Tiempo restante de SLA</Label>
+          <Label htmlFor="sla-time">{t('labels.timeRange')}</Label>
           <Select value={slaTimeRange} onValueChange={setSlaTimeRange}>
             <SelectTrigger id="sla-time">
-              <SelectValue placeholder="Seleccionar rango" />
+              <SelectValue placeholder={t('placeholders.selectRange')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Todos los rangos</SelectItem>
-              <SelectItem value="less-than-1h">Menos de 1 hora</SelectItem>
-              <SelectItem value="1-4h">1 a 4 horas</SelectItem>
-              <SelectItem value="4-24h">4 a 24 horas</SelectItem>
-              <SelectItem value="1-3d">1 a 3 días</SelectItem>
-              <SelectItem value="more-than-3d">Más de 3 días</SelectItem>
-              <SelectItem value="overdue">Tiempo vencido</SelectItem>
+              <SelectItem value="all">{t('timeRanges.all')}</SelectItem>
+              <SelectItem value="less-than-1h">{t('timeRanges.lessThan1h')}</SelectItem>
+              <SelectItem value="1-4h">{t('timeRanges.1to4h')}</SelectItem>
+              <SelectItem value="4-24h">{t('timeRanges.4to24h')}</SelectItem>
+              <SelectItem value="1-3d">{t('timeRanges.1to3d')}</SelectItem>
+              <SelectItem value="more-than-3d">{t('timeRanges.moreThan3d')}</SelectItem>
+              <SelectItem value="overdue">{t('timeRanges.overdue')}</SelectItem>
             </SelectContent>
           </Select>
 
           <Label htmlFor="workflow-type" className="mt-4 block">
-            Tipo de Workflow
+            {t('labels.workflowType')}
           </Label>
           <Select value={workflowType} onValueChange={setWorkflowType}>
             <SelectTrigger id="workflow-type">
-              <SelectValue placeholder="Seleccionar workflow" />
+              <SelectValue placeholder={t('placeholders.selectWorkflow')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Todos los workflows</SelectItem>
+              <SelectItem value="all">{t('workflows.all')}</SelectItem>
               {workflows.map((workflow) => (
                 <SelectItem key={workflow.id} value={workflow.id}>
                   {workflow.name}
@@ -166,13 +169,20 @@ export function SLAFilters({ tenantId, onSearch }: SLAFiltersProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="sla-search">Buscar por ID o descripción</Label>
+          <Label htmlFor="sla-search">{t('labels.search')}</Label>
           <div className="relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input id="sla-search" type="search" placeholder="Buscar solicitudes..." className="pl-8" />
+            <Input
+              id="sla-search"
+              type="search"
+              placeholder={t('placeholders.search')}
+              className="pl-8"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+            />
           </div>
           <Button onClick={handleSearch} className="w-full mt-6">
-            Buscar
+            {t('buttons.search')}
           </Button>
         </div>
       </div>

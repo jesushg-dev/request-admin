@@ -5,6 +5,7 @@ import { getDashboardMetrics } from '@/actions/dashboard';
 
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useTranslations } from 'next-intl';
 
 import { DashboardMetrics } from './dashboard-metrics';
 
@@ -22,6 +23,7 @@ interface MetricsData {
 }
 
 export default function DashboardMetricsClient({ tenantId, workflowId }: { tenantId: string; workflowId?: string | null }) {
+  const t = useTranslations('admin.dashboard.metricsClient');
   const [data, setData] = useState<MetricsData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -43,7 +45,7 @@ export default function DashboardMetricsClient({ tenantId, workflowId }: { tenan
   if (loading) {
     return (
       <div className="space-y-8">
-        {/* Skeleton para Métricas Generales */}
+        {/* Skeleton for General Metrics */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <Skeleton className="h-7 w-48" />
@@ -64,7 +66,7 @@ export default function DashboardMetricsClient({ tenantId, workflowId }: { tenan
             ))}
           </div>
         </div>
-        {/* Skeleton para Métricas de SLA */}
+        {/* Skeleton for SLA Metrics */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <Skeleton className="h-7 w-64" />
@@ -94,7 +96,7 @@ export default function DashboardMetricsClient({ tenantId, workflowId }: { tenan
       <div className="space-y-8">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Error al cargar métricas</h3>
+            <h3 className="text-lg font-semibold">{t('loadError.title')}</h3>
             <div className="h-px bg-border flex-1 ml-4" />
           </div>
         </div>

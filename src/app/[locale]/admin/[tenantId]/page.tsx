@@ -16,9 +16,11 @@ import { SLADashboard } from '@/components/common/dashboard/sla-dashboard';
 import { SLAFilters, SLAFilterValues } from '@/components/common/dashboard/sla-filters';
 import { WorkflowSelector } from '@/components/common/dashboard/workflow-selector';
 import { useTenantContext } from '@/components/hoc/tenant-provider';
+import { useTranslations } from 'next-intl';
 
 export default function Home() {
   const { tenantId, userTenant, currentTenant } = useTenantContext();
+  const t = useTranslations('admin.dashboard.page');
   
   const [selectedWorkflow, setSelectedWorkflow] = useState<string | null>(null);
   const [slaFilters, setSlaFilters] = useState<SLAFilterValues | null>(null);
@@ -26,8 +28,8 @@ export default function Home() {
   const handleSearch = (filters: SLAFilterValues): void => {
     setSlaFilters(filters);
     console.log('Searching with filters:', filters);
-    toast.info('Búsqueda aplicada', {
-      description: 'Los filtros han sido aplicados correctamente',
+    toast.info(t('searchApplied.title'), {
+      description: t('searchApplied.description'),
     });
   };
 
@@ -36,8 +38,8 @@ export default function Home() {
     console.log('Selected workflow:', workflowId);
 
     if (workflowId) {
-      toast.success('Flujo de trabajo seleccionado', {
-        description: `Se ha seleccionado el flujo: ${workflowId}`,
+      toast.success(t('workflowSelected.title'), {
+        description: t('workflowSelected.description', { workflowId }),
       });
     }
   };
@@ -47,13 +49,13 @@ export default function Home() {
       <div className="container py-6 flex flex-col h-full">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-            <p className="text-muted-foreground">Bienvenido {userTenant.displayUserName} al sistema de gestión de solicitudes de {currentTenant ? `${currentTenant.name}` : ''}</p>
+            <h1 className="text-3xl font-bold tracking-tight">{t('dashboardTitle')}</h1>
+            <p className="text-muted-foreground">{t('welcome', { user: userTenant.displayUserName, tenant: currentTenant ? currentTenant.name : '' })}</p>
           </div>
           <Button className="w-full md:w-auto">
             <Link className="flex gap-2 items-center" href={{ pathname: '/admin/[tenantId]/requests/new', params: { tenantId } }}>
               <PlusCircle className="mr-2 h-4 w-4" />
-              Nueva Solicitud
+              {t('newRequest')}
             </Link>
           </Button>
         </div>
@@ -61,9 +63,9 @@ export default function Home() {
         <div className="mt-8 flex flex-col flex-grow min-h-0">
           <Tabs defaultValue="general" className="flex flex-col flex-grow min-h-0">
             <TabsList>
-              <TabsTrigger value="general">General</TabsTrigger>
-              <TabsTrigger value="workflow">Flujo de Trabajo</TabsTrigger>
-              <TabsTrigger value="sla">SLAs</TabsTrigger>
+              <TabsTrigger value="general">{t('tabs.general')}</TabsTrigger>
+              <TabsTrigger value="workflow">{t('tabs.workflow')}</TabsTrigger>
+              <TabsTrigger value="sla">{t('tabs.sla')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="general" className="h-full overflow-y-auto">
@@ -80,7 +82,7 @@ export default function Home() {
               </div>
 
               <div className="mt-8">
-                <h2 className="text-xl font-bold">Solicitudes Recientes</h2>
+                <h2 className="text-xl font-bold">{t('recentRequests.title')}</h2>
                 <div className="mt-4">
                   <RecentRequests tenantId={tenantId} />
                 </div>
@@ -101,7 +103,7 @@ export default function Home() {
               </div>
 
               <div className="mt-8">
-                <h2 className="text-xl font-bold">Solicitudes Recientes {selectedWorkflow && `- ${selectedWorkflow}`}</h2>
+                <h2 className="text-xl font-bold">{selectedWorkflow ? t('recentRequests.titleWithWorkflow', { workflow: selectedWorkflow }) : t('recentRequests.title')}</h2>
                 <div className="mt-4">
                   <RecentRequests tenantId={tenantId} workflowFilter={selectedWorkflow} />
                 </div>

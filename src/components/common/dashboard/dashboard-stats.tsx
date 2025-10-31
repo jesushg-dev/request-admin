@@ -8,6 +8,7 @@ import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recha
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import EmptyState from '@/components/shared/empty-state';
+import { useTranslations } from 'next-intl';
 
 // Generar colores consistentes para workflows
 const generateColor = (index: number, total: number): string => {
@@ -27,9 +28,9 @@ function DashboardStatsSkeleton() {
         <CardTitle>
           <Skeleton className="h-6 w-64" />
         </CardTitle>
-        <CardDescription>
+        <div className="text-sm text-muted-foreground">
           <Skeleton className="h-4 w-96 mt-2" />
-        </CardDescription>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="h-[300px] flex flex-col gap-4 justify-center items-center">
@@ -63,6 +64,7 @@ function DashboardStatsSkeleton() {
 }
 
 export default function DashboardStats({ tenantId, workflowId }: DashboardStatsProps) {
+  const t = useTranslations('admin.dashboard.stats');
   const [chartData, setChartData] = useState<any[]>([]);
   const [workflows, setWorkflows] = useState<Array<{ id: string; name: string }>>([]);
   const [loading, setLoading] = useState(true);
@@ -90,8 +92,8 @@ export default function DashboardStats({ tenantId, workflowId }: DashboardStatsP
   if (chartData.length === 0) {
     return (
       <EmptyState
-        title="No hay estadísticas disponibles"
-        description="Aún no se han registrado solicitudes.\nLas estadísticas aparecerán aquí una vez que se creen solicitudes."
+        title={t('empty.title')}
+        description={t('empty.description')}
         icons={[FileText, BarChart2, TrendingUp]}
       />
     );
@@ -100,8 +102,8 @@ export default function DashboardStats({ tenantId, workflowId }: DashboardStatsP
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Análisis de Solicitudes por Workflow</CardTitle>
-        <CardDescription>Distribución de solicitudes por tipo de workflow en los últimos 6 meses</CardDescription>
+        <CardTitle>{t('title')}</CardTitle>
+        <CardDescription>{t('description')}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="h-[300px]">
@@ -112,9 +114,9 @@ export default function DashboardStats({ tenantId, workflowId }: DashboardStatsP
               <Tooltip
                 formatter={(value, name) => {
                   const nameStr = typeof name === 'string' ? name : String(name);
-                  return [`${value} solicitudes`, nameStr];
+                  return [`${value} ${t('tooltip.requests')}`, nameStr];
                 }}
-                labelFormatter={(label) => `Mes: ${label}`}
+                labelFormatter={(label) => `${t('tooltip.month')}: ${label}`}
               />
               {workflows.map((workflow, index) => (
                 <Bar key={workflow.id} dataKey={workflow.name} fill={generateColor(index, workflows.length)} radius={[4, 4, 0, 0]} />

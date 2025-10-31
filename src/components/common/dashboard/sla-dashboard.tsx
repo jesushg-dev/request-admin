@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import EmptyState from '@/components/shared/empty-state';
+import { useTranslations } from 'next-intl';
 
 import type { SLAFilterValues } from './sla-filters';
 
@@ -128,9 +129,10 @@ function MetricCard({ title, value, description, trend, icon, iconColor }: Metri
 }
 
 function SLADashboardSkeleton() {
+  const t = useTranslations('admin.dashboard.slaDashboard');
   return (
     <div className="space-y-6">
-      {/* Skeletons para las primeras 4 tarjetas de métricas */}
+      {/* Skeletons for first 4 metric cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {[...Array(4)].map((_, i) => (
           <Card key={i}>
@@ -146,7 +148,7 @@ function SLADashboardSkeleton() {
         ))}
       </div>
 
-      {/* Skeletons para las siguientes 4 tarjetas de métricas */}
+      {/* Skeletons for next 4 metric cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {[...Array(4)].map((_, i) => (
           <Card key={i}>
@@ -162,7 +164,7 @@ function SLADashboardSkeleton() {
         ))}
       </div>
 
-      {/* Skeleton para gráficos principales */}
+      {/* Main charts skeleton */}
       <div className="grid gap-4 md:grid-cols-2">
         {/* Pie Chart Skeleton */}
         <Card>
@@ -197,7 +199,7 @@ function SLADashboardSkeleton() {
         </Card>
       </div>
 
-      {/* Skeleton para tendencia de cumplimiento */}
+      {/* Compliance trend skeleton */}
       <Card>
         <CardHeader>
           <Skeleton className="h-6 w-64 mb-1" />
@@ -215,7 +217,7 @@ function SLADashboardSkeleton() {
         </CardContent>
       </Card>
 
-      {/* Skeleton para análisis por hora */}
+      {/* Hourly analysis skeleton */}
       <Card>
         <CardHeader>
           <Skeleton className="h-6 w-56 mb-1" />
@@ -233,7 +235,7 @@ function SLADashboardSkeleton() {
         </CardContent>
       </Card>
 
-      {/* Skeleton para paneles de detalle */}
+      {/* Detail panels skeleton */}
       <div className="grid gap-4 md:grid-cols-3">
         {[...Array(3)].map((_, panelIndex) => (
           <Card key={panelIndex}>
@@ -260,6 +262,7 @@ function SLADashboardSkeleton() {
 }
 
 export function SLADashboard({ tenantId, filters }: SLADashboardProps) {
+  const t = useTranslations('admin.dashboard.slaDashboard');
   const [data, setData] = useState<SLADataResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -285,8 +288,8 @@ export function SLADashboard({ tenantId, filters }: SLADashboardProps) {
   if (!data) {
     return (
       <EmptyState
-        title="No hay datos de SLA disponibles"
-        description="Aún no se han registrado solicitudes con información de SLA.\nLos datos aparecerán aquí una vez que se creen solicitudes."
+        title={t('empty.title')}
+        description={t('empty.description')}
         icons={[FileText, Target, Clock]}
       />
     );
@@ -294,46 +297,46 @@ export function SLADashboard({ tenantId, filters }: SLADashboardProps) {
 
   return (
     <div className="space-y-6">
-      {/* Métricas principales de SLA */}
+      {/* Main SLA metrics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <MetricCard title="Cumplimiento de SLA" value={`${data.compliance.toFixed(1)}%`} trend={data.trends.complianceTrend} icon={<CheckCircle className="h-4 w-4" />} iconColor="text-emerald-500" />
+        <MetricCard title={t('cards.compliance.title')} value={`${data.compliance.toFixed(1)}%`} trend={data.trends.complianceTrend} icon={<CheckCircle className="h-4 w-4" />} iconColor="text-emerald-500" />
         <MetricCard
-          title="Tiempo Promedio de Resolución"
-          value={`${data.avgResolutionTime.toFixed(1)} días`}
+          title={t('cards.avgResolutionTime.title')}
+          value={`${data.avgResolutionTime.toFixed(1)} ${t('cards.avgResolutionTime.unit')}`}
           trend={data.trends.resolutionTimeTrend}
           icon={<Clock className="h-4 w-4" />}
           iconColor="text-blue-500"
         />
-        <MetricCard title="Solicitudes en Riesgo" value={data.atRisk.toString()} trend={data.trends.atRiskTrend} icon={<AlertTriangle className="h-4 w-4" />} iconColor="text-amber-500" />
-        <MetricCard title="Solicitudes Vencidas" value={data.overdue.toString()} trend={data.trends.overdueTrend} icon={<AlertTriangle className="h-4 w-4" />} iconColor="text-red-500" />
+        <MetricCard title={t('cards.atRisk.title')} value={data.atRisk.toString()} trend={data.trends.atRiskTrend} icon={<AlertTriangle className="h-4 w-4" />} iconColor="text-amber-500" />
+        <MetricCard title={t('cards.overdue.title')} value={data.overdue.toString()} trend={data.trends.overdueTrend} icon={<AlertTriangle className="h-4 w-4" />} iconColor="text-red-500" />
       </div>
 
-      {/* Segunda fila de métricas */}
+      {/* Second row of metrics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <MetricCard title="SLA Promedio por Solicitud" value={`${data.avgSlaHours}h`} description="Tiempo asignado promedio" icon={<Calendar className="h-4 w-4" />} iconColor="text-purple-500" />
-        <MetricCard title="Escalaciones por SLA" value="0" trend={{ value: 0, isPositive: true, text: 'N/A' }} icon={<TrendingUp className="h-4 w-4" />} iconColor="text-orange-500" />
+        <MetricCard title={t('cards.avgSlaHours.title')} value={`${data.avgSlaHours}${t('cards.avgSlaHours.unit')}`} description={t('cards.avgSlaHours.description')} icon={<Calendar className="h-4 w-4" />} iconColor="text-purple-500" />
+        <MetricCard title={t('cards.escalations.title')} value="0" trend={{ value: 0, isPositive: true, text: t('cards.escalations.trendText') }} icon={<TrendingUp className="h-4 w-4" />} iconColor="text-orange-500" />
         <MetricCard
-          title="Equipos con Mejor SLA"
+          title={t('cards.bestWorkflow.title')}
           value={data.bestWorkflow.name}
-          description={`${data.bestWorkflow.compliance.toFixed(1)}% de cumplimiento`}
+          description={t('cards.bestWorkflow.description', { compliance: data.bestWorkflow.compliance.toFixed(1) })}
           icon={<Users className="h-4 w-4" />}
           iconColor="text-green-500"
         />
         <MetricCard
-          title="Alertas Activas"
+          title={t('cards.activeAlerts.title')}
           value={data.alerts.length.toString()}
-          description="Solicitudes que requieren atención"
+          description={t('cards.activeAlerts.description')}
           icon={<AlertTriangle className="h-4 w-4" />}
           iconColor="text-red-500"
         />
       </div>
 
-      {/* Gráficos principales */}
+      {/* Primary charts */}
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Estado de SLA</CardTitle>
-            <CardDescription>Distribución de solicitudes por estado de SLA</CardDescription>
+            <CardTitle>{t('charts.pie.title')}</CardTitle>
+            <CardDescription>{t('charts.pie.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[300px]">
@@ -352,7 +355,7 @@ export function SLADashboard({ tenantId, filters }: SLADashboardProps) {
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => [`${value} solicitudes`, 'Cantidad']} />
+                  <Tooltip formatter={(value) => [`${value} ${t('charts.pie.tooltipUnit')}`, t('charts.pie.tooltipLabel')]} />
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>
@@ -362,8 +365,8 @@ export function SLADashboard({ tenantId, filters }: SLADashboardProps) {
 
         <Card>
           <CardHeader>
-            <CardTitle>SLA por Workflow</CardTitle>
-            <CardDescription>Distribución de estados de SLA por tipo de workflow</CardDescription>
+            <CardTitle>{t('charts.workflow.title')}</CardTitle>
+            <CardDescription>{t('charts.workflow.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[300px]">
@@ -373,10 +376,10 @@ export function SLADashboard({ tenantId, filters }: SLADashboardProps) {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="onTime" name="A tiempo" stackId="a" fill="#3b82f6" />
-                  <Bar dataKey="warning" name="Próximo a vencer" stackId="a" fill="#f59e0b" />
-                  <Bar dataKey="overdue" name="Vencido" stackId="a" fill="#ef4444" />
-                  <Bar dataKey="completed" name="Completado" stackId="a" fill="#10b981" />
+                  <Bar dataKey="onTime" name={t('charts.workflow.onTime')} stackId="a" fill="#3b82f6" />
+                  <Bar dataKey="warning" name={t('charts.workflow.warning')} stackId="a" fill="#f59e0b" />
+                  <Bar dataKey="overdue" name={t('charts.workflow.overdue')} stackId="a" fill="#ef4444" />
+                  <Bar dataKey="completed" name={t('charts.workflow.completed')} stackId="a" fill="#10b981" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -384,11 +387,11 @@ export function SLADashboard({ tenantId, filters }: SLADashboardProps) {
         </Card>
       </div>
 
-      {/* Tendencia de cumplimiento */}
+      {/* Compliance trend */}
       <Card>
         <CardHeader>
-          <CardTitle>Tendencia de Cumplimiento de SLA</CardTitle>
-          <CardDescription>Porcentaje de cumplimiento y volumen de solicitudes en los últimos 6 meses</CardDescription>
+          <CardTitle>{t('charts.trend.title')}</CardTitle>
+          <CardDescription>{t('charts.trend.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-[300px]">
@@ -399,20 +402,20 @@ export function SLADashboard({ tenantId, filters }: SLADashboardProps) {
                 <YAxis yAxisId="right" orientation="right" />
                 <Tooltip />
                 <Legend />
-                <Area yAxisId="left" type="monotone" dataKey="cumplimiento" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.3} name="% Cumplimiento" />
-                <Line yAxisId="left" type="monotone" dataKey="promedio" stroke="#d1d5db" strokeDasharray="5 5" name="Objetivo (85%)" />
-                <Bar yAxisId="right" dataKey="solicitudes" fill="#f59e0b" fillOpacity={0.7} name="Total Solicitudes" />
+                <Area yAxisId="left" type="monotone" dataKey="cumplimiento" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.3} name={t('charts.trend.compliance')} />
+                <Line yAxisId="left" type="monotone" dataKey="promedio" stroke="#d1d5db" strokeDasharray="5 5" name={t('charts.trend.target')} />
+                <Bar yAxisId="right" dataKey="solicitudes" fill="#f59e0b" fillOpacity={0.7} name={t('charts.trend.totalRequests')} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </CardContent>
       </Card>
 
-      {/* Análisis por hora del día */}
+      {/* Hourly analysis */}
       <Card>
         <CardHeader>
-          <CardTitle>Violaciones de SLA por Hora</CardTitle>
-          <CardDescription>Análisis de incumplimientos de SLA durante el día</CardDescription>
+          <CardTitle>{t('charts.hourly.title')}</CardTitle>
+          <CardDescription>{t('charts.hourly.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-[300px]">
@@ -422,24 +425,24 @@ export function SLADashboard({ tenantId, filters }: SLADashboardProps) {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="violations" stroke="#ef4444" name="Violaciones de SLA" />
-                <Line type="monotone" dataKey="total" stroke="#3b82f6" name="Total Solicitudes" />
+                <Line type="monotone" dataKey="violations" stroke="#ef4444" name={t('charts.hourly.violations')} />
+                <Line type="monotone" dataKey="total" stroke="#3b82f6" name={t('charts.hourly.totalRequests')} />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </CardContent>
       </Card>
 
-      {/* Paneles de detalle */}
+      {/* Detail panels */}
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader>
-            <CardTitle>SLA por Departamento</CardTitle>
-            <CardDescription>Cumplimiento de SLA por departamento</CardDescription>
+            <CardTitle>{t('panels.dept.title')}</CardTitle>
+            <CardDescription>{t('panels.dept.description')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {data.slaDeptData.length === 0 ? (
-              <div className="text-center text-sm text-muted-foreground py-4">No hay datos disponibles</div>
+              <div className="text-center text-sm text-muted-foreground py-4">{t('panels.dept.empty')}</div>
             ) : (
               data.slaDeptData.slice(0, 4).map((dept: SLADeptData) => (
                 <div key={dept.name} className="space-y-2">
@@ -458,12 +461,12 @@ export function SLADashboard({ tenantId, filters }: SLADashboardProps) {
 
         <Card>
           <CardHeader>
-            <CardTitle>Tiempo Promedio de Resolución</CardTitle>
-            <CardDescription>Por tipo de solicitud (en horas)</CardDescription>
+            <CardTitle>{t('panels.avgTime.title')}</CardTitle>
+            <CardDescription>{t('panels.avgTime.description')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {data.avgTimeByType.length === 0 ? (
-              <div className="text-center text-sm text-muted-foreground py-4">No hay datos disponibles</div>
+              <div className="text-center text-sm text-muted-foreground py-4">{t('panels.avgTime.empty')}</div>
             ) : (
               data.avgTimeByType.map((type: SLATimeByType) => {
                 const percentage = Math.min((type.hours / 24) * 100, 100);
@@ -485,13 +488,13 @@ export function SLADashboard({ tenantId, filters }: SLADashboardProps) {
 
         <Card>
           <CardHeader>
-            <CardTitle>Alertas de SLA</CardTitle>
-            <CardDescription>Solicitudes que requieren atención inmediata</CardDescription>
+            <CardTitle>{t('panels.alerts.title')}</CardTitle>
+            <CardDescription>{t('panels.alerts.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {data.alerts.length === 0 ? (
-                <div className="text-center text-sm text-muted-foreground py-4">No hay alertas de SLA</div>
+                <div className="text-center text-sm text-muted-foreground py-4">{t('panels.alerts.empty')}</div>
               ) : (
                 data.alerts.map((alert: SLAAlert) => (
                   <div

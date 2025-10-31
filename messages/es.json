@@ -820,6 +820,140 @@
         "logout": "Cerrar sesión"
       }
     },
+    "dashboard": {
+      "page": {
+        "dashboardTitle": "Dashboard",
+        "welcome": "Bienvenido, {user}, al sistema de gestión de solicitudes de {tenant}.",
+        "newRequest": "Nueva Solicitud",
+        "tabs": {
+          "general": "General",
+          "workflow": "Flujo de Trabajo",
+          "sla": "SLAs"
+        },
+          "recentRequests": {
+            "title": "Solicitudes Recientes",
+            "titleWithWorkflow": "Solicitudes Recientes - {workflow}"
+          },
+        "searchApplied": {
+          "title": "Búsqueda aplicada",
+          "description": "Los filtros han sido aplicados correctamente"
+        },
+        "workflowSelected": {
+          "title": "Flujo de trabajo seleccionado",
+          "description": "Se ha seleccionado el flujo: {workflowId}"
+        }
+      },
+      "slaDashboard": {
+        "empty": {
+          "title": "No hay datos de SLA disponibles",
+          "description": "Aún no se han registrado solicitudes con información de SLA.\nLos datos aparecerán aquí una vez que se creen solicitudes."
+        },
+        "cards": {
+          "compliance": { "title": "Cumplimiento de SLA" },
+          "avgResolutionTime": { "title": "Tiempo Promedio de Resolución", "unit": "días" },
+          "atRisk": { "title": "Solicitudes en Riesgo" },
+          "overdue": { "title": "Solicitudes Vencidas" },
+          "avgSlaHours": { "title": "SLA Promedio por Solicitud", "unit": "h", "description": "Tiempo asignado promedio" },
+          "escalations": { "title": "Escalaciones por SLA", "trendText": "N/A" },
+          "bestWorkflow": { "title": "Equipos con Mejor SLA", "description": "{compliance}% de cumplimiento" },
+          "activeAlerts": { "title": "Alertas Activas", "description": "Solicitudes que requieren atención" }
+        },
+        "charts": {
+          "pie": { "title": "Estado de SLA", "description": "Distribución de solicitudes por estado de SLA", "tooltipUnit": "solicitudes", "tooltipLabel": "Cantidad" },
+          "workflow": {
+            "title": "SLA por Workflow",
+            "description": "Distribución de estados de SLA por tipo de workflow",
+            "onTime": "A tiempo",
+            "warning": "Próximo a vencer",
+            "overdue": "Vencido",
+            "completed": "Completado"
+          },
+          "trend": {
+            "title": "Tendencia de Cumplimiento de SLA",
+            "description": "Porcentaje de cumplimiento y volumen de solicitudes en los últimos 6 meses",
+            "compliance": "% Cumplimiento",
+            "target": "Objetivo (85%)",
+            "totalRequests": "Total Solicitudes"
+          },
+          "hourly": {
+            "title": "Violaciones de SLA por Hora",
+            "description": "Análisis de incumplimientos de SLA durante el día",
+            "violations": "Violaciones de SLA",
+            "totalRequests": "Total Solicitudes"
+          }
+        },
+        "panels": {
+          "dept": { "title": "SLA por Departamento", "description": "Cumplimiento de SLA por departamento", "empty": "No hay datos disponibles" },
+          "avgTime": { "title": "Tiempo Promedio de Resolución", "description": "Por tipo de solicitud (en horas)", "empty": "No hay datos disponibles" },
+          "alerts": { "title": "Alertas de SLA", "description": "Solicitudes que requieren atención inmediata", "empty": "No hay alertas de SLA" }
+        }
+      },
+      "slaFilters": {
+        "labels": { "status": "Estado de SLA", "slaPercentage": "Porcentaje de SLA consumido", "timeRange": "Tiempo restante de SLA", "workflowType": "Tipo de Workflow", "search": "Buscar por ID o descripción" },
+        "status": { "all": "Todos los estados", "onTime": "A tiempo", "warning": "Próximo a vencer", "overdue": "Vencido", "completed": "Completado" },
+        "badges": { "normal": "Normal" },
+        "placeholders": { "selectRange": "Seleccionar rango", "selectWorkflow": "Seleccionar workflow", "search": "Buscar solicitudes..." },
+        "timeRanges": { "all": "Todos los rangos", "lessThan1h": "Menos de 1 hora", "1to4h": "1 a 4 horas", "4to24h": "4 a 24 horas", "1to3d": "1 a 3 días", "moreThan3d": "Más de 3 días", "overdue": "Tiempo vencido" },
+        "workflows": { "all": "Todos los workflows" },
+        "buttons": { "search": "Buscar" }
+      },
+      "workflowSelector": {
+        "title": "Estadísticas por flujo de trabajo",
+        "subtitle": "Selecciona un flujo de trabajo para ver métricas específicas",
+        "placeholders": { "select": "Seleccione un flujo de trabajo" },
+        "options": { "all": "Todos los flujos", "categories": "categorías" },
+        "helper": "Selecciona un flujo de trabajo o 'Todos los flujos' para ver las métricas generales"
+      },
+      "recentRequests": {
+        "table": {
+          "id": "ID",
+          "title": "Título",
+          "requester": "Solicitante",
+          "department": "Departamento",
+          "workflow": "Workflow",
+          "status": "Estado",
+          "priority": "Prioridad",
+          "date": "Fecha",
+          "actions": "Acciones"
+        },
+        "loading": "Cargando...",
+        "empty": "No hay solicitudes recientes",
+        "view": "Ver"
+      },
+      "quickStats": {
+        "pending": { "title": "Solicitudes Pendientes", "description": "Solicitudes que requieren atención", "highPriority": "{count} con prioridad alta" },
+        "completed": { "title": "Solicitudes Completadas", "description": "Solicitudes resueltas este mes", "avgResolution": "Tiempo promedio: {days} días" },
+        "reports": { "title": "Reportes", "description": "Análisis de desempeño", "ctaHint": "Accede a reportes detallados" },
+        "actions": { "viewAll": "Ver todas", "viewReports": "Ver reportes" }
+      },
+      "stats": {
+        "title": "Análisis de Solicitudes por Workflow",
+        "description": "Distribución de solicitudes por tipo de workflow en los últimos 6 meses",
+        "empty": { "title": "No hay estadísticas disponibles", "description": "Aún no se han registrado solicitudes.\nLas estadísticas aparecerán aquí una vez que se creen solicitudes." },
+        "tooltip": { "requests": "solicitudes", "month": "Mes" }
+      },
+      "metricsClient": {
+        "loadError": { "title": "Error al cargar métricas" }
+        },
+        "metrics": {
+          "general": {
+            "title": "Métricas Generales",
+            "vsLastMonth": "vs. mes anterior",
+            "totalRequests": { "title": "Total de Solicitudes" },
+            "avgResolutionTime": { "title": "Tiempo Promedio de Resolución", "unit": "días" },
+            "resolutionRate": { "title": "Tasa de Resolución" },
+            "pending": { "title": "Solicitudes Pendientes" }
+          },
+          "sla": {
+            "title": "Métricas de SLA y Estados Fijos",
+            "vsLastMonth": "vs. mes anterior",
+            "overdue": { "title": "Solicitudes Vencidas (SLA)" },
+            "compliance": { "title": "SLA Promedio Cumplido" },
+            "atRisk": { "title": "SLA en Riesgo" },
+            "draft": { "title": "Solicitudes en Borrador" }
+          }
+        }
+    },
     "area": {
       "main": {
         "entityLabel": "área",

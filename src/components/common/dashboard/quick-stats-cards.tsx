@@ -7,6 +7,7 @@ import { AlertTriangle, ArrowRight, CheckCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useTranslations } from 'next-intl';
 
 interface QuickStatsProps {
   tenantId: string;
@@ -14,6 +15,7 @@ interface QuickStatsProps {
 }
 
 export default function QuickStatsCards({ tenantId, workflowId }: QuickStatsProps) {
+  const t = useTranslations('admin.dashboard.quickStats');
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -59,19 +61,19 @@ export default function QuickStatsCards({ tenantId, workflowId }: QuickStatsProp
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle>Solicitudes Pendientes</CardTitle>
-          <CardDescription>Solicitudes que requieren atención</CardDescription>
+          <CardTitle>{t('pending.title')}</CardTitle>
+          <CardDescription>{t('pending.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-4xl font-bold">{data.pendingRequests.value}</div>
           <div className="mt-2 flex items-center text-sm text-muted-foreground">
-            <span>{data.pendingRequests.highPriority || 0} con prioridad alta</span>
+            <span>{t('pending.highPriority', { count: data.pendingRequests.highPriority || 0 })}</span>
           </div>
         </CardContent>
         <CardFooter>
           <Button variant="ghost" size="sm" className="w-full" asChild>
             <Link href={{ pathname: '/admin/[tenantId]/requests', params: { tenantId } }} className="flex items-center gap-1">
-              Ver todas
+              {t('actions.viewAll')}
               <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
           </Button>
@@ -80,19 +82,19 @@ export default function QuickStatsCards({ tenantId, workflowId }: QuickStatsProp
 
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle>Solicitudes Completadas</CardTitle>
-          <CardDescription>Solicitudes resueltas este mes</CardDescription>
+          <CardTitle>{t('completed.title')}</CardTitle>
+          <CardDescription>{t('completed.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-4xl font-bold">{data.completedRequests.value}</div>
           <div className="mt-2 flex items-center text-sm text-muted-foreground">
-            <span>Tiempo promedio: {data.completedRequests.avgResolutionTime.toFixed(1)} días</span>
+            <span>{t('completed.avgResolution', { days: data.completedRequests.avgResolutionTime.toFixed(1) })}</span>
           </div>
         </CardContent>
         <CardFooter>
           <Button variant="ghost" size="sm" className="w-full" asChild>
             <Link href={{ pathname: '/admin/[tenantId]/requests', params: { tenantId } }} className="flex items-center gap-1">
-              Ver todas
+              {t('actions.viewAll')}
               <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
           </Button>
@@ -101,21 +103,21 @@ export default function QuickStatsCards({ tenantId, workflowId }: QuickStatsProp
 
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle>Reportes</CardTitle>
-          <CardDescription>Análisis de desempeño</CardDescription>
+          <CardTitle>{t('reports.title')}</CardTitle>
+          <CardDescription>{t('reports.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-4xl font-bold">
             <AlertTriangle className="h-8 w-8" />
           </div>
           <div className="mt-2 flex items-center text-sm text-muted-foreground">
-            <span>Accede a reportes detallados</span>
+            <span>{t('reports.ctaHint')}</span>
           </div>
         </CardContent>
         <CardFooter>
           <Button variant="ghost" size="sm" className="w-full" asChild>
             <Link href={{ pathname: '/admin/[tenantId]/reports', params: { tenantId } }} className="flex items-center gap-1">
-              Ver reportes
+              {t('actions.viewReports')}
               <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
           </Button>

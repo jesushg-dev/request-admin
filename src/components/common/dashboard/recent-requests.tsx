@@ -7,6 +7,7 @@ import { Link } from '@/i18n/routing';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useTranslations } from 'next-intl';
 
 interface Request {
   id: string;
@@ -24,7 +25,7 @@ interface RecentRequestsProps {
   workflowFilter?: string | null;
 }
 
-// Función para determinar el color de la insignia de estado
+// Determine badge variant for status
 function getStatusBadgeVariant(status: string): 'default' | 'secondary' | 'destructive' | 'outline' {
   switch (status) {
     case 'En progreso':
@@ -34,7 +35,7 @@ function getStatusBadgeVariant(status: string): 'default' | 'secondary' | 'destr
     case 'En revisión':
       return 'secondary';
     case 'Cerrado':
-      return 'default'; // Note: "success" is not a valid variant, using "default"
+      return 'default';
     case 'Borrador':
       return 'outline';
     case 'Cancelado':
@@ -44,13 +45,13 @@ function getStatusBadgeVariant(status: string): 'default' | 'secondary' | 'destr
   }
 }
 
-// Función para determinar el color de la insignia de prioridad
+// Determine badge variant for priority
 function getPriorityBadgeVariant(priority: string): 'default' | 'secondary' | 'destructive' | 'outline' {
   switch (priority) {
     case 'Alta':
       return 'destructive';
     case 'Media':
-      return 'default'; // Note: "warning" is not a valid variant, using "default"
+      return 'default';
     case 'Baja':
       return 'secondary';
     default:
@@ -59,6 +60,7 @@ function getPriorityBadgeVariant(priority: string): 'default' | 'secondary' | 'd
 }
 
 export default function RecentRequests({ tenantId, workflowFilter }: RecentRequestsProps) {
+  const t = useTranslations('admin.dashboard.recentRequests');
   const [requests, setRequests] = useState<Request[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -83,22 +85,22 @@ export default function RecentRequests({ tenantId, workflowFilter }: RecentReque
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Título</TableHead>
-              <TableHead>Solicitante</TableHead>
-              <TableHead>Departamento</TableHead>
-              {!workflowFilter && <TableHead>Workflow</TableHead>}
-              <TableHead>Estado</TableHead>
-              <TableHead>Prioridad</TableHead>
-              <TableHead>Fecha</TableHead>
-              <TableHead className="text-right">Acciones</TableHead>
+              <TableHead>{t('table.id')}</TableHead>
+              <TableHead>{t('table.title')}</TableHead>
+              <TableHead>{t('table.requester')}</TableHead>
+              <TableHead>{t('table.department')}</TableHead>
+              {!workflowFilter && <TableHead>{t('table.workflow')}</TableHead>}
+              <TableHead>{t('table.status')}</TableHead>
+              <TableHead>{t('table.priority')}</TableHead>
+              <TableHead>{t('table.date')}</TableHead>
+              <TableHead className="text-right">{t('table.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {[...Array(5)].map((_, i) => (
               <TableRow key={i}>
                 <TableCell colSpan={9} className="text-center py-4">
-                  Cargando...
+                  {t('loading')}
                 </TableCell>
               </TableRow>
             ))}
@@ -114,21 +116,21 @@ export default function RecentRequests({ tenantId, workflowFilter }: RecentReque
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Título</TableHead>
-              <TableHead>Solicitante</TableHead>
-              <TableHead>Departamento</TableHead>
-              {!workflowFilter && <TableHead>Workflow</TableHead>}
-              <TableHead>Estado</TableHead>
-              <TableHead>Prioridad</TableHead>
-              <TableHead>Fecha</TableHead>
-              <TableHead className="text-right">Acciones</TableHead>
+              <TableHead>{t('table.id')}</TableHead>
+              <TableHead>{t('table.title')}</TableHead>
+              <TableHead>{t('table.requester')}</TableHead>
+              <TableHead>{t('table.department')}</TableHead>
+              {!workflowFilter && <TableHead>{t('table.workflow')}</TableHead>}
+              <TableHead>{t('table.status')}</TableHead>
+              <TableHead>{t('table.priority')}</TableHead>
+              <TableHead>{t('table.date')}</TableHead>
+              <TableHead className="text-right">{t('table.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             <TableRow>
               <TableCell colSpan={9} className="text-center py-4 text-muted-foreground">
-                No hay solicitudes recientes
+                {t('empty')}
               </TableCell>
             </TableRow>
           </TableBody>
@@ -142,15 +144,15 @@ export default function RecentRequests({ tenantId, workflowFilter }: RecentReque
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>ID</TableHead>
-            <TableHead>Título</TableHead>
-            <TableHead>Solicitante</TableHead>
-            <TableHead>Departamento</TableHead>
-            {!workflowFilter && <TableHead>Workflow</TableHead>}
-            <TableHead>Estado</TableHead>
-            <TableHead>Prioridad</TableHead>
-            <TableHead>Fecha</TableHead>
-            <TableHead className="text-right">Acciones</TableHead>
+            <TableHead>{t('table.id')}</TableHead>
+            <TableHead>{t('table.title')}</TableHead>
+            <TableHead>{t('table.requester')}</TableHead>
+            <TableHead>{t('table.department')}</TableHead>
+            {!workflowFilter && <TableHead>{t('table.workflow')}</TableHead>}
+            <TableHead>{t('table.status')}</TableHead>
+            <TableHead>{t('table.priority')}</TableHead>
+            <TableHead>{t('table.date')}</TableHead>
+            <TableHead className="text-right">{t('table.actions')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -170,7 +172,7 @@ export default function RecentRequests({ tenantId, workflowFilter }: RecentReque
               <TableCell>{request.created}</TableCell>
               <TableCell className="text-right">
                 <Button variant="ghost" size="sm" asChild>
-                  <Link href={{ pathname: '/admin/[tenantId]/requests/[slug]', params: { tenantId, slug: request.id } }}>Ver</Link>
+                  <Link href={{ pathname: '/admin/[tenantId]/requests/[slug]', params: { tenantId, slug: request.id } }}>{t('view')}</Link>
                 </Button>
               </TableCell>
             </TableRow>
