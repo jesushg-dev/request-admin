@@ -40,6 +40,36 @@ import { MenuItem, NavMain } from './nav-main';
 import { NavUser } from './nav-user';
 import { TenantSwitcher } from './tenant-switcher';
 
+/**
+ * Filters menu items by hiding those that are disabled.
+ * If a parent item has no available sub-items after filtering, it is also hidden.
+ */
+function filterMenuItems(items: MenuItem[]): MenuItem[] {
+  return items
+    .map((item) => {
+      // If it has sub-items, filter out disabled sub-items
+      if (item.items && item.items.length > 0) {
+        const filteredSubItems = item.items.filter((subItem) => !subItem.disabled);
+        // If no sub-items remain after filtering, return null to hide the parent item
+        if (filteredSubItems.length === 0) {
+          return null;
+        }
+        const { disabled, ...itemWithoutDisabled } = item;
+        return {
+          ...itemWithoutDisabled,
+          items: filteredSubItems,
+        };
+      }
+      // If it's a main item without sub-items, filter it if disabled
+      if (item.disabled) {
+        return null;
+      }
+      const { disabled, ...itemWithoutDisabled } = item;
+      return itemWithoutDisabled;
+    })
+    .filter((item) => item !== null) as MenuItem[];
+}
+
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   user: {
     name?: string | null;
@@ -73,7 +103,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
     const canViewAssignmentHierarchy = hasPermission(PERMISSION.ASSIGNMENT_HIERARCHY.VIEW);
     const canViewRequestHierarchy = hasPermission(PERMISSION.REQUEST_HIERARCHY.VIEW);
 
-    return [
+    const allItems: MenuItem[] = [
       {
         title: t('dashboard'),
         icon: HomeIcon,
@@ -137,7 +167,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
             disabled: !canViewAgreements,
           },
         ],
-        disabled: false, // Parent is not disabled, but children might be
+        disabled: !canViewDataRooms || !canViewDocuments || !canViewSharedLinks || !canViewAgreements, 
       },
       {
         title: t('configuration'),
@@ -198,9 +228,12 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
             disabled: !canViewWorkflows,
           },
         ],
-        disabled: false, // Parent is not disabled, but children might be
+        disabled: 
+        !canViewAreas || !canViewAssignmentHierarchy || !canViewRequestTypes || !canViewRequestHierarchy || !canViewRequirements || !canViewRequirementTypes || !canViewPriorities || !canViewWorkflows,
       },
     ];
+
+    return filterMenuItems(allItems);
   }, [t, tenantId, hasPermission]);
 
   const systemMain = useMemo<MenuItem[]>(() => {
@@ -208,16 +241,17 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
     const canViewRoles = hasPermission(PERMISSION.ROLE_MANAGEMENT.VIEW);
     const canViewIdentificationTypes = hasPermission(PERMISSION.IDENTIFICATION_TYPE.VIEW);
 
-    return [
+    const allItems: MenuItem[] = [
       {
         title: t('security'),
         icon: ShieldIcon,
         items: [
-          /*{
+          {
             title: t('dashboard'),
             url: { pathname: '/admin/[tenantId]/security', params: { tenantId } },
             icon: RadarIcon,
-          },*/
+            disabled: !canViewUsers || !canViewRoles,
+          },
           {
             title: t('identificationTypes'),
             url: { pathname: '/admin/[tenantId]/security/identification-types', params: { tenantId } },
@@ -237,7 +271,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
             disabled: !canViewUsers,
           },
         ],
-        disabled: false, // Parent is not disabled, but children might be
+        disabled:   !canViewUsers || !canViewRoles || !canViewIdentificationTypes, 
       },
       {
         title: t('settings'),
@@ -254,6 +288,8 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
         disabled: false, // Help accessible to all authenticated users
       },
     ];
+
+    return filterMenuItems(allItems);
   }, [t, tenantId, hasPermission]);
 
   return (
