@@ -1,67 +1,67 @@
-# Flujo Detallado
+# Detailed Flow
 
-## Crear usuario y asignar roles:
+## Create user and assign roles:
 
-- El sistema crea un usuario **inactivo** y le asigna roles iniciales.
-- Asociar al usuario con un tenant, si es necesario desde este punto.
+- The system creates an **inactive** user and assigns initial roles.
+- Associate the user with a tenant, if necessary from this point.
 
-## Enviar un correo de verificación:
+## Send verification email:
 
-- Enviar un correo con:
-  - Un **enlace para verificar el correo** (firma única, segura, con expiración).
-  - Un **código de acceso al tenant** (puede ser el mismo que el de verificación del correo o un código separado, dependiendo de tus necesidades).
+- Send an email with:
+  - A **link to verify the email** (unique, secure signature, with expiration).
+  - A **tenant access code** (can be the same as the email verification code or a separate code, depending on your needs).
 
-## Usuario verifica el correo:
+## User verifies email:
 
-- Al hacer clic en el enlace del correo, el sistema marca el correo como **verificado**.
-- El usuario queda **activo**, pero **no tiene acceso al tenant todavía**.
+- When clicking the email link, the system marks the email as **verified**.
+- The user becomes **active**, but **does not have access to the tenant yet**.
 
-## Usuario ingresa el código de acceso al tenant:
+## User enters tenant access code:
 
-- El usuario accede a una interfaz donde debe ingresar el **código proporcionado**.
-- El sistema valida:
-  - Que el código sea válido y no haya expirado.
-  - Que el código esté asociado al usuario correcto.
-  - Que el código esté asociado al tenant correspondiente.
+- The user accesses an interface where they must enter the **provided code**.
+- The system validates:
+  - That the code is valid and has not expired.
+  - That the code is associated with the correct user.
+  - That the code is associated with the corresponding tenant.
 
-## Usuario obtiene acceso al tenant:
+## User gains access to tenant:
 
-- Si el código es válido, el sistema **activa el acceso** del usuario al tenant y lo registra como miembro autorizado.
+- If the code is valid, the system **activates the user's access** to the tenant and registers them as an authorized member.
 
-## Inicio de sesión normal:
+## Normal login:
 
-- Después de estos pasos, el usuario puede iniciar sesión en el tenant normalmente, sin necesidad de códigos adicionales.
-
----
-
-# Ventajas del Flujo
-
-## Seguridad mejorada:
-
-- La verificación de correo asegura que el usuario posee una dirección válida.
-- El código adicional para el tenant garantiza un segundo nivel de validación.
-
-## Flexibilidad:
-
-- Permite manejar múltiples tenants, ya que el acceso se gestiona por códigos específicos.
-
-## Auditoría clara:
-
-- Puedes registrar los pasos completados (correo verificado, código ingresado) para seguimiento y resolución de problemas.
+- After these steps, the user can log in to the tenant normally, without needing additional codes.
 
 ---
 
-# Consideraciones Técnicas
+# Flow Advantages
 
-## Código único por tenant:
+## Enhanced security:
 
-- Genera un código único por tenant y usuario. Opcionalmente, incluye una **expiración** (por ejemplo, 24-48 horas).
-- Almacénalo **cifrado** en la base de datos.
+- Email verification ensures the user owns a valid address.
+- The additional tenant code guarantees a second level of validation.
 
-## Mensajes claros:
+## Flexibility:
 
-- Guía al usuario en cada paso con mensajes claros y recordatorios de qué necesita completar para obtener acceso.
+- Allows handling multiple tenants, as access is managed by specific codes.
 
-## Opciones de recuperación:
+## Clear audit trail:
 
-- Si el usuario pierde el código, proporciona una opción para regenerarlo o reenviarlo al correo registrado.
+- You can record completed steps (email verified, code entered) for tracking and troubleshooting.
+
+---
+
+# Technical Considerations
+
+## Unique code per tenant:
+
+- Generate a unique code per tenant and user. Optionally, include an **expiration** (e.g., 24-48 hours).
+- Store it **encrypted** in the database.
+
+## Clear messages:
+
+- Guide the user through each step with clear messages and reminders of what they need to complete to gain access.
+
+## Recovery options:
+
+- If the user loses the code, provide an option to regenerate or resend it to the registered email.

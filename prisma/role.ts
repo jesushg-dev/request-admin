@@ -203,7 +203,7 @@ export interface SystemRoleData {
 export const SYSTEM_ROLES: SystemRoleData[] = [
   {
     name: 'Administrador',
-    description: 'El Administrador es responsable de garantizar la seguridad y el acceso al sistema. Gestiona usuarios, configura el sistema y controla permisos y restricciones para proteger la información. También supervisa tareas como el restablecimiento de contraseñas y la asignación de roles.',
+    description: 'Responsable de garantizar la seguridad y el acceso al sistema. Gestiona usuarios, configura el sistema y controla permisos y restricciones para proteger la información. Supervisa tareas como restablecimiento de contraseñas y asignación de roles.',
     features: ADMINISTRADOR_FEATURES,
     userTenantId: [], // Will be assigned via USER_TENANT_JESUS_ID parameter
   },
@@ -221,7 +221,7 @@ export const SYSTEM_ROLES: SystemRoleData[] = [
   },
   {
     name: 'Distribuidor',
-    description: 'Usuario externo autorizado que representa comercialmente a Claro-Nicaragua. Su función principal es registrar solicitudes en nombre de los clientes, ya sea para activaciones, suspensiones, renovaciones u otros servicios relacionados con telecomunicaciones. Además, puede solicitar apoyo en otros temas vinculados a los servicios provistos por la empresa.',
+    description: 'Usuario externo autorizado que representa comercialmente a Claro-Nicaragua. Su función principal es registrar solicitudes en nombre de los clientes para activaciones, suspensiones, renovaciones u otros servicios de telecomunicaciones.',
     features: DISTRIBUIDOR_FEATURES,
     userTenantId: [],
   },
