@@ -1,4 +1,5 @@
-import { PermissionActions } from '@/constants/permissions';
+import { randomUUID } from 'crypto';
+
 import { PrismaClient } from '@prisma/client';
 
 import { hashPassword } from '@/lib/password';
@@ -27,7 +28,7 @@ import { createTrasladosDeEquiposArea } from './area-seed/traslados-equipos.area
 import { getITILAssignmentTypes } from './assignment-type';
 import { PrismaModules } from './module';
 import { getPriorities } from './priority';
-import { TEST_USERS } from './role';
+import { TEST_USERS, createSystemRoles, SUPERVISOR_FEATURES, COLABORADOR_FEATURES } from './role';
 import { getITILStatuses, getITILTransitions } from './status';
 import { UNSTABLE_TENANT_ID } from './util';
 
@@ -37,7 +38,7 @@ const USER_TENANT_JESUS_ID = '98c74680-9b23-473d-a105-b2591e2cd187';
 const USER_TENANT_DANILO_ID = 'fb420cf8-8820-4fb7-9fe5-bfe7b2f83894';
 
 // Function to create test users with assigned roles
-async function createTestUsersWithRoles(prisma: PrismaClient, tenantId: string, identificationTypeId: string) {
+async function createTestUsersWithRoles(prisma: PrismaClient, tenantId: string, identificationTypeId: string): Promise<string[]> {
   // Get existing roles
   const roles = await prisma.role.findMany({
     where: { tenantId },
@@ -46,25 +47,26 @@ async function createTestUsersWithRoles(prisma: PrismaClient, tenantId: string, 
 
   if (roles.length === 0) {
     console.log('No roles available to assign');
-    return;
+    return [];
   }
+
+  const userTenantIds: string[] = [];
 
   for (let i = 0; i < TEST_USERS.length; i++) {
     const userData = TEST_USERS[i];
-    // Select a role by distributing roles evenly
-    const roleIndex = i % roles.length;
-    const selectedRole = roles[roleIndex];
+    // Find the specific role for this user by name
+    const selectedRole = roles.find((role) => role.name === userData.roleName);
 
-    // Generate unique IDs using timestamp and random
-    const timestamp = Date.now();
-    const random1 = Math.random().toString(36).slice(2, 11);
-    const random2 = Math.random().toString(36).slice(2, 11);
-    const random3 = Math.random().toString(36).slice(2, 11);
-    const random4 = Math.random().toString(36).slice(2, 11);
-    const userId = `test_user_${i + 1}_${timestamp}_${random1}`;
-    const userTenantId = `test_ut_${i + 1}_${timestamp}_${random2}`;
-    const personId = `test_person_${i + 1}_${timestamp}_${random3}`;
-    const accountId = `test_account_${i + 1}_${timestamp}_${random4}`;
+    if (!selectedRole) {
+      console.log(`⚠️  Role '${userData.roleName}' not found for user ${userData.name}. Skipping role assignment.`);
+      continue;
+    }
+
+    // Generate unique UUIDs for each entity
+    const userId = randomUUID();
+    const userTenantId = randomUUID();
+    const personId = randomUUID();
+    const accountId = randomUUID();
 
     // Create the user with their tenant and person
     const user = await prisma.user.create({
@@ -123,10 +125,12 @@ async function createTestUsersWithRoles(prisma: PrismaClient, tenantId: string, 
       },
     });
 
+    userTenantIds.push(userTenantId);
     console.log(`✅ User created: ${userData.name} with role: ${selectedRole.name}`);
   }
 
   console.log(`\n🎉 ${TEST_USERS.length} test users created with assigned roles\n`);
+  return userTenantIds;
 }
 
 async function main() {
@@ -148,11 +152,6 @@ async function main() {
   });
 
   await createModuleAndFeature();
-
-  //////////////////////////
-  // Create System Roles
-  //////////////////////////
-  await createSystemRoles(prisma);
 
   //////////////////////////
   // Create Identification Types
@@ -267,9 +266,14 @@ async function main() {
   });
 
   //////////////////////////
+  // Create System Roles
+  //////////////////////////
+  await createSystemRoles(prisma, UNSTABLE_TENANT_ID, USER_TENANT_JESUS_ID, USER_TENANT_DANILO_ID);
+
+  //////////////////////////
   // Create test users with roles
   //////////////////////////
-  await createTestUsersWithRoles(prisma, UNSTABLE_TENANT_ID, dnIdentificationType.id);
+  const testUserTenantIds = await createTestUsersWithRoles(prisma, UNSTABLE_TENANT_ID, dnIdentificationType.id);
 
   // Create ITIL statuses
   const priorities = getPriorities();
@@ -322,7 +326,7 @@ async function main() {
   //////////////////////////
   const hierarchy = await createAreaHierarchy();
 
-  await createAreas(hierarchy.hierarchyId, hierarchy.hierarchyLevelRequestTypeId, hierarchy.hierarchyLevelCategoryId, hierarchy.hierarchyLevelSubcategoryId);
+  await createAreas(hierarchy.hierarchyId, hierarchy.hierarchyLevelRequestTypeId, hierarchy.hierarchyLevelCategoryId, hierarchy.hierarchyLevelSubcategoryId, testUserTenantIds);
 
   //////////////////////////
   // Create requirements categories
@@ -2702,246 +2706,51 @@ export async function seedITILWorkflow() {
   return { workflow, statuses, transitions };
 }
 
-// Definir permisos comunes para reutilizar
-const SUPERVISOR_FEATURES = [
-  PermissionActions.REQUEST_MANAGEMENT.SCOPED_ASSIGN_USER,
-  PermissionActions.REQUEST_MANAGEMENT.SCOPED_CREATE,
-  PermissionActions.REQUEST_MANAGEMENT.SCOPED_DISABLE,
-  PermissionActions.REQUEST_MANAGEMENT.SCOPED_EDIT,
-  PermissionActions.REQUEST_MANAGEMENT.SCOPED_SEND_DOCUMENTS,
-  PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_PRIORITY,
-  PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_STATUS,
-  PermissionActions.REQUEST_MANAGEMENT.SCOPED_VIEW,
-];
 
-const COLABORADOR_FEATURES = [
-  PermissionActions.REQUEST_MANAGEMENT.SCOPED_CREATE,
-  PermissionActions.REQUEST_MANAGEMENT.SCOPED_SEND_DOCUMENTS,
-  PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_STATUS,
-  PermissionActions.REQUEST_MANAGEMENT.SCOPED_VIEW,
-];
+/**
+ * Helper function to create area roles
+ * 
+ * This function creates Supervisor and Colaborador roles for each area and assigns users to them.
+ * Users are distributed 50/50: first half as Supervisors, second half as Colaboradores.
+ * 
+ * User distribution order:
+ * 1. Jesus Hernandez (System - Administrador)
+ * 2. Danilo Acevedo (System - Analista)
+ * 3-12. Test users in the order they were created (TEST_USERS array)
+ * 
+ * For detailed user information and QA testing, see: docs/TEST_USERS.md
+ * 
+ * @param prisma Prisma client instance
+ * @param area Area object with id and name
+ * @param testUserTenantIds Array of user tenant IDs from test users
+ */
+async function createAreaRoles(
+  prisma: PrismaClient,
+  area: { id: string; name: string },
+  testUserTenantIds: string[]
+) {
+  // Distribute test users between Supervisor and Colaborador roles
+  // Include system users (Jesus and Danilo) as well
+  const allUserTenantIds = [USER_TENANT_JESUS_ID, USER_TENANT_DANILO_ID, ...testUserTenantIds];
+  
+  // Split users: first half as Supervisors, second half as Colaboradores
+  // Example: 12 users → 6 Supervisors (positions 0-5), 6 Colaboradores (positions 6-11)
+  const midPoint = Math.ceil(allUserTenantIds.length / 2);
+  const supervisorUserIds = allUserTenantIds.slice(0, midPoint);
+  const colaboradorUserIds = allUserTenantIds.slice(midPoint);
 
-async function createSystemRoles(prisma: PrismaClient) {
-  const ADMINISTRADOR_FEATURES = [
-    // Dashboard
-    PermissionActions.DASHBOARD.VIEW,
-    PermissionActions.DASHBOARD.EXPORT,
-    // Request Management 
-    PermissionActions.REQUEST_MANAGEMENT.CREATE,
-    PermissionActions.REQUEST_MANAGEMENT.SCOPED_CREATE,
-    PermissionActions.REQUEST_MANAGEMENT.VIEW,
-    PermissionActions.REQUEST_MANAGEMENT.SCOPED_VIEW,
-    PermissionActions.REQUEST_MANAGEMENT.EDIT,
-    PermissionActions.REQUEST_MANAGEMENT.SCOPED_EDIT,
-    PermissionActions.REQUEST_MANAGEMENT.DISABLE,
-    PermissionActions.REQUEST_MANAGEMENT.SCOPED_DISABLE,
-    PermissionActions.REQUEST_MANAGEMENT.ASSIGN_USER,
-    PermissionActions.REQUEST_MANAGEMENT.SCOPED_ASSIGN_USER,
-    PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_STATUS,
-    PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_PRIORITY,
-    PermissionActions.REQUEST_MANAGEMENT.SCOPED_SEND_DOCUMENTS,
-    // User Management
-    PermissionActions.USER_MANAGEMENT.CREATE,
-    PermissionActions.USER_MANAGEMENT.VIEW,
-    PermissionActions.USER_MANAGEMENT.EDIT,
-    PermissionActions.USER_MANAGEMENT.DELETE,
-    // Role Management
-    PermissionActions.ROLE_MANAGEMENT.CREATE,
-    PermissionActions.ROLE_MANAGEMENT.VIEW,
-    PermissionActions.ROLE_MANAGEMENT.EDIT,
-    PermissionActions.ROLE_MANAGEMENT.DELETE,
-    PermissionActions.ROLE_MANAGEMENT.ASSIGN,
-    // Reports
-    PermissionActions.REPORTS.VIEW,
-    PermissionActions.REPORTS.EXPORT,
-    // Configuration Modules
-    PermissionActions.AREA.CREATE,
-    PermissionActions.AREA.VIEW,
-    PermissionActions.AREA.EDIT,
-    PermissionActions.AREA.DELETE,
-    PermissionActions.REQUEST_TYPE.CREATE,
-    PermissionActions.REQUEST_TYPE.VIEW,
-    PermissionActions.REQUEST_TYPE.EDIT,
-    PermissionActions.REQUEST_TYPE.DELETE,
-    PermissionActions.REQUEST_TYPE.ACTIVATE,
-    PermissionActions.REQUIREMENT_TYPE.CREATE,
-    PermissionActions.REQUIREMENT_TYPE.VIEW,
-    PermissionActions.REQUIREMENT_TYPE.EDIT,
-    PermissionActions.REQUIREMENT_TYPE.DELETE,
-    PermissionActions.REQUIREMENT_TYPE.ACTIVATE,
-    PermissionActions.REQUIREMENT.CREATE,
-    PermissionActions.REQUIREMENT.VIEW,
-    PermissionActions.REQUIREMENT.EDIT,
-    PermissionActions.REQUIREMENT.DELETE,
-    PermissionActions.PRIORITY.CREATE,
-    PermissionActions.PRIORITY.VIEW,
-    PermissionActions.PRIORITY.EDIT,
-    PermissionActions.PRIORITY.DELETE,
-    PermissionActions.WORKFLOW.CREATE,
-    PermissionActions.WORKFLOW.VIEW,
-    PermissionActions.WORKFLOW.EDIT,
-    PermissionActions.WORKFLOW.DELETE,
-    PermissionActions.ASSIGNMENT_HIERARCHY.CREATE,
-    PermissionActions.ASSIGNMENT_HIERARCHY.VIEW,
-    PermissionActions.ASSIGNMENT_HIERARCHY.EDIT,
-    PermissionActions.ASSIGNMENT_HIERARCHY.DELETE,
-    PermissionActions.REQUEST_HIERARCHY.CREATE,
-    PermissionActions.REQUEST_HIERARCHY.VIEW,
-    PermissionActions.REQUEST_HIERARCHY.EDIT,
-    PermissionActions.REQUEST_HIERARCHY.DELETE,
-    PermissionActions.IDENTIFICATION_TYPE.CREATE,
-    PermissionActions.IDENTIFICATION_TYPE.VIEW,
-    PermissionActions.IDENTIFICATION_TYPE.EDIT,
-    PermissionActions.IDENTIFICATION_TYPE.DELETE,
-    // Document Management
-    PermissionActions.DOCUMENT_MANAGEMENT.CREATE,
-    PermissionActions.DOCUMENT_MANAGEMENT.VIEW,
-    PermissionActions.DOCUMENT_MANAGEMENT.EDIT,
-    PermissionActions.DOCUMENT_MANAGEMENT.DELETE,
-    PermissionActions.DATA_ROOM.CREATE,
-    PermissionActions.DATA_ROOM.VIEW,
-    PermissionActions.DATA_ROOM.EDIT,
-    PermissionActions.DATA_ROOM.DELETE,
-    PermissionActions.SHARED_LINK.CREATE,
-    PermissionActions.SHARED_LINK.VIEW,
-    PermissionActions.SHARED_LINK.EDIT,
-    PermissionActions.SHARED_LINK.DELETE,
-    PermissionActions.AGREEMENT.CREATE,
-    PermissionActions.AGREEMENT.VIEW,
-    PermissionActions.AGREEMENT.EDIT,
-    PermissionActions.AGREEMENT.DELETE,
-    // Form Designer
-    PermissionActions.FORM_DESIGNER.CREATE,
-    PermissionActions.FORM_DESIGNER.VIEW,
-    PermissionActions.FORM_DESIGNER.EDIT,
-    PermissionActions.FORM_DESIGNER.DELETE,
-    PermissionActions.FORM_DESIGNER.PUBLISH,
-  ];
-
-  const COORDINADOR_FEATURES = [
-    // Dashboard
-    PermissionActions.DASHBOARD.VIEW,
-    PermissionActions.DASHBOARD.EXPORT,
-    // Request Management - Supervisión y asignación
-    PermissionActions.REQUEST_MANAGEMENT.VIEW,
-    PermissionActions.REQUEST_MANAGEMENT.SCOPED_VIEW,
-    PermissionActions.REQUEST_MANAGEMENT.EDIT,
-    PermissionActions.REQUEST_MANAGEMENT.SCOPED_EDIT,
-    PermissionActions.REQUEST_MANAGEMENT.ASSIGN_USER,
-    PermissionActions.REQUEST_MANAGEMENT.SCOPED_ASSIGN_USER,
-    PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_STATUS,
-    PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_PRIORITY,
-    PermissionActions.REQUEST_MANAGEMENT.SCOPED_SEND_DOCUMENTS,
-    // Reports
-    PermissionActions.REPORTS.VIEW,
-    PermissionActions.REPORTS.EXPORT,
-    // Document Management - Visualización
-    PermissionActions.DOCUMENT_MANAGEMENT.VIEW,
-    PermissionActions.DATA_ROOM.VIEW,
-    PermissionActions.SHARED_LINK.VIEW,
-    PermissionActions.AGREEMENT.VIEW,
-  ];
-
-  const ANALISTA_FEATURES = [
-    // Dashboard
-    PermissionActions.DASHBOARD.VIEW,
-    // Request Management - Resolución de solicitudes
-    PermissionActions.REQUEST_MANAGEMENT.VIEW,
-    PermissionActions.REQUEST_MANAGEMENT.SCOPED_VIEW,
-    PermissionActions.REQUEST_MANAGEMENT.EDIT,
-    PermissionActions.REQUEST_MANAGEMENT.SCOPED_EDIT,
-    PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_STATUS,
-    PermissionActions.REQUEST_MANAGEMENT.SCOPED_SEND_DOCUMENTS,
-    // Document Management - Visualización y envío
-    PermissionActions.DOCUMENT_MANAGEMENT.VIEW,
-    PermissionActions.DATA_ROOM.VIEW,
-    PermissionActions.SHARED_LINK.VIEW,
-  ];
-
-  const DISTRIBUIDOR_FEATURES = [
-    // Request Management - Solo crear solicitudes
-    PermissionActions.REQUEST_MANAGEMENT.CREATE,
-    PermissionActions.REQUEST_MANAGEMENT.SCOPED_CREATE,
-    PermissionActions.REQUEST_MANAGEMENT.VIEW,
-    PermissionActions.REQUEST_MANAGEMENT.SCOPED_VIEW,
-    PermissionActions.REQUEST_MANAGEMENT.SCOPED_SEND_DOCUMENTS,
-    // Document Management - Visualización básica
-    PermissionActions.DOCUMENT_MANAGEMENT.VIEW,
-  ];
-
-  const systemRoles = [
-    {
-      name: 'Administrador',
-      description: 'El Administrador es responsable de garantizar la seguridad y el acceso al sistema. Gestiona usuarios, configura el sistema y controla permisos y restricciones para proteger la información. También supervisa tareas como el restablecimiento de contraseñas y la asignación de roles.',
-      features: ADMINISTRADOR_FEATURES,
-      userTenantId: [USER_TENANT_JESUS_ID],
-    },
-    {
-      name: 'Coordinador',
-      description: 'El Coordinador es el encargado de supervisar y gestionar las solicitudes de servicios de telecomunicaciones. Actúa como intermediario entre los usuarios y los analistas, asegurando que las solicitudes se asignen y resuelvan de manera oportuna.',
-      features: COORDINADOR_FEATURES,
-      userTenantId: [],
-    },
-    {
-      name: 'Analista',
-      description: 'El Analista es el responsable de resolver las solicitudes asignadas por el Coordinador. Debe brindar soluciones efectivas y oportunas, siguiendo los procedimientos establecidos por la empresa.',
-      features: ANALISTA_FEATURES,
-      userTenantId: [USER_TENANT_DANILO_ID],
-    },
-    {
-      name: 'Distribuidor',
-      description: 'Usuario externo autorizado que representa comercialmente a Claro-Nicaragua. Su función principal es registrar solicitudes en nombre de los clientes, ya sea para activaciones, suspensiones, renovaciones u otros servicios relacionados con telecomunicaciones. Además, puede solicitar apoyo en otros temas vinculados a los servicios provistos por la empresa.',
-      features: DISTRIBUIDOR_FEATURES,
-      userTenantId: [],
-    },
-  ];
-
-  for (const roleData of systemRoles) {
-    const role = await prisma.role.create({
-      data: {
-        name: roleData.name,
-        description: roleData.description,
-        tenantId: UNSTABLE_TENANT_ID,
-        createdBy: 'system',
-        roleFeature: {
-          create: roleData.features.map((featureKey) => ({
-            tenant: { connect: { id: UNSTABLE_TENANT_ID } },
-            feature: { connect: { key: featureKey } },
-            createdBy: 'system',
-          })),
-        },
-      },
-    });
-
-    // Asignar roles a usuarios si están especificados
-    for (const userTenantId of roleData.userTenantId) {
-      await prisma.userTenantRole.create({
-        data: {
-          tenantId: UNSTABLE_TENANT_ID,
-          userTenantId: userTenantId,
-          roleId: role.id,
-          isActive: true,
-          createdBy: 'system',
-        },
-      });
-    }
-  }
-}
-
-// Función helper para crear roles
-async function createAreaRoles(prisma: PrismaClient, area: { id: string; name: string }) {
   const roles = [
     {
       name: 'Supervisor',
       description: `Supervisor de ${area.name}`,
       features: SUPERVISOR_FEATURES,
-      userTenantId: [USER_TENANT_JESUS_ID],
+      userTenantId: supervisorUserIds,
     },
     {
       name: 'Colaborador',
       description: `Colaborador de ${area.name}`,
       features: COLABORADOR_FEATURES,
-      userTenantId: [USER_TENANT_DANILO_ID],
+      userTenantId: colaboradorUserIds,
     },
   ];
 
@@ -2970,8 +2779,14 @@ async function createAreaRoles(prisma: PrismaClient, area: { id: string; name: s
   }
 }
 
-// Función principal refactorizada
-async function createAreas(hierarchyId: string, hierarchyLevelRequestTypeId: string, hierarchyLevelCategoryId: string, hierarchyLevelSubcategoryId: string) {
+// Main refactored function
+async function createAreas(
+  hierarchyId: string,
+  hierarchyLevelRequestTypeId: string,
+  hierarchyLevelCategoryId: string,
+  hierarchyLevelSubcategoryId: string,
+  testUserTenantIds: string[]
+) {
   const areaCreators = [
     createInternalCommissionsArea,
     createCommissionsArea,
@@ -2998,7 +2813,7 @@ async function createAreas(hierarchyId: string, hierarchyLevelRequestTypeId: str
 
   for (const createArea of areaCreators) {
     const area = await createArea(prisma, hierarchyId, hierarchyLevelRequestTypeId, hierarchyLevelCategoryId, hierarchyLevelSubcategoryId);
-    await createAreaRoles(prisma, area);
+    await createAreaRoles(prisma, area, testUserTenantIds);
   }
 }
 
