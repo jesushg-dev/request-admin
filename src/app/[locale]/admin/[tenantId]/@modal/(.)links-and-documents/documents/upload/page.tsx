@@ -1,6 +1,9 @@
 import { type FC } from 'react';
+import { type Locale } from 'next-intl';
 import { getPathname } from '@/i18n/routing';
-import { Locale } from 'next-intl';
+import { getAuthContext } from '@/actions/authorization';
+import { PermissionActions } from '@/constants/permissions';
+import { redirect } from '@/i18n/routing';
 import { SearchParams } from 'nuqs/server';
 
 import { loadSearchParams } from '@/lib/document';
@@ -14,6 +17,14 @@ interface NewPageProps {
 
 const NewPage: FC<NewPageProps> = async ({ params, searchParams }) => {
   const { locale, tenantId } = await params;
+
+  const auth = await getAuthContext(tenantId);
+  const canCreate = auth.hasPermissions([PermissionActions.DOCUMENT_MANAGEMENT.CREATE]);
+  
+  if (!canCreate) {
+    return redirect({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/documents', params: { tenantId } } });
+  }
+
   const { folderId, dataroomId, dataroomName, callbackUrl } = await loadSearchParams(searchParams);
 
   return (

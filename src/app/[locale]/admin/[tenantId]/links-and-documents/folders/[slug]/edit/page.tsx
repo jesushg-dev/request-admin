@@ -1,5 +1,7 @@
 import { FC } from 'react';
 import { redirect } from '@/i18n/routing';
+import { getAuthContext } from '@/actions/authorization';
+import { PermissionActions } from '@/constants/permissions';
 import { db } from '@/server/db-client';
 import { Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
@@ -9,23 +11,32 @@ import { folderReferencesLoader } from '@/lib/document';
 import { FolderForm } from '@/components/common/data-room/folder-form';
 import { PageCardWrapper } from '@/components/shared/page-container';
 
-interface NewPageProps {
+interface EditPageProps {
   params: Promise<{ locale: Locale; tenantId: string; slug: string }>;
   searchParams: Promise<SearchParams>;
 }
 
-const NewPage: FC<NewPageProps> = async ({ params, searchParams }) => {
+const EditPage: FC<EditPageProps> = async ({ params, searchParams }) => {
   const { locale, tenantId, slug } = await params;
+
+  // Folders are part of data rooms, so we need DATA_ROOM.EDIT permission
+  const auth = await getAuthContext(tenantId);
+  const canEditDataRooms = auth.hasPermissions([PermissionActions.DATA_ROOM.EDIT]);
+  
+  if (!canEditDataRooms) {
+    return redirect({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/data-rooms', params: { tenantId } } });
+  }
+
   const t = await getTranslations('admin.folder.create');
   const { dataroomId } = await folderReferencesLoader(searchParams);
 
-  const initialValues = db.dataroomFolder.findFirst({
-    select: { id: true, name: true },
+  const initialValues = await db.dataroomFolder.findFirst({
+    select: { id: true, name: true, dataroomId: true },
     where: { id: slug, dataroomId, tenantId },
   });
 
   if (!initialValues) {
-    return redirect({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/data-rooms/[slug]', params: { tenantId, slug } } });
+    return redirect({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/data-rooms', params: { tenantId } } });
   }
 
   return (
@@ -35,4 +46,4 @@ const NewPage: FC<NewPageProps> = async ({ params, searchParams }) => {
   );
 };
 
-export default NewPage;
+export default EditPage;

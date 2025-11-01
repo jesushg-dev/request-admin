@@ -302,7 +302,7 @@ describe('UpdateFormContent', () => {
     const mockUpdatedForm = { id: 'form-123', content: jsonContent };
     (db.form.update as jest.Mock).mockResolvedValueOnce(mockUpdatedForm);
 
-    const result = await UpdateFormContent('form-123', jsonContent);
+    const result = await UpdateFormContent('form-123', jsonContent, 'tenant-123');
 
     expect(result).toEqual(mockUpdatedForm);
     expect(db.form.update).toHaveBeenCalledWith({
@@ -316,7 +316,7 @@ describe('UpdateFormContent', () => {
     const dbError = new Error('Update failed');
     (db.form.update as jest.Mock).mockRejectedValueOnce(dbError);
 
-    await expect(UpdateFormContent('form-123', jsonContent)).rejects.toThrow('Update failed');
+    await expect(UpdateFormContent('form-123', jsonContent, 'tenant-123')).rejects.toThrow('Update failed');
   });
 });
 

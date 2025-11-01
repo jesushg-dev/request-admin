@@ -1,7 +1,9 @@
 import { FC } from 'react';
+import { type Locale } from 'next-intl';
 import { redirect } from '@/i18n/routing';
+import { getAuthContext } from '@/actions/authorization';
+import { PermissionActions } from '@/constants/permissions';
 import { db } from '@/server/db-server';
-import { Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
 import { IdentificationTypeForm } from '@/components/common/identification-type/identification-type-form';
@@ -13,6 +15,14 @@ interface EditIdentificationTypePageProps {
 
 const EditIdentificationTypePage: FC<EditIdentificationTypePageProps> = async ({ params }) => {
   const { locale, tenantId, slug } = await params;
+
+  const auth = await getAuthContext(tenantId);
+  const canEdit = auth.hasPermissions([PermissionActions.IDENTIFICATION_TYPE.EDIT]);
+  
+  if (!canEdit) {
+    return redirect({ locale, href: { pathname: '/admin/[tenantId]/security/identification-types', params: { tenantId } } });
+  }
+
   const t = await getTranslations('admin.identificationType.form');
 
   const defaultValues = await db.identificationType.findFirst({
@@ -21,12 +31,12 @@ const EditIdentificationTypePage: FC<EditIdentificationTypePageProps> = async ({
   });
 
   if (!defaultValues) {
-    return redirect({ href: { pathname: '/admin/[tenantId]/security/identification-types', params: { tenantId } }, locale });
+    return redirect({ locale, href: { pathname: '/admin/[tenantId]/security/identification-types', params: { tenantId } } });
   }
 
   return (
     <PageCardWrapper title={t('editIdentificationType')} description={t('editIdentificationTypeDescription')}>
-      <IdentificationTypeForm tenantId={tenantId} />
+      <IdentificationTypeForm tenantId={tenantId} defaultValues={{ ...defaultValues, description: defaultValues.description ?? undefined, regex: defaultValues.regex ?? undefined }} />
     </PageCardWrapper>
   );
 };

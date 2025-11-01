@@ -1,4 +1,6 @@
 import { getPathname, Link, redirect } from '@/i18n/routing';
+import { getAuthContext } from '@/actions/authorization';
+import { PermissionActions } from '@/constants/permissions';
 import { db } from '@/server/db-client';
 import { format } from 'date-fns';
 import { Calendar, Clock, FileText, MoreHorizontal, Palette, Pencil, Trash2, User, Users } from 'lucide-react';
@@ -17,6 +19,17 @@ interface DataroomDetailPageProps {
 
 export default async function DataroomDetailPage({ params }: DataroomDetailPageProps) {
   const { locale, tenantId, slug } = await params;
+
+  const auth = await getAuthContext(tenantId);
+  const canViewDataRooms = auth.hasPermissions([PermissionActions.DATA_ROOM.VIEW]);
+  
+  if (!canViewDataRooms) {
+    return redirect({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/data-rooms', params: { tenantId } } });
+  }
+
+  const canEdit = auth.hasPermissions([PermissionActions.DATA_ROOM.EDIT]);
+  const canDelete = auth.hasPermissions([PermissionActions.DATA_ROOM.DELETE]);
+
   const t = await getTranslations('admin.dataroom.view');
 
   const callbackUrl = getPathname({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/data-rooms/[slug]', params: { tenantId, slug } } });
@@ -45,18 +58,20 @@ export default async function DataroomDetailPage({ params }: DataroomDetailPageP
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>{t('actions.dataroomActions')}</DropdownMenuLabel>
-                <DropdownMenuItem>
-                  <Link
-                    className="flex items-center flex-1"
-                    href={{
-                      pathname: '/admin/[tenantId]/links-and-documents/data-rooms/[slug]/edit',
-                      query: { callbackUrl },
-                      params: { tenantId, slug },
-                    }}>
-                    <Pencil className="mr-2 h-4 w-4" />
-                    {t('actions.editDataroom')}
-                  </Link>
-                </DropdownMenuItem>
+                {canEdit && (
+                  <DropdownMenuItem>
+                    <Link
+                      className="flex items-center flex-1"
+                      href={{
+                        pathname: '/admin/[tenantId]/links-and-documents/data-rooms/[slug]/edit',
+                        query: { callbackUrl },
+                        params: { tenantId, slug },
+                      }}>
+                      <Pencil className="mr-2 h-4 w-4" />
+                      {t('actions.editDataroom')}
+                    </Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem>
                   <Link
                     className="flex items-center flex-1"
@@ -81,11 +96,15 @@ export default async function DataroomDetailPage({ params }: DataroomDetailPageP
                     {t('actions.customizeBranding')}
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive focus:text-destructive">
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  {t('actions.deleteDataroom')}
-                </DropdownMenuItem>
+                {canDelete && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="text-destructive focus:text-destructive">
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      {t('actions.deleteDataroom')}
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

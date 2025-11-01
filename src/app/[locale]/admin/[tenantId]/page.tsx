@@ -16,14 +16,33 @@ import { SLADashboard } from '@/components/common/dashboard/sla-dashboard';
 import { SLAFilters, SLAFilterValues } from '@/components/common/dashboard/sla-filters';
 import { WorkflowSelector } from '@/components/common/dashboard/workflow-selector';
 import { useTenantContext } from '@/components/hoc/tenant-provider';
+import { useAuthorization, PERMISSION } from '@/hooks/use-authorization';
 import { useTranslations } from 'next-intl';
+import { PermissionEmptyState } from '@/components/shared/permission-empty-state';
+import { PermissionButton } from '@/components/shared/permission-button';
 
 export default function Home() {
   const { tenantId, userTenant, currentTenant } = useTenantContext();
+  const { hasPermission } = useAuthorization(tenantId);
   const t = useTranslations('admin.dashboard.page');
-  
   const [selectedWorkflow, setSelectedWorkflow] = useState<string | null>(null);
   const [slaFilters, setSlaFilters] = useState<SLAFilterValues | null>(null);
+  
+  // Permission checks
+  const canViewDashboard = hasPermission(PERMISSION.DASHBOARD.VIEW);
+  const canCreateRequests = hasPermission(PERMISSION.REQUEST_MANAGEMENT.CREATE);
+  const canViewRequests = hasPermission(PERMISSION.REQUEST_MANAGEMENT.VIEW);
+  
+  // If user doesn't have dashboard view permission, show empty state
+  if (!canViewDashboard) {
+    return (
+      <ScrollArea className="flex-grow min-h-0">
+        <div className="container py-6 flex flex-col h-full">
+          <PermissionEmptyState />
+        </div>
+      </ScrollArea>
+    );
+  }
 
   const handleSearch = (filters: SLAFilterValues): void => {
     setSlaFilters(filters);
@@ -52,12 +71,13 @@ export default function Home() {
             <h1 className="text-3xl font-bold tracking-tight">{t('dashboardTitle')}</h1>
             <p className="text-muted-foreground">{t('welcome', { user: userTenant.displayUserName, tenant: currentTenant ? currentTenant.name : '' })}</p>
           </div>
-          <Button className="w-full md:w-auto">
-            <Link className="flex gap-2 items-center" href={{ pathname: '/admin/[tenantId]/requests/new', params: { tenantId } }}>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              {t('newRequest')}
-            </Link>
-          </Button>
+          <PermissionButton
+            hasPermission={canCreateRequests}
+            href={{ pathname: '/admin/[tenantId]/requests/new', params: { tenantId } }}
+            className="w-full md:w-auto">
+            <PlusCircle className="mr-2 h-4 w-4" />
+            {t('newRequest')}
+          </PermissionButton>
         </div>
 
         <div className="mt-8 flex flex-col flex-grow min-h-0">
@@ -81,12 +101,14 @@ export default function Home() {
                 <QuickStatsCards tenantId={tenantId} workflowId={null} />
               </div>
 
-              <div className="mt-8">
-                <h2 className="text-xl font-bold">{t('recentRequests.title')}</h2>
-                <div className="mt-4">
-                  <RecentRequests tenantId={tenantId} />
+              {canViewRequests && (
+                <div className="mt-8">
+                  <h2 className="text-xl font-bold">{t('recentRequests.title')}</h2>
+                  <div className="mt-4">
+                    <RecentRequests tenantId={tenantId} />
+                  </div>
                 </div>
-              </div>
+              )}
             </TabsContent>
 
             <TabsContent value="workflow" className="h-full overflow-y-auto">
@@ -102,12 +124,14 @@ export default function Home() {
                 <DashboardStats tenantId={tenantId} workflowId={selectedWorkflow} />
               </div>
 
-              <div className="mt-8">
-                <h2 className="text-xl font-bold">{selectedWorkflow ? t('recentRequests.titleWithWorkflow', { workflow: selectedWorkflow }) : t('recentRequests.title')}</h2>
-                <div className="mt-4">
-                  <RecentRequests tenantId={tenantId} workflowFilter={selectedWorkflow} />
+              {canViewRequests && (
+                <div className="mt-8">
+                  <h2 className="text-xl font-bold">{selectedWorkflow ? t('recentRequests.titleWithWorkflow', { workflow: selectedWorkflow }) : t('recentRequests.title')}</h2>
+                  <div className="mt-4">
+                    <RecentRequests tenantId={tenantId} workflowFilter={selectedWorkflow} />
+                  </div>
                 </div>
-              </div>
+              )}
             </TabsContent>
 
             <TabsContent value="sla" className="h-full overflow-y-auto">

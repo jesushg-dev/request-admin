@@ -3,7 +3,8 @@
     "roleGate": {
       "errors": {
         "noFeature": "You do not have permission to view this content!",
-        "noPermission": "You do not have permission to view this content!"
+        "noPermission": "You do not have permission to view this content!",
+        "noPermissionDescription": "Please contact your administrator to request access to this resource."
       }
     }
   },
@@ -958,7 +959,7 @@
         "subtitle": "Service request analysis and statistics",
         "buttons": { "showFilters": "Show filters", "hideFilters": "Hide filters" },
         "period": { "placeholder": "Period", "label": "Period", "month": "Last month", "quarter": "Last quarter", "year": "Last year" },
-        "export": { "title": "Export", "format": "Export format", "pdf": "PDF", "excel": "Excel", "json": "JSON", "exporting": "Exporting report in {format} format...", "success": "Report exported successfully in {format} format", "error": "Error exporting report" },
+        "export": { "title": "Export", "format": "Export format", "pdf": "PDF", "excel": "Excel", "json": "JSON", "exporting": "Exporting report in {format} format...", "success": "Report exported successfully in {format} format", "error": "Error exporting report", "noPermission": "You do not have permission to export reports" },
         "tabs": { "overview": "Overview", "areas": "By Area", "status": "By Status", "performance": "Performance", "workflows": "Workflows", "execution": "Model Execution", "alerts": "Alerts", "monthlyTrends": "Monthly Trends" },
         "overview": {
           "totalRequests": "Total Requests",

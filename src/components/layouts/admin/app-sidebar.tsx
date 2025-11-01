@@ -33,6 +33,7 @@ import { useTranslations } from 'next-intl';
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '@/components/ui/sidebar';
 import { useTenantContext } from '@/components/hoc/tenant-provider';
+import { useAuthorization, PERMISSION } from '@/hooks/use-authorization';
 
 //import { NavFormSubmissions } from './nav-form-submissions';
 import { MenuItem, NavMain } from './nav-main';
@@ -52,26 +53,47 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
   const pathname = usePathname();
   const t = useTranslations('admin.sidebar');
   const { tenantId, tenants } = useTenantContext();
+  const { hasPermission } = useAuthorization(tenantId);
 
   const navMain = useMemo<MenuItem[]>(() => {
+    const canViewDashboard = hasPermission(PERMISSION.DASHBOARD.VIEW);
+    const canViewRequests = hasPermission(PERMISSION.REQUEST_MANAGEMENT.VIEW);
+    const canViewReports = hasPermission(PERMISSION.REPORTS.VIEW);
+    const canViewForms = hasPermission(PERMISSION.FORM_DESIGNER.VIEW);
+    const canViewDocuments = hasPermission(PERMISSION.DOCUMENT_MANAGEMENT.VIEW);
+    const canViewDataRooms = hasPermission(PERMISSION.DATA_ROOM.VIEW);
+    const canViewSharedLinks = hasPermission(PERMISSION.SHARED_LINK.VIEW);
+    const canViewAgreements = hasPermission(PERMISSION.AGREEMENT.VIEW);
+    const canViewAreas = hasPermission(PERMISSION.AREA.VIEW);
+    const canViewRequestTypes = hasPermission(PERMISSION.REQUEST_TYPE.VIEW);
+    const canViewRequirements = hasPermission(PERMISSION.REQUIREMENT.VIEW);
+    const canViewRequirementTypes = hasPermission(PERMISSION.REQUIREMENT_TYPE.VIEW);
+    const canViewPriorities = hasPermission(PERMISSION.PRIORITY.VIEW);
+    const canViewWorkflows = hasPermission(PERMISSION.WORKFLOW.VIEW);
+    const canViewAssignmentHierarchy = hasPermission(PERMISSION.ASSIGNMENT_HIERARCHY.VIEW);
+    const canViewRequestHierarchy = hasPermission(PERMISSION.REQUEST_HIERARCHY.VIEW);
+
     return [
       {
         title: t('dashboard'),
         icon: HomeIcon,
         url: { pathname: '/admin/[tenantId]', params: { tenantId } },
         items: [],
+        disabled: !canViewDashboard,
       },
       {
         title: t('requests'),
         icon: ClipboardIcon,
         url: { pathname: '/admin/[tenantId]/requests', params: { tenantId } },
         items: [],
+        disabled: !canViewRequests,
       },
       {
         title: t('reports'),
         icon: ChartColumnIncreasingIcon,
         url: { pathname: '/admin/[tenantId]/reports', params: { tenantId } },
         items: [],
+        disabled: !canViewReports,
       },
       /*{
         title: t('messages'),
@@ -84,6 +106,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
         url: { pathname: '/admin/[tenantId]/form-designer', params: { tenantId } },
         icon: GridIcon,
         items: [],
+        disabled: !canViewForms,
       },
       {
         title: t('linksAndDocuments'),
@@ -93,23 +116,28 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
             title: t('dataRooms'),
             url: { pathname: '/admin/[tenantId]/links-and-documents/data-rooms', params: { tenantId } },
             icon: BuildingIcon,
+            disabled: !canViewDataRooms,
           },
           {
             title: t('documents'),
             url: { pathname: '/admin/[tenantId]/links-and-documents/documents', params: { tenantId } },
             icon: FileTextIcon,
+            disabled: !canViewDocuments,
           },
           {
             title: t('links'),
             url: { pathname: '/admin/[tenantId]/links-and-documents/links', params: { tenantId } },
             icon: RadioTowerIcon,
+            disabled: !canViewSharedLinks,
           },
           {
             title: t('agreements'),
             url: { pathname: '/admin/[tenantId]/links-and-documents/agreements', params: { tenantId } },
             icon: ScaleIcon,
+            disabled: !canViewAgreements,
           },
         ],
+        disabled: false, // Parent is not disabled, but children might be
       },
       {
         title: t('configuration'),
@@ -119,6 +147,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
             title: t('areas'),
             url: { pathname: '/admin/[tenantId]/configurations/areas', params: { tenantId } },
             icon: LandPlotIcon,
+            disabled: !canViewAreas,
           },
           {
             title: t('assignmentHierarchy'),
@@ -127,11 +156,13 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
               params: { tenantId },
             },
             icon: FolderOpenDot,
+            disabled: !canViewAssignmentHierarchy,
           },
           {
             title: t('requestTypes'),
             url: { pathname: '/admin/[tenantId]/configurations/request-types', params: { tenantId } },
             icon: LayersIcon,
+            disabled: !canViewRequestTypes,
           },
           {
             title: t('requestHierarchy'),
@@ -140,33 +171,43 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
               params: { tenantId },
             },
             icon: FolderOpen,
+            disabled: !canViewRequestHierarchy,
           },
           {
             title: t('requirements'),
             url: { pathname: '/admin/[tenantId]/configurations/requirements', params: { tenantId } },
             icon: BookIcon,
+            disabled: !canViewRequirements,
           },
           {
             title: t('requirementTypes'),
             url: { pathname: '/admin/[tenantId]/configurations/requirement-types', params: { tenantId } },
             icon: BookTypeIcon,
+            disabled: !canViewRequirementTypes,
           },
           {
             title: t('priorities'),
             url: { pathname: '/admin/[tenantId]/configurations/priorities', params: { tenantId } },
             icon: TagsIcon,
+            disabled: !canViewPriorities,
           },
           {
             title: t('workflows'),
             url: { pathname: '/admin/[tenantId]/configurations/workflows', params: { tenantId } },
             icon: WorkflowIcon,
+            disabled: !canViewWorkflows,
           },
         ],
+        disabled: false, // Parent is not disabled, but children might be
       },
     ];
-  }, [t, tenantId]);
+  }, [t, tenantId, hasPermission]);
 
   const systemMain = useMemo<MenuItem[]>(() => {
+    const canViewUsers = hasPermission(PERMISSION.USER_MANAGEMENT.VIEW);
+    const canViewRoles = hasPermission(PERMISSION.ROLE_MANAGEMENT.VIEW);
+    const canViewIdentificationTypes = hasPermission(PERMISSION.IDENTIFICATION_TYPE.VIEW);
+
     return [
       {
         title: t('security'),
@@ -181,33 +222,39 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
             title: t('identificationTypes'),
             url: { pathname: '/admin/[tenantId]/security/identification-types', params: { tenantId } },
             icon: IdCardIcon,
+            disabled: !canViewIdentificationTypes,
           },
           {
             title: t('roles'),
             url: { pathname: '/admin/[tenantId]/security/roles', params: { tenantId } },
             icon: ShieldIcon,
+            disabled: !canViewRoles,
           },
           {
             title: t('users'),
             url: { pathname: '/admin/[tenantId]/security/users', params: { tenantId } },
             icon: UsersIcon,
+            disabled: !canViewUsers,
           },
         ],
+        disabled: false, // Parent is not disabled, but children might be
       },
       {
         title: t('settings'),
         url: { pathname: '/admin/[tenantId]/settings/account', params: { tenantId } },
         icon: SettingsIcon,
         items: [],
+        disabled: false, // Settings accessible to all authenticated users
       },
       {
         title: t('help'),
         url: { pathname: '/admin/[tenantId]/help', params: { tenantId } },
         icon: MessageCircleQuestionIcon,
         items: [],
+        disabled: false, // Help accessible to all authenticated users
       },
     ];
-  }, [t, tenantId]);
+  }, [t, tenantId, hasPermission]);
 
   return (
     <Sidebar collapsible="icon" {...props}>

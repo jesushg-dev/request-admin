@@ -1,6 +1,9 @@
 import { FC } from 'react';
-import { upsertRequestHierarchy } from '@/actions/hierarchy';
 import { type Locale } from 'next-intl';
+import { getAuthContext } from '@/actions/authorization';
+import { PermissionActions } from '@/constants/permissions';
+import { redirect } from '@/i18n/routing';
+import { upsertRequestHierarchy } from '@/actions/hierarchy';
 
 import { HierarchyFormStepper } from '@/components/common/hierarchy/hierarchy-form-stepper';
 
@@ -10,6 +13,13 @@ interface CreateRequestHierarchyPageProps {
 
 const CreateRequestHierarchyPage: FC<CreateRequestHierarchyPageProps> = async ({ params }) => {
   const { tenantId, locale } = await params;
+
+  const auth = await getAuthContext(tenantId);
+  const canCreate = auth.hasPermissions([PermissionActions.REQUEST_HIERARCHY.CREATE]);
+  
+  if (!canCreate) {
+    return redirect({ locale, href: { pathname: '/admin/[tenantId]/configurations/request-hierarchies', params: { tenantId } } });
+  }
 
   return <HierarchyFormStepper tenantId={tenantId} locale={locale} upsertAction={upsertRequestHierarchy} />;
 };

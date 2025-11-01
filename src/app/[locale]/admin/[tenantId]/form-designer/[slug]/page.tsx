@@ -1,4 +1,6 @@
 import { GetFormById } from '@/actions/form';
+import { getAuthContext } from '@/actions/authorization';
+import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
 import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
@@ -15,6 +17,14 @@ interface FormDetailPageProps {
 
 export default async function FormDetailPage({ params }: FormDetailPageProps) {
   const { locale, tenantId, slug } = await params;
+
+  const auth = await getAuthContext(tenantId);
+  const canViewForms = auth.hasPermissions([PermissionActions.FORM_DESIGNER.VIEW]);
+  
+  if (!canViewForms) {
+    return redirect({ locale, href: { pathname: '/admin/[tenantId]/form-designer', params: { tenantId } } });
+  }
+
   const t = await getTranslations('admin.form.view');
 
   const form = await GetFormById(slug, tenantId);

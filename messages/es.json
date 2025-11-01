@@ -3,7 +3,8 @@
     "roleGate": {
       "errors": {
         "noFeature": "¡No tienes permiso para acceder a esta página!",
-        "noPermission": "¡No tienes permiso para ver este contenido!"
+        "noPermission": "¡No tienes permiso para ver este contenido!",
+        "noPermissionDescription": "Por favor, contacta a tu administrador para solicitar acceso a este recurso."
       }
     }
   },
@@ -960,7 +961,7 @@
         "subtitle": "Análisis y estadísticas de solicitudes de servicios",
         "buttons": { "showFilters": "Mostrar filtros", "hideFilters": "Ocultar filtros" },
         "period": { "placeholder": "Período", "label": "Período", "month": "Último mes", "quarter": "Último trimestre", "year": "Último año" },
-        "export": { "title": "Exportar", "format": "Formato de exportación", "pdf": "PDF", "excel": "Excel", "json": "JSON", "exporting": "Exportando reporte en formato {format}...", "success": "Reporte exportado exitosamente en formato {format}", "error": "Error al exportar el reporte" },
+        "export": { "title": "Exportar", "format": "Formato de exportación", "pdf": "PDF", "excel": "Excel", "json": "JSON", "exporting": "Exportando reporte en formato {format}...", "success": "Reporte exportado exitosamente en formato {format}", "error": "Error al exportar el reporte", "noPermission": "No tienes permiso para exportar reportes" },
         "tabs": { "overview": "Resumen", "areas": "Por Área", "status": "Por Estado", "performance": "Desempeño", "workflows": "Flujos de Trabajo", "execution": "Ejecución de Modelos", "alerts": "Alertas", "monthlyTrends": "Tendencias Mensuales" },
         "overview": {
           "totalRequests": "Total de Solicitudes",

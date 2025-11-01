@@ -1,20 +1,35 @@
 import { FC } from 'react';
-import { getRequestPriorityTypeAsFormById } from '@/actions/priority';
 import { type Locale } from 'next-intl';
+import { redirect } from '@/i18n/routing';
+import { getAuthContext } from '@/actions/authorization';
+import { PermissionActions } from '@/constants/permissions';
+import { getRequestPriorityTypeAsFormById } from '@/actions/priority';
 import { getTranslations } from 'next-intl/server';
 
 import PriorityForm from '@/components/common/priority/priority-form';
 import { PageCardWrapper } from '@/components/shared/page-container';
 
-interface UpdatePriorityPageProps {
+interface EditPriorityPageProps {
   params: Promise<{ locale: Locale; slug: string; tenantId: string }>;
 }
 
-const UpdatePriorityPage: FC<UpdatePriorityPageProps> = async ({ params }) => {
-  const { tenantId, slug } = await params;
+const EditPriorityPage: FC<EditPriorityPageProps> = async ({ params }) => {
+  const { locale, tenantId, slug } = await params;
+
+  const auth = await getAuthContext(tenantId);
+  const canEdit = auth.hasPermissions([PermissionActions.PRIORITY.EDIT]);
+  
+  if (!canEdit) {
+    return redirect({ locale, href: { pathname: '/admin/[tenantId]/configurations/priorities', params: { tenantId } } });
+  }
+
   const t = await getTranslations('admin.requestPriorityType.form');
 
   const priority = await getRequestPriorityTypeAsFormById(slug, tenantId);
+
+  if (!priority) {
+    return redirect({ locale, href: { pathname: '/admin/[tenantId]/configurations/priorities', params: { tenantId } } });
+  }
 
   return (
     <PageCardWrapper title={t('header.title')} description={t('header.descriptionUpdate')}>
@@ -23,4 +38,4 @@ const UpdatePriorityPage: FC<UpdatePriorityPageProps> = async ({ params }) => {
   );
 };
 
-export default UpdatePriorityPage;
+export default EditPriorityPage;

@@ -3,6 +3,8 @@
 import { currentSession } from '@/server/auth-server';
 import { db } from '@/server/db-server';
 import { formSchema, formSchemaType, keysSchema } from '@/services/schemas/form';
+import { getAuthContext } from '@/actions/authorization';
+import { PermissionActions } from '@/constants/permissions';
 
 import { UserNotFoundErr } from '@/lib/error';
 
@@ -43,6 +45,13 @@ export async function CreateForm(data: formSchemaType, tenantId: string) {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
+  // RBAC check
+  const auth = await getAuthContext(tenantId);
+  const canCreate = auth.hasPermissions([PermissionActions.FORM_DESIGNER.CREATE]);
+  if (!canCreate) {
+    throw new Error('Forbidden: lacking permissions to create forms');
+  }
+
   const validation = formSchema.safeParse(data);
   if (!validation.success) {
     throw new Error('form not valid');
@@ -78,12 +87,19 @@ export async function GetFormById(id: string, tenantId: string) {
   });
 }
 
-export async function UpdateFormContent(id: string, jsonContent: string) {
+export async function UpdateFormContent(id: string, jsonContent: string, tenantId: string) {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
+  // RBAC check
+  const auth = await getAuthContext(tenantId);
+  const canEdit = auth.hasPermissions([PermissionActions.FORM_DESIGNER.EDIT]);
+  if (!canEdit) {
+    throw new Error('Forbidden: lacking permissions to edit forms');
+  }
+
   return await db.form.update({
-    where: { id },
+    where: { id, tenantId },
     data: { content: jsonContent },
   });
 }
@@ -91,6 +107,13 @@ export async function UpdateFormContent(id: string, jsonContent: string) {
 export async function PublishForm(id: string, tenantId: string) {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
+
+  // RBAC check
+  const auth = await getAuthContext(tenantId);
+  const canPublish = auth.hasPermissions([PermissionActions.FORM_DESIGNER.PUBLISH]);
+  if (!canPublish) {
+    throw new Error('Forbidden: lacking permissions to publish forms');
+  }
 
   return await db.form.update({
     data: {
@@ -116,6 +139,22 @@ export async function GetFormContentById(id: string, tenantId: string) {
     select: { id: true, name: true, description: true, content: true },
     data: { visits: { increment: 1 } },
     where: { tenantId, id, published: true },
+  });
+}
+
+export async function DeleteForm(id: string, tenantId: string) {
+  const session = await currentSession();
+  if (!session) throw new UserNotFoundErr();
+
+  // RBAC check
+  const auth = await getAuthContext(tenantId);
+  const canDelete = auth.hasPermissions([PermissionActions.FORM_DESIGNER.DELETE]);
+  if (!canDelete) {
+    throw new Error('Forbidden: lacking permissions to delete forms');
+  }
+
+  return await db.form.delete({
+    where: { id, tenantId },
   });
 }
 

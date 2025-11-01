@@ -113,7 +113,7 @@ function FormBuilder({ form }: { form: Form }) {
             <PreviewDialogBtn />
             {!form.published && (
               <>
-                <SaveFormBtn id={form.id} />
+                <SaveFormBtn id={form.id} tenantId={form.tenantId} />
                 <PublishFormBtn id={form.id} tenantId={form.tenantId} />
               </>
             )}

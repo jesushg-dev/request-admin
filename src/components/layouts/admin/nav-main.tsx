@@ -12,10 +12,12 @@ export type MenuItem = {
   icon?: LucideIcon;
   isActive?: boolean;
   url?: I18Link;
+  disabled?: boolean;
   items?: {
     title: string;
     icon?: LucideIcon;
     url: I18Link;
+    disabled?: boolean;
   }[];
 };
 
@@ -29,19 +31,26 @@ export function NavMain({ title, items, currentPath }: { title: string; items: M
           <Collapsible key={item.title} asChild defaultOpen={item.isActive || item.title === activeKey}>
             {item.url && item.items?.length === 0 ? (
               <SidebarMenuItem>
-                <SidebarMenuButton tooltip={item.title} asChild>
-                  <Link href={item.url} className={`text-xs ${currentPath === (item.url as { pathname: string }).pathname ? 'font-semibold' : ''}`}>
-                    {item.icon && <item.icon />}
-                    {item.title}
-                  </Link>
+                <SidebarMenuButton tooltip={item.title} disabled={item.disabled} asChild={!item.disabled}>
+                  {item.disabled ? (
+                    <span className={`text-xs ${currentPath === (item.url as { pathname: string }).pathname ? 'font-semibold' : ''} opacity-50 cursor-not-allowed`}>
+                      {item.icon && <item.icon />}
+                      {item.title}
+                    </span>
+                  ) : (
+                    <Link href={item.url} className={`text-xs ${currentPath === (item.url as { pathname: string }).pathname ? 'font-semibold' : ''}`}>
+                      {item.icon && <item.icon />}
+                      {item.title}
+                    </Link>
+                  )}
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ) : (
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
-                  <SidebarMenuButton tooltip={item.title}>
+                  <SidebarMenuButton tooltip={item.title} disabled={item.disabled}>
                     {item.icon && <item.icon />}
-                    <span className="text-xs">{item.title}</span>
+                    <span className={`text-xs ${item.disabled ? 'opacity-50' : ''}`}>{item.title}</span>
                     <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
@@ -49,11 +58,18 @@ export function NavMain({ title, items, currentPath }: { title: string; items: M
                   <SidebarMenuSub>
                     {item.items?.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
-                        <SidebarMenuSubButton asChild className="py-1">
-                          <Link href={subItem.url} className={`text-xs ${currentPath === (subItem.url as { pathname: string }).pathname ? 'font-semibold' : ''}`}>
-                            {subItem.icon && <subItem.icon />}
-                            {subItem.title}
-                          </Link>
+                        <SidebarMenuSubButton asChild={!subItem.disabled} className={`py-1 ${subItem.disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}>
+                          {subItem.disabled ? (
+                            <span className={`text-xs ${currentPath === (subItem.url as { pathname: string }).pathname ? 'font-semibold' : ''}`}>
+                              {subItem.icon && <subItem.icon />}
+                              {subItem.title}
+                            </span>
+                          ) : (
+                            <Link href={subItem.url} className={`text-xs ${currentPath === (subItem.url as { pathname: string }).pathname ? 'font-semibold' : ''}`}>
+                              {subItem.icon && <subItem.icon />}
+                              {subItem.title}
+                            </Link>
+                          )}
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                     ))}

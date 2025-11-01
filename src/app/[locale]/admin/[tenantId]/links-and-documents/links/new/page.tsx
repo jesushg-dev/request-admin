@@ -1,6 +1,9 @@
 import { FC } from 'react';
+import { type Locale } from 'next-intl';
 import { getPathname } from '@/i18n/routing';
-import { Locale } from 'next-intl';
+import { getAuthContext } from '@/actions/authorization';
+import { PermissionActions } from '@/constants/permissions';
+import { redirect } from '@/i18n/routing';
 import { getTranslations } from 'next-intl/server';
 import { SearchParams } from 'nuqs/server';
 
@@ -15,6 +18,14 @@ interface NewPageProps {
 
 const NewPage: FC<NewPageProps> = async ({ params, searchParams }) => {
   const { locale, tenantId } = await params;
+
+  const auth = await getAuthContext(tenantId);
+  const canCreate = auth.hasPermissions([PermissionActions.SHARED_LINK.CREATE]);
+  
+  if (!canCreate) {
+    return redirect({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/links', params: { tenantId } } });
+  }
+
   const t = await getTranslations('admin.link.form');
   const { documentId, dataroomId, callbackUrl, linkType } = await documentReferencesLoader(searchParams);
   const finalCallbackUrl = callbackUrl ? callbackUrl : getPathname({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/documents', params: { tenantId } } });

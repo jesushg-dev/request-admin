@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
 import { useTenantContext } from '@/components/hoc/tenant-provider';
+import { useAuthorization } from '@/hooks/use-authorization';
 
 export function NavUser({
   user,
@@ -64,7 +65,7 @@ export function NavUser({
                 {t('upgrade')}
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator />*/}
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
                 <Link href={{ pathname: '/admin/[tenantId]/settings/account', params: { tenantId } }}>
@@ -72,19 +73,19 @@ export function NavUser({
                   {t('account')}
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
+              {/*<DropdownMenuItem asChild>
                 <Link href={{ pathname: '/admin/[tenantId]/settings/organization/subscription', params: { tenantId } }}>
                   <CreditCard />
                   {t('billing')}
                 </Link>
-              </DropdownMenuItem>
+              </DropdownMenuItem>*/}
               <DropdownMenuItem asChild>
                 <Link href={{ pathname: '/admin/[tenantId]/notifications', params: { tenantId } }}>
                   <Bell />
                   {t('notifications')}
                 </Link>
               </DropdownMenuItem>
-            </DropdownMenuGroup>*/}
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={onLogout}>
               <LogOut />

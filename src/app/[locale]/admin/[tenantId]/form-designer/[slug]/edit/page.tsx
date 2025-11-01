@@ -1,4 +1,6 @@
 import { GetFormById } from '@/actions/form';
+import { getAuthContext } from '@/actions/authorization';
+import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
 import { type Locale } from 'next-intl';
 
@@ -10,6 +12,14 @@ interface BuilderPageProps {
 
 async function BuilderPage({ params }: BuilderPageProps) {
   const { locale, tenantId, slug } = await params;
+
+  const auth = await getAuthContext(tenantId);
+  const canEditForms = auth.hasPermissions([PermissionActions.FORM_DESIGNER.EDIT]);
+  
+  if (!canEditForms) {
+    return redirect({ locale, href: { pathname: '/admin/[tenantId]/form-designer', params: { tenantId } } });
+  }
+
   const form = await GetFormById(slug, tenantId);
   if (!form) {
     throw new Error('form not found');

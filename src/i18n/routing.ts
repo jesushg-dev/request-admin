@@ -277,6 +277,10 @@ const securityPathnames = {
     en: '/admin/[tenantId]/security/identification-types/[slug]',
     es: '/admin/[tenantId]/seguridad/tipos-de-identificacion/[slug]',
   },
+  '/admin/[tenantId]/security/identification-types/[slug]/edit': {
+    en: '/admin/[tenantId]/security/identification-types/[slug]/edit',
+    es: '/admin/[tenantId]/seguridad/tipos-de-identificacion/[slug]/editar',
+  },
 } satisfies Pathnames<Locale[]>;
 
 const formsPathnames = {

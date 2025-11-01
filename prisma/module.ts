@@ -487,12 +487,531 @@ export const PrismaModules: PrismaModulesDefinition = {
         },
         scope: 'global',
       },
+      VIEW: {
+        action: PermissionActions.ROLE_MANAGEMENT.VIEW,
+        name: { en: 'View', es: 'Ver' },
+        description: {
+          en: 'Permission to view existing roles',
+          es: 'Permiso para consultar roles existentes',
+        },
+        scope: 'global',
+      },
+      EDIT: {
+        action: PermissionActions.ROLE_MANAGEMENT.EDIT,
+        name: { en: 'Edit', es: 'Editar' },
+        description: {
+          en: 'Permission to edit existing roles',
+          es: 'Permiso para modificar roles existentes',
+        },
+        scope: 'global',
+      },
+      DELETE: {
+        action: PermissionActions.ROLE_MANAGEMENT.DELETE,
+        name: { en: 'Delete', es: 'Eliminar' },
+        description: {
+          en: 'Permission to delete roles from the system',
+          es: 'Permiso para eliminar roles del sistema',
+        },
+        scope: 'global',
+      },
       ASSIGN: {
         action: PermissionActions.ROLE_MANAGEMENT.ASSIGN,
         name: { en: 'Assign', es: 'Asignar' },
         description: {
           en: 'Permission to assign roles to users',
           es: 'Permiso para asignar roles a usuarios',
+        },
+        scope: 'global',
+      },
+    },
+  },
+  REPORTS: {
+    name: {
+      en: ModuleName.REPORTS,
+      es: 'Reportes',
+    },
+    description: {
+      en: 'Module to generate and export reports on system data',
+      es: 'Módulo para generar y exportar reportes sobre los datos del sistema',
+    },
+    features: {
+      VIEW: {
+        action: PermissionActions.REPORTS.VIEW,
+        name: { en: 'View', es: 'Ver' },
+        description: {
+          en: 'Permission to view reports and analytics',
+          es: 'Permiso para consultar reportes y análisis',
+        },
+        scope: 'global',
+      },
+      EXPORT: {
+        action: PermissionActions.REPORTS.EXPORT,
+        name: { en: 'Export', es: 'Exportar' },
+        description: {
+          en: 'Permission to export reports in different formats',
+          es: 'Permiso para exportar reportes en diferentes formatos',
+        },
+        scope: 'global',
+      },
+    },
+  },
+  DOCUMENT_MANAGEMENT: {
+    name: {
+      en: ModuleName.DOCUMENT_MANAGEMENT,
+      es: 'Gestión de Documentos',
+    },
+    description: {
+      en: 'Module to manage documents, data rooms, links, and agreements',
+      es: 'Módulo para gestionar documentos, salas de datos, enlaces y acuerdos',
+    },
+    features: {
+      CREATE: {
+        action: PermissionActions.DOCUMENT_MANAGEMENT.CREATE,
+        name: { en: 'Create', es: 'Crear' },
+        description: {
+          en: 'Permission to create new documents, data rooms, links, or agreements',
+          es: 'Permiso para crear nuevos documentos, salas de datos, enlaces o acuerdos',
+        },
+        scope: 'global',
+      },
+      VIEW: {
+        action: PermissionActions.DOCUMENT_MANAGEMENT.VIEW,
+        name: { en: 'View', es: 'Ver' },
+        description: {
+          en: 'Permission to view documents, data rooms, links, and agreements',
+          es: 'Permiso para consultar documentos, salas de datos, enlaces y acuerdos',
+        },
+        scope: 'global',
+      },
+      EDIT: {
+        action: PermissionActions.DOCUMENT_MANAGEMENT.EDIT,
+        name: { en: 'Edit', es: 'Editar' },
+        description: {
+          en: 'Permission to edit existing documents, data rooms, links, or agreements',
+          es: 'Permiso para modificar documentos, salas de datos, enlaces o acuerdos existentes',
+        },
+        scope: 'global',
+      },
+      DELETE: {
+        action: PermissionActions.DOCUMENT_MANAGEMENT.DELETE,
+        name: { en: 'Delete', es: 'Eliminar' },
+        description: {
+          en: 'Permission to delete documents, data rooms, links, or agreements',
+          es: 'Permiso para eliminar documentos, salas de datos, enlaces o acuerdos',
+        },
+        scope: 'global',
+      },
+    },
+  },
+  PRIORITY: {
+    name: {
+      en: ModuleName.PRIORITY,
+      es: 'Prioridades',
+    },
+    description: {
+      en: 'Module to manage priority levels for requests',
+      es: 'Módulo para gestionar los niveles de prioridad de las solicitudes',
+    },
+    features: {
+      CREATE: {
+        action: PermissionActions.PRIORITY.CREATE,
+        name: { en: 'Create', es: 'Crear' },
+        description: {
+          en: 'Permission to create new priority levels',
+          es: 'Permiso para crear nuevos niveles de prioridad',
+        },
+        scope: 'global',
+      },
+      VIEW: {
+        action: PermissionActions.PRIORITY.VIEW,
+        name: { en: 'View', es: 'Ver' },
+        description: {
+          en: 'Permission to view existing priority levels',
+          es: 'Permiso para consultar los niveles de prioridad existentes',
+        },
+        scope: 'global',
+      },
+      EDIT: {
+        action: PermissionActions.PRIORITY.EDIT,
+        name: { en: 'Edit', es: 'Editar' },
+        description: {
+          en: 'Permission to edit existing priority levels',
+          es: 'Permiso para modificar los niveles de prioridad existentes',
+        },
+        scope: 'global',
+      },
+      DELETE: {
+        action: PermissionActions.PRIORITY.DELETE,
+        name: { en: 'Delete', es: 'Eliminar' },
+        description: {
+          en: 'Permission to delete priority levels from the system',
+          es: 'Permiso para eliminar niveles de prioridad del sistema',
+        },
+        scope: 'global',
+      },
+    },
+  },
+  WORKFLOW: {
+    name: {
+      en: ModuleName.WORKFLOW,
+      es: 'Flujos de Trabajo',
+    },
+    description: {
+      en: 'Module to manage workflows and their transitions',
+      es: 'Módulo para gestionar flujos de trabajo y sus transiciones',
+    },
+    features: {
+      CREATE: {
+        action: PermissionActions.WORKFLOW.CREATE,
+        name: { en: 'Create', es: 'Crear' },
+        description: {
+          en: 'Permission to create new workflows',
+          es: 'Permiso para crear nuevos flujos de trabajo',
+        },
+        scope: 'global',
+      },
+      VIEW: {
+        action: PermissionActions.WORKFLOW.VIEW,
+        name: { en: 'View', es: 'Ver' },
+        description: {
+          en: 'Permission to view existing workflows',
+          es: 'Permiso para consultar los flujos de trabajo existentes',
+        },
+        scope: 'global',
+      },
+      EDIT: {
+        action: PermissionActions.WORKFLOW.EDIT,
+        name: { en: 'Edit', es: 'Editar' },
+        description: {
+          en: 'Permission to edit existing workflows',
+          es: 'Permiso para modificar los flujos de trabajo existentes',
+        },
+        scope: 'global',
+      },
+      DELETE: {
+        action: PermissionActions.WORKFLOW.DELETE,
+        name: { en: 'Delete', es: 'Eliminar' },
+        description: {
+          en: 'Permission to delete workflows from the system',
+          es: 'Permiso para eliminar flujos de trabajo del sistema',
+        },
+        scope: 'global',
+      },
+    },
+  },
+  IDENTIFICATION_TYPE: {
+    name: {
+      en: ModuleName.IDENTIFICATION_TYPE,
+      es: 'Tipos de Identificación',
+    },
+    description: {
+      en: 'Module to manage identification types for users',
+      es: 'Módulo para gestionar los tipos de identificación de usuarios',
+    },
+    features: {
+      CREATE: {
+        action: PermissionActions.IDENTIFICATION_TYPE.CREATE,
+        name: { en: 'Create', es: 'Crear' },
+        description: {
+          en: 'Permission to create new identification types',
+          es: 'Permiso para crear nuevos tipos de identificación',
+        },
+        scope: 'global',
+      },
+      VIEW: {
+        action: PermissionActions.IDENTIFICATION_TYPE.VIEW,
+        name: { en: 'View', es: 'Ver' },
+        description: {
+          en: 'Permission to view existing identification types',
+          es: 'Permiso para consultar los tipos de identificación existentes',
+        },
+        scope: 'global',
+      },
+      EDIT: {
+        action: PermissionActions.IDENTIFICATION_TYPE.EDIT,
+        name: { en: 'Edit', es: 'Editar' },
+        description: {
+          en: 'Permission to edit existing identification types',
+          es: 'Permiso para modificar los tipos de identificación existentes',
+        },
+        scope: 'global',
+      },
+      DELETE: {
+        action: PermissionActions.IDENTIFICATION_TYPE.DELETE,
+        name: { en: 'Delete', es: 'Eliminar' },
+        description: {
+          en: 'Permission to delete identification types from the system',
+          es: 'Permiso para eliminar tipos de identificación del sistema',
+        },
+        scope: 'global',
+      },
+    },
+  },
+  DATA_ROOM: {
+    name: {
+      en: ModuleName.DATA_ROOM,
+      es: 'Salas de Datos',
+    },
+    description: {
+      en: 'Module to manage data rooms for storing and organizing documents',
+      es: 'Módulo para gestionar salas de datos para almacenar y organizar documentos',
+    },
+    features: {
+      CREATE: {
+        action: PermissionActions.DATA_ROOM.CREATE,
+        name: { en: 'Create', es: 'Crear' },
+        description: {
+          en: 'Permission to create new data rooms',
+          es: 'Permiso para crear nuevas salas de datos',
+        },
+        scope: 'global',
+      },
+      VIEW: {
+        action: PermissionActions.DATA_ROOM.VIEW,
+        name: { en: 'View', es: 'Ver' },
+        description: {
+          en: 'Permission to view existing data rooms',
+          es: 'Permiso para consultar las salas de datos existentes',
+        },
+        scope: 'global',
+      },
+      EDIT: {
+        action: PermissionActions.DATA_ROOM.EDIT,
+        name: { en: 'Edit', es: 'Editar' },
+        description: {
+          en: 'Permission to edit existing data rooms',
+          es: 'Permiso para modificar las salas de datos existentes',
+        },
+        scope: 'global',
+      },
+      DELETE: {
+        action: PermissionActions.DATA_ROOM.DELETE,
+        name: { en: 'Delete', es: 'Eliminar' },
+        description: {
+          en: 'Permission to delete data rooms from the system',
+          es: 'Permiso para eliminar salas de datos del sistema',
+        },
+        scope: 'global',
+      },
+    },
+  },
+  SHARED_LINK: {
+    name: {
+      en: ModuleName.SHARED_LINK,
+      es: 'Enlaces Compartidos',
+    },
+    description: {
+      en: 'Module to manage shared links for document access',
+      es: 'Módulo para gestionar enlaces compartidos para acceso a documentos',
+    },
+    features: {
+      CREATE: {
+        action: PermissionActions.SHARED_LINK.CREATE,
+        name: { en: 'Create', es: 'Crear' },
+        description: {
+          en: 'Permission to create new shared links',
+          es: 'Permiso para crear nuevos enlaces compartidos',
+        },
+        scope: 'global',
+      },
+      VIEW: {
+        action: PermissionActions.SHARED_LINK.VIEW,
+        name: { en: 'View', es: 'Ver' },
+        description: {
+          en: 'Permission to view existing shared links',
+          es: 'Permiso para consultar los enlaces compartidos existentes',
+        },
+        scope: 'global',
+      },
+      EDIT: {
+        action: PermissionActions.SHARED_LINK.EDIT,
+        name: { en: 'Edit', es: 'Editar' },
+        description: {
+          en: 'Permission to edit existing shared links',
+          es: 'Permiso para modificar los enlaces compartidos existentes',
+        },
+        scope: 'global',
+      },
+      DELETE: {
+        action: PermissionActions.SHARED_LINK.DELETE,
+        name: { en: 'Delete', es: 'Eliminar' },
+        description: {
+          en: 'Permission to delete shared links from the system',
+          es: 'Permiso para eliminar enlaces compartidos del sistema',
+        },
+        scope: 'global',
+      },
+    },
+  },
+  AGREEMENT: {
+    name: {
+      en: ModuleName.AGREEMENT,
+      es: 'Acuerdos',
+    },
+    description: {
+      en: 'Module to manage agreements and contracts',
+      es: 'Módulo para gestionar acuerdos y contratos',
+    },
+    features: {
+      CREATE: {
+        action: PermissionActions.AGREEMENT.CREATE,
+        name: { en: 'Create', es: 'Crear' },
+        description: {
+          en: 'Permission to create new agreements',
+          es: 'Permiso para crear nuevos acuerdos',
+        },
+        scope: 'global',
+      },
+      VIEW: {
+        action: PermissionActions.AGREEMENT.VIEW,
+        name: { en: 'View', es: 'Ver' },
+        description: {
+          en: 'Permission to view existing agreements',
+          es: 'Permiso para consultar los acuerdos existentes',
+        },
+        scope: 'global',
+      },
+      EDIT: {
+        action: PermissionActions.AGREEMENT.EDIT,
+        name: { en: 'Edit', es: 'Editar' },
+        description: {
+          en: 'Permission to edit existing agreements',
+          es: 'Permiso para modificar los acuerdos existentes',
+        },
+        scope: 'global',
+      },
+      DELETE: {
+        action: PermissionActions.AGREEMENT.DELETE,
+        name: { en: 'Delete', es: 'Eliminar' },
+        description: {
+          en: 'Permission to delete agreements from the system',
+          es: 'Permiso para eliminar acuerdos del sistema',
+        },
+        scope: 'global',
+      },
+    },
+  },
+  ASSIGNMENT_HIERARCHY: {
+    name: {
+      en: ModuleName.ASSIGNMENT_HIERARCHY,
+      es: 'Jerarquía de Asignación',
+    },
+    description: {
+      en: 'Module to manage assignment hierarchies and their categories',
+      es: 'Módulo para gestionar las jerarquías de asignación y sus categorías',
+    },
+    features: {
+      CREATE: {
+        action: PermissionActions.ASSIGNMENT_HIERARCHY.CREATE,
+        name: { en: 'Create', es: 'Crear' },
+        description: {
+          en: 'Permission to create new assignment hierarchies',
+          es: 'Permiso para crear nuevas jerarquías de asignación',
+        },
+        scope: 'global',
+      },
+      VIEW: {
+        action: PermissionActions.ASSIGNMENT_HIERARCHY.VIEW,
+        name: { en: 'View', es: 'Ver' },
+        description: {
+          en: 'Permission to view existing assignment hierarchies',
+          es: 'Permiso para consultar las jerarquías de asignación existentes',
+        },
+        scope: 'global',
+      },
+      EDIT: {
+        action: PermissionActions.ASSIGNMENT_HIERARCHY.EDIT,
+        name: { en: 'Edit', es: 'Editar' },
+        description: {
+          en: 'Permission to edit existing assignment hierarchies',
+          es: 'Permiso para modificar las jerarquías de asignación existentes',
+        },
+        scope: 'global',
+      },
+      DELETE: {
+        action: PermissionActions.ASSIGNMENT_HIERARCHY.DELETE,
+        name: { en: 'Delete', es: 'Eliminar' },
+        description: {
+          en: 'Permission to delete assignment hierarchies from the system',
+          es: 'Permiso para eliminar jerarquías de asignación del sistema',
+        },
+        scope: 'global',
+      },
+    },
+  },
+  REQUEST_HIERARCHY: {
+    name: {
+      en: ModuleName.REQUEST_HIERARCHY,
+      es: 'Jerarquía de Solicitud',
+    },
+    description: {
+      en: 'Module to manage request hierarchies and their categories',
+      es: 'Módulo para gestionar las jerarquías de solicitud y sus categorías',
+    },
+    features: {
+      CREATE: {
+        action: PermissionActions.REQUEST_HIERARCHY.CREATE,
+        name: { en: 'Create', es: 'Crear' },
+        description: {
+          en: 'Permission to create new request hierarchies',
+          es: 'Permiso para crear nuevas jerarquías de solicitud',
+        },
+        scope: 'global',
+      },
+      VIEW: {
+        action: PermissionActions.REQUEST_HIERARCHY.VIEW,
+        name: { en: 'View', es: 'Ver' },
+        description: {
+          en: 'Permission to view existing request hierarchies',
+          es: 'Permiso para consultar las jerarquías de solicitud existentes',
+        },
+        scope: 'global',
+      },
+      EDIT: {
+        action: PermissionActions.REQUEST_HIERARCHY.EDIT,
+        name: { en: 'Edit', es: 'Editar' },
+        description: {
+          en: 'Permission to edit existing request hierarchies',
+          es: 'Permiso para modificar las jerarquías de solicitud existentes',
+        },
+        scope: 'global',
+      },
+      DELETE: {
+        action: PermissionActions.REQUEST_HIERARCHY.DELETE,
+        name: { en: 'Delete', es: 'Eliminar' },
+        description: {
+          en: 'Permission to delete request hierarchies from the system',
+          es: 'Permiso para eliminar jerarquías de solicitud del sistema',
+        },
+        scope: 'global',
+      },
+    },
+  },
+  DASHBOARD: {
+    name: {
+      en: ModuleName.DASHBOARD,
+      es: 'Panel de Control',
+    },
+    description: {
+      en: 'Module to access the dashboard with metrics, statistics, and system overview',
+      es: 'Módulo para acceder al panel de control con métricas, estadísticas y resumen del sistema',
+    },
+    features: {
+      VIEW: {
+        action: PermissionActions.DASHBOARD.VIEW,
+        name: { en: 'View', es: 'Ver' },
+        description: {
+          en: 'Permission to view the dashboard with metrics and statistics',
+          es: 'Permiso para consultar el panel de control con métricas y estadísticas',
+        },
+        scope: 'global',
+      },
+      EXPORT: {
+        action: PermissionActions.DASHBOARD.EXPORT,
+        name: { en: 'Export', es: 'Exportar' },
+        description: {
+          en: 'Permission to export dashboard data and reports',
+          es: 'Permiso para exportar datos del panel de control y reportes',
         },
         scope: 'global',
       },

@@ -1,15 +1,27 @@
 import { FC } from 'react';
+import { type Locale } from 'next-intl';
+import { redirect } from '@/i18n/routing';
+import { getAuthContext } from '@/actions/authorization';
+import { PermissionActions } from '@/constants/permissions';
 import { getTranslations } from 'next-intl/server';
 
 import AssignRequestsForm from '@/components/common/request/assign-requests-form';
 import { PageDialogWrapper } from '@/components/shared/page-container';
 
 interface AssignMassivelyRequestsPageProps {
-  params: Promise<{ tenantId: string }>;
+  params: Promise<{ locale: Locale; tenantId: string }>;
 }
 
 const AssignMassivelyRequestsPage: FC<AssignMassivelyRequestsPageProps> = async ({ params }) => {
-  await params;
+  const { locale, tenantId } = await params;
+
+  const auth = await getAuthContext(tenantId);
+  const canAssign = auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.ASSIGN_USER]);
+  
+  if (!canAssign) {
+    return redirect({ locale, href: { pathname: '/admin/[tenantId]/requests', params: { tenantId } } });
+  }
+
   const t = await getTranslations('admin.request.massiveAssign');
 
   return (

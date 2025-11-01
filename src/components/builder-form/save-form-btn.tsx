@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import useDesigner from '@/hooks/use-designer';
 import { Button } from '@/components/ui/button';
 
-function SaveFormBtn({ id }: { id: string }) {
+function SaveFormBtn({ id, tenantId }: { id: string; tenantId: string }) {
   const t = useTranslations('component.form');
   const { elements } = useDesigner();
   const [loading, startTransition] = useTransition();
@@ -17,7 +17,7 @@ function SaveFormBtn({ id }: { id: string }) {
   const updateFormContent = async () => {
     try {
       const jsonElements = JSON.stringify(elements);
-      await UpdateFormContent(id, jsonElements);
+      await UpdateFormContent(id, jsonElements, tenantId);
       toast.success(t('success'), { description: t('saveSuccess') });
     } catch {
       toast.error(t('error'), { description: t('saveError') });

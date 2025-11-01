@@ -9,6 +9,7 @@ import { Tree, TreeDataProvider, TreeItem, TreeItemIndex, UncontrolledTreeEnviro
 import { cn } from '@/lib/utils';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuShortcut, ContextMenuTrigger } from '@/components/ui/context-menu';
 import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuItem } from '@/components/ui/sidebar';
+import { useAuthorization, PERMISSION } from '@/hooks/use-authorization';
 
 import { ConvertedMenuItem, useDndSubmissionContext } from './dnd-submission-provider';
 
@@ -17,8 +18,11 @@ interface NavFormSubmissionsProps {
   currentPath: string;
 }
 
-export function NavFormSubmissions({ currentPath }: NavFormSubmissionsProps) {
+export function NavFormSubmissions({ tenantId, currentPath }: NavFormSubmissionsProps) {
   const { formMenuItems, isLoading, deleteMenuItemById, updateMenuItemsParentAndPosition } = useDndSubmissionContext();
+  const { hasPermission } = useAuthorization(tenantId);
+  const canViewForms = hasPermission(PERMISSION.FORM_DESIGNER.VIEW);
+
   const activeKey = Object.keys(formMenuItems).find((key) => {
     const menuItem = formMenuItems[key];
     if (!menuItem?.data.url) return false;
@@ -28,7 +32,27 @@ export function NavFormSubmissions({ currentPath }: NavFormSubmissionsProps) {
 
   const { setNodeRef, isOver } = useDroppable({
     id: 'form-submissions',
+    disabled: !canViewForms,
   });
+
+  // If user doesn't have form permissions, show disabled state
+  if (!canViewForms) {
+    return (
+      <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+        <SidebarGroupLabel>Form Submissions</SidebarGroupLabel>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <div className="rounded-lg border-2 border-dashed p-4 opacity-50">
+              <div className="flex flex-col items-center gap-2 text-center">
+                <p className="text-sm font-medium">No access</p>
+                <p className="text-muted-foreground text-xs">Form submissions require form view permission</p>
+              </div>
+            </div>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarGroup>
+    );
+  }
 
   const dataProvider = useMemo(() => {
     const customData = new CustomDataProviderImplementation<ConvertedMenuItem>(formMenuItems, updateMenuItemsParentAndPosition);

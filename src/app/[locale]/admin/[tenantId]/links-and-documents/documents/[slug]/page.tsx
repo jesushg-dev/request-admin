@@ -1,4 +1,6 @@
-import { getPathname, Link } from '@/i18n/routing';
+import { getPathname, Link, redirect } from '@/i18n/routing';
+import { getAuthContext } from '@/actions/authorization';
+import { PermissionActions } from '@/constants/permissions';
 import { db } from '@/server/db-server';
 import { format } from 'date-fns';
 import { Calendar, Edit, ExternalLink, File, LinkIcon, MoreHorizontal, Trash2, Upload } from 'lucide-react';
@@ -11,9 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DocumentAnalytics } from '@/components/common/documents/document-analytics';
-//import { DocumentComments } from '@/components/common/documents/document-comments';
 import { DocumentMetadata } from '@/components/common/documents/document-metadata';
-//import { DocumentReactionWidget } from '@/components/common/documents/document-reaction-widget';
 import { DocumentSharedLinks } from '@/components/common/documents/document-shared-links';
 import { DocumentVersionHistory } from '@/components/common/documents/document-version-history';
 import DocumentViewer, { DocumentDownloadButton } from '@/components/common/documents/document-viewer';
@@ -24,6 +24,17 @@ interface DocumentDetailPageProps {
 
 export default async function DocumentDetailPage({ params }: DocumentDetailPageProps) {
   const { locale, tenantId, slug } = await params;
+
+  const auth = await getAuthContext(tenantId);
+  const canViewDocuments = auth.hasPermissions([PermissionActions.DOCUMENT_MANAGEMENT.VIEW]);
+  
+  if (!canViewDocuments) {
+    return redirect({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/documents', params: { tenantId } } });
+  }
+
+  const canEdit = auth.hasPermissions([PermissionActions.DOCUMENT_MANAGEMENT.EDIT]);
+  const canDelete = auth.hasPermissions([PermissionActions.DOCUMENT_MANAGEMENT.DELETE]);
+
   const t = await getTranslations({ locale, namespace: 'admin.document.view' });
   const callbackUrl = getPathname({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/documents/[slug]', params: { tenantId, slug } } });
 
@@ -90,25 +101,33 @@ export default async function DocumentDetailPage({ params }: DocumentDetailPageP
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel>{t('dropdown.actions')}</DropdownMenuLabel>
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href={{
-                        pathname: '/admin/[tenantId]/links-and-documents/documents/[slug]/edit',
-                        params: { tenantId, slug: document.id },
-                      }}>
-                      <Edit className="mr-2 h-4 w-4" />
-                      {t('dropdown.edit_document')}
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Upload className="mr-2 h-4 w-4" />
-                    {t('dropdown.upload_new_version')}
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <Trash2 className="mr-2 h-4 w-4 text-destructive" />
-                    <span className="text-destructive">{t('dropdown.delete_document')}</span>
-                  </DropdownMenuItem>
+                  {canEdit && (
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href={{
+                          pathname: '/admin/[tenantId]/links-and-documents/documents/[slug]/edit',
+                          params: { tenantId, slug: document.id },
+                        }}>
+                        <Edit className="mr-2 h-4 w-4" />
+                        {t('dropdown.edit_document')}
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  {canEdit && (
+                    <DropdownMenuItem>
+                      <Upload className="mr-2 h-4 w-4" />
+                      {t('dropdown.upload_new_version')}
+                    </DropdownMenuItem>
+                  )}
+                  {canDelete && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem>
+                        <Trash2 className="mr-2 h-4 w-4 text-destructive" />
+                        <span className="text-destructive">{t('dropdown.delete_document')}</span>
+                      </DropdownMenuItem>
+                    </>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -123,10 +142,6 @@ export default async function DocumentDetailPage({ params }: DocumentDetailPageP
               <TabsTrigger value="versions">{t('tabs.versions')}</TabsTrigger>
               <TabsTrigger value="links">{t('tabs.links')}</TabsTrigger>
               <TabsTrigger value="analytics">{t('tabs.analytics')}</TabsTrigger>
-              {/* todo: implement comments and reactions after MVP
-              <TabsTrigger value="comments">Comments</TabsTrigger>
-              <TabsTrigger value="reactions">Reactions</TabsTrigger>
-              */}
             </TabsList>
 
             <TabsContent value="preview" className="flex-1 rounded-lg overflow-y-auto justify-center items-center border flex flex-col bg-white dark:bg-gray-900">
