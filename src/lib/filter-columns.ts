@@ -62,10 +62,10 @@ export function buildPrismaFilters<T extends Record<string, unknown>>(filters: A
           return { [column]: { not: value } };
 
         case 'iLike':
-          return type === 'text' && typeof value === 'string' ? { [column]: { contains: value, mode: 'insensitive' } } : undefined;
+          return type === 'text' && typeof value === 'string' ? { [column]: { contains: value,  } } : undefined;
 
         case 'notILike':
-          return type === 'text' && typeof value === 'string' ? { [column]: { not: { contains: value, mode: 'insensitive' } } } : undefined;
+          return type === 'text' && typeof value === 'string' ? { [column]: { not: { contains: value,  } } } : undefined;
 
         case 'lt':
           if (type === 'number') return { [column]: { lt: value } };

@@ -10,10 +10,10 @@ import "./request.zmodel"
 // Document and File Models
 // ----------------------
 model Document extends TenantScoped, Auditable {
-  id          String   @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for the document
+  id          String   @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for the document
 
   // Basic details
-  name         String   //@db.VarChar(155) // Document name (max length 155)
+  name         String   @db.VarChar(155) // Document name (max length 155)
   description  String?  // Optional document description
 
   // File storage references
@@ -37,20 +37,20 @@ model Document extends TenantScoped, Auditable {
   downloadOnly         Boolean @default(false) // Indicates if the document is download-only
 
   // Owner relationship
-  ownerId      String? 
+  ownerId      String? @db.UniqueIdentifier
   owner        UserTenant? @relation(fields: [ownerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   // Folder relationship (optional)
-  folderId String? //@db.UniqueIdentifier // Optional Folder ID (SQL Server GUID)
+  folderId String? @db.UniqueIdentifier // Optional Folder ID (SQL Server GUID)
   folder   DataroomFolder? @relation(fields: [folderId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   // Dataroom relationship (optional)
-  dataroomId String? //@db.UniqueIdentifier
+  dataroomId String? @db.UniqueIdentifier
   dataroom   Dataroom? @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   orderIndex Int?
 
   // Compliance tracking (optional)
-  requirementComplianceTrackingId String? //@db.UniqueIdentifier // Associated compliance tracking ID
+  requirementComplianceTrackingId String? @db.UniqueIdentifier // Associated compliance tracking ID
   requirementComplianceTracking   RequirementComplianceTracking? @relation(fields: [requirementComplianceTrackingId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   // Other relationships
@@ -65,11 +65,11 @@ model Document extends TenantScoped, Auditable {
 }
 
 model DocumentVersion extends TenantScoped, Auditable {
-  id            String   @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for document version
+  id            String   @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for document version
   versionNumber Int      @default(1)// Version number for control (e.g., 1, 2, 3)
   
   // Relationship to Document
-  documentId    String   //@db.UniqueIdentifier
+  documentId    String   @db.UniqueIdentifier
   document      Document @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   
   // File references for this version
@@ -97,14 +97,14 @@ model DocumentVersion extends TenantScoped, Auditable {
 }
 
 model DocumentPage extends TenantScoped, Auditable {
-  id         String   @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for document page
-  versionId  String   //@db.UniqueIdentifier
+  id         String   @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for document page
+  versionId  String   @db.UniqueIdentifier
   version    DocumentVersion @relation(fields: [versionId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   pageNumber Int      // Page number (e.g., 1, 2, 3)
   // Stored as JSON text in NVARCHAR(Max)
-  embeddedLinks String //@db.NVarChar(Max)
-  pageLinks  String   //@db.NVarChar(Max)    // JSON data for page links: [{ "href": "https://example.com", "coords": "0,0,100,100" }]
-  metadata   String   //@db.NVarChar(Max)    // JSON metadata: { originalWidth, originalHeight, scaledWidth, scaledHeight, scaleFactor }
+  embeddedLinks String @db.NVarChar(Max)
+  pageLinks  String   @db.NVarChar(Max)    // JSON data for page links: [{ "href": "https://example.com", "coords": "0,0,100,100" }]
+  metadata   String   @db.NVarChar(Max)    // JSON metadata: { originalWidth, originalHeight, scaledWidth, scaledHeight, scaleFactor }
   file       String   // Reference to stored page file
   // Allowed values: "S3_PATH", "VERCEL_BLOB"
   storageType String  @default("VERCEL_BLOB")
@@ -117,10 +117,10 @@ model DocumentPage extends TenantScoped, Auditable {
 // Link and Preset Models
 // ----------------------
 model Link extends TenantScoped, Auditable {
-  id         String   @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for link
-  documentId String?  //@db.UniqueIdentifier // Optional associated document ID
+  id         String   @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for link
+  documentId String?  @db.UniqueIdentifier // Optional associated document ID
   document   Document? @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  dataroomId String?  //@db.UniqueIdentifier // Optional associated dataroom ID
+  dataroomId String?  @db.UniqueIdentifier // Optional associated dataroom ID
   dataroom   Dataroom? @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   // Allowed values: "DOCUMENT_LINK", "DATAROOM_LINK"
   linkType   String   @default("DOCUMENT_LINK")
@@ -130,9 +130,9 @@ model Link extends TenantScoped, Auditable {
   expiresAt  DateTime? // Optional expiration date
   password   String?  // Optional password for link protection
   // Stored as JSON text (an array of strings) in NVARCHAR(Max)
-  allowList  String   //@db.NVarChar(Max)
+  allowList  String   @db.NVarChar(Max)
   // Stored as JSON text (an array of strings) in NVARCHAR(Max)
-  denyList   String   //@db.NVarChar(Max)
+  denyList   String   @db.NVarChar(Max)
   emailProtected     Boolean @default(true)  // Enable email protection
   emailAuthenticated Boolean @default(false) // Enable email authentication
   allowDownload      Boolean? @default(false) // Option to allow document download
@@ -148,11 +148,11 @@ model Link extends TenantScoped, Auditable {
   feedback   DocumentFeedback?
   
   // Agreement relation (optional)
-  agreementId String? //@db.UniqueIdentifier // Associated agreement ID
+  agreementId String? @db.UniqueIdentifier // Associated agreement ID
   agreement   Agreement? @relation(fields: [agreementId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   // Domain relationship
-  domainId   String? //@db.UniqueIdentifier // Optional associated domain ID
+  domainId   String? @db.UniqueIdentifier // Optional associated domain ID
   domain     Domain? @relation(fields: [domainId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   domainSlug String?  // Stores the domain's slug even if the domain is deleted
 
@@ -166,12 +166,12 @@ model Link extends TenantScoped, Auditable {
   // Group linking
   // Allowed values: "GENERAL", "GROUP", "TEAM"
   audienceType String  @default("GENERAL")
-  groupId      String? //@db.UniqueIdentifier // Optional group ID for audience segmentation
+  groupId      String? @db.UniqueIdentifier // Optional group ID for audience segmentation
   group        DataroomViewerGroup? @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   // Watermark configuration
   enableWatermark    Boolean? @default(false) // Toggle watermark
-  watermarkConfig    String   //@db.NVarChar(Max) // JSON configuration for watermark (e.g., { "text": "Confidential", "isTiled": false, "color": "#000000", ... })
+  watermarkConfig    String   @db.NVarChar(Max) // JSON configuration for watermark (e.g., { "text": "Confidential", "isTiled": false, "color": "#000000", ... })
 
   @@unique([domainSlug, slug])
   @@index([documentId])
@@ -181,7 +181,7 @@ model Link extends TenantScoped, Auditable {
 }
 
 model LinkPreset extends TenantScoped, Auditable {
-  id   String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for link preset
+  id   String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for link preset
   name String
 
   enableCustomMetaTag Boolean? @default(false) // Toggle for custom metatag usage
@@ -197,7 +197,7 @@ model LinkPreset extends TenantScoped, Auditable {
 // Domain and DocumentView Models
 // ----------------------
 model Domain extends TenantScoped, Auditable {
-  id           String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for domain
+  id           String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for domain
   slug         String @unique
   verified     Boolean @default(false) // Domain verification status
   isDefault    Boolean @default(false) // Primary domain flag
@@ -209,12 +209,12 @@ model Domain extends TenantScoped, Auditable {
 }
 
 model DocumentView extends TenantScoped, Auditable {
-  id            String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for view
-  linkId        String //@db.UniqueIdentifier
+  id            String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for view
+  linkId        String @db.UniqueIdentifier
   link          Link   @relation(fields: [linkId], references: [id])
-  documentId    String? //@db.UniqueIdentifier
+  documentId    String? @db.UniqueIdentifier
   document      Document? @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  dataroomId    String? //@db.UniqueIdentifier
+  dataroomId    String? @db.UniqueIdentifier
   dataroom      Dataroom? @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   dataroomViewId String? // Dataroom view ID
   viewerEmail   String? // Email of the viewer
@@ -225,9 +225,9 @@ model DocumentView extends TenantScoped, Auditable {
   reactions     DocumentReaction[]
   // Allowed values: "DOCUMENT_VIEW", "DATAROOM_VIEW"
   viewType      String  @default("DOCUMENT_VIEW")
-  viewerId      String? //@db.UniqueIdentifier // Foreign key to Viewer
+  viewerId      String? @db.UniqueIdentifier // Foreign key to Viewer
   viewer        Viewer?  @relation(fields: [viewerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  groupId       String? //@db.UniqueIdentifier // Group ID from dataroom
+  groupId       String? @db.UniqueIdentifier // Group ID from dataroom
   group         DataroomViewerGroup? @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   feedbackResponse      FeedbackResponse?
   agreementResponse     AgreementResponse?
@@ -245,14 +245,14 @@ model DocumentView extends TenantScoped, Auditable {
 // Viewer and Reaction Models
 // ----------------------
 model Viewer extends TenantScoped, Auditable {
-  id        String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for viewer
+  id        String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for viewer
   email     String
   verified  Boolean @default(false) // Email verification status
   invitedAt DateTime? // Invitation timestamp
   // Stored as NVARCHAR(Max) containing JSON text.
-  notificationPreferences String   //@db.NVarChar(Max)
+  notificationPreferences String   @db.NVarChar(Max)
 
-  dataroomId String? //@db.UniqueIdentifier
+  dataroomId String? @db.UniqueIdentifier
   dataroom   Dataroom? @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   views   DocumentView[]
@@ -264,8 +264,8 @@ model Viewer extends TenantScoped, Auditable {
 }
 
 model DocumentReaction extends TenantScoped, Auditable {
-  id         String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for reaction
-  viewId     String //@db.UniqueIdentifier
+  id         String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for reaction
+  viewId     String @db.UniqueIdentifier
   view       DocumentView   @relation(fields: [viewId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   pageNumber Int    // Page number where reaction occurred
   type       String // Reaction type (e.g., "like", "dislike", "love", etc.)
@@ -288,7 +288,7 @@ model InvitationDocument extends TenantScoped, Auditable {
 // "FIRST_DAY_DOMAIN_REMINDER_EMAIL", "FIRST_DOMAIN_INVALID_EMAIL", "SECOND_DOMAIN_INVALID_EMAIL", 
 // "FIRST_TRIAL_END_REMINDER_EMAIL", "FINAL_TRIAL_END_REMINDER_EMAIL"
 model SentEmail extends TenantScoped, Auditable {
-  id         String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for sent email
+  id         String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for sent email
   type       String  // Email type as string
   recipient  String // Recipient email address
   marketing  Boolean @default(false)
@@ -298,11 +298,11 @@ model SentEmail extends TenantScoped, Auditable {
 }
 
 model DocumentConversation extends TenantScoped, Auditable {
-  id         String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for conversation
+  id         String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for conversation
   threadId   String @unique // Thread ID from OpenAI Assistant API
-  userTenantId String
+  userTenantId String @db.UniqueIdentifier
   userTenant   UserTenant   @relation(fields: [userTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  documentId String //@db.UniqueIdentifier
+  documentId String @db.UniqueIdentifier
   document   Document @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   @@unique([userTenantId, documentId])
@@ -325,21 +325,21 @@ model Dataroom extends TenantScoped, Auditable, CatalogBase {
   brand        DataroomBrand?
   
   // Request relationship (optional, merged from legacy model)
-  requestId  String?  @unique //@db.UniqueIdentifier // Associated request ID
+  requestId  String?  @unique @db.UniqueIdentifier // Associated request ID
   request    Request? @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([tenantId])
 }
 
 model DataroomFolder extends TenantScoped, Auditable {
-  id          String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for dataroom folder
+  id          String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for dataroom folder
   name        String
   path        String // Materialized path (e.g., "/folder/subfolder")
-  parentId    String? //@db.UniqueIdentifier
+  parentId    String? @db.UniqueIdentifier
   documents   Document[]
   childFolders DataroomFolder[] @relation("SubFolders")
   parentFolder DataroomFolder? @relation("SubFolders", fields: [parentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  dataroomId  String //@db.UniqueIdentifier
+  dataroomId  String @db.UniqueIdentifier
   dataroom    Dataroom @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   orderIndex  Int?
 
@@ -351,12 +351,12 @@ model DataroomFolder extends TenantScoped, Auditable {
 
 
 model DataroomBrand extends TenantScoped, Auditable {
-  id         String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for dataroom brand
+  id         String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for dataroom brand
   logo       String? // Reference to logo file location
   banner     String? // Reference to banner file location
   brandColor String? // Brand color
   accentColor String? // Accent color
-  dataroomId String @unique //@db.UniqueIdentifier 
+  dataroomId String @unique @db.UniqueIdentifier 
   dataroom   Dataroom @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   @@index([tenantId])
@@ -366,21 +366,21 @@ model DataroomBrand extends TenantScoped, Auditable {
 // Feedback and Agreement Models
 // ----------------------
 model DocumentFeedback extends TenantScoped, Auditable {
-  id      String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for feedback
-  linkId  String @unique //@db.UniqueIdentifier 
+  id      String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for feedback
+  linkId  String @unique @db.UniqueIdentifier 
   link    Link   @relation(fields: [linkId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  data    String   //@db.NVarChar(Max)   // JSON storing feedback question data
+  data    String   @db.NVarChar(Max)   // JSON storing feedback question data
   responses FeedbackResponse[]
 
   @@index([linkId])
 }
 
 model FeedbackResponse extends TenantScoped, Auditable {
-  id         String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for feedback response
-  feedbackId String //@db.UniqueIdentifier
+  id         String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for feedback response
+  feedbackId String @db.UniqueIdentifier
   feedback   DocumentFeedback @relation(fields: [feedbackId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  data       String   //@db.NVarChar(Max)   // JSON storing feedback response data (e.g., answer)
-  viewId     String @unique //@db.UniqueIdentifier 
+  data       String   @db.NVarChar(Max)   // JSON storing feedback response data (e.g., answer)
+  viewId     String @unique @db.UniqueIdentifier 
   view       DocumentView   @relation(fields: [viewId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   @@index([feedbackId])
@@ -398,10 +398,10 @@ model Agreement extends TenantScoped, Auditable, CatalogBase {
 }
 
 model AgreementResponse extends TenantScoped, Auditable {
-  id          String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for agreement response
-  agreementId String //@db.UniqueIdentifier
+  id          String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for agreement response
+  agreementId String @db.UniqueIdentifier
   agreement   Agreement @relation(fields: [agreementId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  viewId      String @unique //@db.UniqueIdentifier 
+  viewId      String @unique @db.UniqueIdentifier 
   view        DocumentView @relation(fields: [viewId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   @@index([agreementId])
@@ -412,16 +412,16 @@ model AgreementResponse extends TenantScoped, Auditable {
 // Viewer Group and Access Control Models
 // ----------------------
 model DataroomViewerGroup extends TenantScoped, Auditable {
-  id         String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for viewer group
+  id         String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for viewer group
   name       String
   members    DataroomViewerGroupMembership[]
   // Stored as NVARCHAR(Max) containing JSON text (an array of strings)
-  domains    String   //@db.NVarChar(Max)
+  domains    String   @db.NVarChar(Max)
   links      Link[]
   accessControls DataroomViewerGroupAccessControls[]
   allowAll   Boolean @default(false)
 
-  dataroomId String //@db.UniqueIdentifier
+  dataroomId String @db.UniqueIdentifier
   dataroom   Dataroom @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   views      DocumentView[]
 
@@ -430,10 +430,10 @@ model DataroomViewerGroup extends TenantScoped, Auditable {
 }
 
 model DataroomViewerGroupMembership extends TenantScoped, Auditable {
-  id       String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for membership
-  viewerId String //@db.UniqueIdentifier
+  id       String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for membership
+  viewerId String @db.UniqueIdentifier
   viewer   Viewer @relation(fields: [viewerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  groupId  String //@db.UniqueIdentifier
+  groupId  String @db.UniqueIdentifier
   group    DataroomViewerGroup @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   @@unique([viewerId, groupId])
@@ -442,8 +442,8 @@ model DataroomViewerGroupMembership extends TenantScoped, Auditable {
 }
 
 model DataroomViewerGroupAccessControls extends TenantScoped, Auditable {
-  id      String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for access control
-  groupId String //@db.UniqueIdentifier
+  id      String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for access control
+  groupId String @db.UniqueIdentifier
   group   DataroomViewerGroup @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   // Access control for items (documents or dataroom items)
@@ -461,7 +461,7 @@ model DataroomViewerGroupAccessControls extends TenantScoped, Auditable {
 // Webhook and Token Models
 // ----------------------
 model IncomingWebhook extends TenantScoped, Auditable {
-  id         String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for webhook
+  id         String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for webhook
   externalId String @unique
   name       String
   secret     String? // Webhook signing secret for verification
@@ -475,7 +475,7 @@ model IncomingWebhook extends TenantScoped, Auditable {
 }
 
 model RestrictedToken extends TenantScoped, Auditable {
-  id         String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for restricted token
+  id         String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for restricted token
   name       String
   hashedKey  String @unique
   partialKey String
@@ -484,7 +484,7 @@ model RestrictedToken extends TenantScoped, Auditable {
   lastUsed   DateTime?
   rateLimit  Int @default(60) // Rate limit per minute
 
-  userTenantId String
+  userTenantId String @db.UniqueIdentifier
   userTenant   UserTenant @relation(fields: [userTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   @@index([userTenantId])
@@ -492,12 +492,12 @@ model RestrictedToken extends TenantScoped, Auditable {
 }
 
 model Webhook extends TenantScoped, Auditable {
-  id     String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for webhook
+  id     String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for webhook
   pId    String @unique // Public ID for the webhook
   name   String
   url    String
   secret String // Signing secret for the webhook
-  triggers String   //@db.NVarChar(Max)
+  triggers String   @db.NVarChar(Max)
 
   @@index([tenantId])
 }
@@ -507,14 +507,14 @@ model Webhook extends TenantScoped, Auditable {
 // ----------------------
 // Allowed values: "SHORT_TEXT", "LONG_TEXT", "NUMBER", "PHONE_NUMBER", "URL", "CHECKBOX", "SELECT", "MULTI_SELECT"
 model CustomField extends TenantScoped, Auditable {
-  id          String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for custom field
+  id          String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for custom field
   type        String  // Custom field type as string
   identifier  String
   label       String
   placeholder String? // Optional placeholder text
   required    Boolean @default(false)
   disabled    Boolean @default(false)
-  linkId      String //@db.UniqueIdentifier
+  linkId      String @db.UniqueIdentifier
   link        Link   @relation(fields: [linkId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   orderIndex  Int    @default(0)
 
@@ -522,9 +522,9 @@ model CustomField extends TenantScoped, Auditable {
 }
 
 model CustomFieldResponse extends TenantScoped, Auditable {
-  id      String @id @default(uuid()) //@db.UniqueIdentifier // Unique identifier for custom field response
-  data    String   //@db.NVarChar(Max)   // JSON storing custom field responses
-  viewId  String @unique //@db.UniqueIdentifier 
+  id      String @id @default(uuid()) @db.UniqueIdentifier // Unique identifier for custom field response
+  data    String   @db.NVarChar(Max)   // JSON storing custom field responses
+  viewId  String @unique @db.UniqueIdentifier 
   view    DocumentView @relation(fields: [viewId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   @@index([viewId])

@@ -6,10 +6,10 @@
 
 import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
 import type { PolicyCrudKind } from '@zenstackhq/runtime';
+import type { Prisma, RequestWorkflow } from '@zenstackhq/runtime/models';
 import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
 import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
 
-import type { Prisma, RequestWorkflow } from '../../../../node_modules/.prisma/client';
 import metadata from './__model_meta';
 
 type DefaultError = QueryError;

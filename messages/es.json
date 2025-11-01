@@ -1796,7 +1796,7 @@
           "failedToSaveChanges": "Error al guardar los cambios",
           "noRequirementsAvailable": "No hay requisitos disponibles",
           "noRequirementsFoundForThisRequest": "No se encontraron requisitos para esta solicitud",
-          "totalRequirements": "Requisitos totales",
+          "totalRequirements": "Requerimientos totales",
           "trackProgress": "Seguimiento del progreso",
           "completed": "Completado",
           "pending": "Pendiente",
@@ -2029,7 +2029,7 @@
           },
           "requestDetails": "Detalles de solicitud",
           "requirementProgress": {
-            "totalRequirements": "Requisitos Totales",
+            "totalRequirements": "Requerimientos totales",
             "trackProgress": "Seguimiento del progreso de los requisitos de la solicitud",
             "noRequirementsAvailable": "No hay requisitos disponibles",
             "noRequirementsDescription": "No se encontraron requisitos para esta solicitud."
