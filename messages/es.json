@@ -2417,6 +2417,53 @@
       }
     },
     "security": {
+      "dashboard": {
+        "title": "Panel de Seguridad",
+        "description": "Una vista completa del estado de seguridad de su sistema",
+        "stats": {
+          "totalUsers": {
+            "title": "Total de Usuarios",
+            "description": "Cuentas activas en el sistema"
+          },
+          "activeRoles": {
+            "title": "Roles Activos",
+            "description": "Roles del sistema definidos"
+          },
+          "failedLoginAttempts": {
+            "title": "Intentos de Login Fallidos",
+            "description": "En las últimas 24 horas"
+          },
+          "passwordResets": {
+            "title": "Restablecimientos de Contraseña",
+            "description": "Solicitudes en los últimos 7 días"
+          }
+        },
+        "tabs": {
+          "users": "Usuarios",
+          "roles": "Roles"
+        },
+        "table": {
+          "users": {
+            "name": "Nombre",
+            "email": "Correo Electrónico",
+            "role": "Rol",
+            "status": "Estado",
+            "actions": "Acciones",
+            "noUsers": "No se encontraron usuarios",
+            "viewDetails": "Ver Detalles",
+            "noRole": "Sin Rol"
+          },
+          "roles": {
+            "roleName": "Nombre del Rol",
+            "permissions": "Permisos",
+            "userCount": "Cantidad de Usuarios",
+            "actions": "Acciones",
+            "noRoles": "No se encontraron roles",
+            "viewDetails": "Ver Detalles",
+            "noPermissions": "Sin permisos"
+          }
+        }
+      },
       "users": {
         "title": "Usuarios",
         "view": "Ver Usuarios",

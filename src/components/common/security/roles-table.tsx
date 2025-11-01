@@ -1,47 +1,150 @@
+'use client';
+
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { useFindManyRole } from '@/services/api/hooks';
+import { Prisma } from '@prisma/client';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Skeleton } from '@/components/ui/skeleton';
 
-const roles = [
-  { id: 1, name: 'Admin', permissions: ['Read', 'Write', 'Delete'], userCount: 5 },
-  { id: 2, name: 'Manager', permissions: ['Read', 'Write'], userCount: 10 },
-  { id: 3, name: 'User', permissions: ['Read'], userCount: 100 },
-  { id: 4, name: 'Guest', permissions: ['Read'], userCount: 50 },
-  { id: 5, name: 'Support', permissions: ['Read', 'Write'], userCount: 15 },
-];
+const RoleDefaultArgs = Prisma.validator<Prisma.RoleDefaultArgs>()({
+  select: {
+    id: true,
+    name: true,
+    description: true,
+    roleFeature: {
+      select: {
+        feature: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      where: {
+        isActive: true,
+      },
+    },
+    _count: {
+      select: {
+        userRole: {
+          where: {
+            isActive: true,
+          },
+        },
+        roleFeature: {
+          where: {
+            isActive: true,
+          },
+        },
+      },
+    },
+  },
+});
 
-export function RolesTable() {
+type RoleWithRelations = Prisma.RoleGetPayload<typeof RoleDefaultArgs>;
+
+interface RolesTableProps {
+  tenantId: string;
+}
+
+export function RolesTable({ tenantId }: RolesTableProps) {
+  const t = useTranslations('admin.security.dashboard.table.roles');
+  const { data, isLoading } = useFindManyRole({
+    ...RoleDefaultArgs,
+    where: {
+      tenantId,
+    },
+    take: 10, // Limit to 10 roles for the dashboard
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>{t('roleName')}</TableHead>
+            <TableHead>{t('permissions')}</TableHead>
+            <TableHead>{t('userCount')}</TableHead>
+            <TableHead>{t('actions')}</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {Array.from({ length: 5 }).map((_, i) => (
+            <TableRow key={i}>
+              <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+              <TableCell><Skeleton className="h-4 w-48" /></TableCell>
+              <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+              <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    );
+  }
+
+  const roles = data || [];
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Role Name</TableHead>
-          <TableHead>Permissions</TableHead>
-          <TableHead>User Count</TableHead>
-          <TableHead>Actions</TableHead>
+          <TableHead>{t('roleName')}</TableHead>
+          <TableHead>{t('permissions')}</TableHead>
+          <TableHead>{t('userCount')}</TableHead>
+          <TableHead>{t('actions')}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {roles.map((role) => (
-          <TableRow key={role.id}>
-            <TableCell className="font-medium">{role.name}</TableCell>
-            <TableCell>
-              {role.permissions.map((permission) => (
-                <Badge key={permission} variant="outline" className="mr-1">
-                  {permission}
-                </Badge>
-              ))}
-            </TableCell>
-            <TableCell>{role.userCount}</TableCell>
-            <TableCell>
-              <Button variant="link" asChild>
-                <Link href={`/roles/${role.id}`}>View Details</Link>
-              </Button>
+        {roles.length === 0 ? (
+          <TableRow>
+            <TableCell colSpan={4} className="text-center text-muted-foreground">
+              {t('noRoles')}
             </TableCell>
           </TableRow>
-        ))}
+        ) : (
+          roles.map((role) => {
+            const features = role.roleFeature.map((rf) => rf.feature.name);
+            const userCount = role._count.userRole;
+
+            return (
+              <TableRow key={role.id}>
+                <TableCell className="font-medium">{role.name}</TableCell>
+                <TableCell>
+                  {features.length > 0 ? (
+                    <div className="flex flex-wrap gap-1">
+                      {features.slice(0, 3).map((feature, idx) => (
+                        <Badge key={idx} variant="outline" className="text-xs">
+                          {feature}
+                        </Badge>
+                      ))}
+                      {features.length > 3 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{features.length - 3}
+                        </Badge>
+                      )}
+                    </div>
+                  ) : (
+                    <span className="text-muted-foreground text-sm">{t('noPermissions')}</span>
+                  )}
+                </TableCell>
+                <TableCell>{userCount}</TableCell>
+                <TableCell>
+                  <Button variant="link" asChild>
+                    <Link href={`/admin/${tenantId}/security/roles/${role.id}`}>
+                      {t('viewDetails')}
+                    </Link>
+                  </Button>
+                </TableCell>
+              </TableRow>
+            );
+          })
+        )}
       </TableBody>
     </Table>
   );

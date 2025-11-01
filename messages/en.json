@@ -2408,6 +2408,53 @@
       }
     },
     "security": {
+      "dashboard": {
+        "title": "Security Dashboard",
+        "description": "A comprehensive view of your system's security status",
+        "stats": {
+          "totalUsers": {
+            "title": "Total Users",
+            "description": "Active accounts in the system"
+          },
+          "activeRoles": {
+            "title": "Active Roles",
+            "description": "Defined system roles"
+          },
+          "failedLoginAttempts": {
+            "title": "Failed Login Attempts",
+            "description": "In the last 24 hours"
+          },
+          "passwordResets": {
+            "title": "Password Resets",
+            "description": "Requests in the last 7 days"
+          }
+        },
+        "tabs": {
+          "users": "Users",
+          "roles": "Roles"
+        },
+        "table": {
+          "users": {
+            "name": "Name",
+            "email": "Email",
+            "role": "Role",
+            "status": "Status",
+            "actions": "Actions",
+            "noUsers": "No users found",
+            "viewDetails": "View Details",
+            "noRole": "No Role"
+          },
+          "roles": {
+            "roleName": "Role Name",
+            "permissions": "Permissions",
+            "userCount": "User Count",
+            "actions": "Actions",
+            "noRoles": "No roles found",
+            "viewDetails": "View Details",
+            "noPermissions": "No permissions"
+          }
+        }
+      },
       "users": {
         "title": "Users",
         "view": "View Users",
