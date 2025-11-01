@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { getCurrentUserTenant } from '@/actions/user';
 import { redirect } from '@/i18n/routing';
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-server';
+import { getDb } from '@/server/db-client';
 import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
@@ -51,6 +51,7 @@ export default async function RootLayout({
   const session = await currentSession();
   if (!session) return redirect({ href: '/', locale: 'en' });
 
+  const db = await getDb();
   const tenants = await db.tenant.findMany({
     select: { id: true, name: true, description: true, logo: true },
     where: { userTenants: { some: { userId: { equals: session.user.id } } } },

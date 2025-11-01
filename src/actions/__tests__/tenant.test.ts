@@ -1,7 +1,7 @@
 // Import after mocks
 import { redirect } from '@/i18n/routing';
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-server';
+import { getDb } from '@/server/db-client';
 
 import { getTenantIdFromUrl, getTenantInformation } from '../tenant';
 
@@ -10,12 +10,14 @@ jest.mock('@/server/auth-server', () => ({
   currentSession: jest.fn(),
 }));
 
-jest.mock('@/server/db-server', () => ({
-  db: {
-    tenant: {
-      findFirst: jest.fn(),
-    },
+const mockDb = {
+  tenant: {
+    findFirst: jest.fn(),
   },
+};
+
+jest.mock('@/server/db-client', () => ({
+  getDb: jest.fn(),
 }));
 
 jest.mock('@/i18n/routing', () => ({
@@ -26,6 +28,11 @@ jest.mock('@/i18n/routing', () => ({
 describe('Tenant Actions', () => {
   const mockSession = { user: { id: 'user-123' }, tenantId: 'tenant-123' };
   const mockTenantId = 'tenant-1';
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (getDb as jest.Mock).mockResolvedValue(mockDb);
+  });
 
   const mockTenant = {
     name: 'Test Tenant',
@@ -77,7 +84,7 @@ describe('Tenant Actions', () => {
     });
 
     it('should return tenant information', async () => {
-      (db.tenant.findFirst as jest.Mock).mockResolvedValue(mockTenant);
+      (mockDb.tenant.findFirst as jest.Mock).mockResolvedValue(mockTenant);
 
       const result = await getTenantInformation(mockTenantId);
 
@@ -95,7 +102,7 @@ describe('Tenant Actions', () => {
         address: mockTenant.address,
       });
 
-      expect(db.tenant.findFirst).toHaveBeenCalledWith({
+      expect(mockDb.tenant.findFirst).toHaveBeenCalledWith({
         where: { id: mockTenantId },
         select: {
           name: true,
@@ -128,7 +135,7 @@ describe('Tenant Actions', () => {
         address: null,
       };
 
-      (db.tenant.findFirst as jest.Mock).mockResolvedValue(tenantWithNullFields);
+      (mockDb.tenant.findFirst as jest.Mock).mockResolvedValue(tenantWithNullFields);
 
       const result = await getTenantInformation(mockTenantId);
 
@@ -148,7 +155,7 @@ describe('Tenant Actions', () => {
     });
 
     it('should throw error when tenant not found', async () => {
-      (db.tenant.findFirst as jest.Mock).mockResolvedValue(null);
+      (mockDb.tenant.findFirst as jest.Mock).mockResolvedValue(null);
 
       await expect(getTenantInformation(mockTenantId)).rejects.toThrow('Tenant not found');
     });

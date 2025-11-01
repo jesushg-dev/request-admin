@@ -3,7 +3,7 @@
 import { locales, redirect } from '@/i18n/routing';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-server';
+import { getDb } from '@/server/db-client';
 
 import { extractTenantId } from '@/lib/utils';
 import { TenantFormValues } from '@/components/common/tenant/tenant-form';
@@ -28,6 +28,7 @@ export const getTenantInformation = async (tenantId: string): Promise<TenantForm
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
+  const db = await getDb();
   const response = await db.tenant.findFirst({
     where: {
       id: tenantId,

@@ -1,13 +1,13 @@
 import { getPathname, Link, redirect } from '@/i18n/routing';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
-import { db } from '@/server/db-server';
+import { getDb } from '@/server/db-client';
 import { format } from 'date-fns';
 import { Calendar, Edit, ExternalLink, File, LinkIcon, MoreHorizontal, Trash2, Upload } from 'lucide-react';
 import type { Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
-import { DocumentDefaultArgs } from '@/types/prisma/document';
+import { DocumentDefaultArgs } from '@/types/zenstackhq/document';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -38,6 +38,7 @@ export default async function DocumentDetailPage({ params }: DocumentDetailPageP
   const t = await getTranslations({ locale, namespace: 'admin.document.view' });
   const callbackUrl = getPathname({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/documents/[slug]', params: { tenantId, slug } } });
 
+  const db = await getDb();
   const document = await db.document.findUnique({
     ...DocumentDefaultArgs,
     where: { id: slug, tenantId },

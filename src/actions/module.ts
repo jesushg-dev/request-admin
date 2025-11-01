@@ -1,9 +1,9 @@
 'use server';
 
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-server';
+import { getDb } from '@/server/db-client';
 
-import { ModuleDefaultArgs } from '@/types/prisma/module';
+import { ModuleDefaultArgs } from '@/types/zenstackhq/module';
 
 import { ModuleScope } from '../../prisma/module';
 
@@ -13,6 +13,7 @@ export const getModuleByTenantIdAndScope = async (tenantId: string, scope: Modul
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
+  const db = await getDb();
   const modules = await db.module.findMany({
     ...ModuleDefaultArgs,
     where: { tenantId, feature: { some: { scope: scope, isActive: true } } },

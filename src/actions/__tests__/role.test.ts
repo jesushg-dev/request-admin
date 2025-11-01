@@ -1,6 +1,6 @@
 // Import after mocks
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
 import { CreateRole, getRoleAsFormById, UpdateRole } from '../role';
 
@@ -9,19 +9,21 @@ jest.mock('@/server/auth-server', () => ({
   currentSession: jest.fn(),
 }));
 
-jest.mock('@/server/db-client', () => ({
-  db: {
-    role: {
-      findMany: jest.fn(),
-      findFirst: jest.fn(),
-      create: jest.fn(),
-      update: jest.fn(),
-    },
-    userTenantRole: {
-      create: jest.fn(),
-      deleteMany: jest.fn(),
-    },
+const mockDb = {
+  role: {
+    findMany: jest.fn(),
+    findFirst: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
   },
+  userTenantRole: {
+    create: jest.fn(),
+    deleteMany: jest.fn(),
+  },
+};
+
+jest.mock('@/server/db-client', () => ({
+  getDb: jest.fn(),
 }));
 
 describe('Role Actions', () => {
@@ -108,6 +110,7 @@ describe('Role Actions', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (currentSession as jest.Mock).mockResolvedValue(mockSession);
+    (getDb as jest.Mock).mockResolvedValue(mockDb);
   });
 
   describe('getRoleAsFormById', () => {
@@ -118,7 +121,7 @@ describe('Role Actions', () => {
     });
 
     it('should return formatted role form data', async () => {
-      (db.role.findMany as jest.Mock).mockResolvedValue([mockRole]);
+      (mockDb.role.findMany as jest.Mock).mockResolvedValue([mockRole]);
 
       const result = await getRoleAsFormById(mockRoleIds, mockTenantId);
 
@@ -159,7 +162,7 @@ describe('Role Actions', () => {
         ],
       });
 
-      expect(db.role.findMany).toHaveBeenCalledWith({
+      expect(mockDb.role.findMany).toHaveBeenCalledWith({
         select: {
           id: true,
           name: true,
@@ -227,7 +230,7 @@ describe('Role Actions', () => {
         ],
       };
 
-      (db.role.findMany as jest.Mock).mockResolvedValue([roleWithNullDescriptions]);
+      (mockDb.role.findMany as jest.Mock).mockResolvedValue([roleWithNullDescriptions]);
 
       const result = await getRoleAsFormById(mockRoleIds, mockTenantId);
 
@@ -252,7 +255,7 @@ describe('Role Actions', () => {
         ],
       };
 
-      (db.role.findMany as jest.Mock).mockResolvedValue([roleWithUserWithoutPerson]);
+      (mockDb.role.findMany as jest.Mock).mockResolvedValue([roleWithUserWithoutPerson]);
 
       const result = await getRoleAsFormById(mockRoleIds, mockTenantId);
 
@@ -289,14 +292,14 @@ describe('Role Actions', () => {
         ],
       };
 
-      (db.role.findFirst as jest.Mock).mockResolvedValue(null);
-      (db.role.create as jest.Mock).mockResolvedValue(mockCreatedRole);
-      (db.userTenantRole.create as jest.Mock).mockResolvedValue({});
+      (mockDb.role.findFirst as jest.Mock).mockResolvedValue(null);
+      (mockDb.role.create as jest.Mock).mockResolvedValue(mockCreatedRole);
+      (mockDb.userTenantRole.create as jest.Mock).mockResolvedValue({});
 
       const result = await CreateRole(mockRoleFormData, mockTenantId);
 
       expect(result).toEqual([mockCreatedRole]);
-      expect(db.role.create).toHaveBeenCalledWith({
+      expect(mockDb.role.create).toHaveBeenCalledWith({
         data: {
           name: mockRoleFormData.roles[0].name,
           description: mockRoleFormData.roles[0].description,
@@ -342,7 +345,7 @@ describe('Role Actions', () => {
     });
 
     it('should throw error when role name already exists', async () => {
-      (db.role.findFirst as jest.Mock).mockResolvedValue({ id: 'existing-role' });
+      (mockDb.role.findFirst as jest.Mock).mockResolvedValue({ id: 'existing-role' });
 
       await expect(CreateRole(mockRoleFormData, mockTenantId)).rejects.toThrow('A role with the name "Test Role" already exists');
     });
@@ -354,13 +357,13 @@ describe('Role Actions', () => {
         roleFeature: [],
       };
 
-      (db.role.findFirst as jest.Mock).mockResolvedValue(null);
-      (db.role.create as jest.Mock).mockResolvedValue(mockCreatedRole);
-      (db.userTenantRole.create as jest.Mock).mockResolvedValue({});
+      (mockDb.role.findFirst as jest.Mock).mockResolvedValue(null);
+      (mockDb.role.create as jest.Mock).mockResolvedValue(mockCreatedRole);
+      (mockDb.userTenantRole.create as jest.Mock).mockResolvedValue({});
 
       await CreateRole(mockRoleFormData, mockTenantId);
 
-      expect(db.userTenantRole.create).toHaveBeenCalledWith({
+      expect(mockDb.userTenantRole.create).toHaveBeenCalledWith({
         data: {
           tenantId: mockTenantId,
           isActive: mockRoleFormData.userRoles[0].isActive,
@@ -401,17 +404,17 @@ describe('Role Actions', () => {
         ],
       };
 
-      (db.role.findFirst as jest.Mock)
+      (mockDb.role.findFirst as jest.Mock)
         .mockResolvedValueOnce({ id: 'role-1', name: 'Old Role' }) // First call for existence check
         .mockResolvedValueOnce(null); // Second call for duplicate name check
-      (db.role.update as jest.Mock).mockResolvedValue(mockUpdatedRole);
-      (db.userTenantRole.deleteMany as jest.Mock).mockResolvedValue({});
-      (db.userTenantRole.create as jest.Mock).mockResolvedValue({});
+      (mockDb.role.update as jest.Mock).mockResolvedValue(mockUpdatedRole);
+      (mockDb.userTenantRole.deleteMany as jest.Mock).mockResolvedValue({});
+      (mockDb.userTenantRole.create as jest.Mock).mockResolvedValue({});
 
       const result = await UpdateRole(mockRoleFormData, mockTenantId);
 
       expect(result).toEqual([mockUpdatedRole]);
-      expect(db.role.update).toHaveBeenCalledWith({
+      expect(mockDb.role.update).toHaveBeenCalledWith({
         where: { id: 'role-1', tenantId: mockTenantId },
         data: {
           name: mockRoleFormData.roles[0].name,
@@ -458,13 +461,13 @@ describe('Role Actions', () => {
     });
 
     it('should throw error when role not found', async () => {
-      (db.role.findFirst as jest.Mock).mockResolvedValue(null);
+      (mockDb.role.findFirst as jest.Mock).mockResolvedValue(null);
 
       await expect(UpdateRole(mockRoleFormData, mockTenantId)).rejects.toThrow('Role with ID "role-1" not found');
     });
 
     it('should throw error when role name already exists for another role', async () => {
-      (db.role.findFirst as jest.Mock)
+      (mockDb.role.findFirst as jest.Mock)
         .mockResolvedValueOnce({ id: 'role-1', name: 'Old Role' }) // First call for existence check
         .mockResolvedValueOnce({ id: 'other-role', name: 'Test Role' }); // Second call for duplicate name check
 
@@ -478,21 +481,21 @@ describe('Role Actions', () => {
         roleFeature: [],
       };
 
-      (db.role.findFirst as jest.Mock).mockResolvedValueOnce({ id: 'role-1', name: 'Old Role' }).mockResolvedValueOnce(null);
-      (db.role.update as jest.Mock).mockResolvedValue(mockUpdatedRole);
-      (db.userTenantRole.deleteMany as jest.Mock).mockResolvedValue({});
-      (db.userTenantRole.create as jest.Mock).mockResolvedValue({});
+      (mockDb.role.findFirst as jest.Mock).mockResolvedValueOnce({ id: 'role-1', name: 'Old Role' }).mockResolvedValueOnce(null);
+      (mockDb.role.update as jest.Mock).mockResolvedValue(mockUpdatedRole);
+      (mockDb.userTenantRole.deleteMany as jest.Mock).mockResolvedValue({});
+      (mockDb.userTenantRole.create as jest.Mock).mockResolvedValue({});
 
       await UpdateRole(mockRoleFormData, mockTenantId);
 
-      expect(db.userTenantRole.deleteMany).toHaveBeenCalledWith({
+      expect(mockDb.userTenantRole.deleteMany).toHaveBeenCalledWith({
         where: {
           tenantId: mockTenantId,
           roleId: { in: ['role-1'] },
         },
       });
 
-      expect(db.userTenantRole.create).toHaveBeenCalledWith({
+      expect(mockDb.userTenantRole.create).toHaveBeenCalledWith({
         data: {
           tenantId: mockTenantId,
           isActive: mockRoleFormData.userRoles[0].isActive,

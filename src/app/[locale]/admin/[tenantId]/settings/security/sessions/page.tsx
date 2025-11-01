@@ -3,7 +3,7 @@
 import React, { useMemo, useTransition } from 'react';
 import { authClient, useSession } from '@/server/auth-client';
 import { useCountSession, useFindManySession } from '@/services/api/hooks';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@zenstackhq/runtime/models';
 import { ColumnDef } from '@tanstack/react-table';
 import { Computer, Smartphone, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';

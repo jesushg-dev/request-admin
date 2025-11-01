@@ -1,6 +1,6 @@
 import { colorOptions, nodeColors, typeOptions } from '@/constants/workflow';
 
-import type { RequestWorkflowType } from '@/types/prisma/workflow';
+import type { RequestWorkflowType } from '@/types/zenstackhq/workflow';
 import { getInitialStatus, getStatusTransitions, getWorkflowStateMachine, transformStatusToNode, transformTransitionToEdge, validateTransition } from '@/lib/workflow';
 
 describe('Workflow Functions', () => {

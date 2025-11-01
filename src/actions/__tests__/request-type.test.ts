@@ -1,4 +1,4 @@
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
 import { generateUuid } from '@/lib/id';
 import { RequestCategoryValues } from '@/components/common/request-type/category-form';
@@ -6,22 +6,26 @@ import { RequestCategoryValues } from '@/components/common/request-type/category
 import { getRequestCategoriesByIds, upsertCategoriesFlat } from '../request-type';
 
 // Mock the database client
-jest.mock('@/server/db-client', () => ({
-  db: {
-    requestCategory: {
-      findMany: jest.fn(),
-      upsert: jest.fn(),
-    },
-    requestHierarchy: {
-      findFirstOrThrow: jest.fn(),
-    },
-    $transaction: jest.fn(),
+const mockDb: any = {
+  requestCategory: {
+    findMany: jest.fn(),
+    upsert: jest.fn(),
   },
+  requestHierarchy: {
+    findFirstOrThrow: jest.fn(),
+  },
+  $transaction: jest.fn(),
+};
+mockDb.$transaction.mockImplementation((callback: any) => callback(mockDb));
+
+jest.mock('@/server/db-client', () => ({
+  getDb: jest.fn(),
 }));
 
 describe('Request Type Actions', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (getDb as jest.Mock).mockResolvedValue(mockDb);
   });
 
   describe('getRequestCategoriesByIds', () => {
@@ -50,8 +54,8 @@ describe('Request Type Actions', () => {
 
     it('should fetch and transform categories correctly', async () => {
       // Mock database responses
-      (db.requestCategory.findMany as jest.Mock).mockResolvedValue([mockCategory]);
-      (db.requestHierarchy.findFirstOrThrow as jest.Mock).mockResolvedValue({
+      (mockDb.requestCategory.findMany as jest.Mock).mockResolvedValue([mockCategory]);
+      (mockDb.requestHierarchy.findFirstOrThrow as jest.Mock).mockResolvedValue({
         id: mockHierarchyId,
         name: 'Test Hierarchy',
       });
@@ -86,8 +90,8 @@ describe('Request Type Actions', () => {
     });
 
     it('should handle empty categories array', async () => {
-      (db.requestCategory.findMany as jest.Mock).mockResolvedValue([]);
-      (db.requestHierarchy.findFirstOrThrow as jest.Mock).mockResolvedValue({
+      (mockDb.requestCategory.findMany as jest.Mock).mockResolvedValue([]);
+      (mockDb.requestHierarchy.findFirstOrThrow as jest.Mock).mockResolvedValue({
         id: mockHierarchyId,
         name: 'Test Hierarchy',
       });
@@ -112,8 +116,8 @@ describe('Request Type Actions', () => {
         executionFlowDefinitions: [],
       };
 
-      (db.requestCategory.findMany as jest.Mock).mockResolvedValue([categoryWithRequirements]);
-      (db.requestHierarchy.findFirstOrThrow as jest.Mock).mockResolvedValue({
+      (mockDb.requestCategory.findMany as jest.Mock).mockResolvedValue([categoryWithRequirements]);
+      (mockDb.requestHierarchy.findFirstOrThrow as jest.Mock).mockResolvedValue({
         id: mockHierarchyId,
         name: 'Test Hierarchy',
       });
@@ -145,8 +149,8 @@ describe('Request Type Actions', () => {
         executionFlowDefinitions: [],
       };
 
-      (db.requestCategory.findMany as jest.Mock).mockResolvedValue([categoryWithGuides]);
-      (db.requestHierarchy.findFirstOrThrow as jest.Mock).mockResolvedValue({
+      (mockDb.requestCategory.findMany as jest.Mock).mockResolvedValue([categoryWithGuides]);
+      (mockDb.requestHierarchy.findFirstOrThrow as jest.Mock).mockResolvedValue({
         id: mockHierarchyId,
         name: 'Test Hierarchy',
       });
@@ -168,14 +172,14 @@ describe('Request Type Actions', () => {
     });
 
     it('should handle database errors gracefully', async () => {
-      (db.requestCategory.findMany as jest.Mock).mockRejectedValue(new Error('Database error'));
+      (mockDb.requestCategory.findMany as jest.Mock).mockRejectedValue(new Error('Database error'));
 
       await expect(getRequestCategoriesByIds(mockRootIds, mockTenantId)).rejects.toThrow('Database error');
     });
 
     it('should handle missing hierarchy gracefully', async () => {
-      (db.requestCategory.findMany as jest.Mock).mockResolvedValue([mockCategory]);
-      (db.requestHierarchy.findFirstOrThrow as jest.Mock).mockRejectedValue(new Error('Hierarchy not found'));
+      (mockDb.requestCategory.findMany as jest.Mock).mockResolvedValue([mockCategory]);
+      (mockDb.requestHierarchy.findFirstOrThrow as jest.Mock).mockRejectedValue(new Error('Hierarchy not found'));
 
       await expect(getRequestCategoriesByIds(mockRootIds, mockTenantId)).rejects.toThrow('Hierarchy not found');
     });
@@ -226,21 +230,21 @@ describe('Request Type Actions', () => {
 
     it('should process categories in correct order (parent before child)', async () => {
       const mockTransaction = jest.fn();
-      (db.$transaction as jest.Mock).mockImplementation(mockTransaction);
+      (mockDb.$transaction as jest.Mock).mockImplementation(mockTransaction);
 
       await upsertCategoriesFlat(mockCategories, mockTenantId, mockHierarchyId);
 
-      expect(db.$transaction).toHaveBeenCalled();
+      expect(mockDb.$transaction).toHaveBeenCalled();
       expect(mockTransaction).toHaveBeenCalled();
     });
 
     it('should handle empty categories array', async () => {
       const mockTransaction = jest.fn();
-      (db.$transaction as jest.Mock).mockImplementation(mockTransaction);
+      (mockDb.$transaction as jest.Mock).mockImplementation(mockTransaction);
 
       await upsertCategoriesFlat([], mockTenantId, mockHierarchyId);
 
-      expect(db.$transaction).toHaveBeenCalled();
+      expect(mockDb.$transaction).toHaveBeenCalled();
       expect(mockTransaction).toHaveBeenCalled();
     });
 
@@ -321,17 +325,17 @@ describe('Request Type Actions', () => {
       ];
 
       const mockTransaction = jest.fn();
-      (db.$transaction as jest.Mock).mockImplementation(mockTransaction);
+      (mockDb.$transaction as jest.Mock).mockImplementation(mockTransaction);
 
       await upsertCategoriesFlat(complexCategories, mockTenantId, mockHierarchyId);
 
-      expect(db.$transaction).toHaveBeenCalled();
+      expect(mockDb.$transaction).toHaveBeenCalled();
       expect(mockTransaction).toHaveBeenCalled();
     });
 
     it('should handle transaction errors', async () => {
       const mockTransaction = jest.fn().mockRejectedValue(new Error('Transaction failed'));
-      (db.$transaction as jest.Mock).mockImplementation(mockTransaction);
+      (mockDb.$transaction as jest.Mock).mockImplementation(mockTransaction);
 
       await expect(upsertCategoriesFlat(mockCategories, mockTenantId, mockHierarchyId)).rejects.toThrow('Transaction failed');
     });
@@ -345,11 +349,11 @@ describe('Request Type Actions', () => {
       ];
 
       const mockTransaction = jest.fn();
-      (db.$transaction as jest.Mock).mockImplementation(mockTransaction);
+      (mockDb.$transaction as jest.Mock).mockImplementation(mockTransaction);
 
       await upsertCategoriesFlat(categoriesWithMissingParent, mockTenantId, mockHierarchyId);
 
-      expect(db.$transaction).toHaveBeenCalled();
+      expect(mockDb.$transaction).toHaveBeenCalled();
       expect(mockTransaction).toHaveBeenCalled();
     });
 
@@ -376,11 +380,11 @@ describe('Request Type Actions', () => {
       ];
 
       const mockTransaction = jest.fn();
-      (db.$transaction as jest.Mock).mockImplementation(mockTransaction);
+      (mockDb.$transaction as jest.Mock).mockImplementation(mockTransaction);
 
       await upsertCategoriesFlat(categoriesWithInvalidParent, mockTenantId, mockHierarchyId);
 
-      expect(db.$transaction).toHaveBeenCalled();
+      expect(mockDb.$transaction).toHaveBeenCalled();
       expect(mockTransaction).toHaveBeenCalled();
     });
   });

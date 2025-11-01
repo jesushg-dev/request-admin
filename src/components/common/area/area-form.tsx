@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Control, useFormContext, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 
-import { AssignmentHierarchyWithLevelsType } from '@/types/prisma/hierarchy';
+import { AssignmentHierarchyWithLevelsType } from '@/types/zenstackhq/hierarchy';
 import { generateUuid } from '@/lib/id';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FormField } from '@/components/ui/form';

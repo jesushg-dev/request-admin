@@ -1,6 +1,6 @@
 import { currentSession } from '@/server/auth-server';
 // Import the mocked db
-import { db } from '@/server/db-server';
+import { getDb } from '@/server/db-client';
 
 import { RequestFormStepperType } from '@/components/common/request/request-form-stepper';
 
@@ -97,10 +97,9 @@ jest.mock('../workflow', () => ({
   getInitialStatusFromDatabase: jest.fn().mockResolvedValue({ id: 'status-1' }),
 }));
 
-// Mock database using a factory function
-jest.mock('@/server/db-server', () => {
+jest.mock('@/server/db-client', () => {
   const createMockDb = (): MockDbType => {
-    const db = {
+    const mockDb = {
       request: {
         findUnique: jest.fn() as jest.Mock,
         create: jest.fn() as jest.Mock,
@@ -167,22 +166,26 @@ jest.mock('@/server/db-server', () => {
       $queryRawUnsafe: jest.fn() as jest.Mock,
     };
 
-    db.$transaction.mockImplementation(async (callback) => {
+    mockDb.$transaction.mockImplementation(async (callback) => {
       if (typeof callback === 'function') {
-        return callback(db);
+        return callback(mockDb);
       }
       return Promise.all(callback);
     });
 
-    return db;
+    return mockDb;
   };
 
+  const mockDbInstance = createMockDb();
+
   return {
-    db: createMockDb(),
+    getDb: jest.fn().mockResolvedValue(mockDbInstance),
   };
 });
 
 describe('Request Actions', () => {
+  let mockDb: MockDbType;
+
   const mockSession = {
     user: {
       id: 'user-123',
@@ -191,6 +194,11 @@ describe('Request Actions', () => {
 
   const mockTenantId = 'tenant-123';
   const mockRequestId = 'request-123';
+
+  beforeEach(async () => {
+    // Get the mockDb instance from getDb mock
+    mockDb = await (getDb as jest.Mock)();
+  });
 
   const mockRequestData: RequestFormStepperType = {
     id: mockRequestId,
@@ -234,10 +242,10 @@ describe('Request Actions', () => {
       };
 
       beforeEach(() => {
-        (db.request.findUnique as jest.Mock).mockResolvedValue(null);
-        (db.assignmentType.findFirstOrThrow as jest.Mock).mockResolvedValue({ id: 'type-1' });
-        (db.requestCategoryRequirement.findMany as jest.Mock).mockResolvedValue([]);
-        (db.userTenant.findMany as jest.Mock).mockResolvedValue([
+        (mockDb.request.findUnique as jest.Mock).mockResolvedValue(null);
+        (mockDb.assignmentType.findFirstOrThrow as jest.Mock).mockResolvedValue({ id: 'type-1' });
+        (mockDb.requestCategoryRequirement.findMany as jest.Mock).mockResolvedValue([]);
+        (mockDb.userTenant.findMany as jest.Mock).mockResolvedValue([
           {
             id: 'user-1',
             userAreas: [
@@ -248,22 +256,22 @@ describe('Request Actions', () => {
             ],
           },
         ]);
-        (db.dataroom.create as jest.Mock).mockResolvedValue({ id: 'dataroom-1' });
-        (db.request.create as jest.Mock).mockResolvedValue(mockCreatedRequest);
-        (db.channel.create as jest.Mock).mockResolvedValue({ id: 'channel-1' });
+        (mockDb.dataroom.create as jest.Mock).mockResolvedValue({ id: 'dataroom-1' });
+        (mockDb.request.create as jest.Mock).mockResolvedValue(mockCreatedRequest);
+        (mockDb.channel.create as jest.Mock).mockResolvedValue({ id: 'channel-1' });
       });
 
       it('should create a new request when it does not exist', async () => {
         const result = await upsertRequest(mockTenantId, mockRequestData);
 
         expect(result).toBeDefined();
-        expect(db.request.create).toHaveBeenCalled();
-        expect(db.dataroom.create).toHaveBeenCalled();
-        expect(db.requestChangeLog.create).toHaveBeenCalled();
+        expect(mockDb.request.create).toHaveBeenCalled();
+        expect(mockDb.dataroom.create).toHaveBeenCalled();
+        expect(mockDb.requestChangeLog.create).toHaveBeenCalled();
       });
 
       it('should handle request with requirement compliances', async () => {
-        (db.requestCategoryRequirement.findMany as jest.Mock).mockResolvedValue([
+        (mockDb.requestCategoryRequirement.findMany as jest.Mock).mockResolvedValue([
           { requirementId: 'req-1', isActive: true },
           { requirementId: 'req-2', isActive: false },
         ]);
@@ -321,7 +329,7 @@ describe('Request Actions', () => {
       });
 
       it('should handle database transaction failures', async () => {
-        (db.dataroom.create as jest.Mock).mockRejectedValue(new Error('Database error'));
+        (mockDb.dataroom.create as jest.Mock).mockRejectedValue(new Error('Database error'));
 
         await expect(upsertRequest(mockTenantId, mockRequestData)).rejects.toThrow('Database error');
       });
@@ -374,10 +382,10 @@ describe('Request Actions', () => {
       };
 
       beforeEach(() => {
-        (db.request.findUnique as jest.Mock).mockResolvedValue(existingRequest);
-        (db.assignmentType.findFirstOrThrow as jest.Mock).mockResolvedValue({ id: 'type-1' });
-        (db.requestCategoryRequirement.findMany as jest.Mock).mockResolvedValue([]);
-        (db.userTenant.findMany as jest.Mock).mockResolvedValue([
+        (mockDb.request.findUnique as jest.Mock).mockResolvedValue(existingRequest);
+        (mockDb.assignmentType.findFirstOrThrow as jest.Mock).mockResolvedValue({ id: 'type-1' });
+        (mockDb.requestCategoryRequirement.findMany as jest.Mock).mockResolvedValue([]);
+        (mockDb.userTenant.findMany as jest.Mock).mockResolvedValue([
           {
             id: 'user-1',
             userAreas: [
@@ -388,19 +396,19 @@ describe('Request Actions', () => {
             ],
           },
         ]);
-        (db.request.update as jest.Mock).mockResolvedValue(updatedRequest);
+        (mockDb.request.update as jest.Mock).mockResolvedValue(updatedRequest);
       });
 
       it('should update an existing request', async () => {
         const result = await upsertRequest(mockTenantId, mockRequestData);
 
         expect(result).toBeDefined();
-        expect(db.request.update).toHaveBeenCalled();
-        expect(db.requestChangeLog.create).toHaveBeenCalled();
+        expect(mockDb.request.update).toHaveBeenCalled();
+        expect(mockDb.requestChangeLog.create).toHaveBeenCalled();
       });
 
       it('should update request with requirement compliances', async () => {
-        (db.requestCategoryRequirement.findMany as jest.Mock).mockResolvedValue([
+        (mockDb.requestCategoryRequirement.findMany as jest.Mock).mockResolvedValue([
           { requirementId: 'req-1', isActive: true },
           { requirementId: 'req-2', isActive: false },
         ]);
@@ -467,9 +475,9 @@ describe('Request Actions', () => {
         executionFlowDefinitions: [],
       };
 
-      (db.request.findUniqueOrThrow as jest.Mock).mockResolvedValue(mockRequest);
-      (db.requestCategory.findMany as jest.Mock).mockResolvedValue([{ id: 'cat-1', name: 'Category 1', parentCategoryId: null }]);
-      (db.assignmentCategory.findMany as jest.Mock).mockResolvedValue([{ id: 'assign-cat-1', name: 'Assignment Category 1', parentCategoryId: null }]);
+      (mockDb.request.findUniqueOrThrow as jest.Mock).mockResolvedValue(mockRequest);
+      (mockDb.requestCategory.findMany as jest.Mock).mockResolvedValue([{ id: 'cat-1', name: 'Category 1', parentCategoryId: null }]);
+      (mockDb.assignmentCategory.findMany as jest.Mock).mockResolvedValue([{ id: 'assign-cat-1', name: 'Assignment Category 1', parentCategoryId: null }]);
 
       const result = await getRequestById(mockTenantId, mockRequestId);
 
@@ -503,9 +511,9 @@ describe('Request Actions', () => {
         executionFlowDefinitions: [],
       };
 
-      (db.request.findUniqueOrThrow as jest.Mock).mockResolvedValue(mockRequest);
-      (db.requestCategory.findMany as jest.Mock).mockResolvedValue([{ id: 'cat-1', name: 'Category 1', parentCategoryId: null }]);
-      (db.assignmentCategory.findMany as jest.Mock).mockResolvedValue([{ id: 'assign-cat-1', name: 'Assignment Category 1', parentCategoryId: null }]);
+      (mockDb.request.findUniqueOrThrow as jest.Mock).mockResolvedValue(mockRequest);
+      (mockDb.requestCategory.findMany as jest.Mock).mockResolvedValue([{ id: 'cat-1', name: 'Category 1', parentCategoryId: null }]);
+      (mockDb.assignmentCategory.findMany as jest.Mock).mockResolvedValue([{ id: 'assign-cat-1', name: 'Assignment Category 1', parentCategoryId: null }]);
 
       const result = await getRequestById(mockTenantId, mockRequestId);
 
@@ -541,9 +549,9 @@ describe('Request Actions', () => {
         executionFlowDefinitions: [],
       };
 
-      (db.request.findUniqueOrThrow as jest.Mock).mockResolvedValue(mockRequest);
-      (db.requestCategory.findMany as jest.Mock).mockResolvedValue([{ id: 'cat-1', name: 'Category 1', parentCategoryId: null }]);
-      (db.assignmentCategory.findMany as jest.Mock).mockResolvedValue([{ id: 'assign-cat-1', name: 'Assignment Category 1', parentCategoryId: null }]);
+      (mockDb.request.findUniqueOrThrow as jest.Mock).mockResolvedValue(mockRequest);
+      (mockDb.requestCategory.findMany as jest.Mock).mockResolvedValue([{ id: 'cat-1', name: 'Category 1', parentCategoryId: null }]);
+      (mockDb.assignmentCategory.findMany as jest.Mock).mockResolvedValue([{ id: 'assign-cat-1', name: 'Assignment Category 1', parentCategoryId: null }]);
 
       const result = await getRequestById(mockTenantId, mockRequestId);
 
@@ -569,13 +577,13 @@ describe('Request Actions', () => {
         executionFlowDefinitions: [],
       };
 
-      (db.request.findUniqueOrThrow as jest.Mock).mockResolvedValue(mockRequest);
-      (db.requestCategory.findMany as jest.Mock).mockResolvedValue([
+      (mockDb.request.findUniqueOrThrow as jest.Mock).mockResolvedValue(mockRequest);
+      (mockDb.requestCategory.findMany as jest.Mock).mockResolvedValue([
         { id: 'cat-1', name: 'Parent Category', parentCategoryId: null },
         { id: 'cat-2', name: 'Child Category', parentCategoryId: 'cat-1' },
         { id: 'cat-3', name: 'Grandchild Category', parentCategoryId: 'cat-2' },
       ]);
-      (db.assignmentCategory.findMany as jest.Mock).mockResolvedValue([
+      (mockDb.assignmentCategory.findMany as jest.Mock).mockResolvedValue([
         { id: 'assign-cat-1', name: 'Parent Assignment', parentCategoryId: null },
         { id: 'assign-cat-2', name: 'Child Assignment', parentCategoryId: 'assign-cat-1' },
         { id: 'assign-cat-3', name: 'Grandchild Assignment', parentCategoryId: 'assign-cat-2' },
@@ -607,20 +615,20 @@ describe('Request Actions', () => {
 
     beforeEach(() => {
       jest.clearAllMocks();
-      (db.formSubmission.count as jest.Mock).mockResolvedValue(2);
-      (db.requestCategoryForm.count as jest.Mock).mockResolvedValue(3);
-      (db.customerSatisfactionSurvey.findFirst as jest.Mock).mockResolvedValue(null);
-      (db.channel.findFirst as jest.Mock).mockResolvedValue(null);
-      (db.dataroom.findFirst as jest.Mock).mockResolvedValue(null);
-      (db.guideDocument.findMany as jest.Mock).mockResolvedValue([]);
-      (db.userTenant.findFirst as jest.Mock).mockResolvedValue({
+      (mockDb.formSubmission.count as jest.Mock).mockResolvedValue(2);
+      (mockDb.requestCategoryForm.count as jest.Mock).mockResolvedValue(3);
+      (mockDb.customerSatisfactionSurvey.findFirst as jest.Mock).mockResolvedValue(null);
+      (mockDb.channel.findFirst as jest.Mock).mockResolvedValue(null);
+      (mockDb.dataroom.findFirst as jest.Mock).mockResolvedValue(null);
+      (mockDb.guideDocument.findMany as jest.Mock).mockResolvedValue([]);
+      (mockDb.userTenant.findFirst as jest.Mock).mockResolvedValue({
         person: { firstName: 'John', lastName: 'Doe' },
         user: { email: 'john@example.com' },
       });
-      (db.assignedUser.findMany as jest.Mock).mockResolvedValue([]);
-      (db.requestAssignment.count as jest.Mock).mockResolvedValue(0);
-      (db.executionFlowDefinition.findFirst as jest.Mock).mockResolvedValue(null);
-      (db.executionModelInstance.findFirst as jest.Mock).mockResolvedValue(null);
+      (mockDb.assignedUser.findMany as jest.Mock).mockResolvedValue([]);
+      (mockDb.requestAssignment.count as jest.Mock).mockResolvedValue(0);
+      (mockDb.executionFlowDefinition.findFirst as jest.Mock).mockResolvedValue(null);
+      (mockDb.executionModelInstance.findFirst as jest.Mock).mockResolvedValue(null);
     });
 
     it('should return request details with all optional fields', async () => {
@@ -658,11 +666,11 @@ describe('Request Actions', () => {
         createdAt: new Date(),
       };
 
-      (db.customerSatisfactionSurvey.findFirst as jest.Mock).mockResolvedValue(mockSatisfactionSurvey);
-      (db.channel.findFirst as jest.Mock).mockResolvedValue(mockChannel);
-      (db.dataroom.findFirst as jest.Mock).mockResolvedValue(mockDataroom);
-      (db.executionFlowDefinition.findFirst as jest.Mock).mockResolvedValue(mockExecutionFlow);
-      (db.executionModelInstance.findFirst as jest.Mock).mockResolvedValue(mockExecutionInstance);
+      (mockDb.customerSatisfactionSurvey.findFirst as jest.Mock).mockResolvedValue(mockSatisfactionSurvey);
+      (mockDb.channel.findFirst as jest.Mock).mockResolvedValue(mockChannel);
+      (mockDb.dataroom.findFirst as jest.Mock).mockResolvedValue(mockDataroom);
+      (mockDb.executionFlowDefinition.findFirst as jest.Mock).mockResolvedValue(mockExecutionFlow);
+      (mockDb.executionModelInstance.findFirst as jest.Mock).mockResolvedValue(mockExecutionInstance);
 
       const result = await getRequestDetailsByRequest(mockTenantId, mockRequestDetails);
 
@@ -673,7 +681,7 @@ describe('Request Actions', () => {
     });
 
     it('should return request details with assigned users', async () => {
-      (db.assignedUser.findMany as jest.Mock).mockResolvedValue([
+      (mockDb.assignedUser.findMany as jest.Mock).mockResolvedValue([
         {
           isCoordinator: true,
           userTenant: {
@@ -691,7 +699,7 @@ describe('Request Actions', () => {
     });
 
     it('should handle missing user tenant data', async () => {
-      (db.userTenant.findFirst as jest.Mock).mockResolvedValue(null);
+      (mockDb.userTenant.findFirst as jest.Mock).mockResolvedValue(null);
 
       const result = await getRequestDetailsByRequest(mockTenantId, mockRequestDetails);
 
@@ -700,7 +708,7 @@ describe('Request Actions', () => {
     });
 
     it('should handle request with guides', async () => {
-      (db.guideDocument.findMany as jest.Mock).mockResolvedValue([
+      (mockDb.guideDocument.findMany as jest.Mock).mockResolvedValue([
         {
           id: 'guide-1',
           name: 'Test Guide',
@@ -719,7 +727,7 @@ describe('Request Actions', () => {
     });
 
     it('should handle request with related counts', async () => {
-      (db.requestAssignment.count as jest.Mock)
+      (mockDb.requestAssignment.count as jest.Mock)
         .mockResolvedValueOnce(3) // for relatedRequestCount
         .mockResolvedValueOnce(2); // for relatedAssignmentCount
 
@@ -730,8 +738,8 @@ describe('Request Actions', () => {
     });
 
     it('should handle request with form submission counts', async () => {
-      (db.formSubmission.count as jest.Mock).mockResolvedValue(5);
-      (db.requestCategoryForm.count as jest.Mock).mockResolvedValue(10);
+      (mockDb.formSubmission.count as jest.Mock).mockResolvedValue(5);
+      (mockDb.requestCategoryForm.count as jest.Mock).mockResolvedValue(10);
 
       const result = await getRequestDetailsByRequest(mockTenantId, mockRequestDetails);
 
@@ -754,7 +762,7 @@ describe('Request Actions', () => {
     });
 
     it('should handle request with multiple assigned users', async () => {
-      (db.assignedUser.findMany as jest.Mock).mockResolvedValue([
+      (mockDb.assignedUser.findMany as jest.Mock).mockResolvedValue([
         {
           isCoordinator: true,
           userTenant: {
@@ -780,8 +788,8 @@ describe('Request Actions', () => {
     });
 
     it('should handle request with empty assigned users', async () => {
-      (db.assignedUser.findMany as jest.Mock).mockResolvedValue([]);
-      (db.userTenant.findFirst as jest.Mock).mockResolvedValue(null);
+      (mockDb.assignedUser.findMany as jest.Mock).mockResolvedValue([]);
+      (mockDb.userTenant.findFirst as jest.Mock).mockResolvedValue(null);
 
       const result = await getRequestDetailsByRequest(mockTenantId, mockRequestDetails);
       expect(result.assignedUsers).toHaveLength(0);
@@ -790,7 +798,7 @@ describe('Request Actions', () => {
     });
 
     it('should handle request with partial user data', async () => {
-      (db.assignedUser.findMany as jest.Mock).mockResolvedValue([
+      (mockDb.assignedUser.findMany as jest.Mock).mockResolvedValue([
         {
           isCoordinator: true,
           userTenant: {
@@ -808,7 +816,7 @@ describe('Request Actions', () => {
 
   describe('getPrioritiesAsOptions', () => {
     it('should return only active priorities', async () => {
-      (db.requestPriorityType.findMany as jest.Mock).mockResolvedValue([
+      (mockDb.requestPriorityType.findMany as jest.Mock).mockResolvedValue([
         { id: 'priority-1', name: 'High', primaryColor: '#FF0000' },
         { id: 'priority-2', name: 'Medium', primaryColor: '#00FF00' },
       ]);

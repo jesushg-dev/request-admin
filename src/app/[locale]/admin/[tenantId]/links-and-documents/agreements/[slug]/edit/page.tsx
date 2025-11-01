@@ -3,7 +3,7 @@ import { type Locale } from 'next-intl';
 import { redirect } from '@/i18n/routing';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 import { getTranslations } from 'next-intl/server';
 
 import { AgreementForm } from '@/components/common/data-room/agreement-form';
@@ -25,6 +25,7 @@ const EditPage: FC<EditPageProps> = async ({ params }) => {
 
   const t = await getTranslations('admin.agreement.form');
 
+  const db = await getDb();
   const initialValues = await db.agreement.findFirst({
     where: { id: slug, tenantId },
     select: { id: true, name: true, description: true, content: true, requireName: true },

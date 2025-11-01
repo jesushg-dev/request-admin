@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react';
 import { useCountDataroom, useFindManyDataroom } from '@/services/api/hooks';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@zenstackhq/runtime/models';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import { EyeIcon, FileIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';

@@ -1,7 +1,7 @@
 'use server';
 
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-server';
+import { getDb } from '@/server/db-client';
 
 import { UserNotFoundErr } from '@/lib/error';
 import { generateUuid } from '@/lib/id';
@@ -10,6 +10,7 @@ export async function cloneDocumentsAndFolders(documentIds: string[], folderIds:
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
+  const db = await getDb();
   const documents = await db.document.findMany({
     where: { id: { in: documentIds } },
   });

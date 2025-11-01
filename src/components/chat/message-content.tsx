@@ -1,7 +1,7 @@
 import { memo, type FC } from 'react';
 import dynamic from 'next/dynamic';
 
-import { MessageType } from '@/types/prisma/message';
+import { MessageType } from '@/types/zenstackhq/message';
 
 import { Reactions } from './message-reactions';
 import { ThreadBar } from './thread-bar';

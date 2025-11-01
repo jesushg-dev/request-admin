@@ -1,12 +1,14 @@
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
 import { updateRequirementCompliance } from '../requirements';
 
 // Mock the database client
+const mockDb: any = {
+  $transaction: jest.fn(),
+};
+
 jest.mock('@/server/db-client', () => ({
-  db: {
-    $transaction: jest.fn(),
-  },
+  getDb: jest.fn(),
 }));
 
 describe('updateRequirementCompliance', () => {
@@ -21,6 +23,7 @@ describe('updateRequirementCompliance', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    (getDb as jest.Mock).mockResolvedValue(mockDb);
   });
 
   it('should successfully update requirement compliances', async () => {
@@ -37,22 +40,22 @@ describe('updateRequirementCompliance', () => {
       return callback(mockTx);
     });
 
-    (db.$transaction as jest.Mock).mockImplementation(mockTransaction);
+    (mockDb.$transaction as jest.Mock).mockImplementation(mockTransaction);
 
     const result = await updateRequirementCompliance(mockRequestId, mockTenantId, mockCompliances);
 
     expect(result).toEqual({ success: true });
-    expect(db.$transaction).toHaveBeenCalledTimes(1);
+    expect(mockDb.$transaction).toHaveBeenCalledTimes(1);
   });
 
   it('should handle errors and return error response', async () => {
     // Mock the transaction to throw an error
-    (db.$transaction as jest.Mock).mockRejectedValue(new Error('Database error'));
+      (mockDb.$transaction as jest.Mock).mockRejectedValue(new Error('Database error'));
 
     const result = await updateRequirementCompliance(mockRequestId, mockTenantId, mockCompliances);
 
     expect(result).toEqual({ error: 'Failed to update requirements' });
-    expect(db.$transaction).toHaveBeenCalledTimes(1);
+    expect(mockDb.$transaction).toHaveBeenCalledTimes(1);
   });
 
   it('should call upsert for each existing requirement', async () => {
@@ -69,7 +72,7 @@ describe('updateRequirementCompliance', () => {
       return callback(mockTx);
     });
 
-    (db.$transaction as jest.Mock).mockImplementation(mockTransaction);
+    (mockDb.$transaction as jest.Mock).mockImplementation(mockTransaction);
 
     await updateRequirementCompliance(mockRequestId, mockTenantId, mockCompliances);
 

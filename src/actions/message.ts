@@ -2,7 +2,7 @@
 'use server';
 
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
 import { OurMessageMetadata } from '@/lib/ablyChat';
 import { UserNotFoundErr } from '@/lib/error';
@@ -61,6 +61,7 @@ export async function createMessage({ id, body, tenantId, userTenantId, relatedI
     imageUrl = 'uploaded-image-url-or-id';
   }
 
+  const db = await getDb();
   const message = await db.message.create({
     select: { id: true },
     data: { id, body, tenantId, userTenantId, ...(imageUrl && { imageId: imageUrl }), ...relatedField },
@@ -75,6 +76,7 @@ export async function createMessage({ id, body, tenantId, userTenantId, relatedI
 export async function updateMessage({ id, body, imageFile, emailEnabled, whatsAppEnabled }: { id: string; body: string; imageFile?: File; emailEnabled?: boolean; whatsAppEnabled?: boolean }) {
   const imageUrl = await handleImageUpload(imageFile);
 
+  const db = await getDb();
   const message = await db.message.update({
     select: { id: true },
     where: { id },
@@ -91,12 +93,14 @@ export async function updateMessage({ id, body, imageFile, emailEnabled, whatsAp
 }
 
 export async function removeMessage({ id }: { id: string }) {
+  const db = await getDb();
   return db.message.delete({
     where: { id },
   });
 }
 
 export async function upsertReaction({ messageId, userTenantId, tenantId, value }: { messageId: string; userTenantId: string; tenantId: string; value: string }) {
+  const db = await getDb();
   return db.reaction.upsert({
     where: {
       messageId_userTenantId: {
@@ -115,6 +119,7 @@ export async function upsertReaction({ messageId, userTenantId, tenantId, value 
 }
 
 export async function deleteReaction({ id }: { id: string }) {
+  const db = await getDb();
   return db.reaction.delete({
     where: { id },
   });
@@ -124,6 +129,7 @@ export async function findOrCreateConversation({ tenantId, userId }: { tenantId:
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
+  const db = await getDb();
   // Search for an existing conversation
   const existingConversation = await db.conversation.findFirst({
     where: {

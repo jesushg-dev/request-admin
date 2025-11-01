@@ -1,6 +1,6 @@
 import { Message as AblyMessage } from '@ably/chat';
 
-import { MessageType } from '@/types/prisma/message';
+import { MessageType } from '@/types/zenstackhq/message';
 
 /**
  * Metadata structure for Ably messages.

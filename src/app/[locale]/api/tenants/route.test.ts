@@ -2,22 +2,25 @@
  * @jest-environment node
  */
 
-import { db } from '@/server/db-server';
+import { getDb } from '@/server/db-client';
 
 import { POST } from './route';
 
 // Mock the database
-jest.mock('@/server/db-server', () => ({
-  db: {
-    tenant: {
-      findMany: jest.fn(),
-    },
+const mockDb = {
+  tenant: {
+    findMany: jest.fn(),
   },
+};
+
+jest.mock('@/server/db-client', () => ({
+  getDb: jest.fn(),
 }));
 
 describe('Tenants API', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (getDb as jest.Mock).mockResolvedValue(mockDb);
   });
 
   it('returns tenants for a valid user ID', async () => {
@@ -26,7 +29,7 @@ describe('Tenants API', () => {
     const mockUserId = 'user123';
 
     // Setup mock response
-    (db.tenant.findMany as jest.Mock).mockResolvedValue(mockTenants);
+    (mockDb.tenant.findMany as jest.Mock).mockResolvedValue(mockTenants);
 
     // Create mock request
     const request = new Request('http://localhost:3000/api/tenants', {
@@ -41,7 +44,7 @@ describe('Tenants API', () => {
     // Assertions
     expect(response.status).toBe(200);
     expect(data).toEqual({ tenants: mockTenants });
-    expect(db.tenant.findMany).toHaveBeenCalledWith({
+    expect(mockDb.tenant.findMany).toHaveBeenCalledWith({
       select: { id: true },
       where: { userTenants: { some: { userId: mockUserId } } },
     });
@@ -49,7 +52,7 @@ describe('Tenants API', () => {
 
   it('handles database errors gracefully', async () => {
     // Setup mock error
-    (db.tenant.findMany as jest.Mock).mockRejectedValue(new Error('Database error'));
+    (mockDb.tenant.findMany as jest.Mock).mockRejectedValue(new Error('Database error'));
 
     // Create mock request
     const request = new Request('http://localhost:3000/api/tenants', {

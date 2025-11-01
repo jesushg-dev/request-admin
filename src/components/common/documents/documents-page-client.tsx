@@ -3,7 +3,7 @@
 import React, { useMemo } from 'react';
 import { Link } from '@/i18n/routing';
 import { useCountDocument, useFindManyDocument } from '@/services/api/hooks';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@zenstackhq/runtime/models';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import { Download, Share2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';

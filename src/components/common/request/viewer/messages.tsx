@@ -2,7 +2,7 @@
 
 import { ChatClientProvider, ChatRoomProvider } from '@ably/chat/react';
 
-import { RequestDetailsType } from '@/types/prisma/request';
+import { RequestDetailsType } from '@/types/zenstackhq/request';
 import { getAblyChatClient } from '@/lib/ablyClient';
 import { Card } from '@/components/ui/card';
 import { ChatHeader } from '@/components/chat/chat-header';

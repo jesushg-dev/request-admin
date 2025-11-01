@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@zenstackhq/runtime/models';
 
 import { RequestCategoryValues } from '@/components/common/request-type/category-form';
 

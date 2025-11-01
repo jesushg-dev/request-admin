@@ -4,7 +4,7 @@ import { PermissionAction, PermissionActions } from '@/constants/permissions';
 import { useSession } from '@/server/auth-client';
 import { useFindUniqueUserTenant } from '@/services/api/hooks';
 
-import { UserTenantDefaultArgs, UserTenantWithRelations } from '@/types/prisma/authorization';
+import { UserTenantDefaultArgs, UserTenantWithRelations } from '@/types/zenstackhq/authorization';
 
 export { PermissionActions as PERMISSION } from '@/constants/permissions';
 

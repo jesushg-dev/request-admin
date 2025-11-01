@@ -1,7 +1,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from '@/i18n/routing';
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-server';
+import { getDb } from '@/server/db-client';
 
 import {
   getAssignmentHierarchiesAndLevelsByTenantId,
@@ -15,21 +15,23 @@ import {
 } from '../hierarchy';
 
 // Mock dependencies
-jest.mock('@/server/db-server', () => ({
-  db: {
-    requestHierarchy: {
-      upsert: jest.fn(),
-      findFirstOrThrow: jest.fn(),
-      findMany: jest.fn(),
-      findFirst: jest.fn(),
-    },
-    assignmentHierarchy: {
-      upsert: jest.fn(),
-      findFirstOrThrow: jest.fn(),
-      findMany: jest.fn(),
-      findFirst: jest.fn(),
-    },
+const mockDb = {
+  requestHierarchy: {
+    upsert: jest.fn(),
+    findFirstOrThrow: jest.fn(),
+    findMany: jest.fn(),
+    findFirst: jest.fn(),
   },
+  assignmentHierarchy: {
+    upsert: jest.fn(),
+    findFirstOrThrow: jest.fn(),
+    findMany: jest.fn(),
+    findFirst: jest.fn(),
+  },
+};
+
+jest.mock('@/server/db-client', () => ({
+  getDb: jest.fn(),
 }));
 
 jest.mock('@/server/auth-server', () => ({
@@ -66,15 +68,16 @@ describe('Hierarchy Actions', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (currentSession as jest.Mock).mockResolvedValue(mockSession);
+    (getDb as jest.Mock).mockResolvedValue(mockDb);
   });
 
   describe('upsertRequestHierarchy', () => {
     it('should create a new request hierarchy', async () => {
-      (db.requestHierarchy.upsert as jest.Mock).mockResolvedValueOnce(mockHierarchyData);
+      (mockDb.requestHierarchy.upsert as jest.Mock).mockResolvedValueOnce(mockHierarchyData);
 
       await upsertRequestHierarchy(mockHierarchyData, mockTenantId, mockLocale);
 
-      expect(db.requestHierarchy.upsert).toHaveBeenCalledWith({
+      expect(mockDb.requestHierarchy.upsert).toHaveBeenCalledWith({
         where: { id: mockHierarchyData.id, tenantId: mockTenantId },
         create: expect.any(Object),
         update: expect.any(Object),
@@ -101,7 +104,7 @@ describe('Hierarchy Actions', () => {
         _count: { categories: 5 },
       };
 
-      (db.requestHierarchy.findFirstOrThrow as jest.Mock).mockResolvedValueOnce(mockHierarchy);
+      (mockDb.requestHierarchy.findFirstOrThrow as jest.Mock).mockResolvedValueOnce(mockHierarchy);
 
       const result = await getRequestHierarchyAndLevelsById(mockTenantId, mockHierarchyData.id);
 
@@ -121,7 +124,7 @@ describe('Hierarchy Actions', () => {
   describe('getRequestHierarchiesAndLevelsByTenantId', () => {
     it('should return array of hierarchies', async () => {
       const mockHierarchies = [mockHierarchyData];
-      (db.requestHierarchy.findMany as jest.Mock).mockResolvedValueOnce(mockHierarchies);
+      (mockDb.requestHierarchy.findMany as jest.Mock).mockResolvedValueOnce(mockHierarchies);
 
       const result = await getRequestHierarchiesAndLevelsByTenantId(mockLocale, mockTenantId);
 
@@ -129,7 +132,7 @@ describe('Hierarchy Actions', () => {
     });
 
     it('should redirect if no hierarchies found', async () => {
-      (db.requestHierarchy.findMany as jest.Mock).mockResolvedValueOnce(null);
+      (mockDb.requestHierarchy.findMany as jest.Mock).mockResolvedValueOnce(null);
 
       await getRequestHierarchiesAndLevelsByTenantId(mockLocale, mockTenantId);
 
@@ -148,7 +151,7 @@ describe('Hierarchy Actions', () => {
         _count: { categories: 5 },
       };
 
-      (db.assignmentHierarchy.findFirstOrThrow as jest.Mock).mockResolvedValueOnce(mockHierarchy);
+      (mockDb.assignmentHierarchy.findFirstOrThrow as jest.Mock).mockResolvedValueOnce(mockHierarchy);
 
       const result = await getAssignmentHierarchyAndLevelsById(mockTenantId, mockHierarchyData.id);
 
@@ -168,7 +171,7 @@ describe('Hierarchy Actions', () => {
   describe('getAssignmentHierarchiesAndLevelsByTenantId', () => {
     it('should return array of hierarchies', async () => {
       const mockHierarchies = [mockHierarchyData];
-      (db.assignmentHierarchy.findMany as jest.Mock).mockResolvedValueOnce(mockHierarchies);
+      (mockDb.assignmentHierarchy.findMany as jest.Mock).mockResolvedValueOnce(mockHierarchies);
 
       const result = await getAssignmentHierarchiesAndLevelsByTenantId(mockLocale, mockTenantId);
 
@@ -176,7 +179,7 @@ describe('Hierarchy Actions', () => {
     });
 
     it('should redirect if no hierarchies found', async () => {
-      (db.assignmentHierarchy.findMany as jest.Mock).mockResolvedValueOnce(null);
+      (mockDb.assignmentHierarchy.findMany as jest.Mock).mockResolvedValueOnce(null);
 
       await getAssignmentHierarchiesAndLevelsByTenantId(mockLocale, mockTenantId);
 
@@ -191,7 +194,7 @@ describe('Hierarchy Actions', () => {
         categories: [{ id: 'test-category' }],
       };
 
-      (db.requestHierarchy.findFirst as jest.Mock).mockResolvedValueOnce(mockHierarchy);
+      (mockDb.requestHierarchy.findFirst as jest.Mock).mockResolvedValueOnce(mockHierarchy);
 
       const result = await getRequestHierarchyAndLevelsByCategoryId(mockLocale, mockTenantId, 'test-category');
 
@@ -199,7 +202,7 @@ describe('Hierarchy Actions', () => {
     });
 
     it('should redirect if no hierarchy found', async () => {
-      (db.requestHierarchy.findFirst as jest.Mock).mockResolvedValueOnce(null);
+      (mockDb.requestHierarchy.findFirst as jest.Mock).mockResolvedValueOnce(null);
 
       await getRequestHierarchyAndLevelsByCategoryId(mockLocale, mockTenantId, 'test-category');
 
@@ -214,7 +217,7 @@ describe('Hierarchy Actions', () => {
         categories: [{ id: 'test-category' }],
       };
 
-      (db.assignmentHierarchy.findFirst as jest.Mock).mockResolvedValueOnce(mockHierarchy);
+      (mockDb.assignmentHierarchy.findFirst as jest.Mock).mockResolvedValueOnce(mockHierarchy);
 
       const result = await getAssignmentHierarchyAndLevelsByCategoryId(mockLocale, mockTenantId, 'test-category');
 
@@ -222,7 +225,7 @@ describe('Hierarchy Actions', () => {
     });
 
     it('should redirect if no hierarchy found', async () => {
-      (db.assignmentHierarchy.findFirst as jest.Mock).mockResolvedValueOnce(null);
+      (mockDb.assignmentHierarchy.findFirst as jest.Mock).mockResolvedValueOnce(null);
 
       await getAssignmentHierarchyAndLevelsByCategoryId(mockLocale, mockTenantId, 'test-category');
 
@@ -232,11 +235,11 @@ describe('Hierarchy Actions', () => {
 
   describe('upsertAssignmentHierarchy', () => {
     it('should create a new assignment hierarchy', async () => {
-      (db.assignmentHierarchy.upsert as jest.Mock).mockResolvedValueOnce(mockHierarchyData);
+      (mockDb.assignmentHierarchy.upsert as jest.Mock).mockResolvedValueOnce(mockHierarchyData);
 
       await upsertAssignmentHierarchy(mockHierarchyData, mockTenantId, mockLocale);
 
-      expect(db.assignmentHierarchy.upsert).toHaveBeenCalledWith({
+      expect(mockDb.assignmentHierarchy.upsert).toHaveBeenCalledWith({
         where: { id: mockHierarchyData.id, tenantId: mockTenantId },
         create: expect.any(Object),
         update: expect.any(Object),

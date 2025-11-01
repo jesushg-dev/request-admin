@@ -1,6 +1,6 @@
 import { type Locale } from 'next-intl';
 
-import { NotificationDbType } from './prisma/notification';
+import { NotificationDbType } from './zenstackhq/notification';
 
 export type NotificationDataType = NotificationDbType & {
   type: NotificationType;

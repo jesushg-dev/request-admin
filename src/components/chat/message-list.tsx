@@ -2,11 +2,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { useInfiniteFindManyMessage } from '@/services/api/hooks';
 import { ChatMessageEventType } from '@ably/chat';
 import { useMessages as useAblyMessages } from '@ably/chat/react';
-import type { Prisma } from '@prisma/client';
+import type { Prisma } from '@zenstackhq/runtime/models';
 import { useTranslations } from 'next-intl';
 import { useInView } from 'react-intersection-observer';
 
-import { MessageDefaultArgs, MessageType } from '@/types/prisma/message';
+import { MessageDefaultArgs, MessageType } from '@/types/zenstackhq/message';
 import { ablyToAppMessage } from '@/lib/ablyChat';
 
 import { Spinner } from '../spinner';

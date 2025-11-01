@@ -2,7 +2,7 @@
 
 import React, { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 
-import { RequestLevelType } from '@/types/prisma/hierarchy';
+import { RequestLevelType } from '@/types/zenstackhq/hierarchy';
 import { OptionType } from '@/components/custom-ui/select';
 
 import { RequestCategoryValues } from './category-form';

@@ -1,7 +1,7 @@
 import { getPathname, Link, redirect } from '@/i18n/routing';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 import { format } from 'date-fns';
 import { Calendar, Clock, FileText, MoreHorizontal, Palette, Pencil, Trash2, User, Users } from 'lucide-react';
 import { Locale } from 'next-intl';
@@ -34,6 +34,7 @@ export default async function DataroomDetailPage({ params }: DataroomDetailPageP
 
   const callbackUrl = getPathname({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/data-rooms/[slug]', params: { tenantId, slug } } });
 
+  const db = await getDb();
   const dataroom = await db.dataroom.findFirst({
     where: { id: slug, tenantId },
     select: { id: true, name: true, description: true, createdBy: true, createdAt: true, updatedAt: true, _count: { select: { documents: true, viewers: true } } },

@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
-import { RequestLevelType } from '@/types/prisma/hierarchy';
+import { RequestLevelType } from '@/types/zenstackhq/hierarchy';
 import { generateUuid } from '@/lib/id';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';

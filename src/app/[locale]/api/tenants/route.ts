@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/server/db-server';
+import { getDb } from '@/server/db-client';
 
 export async function POST(request: Request) {
   const { userId } = (await request.json()) as { userId: string };
 
   try {
+    const db = await getDb();
     const tenants = await db.tenant.findMany({
       select: { id: true },
       where: { userTenants: { some: { userId } } },

@@ -1,5 +1,5 @@
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-server';
+import { getDb } from '@/server/db-client';
 
 import { getModuleByTenantIdAndScope } from '../module';
 
@@ -8,17 +8,20 @@ jest.mock('@/server/auth-server', () => ({
   currentSession: jest.fn(),
 }));
 
-jest.mock('@/server/db-server', () => ({
-  db: {
-    module: {
-      findMany: jest.fn(),
-    },
+const mockDb = {
+  module: {
+    findMany: jest.fn(),
   },
+};
+
+jest.mock('@/server/db-client', () => ({
+  getDb: jest.fn(),
 }));
 
 describe('Module Actions', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (getDb as jest.Mock).mockResolvedValue(mockDb);
   });
 
   describe('getModuleByTenantIdAndScope', () => {
@@ -48,7 +51,7 @@ describe('Module Actions', () => {
         },
       ];
 
-      (db.module.findMany as jest.Mock).mockResolvedValue(mockModules);
+      (mockDb.module.findMany as jest.Mock).mockResolvedValue(mockModules);
 
       const result = await getModuleByTenantIdAndScope(mockTenantId, mockScope);
 
@@ -59,7 +62,7 @@ describe('Module Actions', () => {
       expect(result[0].feature[0].isActive).toBe(true);
 
       // Verify the database query
-      expect(db.module.findMany).toHaveBeenCalledWith({
+      expect(mockDb.module.findMany).toHaveBeenCalledWith({
         select: {
           description: true,
           feature: {
@@ -95,7 +98,7 @@ describe('Module Actions', () => {
       (currentSession as jest.Mock).mockResolvedValue({ user: { id: '1' } });
 
       // Mock empty database response
-      (db.module.findMany as jest.Mock).mockResolvedValue([]);
+      (mockDb.module.findMany as jest.Mock).mockResolvedValue([]);
 
       const result = await getModuleByTenantIdAndScope(mockTenantId, mockScope);
 

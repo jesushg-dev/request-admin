@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { AssignmentLevelType, RequestLevelType } from '@/types/prisma/hierarchy';
+import { AssignmentLevelType, RequestLevelType } from '@/types/zenstackhq/hierarchy';
 import useMessage from '@/lib/message';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';

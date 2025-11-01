@@ -1,7 +1,7 @@
 import { colorOptions, nodeColors, typeOptions } from '@/constants/workflow';
 import { MarkerType } from '@xyflow/react';
 
-import type { RequestWorkflowStatusType, RequestWorkflowTransitionType, RequestWorkflowType } from '@/types/prisma/workflow';
+import type { RequestWorkflowStatusType, RequestWorkflowTransitionType, RequestWorkflowType } from '@/types/zenstackhq/workflow';
 import { WorkflowEdge, WorkflowNode } from '@/components/common/workflow/workflow-stepper/flow-diagram-editor';
 
 type NextStatusWithTransition = RequestWorkflowStatusType & {

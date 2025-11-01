@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
-import { ModuleWithFeaturesType } from '@/types/prisma/module';
+import { ModuleWithFeaturesType } from '@/types/zenstackhq/module';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';

@@ -6,7 +6,7 @@ import { useFindUniqueDataroom } from '@/services/api/hooks';
 import { ArrowLeft, FileKey2, Globe, Mail, MoreHorizontal, Plus, Shield, Trash2, Users } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { DataroomViewerDetailDefaultArgs } from '@/types/prisma/document';
+import { DataroomViewerDetailDefaultArgs } from '@/types/zenstackhq/document';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';

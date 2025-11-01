@@ -8,7 +8,7 @@ import { parseAsBoolean, useQueryState } from 'nuqs';
 import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
-import { AssignmentHierarchyDefaultArgs, AssignmentLevelType, RequestHierarchyDefaultArgs, RequestLevelType } from '@/types/prisma/hierarchy';
+import { AssignmentHierarchyDefaultArgs, AssignmentLevelType, RequestHierarchyDefaultArgs, RequestLevelType } from '@/types/zenstackhq/hierarchy';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FormField } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';

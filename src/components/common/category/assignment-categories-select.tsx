@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { ControllerRenderProps, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
-import { AssignmentLevelType } from '@/types/prisma/hierarchy';
+import { AssignmentLevelType } from '@/types/zenstackhq/hierarchy';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import Select from '@/components/custom-ui/select';
 

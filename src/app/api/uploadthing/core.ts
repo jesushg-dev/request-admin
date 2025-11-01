@@ -1,6 +1,6 @@
 import { STORAGE_SERVICE } from '@/constants/storage';
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 import { createUploadthing, type FileRouter } from 'uploadthing/next';
 import { UploadThingError } from 'uploadthing/server';
 import { z } from 'zod';
@@ -43,6 +43,7 @@ export const ourFileRouter = {
       const contentType = file.type;
 
       try {
+        const db = await getDb();
         await db.document.create({
           data: {
             tenantId: metadata.tenantId,

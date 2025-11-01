@@ -1,7 +1,7 @@
 'use server';
 
 import { STATUS } from '@/constants/requests';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
 interface ReportFilters {
   dateRange?: {
@@ -14,6 +14,7 @@ interface ReportFilters {
 }
 
 export async function getOverviewReport(tenantId: string, filters?: ReportFilters) {
+  const db = await getDb();
   const whereClause = buildWhereClause(tenantId, filters);
 
   const totalRequests = await db.request.count({
@@ -83,6 +84,7 @@ export async function getOverviewReport(tenantId: string, filters?: ReportFilter
 }
 
 export async function getMonthlyTrends(tenantId: string, filters?: ReportFilters) {
+  const db = await getDb();
   const whereClause = buildWhereClause(tenantId, filters);
 
   const monthlyData = await db.requestAssignment.groupBy({
@@ -116,6 +118,7 @@ export async function getMonthlyTrends(tenantId: string, filters?: ReportFilters
 }
 
 export async function getAreaDistribution(tenantId: string, filters?: ReportFilters) {
+  const db = await getDb();
   const whereClause = buildWhereClause(tenantId, filters);
 
   const areaData = await db.requestAssignment.groupBy({
@@ -147,6 +150,7 @@ export async function getAreaDistribution(tenantId: string, filters?: ReportFilt
 }
 
 export async function getStatusDistribution(tenantId: string, filters?: ReportFilters) {
+  const db = await getDb();
   const whereClause = buildWhereClause(tenantId, filters);
 
   const statusData = await db.requestAssignment.groupBy({
@@ -180,6 +184,7 @@ export async function getStatusDistribution(tenantId: string, filters?: ReportFi
 }
 
 export async function getAverageResolutionTime(tenantId: string, filters?: ReportFilters) {
+  const db = await getDb();
   const whereClause = buildWhereClause(tenantId, filters);
 
   // Get all assignments grouped by area
@@ -238,6 +243,7 @@ export async function getAverageResolutionTime(tenantId: string, filters?: Repor
 }
 
 export async function getSLACompliance(tenantId: string, filters?: ReportFilters) {
+  const db = await getDb();
   const whereClause = buildWhereClause(tenantId, filters);
 
   // Get all assignments with SLA
@@ -279,6 +285,7 @@ export async function getSLACompliance(tenantId: string, filters?: ReportFilters
 }
 
 export async function getWorkflowTypes(tenantId: string) {
+  const db = await getDb();
   const workflows = await db.requestWorkflow.findMany({
     where: {
       tenantId,
@@ -297,6 +304,7 @@ export async function getWorkflowTypes(tenantId: string) {
 }
 
 export async function getAreas(tenantId: string) {
+  const db = await getDb();
   const areas = await db.area.findMany({
     where: {
       tenantId,
@@ -315,6 +323,7 @@ export async function getAreas(tenantId: string) {
 }
 
 export async function getStatuses(tenantId: string) {
+  const db = await getDb();
   const statuses = await db.requestWorkflowStatus.findMany({
     where: {
       tenantId,
@@ -335,6 +344,7 @@ export async function getStatuses(tenantId: string) {
 }
 
 export async function getPriorities(tenantId: string) {
+  const db = await getDb();
   const priorities = await db.requestPriorityType.findMany({
     where: {
       tenantId,
@@ -353,6 +363,7 @@ export async function getPriorities(tenantId: string) {
 }
 
 export async function getWorkflowDistribution(tenantId: string, filters?: ReportFilters) {
+  const db = await getDb();
   const whereClause = buildWhereClause(tenantId, filters);
 
   // Get status distribution from assignments
@@ -407,6 +418,7 @@ interface AlertData {
 }
 
 export async function getAlerts(tenantId: string, filters?: ReportFilters) {
+  const db = await getDb();
   const now = new Date();
   const whereClause = buildWhereClause(tenantId, filters);
 
@@ -560,6 +572,7 @@ export interface ExecutionStep {
 }
 
 export async function getExecutionFlows(tenantId: string) {
+  const db = await getDb();
   // Get all execution flows with their categories
   const flows = await db.executionFlowDefinition.findMany({
     where: {
@@ -649,6 +662,7 @@ export async function getExecutionFlows(tenantId: string) {
 }
 
 export async function getExecutionFlowDetails(tenantId: string, flowId: string) {
+  const db = await getDb();
   const flow = await db.executionFlowDefinition.findUnique({
     where: {
       id: flowId,

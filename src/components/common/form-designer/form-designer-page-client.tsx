@@ -3,13 +3,13 @@
 import React, { memo, useMemo } from 'react';
 import { useCountForm, useFindManyForm } from '@/services/api/hooks';
 import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@zenstackhq/runtime/models';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 
-import { FormDefaultArgs, type FormWithRelations } from '@/types/prisma/form';
+import { FormDefaultArgs, type FormWithRelations } from '@/types/zenstackhq/form';
 import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { formatDate } from '@/lib/utils';
 import { useDataTable } from '@/hooks/use-data-table';

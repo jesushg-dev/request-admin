@@ -1,12 +1,13 @@
 'use server';
 
 import { WorkflowStatusType } from '@/constants/workflow';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
-import { RequestWorkflowDefaultArgs, type RequestWorkflowType } from '@/types/prisma/workflow';
+import { RequestWorkflowDefaultArgs, type RequestWorkflowType } from '@/types/zenstackhq/workflow';
 
 // Main function to get the workflow
 export const getWorkflowWithTransitions = async (tenantId: string, requestCategoryId: string): Promise<RequestWorkflowType> => {
+  const db = await getDb();
   const requestWorkflow = await db.requestWorkflow.findFirst({
     ...RequestWorkflowDefaultArgs,
     where: {
@@ -26,6 +27,7 @@ export const getWorkflowWithTransitions = async (tenantId: string, requestCatego
 };
 
 export const getInitialStatusFromDatabase = async (tenantId: string, requestCategoryId: string) => {
+  const db = await getDb();
   return await db.requestWorkflowStatus.findFirstOrThrow({
     ...RequestWorkflowDefaultArgs.select.requestWorkflowStatus,
     where: {

@@ -2,7 +2,7 @@ import { type FC } from 'react';
 import { BookOpen, FileText, HelpCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { RequestDetailsType } from '@/types/prisma/request';
+import { RequestDetailsType } from '@/types/zenstackhq/request';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import EmptyState from '@/components/shared/empty-state';

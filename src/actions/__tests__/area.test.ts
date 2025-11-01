@@ -1,16 +1,18 @@
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
 import { getAreaByTenantIdAndAreaId, getAreasWithRolesAsOptionsByTenantId } from '../area';
 import { getAssignmentCategoriesByIds } from '../assignment-type';
 
 // Mock the database client
-jest.mock('@/server/db-client', () => ({
-  db: {
-    area: {
-      findFirstOrThrow: jest.fn(),
-      findMany: jest.fn(),
-    },
+const mockDb = {
+  area: {
+    findFirstOrThrow: jest.fn(),
+    findMany: jest.fn(),
   },
+};
+
+jest.mock('@/server/db-client', () => ({
+  getDb: jest.fn(),
 }));
 
 // Mock the assignment type actions
@@ -24,6 +26,7 @@ describe('Area Actions', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    (getDb as jest.Mock).mockResolvedValue(mockDb);
   });
 
   describe('getAreaByTenantIdAndAreaId', () => {
@@ -101,7 +104,7 @@ describe('Area Actions', () => {
     ];
 
     it('should return area data with all related information', async () => {
-      (db.area.findFirstOrThrow as jest.Mock).mockResolvedValue(mockArea);
+      (mockDb.area.findFirstOrThrow as jest.Mock).mockResolvedValue(mockArea);
       (getAssignmentCategoriesByIds as jest.Mock).mockResolvedValue({ categories: mockCategories });
 
       const result = await getAreaByTenantIdAndAreaId(mockTenantId, mockAreaId);
@@ -154,7 +157,7 @@ describe('Area Actions', () => {
     });
 
     it('should throw an error when area is not found', async () => {
-      (db.area.findFirstOrThrow as jest.Mock).mockRejectedValue(new Error('Area not found'));
+      (mockDb.area.findFirstOrThrow as jest.Mock).mockRejectedValue(new Error('Area not found'));
 
       await expect(getAreaByTenantIdAndAreaId(mockTenantId, mockAreaId)).rejects.toThrow('Area not found');
     });
@@ -180,7 +183,7 @@ describe('Area Actions', () => {
     ];
 
     it('should return active areas with their roles as options', async () => {
-      (db.area.findMany as jest.Mock).mockResolvedValue(mockAreas);
+      (mockDb.area.findMany as jest.Mock).mockResolvedValue(mockAreas);
 
       const result = await getAreasWithRolesAsOptionsByTenantId(mockTenantId);
 
@@ -197,7 +200,7 @@ describe('Area Actions', () => {
     });
 
     it('should return empty array when no areas are found', async () => {
-      (db.area.findMany as jest.Mock).mockResolvedValue([]);
+      (mockDb.area.findMany as jest.Mock).mockResolvedValue([]);
 
       const result = await getAreasWithRolesAsOptionsByTenantId(mockTenantId);
 

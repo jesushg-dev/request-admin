@@ -5,7 +5,7 @@ import { redirect } from '@/i18n/routing';
 import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
-import { DynamicColumn } from '@/types/prisma/form';
+import { DynamicColumn } from '@/types/zenstackhq/form';
 import { FormElementInstance } from '@/components/builder-form/form-elements';
 import StatCard from '@/components/stat-card';
 

@@ -4,7 +4,7 @@ import { FileCogIcon, HelpCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useFormContext, useWatch } from 'react-hook-form';
 
-import { ModuleWithFeaturesType } from '@/types/prisma/module';
+import { ModuleWithFeaturesType } from '@/types/zenstackhq/module';
 import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';

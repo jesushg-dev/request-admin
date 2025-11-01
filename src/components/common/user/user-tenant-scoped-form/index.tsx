@@ -10,7 +10,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { AreaRoleOptionType } from '@/types/prisma/user';
+import { AreaRoleOptionType } from '@/types/zenstackhq/user';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { OptionType } from '@/components/custom-ui/select';

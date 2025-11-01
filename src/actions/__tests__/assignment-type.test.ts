@@ -1,18 +1,21 @@
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
 import { AssignmentCategory } from '@/components/common/category/assignment-category-form';
 
 import { getAssignmentCategoriesByIds, upsertCategoriesFlat } from '../assignment-type';
 
 // Mock the db client
-jest.mock('@/server/db-client', () => ({
-  db: {
-    assignmentCategory: {
-      findMany: jest.fn(),
-      upsert: jest.fn(),
-    },
-    $transaction: jest.fn((callback) => callback(db)),
+const mockDb: any = {
+  assignmentCategory: {
+    findMany: jest.fn(),
+    upsert: jest.fn(),
   },
+  $transaction: jest.fn(),
+};
+mockDb.$transaction.mockImplementation((callback: any) => callback(mockDb));
+
+jest.mock('@/server/db-client', () => ({
+  getDb: jest.fn(),
 }));
 
 describe('Assignment Type Actions', () => {
@@ -22,6 +25,7 @@ describe('Assignment Type Actions', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    (getDb as jest.Mock).mockResolvedValue(mockDb);
   });
 
   describe('getAssignmentCategoriesByIds', () => {
@@ -56,7 +60,7 @@ describe('Assignment Type Actions', () => {
       ];
 
       // Mock the database response
-      (db.assignmentCategory.findMany as jest.Mock).mockResolvedValue(mockDbCategories);
+      (mockDb.assignmentCategory.findMany as jest.Mock).mockResolvedValue(mockDbCategories);
 
       // Execute the function
       const result = await getAssignmentCategoriesByIds(rootIds, mockTenantId);
@@ -70,7 +74,7 @@ describe('Assignment Type Actions', () => {
       expect(result.categories[1].subcategories).toHaveLength(0);
 
       // Verify database calls
-      expect(db.assignmentCategory.findMany).toHaveBeenCalledWith({
+      expect(mockDb.assignmentCategory.findMany).toHaveBeenCalledWith({
         select: {
           id: true,
           name: true,
@@ -117,15 +121,15 @@ describe('Assignment Type Actions', () => {
       ];
 
       // Mock the transaction
-      (db.$transaction as jest.Mock).mockImplementation((callback) => callback(db));
+      (mockDb.$transaction as jest.Mock).mockImplementation((callback) => callback(mockDb));
 
       await upsertCategoriesFlat(mockCategories, mockTenantId, mockHierarchyId, mockAreaId);
 
       // Verify that upsert was called for both categories
-      expect(db.assignmentCategory.upsert).toHaveBeenCalledTimes(2);
+      expect(mockDb.assignmentCategory.upsert).toHaveBeenCalledTimes(2);
 
       // Verify the first call (root category)
-      expect(db.assignmentCategory.upsert).toHaveBeenNthCalledWith(1, {
+      expect(mockDb.assignmentCategory.upsert).toHaveBeenNthCalledWith(1, {
         where: { id: 'root-1' },
         create: {
           areaId: mockAreaId,
@@ -151,7 +155,7 @@ describe('Assignment Type Actions', () => {
       });
 
       // Verify the second call (child category)
-      expect(db.assignmentCategory.upsert).toHaveBeenNthCalledWith(2, {
+      expect(mockDb.assignmentCategory.upsert).toHaveBeenNthCalledWith(2, {
         where: { id: 'child-1' },
         create: {
           areaId: mockAreaId,
@@ -179,7 +183,7 @@ describe('Assignment Type Actions', () => {
 
     it('should handle empty categories array', async () => {
       await upsertCategoriesFlat([], mockTenantId, mockHierarchyId, mockAreaId);
-      expect(db.assignmentCategory.upsert).not.toHaveBeenCalled();
+      expect(mockDb.assignmentCategory.upsert).not.toHaveBeenCalled();
     });
   });
 });

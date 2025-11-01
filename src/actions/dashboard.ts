@@ -1,10 +1,11 @@
 'use server';
 
 import { STATUS } from '@/constants/requests';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 import { endOfDay, subDays } from 'date-fns';
 
 export async function getDashboardRequestTrends(tenantId: string) {
+  const db = await getDb();
   const requestTrends = await db.requestAssignment.groupBy({
     by: ['createdAt'],
     where: {
@@ -28,6 +29,7 @@ export async function getDashboardRequestTrends(tenantId: string) {
 }
 
 export async function getDashboardRequestCounts(tenantId: string) {
+  const db = await getDb();
   const totalRequests = await db.request.count({
     where: { tenantId },
   });
@@ -82,6 +84,7 @@ export async function getDashboardRequestCounts(tenantId: string) {
 }
 
 export async function getWorkflows(tenantId: string) {
+  const db = await getDb();
   const workflows = await db.requestWorkflow.findMany({
     where: {
       tenantId,
@@ -129,6 +132,7 @@ interface RequestWhereClause {
 }
 
 export async function getDashboardMetrics(tenantId: string, workflowId?: string | null) {
+  const db = await getDb();
   const now = new Date();
   const lastMonth = subDays(now, 30);
 
@@ -401,6 +405,7 @@ export async function getDashboardMetrics(tenantId: string, workflowId?: string 
 }
 
 export async function getDashboardAssignmentTrends(tenantId: string, timeRange?: string) {
+  const db = await getDb();
   const days = timeRange === '30d' ? 30 : timeRange === '7d' ? 7 : 90;
 
   const endDate = endOfDay(new Date());
@@ -451,6 +456,7 @@ interface WorkflowQueryWhereClause {
 }
 
 export async function getWorkflowStatsByMonth(tenantId: string, months: number = 6, workflowId?: string | null) {
+  const db = await getDb();
   const now = new Date();
   const startDate = new Date(now.getFullYear(), now.getMonth() - months + 1, 1);
 
@@ -569,6 +575,7 @@ interface RecentRequestsWhereClause {
 }
 
 export async function getRecentRequests(tenantId: string, workflowFilter?: string | null, limit: number = 10) {
+  const db = await getDb();
   const whereCondition: RecentRequestsWhereClause = {
     tenantId,
   };
@@ -659,6 +666,7 @@ interface BaseWhereClause {
 }
 
 export async function getSLADashboardData(tenantId: string, filters?: SLAFilters) {
+  const db = await getDb();
   const now = new Date();
 
   // Construir filtros de where según los filtros recibidos

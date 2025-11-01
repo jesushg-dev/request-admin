@@ -1,6 +1,6 @@
 // Import after mocks
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
 import { UserNotFoundErr } from '@/lib/error';
 
@@ -11,13 +11,15 @@ jest.mock('@/server/auth-server', () => ({
   currentSession: jest.fn(),
 }));
 
-jest.mock('@/server/db-client', () => ({
-  db: {
-    requirement: {
-      findMany: jest.fn(),
-      findFirstOrThrow: jest.fn(),
-    },
+const mockDb = {
+  requirement: {
+    findMany: jest.fn(),
+    findFirstOrThrow: jest.fn(),
   },
+};
+
+jest.mock('@/server/db-client', () => ({
+  getDb: jest.fn(),
 }));
 
 describe('Requirement Actions', () => {
@@ -30,6 +32,7 @@ describe('Requirement Actions', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (currentSession as jest.Mock).mockResolvedValue(mockSession);
+    (getDb as jest.Mock).mockResolvedValue(mockDb);
   });
 
   describe('getRequirementsAsOptions', () => {
@@ -45,7 +48,7 @@ describe('Requirement Actions', () => {
         { id: 'req-2', name: 'Requirement 2' },
       ];
 
-      (db.requirement.findMany as jest.Mock).mockResolvedValue(mockRequirements);
+      (mockDb.requirement.findMany as jest.Mock).mockResolvedValue(mockRequirements);
 
       const result = await getRequirementsAsOptions(mockTenantId);
 
@@ -53,7 +56,7 @@ describe('Requirement Actions', () => {
         { value: 'req-1', label: 'Requirement 1' },
         { value: 'req-2', label: 'Requirement 2' },
       ]);
-      expect(db.requirement.findMany).toHaveBeenCalledWith({
+      expect(mockDb.requirement.findMany).toHaveBeenCalledWith({
         select: {
           id: true,
           name: true,
@@ -86,7 +89,7 @@ describe('Requirement Actions', () => {
     });
 
     it('should return formatted requirement as form values', async () => {
-      (db.requirement.findFirstOrThrow as jest.Mock).mockResolvedValue(mockRequirement);
+      (mockDb.requirement.findFirstOrThrow as jest.Mock).mockResolvedValue(mockRequirement);
 
       const result = await getRequirementAsFormById(mockRequirementId, mockTenantId);
 
@@ -103,7 +106,7 @@ describe('Requirement Actions', () => {
         },
       });
 
-      expect(db.requirement.findFirstOrThrow).toHaveBeenCalledWith({
+      expect(mockDb.requirement.findFirstOrThrow).toHaveBeenCalledWith({
         select: {
           id: true,
           name: true,
@@ -123,7 +126,7 @@ describe('Requirement Actions', () => {
         description: null,
       };
 
-      (db.requirement.findFirstOrThrow as jest.Mock).mockResolvedValue(requirementWithNullDescription);
+      (mockDb.requirement.findFirstOrThrow as jest.Mock).mockResolvedValue(requirementWithNullDescription);
 
       const result = await getRequirementAsFormById(mockRequirementId, mockTenantId);
 

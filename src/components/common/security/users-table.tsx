@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useFindManyUserTenant } from '@/services/api/hooks';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@zenstackhq/runtime/models';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';

@@ -4,12 +4,12 @@ import { AssignmentTypeEnum } from '@/constants/assignment-type';
 import { PermissionActions } from '@/constants/permissions';
 import { getAuthContext } from '@/actions/authorization';
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-server';
+import { getDb } from '@/server/db-client';
 
 import { NotificationTypeEnum } from '@/types/notification';
-import { ExecutionFlowDefaultArgs } from '@/types/prisma/execution-flow';
-import { RequestDefaultArgs, RequestDetailsType, RequestType } from '@/types/prisma/request';
-import { UserAreaWithRoleType, UserTenantWithAreaDefaultArgs } from '@/types/prisma/user';
+import { ExecutionFlowDefaultArgs } from '@/types/zenstackhq/execution-flow';
+import { RequestDefaultArgs, RequestDetailsType, RequestType } from '@/types/zenstackhq/request';
+import { UserAreaWithRoleType, UserTenantWithAreaDefaultArgs } from '@/types/zenstackhq/user';
 import { transformExecutionFlowToZodSchema } from '@/lib/execution-flow';
 import { normalizeValue } from '@/lib/utils';
 import { RequestFormStepperType } from '@/components/common/request/request-form-stepper';
@@ -39,6 +39,8 @@ type AssignmentWithRelations = {
 export const upsertRequest = async (tenantId: string, data: RequestFormStepperType) => {
   const session = await currentSession();
   if (!session?.user?.id) throw new UserNotFoundErr('User not found');
+
+  const db = await getDb();
 
   // Validate categories
   if (data.requestCategory.length === 0) throw new Error('Request category is required');
@@ -117,6 +119,7 @@ export const upsertRequest = async (tenantId: string, data: RequestFormStepperTy
 // BETTER SOLUTION: Handle form submissions after request creation
 // ========================
 const handleCreate = async (tenantId: string, data: RequestFormStepperType, userId: string, flowId: string | null = null) => {
+  const db = await getDb();
   // Move data preparation OUTSIDE the transaction
   const [userAreas, requirementCompliances, assignmentType] = await Promise.all([
     getAreaWithSupervisors(tenantId, data.areaId.value),
@@ -286,6 +289,7 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
 // UPDATE REQUEST (Alternative approach - Split transactions)
 // ========================
 const handleUpdate = async (existingRequest: RequestType, tenantId: string, data: RequestFormStepperType, userId: string, flowId: string | null = null) => {
+  const db = await getDb();
   // Move data preparation OUTSIDE the transaction
   const [area, requirementCompliances, assignmentType] = await Promise.all([
     getAreaWithSupervisors(tenantId, data.areaId.value),
@@ -448,6 +452,7 @@ const handleUpdate = async (existingRequest: RequestType, tenantId: string, data
 // HELPER FUNCTIONS
 // ========================
 const getAreaWithSupervisors = async (tenantId: string, areaId: string) => {
+  const db = await getDb();
   return db.userTenant.findMany({
     ...UserTenantWithAreaDefaultArgs,
     where: {
@@ -603,6 +608,7 @@ export const getRequestById = async (tenantId: string, requestId: string): Promi
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
+  const db = await getDb();
   const request = await db.request.findUniqueOrThrow({
     where: { id: requestId, tenantId },
     select: {
@@ -673,6 +679,7 @@ export const getRequestDetailsByRequest = async (tenantId: string, request: Requ
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
+  const db = await getDb();
   const requestCategoryId = request.requestCategory.slice(-1)[0].value;
   const assignmentCategoryId = request.assignmentCategory.slice(-1)[0].value;
   const requestCategoryIds = request.requestCategory.map((rc) => rc.value);
@@ -789,6 +796,7 @@ export const getPrioritiesAsOptions = async (tenantId: string) => {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
+  const db = await getDb();
   const priorities = await db.requestPriorityType.findMany({
     select: { id: true, name: true, primaryColor: true },
     where: { tenantId, isActive: true },
@@ -803,6 +811,7 @@ export const getPrioritiesAsOptions = async (tenantId: string) => {
 async function getAncestorCategories(categoryId: string, tableName: 'RequestCategory' | 'AssignmentCategory') {
   if (!['RequestCategory', 'AssignmentCategory'].includes(tableName)) throw new Error('Invalid table name');
 
+  const db = await getDb();
   let allCategories: { id: string; name: string; parentCategoryId: string | null }[] = [];
   if (tableName === 'RequestCategory') {
     allCategories = await db.requestCategory.findMany({
@@ -839,6 +848,7 @@ export const getRequestsFilteredByAreaAccess = async (tenantId: string) => {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
+  const db = await getDb();
   const auth = await getAuthContext(tenantId);
   
   // Check if user has global VIEW permission

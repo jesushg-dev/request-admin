@@ -3,7 +3,7 @@ import { type Locale } from 'next-intl';
 import { redirect } from '@/i18n/routing';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
-import { db } from '@/server/db-server';
+import { getDb } from '@/server/db-client';
 import { getTranslations } from 'next-intl/server';
 
 import { IdentificationTypeForm } from '@/components/common/identification-type/identification-type-form';
@@ -25,6 +25,7 @@ const EditIdentificationTypePage: FC<EditIdentificationTypePageProps> = async ({
 
   const t = await getTranslations('admin.identificationType.form');
 
+  const db = await getDb();
   const defaultValues = await db.identificationType.findFirst({
     where: { id: slug, tenantId },
     select: { id: true, name: true, description: true, regex: true },

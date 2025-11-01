@@ -3,7 +3,7 @@ import { type Locale } from 'next-intl';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
 import { DataroomBrandingForm } from '@/components/common/data-room/dataroom-branding-form';
 
@@ -21,6 +21,7 @@ const EditPage: FC<EditBrandingPageProps> = async ({ params }) => {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/data-rooms/[slug]', params: { tenantId, slug } } });
   }
 
+  const db = await getDb();
   const initialValues = await db.dataroomBrand.findFirst({
     where: { dataroomId: slug, tenantId },
     select: { id: true, logo: true, dataroomId: true, banner: true, brandColor: true, accentColor: true },

@@ -3,10 +3,10 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from '@/i18n/routing';
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-server';
+import { getDb } from '@/server/db-client';
 import { type Locale } from 'next-intl';
 
-import { AssignmentHierarchyDefaultArgs, AssignmentHierarchyWithLevelsType, RequestHierarchyDefaultArgs, RequestHierarchyWithLevelsType } from '@/types/prisma/hierarchy';
+import { AssignmentHierarchyDefaultArgs, AssignmentHierarchyWithLevelsType, RequestHierarchyDefaultArgs, RequestHierarchyWithLevelsType } from '@/types/zenstackhq/hierarchy';
 import { generateUuid } from '@/lib/id';
 import { HierarchyFormStepperValues } from '@/components/common/hierarchy/hierarchy-form-stepper';
 
@@ -16,6 +16,7 @@ export const upsertRequestHierarchy = async (data: HierarchyFormStepperValues, t
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
+  const db = await getDb();
   await db.requestHierarchy.upsert({
     where: { id: data.id, tenantId },
     create: {
@@ -60,6 +61,7 @@ export const upsertRequestHierarchy = async (data: HierarchyFormStepperValues, t
 export const upsertAssignmentHierarchy = async (data: HierarchyFormStepperValues, tenantId: string, locale: Locale) => {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
+  const db = await getDb();
   await db.assignmentHierarchy.upsert({
     where: { id: data.id, tenantId },
     create: {
@@ -102,6 +104,7 @@ export const upsertAssignmentHierarchy = async (data: HierarchyFormStepperValues
 export const getRequestHierarchyAndLevelsById = async (tenantId: string, id: string): Promise<HierarchyFormStepperValues & { categoriesCount: number }> => {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
+  const db = await getDb();
   const hierarchy = await db.requestHierarchy.findFirstOrThrow({
     select: {
       id: true,
@@ -147,6 +150,7 @@ export const getAssignmentHierarchyAndLevelsById = async (tenantId: string, id: 
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
+  const db = await getDb();
   const hierarchy = await db.assignmentHierarchy.findFirstOrThrow({
     select: {
       id: true,
@@ -192,6 +196,7 @@ export const getRequestHierarchiesAndLevelsByTenantId = async (locale: Locale, t
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
+  const db = await getDb();
   const hierarchies = await db.requestHierarchy.findMany({
     ...RequestHierarchyDefaultArgs,
     where: { tenantId },
@@ -208,6 +213,7 @@ export const getAssignmentHierarchiesAndLevelsByTenantId = async (locale: Locale
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
+  const db = await getDb();
   const hierarchies = await db.assignmentHierarchy.findMany({
     ...AssignmentHierarchyDefaultArgs,
     where: { tenantId },
@@ -224,6 +230,7 @@ export const getRequestHierarchyAndLevelsByCategoryId = async (locale: Locale, t
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
+  const db = await getDb();
   const hierarchy = await db.requestHierarchy.findFirst({
     ...RequestHierarchyDefaultArgs,
     where: { tenantId, categories: { some: { id: categoryId } } },
@@ -240,6 +247,7 @@ export const getAssignmentHierarchyAndLevelsByCategoryId = async (locale: Locale
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
+  const db = await getDb();
   const hierarchy = await db.assignmentHierarchy.findFirst({
     ...AssignmentHierarchyDefaultArgs,
     where: { tenantId, categories: { some: { id: categoryId } } },

@@ -1,13 +1,14 @@
 'use server';
 
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
-import { AreaRoleOptionType } from '@/types/prisma/user';
+import { AreaRoleOptionType } from '@/types/zenstackhq/user';
 import { AreaFormStepperType } from '@/components/common/area/area-form-stepper';
 
 import { getAssignmentCategoriesByIds } from './assignment-type';
 
 export async function getAreaByTenantIdAndAreaId(tenantId: string, areaId: string): Promise<AreaFormStepperType> {
+  const db = await getDb();
   const area = await db.area.findFirstOrThrow({
     where: {
       tenantId,
@@ -162,6 +163,7 @@ export async function getAreaByTenantIdAndAreaId(tenantId: string, areaId: strin
 }
 
 export async function getAreasWithRolesAsOptionsByTenantId(tenantId: string): Promise<AreaRoleOptionType[]> {
+  const db = await getDb();
   const areas = await db.area.findMany({
     where: {
       tenantId,

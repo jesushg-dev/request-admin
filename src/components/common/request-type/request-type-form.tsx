@@ -11,7 +11,7 @@ import { ImperativePanelHandle } from 'react-resizable-panels';
 import { SingleValue } from 'react-select';
 import { toast } from 'sonner';
 
-import { RequestHierarchyWithLevelsType } from '@/types/prisma/hierarchy';
+import { RequestHierarchyWithLevelsType } from '@/types/zenstackhq/hierarchy';
 import { buildRequestCategoryUpsertArgs } from '@/lib/request-type';
 import { Form } from '@/components/ui/form';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';

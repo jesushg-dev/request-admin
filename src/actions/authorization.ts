@@ -2,9 +2,9 @@
 
 import { PermissionAction } from '@/constants/permissions';
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
-import { UserTenantDefaultArgs } from '@/types/prisma/authorization';
+import { UserTenantDefaultArgs } from '@/types/zenstackhq/authorization';
 
 class AuthorizationError extends Error {}
 
@@ -27,6 +27,7 @@ export const getAuthContext = async (tenantId: string): Promise<AuthResult> => {
   const loadPermissions = async () => {
     if (permissionsCache) return;
 
+    const db = await getDb();
     const userTenant = await db.userTenant.findUnique({
       ...UserTenantDefaultArgs,
       where: { userId_tenantId: { userId: session!.user!.id, tenantId } },

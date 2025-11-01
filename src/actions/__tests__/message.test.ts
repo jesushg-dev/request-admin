@@ -1,5 +1,5 @@
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
 import { UserNotFoundErr } from '@/lib/error';
 
@@ -10,13 +10,15 @@ jest.mock('@/server/auth-server', () => ({
   currentSession: jest.fn(),
 }));
 
-jest.mock('@/server/db-client', () => ({
-  db: {
-    conversation: {
-      findFirst: jest.fn(),
-      create: jest.fn(),
-    },
+const mockDb = {
+  conversation: {
+    findFirst: jest.fn(),
+    create: jest.fn(),
   },
+};
+
+jest.mock('@/server/db-client', () => ({
+  getDb: jest.fn(),
 }));
 
 describe('findOrCreateConversation', () => {
@@ -32,6 +34,7 @@ describe('findOrCreateConversation', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (currentSession as jest.Mock).mockResolvedValue(mockSession);
+    (getDb as jest.Mock).mockResolvedValue(mockDb);
   });
 
   it('should throw UserNotFoundErr when no session exists', async () => {
@@ -46,7 +49,7 @@ describe('findOrCreateConversation', () => {
       tenantId: mockTenantId,
     };
 
-    (db.conversation.findFirst as jest.Mock).mockResolvedValue(mockExistingConversation);
+    (mockDb.conversation.findFirst as jest.Mock).mockResolvedValue(mockExistingConversation);
 
     const result = await findOrCreateConversation({
       tenantId: mockTenantId,
@@ -54,7 +57,7 @@ describe('findOrCreateConversation', () => {
     });
 
     expect(result).toEqual(mockExistingConversation);
-    expect(db.conversation.findFirst).toHaveBeenCalledWith({
+    expect(mockDb.conversation.findFirst).toHaveBeenCalledWith({
       where: {
         tenantId: mockTenantId,
         OR: [
@@ -67,7 +70,7 @@ describe('findOrCreateConversation', () => {
         ],
       },
     });
-    expect(db.conversation.create).not.toHaveBeenCalled();
+    expect(mockDb.conversation.create).not.toHaveBeenCalled();
   });
 
   it('should create new conversation when none exists', async () => {
@@ -76,8 +79,8 @@ describe('findOrCreateConversation', () => {
       tenantId: mockTenantId,
     };
 
-    (db.conversation.findFirst as jest.Mock).mockResolvedValue(null);
-    (db.conversation.create as jest.Mock).mockResolvedValue(mockNewConversation);
+    (mockDb.conversation.findFirst as jest.Mock).mockResolvedValue(null);
+    (mockDb.conversation.create as jest.Mock).mockResolvedValue(mockNewConversation);
 
     const result = await findOrCreateConversation({
       tenantId: mockTenantId,
@@ -85,7 +88,7 @@ describe('findOrCreateConversation', () => {
     });
 
     expect(result).toEqual(mockNewConversation);
-    expect(db.conversation.create).toHaveBeenCalledWith({
+    expect(mockDb.conversation.create).toHaveBeenCalledWith({
       data: {
         tenant: { connect: { id: mockTenantId } },
         userTenantOne: {

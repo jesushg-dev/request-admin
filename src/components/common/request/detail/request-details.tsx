@@ -5,9 +5,9 @@ import { Link } from '@/i18n/routing';
 import { Clock, Edit3Icon, EllipsisVertical, FileDown, MessageSquare, Printer, StarIcon, User } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { AssignmentLevelType, RequestLevelType } from '@/types/prisma/hierarchy';
-import { RequestDetailsType } from '@/types/prisma/request';
-import { RequestWorkflowType } from '@/types/prisma/workflow';
+import { AssignmentLevelType, RequestLevelType } from '@/types/zenstackhq/hierarchy';
+import { RequestDetailsType } from '@/types/zenstackhq/request';
+import { RequestWorkflowType } from '@/types/zenstackhq/workflow';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';

@@ -7,7 +7,7 @@ import { Control, FieldErrors, useController, useFieldArray, useFormContext, use
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { AreaRoleOptionType } from '@/types/prisma/user';
+import { AreaRoleOptionType } from '@/types/zenstackhq/user';
 import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';

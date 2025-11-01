@@ -2,7 +2,7 @@
 
 import { useMemo, useState, type FC } from 'react';
 
-import { type DataroomViewerDetail } from '@/types/prisma/document';
+import { type DataroomViewerDetail } from '@/types/zenstackhq/document';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 

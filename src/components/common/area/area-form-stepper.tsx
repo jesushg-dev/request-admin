@@ -11,9 +11,9 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { AssignmentHierarchyWithLevelsType } from '@/types/prisma/hierarchy';
-import { ModuleWithFeaturesType } from '@/types/prisma/module';
-import { RequirementOptionType } from '@/types/prisma/requirement';
+import { AssignmentHierarchyWithLevelsType } from '@/types/zenstackhq/hierarchy';
+import { ModuleWithFeaturesType } from '@/types/zenstackhq/module';
+import { RequirementOptionType } from '@/types/zenstackhq/requirement';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import AreaForm, { areaFormSchema, getAreaDefaultValue } from '@/components/common/area/area-form';

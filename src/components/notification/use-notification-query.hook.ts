@@ -7,7 +7,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useChannel } from 'ably/react';
 
 import { NewNotificationType, NotificationDataType, NotificationType, NotificationTypeEnum } from '@/types/notification';
-import { NotificationDefaultArgs } from '@/types/prisma/notification';
+import { NotificationDefaultArgs } from '@/types/zenstackhq/notification';
 
 import { useNotifications } from './notification-provider.core';
 

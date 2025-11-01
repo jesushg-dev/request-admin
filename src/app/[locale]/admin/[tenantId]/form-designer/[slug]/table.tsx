@@ -2,13 +2,14 @@
 
 import { FC, ReactNode, useMemo } from 'react';
 import { useCountFormSubmission, useFindManyFormSubmission } from '@/services/api/hooks';
-import { FormSubmission, Prisma } from '@prisma/client';
+import { Prisma } from '@zenstackhq/runtime/models';
+import type { FormSubmission } from '@zenstackhq/runtime/models';
 import { ColumnDef } from '@tanstack/react-table';
 import { format, formatDistance } from 'date-fns';
 import { useTranslations } from 'next-intl';
 import { parseAsInteger, parseAsString, parseAsStringEnum, useQueryStates } from 'nuqs';
 
-import { DynamicColumn } from '@/types/prisma/form';
+import { DynamicColumn } from '@/types/zenstackhq/form';
 import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';

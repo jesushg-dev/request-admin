@@ -1,7 +1,7 @@
 'use server';
 
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-server';
+import { getDb } from '@/server/db-client';
 import { ExecutionFlowValues } from '@/services/schemas/execution-flow';
 
 import { FlowNodeType } from '@/types/execution-flow';
@@ -11,6 +11,7 @@ export async function createExecutionFlow(processFlow: ExecutionFlowValues, requ
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
+  const db = await getDb();
   return await db.$transaction(async (tx) => {
     // 1. Verify if there are any active executions for the request category
     const relatedRequests = await tx.request.findMany({
@@ -106,6 +107,7 @@ export async function createExecutionLog(tenantId: string, executionId: string, 
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
+  const db = await getDb();
   return await db.$transaction(async (tx) => {
     const details = JSON.stringify(data);
     const newLog = await tx.executionModelLog.create({

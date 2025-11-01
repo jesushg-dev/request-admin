@@ -3,7 +3,7 @@
  */
 
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-server';
+import { getDb } from '@/server/db-client';
 import * as Ably from 'ably';
 
 import { POST } from './route';
@@ -13,12 +13,14 @@ jest.mock('@/server/auth-server', () => ({
   currentSession: jest.fn(),
 }));
 
-jest.mock('@/server/db-server', () => ({
-  db: {
-    userTenant: {
-      findUnique: jest.fn(),
-    },
+const mockDb = {
+  userTenant: {
+    findUnique: jest.fn(),
   },
+};
+
+jest.mock('@/server/db-client', () => ({
+  getDb: jest.fn(),
 }));
 
 jest.mock('ably', () => ({
@@ -40,7 +42,8 @@ describe('Ably API', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (currentSession as jest.Mock).mockResolvedValue(mockSession);
-    (db.userTenant.findUnique as jest.Mock).mockResolvedValue(mockUserTenant);
+    (getDb as jest.Mock).mockResolvedValue(mockDb);
+    (mockDb.userTenant.findUnique as jest.Mock).mockResolvedValue(mockUserTenant);
 
     // Mock environment variables
     process.env.ABLY_API_KEY = 'test-api-key';
@@ -85,7 +88,7 @@ describe('Ably API', () => {
       expect(response.status).toBe(200);
       expect(data).toEqual(mockTokenRequest);
 
-      expect(db.userTenant.findUnique).toHaveBeenCalledWith({
+      expect(mockDb.userTenant.findUnique).toHaveBeenCalledWith({
         where: {
           id: 'user-tenant-123',
           userId: 'user-123',
@@ -150,7 +153,7 @@ describe('Ably API', () => {
     });
 
     it('should return 403 when user tenant association not found', async () => {
-      (db.userTenant.findUnique as jest.Mock).mockResolvedValue(null);
+      (mockDb.userTenant.findUnique as jest.Mock).mockResolvedValue(null);
 
       const formData = new FormData();
       formData.append('clientId', 'invalid-user-tenant');

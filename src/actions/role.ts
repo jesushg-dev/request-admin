@@ -1,7 +1,7 @@
 'use server';
 
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
 import { RoleFormStepperType } from '@/components/common/role/role-form-stepper';
 
@@ -11,6 +11,7 @@ export const getRoleAsFormById = async (ids: string[], tenantId: string): Promis
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
+  const db = await getDb();
   const roles = await db.role.findMany({
     select: {
       id: true,
@@ -99,6 +100,7 @@ export const CreateRole = async (data: RoleFormStepperType, tenantId: string) =>
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
+  const db = await getDb();
   const { roles } = data;
 
   // Validate required fields
@@ -181,6 +183,7 @@ export const UpdateRole = async (data: RoleFormStepperType, tenantId: string) =>
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
+  const db = await getDb();
   const { roles } = data;
 
   // Validate required fields

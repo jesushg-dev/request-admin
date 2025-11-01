@@ -2,7 +2,7 @@
 
 import { headers } from 'next/headers';
 import { auth, currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
 import { UserTenant } from '@/types/user';
 import { convertUserTenantTypeToUserTenant, getUserName } from '@/lib/user';
@@ -41,6 +41,7 @@ const sanitizeInvitationData = (data: UserTenantScopedFormValues): SafeInvitatio
 
 // Updates an existing user
 const updateExistingUser = async (tenantId: string, data: UserTenantScopedFormValues, existingUserId: string) => {
+  const db = await getDb();
   // Find the current Person record for this user and tenant
   const currentUserTenant = await db.userTenant.findUnique({
     where: { userId_tenantId: { userId: existingUserId, tenantId } },
@@ -163,6 +164,7 @@ const createUserInvitation = async (tenantId: string, data: UserTenantScopedForm
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
+  const db = await getDb();
   // Sanitize data before saving
   const safeMetadata = sanitizeInvitationData(data);
 
@@ -195,6 +197,7 @@ export const processInvitationAcceptance = async (invitationId: string) => {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
+  const db = await getDb();
   // 1. Retrieve invitation metadata
   const invitationRecord = await db.invitationTenant.findUnique({
     select: { tenantId: true, metadata: true },
@@ -265,6 +268,7 @@ export const upsertUser = async (tenantId: string, data: UserTenantScopedFormVal
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
+  const db = await getDb();
   // Check if the user already exists
   const existingUser = await db.user.findUnique({
     select: { id: true },
@@ -283,6 +287,7 @@ export const getUsersAsOptions = async (tenantId: string) => {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
+  const db = await getDb();
   const userTenants = await db.userTenant.findMany({
     select: {
       id: true,
@@ -304,6 +309,7 @@ export const getIdentityTypesAsOptions = async (tenantId: string) => {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
+  const db = await getDb();
   const identityTypes = await db.identificationType.findMany({
     select: { id: true, name: true, regex: true },
     where: { tenantId },
@@ -321,6 +327,7 @@ export const getRolesAsOptions = async (tenantId: string) => {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
+  const db = await getDb();
   const roles = await db.role.findMany({
     select: { id: true, name: true },
     where: { tenantId },
@@ -337,6 +344,7 @@ export const getCurrentUserTenant = async (tenantId: string): Promise<UserTenant
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
+  const db = await getDb();
   const result = await db.userTenant.findUniqueOrThrow({
     where: { userId_tenantId: { userId: session.user.id, tenantId } },
     select: {

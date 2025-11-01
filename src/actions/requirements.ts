@@ -1,8 +1,9 @@
 'use server';
 
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
 export async function updateRequirementCompliance(requestId: string, tenantId: string, compliances: Record<string, boolean>) {
+  const db = await getDb();
   try {
     await db.$transaction(async (tx) => {
       // Actualizar solo los requisitos existentes

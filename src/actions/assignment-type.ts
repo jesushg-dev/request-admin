@@ -1,6 +1,6 @@
 'use server';
 
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
 import { AssignmentCategory, AssignmentCategoryFormValues } from '@/components/common/category/assignment-category-form';
 
@@ -10,6 +10,7 @@ type FlatCategory = AssignmentCategory & {
 };
 
 export async function getAssignmentCategoriesByIds(rootIds: string[], tenantId: string): Promise<AssignmentCategoryFormValues> {
+  const db = await getDb();
   const categoriesToFetch = new Set(rootIds);
   const categoryMap = new Map<string, AssignmentCategory & { parentCategoryId?: string | null }>();
 
@@ -87,6 +88,7 @@ export async function getAssignmentCategoriesByIds(rootIds: string[], tenantId: 
  * @param hierarchyId - The hierarchy identifier
  */
 export async function upsertCategoriesFlat(categories: AssignmentCategory[], tenantId: string, hierarchyId: string, areaId: string) {
+  const db = await getDb();
   // Flatten the category tree and sort by depth (parents first)
   const flatCategories = flattenCategories(categories).sort((a, b) => a.depth - b.depth);
 

@@ -1,14 +1,9 @@
-import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-client';
-import { User } from '@prisma/client';
-import { enhance } from '@zenstackhq/runtime';
+import { getDb } from '@/server/db-client';
 import { NextRequestHandler } from '@zenstackhq/server/next';
 
-// create an enhanced Prisma client with user context
+// create an enhanced Prisma client with user context using ZenStack
 async function getPrisma() {
-  const session = await currentSession();
-  // todo: review this approach
-  return enhance(db, { user: session?.user as unknown as User });
+  return await getDb();
 }
 
 const handler = NextRequestHandler({ getPrisma, useAppDir: true });

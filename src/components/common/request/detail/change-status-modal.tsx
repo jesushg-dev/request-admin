@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { RequestWorkflowType } from '@/types/prisma/workflow';
+import { RequestWorkflowType } from '@/types/zenstackhq/workflow';
 import { normalizeValue } from '@/lib/utils';
 import { getStatusTransitions } from '@/lib/workflow';
 import { Badge } from '@/components/ui/badge';

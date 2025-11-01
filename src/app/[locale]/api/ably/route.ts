@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-server';
+import { getDb } from '@/server/db-client';
 import * as Ably from 'ably';
 
 export async function POST(req: Request) {
@@ -24,6 +24,7 @@ export async function POST(req: Request) {
   }
 
   // 4. Verify user-tenant relationship
+  const db = await getDb();
   const userTenant = await db.userTenant.findUnique({
     where: {
       id: submittedClientId,

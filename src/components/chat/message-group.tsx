@@ -1,6 +1,6 @@
 import { differenceInMinutes } from 'date-fns';
 
-import { MessageType } from '@/types/prisma/message';
+import { MessageType } from '@/types/zenstackhq/message';
 import { TIME_THRESHOLD } from '@/lib/utils';
 import { useFormatTime } from '@/hooks/use-format-time';
 

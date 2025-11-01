@@ -9,7 +9,7 @@ import { ChevronRight, Clipboard, Copy, Eye, FileText, FolderClosed, FolderPlus,
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
-import { DataroomFolderDefaultArgs, DataroomFolderWithRelations, DocumentDefaultArgs, DocumentWithRelations } from '@/types/prisma/document';
+import { DataroomFolderDefaultArgs, DataroomFolderWithRelations, DocumentDefaultArgs, DocumentWithRelations } from '@/types/zenstackhq/document';
 import { getFileIcon } from '@/lib/document-utils';
 import useMessage from '@/lib/message';
 import { Badge } from '@/components/ui/badge';

@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useFindManyRequirement } from '@/services/api/hooks';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@zenstackhq/runtime/models';
 import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useFindFirstRequestHierarchyLevel, useFindManyRequestCategory } from '@/services/api/hooks';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@zenstackhq/runtime/models';
 import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';

@@ -2,22 +2,25 @@
  * @jest-environment node
  */
 
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
 import { POST } from './route';
 
 // Mock the database
-jest.mock('@/server/db-client', () => ({
-  db: {
-    tenant: {
-      findUnique: jest.fn(),
-    },
+const mockDb = {
+  tenant: {
+    findUnique: jest.fn(),
   },
+};
+
+jest.mock('@/server/db-client', () => ({
+  getDb: jest.fn(),
 }));
 
 describe('Tenant Validation API', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (getDb as jest.Mock).mockResolvedValue(mockDb);
   });
 
   it('returns true for valid tenant ID', async () => {
@@ -26,7 +29,7 @@ describe('Tenant Validation API', () => {
     const mockTenantId = 'tenant123';
 
     // Setup mock response
-    (db.tenant.findUnique as jest.Mock).mockResolvedValue(mockTenant);
+    (mockDb.tenant.findUnique as jest.Mock).mockResolvedValue(mockTenant);
 
     // Create mock request
     const request = new Request('http://localhost:3000/api/tenants/validate', {
@@ -41,14 +44,14 @@ describe('Tenant Validation API', () => {
     // Assertions
     expect(response.status).toBe(200);
     expect(data).toEqual({ isValid: true });
-    expect(db.tenant.findUnique).toHaveBeenCalledWith({
+    expect(mockDb.tenant.findUnique).toHaveBeenCalledWith({
       where: { id: mockTenantId },
     });
   });
 
   it('returns false for invalid tenant ID', async () => {
     // Setup mock response
-    (db.tenant.findUnique as jest.Mock).mockResolvedValue(null);
+    (mockDb.tenant.findUnique as jest.Mock).mockResolvedValue(null);
 
     // Create mock request
     const request = new Request('http://localhost:3000/api/tenants/validate', {
@@ -79,12 +82,12 @@ describe('Tenant Validation API', () => {
     // Assertions
     expect(response.status).toBe(400);
     expect(data).toEqual({ error: 'Tenant ID is required' });
-    expect(db.tenant.findUnique).not.toHaveBeenCalled();
+    expect(mockDb.tenant.findUnique).not.toHaveBeenCalled();
   });
 
   it('handles database errors gracefully', async () => {
     // Setup mock error
-    (db.tenant.findUnique as jest.Mock).mockRejectedValue(new Error('Database error'));
+    (mockDb.tenant.findUnique as jest.Mock).mockRejectedValue(new Error('Database error'));
 
     // Create mock request
     const request = new Request('http://localhost:3000/api/tenants/validate', {

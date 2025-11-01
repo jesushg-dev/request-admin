@@ -1,6 +1,6 @@
 'use server';
 
-import { db } from '@/server/db-server';
+import { getDb } from '@/server/db-client';
 import { currentSession } from '@/server/auth-server';
 
 class UserNotFoundErr extends Error {}
@@ -19,6 +19,7 @@ export async function getSecurityStats(tenantId: string): Promise<SecurityStats>
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
+  const db = await getDb();
   // Get total active users in tenant
   const totalUsers = await db.userTenant.count({
     where: {

@@ -22,14 +22,14 @@ interface UseFetchTableDataProps<TData, FMA extends FindManyArgs, CountArgs> {
     perPage: number;
     page: number;
   };
-  useFindManyHook: (args: FMA) => {
+  useFindManyHook: (args?: FMA | any) => {
     data: TData[] | undefined;
     isLoading: boolean;
     isError: boolean;
     error: QueryError | null;
     refetch: () => void;
   };
-  useCountHook: (args: CountArgs) => {
+  useCountHook: (args?: CountArgs | any) => {
     data: number | undefined;
     isLoading: boolean;
     error: QueryError | null;

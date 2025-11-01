@@ -6,7 +6,7 @@ import { EmojiClickData } from 'emoji-picker-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
-import { MessageType } from '@/types/prisma/message';
+import { MessageType } from '@/types/zenstackhq/message';
 import { parseAppMetadataFromString } from '@/lib/ablyChat';
 import useMessage from '@/lib/message';
 import { getUserName } from '@/lib/user';

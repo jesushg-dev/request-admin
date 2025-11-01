@@ -5,7 +5,7 @@ import { format } from 'date-fns';
 import { Edit, Eye, LinkIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { DocumentWithRelations } from '@/types/prisma/document';
+import { DocumentWithRelations } from '@/types/zenstackhq/document';
 import { formatBytes } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';

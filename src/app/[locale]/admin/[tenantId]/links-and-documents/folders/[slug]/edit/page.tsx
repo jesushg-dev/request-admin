@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { redirect } from '@/i18n/routing';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 import { Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import { SearchParams } from 'nuqs/server';
@@ -30,6 +30,7 @@ const EditPage: FC<EditPageProps> = async ({ params, searchParams }) => {
   const t = await getTranslations('admin.folder.create');
   const { dataroomId } = await folderReferencesLoader(searchParams);
 
+  const db = await getDb();
   const initialValues = await db.dataroomFolder.findFirst({
     select: { id: true, name: true, dataroomId: true },
     where: { id: slug, dataroomId, tenantId },

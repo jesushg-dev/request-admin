@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 
-import { RequestLevelType } from '@/types/prisma/hierarchy';
+import { RequestLevelType } from '@/types/zenstackhq/hierarchy';
 import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';

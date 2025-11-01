@@ -1,18 +1,20 @@
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
 import { getDashboardAssignmentTrends, getDashboardRequestCounts, getDashboardRequestTrends } from '../dashboard';
 
 // Mock the database client
-jest.mock('@/server/db-client', () => ({
-  db: {
-    requestAssignment: {
-      groupBy: jest.fn(),
-      findMany: jest.fn(),
-    },
-    request: {
-      count: jest.fn(),
-    },
+const mockDb = {
+  requestAssignment: {
+    groupBy: jest.fn(),
+    findMany: jest.fn(),
   },
+  request: {
+    count: jest.fn(),
+  },
+};
+
+jest.mock('@/server/db-client', () => ({
+  getDb: jest.fn(),
 }));
 
 describe('Dashboard Actions', () => {
@@ -20,6 +22,7 @@ describe('Dashboard Actions', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    (getDb as jest.Mock).mockResolvedValue(mockDb);
   });
 
   describe('getDashboardRequestTrends', () => {
@@ -29,7 +32,7 @@ describe('Dashboard Actions', () => {
         { createdAt: new Date('2024-01-02'), _count: { id: 3 } },
       ];
 
-      (db.requestAssignment.groupBy as jest.Mock).mockResolvedValue(mockTrends);
+      (mockDb.requestAssignment.groupBy as jest.Mock).mockResolvedValue(mockTrends);
 
       const result = await getDashboardRequestTrends(mockTenantId);
 
@@ -38,7 +41,7 @@ describe('Dashboard Actions', () => {
         { date: '2024-01-02', count: 3 },
       ]);
 
-      expect(db.requestAssignment.groupBy).toHaveBeenCalledWith({
+      expect(mockDb.requestAssignment.groupBy).toHaveBeenCalledWith({
         by: ['createdAt'],
         where: {
           tenantId: mockTenantId,
@@ -64,8 +67,8 @@ describe('Dashboard Actions', () => {
         { slaStart: new Date('2024-01-02T10:00:00'), slaEnd: new Date('2024-01-02T14:00:00') },
       ];
 
-      (db.request.count as jest.Mock).mockResolvedValueOnce(mockTotalRequests).mockResolvedValueOnce(mockOpenRequests).mockResolvedValueOnce(mockOverdueRequests);
-      (db.requestAssignment.findMany as jest.Mock).mockResolvedValue(mockResolvedRequests);
+      (mockDb.request.count as jest.Mock).mockResolvedValueOnce(mockTotalRequests).mockResolvedValueOnce(mockOpenRequests).mockResolvedValueOnce(mockOverdueRequests);
+      (mockDb.requestAssignment.findMany as jest.Mock).mockResolvedValue(mockResolvedRequests);
 
       const result = await getDashboardRequestCounts(mockTenantId);
 
@@ -78,8 +81,8 @@ describe('Dashboard Actions', () => {
     });
 
     it('should return N/A for average resolution time when no resolved requests', async () => {
-      (db.request.count as jest.Mock).mockResolvedValueOnce(0).mockResolvedValueOnce(0).mockResolvedValueOnce(0);
-      (db.requestAssignment.findMany as jest.Mock).mockResolvedValue([]);
+      (mockDb.request.count as jest.Mock).mockResolvedValueOnce(0).mockResolvedValueOnce(0).mockResolvedValueOnce(0);
+      (mockDb.requestAssignment.findMany as jest.Mock).mockResolvedValue([]);
 
       const result = await getDashboardRequestCounts(mockTenantId);
 
@@ -100,7 +103,7 @@ describe('Dashboard Actions', () => {
         },
       ];
 
-      (db.requestAssignment.findMany as jest.Mock).mockResolvedValue(mockAssignments);
+      (mockDb.requestAssignment.findMany as jest.Mock).mockResolvedValue(mockAssignments);
 
       const result = await getDashboardAssignmentTrends(mockTenantId, '7d');
 
@@ -110,7 +113,7 @@ describe('Dashboard Actions', () => {
     it('should use default 90 days when no time range is specified', async () => {
       await getDashboardAssignmentTrends(mockTenantId);
 
-      expect(db.requestAssignment.findMany).toHaveBeenCalledWith(
+      expect(mockDb.requestAssignment.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             assignmentDate: expect.any(Object),

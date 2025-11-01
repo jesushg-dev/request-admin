@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
 export async function POST(request: Request) {
   const { tenantId } = (await request.json()) as { tenantId: string };
@@ -9,6 +9,7 @@ export async function POST(request: Request) {
   }
 
   try {
+    const db = await getDb();
     const tenant = await db.tenant.findUnique({ where: { id: tenantId } });
     const isValid = !!tenant;
     return NextResponse.json({ isValid }, { status: 200 });

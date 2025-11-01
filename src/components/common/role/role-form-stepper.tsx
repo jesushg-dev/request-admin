@@ -10,8 +10,8 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { ModuleWithFeaturesType } from '@/types/prisma/module';
-import { RequirementOptionType } from '@/types/prisma/requirement';
+import { ModuleWithFeaturesType } from '@/types/zenstackhq/module';
+import { RequirementOptionType } from '@/types/zenstackhq/requirement';
 import { Form } from '@/components/ui/form';
 import UserRoleAssignmentForm, { userRoleAssignmentFormSchema } from '@/components/common/role/user-role-assignment-form';
 import { OptionType } from '@/components/custom-ui/select';

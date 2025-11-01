@@ -3,7 +3,7 @@
 import React, { memo, useMemo } from 'react';
 import { useCountAssignmentHierarchy, useFindManyAssignmentHierarchy } from '@/services/api/hooks';
 import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@zenstackhq/runtime/models';
 import { Checkbox } from '@radix-ui/react-checkbox';
 import { ColumnDef } from '@tanstack/react-table';
 import { ChevronDown, ChevronUp } from 'lucide-react';

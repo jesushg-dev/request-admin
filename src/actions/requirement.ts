@@ -1,10 +1,10 @@
 'use server';
 
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 import { omit } from 'lodash';
 
-import { RequirementDefaultArgs } from '@/types/prisma/requirement';
+import { RequirementDefaultArgs } from '@/types/zenstackhq/requirement';
 import { UserNotFoundErr } from '@/lib/error';
 import { RequirementFormValues } from '@/components/common/requirement/requirement-form';
 
@@ -12,6 +12,7 @@ export const getRequirementsAsOptions = async (tenantId: string) => {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
+  const db = await getDb();
   const requirements = await db.requirement.findMany({ ...RequirementDefaultArgs, where: { tenantId } });
   const preparedRequirements = requirements.map((req) => ({ value: req.id, label: req.name }));
 
@@ -22,6 +23,7 @@ export const getRequirementAsFormById = async (id: string, tenantId: string) => 
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
+  const db = await getDb();
   const requirement = await db.requirement.findFirstOrThrow({
     select: {
       id: true,

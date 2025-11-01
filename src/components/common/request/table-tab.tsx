@@ -3,7 +3,7 @@
 import React, { memo, useMemo, useEffect, useState } from 'react';
 import { useCountRequest, useFindManyRequest } from '@/services/api/hooks';
 import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@zenstackhq/runtime/models';
 import { ColumnDef } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
 import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';

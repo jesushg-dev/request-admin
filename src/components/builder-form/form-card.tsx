@@ -7,7 +7,7 @@ import { formatDistance } from 'date-fns';
 import { ArrowRightIcon, BookOpenCheckIcon, FilePenLineIcon, GripVertical, ViewIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { FormWithRelations } from '@/types/prisma/form';
+import { FormWithRelations } from '@/types/zenstackhq/form';
 import { cn } from '@/lib/utils';
 
 import ClientOnly from '../client-only';

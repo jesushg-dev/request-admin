@@ -1,6 +1,6 @@
 // Import after mocks
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
 import { CreateRequirementType, getRequirementTypeAsFormById, getRequirementTypesAsOptions, UpdateRequirementType } from '../requirementType';
 
@@ -9,16 +9,18 @@ jest.mock('@/server/auth-server', () => ({
   currentSession: jest.fn(),
 }));
 
-jest.mock('@/server/db-client', () => ({
-  db: {
-    requirementType: {
-      findMany: jest.fn(),
-      findFirstOrThrow: jest.fn(),
-      findFirst: jest.fn(),
-      create: jest.fn(),
-      update: jest.fn(),
-    },
+const mockDb = {
+  requirementType: {
+    findMany: jest.fn(),
+    findFirstOrThrow: jest.fn(),
+    findFirst: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
   },
+};
+
+jest.mock('@/server/db-client', () => ({
+  getDb: jest.fn(),
 }));
 
 describe('RequirementType Actions', () => {
@@ -35,6 +37,7 @@ describe('RequirementType Actions', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (currentSession as jest.Mock).mockResolvedValue(mockSession);
+    (getDb as jest.Mock).mockResolvedValue(mockDb);
   });
 
   describe('getRequirementTypesAsOptions', () => {
@@ -46,12 +49,12 @@ describe('RequirementType Actions', () => {
 
     it('should return requirement types for the given tenant', async () => {
       const mockRequirementTypes = [mockRequirementType];
-      (db.requirementType.findMany as jest.Mock).mockResolvedValue(mockRequirementTypes);
+      (mockDb.requirementType.findMany as jest.Mock).mockResolvedValue(mockRequirementTypes);
 
       const result = await getRequirementTypesAsOptions(mockTenantId);
 
       expect(result).toEqual(mockRequirementTypes);
-      expect(db.requirementType.findMany).toHaveBeenCalledWith({
+      expect(mockDb.requirementType.findMany).toHaveBeenCalledWith({
         select: {
           id: true,
           name: true,
@@ -70,7 +73,7 @@ describe('RequirementType Actions', () => {
     });
 
     it('should return requirement type form values for the given id', async () => {
-      (db.requirementType.findFirstOrThrow as jest.Mock).mockResolvedValue(mockRequirementType);
+      (mockDb.requirementType.findFirstOrThrow as jest.Mock).mockResolvedValue(mockRequirementType);
 
       const result = await getRequirementTypeAsFormById('req-type-1', mockTenantId);
 
@@ -79,7 +82,7 @@ describe('RequirementType Actions', () => {
         isDefault: false,
         description: mockRequirementType.description,
       });
-      expect(db.requirementType.findFirstOrThrow).toHaveBeenCalledWith({
+      expect(mockDb.requirementType.findFirstOrThrow).toHaveBeenCalledWith({
         select: {
           id: true,
           name: true,
@@ -95,7 +98,7 @@ describe('RequirementType Actions', () => {
         ...mockRequirementType,
         description: null,
       };
-      (db.requirementType.findFirstOrThrow as jest.Mock).mockResolvedValue(requirementTypeWithNullDescription);
+      (mockDb.requirementType.findFirstOrThrow as jest.Mock).mockResolvedValue(requirementTypeWithNullDescription);
 
       const result = await getRequirementTypeAsFormById('req-type-1', mockTenantId);
 
@@ -124,16 +127,16 @@ describe('RequirementType Actions', () => {
         createdBy: mockSession.user.id,
       };
 
-      (db.requirementType.findFirst as jest.Mock).mockResolvedValue(null);
-      (db.requirementType.create as jest.Mock).mockResolvedValue(mockCreatedRequirementType);
+      (mockDb.requirementType.findFirst as jest.Mock).mockResolvedValue(null);
+      (mockDb.requirementType.create as jest.Mock).mockResolvedValue(mockCreatedRequirementType);
 
       const result = await CreateRequirementType(validData, mockTenantId);
 
       expect(result).toEqual(mockCreatedRequirementType);
-      expect(db.requirementType.findFirst).toHaveBeenCalledWith({
+      expect(mockDb.requirementType.findFirst).toHaveBeenCalledWith({
         where: { name: validData.name, tenantId: mockTenantId },
       });
-      expect(db.requirementType.create).toHaveBeenCalledWith({
+      expect(mockDb.requirementType.create).toHaveBeenCalledWith({
         data: {
           ...validData,
           description: validData.description,
@@ -145,7 +148,7 @@ describe('RequirementType Actions', () => {
     });
 
     it('should throw error when name already exists', async () => {
-      (db.requirementType.findFirst as jest.Mock).mockResolvedValue({ id: 'existing-req-type' });
+      (mockDb.requirementType.findFirst as jest.Mock).mockResolvedValue({ id: 'existing-req-type' });
 
       await expect(CreateRequirementType(validData, mockTenantId)).rejects.toThrow('A requirement type with this name already exists');
     });
@@ -165,12 +168,12 @@ describe('RequirementType Actions', () => {
         createdBy: mockSession.user.id,
       };
 
-      (db.requirementType.findFirst as jest.Mock).mockResolvedValue(null);
-      (db.requirementType.create as jest.Mock).mockResolvedValue(mockCreatedRequirementType);
+      (mockDb.requirementType.findFirst as jest.Mock).mockResolvedValue(null);
+      (mockDb.requirementType.create as jest.Mock).mockResolvedValue(mockCreatedRequirementType);
 
       await CreateRequirementType(dataWithEmptyDescription, mockTenantId);
 
-      expect(db.requirementType.create).toHaveBeenCalledWith({
+      expect(mockDb.requirementType.create).toHaveBeenCalledWith({
         data: {
           ...dataWithEmptyDescription,
           description: '',
@@ -204,15 +207,15 @@ describe('RequirementType Actions', () => {
         updatedBy: mockSession.user.id,
       };
 
-      (db.requirementType.findFirst as jest.Mock)
+      (mockDb.requirementType.findFirst as jest.Mock)
         .mockResolvedValueOnce(mockExistingRequirementType) // First call for existence check
         .mockResolvedValueOnce(null); // Second call for duplicate name check
-      (db.requirementType.update as jest.Mock).mockResolvedValue(mockUpdatedRequirementType);
+      (mockDb.requirementType.update as jest.Mock).mockResolvedValue(mockUpdatedRequirementType);
 
       const result = await UpdateRequirementType('req-type-1', validData, mockTenantId);
 
       expect(result).toEqual(mockUpdatedRequirementType);
-      expect(db.requirementType.update).toHaveBeenCalledWith({
+      expect(mockDb.requirementType.update).toHaveBeenCalledWith({
         where: { id: 'req-type-1', tenantId: mockTenantId },
         data: {
           ...validData,
@@ -224,7 +227,7 @@ describe('RequirementType Actions', () => {
     });
 
     it('should throw error when requirement type not found', async () => {
-      (db.requirementType.findFirst as jest.Mock).mockResolvedValue(null);
+      (mockDb.requirementType.findFirst as jest.Mock).mockResolvedValue(null);
 
       await expect(UpdateRequirementType('req-type-1', validData, mockTenantId)).rejects.toThrow('Requirement type not found');
     });
@@ -233,7 +236,7 @@ describe('RequirementType Actions', () => {
       const mockExistingRequirementType = { id: 'req-type-1', name: 'Old Requirement Type' };
       const mockDuplicateRequirementType = { id: 'other-req-type', name: validData.name };
 
-      (db.requirementType.findFirst as jest.Mock)
+      (mockDb.requirementType.findFirst as jest.Mock)
         .mockResolvedValueOnce(mockExistingRequirementType) // First call for existence check
         .mockResolvedValueOnce(mockDuplicateRequirementType); // Second call for duplicate name check
 

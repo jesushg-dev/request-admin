@@ -1,7 +1,7 @@
 // Import after ALL mocks
 import { createNotification, deleteNotification, sendEmailNotification, sendSMSNotification, sendWhatsAppNotification } from '@/actions/notification';
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
 import { NotificationTypeEnum } from '@/types/notification';
 import { sendNotificationEmail } from '@/lib/mail';
@@ -41,34 +41,36 @@ jest.mock('@/env', () => ({
   },
 }));
 
-jest.mock('@/server/db-client', () => ({
-  db: {
-    notification: {
-      create: jest.fn().mockResolvedValue({
-        id: 'notification-1',
-        tenantId: 'tenant-1',
-        type: 'ASSIGNMENT',
-        body: '{"type":"ASSIGNMENT","data":{"requestId":"req-1","assigneeId":"user-1"}}',
-      }),
-      findMany: jest.fn().mockResolvedValue([]),
-      update: jest.fn().mockResolvedValue({}),
-      delete: jest.fn().mockResolvedValue({ id: 'notification-1' }),
-    },
-    notificationRecipient: {
-      create: jest.fn().mockResolvedValue({
-        id: 'recipient-1',
-        notificationId: 'notification-1',
-        userTenantId: 'user-tenant-1',
-        type: 'email',
-      }),
-      findMany: jest.fn().mockResolvedValue([]),
-      deleteMany: jest.fn().mockResolvedValue({ count: 1 }),
-      count: jest.fn().mockResolvedValue(1),
-    },
-    userTenant: {
-      findMany: jest.fn().mockResolvedValue([{ id: 'user-tenant-1' }, { id: 'user-tenant-2' }]),
-    },
+const mockDb = {
+  notification: {
+    create: jest.fn().mockResolvedValue({
+      id: 'notification-1',
+      tenantId: 'tenant-1',
+      type: 'ASSIGNMENT',
+      body: '{"type":"ASSIGNMENT","data":{"requestId":"req-1","assigneeId":"user-1"}}',
+    }),
+    findMany: jest.fn().mockResolvedValue([]),
+    update: jest.fn().mockResolvedValue({}),
+    delete: jest.fn().mockResolvedValue({ id: 'notification-1' }),
   },
+  notificationRecipient: {
+    create: jest.fn().mockResolvedValue({
+      id: 'recipient-1',
+      notificationId: 'notification-1',
+      userTenantId: 'user-tenant-1',
+      type: 'email',
+    }),
+    findMany: jest.fn().mockResolvedValue([]),
+    deleteMany: jest.fn().mockResolvedValue({ count: 1 }),
+    count: jest.fn().mockResolvedValue(1),
+  },
+  userTenant: {
+    findMany: jest.fn().mockResolvedValue([{ id: 'user-tenant-1' }, { id: 'user-tenant-2' }]),
+  },
+};
+
+jest.mock('@/server/db-client', () => ({
+  getDb: jest.fn(),
 }));
 
 jest.mock('@/server/auth-server', () => ({
@@ -104,6 +106,7 @@ describe('Notification Server Actions', () => {
     (currentSession as jest.Mock).mockResolvedValue({
       user: { id: 'user-123', isGlobalAdmin: false },
     });
+    (getDb as jest.Mock).mockResolvedValue(mockDb);
     (console.error as jest.Mock).mockClear();
     (console.log as jest.Mock).mockClear();
   });
@@ -131,7 +134,7 @@ describe('Notification Server Actions', () => {
         body: '{"type":"ASSIGNMENT","data":{"requestId":"req-1","assigneeId":"user-1"}}',
       });
 
-      expect(db.notification.create).toHaveBeenCalledWith({
+      expect(mockDb.notification.create).toHaveBeenCalledWith({
         data: {
           tenantId: 'tenant-1',
           type: NotificationTypeEnum.ASSIGNMENT,
@@ -172,21 +175,21 @@ describe('Notification Server Actions', () => {
       const result = await deleteNotification(mockParams.tenantId, mockParams.userTenantId, mockParams.notificationId);
 
       expect(result).toEqual({ success: true });
-      expect(db.notificationRecipient.deleteMany).toHaveBeenCalledWith({
+      expect(mockDb.notificationRecipient.deleteMany).toHaveBeenCalledWith({
         where: { tenantId: 'tenant-1', notificationId: 'notification-1', userTenantId: 'user-tenant-1' },
       });
-      expect(db.notificationRecipient.count).toHaveBeenCalledWith({
+      expect(mockDb.notificationRecipient.count).toHaveBeenCalledWith({
         where: { notificationId: 'notification-1' },
       });
     });
 
     it('should delete entire notification when no recipients remain', async () => {
-      (db.notificationRecipient.count as jest.Mock).mockResolvedValue(0);
+      (mockDb.notificationRecipient.count as jest.Mock).mockResolvedValue(0);
 
       const result = await deleteNotification(mockParams.tenantId, mockParams.userTenantId, mockParams.notificationId);
 
       expect(result).toEqual({ success: true });
-      expect(db.notification.delete).toHaveBeenCalledWith({
+      expect(mockDb.notification.delete).toHaveBeenCalledWith({
         where: expect.objectContaining({ id: 'notification-1' }),
         select: expect.any(Object),
       });

@@ -2,7 +2,7 @@
 
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useFindManyRequestChangeLog } from '@/services/api/hooks';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@zenstackhq/runtime/models';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { ChevronDown } from 'lucide-react';

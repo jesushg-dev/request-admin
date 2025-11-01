@@ -1,7 +1,8 @@
-import { db } from '../../server/db-server';
+import { getDb } from '../../server/db-client';
 
 export const getUserByEmail = async (email: string) => {
   try {
+    const db = await getDb();
     const user = await db.user.findUnique({ where: { email } });
 
     return user;
@@ -15,6 +16,7 @@ export const getUserById = async (id: string) => {
   if (!id) throw new Error('User ID is required.');
 
   try {
+    const db = await getDb();
     return await db.user.findUnique({
       where: { id },
     });
@@ -29,6 +31,7 @@ export const getUserByIdWithFeatures = async (id: string) => {
   if (!id) throw new Error('User ID is required.');
 
   try {
+    const db = await getDb();
     const user = await db.user.findUnique({
       where: { id },
       select: {

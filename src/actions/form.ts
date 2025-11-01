@@ -1,7 +1,7 @@
 'use server';
 
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-server';
+import { getDb } from '@/server/db-client';
 import { formSchema, formSchemaType, keysSchema } from '@/services/schemas/form';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
@@ -12,6 +12,7 @@ export const getFormsAsOptions = async (tenantId: string) => {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
+  const db = await getDb();
   const Forms = await db.form.findMany({ select: { id: true, name: true }, where: { tenantId } });
   const preparedForms = Forms.map((req) => ({ value: req.id, label: req.name }));
 
@@ -22,6 +23,7 @@ export async function GetFormStats(tenantId: string) {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
+  const db = await getDb();
   const stats = await db.form.aggregate({
     where: { tenantId },
     _sum: { visits: true, submissions: true },
@@ -59,6 +61,7 @@ export async function CreateForm(data: formSchemaType, tenantId: string) {
 
   const { name, description, isPublic } = data;
 
+  const db = await getDb();
   const form = await db.form.create({
     data: { name, description, tenantId, isPublic },
   });
@@ -72,6 +75,7 @@ export async function GetForms(tenantId: string) {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
+  const db = await getDb();
   return await db.form.findMany({
     where: { tenantId },
     orderBy: { createdAt: 'desc' },
@@ -82,6 +86,7 @@ export async function GetFormById(id: string, tenantId: string) {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
+  const db = await getDb();
   return await db.form.findUnique({
     where: { id, tenantId },
   });
@@ -98,6 +103,7 @@ export async function UpdateFormContent(id: string, jsonContent: string, tenantI
     throw new Error('Forbidden: lacking permissions to edit forms');
   }
 
+  const db = await getDb();
   return await db.form.update({
     where: { id, tenantId },
     data: { content: jsonContent },
@@ -115,6 +121,7 @@ export async function PublishForm(id: string, tenantId: string) {
     throw new Error('Forbidden: lacking permissions to publish forms');
   }
 
+  const db = await getDb();
   return await db.form.update({
     data: {
       published: true,
@@ -124,6 +131,7 @@ export async function PublishForm(id: string, tenantId: string) {
 }
 
 export async function GetFormContentByUrl(formUrl: string, tenantId: string) {
+  const db = await getDb();
   return await db.form.update({
     select: { id: true, name: true, content: true },
     data: { visits: { increment: 1 } },
@@ -135,6 +143,7 @@ export async function GetFormContentById(id: string, tenantId: string) {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
+  const db = await getDb();
   return await db.form.update({
     select: { id: true, name: true, description: true, content: true },
     data: { visits: { increment: 1 } },
@@ -153,6 +162,7 @@ export async function DeleteForm(id: string, tenantId: string) {
     throw new Error('Forbidden: lacking permissions to delete forms');
   }
 
+  const db = await getDb();
   return await db.form.delete({
     where: { id, tenantId },
   });
@@ -167,6 +177,7 @@ export async function SubmitForm(tenantId: string, formId: string, content: Reco
 
   const keysData = Object.entries(keys.data).map(([key, value]) => ({ key, value, tenantId }));
 
+  const db = await getDb();
   return await db.form.update({
     data: {
       submissions: { increment: 1 },

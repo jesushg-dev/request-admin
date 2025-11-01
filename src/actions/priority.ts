@@ -1,9 +1,9 @@
 'use server';
 
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
-import { RequestPriorityTypeDefaultArgs } from '@/types/prisma/priority';
+import { RequestPriorityTypeDefaultArgs } from '@/types/zenstackhq/priority';
 import { RequestPriorityTypeFormValues } from '@/components/common/priority/priority-form';
 
 class UserNotFoundErr extends Error {}
@@ -12,6 +12,7 @@ export const getRequestPriorityTypesAsOptions = async (tenantId: string) => {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
+  const db = await getDb();
   return await db.requestPriorityType.findMany({ ...RequestPriorityTypeDefaultArgs, where: { tenantId, isActive: true } });
 };
 
@@ -19,6 +20,7 @@ export const getRequestPriorityTypeAsFormById = async (id: string, tenantId: str
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
+  const db = await getDb();
   const priority = await db.requestPriorityType.findFirstOrThrow({
     select: {
       id: true,
@@ -49,6 +51,8 @@ export const CreateRequestPriorityType = async (data: Omit<RequestPriorityTypeFo
   if (!name || !primaryColor) {
     throw new Error('Name and color are required');
   }
+
+  const db = await getDb();
 
   // Check if name already exists for this tenant
   const existingPriority = await db.requestPriorityType.findFirst({
@@ -84,6 +88,8 @@ export const UpdateRequestPriorityType = async (id: string, data: Omit<RequestPr
   if (!name || !primaryColor) {
     throw new Error('Name and color are required');
   }
+
+  const db = await getDb();
 
   // Check if priority exists and belongs to tenant
   const existingPriority = await db.requestPriorityType.findFirst({

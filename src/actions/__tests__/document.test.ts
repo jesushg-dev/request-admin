@@ -1,5 +1,5 @@
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-server';
+import { getDb } from '@/server/db-client';
 
 import { UserNotFoundErr } from '@/lib/error';
 import { generateUuid } from '@/lib/id';
@@ -11,17 +11,19 @@ jest.mock('@/server/auth-server', () => ({
   currentSession: jest.fn(),
 }));
 
-jest.mock('@/server/db-server', () => ({
-  db: {
-    document: {
-      findMany: jest.fn(),
-      create: jest.fn(),
-    },
-    dataroomFolder: {
-      findMany: jest.fn(),
-      create: jest.fn(),
-    },
+const mockDb = {
+  document: {
+    findMany: jest.fn(),
+    create: jest.fn(),
   },
+  dataroomFolder: {
+    findMany: jest.fn(),
+    create: jest.fn(),
+  },
+};
+
+jest.mock('@/server/db-client', () => ({
+  getDb: jest.fn(),
 }));
 
 jest.mock('@/lib/id', () => ({
@@ -38,6 +40,7 @@ describe('cloneDocumentsAndFolders', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (currentSession as jest.Mock).mockResolvedValue(mockSession);
+    (getDb as jest.Mock).mockResolvedValue(mockDb);
     (generateUuid as jest.Mock).mockImplementation(() => 'new-uuid');
   });
 
@@ -63,14 +66,14 @@ describe('cloneDocumentsAndFolders', () => {
 
     const mockSubFolders = [{ id: 'subfolder-1', name: 'Subfolder 1', parentId: 'folder-1' }];
 
-    (db.document.findMany as jest.Mock).mockImplementation((args) => {
+    (mockDb.document.findMany as jest.Mock).mockImplementation((args) => {
       if (args.where.id) {
         return mockDocuments;
       }
       return mockDocumentsInFolders;
     });
 
-    (db.dataroomFolder.findMany as jest.Mock).mockImplementation((args) => {
+    (mockDb.dataroomFolder.findMany as jest.Mock).mockImplementation((args) => {
       if (args.where.id) {
         return mockFolders;
       }
@@ -80,8 +83,8 @@ describe('cloneDocumentsAndFolders', () => {
     await cloneDocumentsAndFolders(mockDocumentIds, mockFolderIds, mockDataroomId, mockCurrentFolderId);
 
     // Verify document creation calls
-    expect(db.document.create).toHaveBeenCalledTimes(3); // 2 direct documents + 1 document in folder
-    expect(db.document.create).toHaveBeenCalledWith({
+    expect(mockDb.document.create).toHaveBeenCalledTimes(3); // 2 direct documents + 1 document in folder
+    expect(mockDb.document.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
         id: 'new-uuid',
         dataroomId: mockDataroomId,
@@ -90,8 +93,8 @@ describe('cloneDocumentsAndFolders', () => {
     });
 
     // Verify folder creation calls
-    expect(db.dataroomFolder.create).toHaveBeenCalledTimes(3); // 2 folders + 1 subfolder
-    expect(db.dataroomFolder.create).toHaveBeenCalledWith({
+    expect(mockDb.dataroomFolder.create).toHaveBeenCalledTimes(3); // 2 folders + 1 subfolder
+    expect(mockDb.dataroomFolder.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
         id: 'new-uuid',
         dataroomId: mockDataroomId,
@@ -101,12 +104,12 @@ describe('cloneDocumentsAndFolders', () => {
   });
 
   it('should handle empty arrays of documents and folders', async () => {
-    (db.document.findMany as jest.Mock).mockResolvedValue([]);
-    (db.dataroomFolder.findMany as jest.Mock).mockResolvedValue([]);
+    (mockDb.document.findMany as jest.Mock).mockResolvedValue([]);
+    (mockDb.dataroomFolder.findMany as jest.Mock).mockResolvedValue([]);
 
     await cloneDocumentsAndFolders([], [], mockDataroomId, mockCurrentFolderId);
 
-    expect(db.document.create).not.toHaveBeenCalled();
-    expect(db.dataroomFolder.create).not.toHaveBeenCalled();
+    expect(mockDb.document.create).not.toHaveBeenCalled();
+    expect(mockDb.dataroomFolder.create).not.toHaveBeenCalled();
   });
 });

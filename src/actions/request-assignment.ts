@@ -1,11 +1,11 @@
 'use server';
 
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-server';
-import { Prisma } from '@prisma/client';
+import { getDb } from '@/server/db-client';
+import { Prisma } from '@zenstackhq/runtime/models';
 
 import { NotificationTypeEnum } from '@/types/notification';
-import { RequestMetadata } from '@/types/prisma/request';
+import { RequestMetadata } from '@/types/zenstackhq/request';
 import { AuthorizationError, ConcurrentModificationError, ValidationError } from '@/lib/error';
 import { normalizeValue } from '@/lib/utils';
 import { AssignRequestFormValues } from '@/components/common/request/detail/assign-request-modal';
@@ -52,6 +52,7 @@ const handleAssignmentUpdate = async ({
   oldValue: string;
   newValue: string;
 }) => {
+  const db = await getDb();
   try {
     await db.$transaction([
       db.requestAssignment.updateMany({
@@ -85,6 +86,7 @@ const updateRequestField = async ({ tenantId, requestId, userId, fieldName, dbFi
   IsNotEmpty(newValue, `${fieldName}Id`);
   IsNotEmpty(userId, 'userId');
 
+  const db = await getDb();
   const lastAssignment = await db.requestAssignment.findFirstOrThrow({
     where: { requestId, tenantId, isActive: true },
     include: { assignedUsers: true },
@@ -119,6 +121,7 @@ export const updateCurrentStatus = async (tenantId: UUID, requestId: UUID, statu
   const session = await currentSession();
   if (!session?.user?.id) throw new AuthorizationError('Authentication required');
 
+  const db = await getDb();
   // RBAC: require global or scoped permission to set status
   const lastAssignment = await db.requestAssignment.findFirstOrThrow({ where: { requestId, tenantId, isActive: true }, select: { areaId: true } });
   const auth = await getAuthContext(tenantId);
@@ -142,6 +145,7 @@ export const updateCurrentPriority = async (tenantId: UUID, requestId: UUID, pri
   const session = await currentSession();
   if (!session?.user?.id) throw new AuthorizationError('Authentication required');
 
+  const db = await getDb();
   // RBAC: require global or scoped permission to set priority
   const lastAssignment = await db.requestAssignment.findFirstOrThrow({ where: { requestId, tenantId, isActive: true }, select: { areaId: true } });
   const auth = await getAuthContext(tenantId);
@@ -173,6 +177,7 @@ export const updateCurrentAssignedUsers = async (tenantId: UUID, requestId: UUID
   const session = await currentSession();
   if (!session?.user?.id) throw new AuthorizationError('Authentication required');
 
+  const db = await getDb();
   // RBAC: require assign permissions
   const lastAssignmentHeader = await db.requestAssignment.findFirstOrThrow({ where: { requestId, tenantId, isActive: true }, select: { areaId: true } });
   const auth = await getAuthContext(tenantId);
@@ -235,6 +240,7 @@ export const updateCurrentClassification = async (tenantId: UUID, requestId: UUI
   const session = await currentSession();
   if (!session?.user?.id) throw new AuthorizationError('Authentication required');
 
+  const db = await getDb();
   // RBAC: require scoped edit permission to reclassify (area/category)
   const lastAssignmentHeader = await db.requestAssignment.findFirstOrThrow({ where: { requestId, tenantId, isActive: true }, select: { areaId: true } });
   const auth = await getAuthContext(tenantId);
@@ -301,6 +307,7 @@ export const getTenantUsers = async (tenantId: UUID) => {
   const session = await currentSession();
   if (!session?.user?.id) throw new AuthorizationError('Authentication required');
 
+  const db = await getDb();
   const users = await db.userTenant.findMany({
     where: { tenantId },
     select: {
@@ -321,6 +328,7 @@ export const getAvailableRequestsForUser = async (tenantId: UUID, userTenantId: 
   const session = await currentSession();
   if (!session?.user?.id) throw new AuthorizationError('Authentication required');
 
+  const db = await getDb();
   // Get user's areas
   const userAreas = await db.userTenantArea.findMany({
     where: { userTenantId, tenantId },
@@ -385,6 +393,7 @@ export const assignRequestsMassively = async (tenantId: UUID, userTenantId: UUID
     throw new ValidationError('Debe seleccionar al menos una solicitud');
   }
 
+  const db = await getDb();
   const auth = await getAuthContext(tenantId);
   const results = [];
 

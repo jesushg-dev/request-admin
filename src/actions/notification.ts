@@ -2,11 +2,11 @@
 
 import { cookies } from 'next/headers';
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 import { Locale } from 'next-intl';
 
 import { InAppNotification, NotificationBody, NotificationTypeWithoutAll } from '@/types/notification';
-import { NotificationDefaultArgs } from '@/types/prisma/notification';
+import { NotificationDefaultArgs } from '@/types/zenstackhq/notification';
 import { UserNotFoundErr } from '@/lib/error';
 import { sendNotificationEmail } from '@/lib/mail';
 import { getNotificationTemplate } from '@/lib/notification-templates';
@@ -39,6 +39,8 @@ export const createNotification = async (notification: InAppNotification) => {
   if (!notification.tenantId || !notification.body.type || !notification.body.data) {
     throw new Error('Missing required notification fields');
   }
+
+  const db = await getDb();
 
   // Prepare recipients
   let recipients: NotificationRecipient[] = Array.isArray(notification.recipients)
@@ -215,6 +217,8 @@ export const deleteNotification = async (tenantId: string, userTenantId: string,
   if (!userTenantId) {
     throw new Error('UserTenant ID is required');
   }
+
+  const db = await getDb();
 
   try {
     // Remove the recipient for this user from the notification

@@ -1,6 +1,6 @@
 import { Link, redirect } from '@/i18n/routing';
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-server';
+import { getDb } from '@/server/db-client';
 import { getTranslations } from 'next-intl/server';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -13,6 +13,7 @@ export default async function TenantsPage() {
   const session = await currentSession();
   if (!session) return redirect({ href: '/', locale: 'en' });
 
+  const db = await getDb();
   const tenants = await db.tenant.findMany({
     where: { userTenants: { some: { userId: session.user.id, isActive: true } } },
     select: { id: true, name: true, logo: true, description: true, websiteUrl: true },

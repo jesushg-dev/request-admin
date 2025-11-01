@@ -8,7 +8,7 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { type RequestDetailsType } from '@/types/prisma/request';
+import { type RequestDetailsType } from '@/types/zenstackhq/request';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';

@@ -6,7 +6,7 @@ import { PermissionActions } from '@/constants/permissions';
 import { getPathname } from '@/i18n/routing';
 import { getTranslations } from 'next-intl/server';
 import { SearchParams } from 'nuqs/server';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
 import { documentReferencesLoader } from '@/lib/document';
 import { LinkForm } from '@/components/common/data-room/link-form';
@@ -32,6 +32,7 @@ const EditPage: FC<EditPageProps> = async ({ params, searchParams }) => {
   const finalCallbackUrl = callbackUrl ? callbackUrl : getPathname({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/documents', params: { tenantId } } });
 
   // Get existing link data
+  const db = await getDb();
   const link = await db.link.findFirst({
     where: { id: slug, tenantId },
     select: {

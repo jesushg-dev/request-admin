@@ -17,7 +17,7 @@ import { AssistiveTreeDescription, useTree } from '@headless-tree/react';
 import { ChevronDown, ChevronRight, Edit, File, FilePlus2, FileSearch, Folder, FolderPlus, MoreHorizontal, Trash } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { RequestHierarchyWithLevelsType } from '@/types/prisma/hierarchy';
+import { RequestHierarchyWithLevelsType } from '@/types/zenstackhq/hierarchy';
 import { generateUuid } from '@/lib/id';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';

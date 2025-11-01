@@ -3,9 +3,9 @@ import { type Locale } from 'next-intl';
 import { redirect } from '@/i18n/routing';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
-import { RequestWorkflowDefaultArgs, RequestWorkflowType } from '@/types/prisma/workflow';
+import { RequestWorkflowDefaultArgs, RequestWorkflowType } from '@/types/zenstackhq/workflow';
 import { transformStatusToNode, transformTransitionToEdge } from '@/lib/workflow';
 import WorkflowFormStepper from '@/components/common/workflow/workflow-stepper';
 
@@ -23,6 +23,7 @@ const UpdateWorkflowPage: FC<UpdateWorkflowPageProps> = async ({ params }) => {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/configurations/workflows', params: { tenantId } } });
   }
 
+  const db = await getDb();
   const workflow = await db.requestWorkflow.findFirst({
     ...RequestWorkflowDefaultArgs,
     where: { tenantId, id: slug },

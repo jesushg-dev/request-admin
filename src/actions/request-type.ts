@@ -1,8 +1,8 @@
 'use server';
 
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
-import { ExecutionFlowDefaultArgs } from '@/types/prisma/execution-flow';
+import { ExecutionFlowDefaultArgs } from '@/types/zenstackhq/execution-flow';
 import { transformExecutionFlowToZodSchema } from '@/lib/execution-flow';
 import { generateUuid } from '@/lib/id';
 import { buildRequestCategoryUpsertArgs } from '@/lib/request-type';
@@ -10,6 +10,7 @@ import { RequestCategoryValues } from '@/components/common/request-type/category
 import { RequestTypeFormValues } from '@/components/common/request-type/request-type-form';
 
 export async function getRequestCategoriesByIds(rootIds: string[], tenantId: string): Promise<RequestTypeFormValues> {
+  const db = await getDb();
   const categoriesToFetch = new Set<string>(rootIds);
   const categoryMap = new Map<string, RequestCategoryValues>();
 
@@ -158,14 +159,17 @@ export async function getRequestCategoriesByIds(rootIds: string[], tenantId: str
 /**
  * Upsert a flat array of RequestCategory objects into the database.
  * Uses BFS traversal to ensure parent-first processing.
+ * Uses ZenStack enhanced client with automatic access control.
  */
 export async function upsertCategoriesFlat(categories: RequestCategoryValues[], tenantId: string, hierarchyId: string) {
+  const db = await getDb();
   const { sortedCategories } = prepareCategoryUpsert(categories);
 
   await db.$transaction(
     async (tx) => {
       for (const cat of sortedCategories) {
-        await tx.requestCategory.upsert(buildRequestCategoryUpsertArgs(cat, tenantId, hierarchyId));
+        const upsertArgs = buildRequestCategoryUpsertArgs(cat, tenantId, hierarchyId);
+        await tx.requestCategory.upsert(upsertArgs);
       }
     },
     {

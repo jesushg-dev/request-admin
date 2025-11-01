@@ -14,9 +14,6 @@
 /prisma/db.sqlite
 /prisma/db.sqlite-journal
 db.sqlite\
-/src/services/api/hooks
-/src/services/api/hooks/__model_meta.ts
-/src/services/api/hooks/__model_meta.ts
 
 # next.js
 /.next/

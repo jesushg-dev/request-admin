@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@zenstackhq/runtime/models';
 import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 
 import { TableCell, TableRow } from '@/components/ui/table';

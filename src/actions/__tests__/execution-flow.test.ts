@@ -4,7 +4,7 @@
 
 // Import after mocks
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-server';
+import { getDb } from '@/server/db-client';
 
 import { FlowNodeType } from '@/types/execution-flow';
 
@@ -15,27 +15,29 @@ jest.mock('@/server/auth-server', () => ({
   currentSession: jest.fn(),
 }));
 
-jest.mock('@/server/db-server', () => ({
-  db: {
-    $transaction: jest.fn(),
-    request: {
-      findMany: jest.fn(),
-    },
-    executionModelInstance: {
-      findMany: jest.fn(),
-      update: jest.fn(),
-    },
-    executionFlowDefinition: {
-      findFirst: jest.fn(),
-      create: jest.fn(),
-    },
-    executionModelHistory: {
-      createMany: jest.fn(),
-    },
-    executionModelLog: {
-      create: jest.fn(),
-    },
+const mockDb: any = {
+  $transaction: jest.fn(),
+  request: {
+    findMany: jest.fn(),
   },
+  executionModelInstance: {
+    findMany: jest.fn(),
+    update: jest.fn(),
+  },
+  executionFlowDefinition: {
+    findFirst: jest.fn(),
+    create: jest.fn(),
+  },
+  executionModelHistory: {
+    createMany: jest.fn(),
+  },
+  executionModelLog: {
+    create: jest.fn(),
+  },
+};
+
+jest.mock('@/server/db-client', () => ({
+  getDb: jest.fn(),
 }));
 
 describe('Execution Flow Actions', () => {
@@ -46,6 +48,7 @@ describe('Execution Flow Actions', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (currentSession as jest.Mock).mockResolvedValue(mockSession);
+    (getDb as jest.Mock).mockResolvedValue(mockDb);
   });
 
   describe('createExecutionFlow', () => {
@@ -110,7 +113,7 @@ describe('Execution Flow Actions', () => {
         return await callback(mockTx);
       });
 
-      (db.$transaction as jest.Mock).mockImplementation(mockTransaction);
+      (mockDb.$transaction as jest.Mock).mockImplementation(mockTransaction);
 
       const result = await createExecutionFlow(mockProcessFlow, mockRequestCategoryId, mockTenantId);
 
@@ -121,7 +124,7 @@ describe('Execution Flow Actions', () => {
         edges: mockProcessFlow.edges,
       });
 
-      expect(db.$transaction).toHaveBeenCalled();
+      expect(mockDb.$transaction).toHaveBeenCalled();
     });
 
     it('should create execution flow with version increment when existing flow exists', async () => {
@@ -150,7 +153,7 @@ describe('Execution Flow Actions', () => {
         return await callback(mockTx);
       });
 
-      (db.$transaction as jest.Mock).mockImplementation(mockTransaction);
+      (mockDb.$transaction as jest.Mock).mockImplementation(mockTransaction);
 
       const result = await createExecutionFlow(mockProcessFlow, mockRequestCategoryId, mockTenantId);
 
@@ -188,7 +191,7 @@ describe('Execution Flow Actions', () => {
         },
       };
 
-      (db.$transaction as jest.Mock).mockImplementation(async (callback) => {
+      (mockDb.$transaction as jest.Mock).mockImplementation(async (callback) => {
         return await callback(mockTx);
       });
 
@@ -223,7 +226,7 @@ describe('Execution Flow Actions', () => {
     });
 
     it('should handle database transaction errors', async () => {
-      (db.$transaction as jest.Mock).mockRejectedValue(new Error('Database error'));
+      (mockDb.$transaction as jest.Mock).mockRejectedValue(new Error('Database error'));
 
       await expect(createExecutionFlow(mockProcessFlow, mockRequestCategoryId, mockTenantId)).rejects.toThrow('Database error');
     });
@@ -256,7 +259,7 @@ describe('Execution Flow Actions', () => {
         return await callback(mockTx);
       });
 
-      (db.$transaction as jest.Mock).mockImplementation(mockTransaction);
+      (mockDb.$transaction as jest.Mock).mockImplementation(mockTransaction);
 
       const result = await createExecutionLog(mockTenantId, mockExecutionId, mockNodeId, mockEventType, mockData, mockOutcome);
 
@@ -269,7 +272,7 @@ describe('Execution Flow Actions', () => {
         outcome: mockOutcome,
       });
 
-      expect(db.$transaction).toHaveBeenCalled();
+      expect(mockDb.$transaction).toHaveBeenCalled();
     });
 
     it('should update execution status to in_progress when event type is start', async () => {
@@ -289,7 +292,7 @@ describe('Execution Flow Actions', () => {
         },
       };
 
-      (db.$transaction as jest.Mock).mockImplementation(async (callback) => {
+      (mockDb.$transaction as jest.Mock).mockImplementation(async (callback) => {
         return await callback(mockTx);
       });
 
@@ -318,7 +321,7 @@ describe('Execution Flow Actions', () => {
         },
       };
 
-      (db.$transaction as jest.Mock).mockImplementation(async (callback) => {
+      (mockDb.$transaction as jest.Mock).mockImplementation(async (callback) => {
         return await callback(mockTx);
       });
 
@@ -334,7 +337,7 @@ describe('Execution Flow Actions', () => {
     });
 
     it('should handle database transaction errors', async () => {
-      (db.$transaction as jest.Mock).mockRejectedValue(new Error('Database error'));
+      (mockDb.$transaction as jest.Mock).mockRejectedValue(new Error('Database error'));
 
       await expect(createExecutionLog(mockTenantId, mockExecutionId, mockNodeId, mockEventType, mockData, mockOutcome)).rejects.toThrow('Database error');
     });

@@ -5,7 +5,7 @@ import { Calendar, Clock, Download, Eye, FileText, Globe, Map, Users } from 'luc
 import { Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { toast } from 'sonner';
 
-import { DocumentWithRelations } from '@/types/prisma/document';
+import { DocumentWithRelations } from '@/types/zenstackhq/document';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';

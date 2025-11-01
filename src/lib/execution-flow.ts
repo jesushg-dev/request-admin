@@ -30,7 +30,7 @@ import type {
   TaskNodeType,
   TimerNodeData,
 } from '@/types/execution-flow';
-import { ExecutionFlowDetailedType } from '@/types/prisma/execution-flow';
+import { ExecutionFlowDetailedType } from '@/types/zenstackhq/execution-flow';
 
 export const getDefaultDataForType = <T extends FlowNodeType>(type: T, locale: Locale): NodeData<T> => {
   const label = nodeLabels[locale][type];

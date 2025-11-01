@@ -1,5 +1,5 @@
 import { currentSession } from '@/server/auth-server';
-import { db } from '@/server/db-client';
+import { getDb } from '@/server/db-client';
 
 import { getAuthContext } from '../authorization';
 
@@ -8,12 +8,14 @@ jest.mock('@/server/auth-server', () => ({
   currentSession: jest.fn(),
 }));
 
-jest.mock('@/server/db-client', () => ({
-  db: {
-    userTenant: {
-      findUnique: jest.fn(),
-    },
+const mockDb = {
+  userTenant: {
+    findUnique: jest.fn(),
   },
+};
+
+jest.mock('@/server/db-client', () => ({
+  getDb: jest.fn(),
 }));
 
 describe('Authorization Module', () => {
@@ -22,6 +24,7 @@ describe('Authorization Module', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    (getDb as jest.Mock).mockResolvedValue(mockDb);
   });
 
   describe('getAuthContext', () => {
@@ -67,7 +70,7 @@ describe('Authorization Module', () => {
         },
       });
 
-      (db.userTenant.findUnique as jest.Mock).mockResolvedValue({
+      (mockDb.userTenant.findUnique as jest.Mock).mockResolvedValue({
         userRoles: [
           {
             role: {
@@ -113,7 +116,7 @@ describe('Authorization Module', () => {
         },
       });
 
-      (db.userTenant.findUnique as jest.Mock).mockResolvedValue(null);
+      (mockDb.userTenant.findUnique as jest.Mock).mockResolvedValue(null);
 
       const auth = await getAuthContext(mockTenantId);
       expect(auth.hasPermissions(['ANY_PERMISSION'])).toBe(false);
