@@ -4,391 +4,330 @@
 
 /* eslint-disable */
 
-import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
-import type { PolicyCrudKind } from '@zenstackhq/runtime';
-import type { Prisma, TwoFactor } from '@zenstackhq/runtime/models';
-import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
-import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
-
+import type { Prisma, TwoFactor } from "@zenstackhq/runtime/models";
+import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/react-query';
+import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
+import type { PolicyCrudKind } from '@zenstackhq/runtime'
 import metadata from './__model_meta';
-
 type DefaultError = QueryError;
+import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
 
-export function useCreateTwoFactor(options?: Omit<UseMutationOptions<TwoFactor | undefined, DefaultError, Prisma.TwoFactorCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.TwoFactorCreateArgs, DefaultError, TwoFactor, true>('TwoFactor', 'POST', `${endpoint}/twoFactor/create`, metadata, options, fetch, true);
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.TwoFactorCreateArgs>(
-      args: Prisma.SelectSubset<T, Prisma.TwoFactorCreateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, TwoFactor, Prisma.TwoFactorGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorCreateArgs>> & ExtraMutationOptions,
-        'mutationFn'
-      >
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, TwoFactor, Prisma.TwoFactorGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
+export function useCreateTwoFactor(options?: Omit<(UseMutationOptions<(TwoFactor | undefined), DefaultError, Prisma.TwoFactorCreateArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.TwoFactorCreateArgs, DefaultError, TwoFactor, true>('TwoFactor', 'POST', `${endpoint}/twoFactor/create`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.TwoFactorCreateArgs>(
+            args: Prisma.SelectSubset<T, Prisma.TwoFactorCreateArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, TwoFactor, Prisma.TwoFactorGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorCreateArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, TwoFactor, Prisma.TwoFactorGetPayload<T>> | undefined);
+        },
+    };
+    return mutation;
 }
 
-export function useCreateManyTwoFactor(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.TwoFactorCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.TwoFactorCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'TwoFactor',
-    'POST',
-    `${endpoint}/twoFactor/createMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.TwoFactorCreateManyArgs>(
-      args: Prisma.SelectSubset<T, Prisma.TwoFactorCreateManyArgs>,
-      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorCreateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
-    },
-  };
-  return mutation;
+export function useCreateManyTwoFactor(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.TwoFactorCreateManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.TwoFactorCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('TwoFactor', 'POST', `${endpoint}/twoFactor/createMany`, metadata, options, fetch, false)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.TwoFactorCreateManyArgs>(
+            args: Prisma.SelectSubset<T, Prisma.TwoFactorCreateManyArgs>,
+            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorCreateManyArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as Prisma.BatchPayload;
+        },
+    };
+    return mutation;
 }
 
-export function useFindManyTwoFactor<
-  TArgs extends Prisma.TwoFactorFindManyArgs,
-  TQueryFnData = Array<Prisma.TwoFactorGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/findMany`, args, options, fetch);
+export function useFindManyTwoFactor<TArgs extends Prisma.TwoFactorFindManyArgs, TQueryFnData = Array<Prisma.TwoFactorGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorFindManyArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/findMany`, args, options, fetch);
 }
 
-export function useInfiniteFindManyTwoFactor<TArgs extends Prisma.TwoFactorFindManyArgs, TQueryFnData = Array<Prisma.TwoFactorGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorFindManyArgs>,
-  options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
-) {
-  options = options ?? { getNextPageParam: () => null };
-  const { endpoint, fetch } = getHooksContext();
-  return useInfiniteModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/findMany`, args, options, fetch);
+export function useInfiniteFindManyTwoFactor<TArgs extends Prisma.TwoFactorFindManyArgs, TQueryFnData = Array<Prisma.TwoFactorGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorFindManyArgs>, options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
+    options = options ?? { getNextPageParam: () => null };
+    const { endpoint, fetch } = getHooksContext();
+    return useInfiniteModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/findMany`, args, options, fetch);
 }
 
-export function useSuspenseFindManyTwoFactor<
-  TArgs extends Prisma.TwoFactorFindManyArgs,
-  TQueryFnData = Array<Prisma.TwoFactorGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/findMany`, args, options, fetch);
+export function useSuspenseFindManyTwoFactor<TArgs extends Prisma.TwoFactorFindManyArgs, TQueryFnData = Array<Prisma.TwoFactorGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorFindManyArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/findMany`, args, options, fetch);
 }
 
-export function useSuspenseInfiniteFindManyTwoFactor<TArgs extends Prisma.TwoFactorFindManyArgs, TQueryFnData = Array<Prisma.TwoFactorGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorFindManyArgs>,
-  options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
-) {
-  options = options ?? { getNextPageParam: () => null };
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/findMany`, args, options, fetch);
+export function useSuspenseInfiniteFindManyTwoFactor<TArgs extends Prisma.TwoFactorFindManyArgs, TQueryFnData = Array<Prisma.TwoFactorGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorFindManyArgs>, options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
+    options = options ?? { getNextPageParam: () => null };
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/findMany`, args, options, fetch);
 }
 
-export function useFindUniqueTwoFactor<
-  TArgs extends Prisma.TwoFactorFindUniqueArgs,
-  TQueryFnData = Prisma.TwoFactorGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.TwoFactorFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/findUnique`, args, options, fetch);
+export function useFindUniqueTwoFactor<TArgs extends Prisma.TwoFactorFindUniqueArgs, TQueryFnData = Prisma.TwoFactorGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.TwoFactorFindUniqueArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/findUnique`, args, options, fetch);
 }
 
-export function useSuspenseFindUniqueTwoFactor<
-  TArgs extends Prisma.TwoFactorFindUniqueArgs,
-  TQueryFnData = Prisma.TwoFactorGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.TwoFactorFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/findUnique`, args, options, fetch);
+export function useSuspenseFindUniqueTwoFactor<TArgs extends Prisma.TwoFactorFindUniqueArgs, TQueryFnData = Prisma.TwoFactorGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.TwoFactorFindUniqueArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstTwoFactor<
-  TArgs extends Prisma.TwoFactorFindFirstArgs,
-  TQueryFnData = Prisma.TwoFactorGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/findFirst`, args, options, fetch);
+export function useFindFirstTwoFactor<TArgs extends Prisma.TwoFactorFindFirstArgs, TQueryFnData = Prisma.TwoFactorGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorFindFirstArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/findFirst`, args, options, fetch);
 }
 
-export function useSuspenseFindFirstTwoFactor<
-  TArgs extends Prisma.TwoFactorFindFirstArgs,
-  TQueryFnData = Prisma.TwoFactorGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/findFirst`, args, options, fetch);
+export function useSuspenseFindFirstTwoFactor<TArgs extends Prisma.TwoFactorFindFirstArgs, TQueryFnData = Prisma.TwoFactorGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorFindFirstArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/findFirst`, args, options, fetch);
 }
 
-export function useUpdateTwoFactor(options?: Omit<UseMutationOptions<TwoFactor | undefined, DefaultError, Prisma.TwoFactorUpdateArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.TwoFactorUpdateArgs, DefaultError, TwoFactor, true>('TwoFactor', 'PUT', `${endpoint}/twoFactor/update`, metadata, options, fetch, true);
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.TwoFactorUpdateArgs>(
-      args: Prisma.SelectSubset<T, Prisma.TwoFactorUpdateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, TwoFactor, Prisma.TwoFactorGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorUpdateArgs>> & ExtraMutationOptions,
-        'mutationFn'
-      >
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, TwoFactor, Prisma.TwoFactorGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
+export function useUpdateTwoFactor(options?: Omit<(UseMutationOptions<(TwoFactor | undefined), DefaultError, Prisma.TwoFactorUpdateArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.TwoFactorUpdateArgs, DefaultError, TwoFactor, true>('TwoFactor', 'PUT', `${endpoint}/twoFactor/update`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.TwoFactorUpdateArgs>(
+            args: Prisma.SelectSubset<T, Prisma.TwoFactorUpdateArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, TwoFactor, Prisma.TwoFactorGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorUpdateArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, TwoFactor, Prisma.TwoFactorGetPayload<T>> | undefined);
+        },
+    };
+    return mutation;
 }
 
-export function useUpdateManyTwoFactor(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.TwoFactorUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.TwoFactorUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('TwoFactor', 'PUT', `${endpoint}/twoFactor/updateMany`, metadata, options, fetch, false);
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.TwoFactorUpdateManyArgs>(
-      args: Prisma.SelectSubset<T, Prisma.TwoFactorUpdateManyArgs>,
-      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorUpdateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
-    },
-  };
-  return mutation;
+export function useUpdateManyTwoFactor(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.TwoFactorUpdateManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.TwoFactorUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('TwoFactor', 'PUT', `${endpoint}/twoFactor/updateMany`, metadata, options, fetch, false)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.TwoFactorUpdateManyArgs>(
+            args: Prisma.SelectSubset<T, Prisma.TwoFactorUpdateManyArgs>,
+            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorUpdateManyArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as Prisma.BatchPayload;
+        },
+    };
+    return mutation;
 }
 
-export function useUpsertTwoFactor(options?: Omit<UseMutationOptions<TwoFactor | undefined, DefaultError, Prisma.TwoFactorUpsertArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.TwoFactorUpsertArgs, DefaultError, TwoFactor, true>('TwoFactor', 'POST', `${endpoint}/twoFactor/upsert`, metadata, options, fetch, true);
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.TwoFactorUpsertArgs>(
-      args: Prisma.SelectSubset<T, Prisma.TwoFactorUpsertArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, TwoFactor, Prisma.TwoFactorGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorUpsertArgs>> & ExtraMutationOptions,
-        'mutationFn'
-      >
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, TwoFactor, Prisma.TwoFactorGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
+export function useUpsertTwoFactor(options?: Omit<(UseMutationOptions<(TwoFactor | undefined), DefaultError, Prisma.TwoFactorUpsertArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.TwoFactorUpsertArgs, DefaultError, TwoFactor, true>('TwoFactor', 'POST', `${endpoint}/twoFactor/upsert`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.TwoFactorUpsertArgs>(
+            args: Prisma.SelectSubset<T, Prisma.TwoFactorUpsertArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, TwoFactor, Prisma.TwoFactorGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorUpsertArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, TwoFactor, Prisma.TwoFactorGetPayload<T>> | undefined);
+        },
+    };
+    return mutation;
 }
 
-export function useDeleteTwoFactor(options?: Omit<UseMutationOptions<TwoFactor | undefined, DefaultError, Prisma.TwoFactorDeleteArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.TwoFactorDeleteArgs, DefaultError, TwoFactor, true>('TwoFactor', 'DELETE', `${endpoint}/twoFactor/delete`, metadata, options, fetch, true);
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.TwoFactorDeleteArgs>(
-      args: Prisma.SelectSubset<T, Prisma.TwoFactorDeleteArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, TwoFactor, Prisma.TwoFactorGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorDeleteArgs>> & ExtraMutationOptions,
-        'mutationFn'
-      >
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, TwoFactor, Prisma.TwoFactorGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
+export function useDeleteTwoFactor(options?: Omit<(UseMutationOptions<(TwoFactor | undefined), DefaultError, Prisma.TwoFactorDeleteArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.TwoFactorDeleteArgs, DefaultError, TwoFactor, true>('TwoFactor', 'DELETE', `${endpoint}/twoFactor/delete`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.TwoFactorDeleteArgs>(
+            args: Prisma.SelectSubset<T, Prisma.TwoFactorDeleteArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, TwoFactor, Prisma.TwoFactorGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorDeleteArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, TwoFactor, Prisma.TwoFactorGetPayload<T>> | undefined);
+        },
+    };
+    return mutation;
 }
 
-export function useDeleteManyTwoFactor(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.TwoFactorDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.TwoFactorDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'TwoFactor',
-    'DELETE',
-    `${endpoint}/twoFactor/deleteMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.TwoFactorDeleteManyArgs>(
-      args: Prisma.SelectSubset<T, Prisma.TwoFactorDeleteManyArgs>,
-      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorDeleteManyArgs>> & ExtraMutationOptions, 'mutationFn'>
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
-    },
-  };
-  return mutation;
+export function useDeleteManyTwoFactor(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.TwoFactorDeleteManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.TwoFactorDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('TwoFactor', 'DELETE', `${endpoint}/twoFactor/deleteMany`, metadata, options, fetch, false)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.TwoFactorDeleteManyArgs>(
+            args: Prisma.SelectSubset<T, Prisma.TwoFactorDeleteManyArgs>,
+            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.TwoFactorDeleteManyArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as Prisma.BatchPayload;
+        },
+    };
+    return mutation;
 }
 
-export function useAggregateTwoFactor<TArgs extends Prisma.TwoFactorAggregateArgs, TQueryFnData = Prisma.GetTwoFactorAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.TwoFactorAggregateArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/aggregate`, args, options, fetch);
+export function useAggregateTwoFactor<TArgs extends Prisma.TwoFactorAggregateArgs, TQueryFnData = Prisma.GetTwoFactorAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.TwoFactorAggregateArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/aggregate`, args, options, fetch);
 }
 
-export function useSuspenseAggregateTwoFactor<TArgs extends Prisma.TwoFactorAggregateArgs, TQueryFnData = Prisma.GetTwoFactorAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.TwoFactorAggregateArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/aggregate`, args, options, fetch);
+export function useSuspenseAggregateTwoFactor<TArgs extends Prisma.TwoFactorAggregateArgs, TQueryFnData = Prisma.GetTwoFactorAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.TwoFactorAggregateArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/aggregate`, args, options, fetch);
 }
 
-export function useGroupByTwoFactor<
-  TArgs extends Prisma.TwoFactorGroupByArgs,
-  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
-  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.TwoFactorGroupByArgs['orderBy'] } : { orderBy?: Prisma.TwoFactorGroupByArgs['orderBy'] },
-  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
-  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
-  ByValid extends Prisma.Has<ByFields, OrderFields>,
-  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
-  HavingValid extends Prisma.Has<ByFields, HavingFields>,
-  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
-  InputErrors extends ByEmpty extends Prisma.True
+export function useGroupByTwoFactor<TArgs extends Prisma.TwoFactorGroupByArgs, HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>, OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.TwoFactorGroupByArgs['orderBy'] } : { orderBy?: Prisma.TwoFactorGroupByArgs['orderBy'] }, OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>, ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>, ByValid extends Prisma.Has<ByFields, OrderFields>, HavingFields extends Prisma.GetHavingFields<TArgs['having']>, HavingValid extends Prisma.Has<ByFields, HavingFields>, ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False, InputErrors extends ByEmpty extends Prisma.True
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
-        }[HavingFields]
-      : 'take' extends Prisma.Keys<TArgs>
-        ? 'orderBy' extends Prisma.Keys<TArgs>
-          ? ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields]
-          : 'Error: If you provide "take", you also need to provide "orderBy"'
-        : 'skip' extends Prisma.Keys<TArgs>
-          ? 'orderBy' extends Prisma.Keys<TArgs>
-            ? ByValid extends Prisma.True
-              ? {}
-              : {
-                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-                }[OrderFields]
-            : 'Error: If you provide "skip", you also need to provide "orderBy"'
-          : ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields],
-  TQueryFnData = {} extends InputErrors
-    ? Array<
-        PickEnumerable<Prisma.TwoFactorGroupByOutputType, TArgs['by']> & {
-          [P in keyof TArgs & keyof Prisma.TwoFactorGroupByOutputType]: P extends '_count'
-            ? TArgs[P] extends boolean
-              ? number
-              : Prisma.GetScalarType<TArgs[P], Prisma.TwoFactorGroupByOutputType[P]>
-            : Prisma.GetScalarType<TArgs[P], Prisma.TwoFactorGroupByOutputType[P]>;
-        }
-      >
-    : InputErrors,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.TwoFactorGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/groupBy`, args, options, fetch);
+    ? {
+        [P in HavingFields]: P extends ByFields
+        ? never
+        : P extends string
+        ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+        : [
+            Error,
+            'Field ',
+            P,
+            ` in "having" needs to be provided in "by"`,
+        ]
+    }[HavingFields]
+    : 'take' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "take", you also need to provide "orderBy"'
+    : 'skip' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "skip", you also need to provide "orderBy"'
+    : ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields], TQueryFnData = {} extends InputErrors ?
+    Array<PickEnumerable<Prisma.TwoFactorGroupByOutputType, TArgs['by']> &
+    {
+        [P in ((keyof TArgs) & (keyof Prisma.TwoFactorGroupByOutputType))]: P extends '_count'
+        ? TArgs[P] extends boolean
+        ? number
+        : Prisma.GetScalarType<TArgs[P], Prisma.TwoFactorGroupByOutputType[P]>
+        : Prisma.GetScalarType<TArgs[P], Prisma.TwoFactorGroupByOutputType[P]>
+    }
+    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.TwoFactorGroupByArgs, OrderByArg> & InputErrors>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/groupBy`, args, options, fetch);
 }
 
-export function useSuspenseGroupByTwoFactor<
-  TArgs extends Prisma.TwoFactorGroupByArgs,
-  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
-  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.TwoFactorGroupByArgs['orderBy'] } : { orderBy?: Prisma.TwoFactorGroupByArgs['orderBy'] },
-  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
-  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
-  ByValid extends Prisma.Has<ByFields, OrderFields>,
-  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
-  HavingValid extends Prisma.Has<ByFields, HavingFields>,
-  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
-  InputErrors extends ByEmpty extends Prisma.True
+export function useSuspenseGroupByTwoFactor<TArgs extends Prisma.TwoFactorGroupByArgs, HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>, OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.TwoFactorGroupByArgs['orderBy'] } : { orderBy?: Prisma.TwoFactorGroupByArgs['orderBy'] }, OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>, ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>, ByValid extends Prisma.Has<ByFields, OrderFields>, HavingFields extends Prisma.GetHavingFields<TArgs['having']>, HavingValid extends Prisma.Has<ByFields, HavingFields>, ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False, InputErrors extends ByEmpty extends Prisma.True
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
-        }[HavingFields]
-      : 'take' extends Prisma.Keys<TArgs>
-        ? 'orderBy' extends Prisma.Keys<TArgs>
-          ? ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields]
-          : 'Error: If you provide "take", you also need to provide "orderBy"'
-        : 'skip' extends Prisma.Keys<TArgs>
-          ? 'orderBy' extends Prisma.Keys<TArgs>
-            ? ByValid extends Prisma.True
-              ? {}
-              : {
-                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-                }[OrderFields]
-            : 'Error: If you provide "skip", you also need to provide "orderBy"'
-          : ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields],
-  TQueryFnData = {} extends InputErrors
-    ? Array<
-        PickEnumerable<Prisma.TwoFactorGroupByOutputType, TArgs['by']> & {
-          [P in keyof TArgs & keyof Prisma.TwoFactorGroupByOutputType]: P extends '_count'
-            ? TArgs[P] extends boolean
-              ? number
-              : Prisma.GetScalarType<TArgs[P], Prisma.TwoFactorGroupByOutputType[P]>
-            : Prisma.GetScalarType<TArgs[P], Prisma.TwoFactorGroupByOutputType[P]>;
-        }
-      >
-    : InputErrors,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.TwoFactorGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/groupBy`, args, options, fetch);
+    ? {
+        [P in HavingFields]: P extends ByFields
+        ? never
+        : P extends string
+        ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+        : [
+            Error,
+            'Field ',
+            P,
+            ` in "having" needs to be provided in "by"`,
+        ]
+    }[HavingFields]
+    : 'take' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "take", you also need to provide "orderBy"'
+    : 'skip' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "skip", you also need to provide "orderBy"'
+    : ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields], TQueryFnData = {} extends InputErrors ?
+    Array<PickEnumerable<Prisma.TwoFactorGroupByOutputType, TArgs['by']> &
+    {
+        [P in ((keyof TArgs) & (keyof Prisma.TwoFactorGroupByOutputType))]: P extends '_count'
+        ? TArgs[P] extends boolean
+        ? number
+        : Prisma.GetScalarType<TArgs[P], Prisma.TwoFactorGroupByOutputType[P]>
+        : Prisma.GetScalarType<TArgs[P], Prisma.TwoFactorGroupByOutputType[P]>
+    }
+    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.TwoFactorGroupByArgs, OrderByArg> & InputErrors>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/groupBy`, args, options, fetch);
 }
 
-export function useCountTwoFactor<
-  TArgs extends Prisma.TwoFactorCountArgs,
-  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.TwoFactorCountAggregateOutputType>) : number,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorCountArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/count`, args, options, fetch);
+export function useCountTwoFactor<TArgs extends Prisma.TwoFactorCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.TwoFactorCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorCountArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/count`, args, options, fetch);
 }
 
-export function useSuspenseCountTwoFactor<
-  TArgs extends Prisma.TwoFactorCountArgs,
-  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.TwoFactorCountAggregateOutputType>) : number,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorCountArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/count`, args, options, fetch);
+export function useSuspenseCountTwoFactor<TArgs extends Prisma.TwoFactorCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.TwoFactorCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.TwoFactorCountArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('TwoFactor', `${endpoint}/twoFactor/count`, args, options, fetch);
 }
 
-export function useCheckTwoFactor<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { id?: string; secret?: string; backupCodes?: string; userId?: string } },
-  options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<boolean, boolean, TError>('TwoFactor', `${endpoint}/twoFactor/check`, args, options, fetch);
+export function useCheckTwoFactor<TError = DefaultError>(args: { operation: PolicyCrudKind; where?: { id?: string; secret?: string; backupCodes?: string; userId?: string }; }, options?: (Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<boolean, boolean, TError>('TwoFactor', `${endpoint}/twoFactor/check`, args, options, fetch);
 }

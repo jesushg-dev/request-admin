@@ -4,355 +4,330 @@
 
 /* eslint-disable */
 
-import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
-import type { PolicyCrudKind } from '@zenstackhq/runtime';
-import type { Area, Prisma } from '@zenstackhq/runtime/models';
-import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
-import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
-
+import type { Prisma, Area } from "@zenstackhq/runtime/models";
+import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/react-query';
+import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
+import type { PolicyCrudKind } from '@zenstackhq/runtime'
 import metadata from './__model_meta';
-
 type DefaultError = QueryError;
+import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
 
-export function useCreateArea(options?: Omit<UseMutationOptions<Area | undefined, DefaultError, Prisma.AreaCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.AreaCreateArgs, DefaultError, Area, true>('Area', 'POST', `${endpoint}/area/create`, metadata, options, fetch, true);
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.AreaCreateArgs>(
-      args: Prisma.SelectSubset<T, Prisma.AreaCreateArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, Area, Prisma.AreaGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AreaCreateArgs>> & ExtraMutationOptions, 'mutationFn'>
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Area, Prisma.AreaGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
+export function useCreateArea(options?: Omit<(UseMutationOptions<(Area | undefined), DefaultError, Prisma.AreaCreateArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.AreaCreateArgs, DefaultError, Area, true>('Area', 'POST', `${endpoint}/area/create`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.AreaCreateArgs>(
+            args: Prisma.SelectSubset<T, Prisma.AreaCreateArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, Area, Prisma.AreaGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.AreaCreateArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, Area, Prisma.AreaGetPayload<T>> | undefined);
+        },
+    };
+    return mutation;
 }
 
-export function useCreateManyArea(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.AreaCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.AreaCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('Area', 'POST', `${endpoint}/area/createMany`, metadata, options, fetch, false);
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.AreaCreateManyArgs>(
-      args: Prisma.SelectSubset<T, Prisma.AreaCreateManyArgs>,
-      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.AreaCreateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
-    },
-  };
-  return mutation;
+export function useCreateManyArea(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.AreaCreateManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.AreaCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('Area', 'POST', `${endpoint}/area/createMany`, metadata, options, fetch, false)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.AreaCreateManyArgs>(
+            args: Prisma.SelectSubset<T, Prisma.AreaCreateManyArgs>,
+            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.AreaCreateManyArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as Prisma.BatchPayload;
+        },
+    };
+    return mutation;
 }
 
-export function useFindManyArea<TArgs extends Prisma.AreaFindManyArgs, TQueryFnData = Array<Prisma.AreaGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.AreaFindManyArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/findMany`, args, options, fetch);
+export function useFindManyArea<TArgs extends Prisma.AreaFindManyArgs, TQueryFnData = Array<Prisma.AreaGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.AreaFindManyArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/findMany`, args, options, fetch);
 }
 
-export function useInfiniteFindManyArea<TArgs extends Prisma.AreaFindManyArgs, TQueryFnData = Array<Prisma.AreaGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.AreaFindManyArgs>,
-  options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
-) {
-  options = options ?? { getNextPageParam: () => null };
-  const { endpoint, fetch } = getHooksContext();
-  return useInfiniteModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/findMany`, args, options, fetch);
+export function useInfiniteFindManyArea<TArgs extends Prisma.AreaFindManyArgs, TQueryFnData = Array<Prisma.AreaGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.AreaFindManyArgs>, options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
+    options = options ?? { getNextPageParam: () => null };
+    const { endpoint, fetch } = getHooksContext();
+    return useInfiniteModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/findMany`, args, options, fetch);
 }
 
-export function useSuspenseFindManyArea<
-  TArgs extends Prisma.AreaFindManyArgs,
-  TQueryFnData = Array<Prisma.AreaGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.AreaFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/findMany`, args, options, fetch);
+export function useSuspenseFindManyArea<TArgs extends Prisma.AreaFindManyArgs, TQueryFnData = Array<Prisma.AreaGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.AreaFindManyArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/findMany`, args, options, fetch);
 }
 
-export function useSuspenseInfiniteFindManyArea<TArgs extends Prisma.AreaFindManyArgs, TQueryFnData = Array<Prisma.AreaGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.AreaFindManyArgs>,
-  options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
-) {
-  options = options ?? { getNextPageParam: () => null };
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/findMany`, args, options, fetch);
+export function useSuspenseInfiniteFindManyArea<TArgs extends Prisma.AreaFindManyArgs, TQueryFnData = Array<Prisma.AreaGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.AreaFindManyArgs>, options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
+    options = options ?? { getNextPageParam: () => null };
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/findMany`, args, options, fetch);
 }
 
-export function useFindUniqueArea<TArgs extends Prisma.AreaFindUniqueArgs, TQueryFnData = Prisma.AreaGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.AreaFindUniqueArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/findUnique`, args, options, fetch);
+export function useFindUniqueArea<TArgs extends Prisma.AreaFindUniqueArgs, TQueryFnData = Prisma.AreaGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.AreaFindUniqueArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/findUnique`, args, options, fetch);
 }
 
-export function useSuspenseFindUniqueArea<
-  TArgs extends Prisma.AreaFindUniqueArgs,
-  TQueryFnData = Prisma.AreaGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.AreaFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/findUnique`, args, options, fetch);
+export function useSuspenseFindUniqueArea<TArgs extends Prisma.AreaFindUniqueArgs, TQueryFnData = Prisma.AreaGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.AreaFindUniqueArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstArea<TArgs extends Prisma.AreaFindFirstArgs, TQueryFnData = Prisma.AreaGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.AreaFindFirstArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/findFirst`, args, options, fetch);
+export function useFindFirstArea<TArgs extends Prisma.AreaFindFirstArgs, TQueryFnData = Prisma.AreaGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.AreaFindFirstArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/findFirst`, args, options, fetch);
 }
 
-export function useSuspenseFindFirstArea<TArgs extends Prisma.AreaFindFirstArgs, TQueryFnData = Prisma.AreaGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.AreaFindFirstArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/findFirst`, args, options, fetch);
+export function useSuspenseFindFirstArea<TArgs extends Prisma.AreaFindFirstArgs, TQueryFnData = Prisma.AreaGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.AreaFindFirstArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/findFirst`, args, options, fetch);
 }
 
-export function useUpdateArea(options?: Omit<UseMutationOptions<Area | undefined, DefaultError, Prisma.AreaUpdateArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.AreaUpdateArgs, DefaultError, Area, true>('Area', 'PUT', `${endpoint}/area/update`, metadata, options, fetch, true);
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.AreaUpdateArgs>(
-      args: Prisma.SelectSubset<T, Prisma.AreaUpdateArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, Area, Prisma.AreaGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AreaUpdateArgs>> & ExtraMutationOptions, 'mutationFn'>
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Area, Prisma.AreaGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
+export function useUpdateArea(options?: Omit<(UseMutationOptions<(Area | undefined), DefaultError, Prisma.AreaUpdateArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.AreaUpdateArgs, DefaultError, Area, true>('Area', 'PUT', `${endpoint}/area/update`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.AreaUpdateArgs>(
+            args: Prisma.SelectSubset<T, Prisma.AreaUpdateArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, Area, Prisma.AreaGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.AreaUpdateArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, Area, Prisma.AreaGetPayload<T>> | undefined);
+        },
+    };
+    return mutation;
 }
 
-export function useUpdateManyArea(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.AreaUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.AreaUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('Area', 'PUT', `${endpoint}/area/updateMany`, metadata, options, fetch, false);
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.AreaUpdateManyArgs>(
-      args: Prisma.SelectSubset<T, Prisma.AreaUpdateManyArgs>,
-      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.AreaUpdateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
-    },
-  };
-  return mutation;
+export function useUpdateManyArea(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.AreaUpdateManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.AreaUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('Area', 'PUT', `${endpoint}/area/updateMany`, metadata, options, fetch, false)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.AreaUpdateManyArgs>(
+            args: Prisma.SelectSubset<T, Prisma.AreaUpdateManyArgs>,
+            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.AreaUpdateManyArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as Prisma.BatchPayload;
+        },
+    };
+    return mutation;
 }
 
-export function useUpsertArea(options?: Omit<UseMutationOptions<Area | undefined, DefaultError, Prisma.AreaUpsertArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.AreaUpsertArgs, DefaultError, Area, true>('Area', 'POST', `${endpoint}/area/upsert`, metadata, options, fetch, true);
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.AreaUpsertArgs>(
-      args: Prisma.SelectSubset<T, Prisma.AreaUpsertArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, Area, Prisma.AreaGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AreaUpsertArgs>> & ExtraMutationOptions, 'mutationFn'>
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Area, Prisma.AreaGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
+export function useUpsertArea(options?: Omit<(UseMutationOptions<(Area | undefined), DefaultError, Prisma.AreaUpsertArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.AreaUpsertArgs, DefaultError, Area, true>('Area', 'POST', `${endpoint}/area/upsert`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.AreaUpsertArgs>(
+            args: Prisma.SelectSubset<T, Prisma.AreaUpsertArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, Area, Prisma.AreaGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.AreaUpsertArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, Area, Prisma.AreaGetPayload<T>> | undefined);
+        },
+    };
+    return mutation;
 }
 
-export function useDeleteArea(options?: Omit<UseMutationOptions<Area | undefined, DefaultError, Prisma.AreaDeleteArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.AreaDeleteArgs, DefaultError, Area, true>('Area', 'DELETE', `${endpoint}/area/delete`, metadata, options, fetch, true);
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.AreaDeleteArgs>(
-      args: Prisma.SelectSubset<T, Prisma.AreaDeleteArgs>,
-      options?: Omit<UseMutationOptions<CheckSelect<T, Area, Prisma.AreaGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AreaDeleteArgs>> & ExtraMutationOptions, 'mutationFn'>
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Area, Prisma.AreaGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
+export function useDeleteArea(options?: Omit<(UseMutationOptions<(Area | undefined), DefaultError, Prisma.AreaDeleteArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.AreaDeleteArgs, DefaultError, Area, true>('Area', 'DELETE', `${endpoint}/area/delete`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.AreaDeleteArgs>(
+            args: Prisma.SelectSubset<T, Prisma.AreaDeleteArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, Area, Prisma.AreaGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.AreaDeleteArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, Area, Prisma.AreaGetPayload<T>> | undefined);
+        },
+    };
+    return mutation;
 }
 
-export function useDeleteManyArea(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.AreaDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.AreaDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('Area', 'DELETE', `${endpoint}/area/deleteMany`, metadata, options, fetch, false);
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.AreaDeleteManyArgs>(
-      args: Prisma.SelectSubset<T, Prisma.AreaDeleteManyArgs>,
-      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.AreaDeleteManyArgs>> & ExtraMutationOptions, 'mutationFn'>
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
-    },
-  };
-  return mutation;
+export function useDeleteManyArea(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.AreaDeleteManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.AreaDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('Area', 'DELETE', `${endpoint}/area/deleteMany`, metadata, options, fetch, false)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.AreaDeleteManyArgs>(
+            args: Prisma.SelectSubset<T, Prisma.AreaDeleteManyArgs>,
+            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.AreaDeleteManyArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as Prisma.BatchPayload;
+        },
+    };
+    return mutation;
 }
 
-export function useAggregateArea<TArgs extends Prisma.AreaAggregateArgs, TQueryFnData = Prisma.GetAreaAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.AreaAggregateArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/aggregate`, args, options, fetch);
+export function useAggregateArea<TArgs extends Prisma.AreaAggregateArgs, TQueryFnData = Prisma.GetAreaAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.AreaAggregateArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/aggregate`, args, options, fetch);
 }
 
-export function useSuspenseAggregateArea<TArgs extends Prisma.AreaAggregateArgs, TQueryFnData = Prisma.GetAreaAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.AreaAggregateArgs>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/aggregate`, args, options, fetch);
+export function useSuspenseAggregateArea<TArgs extends Prisma.AreaAggregateArgs, TQueryFnData = Prisma.GetAreaAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.AreaAggregateArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/aggregate`, args, options, fetch);
 }
 
-export function useGroupByArea<
-  TArgs extends Prisma.AreaGroupByArgs,
-  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
-  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.AreaGroupByArgs['orderBy'] } : { orderBy?: Prisma.AreaGroupByArgs['orderBy'] },
-  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
-  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
-  ByValid extends Prisma.Has<ByFields, OrderFields>,
-  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
-  HavingValid extends Prisma.Has<ByFields, HavingFields>,
-  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
-  InputErrors extends ByEmpty extends Prisma.True
+export function useGroupByArea<TArgs extends Prisma.AreaGroupByArgs, HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>, OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.AreaGroupByArgs['orderBy'] } : { orderBy?: Prisma.AreaGroupByArgs['orderBy'] }, OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>, ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>, ByValid extends Prisma.Has<ByFields, OrderFields>, HavingFields extends Prisma.GetHavingFields<TArgs['having']>, HavingValid extends Prisma.Has<ByFields, HavingFields>, ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False, InputErrors extends ByEmpty extends Prisma.True
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
-        }[HavingFields]
-      : 'take' extends Prisma.Keys<TArgs>
-        ? 'orderBy' extends Prisma.Keys<TArgs>
-          ? ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields]
-          : 'Error: If you provide "take", you also need to provide "orderBy"'
-        : 'skip' extends Prisma.Keys<TArgs>
-          ? 'orderBy' extends Prisma.Keys<TArgs>
-            ? ByValid extends Prisma.True
-              ? {}
-              : {
-                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-                }[OrderFields]
-            : 'Error: If you provide "skip", you also need to provide "orderBy"'
-          : ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields],
-  TQueryFnData = {} extends InputErrors
-    ? Array<
-        PickEnumerable<Prisma.AreaGroupByOutputType, TArgs['by']> & {
-          [P in keyof TArgs & keyof Prisma.AreaGroupByOutputType]: P extends '_count'
-            ? TArgs[P] extends boolean
-              ? number
-              : Prisma.GetScalarType<TArgs[P], Prisma.AreaGroupByOutputType[P]>
-            : Prisma.GetScalarType<TArgs[P], Prisma.AreaGroupByOutputType[P]>;
-        }
-      >
-    : InputErrors,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.AreaGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/groupBy`, args, options, fetch);
+    ? {
+        [P in HavingFields]: P extends ByFields
+        ? never
+        : P extends string
+        ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+        : [
+            Error,
+            'Field ',
+            P,
+            ` in "having" needs to be provided in "by"`,
+        ]
+    }[HavingFields]
+    : 'take' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "take", you also need to provide "orderBy"'
+    : 'skip' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "skip", you also need to provide "orderBy"'
+    : ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields], TQueryFnData = {} extends InputErrors ?
+    Array<PickEnumerable<Prisma.AreaGroupByOutputType, TArgs['by']> &
+    {
+        [P in ((keyof TArgs) & (keyof Prisma.AreaGroupByOutputType))]: P extends '_count'
+        ? TArgs[P] extends boolean
+        ? number
+        : Prisma.GetScalarType<TArgs[P], Prisma.AreaGroupByOutputType[P]>
+        : Prisma.GetScalarType<TArgs[P], Prisma.AreaGroupByOutputType[P]>
+    }
+    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.AreaGroupByArgs, OrderByArg> & InputErrors>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/groupBy`, args, options, fetch);
 }
 
-export function useSuspenseGroupByArea<
-  TArgs extends Prisma.AreaGroupByArgs,
-  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
-  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.AreaGroupByArgs['orderBy'] } : { orderBy?: Prisma.AreaGroupByArgs['orderBy'] },
-  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
-  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
-  ByValid extends Prisma.Has<ByFields, OrderFields>,
-  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
-  HavingValid extends Prisma.Has<ByFields, HavingFields>,
-  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
-  InputErrors extends ByEmpty extends Prisma.True
+export function useSuspenseGroupByArea<TArgs extends Prisma.AreaGroupByArgs, HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>, OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.AreaGroupByArgs['orderBy'] } : { orderBy?: Prisma.AreaGroupByArgs['orderBy'] }, OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>, ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>, ByValid extends Prisma.Has<ByFields, OrderFields>, HavingFields extends Prisma.GetHavingFields<TArgs['having']>, HavingValid extends Prisma.Has<ByFields, HavingFields>, ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False, InputErrors extends ByEmpty extends Prisma.True
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
-        }[HavingFields]
-      : 'take' extends Prisma.Keys<TArgs>
-        ? 'orderBy' extends Prisma.Keys<TArgs>
-          ? ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields]
-          : 'Error: If you provide "take", you also need to provide "orderBy"'
-        : 'skip' extends Prisma.Keys<TArgs>
-          ? 'orderBy' extends Prisma.Keys<TArgs>
-            ? ByValid extends Prisma.True
-              ? {}
-              : {
-                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-                }[OrderFields]
-            : 'Error: If you provide "skip", you also need to provide "orderBy"'
-          : ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields],
-  TQueryFnData = {} extends InputErrors
-    ? Array<
-        PickEnumerable<Prisma.AreaGroupByOutputType, TArgs['by']> & {
-          [P in keyof TArgs & keyof Prisma.AreaGroupByOutputType]: P extends '_count'
-            ? TArgs[P] extends boolean
-              ? number
-              : Prisma.GetScalarType<TArgs[P], Prisma.AreaGroupByOutputType[P]>
-            : Prisma.GetScalarType<TArgs[P], Prisma.AreaGroupByOutputType[P]>;
-        }
-      >
-    : InputErrors,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.AreaGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/groupBy`, args, options, fetch);
+    ? {
+        [P in HavingFields]: P extends ByFields
+        ? never
+        : P extends string
+        ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+        : [
+            Error,
+            'Field ',
+            P,
+            ` in "having" needs to be provided in "by"`,
+        ]
+    }[HavingFields]
+    : 'take' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "take", you also need to provide "orderBy"'
+    : 'skip' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "skip", you also need to provide "orderBy"'
+    : ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields], TQueryFnData = {} extends InputErrors ?
+    Array<PickEnumerable<Prisma.AreaGroupByOutputType, TArgs['by']> &
+    {
+        [P in ((keyof TArgs) & (keyof Prisma.AreaGroupByOutputType))]: P extends '_count'
+        ? TArgs[P] extends boolean
+        ? number
+        : Prisma.GetScalarType<TArgs[P], Prisma.AreaGroupByOutputType[P]>
+        : Prisma.GetScalarType<TArgs[P], Prisma.AreaGroupByOutputType[P]>
+    }
+    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.AreaGroupByArgs, OrderByArg> & InputErrors>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/groupBy`, args, options, fetch);
 }
 
-export function useCountArea<
-  TArgs extends Prisma.AreaCountArgs,
-  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.AreaCountAggregateOutputType>) : number,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.AreaCountArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/count`, args, options, fetch);
+export function useCountArea<TArgs extends Prisma.AreaCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.AreaCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.AreaCountArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/count`, args, options, fetch);
 }
 
-export function useSuspenseCountArea<
-  TArgs extends Prisma.AreaCountArgs,
-  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.AreaCountAggregateOutputType>) : number,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.AreaCountArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/count`, args, options, fetch);
+export function useSuspenseCountArea<TArgs extends Prisma.AreaCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.AreaCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.AreaCountArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('Area', `${endpoint}/area/count`, args, options, fetch);
 }
 
-export function useCheckArea<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { id?: string; name?: string; description?: string; isActive?: boolean; createdBy?: string; updatedBy?: string; tenantId?: string } },
-  options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<boolean, boolean, TError>('Area', `${endpoint}/area/check`, args, options, fetch);
+export function useCheckArea<TError = DefaultError>(args: { operation: PolicyCrudKind; where?: { id?: string; name?: string; description?: string; isActive?: boolean; createdBy?: string; updatedBy?: string; tenantId?: string }; }, options?: (Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<boolean, boolean, TError>('Area', `${endpoint}/area/check`, args, options, fetch);
 }

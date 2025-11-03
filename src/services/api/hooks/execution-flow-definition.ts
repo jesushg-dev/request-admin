@@ -4,476 +4,330 @@
 
 /* eslint-disable */
 
-import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
-import type { PolicyCrudKind } from '@zenstackhq/runtime';
-import type { ExecutionFlowDefinition, Prisma } from '@zenstackhq/runtime/models';
-import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
-import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
-
+import type { Prisma, ExecutionFlowDefinition } from "@zenstackhq/runtime/models";
+import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/react-query';
+import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
+import type { PolicyCrudKind } from '@zenstackhq/runtime'
 import metadata from './__model_meta';
-
 type DefaultError = QueryError;
+import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
 
-export function useCreateExecutionFlowDefinition(
-  options?: Omit<UseMutationOptions<ExecutionFlowDefinition | undefined, DefaultError, Prisma.ExecutionFlowDefinitionCreateArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.ExecutionFlowDefinitionCreateArgs, DefaultError, ExecutionFlowDefinition, true>(
-    'ExecutionFlowDefinition',
-    'POST',
-    `${endpoint}/executionFlowDefinition/create`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.ExecutionFlowDefinitionCreateArgs>(
-      args: Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionCreateArgs>,
-      options?: Omit<
-        UseMutationOptions<
-          CheckSelect<T, ExecutionFlowDefinition, Prisma.ExecutionFlowDefinitionGetPayload<T>> | undefined,
-          DefaultError,
-          Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionCreateArgs>
-        > &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, ExecutionFlowDefinition, Prisma.ExecutionFlowDefinitionGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
+export function useCreateExecutionFlowDefinition(options?: Omit<(UseMutationOptions<(ExecutionFlowDefinition | undefined), DefaultError, Prisma.ExecutionFlowDefinitionCreateArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.ExecutionFlowDefinitionCreateArgs, DefaultError, ExecutionFlowDefinition, true>('ExecutionFlowDefinition', 'POST', `${endpoint}/executionFlowDefinition/create`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.ExecutionFlowDefinitionCreateArgs>(
+            args: Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionCreateArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, ExecutionFlowDefinition, Prisma.ExecutionFlowDefinitionGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionCreateArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, ExecutionFlowDefinition, Prisma.ExecutionFlowDefinitionGetPayload<T>> | undefined);
+        },
+    };
+    return mutation;
 }
 
-export function useCreateManyExecutionFlowDefinition(
-  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.ExecutionFlowDefinitionCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.ExecutionFlowDefinitionCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'ExecutionFlowDefinition',
-    'POST',
-    `${endpoint}/executionFlowDefinition/createMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.ExecutionFlowDefinitionCreateManyArgs>(
-      args: Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionCreateManyArgs>,
-      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionCreateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
-    },
-  };
-  return mutation;
+export function useCreateManyExecutionFlowDefinition(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.ExecutionFlowDefinitionCreateManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.ExecutionFlowDefinitionCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('ExecutionFlowDefinition', 'POST', `${endpoint}/executionFlowDefinition/createMany`, metadata, options, fetch, false)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.ExecutionFlowDefinitionCreateManyArgs>(
+            args: Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionCreateManyArgs>,
+            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionCreateManyArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as Prisma.BatchPayload;
+        },
+    };
+    return mutation;
 }
 
-export function useFindManyExecutionFlowDefinition<
-  TArgs extends Prisma.ExecutionFlowDefinitionFindManyArgs,
-  TQueryFnData = Array<Prisma.ExecutionFlowDefinitionGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/findMany`, args, options, fetch);
+export function useFindManyExecutionFlowDefinition<TArgs extends Prisma.ExecutionFlowDefinitionFindManyArgs, TQueryFnData = Array<Prisma.ExecutionFlowDefinitionGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionFindManyArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/findMany`, args, options, fetch);
 }
 
-export function useInfiniteFindManyExecutionFlowDefinition<
-  TArgs extends Prisma.ExecutionFlowDefinitionFindManyArgs,
-  TQueryFnData = Array<Prisma.ExecutionFlowDefinitionGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionFindManyArgs>, options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
-  options = options ?? { getNextPageParam: () => null };
-  const { endpoint, fetch } = getHooksContext();
-  return useInfiniteModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/findMany`, args, options, fetch);
+export function useInfiniteFindManyExecutionFlowDefinition<TArgs extends Prisma.ExecutionFlowDefinitionFindManyArgs, TQueryFnData = Array<Prisma.ExecutionFlowDefinitionGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionFindManyArgs>, options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
+    options = options ?? { getNextPageParam: () => null };
+    const { endpoint, fetch } = getHooksContext();
+    return useInfiniteModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/findMany`, args, options, fetch);
 }
 
-export function useSuspenseFindManyExecutionFlowDefinition<
-  TArgs extends Prisma.ExecutionFlowDefinitionFindManyArgs,
-  TQueryFnData = Array<Prisma.ExecutionFlowDefinitionGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/findMany`, args, options, fetch);
+export function useSuspenseFindManyExecutionFlowDefinition<TArgs extends Prisma.ExecutionFlowDefinitionFindManyArgs, TQueryFnData = Array<Prisma.ExecutionFlowDefinitionGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionFindManyArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/findMany`, args, options, fetch);
 }
 
-export function useSuspenseInfiniteFindManyExecutionFlowDefinition<
-  TArgs extends Prisma.ExecutionFlowDefinitionFindManyArgs,
-  TQueryFnData = Array<Prisma.ExecutionFlowDefinitionGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
-  args?: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionFindManyArgs>,
-  options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
-) {
-  options = options ?? { getNextPageParam: () => null };
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/findMany`, args, options, fetch);
+export function useSuspenseInfiniteFindManyExecutionFlowDefinition<TArgs extends Prisma.ExecutionFlowDefinitionFindManyArgs, TQueryFnData = Array<Prisma.ExecutionFlowDefinitionGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionFindManyArgs>, options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
+    options = options ?? { getNextPageParam: () => null };
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/findMany`, args, options, fetch);
 }
 
-export function useFindUniqueExecutionFlowDefinition<
-  TArgs extends Prisma.ExecutionFlowDefinitionFindUniqueArgs,
-  TQueryFnData = Prisma.ExecutionFlowDefinitionGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/findUnique`, args, options, fetch);
+export function useFindUniqueExecutionFlowDefinition<TArgs extends Prisma.ExecutionFlowDefinitionFindUniqueArgs, TQueryFnData = Prisma.ExecutionFlowDefinitionGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionFindUniqueArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/findUnique`, args, options, fetch);
 }
 
-export function useSuspenseFindUniqueExecutionFlowDefinition<
-  TArgs extends Prisma.ExecutionFlowDefinitionFindUniqueArgs,
-  TQueryFnData = Prisma.ExecutionFlowDefinitionGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/findUnique`, args, options, fetch);
+export function useSuspenseFindUniqueExecutionFlowDefinition<TArgs extends Prisma.ExecutionFlowDefinitionFindUniqueArgs, TQueryFnData = Prisma.ExecutionFlowDefinitionGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionFindUniqueArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstExecutionFlowDefinition<
-  TArgs extends Prisma.ExecutionFlowDefinitionFindFirstArgs,
-  TQueryFnData = Prisma.ExecutionFlowDefinitionGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/findFirst`, args, options, fetch);
+export function useFindFirstExecutionFlowDefinition<TArgs extends Prisma.ExecutionFlowDefinitionFindFirstArgs, TQueryFnData = Prisma.ExecutionFlowDefinitionGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionFindFirstArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/findFirst`, args, options, fetch);
 }
 
-export function useSuspenseFindFirstExecutionFlowDefinition<
-  TArgs extends Prisma.ExecutionFlowDefinitionFindFirstArgs,
-  TQueryFnData = Prisma.ExecutionFlowDefinitionGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/findFirst`, args, options, fetch);
+export function useSuspenseFindFirstExecutionFlowDefinition<TArgs extends Prisma.ExecutionFlowDefinitionFindFirstArgs, TQueryFnData = Prisma.ExecutionFlowDefinitionGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionFindFirstArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/findFirst`, args, options, fetch);
 }
 
-export function useUpdateExecutionFlowDefinition(
-  options?: Omit<UseMutationOptions<ExecutionFlowDefinition | undefined, DefaultError, Prisma.ExecutionFlowDefinitionUpdateArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.ExecutionFlowDefinitionUpdateArgs, DefaultError, ExecutionFlowDefinition, true>(
-    'ExecutionFlowDefinition',
-    'PUT',
-    `${endpoint}/executionFlowDefinition/update`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.ExecutionFlowDefinitionUpdateArgs>(
-      args: Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionUpdateArgs>,
-      options?: Omit<
-        UseMutationOptions<
-          CheckSelect<T, ExecutionFlowDefinition, Prisma.ExecutionFlowDefinitionGetPayload<T>> | undefined,
-          DefaultError,
-          Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionUpdateArgs>
-        > &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, ExecutionFlowDefinition, Prisma.ExecutionFlowDefinitionGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
+export function useUpdateExecutionFlowDefinition(options?: Omit<(UseMutationOptions<(ExecutionFlowDefinition | undefined), DefaultError, Prisma.ExecutionFlowDefinitionUpdateArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.ExecutionFlowDefinitionUpdateArgs, DefaultError, ExecutionFlowDefinition, true>('ExecutionFlowDefinition', 'PUT', `${endpoint}/executionFlowDefinition/update`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.ExecutionFlowDefinitionUpdateArgs>(
+            args: Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionUpdateArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, ExecutionFlowDefinition, Prisma.ExecutionFlowDefinitionGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionUpdateArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, ExecutionFlowDefinition, Prisma.ExecutionFlowDefinitionGetPayload<T>> | undefined);
+        },
+    };
+    return mutation;
 }
 
-export function useUpdateManyExecutionFlowDefinition(
-  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.ExecutionFlowDefinitionUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.ExecutionFlowDefinitionUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'ExecutionFlowDefinition',
-    'PUT',
-    `${endpoint}/executionFlowDefinition/updateMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.ExecutionFlowDefinitionUpdateManyArgs>(
-      args: Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionUpdateManyArgs>,
-      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionUpdateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
-    },
-  };
-  return mutation;
+export function useUpdateManyExecutionFlowDefinition(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.ExecutionFlowDefinitionUpdateManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.ExecutionFlowDefinitionUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('ExecutionFlowDefinition', 'PUT', `${endpoint}/executionFlowDefinition/updateMany`, metadata, options, fetch, false)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.ExecutionFlowDefinitionUpdateManyArgs>(
+            args: Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionUpdateManyArgs>,
+            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionUpdateManyArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as Prisma.BatchPayload;
+        },
+    };
+    return mutation;
 }
 
-export function useUpsertExecutionFlowDefinition(
-  options?: Omit<UseMutationOptions<ExecutionFlowDefinition | undefined, DefaultError, Prisma.ExecutionFlowDefinitionUpsertArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.ExecutionFlowDefinitionUpsertArgs, DefaultError, ExecutionFlowDefinition, true>(
-    'ExecutionFlowDefinition',
-    'POST',
-    `${endpoint}/executionFlowDefinition/upsert`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.ExecutionFlowDefinitionUpsertArgs>(
-      args: Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionUpsertArgs>,
-      options?: Omit<
-        UseMutationOptions<
-          CheckSelect<T, ExecutionFlowDefinition, Prisma.ExecutionFlowDefinitionGetPayload<T>> | undefined,
-          DefaultError,
-          Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionUpsertArgs>
-        > &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, ExecutionFlowDefinition, Prisma.ExecutionFlowDefinitionGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
+export function useUpsertExecutionFlowDefinition(options?: Omit<(UseMutationOptions<(ExecutionFlowDefinition | undefined), DefaultError, Prisma.ExecutionFlowDefinitionUpsertArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.ExecutionFlowDefinitionUpsertArgs, DefaultError, ExecutionFlowDefinition, true>('ExecutionFlowDefinition', 'POST', `${endpoint}/executionFlowDefinition/upsert`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.ExecutionFlowDefinitionUpsertArgs>(
+            args: Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionUpsertArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, ExecutionFlowDefinition, Prisma.ExecutionFlowDefinitionGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionUpsertArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, ExecutionFlowDefinition, Prisma.ExecutionFlowDefinitionGetPayload<T>> | undefined);
+        },
+    };
+    return mutation;
 }
 
-export function useDeleteExecutionFlowDefinition(
-  options?: Omit<UseMutationOptions<ExecutionFlowDefinition | undefined, DefaultError, Prisma.ExecutionFlowDefinitionDeleteArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.ExecutionFlowDefinitionDeleteArgs, DefaultError, ExecutionFlowDefinition, true>(
-    'ExecutionFlowDefinition',
-    'DELETE',
-    `${endpoint}/executionFlowDefinition/delete`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.ExecutionFlowDefinitionDeleteArgs>(
-      args: Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionDeleteArgs>,
-      options?: Omit<
-        UseMutationOptions<
-          CheckSelect<T, ExecutionFlowDefinition, Prisma.ExecutionFlowDefinitionGetPayload<T>> | undefined,
-          DefaultError,
-          Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionDeleteArgs>
-        > &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, ExecutionFlowDefinition, Prisma.ExecutionFlowDefinitionGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
+export function useDeleteExecutionFlowDefinition(options?: Omit<(UseMutationOptions<(ExecutionFlowDefinition | undefined), DefaultError, Prisma.ExecutionFlowDefinitionDeleteArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.ExecutionFlowDefinitionDeleteArgs, DefaultError, ExecutionFlowDefinition, true>('ExecutionFlowDefinition', 'DELETE', `${endpoint}/executionFlowDefinition/delete`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.ExecutionFlowDefinitionDeleteArgs>(
+            args: Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionDeleteArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, ExecutionFlowDefinition, Prisma.ExecutionFlowDefinitionGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionDeleteArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, ExecutionFlowDefinition, Prisma.ExecutionFlowDefinitionGetPayload<T>> | undefined);
+        },
+    };
+    return mutation;
 }
 
-export function useDeleteManyExecutionFlowDefinition(
-  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.ExecutionFlowDefinitionDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>
-) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.ExecutionFlowDefinitionDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'ExecutionFlowDefinition',
-    'DELETE',
-    `${endpoint}/executionFlowDefinition/deleteMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.ExecutionFlowDefinitionDeleteManyArgs>(
-      args: Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionDeleteManyArgs>,
-      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionDeleteManyArgs>> & ExtraMutationOptions, 'mutationFn'>
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
-    },
-  };
-  return mutation;
+export function useDeleteManyExecutionFlowDefinition(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.ExecutionFlowDefinitionDeleteManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.ExecutionFlowDefinitionDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('ExecutionFlowDefinition', 'DELETE', `${endpoint}/executionFlowDefinition/deleteMany`, metadata, options, fetch, false)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.ExecutionFlowDefinitionDeleteManyArgs>(
+            args: Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionDeleteManyArgs>,
+            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.ExecutionFlowDefinitionDeleteManyArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as Prisma.BatchPayload;
+        },
+    };
+    return mutation;
 }
 
-export function useAggregateExecutionFlowDefinition<
-  TArgs extends Prisma.ExecutionFlowDefinitionAggregateArgs,
-  TQueryFnData = Prisma.GetExecutionFlowDefinitionAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionAggregateArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/aggregate`, args, options, fetch);
+export function useAggregateExecutionFlowDefinition<TArgs extends Prisma.ExecutionFlowDefinitionAggregateArgs, TQueryFnData = Prisma.GetExecutionFlowDefinitionAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionAggregateArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/aggregate`, args, options, fetch);
 }
 
-export function useSuspenseAggregateExecutionFlowDefinition<
-  TArgs extends Prisma.ExecutionFlowDefinitionAggregateArgs,
-  TQueryFnData = Prisma.GetExecutionFlowDefinitionAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/aggregate`, args, options, fetch);
+export function useSuspenseAggregateExecutionFlowDefinition<TArgs extends Prisma.ExecutionFlowDefinitionAggregateArgs, TQueryFnData = Prisma.GetExecutionFlowDefinitionAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionAggregateArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/aggregate`, args, options, fetch);
 }
 
-export function useGroupByExecutionFlowDefinition<
-  TArgs extends Prisma.ExecutionFlowDefinitionGroupByArgs,
-  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
-  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.ExecutionFlowDefinitionGroupByArgs['orderBy'] } : { orderBy?: Prisma.ExecutionFlowDefinitionGroupByArgs['orderBy'] },
-  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
-  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
-  ByValid extends Prisma.Has<ByFields, OrderFields>,
-  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
-  HavingValid extends Prisma.Has<ByFields, HavingFields>,
-  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
-  InputErrors extends ByEmpty extends Prisma.True
+export function useGroupByExecutionFlowDefinition<TArgs extends Prisma.ExecutionFlowDefinitionGroupByArgs, HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>, OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.ExecutionFlowDefinitionGroupByArgs['orderBy'] } : { orderBy?: Prisma.ExecutionFlowDefinitionGroupByArgs['orderBy'] }, OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>, ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>, ByValid extends Prisma.Has<ByFields, OrderFields>, HavingFields extends Prisma.GetHavingFields<TArgs['having']>, HavingValid extends Prisma.Has<ByFields, HavingFields>, ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False, InputErrors extends ByEmpty extends Prisma.True
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
-        }[HavingFields]
-      : 'take' extends Prisma.Keys<TArgs>
-        ? 'orderBy' extends Prisma.Keys<TArgs>
-          ? ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields]
-          : 'Error: If you provide "take", you also need to provide "orderBy"'
-        : 'skip' extends Prisma.Keys<TArgs>
-          ? 'orderBy' extends Prisma.Keys<TArgs>
-            ? ByValid extends Prisma.True
-              ? {}
-              : {
-                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-                }[OrderFields]
-            : 'Error: If you provide "skip", you also need to provide "orderBy"'
-          : ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields],
-  TQueryFnData = {} extends InputErrors
-    ? Array<
-        PickEnumerable<Prisma.ExecutionFlowDefinitionGroupByOutputType, TArgs['by']> & {
-          [P in keyof TArgs & keyof Prisma.ExecutionFlowDefinitionGroupByOutputType]: P extends '_count'
-            ? TArgs[P] extends boolean
-              ? number
-              : Prisma.GetScalarType<TArgs[P], Prisma.ExecutionFlowDefinitionGroupByOutputType[P]>
-            : Prisma.GetScalarType<TArgs[P], Prisma.ExecutionFlowDefinitionGroupByOutputType[P]>;
-        }
-      >
-    : InputErrors,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.ExecutionFlowDefinitionGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/groupBy`, args, options, fetch);
+    ? {
+        [P in HavingFields]: P extends ByFields
+        ? never
+        : P extends string
+        ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+        : [
+            Error,
+            'Field ',
+            P,
+            ` in "having" needs to be provided in "by"`,
+        ]
+    }[HavingFields]
+    : 'take' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "take", you also need to provide "orderBy"'
+    : 'skip' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "skip", you also need to provide "orderBy"'
+    : ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields], TQueryFnData = {} extends InputErrors ?
+    Array<PickEnumerable<Prisma.ExecutionFlowDefinitionGroupByOutputType, TArgs['by']> &
+    {
+        [P in ((keyof TArgs) & (keyof Prisma.ExecutionFlowDefinitionGroupByOutputType))]: P extends '_count'
+        ? TArgs[P] extends boolean
+        ? number
+        : Prisma.GetScalarType<TArgs[P], Prisma.ExecutionFlowDefinitionGroupByOutputType[P]>
+        : Prisma.GetScalarType<TArgs[P], Prisma.ExecutionFlowDefinitionGroupByOutputType[P]>
+    }
+    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.ExecutionFlowDefinitionGroupByArgs, OrderByArg> & InputErrors>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/groupBy`, args, options, fetch);
 }
 
-export function useSuspenseGroupByExecutionFlowDefinition<
-  TArgs extends Prisma.ExecutionFlowDefinitionGroupByArgs,
-  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
-  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.ExecutionFlowDefinitionGroupByArgs['orderBy'] } : { orderBy?: Prisma.ExecutionFlowDefinitionGroupByArgs['orderBy'] },
-  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
-  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
-  ByValid extends Prisma.Has<ByFields, OrderFields>,
-  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
-  HavingValid extends Prisma.Has<ByFields, HavingFields>,
-  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
-  InputErrors extends ByEmpty extends Prisma.True
+export function useSuspenseGroupByExecutionFlowDefinition<TArgs extends Prisma.ExecutionFlowDefinitionGroupByArgs, HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>, OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.ExecutionFlowDefinitionGroupByArgs['orderBy'] } : { orderBy?: Prisma.ExecutionFlowDefinitionGroupByArgs['orderBy'] }, OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>, ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>, ByValid extends Prisma.Has<ByFields, OrderFields>, HavingFields extends Prisma.GetHavingFields<TArgs['having']>, HavingValid extends Prisma.Has<ByFields, HavingFields>, ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False, InputErrors extends ByEmpty extends Prisma.True
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
-        }[HavingFields]
-      : 'take' extends Prisma.Keys<TArgs>
-        ? 'orderBy' extends Prisma.Keys<TArgs>
-          ? ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields]
-          : 'Error: If you provide "take", you also need to provide "orderBy"'
-        : 'skip' extends Prisma.Keys<TArgs>
-          ? 'orderBy' extends Prisma.Keys<TArgs>
-            ? ByValid extends Prisma.True
-              ? {}
-              : {
-                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-                }[OrderFields]
-            : 'Error: If you provide "skip", you also need to provide "orderBy"'
-          : ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields],
-  TQueryFnData = {} extends InputErrors
-    ? Array<
-        PickEnumerable<Prisma.ExecutionFlowDefinitionGroupByOutputType, TArgs['by']> & {
-          [P in keyof TArgs & keyof Prisma.ExecutionFlowDefinitionGroupByOutputType]: P extends '_count'
-            ? TArgs[P] extends boolean
-              ? number
-              : Prisma.GetScalarType<TArgs[P], Prisma.ExecutionFlowDefinitionGroupByOutputType[P]>
-            : Prisma.GetScalarType<TArgs[P], Prisma.ExecutionFlowDefinitionGroupByOutputType[P]>;
-        }
-      >
-    : InputErrors,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.ExecutionFlowDefinitionGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/groupBy`, args, options, fetch);
+    ? {
+        [P in HavingFields]: P extends ByFields
+        ? never
+        : P extends string
+        ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+        : [
+            Error,
+            'Field ',
+            P,
+            ` in "having" needs to be provided in "by"`,
+        ]
+    }[HavingFields]
+    : 'take' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "take", you also need to provide "orderBy"'
+    : 'skip' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "skip", you also need to provide "orderBy"'
+    : ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields], TQueryFnData = {} extends InputErrors ?
+    Array<PickEnumerable<Prisma.ExecutionFlowDefinitionGroupByOutputType, TArgs['by']> &
+    {
+        [P in ((keyof TArgs) & (keyof Prisma.ExecutionFlowDefinitionGroupByOutputType))]: P extends '_count'
+        ? TArgs[P] extends boolean
+        ? number
+        : Prisma.GetScalarType<TArgs[P], Prisma.ExecutionFlowDefinitionGroupByOutputType[P]>
+        : Prisma.GetScalarType<TArgs[P], Prisma.ExecutionFlowDefinitionGroupByOutputType[P]>
+    }
+    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.ExecutionFlowDefinitionGroupByArgs, OrderByArg> & InputErrors>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/groupBy`, args, options, fetch);
 }
 
-export function useCountExecutionFlowDefinition<
-  TArgs extends Prisma.ExecutionFlowDefinitionCountArgs,
-  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.ExecutionFlowDefinitionCountAggregateOutputType>) : number,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionCountArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/count`, args, options, fetch);
+export function useCountExecutionFlowDefinition<TArgs extends Prisma.ExecutionFlowDefinitionCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.ExecutionFlowDefinitionCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionCountArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/count`, args, options, fetch);
 }
 
-export function useSuspenseCountExecutionFlowDefinition<
-  TArgs extends Prisma.ExecutionFlowDefinitionCountArgs,
-  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.ExecutionFlowDefinitionCountAggregateOutputType>) : number,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionCountArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/count`, args, options, fetch);
+export function useSuspenseCountExecutionFlowDefinition<TArgs extends Prisma.ExecutionFlowDefinitionCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.ExecutionFlowDefinitionCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.ExecutionFlowDefinitionCountArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/count`, args, options, fetch);
 }
 
-export function useCheckExecutionFlowDefinition<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; version?: number; isActive?: boolean; requestCategoryId?: string } },
-  options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<boolean, boolean, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/check`, args, options, fetch);
+export function useCheckExecutionFlowDefinition<TError = DefaultError>(args: { operation: PolicyCrudKind; where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; version?: number; isActive?: boolean; requestCategoryId?: string }; }, options?: (Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<boolean, boolean, TError>('ExecutionFlowDefinition', `${endpoint}/executionFlowDefinition/check`, args, options, fetch);
 }

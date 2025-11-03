@@ -21,7 +21,7 @@ export function getITILAssignmentTypes() {
       name: 'Service Request Assignment',
       system_name: AssignmentTypeEnum.SERVICE_REQUEST,
       description:
-        'Asignación de tareas asociadas con solicitudes de servicio estándar, como solicitudes de acceso a aplicaciones, servicios o recursos de infraestructura. Se gestionan de acuerdo con los procedimientos establecidos para brindar soporte a los usuarios finales.',
+        'Asignación de tareas asociadas con solicitudes de servicio estándar, como acceso a aplicaciones, servicios o recursos de infraestructura. Se gestionan según procedimientos establecidos para brindar soporte a usuarios finales.',
       isActive: true,
     },
     {

@@ -6,12 +6,12 @@ import './area.zmodel'
 
 model UserTenantRole extends TenantScoped, Auditable {
   // Primary identifier
-  id           String     @id @default(uuid()) @db.UniqueIdentifier
+  id           String     @id @default(uuid())
   isActive     Boolean    @default(true) // Flag for active user role
 
   // Relationships
-  userTenantId String     @db.UniqueIdentifier
-  roleId       String     @db.UniqueIdentifier // Reference to the linked Role
+  userTenantId String
+  roleId       String // Reference to the linked Role
   userTenant   UserTenant @relation(fields: [userTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   role         Role       @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
@@ -50,7 +50,7 @@ model Feature extends TenantScoped, Auditable, CatalogBase {
   scope           String            @default("global") // Example: "global", "area"
 
   // Reference to the module this feature belongs to, used for logical grouping of features
-  moduleId        String            @db.UniqueIdentifier
+  moduleId        String
   module          Module            @relation(fields: [moduleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   // Links this feature to global roles
@@ -68,12 +68,12 @@ model Feature extends TenantScoped, Auditable, CatalogBase {
 
 model RoleFeature extends TenantScoped, Auditable {
   // Primary identifier
-  id        String  @id @default(uuid()) @db.UniqueIdentifier
+  id        String  @id @default(uuid())
   isActive  Boolean @default(true) // Flag for active role feature
 
   // Relationships
-  roleId    String  @db.UniqueIdentifier // Reference to the linked Role
-  featureId String  @db.UniqueIdentifier // Reference to the linked Feature
+  roleId    String // Reference to the linked Role
+  featureId String // Reference to the linked Feature
   role      Role    @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   feature   Feature @relation(fields: [featureId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }

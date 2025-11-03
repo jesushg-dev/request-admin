@@ -4,457 +4,330 @@
 
 /* eslint-disable */
 
-import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
-import type { PolicyCrudKind } from '@zenstackhq/runtime';
-import type { Prisma, RequestWorkflow } from '@zenstackhq/runtime/models';
-import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
-import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
-
+import type { Prisma, RequestWorkflow } from "@zenstackhq/runtime/models";
+import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/react-query';
+import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
+import type { PolicyCrudKind } from '@zenstackhq/runtime'
 import metadata from './__model_meta';
-
 type DefaultError = QueryError;
+import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
 
-export function useCreateRequestWorkflow(options?: Omit<UseMutationOptions<RequestWorkflow | undefined, DefaultError, Prisma.RequestWorkflowCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.RequestWorkflowCreateArgs, DefaultError, RequestWorkflow, true>(
-    'RequestWorkflow',
-    'POST',
-    `${endpoint}/requestWorkflow/create`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.RequestWorkflowCreateArgs>(
-      args: Prisma.SelectSubset<T, Prisma.RequestWorkflowCreateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, RequestWorkflow, Prisma.RequestWorkflowGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.RequestWorkflowCreateArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, RequestWorkflow, Prisma.RequestWorkflowGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
-}
-
-export function useCreateManyRequestWorkflow(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.RequestWorkflowCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.RequestWorkflowCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'RequestWorkflow',
-    'POST',
-    `${endpoint}/requestWorkflow/createMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.RequestWorkflowCreateManyArgs>(
-      args: Prisma.SelectSubset<T, Prisma.RequestWorkflowCreateManyArgs>,
-      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.RequestWorkflowCreateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
-    },
-  };
-  return mutation;
-}
-
-export function useFindManyRequestWorkflow<
-  TArgs extends Prisma.RequestWorkflowFindManyArgs,
-  TQueryFnData = Array<Prisma.RequestWorkflowGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/findMany`, args, options, fetch);
-}
-
-export function useInfiniteFindManyRequestWorkflow<
-  TArgs extends Prisma.RequestWorkflowFindManyArgs,
-  TQueryFnData = Array<Prisma.RequestWorkflowGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowFindManyArgs>, options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
-  options = options ?? { getNextPageParam: () => null };
-  const { endpoint, fetch } = getHooksContext();
-  return useInfiniteModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/findMany`, args, options, fetch);
-}
-
-export function useSuspenseFindManyRequestWorkflow<
-  TArgs extends Prisma.RequestWorkflowFindManyArgs,
-  TQueryFnData = Array<Prisma.RequestWorkflowGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/findMany`, args, options, fetch);
-}
-
-export function useSuspenseInfiniteFindManyRequestWorkflow<
-  TArgs extends Prisma.RequestWorkflowFindManyArgs,
-  TQueryFnData = Array<Prisma.RequestWorkflowGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowFindManyArgs>, options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
-  options = options ?? { getNextPageParam: () => null };
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/findMany`, args, options, fetch);
-}
-
-export function useFindUniqueRequestWorkflow<
-  TArgs extends Prisma.RequestWorkflowFindUniqueArgs,
-  TQueryFnData = Prisma.RequestWorkflowGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/findUnique`, args, options, fetch);
-}
-
-export function useSuspenseFindUniqueRequestWorkflow<
-  TArgs extends Prisma.RequestWorkflowFindUniqueArgs,
-  TQueryFnData = Prisma.RequestWorkflowGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/findUnique`, args, options, fetch);
-}
-
-export function useFindFirstRequestWorkflow<
-  TArgs extends Prisma.RequestWorkflowFindFirstArgs,
-  TQueryFnData = Prisma.RequestWorkflowGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/findFirst`, args, options, fetch);
-}
-
-export function useSuspenseFindFirstRequestWorkflow<
-  TArgs extends Prisma.RequestWorkflowFindFirstArgs,
-  TQueryFnData = Prisma.RequestWorkflowGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/findFirst`, args, options, fetch);
-}
-
-export function useUpdateRequestWorkflow(options?: Omit<UseMutationOptions<RequestWorkflow | undefined, DefaultError, Prisma.RequestWorkflowUpdateArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.RequestWorkflowUpdateArgs, DefaultError, RequestWorkflow, true>(
-    'RequestWorkflow',
-    'PUT',
-    `${endpoint}/requestWorkflow/update`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.RequestWorkflowUpdateArgs>(
-      args: Prisma.SelectSubset<T, Prisma.RequestWorkflowUpdateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, RequestWorkflow, Prisma.RequestWorkflowGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.RequestWorkflowUpdateArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, RequestWorkflow, Prisma.RequestWorkflowGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
-}
-
-export function useUpdateManyRequestWorkflow(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.RequestWorkflowUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.RequestWorkflowUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'RequestWorkflow',
-    'PUT',
-    `${endpoint}/requestWorkflow/updateMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.RequestWorkflowUpdateManyArgs>(
-      args: Prisma.SelectSubset<T, Prisma.RequestWorkflowUpdateManyArgs>,
-      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.RequestWorkflowUpdateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
-    },
-  };
-  return mutation;
-}
-
-export function useUpsertRequestWorkflow(options?: Omit<UseMutationOptions<RequestWorkflow | undefined, DefaultError, Prisma.RequestWorkflowUpsertArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.RequestWorkflowUpsertArgs, DefaultError, RequestWorkflow, true>(
-    'RequestWorkflow',
-    'POST',
-    `${endpoint}/requestWorkflow/upsert`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.RequestWorkflowUpsertArgs>(
-      args: Prisma.SelectSubset<T, Prisma.RequestWorkflowUpsertArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, RequestWorkflow, Prisma.RequestWorkflowGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.RequestWorkflowUpsertArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, RequestWorkflow, Prisma.RequestWorkflowGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
-}
-
-export function useDeleteRequestWorkflow(options?: Omit<UseMutationOptions<RequestWorkflow | undefined, DefaultError, Prisma.RequestWorkflowDeleteArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.RequestWorkflowDeleteArgs, DefaultError, RequestWorkflow, true>(
-    'RequestWorkflow',
-    'DELETE',
-    `${endpoint}/requestWorkflow/delete`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.RequestWorkflowDeleteArgs>(
-      args: Prisma.SelectSubset<T, Prisma.RequestWorkflowDeleteArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, RequestWorkflow, Prisma.RequestWorkflowGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.RequestWorkflowDeleteArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, RequestWorkflow, Prisma.RequestWorkflowGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
-}
-
-export function useDeleteManyRequestWorkflow(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.RequestWorkflowDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.RequestWorkflowDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'RequestWorkflow',
-    'DELETE',
-    `${endpoint}/requestWorkflow/deleteMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.RequestWorkflowDeleteManyArgs>(
-      args: Prisma.SelectSubset<T, Prisma.RequestWorkflowDeleteManyArgs>,
-      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.RequestWorkflowDeleteManyArgs>> & ExtraMutationOptions, 'mutationFn'>
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
-    },
-  };
-  return mutation;
-}
-
-export function useAggregateRequestWorkflow<
-  TArgs extends Prisma.RequestWorkflowAggregateArgs,
-  TQueryFnData = Prisma.GetRequestWorkflowAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowAggregateArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/aggregate`, args, options, fetch);
-}
-
-export function useSuspenseAggregateRequestWorkflow<
-  TArgs extends Prisma.RequestWorkflowAggregateArgs,
-  TQueryFnData = Prisma.GetRequestWorkflowAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/aggregate`, args, options, fetch);
-}
-
-export function useGroupByRequestWorkflow<
-  TArgs extends Prisma.RequestWorkflowGroupByArgs,
-  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
-  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.RequestWorkflowGroupByArgs['orderBy'] } : { orderBy?: Prisma.RequestWorkflowGroupByArgs['orderBy'] },
-  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
-  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
-  ByValid extends Prisma.Has<ByFields, OrderFields>,
-  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
-  HavingValid extends Prisma.Has<ByFields, HavingFields>,
-  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
-  InputErrors extends ByEmpty extends Prisma.True
-    ? `Error: "by" must not be empty.`
-    : HavingValid extends Prisma.False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
-        }[HavingFields]
-      : 'take' extends Prisma.Keys<TArgs>
-        ? 'orderBy' extends Prisma.Keys<TArgs>
-          ? ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields]
-          : 'Error: If you provide "take", you also need to provide "orderBy"'
-        : 'skip' extends Prisma.Keys<TArgs>
-          ? 'orderBy' extends Prisma.Keys<TArgs>
-            ? ByValid extends Prisma.True
-              ? {}
-              : {
-                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-                }[OrderFields]
-            : 'Error: If you provide "skip", you also need to provide "orderBy"'
-          : ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields],
-  TQueryFnData = {} extends InputErrors
-    ? Array<
-        PickEnumerable<Prisma.RequestWorkflowGroupByOutputType, TArgs['by']> & {
-          [P in keyof TArgs & keyof Prisma.RequestWorkflowGroupByOutputType]: P extends '_count'
-            ? TArgs[P] extends boolean
-              ? number
-              : Prisma.GetScalarType<TArgs[P], Prisma.RequestWorkflowGroupByOutputType[P]>
-            : Prisma.GetScalarType<TArgs[P], Prisma.RequestWorkflowGroupByOutputType[P]>;
-        }
-      >
-    : InputErrors,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.RequestWorkflowGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/groupBy`, args, options, fetch);
-}
-
-export function useSuspenseGroupByRequestWorkflow<
-  TArgs extends Prisma.RequestWorkflowGroupByArgs,
-  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
-  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.RequestWorkflowGroupByArgs['orderBy'] } : { orderBy?: Prisma.RequestWorkflowGroupByArgs['orderBy'] },
-  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
-  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
-  ByValid extends Prisma.Has<ByFields, OrderFields>,
-  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
-  HavingValid extends Prisma.Has<ByFields, HavingFields>,
-  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
-  InputErrors extends ByEmpty extends Prisma.True
-    ? `Error: "by" must not be empty.`
-    : HavingValid extends Prisma.False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
-        }[HavingFields]
-      : 'take' extends Prisma.Keys<TArgs>
-        ? 'orderBy' extends Prisma.Keys<TArgs>
-          ? ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields]
-          : 'Error: If you provide "take", you also need to provide "orderBy"'
-        : 'skip' extends Prisma.Keys<TArgs>
-          ? 'orderBy' extends Prisma.Keys<TArgs>
-            ? ByValid extends Prisma.True
-              ? {}
-              : {
-                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-                }[OrderFields]
-            : 'Error: If you provide "skip", you also need to provide "orderBy"'
-          : ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields],
-  TQueryFnData = {} extends InputErrors
-    ? Array<
-        PickEnumerable<Prisma.RequestWorkflowGroupByOutputType, TArgs['by']> & {
-          [P in keyof TArgs & keyof Prisma.RequestWorkflowGroupByOutputType]: P extends '_count'
-            ? TArgs[P] extends boolean
-              ? number
-              : Prisma.GetScalarType<TArgs[P], Prisma.RequestWorkflowGroupByOutputType[P]>
-            : Prisma.GetScalarType<TArgs[P], Prisma.RequestWorkflowGroupByOutputType[P]>;
-        }
-      >
-    : InputErrors,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.RequestWorkflowGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/groupBy`, args, options, fetch);
-}
-
-export function useCountRequestWorkflow<
-  TArgs extends Prisma.RequestWorkflowCountArgs,
-  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.RequestWorkflowCountAggregateOutputType>) : number,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowCountArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/count`, args, options, fetch);
-}
-
-export function useSuspenseCountRequestWorkflow<
-  TArgs extends Prisma.RequestWorkflowCountArgs,
-  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.RequestWorkflowCountAggregateOutputType>) : number,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowCountArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/count`, args, options, fetch);
-}
-
-export function useCheckRequestWorkflow<TError = DefaultError>(
-  args: {
-    operation: PolicyCrudKind;
-    where?: {
-      id?: string;
-      name?: string;
-      description?: string;
-      isActive?: boolean;
-      createdBy?: string;
-      updatedBy?: string;
-      tenantId?: string;
-      isDefault?: boolean;
-      requireComments?: boolean;
-      notifyChanges?: boolean;
+export function useCreateRequestWorkflow(options?: Omit<(UseMutationOptions<(RequestWorkflow | undefined), DefaultError, Prisma.RequestWorkflowCreateArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.RequestWorkflowCreateArgs, DefaultError, RequestWorkflow, true>('RequestWorkflow', 'POST', `${endpoint}/requestWorkflow/create`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.RequestWorkflowCreateArgs>(
+            args: Prisma.SelectSubset<T, Prisma.RequestWorkflowCreateArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, RequestWorkflow, Prisma.RequestWorkflowGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.RequestWorkflowCreateArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, RequestWorkflow, Prisma.RequestWorkflowGetPayload<T>> | undefined);
+        },
     };
-  },
-  options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<boolean, boolean, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/check`, args, options, fetch);
+    return mutation;
+}
+
+export function useCreateManyRequestWorkflow(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.RequestWorkflowCreateManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.RequestWorkflowCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('RequestWorkflow', 'POST', `${endpoint}/requestWorkflow/createMany`, metadata, options, fetch, false)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.RequestWorkflowCreateManyArgs>(
+            args: Prisma.SelectSubset<T, Prisma.RequestWorkflowCreateManyArgs>,
+            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.RequestWorkflowCreateManyArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as Prisma.BatchPayload;
+        },
+    };
+    return mutation;
+}
+
+export function useFindManyRequestWorkflow<TArgs extends Prisma.RequestWorkflowFindManyArgs, TQueryFnData = Array<Prisma.RequestWorkflowGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowFindManyArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/findMany`, args, options, fetch);
+}
+
+export function useInfiniteFindManyRequestWorkflow<TArgs extends Prisma.RequestWorkflowFindManyArgs, TQueryFnData = Array<Prisma.RequestWorkflowGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowFindManyArgs>, options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
+    options = options ?? { getNextPageParam: () => null };
+    const { endpoint, fetch } = getHooksContext();
+    return useInfiniteModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/findMany`, args, options, fetch);
+}
+
+export function useSuspenseFindManyRequestWorkflow<TArgs extends Prisma.RequestWorkflowFindManyArgs, TQueryFnData = Array<Prisma.RequestWorkflowGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowFindManyArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/findMany`, args, options, fetch);
+}
+
+export function useSuspenseInfiniteFindManyRequestWorkflow<TArgs extends Prisma.RequestWorkflowFindManyArgs, TQueryFnData = Array<Prisma.RequestWorkflowGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowFindManyArgs>, options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
+    options = options ?? { getNextPageParam: () => null };
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/findMany`, args, options, fetch);
+}
+
+export function useFindUniqueRequestWorkflow<TArgs extends Prisma.RequestWorkflowFindUniqueArgs, TQueryFnData = Prisma.RequestWorkflowGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowFindUniqueArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/findUnique`, args, options, fetch);
+}
+
+export function useSuspenseFindUniqueRequestWorkflow<TArgs extends Prisma.RequestWorkflowFindUniqueArgs, TQueryFnData = Prisma.RequestWorkflowGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowFindUniqueArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/findUnique`, args, options, fetch);
+}
+
+export function useFindFirstRequestWorkflow<TArgs extends Prisma.RequestWorkflowFindFirstArgs, TQueryFnData = Prisma.RequestWorkflowGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowFindFirstArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/findFirst`, args, options, fetch);
+}
+
+export function useSuspenseFindFirstRequestWorkflow<TArgs extends Prisma.RequestWorkflowFindFirstArgs, TQueryFnData = Prisma.RequestWorkflowGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowFindFirstArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/findFirst`, args, options, fetch);
+}
+
+export function useUpdateRequestWorkflow(options?: Omit<(UseMutationOptions<(RequestWorkflow | undefined), DefaultError, Prisma.RequestWorkflowUpdateArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.RequestWorkflowUpdateArgs, DefaultError, RequestWorkflow, true>('RequestWorkflow', 'PUT', `${endpoint}/requestWorkflow/update`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.RequestWorkflowUpdateArgs>(
+            args: Prisma.SelectSubset<T, Prisma.RequestWorkflowUpdateArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, RequestWorkflow, Prisma.RequestWorkflowGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.RequestWorkflowUpdateArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, RequestWorkflow, Prisma.RequestWorkflowGetPayload<T>> | undefined);
+        },
+    };
+    return mutation;
+}
+
+export function useUpdateManyRequestWorkflow(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.RequestWorkflowUpdateManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.RequestWorkflowUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('RequestWorkflow', 'PUT', `${endpoint}/requestWorkflow/updateMany`, metadata, options, fetch, false)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.RequestWorkflowUpdateManyArgs>(
+            args: Prisma.SelectSubset<T, Prisma.RequestWorkflowUpdateManyArgs>,
+            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.RequestWorkflowUpdateManyArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as Prisma.BatchPayload;
+        },
+    };
+    return mutation;
+}
+
+export function useUpsertRequestWorkflow(options?: Omit<(UseMutationOptions<(RequestWorkflow | undefined), DefaultError, Prisma.RequestWorkflowUpsertArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.RequestWorkflowUpsertArgs, DefaultError, RequestWorkflow, true>('RequestWorkflow', 'POST', `${endpoint}/requestWorkflow/upsert`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.RequestWorkflowUpsertArgs>(
+            args: Prisma.SelectSubset<T, Prisma.RequestWorkflowUpsertArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, RequestWorkflow, Prisma.RequestWorkflowGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.RequestWorkflowUpsertArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, RequestWorkflow, Prisma.RequestWorkflowGetPayload<T>> | undefined);
+        },
+    };
+    return mutation;
+}
+
+export function useDeleteRequestWorkflow(options?: Omit<(UseMutationOptions<(RequestWorkflow | undefined), DefaultError, Prisma.RequestWorkflowDeleteArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.RequestWorkflowDeleteArgs, DefaultError, RequestWorkflow, true>('RequestWorkflow', 'DELETE', `${endpoint}/requestWorkflow/delete`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.RequestWorkflowDeleteArgs>(
+            args: Prisma.SelectSubset<T, Prisma.RequestWorkflowDeleteArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, RequestWorkflow, Prisma.RequestWorkflowGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.RequestWorkflowDeleteArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, RequestWorkflow, Prisma.RequestWorkflowGetPayload<T>> | undefined);
+        },
+    };
+    return mutation;
+}
+
+export function useDeleteManyRequestWorkflow(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.RequestWorkflowDeleteManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.RequestWorkflowDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('RequestWorkflow', 'DELETE', `${endpoint}/requestWorkflow/deleteMany`, metadata, options, fetch, false)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.RequestWorkflowDeleteManyArgs>(
+            args: Prisma.SelectSubset<T, Prisma.RequestWorkflowDeleteManyArgs>,
+            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.RequestWorkflowDeleteManyArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as Prisma.BatchPayload;
+        },
+    };
+    return mutation;
+}
+
+export function useAggregateRequestWorkflow<TArgs extends Prisma.RequestWorkflowAggregateArgs, TQueryFnData = Prisma.GetRequestWorkflowAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowAggregateArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/aggregate`, args, options, fetch);
+}
+
+export function useSuspenseAggregateRequestWorkflow<TArgs extends Prisma.RequestWorkflowAggregateArgs, TQueryFnData = Prisma.GetRequestWorkflowAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowAggregateArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/aggregate`, args, options, fetch);
+}
+
+export function useGroupByRequestWorkflow<TArgs extends Prisma.RequestWorkflowGroupByArgs, HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>, OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.RequestWorkflowGroupByArgs['orderBy'] } : { orderBy?: Prisma.RequestWorkflowGroupByArgs['orderBy'] }, OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>, ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>, ByValid extends Prisma.Has<ByFields, OrderFields>, HavingFields extends Prisma.GetHavingFields<TArgs['having']>, HavingValid extends Prisma.Has<ByFields, HavingFields>, ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False, InputErrors extends ByEmpty extends Prisma.True
+    ? `Error: "by" must not be empty.`
+    : HavingValid extends Prisma.False
+    ? {
+        [P in HavingFields]: P extends ByFields
+        ? never
+        : P extends string
+        ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+        : [
+            Error,
+            'Field ',
+            P,
+            ` in "having" needs to be provided in "by"`,
+        ]
+    }[HavingFields]
+    : 'take' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "take", you also need to provide "orderBy"'
+    : 'skip' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "skip", you also need to provide "orderBy"'
+    : ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields], TQueryFnData = {} extends InputErrors ?
+    Array<PickEnumerable<Prisma.RequestWorkflowGroupByOutputType, TArgs['by']> &
+    {
+        [P in ((keyof TArgs) & (keyof Prisma.RequestWorkflowGroupByOutputType))]: P extends '_count'
+        ? TArgs[P] extends boolean
+        ? number
+        : Prisma.GetScalarType<TArgs[P], Prisma.RequestWorkflowGroupByOutputType[P]>
+        : Prisma.GetScalarType<TArgs[P], Prisma.RequestWorkflowGroupByOutputType[P]>
+    }
+    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.RequestWorkflowGroupByArgs, OrderByArg> & InputErrors>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/groupBy`, args, options, fetch);
+}
+
+export function useSuspenseGroupByRequestWorkflow<TArgs extends Prisma.RequestWorkflowGroupByArgs, HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>, OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.RequestWorkflowGroupByArgs['orderBy'] } : { orderBy?: Prisma.RequestWorkflowGroupByArgs['orderBy'] }, OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>, ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>, ByValid extends Prisma.Has<ByFields, OrderFields>, HavingFields extends Prisma.GetHavingFields<TArgs['having']>, HavingValid extends Prisma.Has<ByFields, HavingFields>, ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False, InputErrors extends ByEmpty extends Prisma.True
+    ? `Error: "by" must not be empty.`
+    : HavingValid extends Prisma.False
+    ? {
+        [P in HavingFields]: P extends ByFields
+        ? never
+        : P extends string
+        ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+        : [
+            Error,
+            'Field ',
+            P,
+            ` in "having" needs to be provided in "by"`,
+        ]
+    }[HavingFields]
+    : 'take' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "take", you also need to provide "orderBy"'
+    : 'skip' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "skip", you also need to provide "orderBy"'
+    : ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields], TQueryFnData = {} extends InputErrors ?
+    Array<PickEnumerable<Prisma.RequestWorkflowGroupByOutputType, TArgs['by']> &
+    {
+        [P in ((keyof TArgs) & (keyof Prisma.RequestWorkflowGroupByOutputType))]: P extends '_count'
+        ? TArgs[P] extends boolean
+        ? number
+        : Prisma.GetScalarType<TArgs[P], Prisma.RequestWorkflowGroupByOutputType[P]>
+        : Prisma.GetScalarType<TArgs[P], Prisma.RequestWorkflowGroupByOutputType[P]>
+    }
+    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.RequestWorkflowGroupByArgs, OrderByArg> & InputErrors>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/groupBy`, args, options, fetch);
+}
+
+export function useCountRequestWorkflow<TArgs extends Prisma.RequestWorkflowCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.RequestWorkflowCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowCountArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/count`, args, options, fetch);
+}
+
+export function useSuspenseCountRequestWorkflow<TArgs extends Prisma.RequestWorkflowCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.RequestWorkflowCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.RequestWorkflowCountArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/count`, args, options, fetch);
+}
+
+export function useCheckRequestWorkflow<TError = DefaultError>(args: { operation: PolicyCrudKind; where?: { id?: string; name?: string; description?: string; isActive?: boolean; createdBy?: string; updatedBy?: string; tenantId?: string; isDefault?: boolean; requireComments?: boolean; notifyChanges?: boolean }; }, options?: (Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<boolean, boolean, TError>('RequestWorkflow', `${endpoint}/requestWorkflow/check`, args, options, fetch);
 }

@@ -24,7 +24,7 @@ model ExecutionFlowDefinition extends TenantScoped, Auditable {
   executions          ExecutionModelInstance[]
   previousHistories   ExecutionModelHistory[]     @relation("PreviousFlowHistory")
   newHistories        ExecutionModelHistory[]     @relation("NewFlowHistory")
-  requestCategoryId   String?                     @unique @db.UniqueIdentifier
+  requestCategoryId   String?                     @unique
   requestCategory     RequestCategory?            @relation(fields: [requestCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   viewportX           Float?
   viewportY           Float?
@@ -79,7 +79,7 @@ model ExecutionNodeGuide extends TenantScoped, Auditable {
   applicationScope    String                   @default("full")
   customInstructions  String?
   order               Int                      @default(1)
-  guideId             String                   @db.UniqueIdentifier
+  guideId             String
   guide               GuideDocument            @relation(fields: [guideId], references: [id])
   nodeId              String
   node                ExecutionNodeDefinition  @relation(fields: [nodeId], references: [id])
@@ -96,7 +96,7 @@ model ExecutionModelInstance extends TenantScoped, Auditable {
   id          String                    @id @default(uuid())
   flow        ExecutionFlowDefinition    @relation(fields: [flowId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   flowId      String
-  requestId   String   @unique @db.UniqueIdentifier
+  requestId   String   @unique
   request     Request  @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   status      String
   logs        ExecutionModelLog[]

@@ -4,446 +4,330 @@
 
 /* eslint-disable */
 
-import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
-import type { PolicyCrudKind } from '@zenstackhq/runtime';
-import type { InvitationTenant, Prisma } from '@zenstackhq/runtime/models';
-import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
-import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
-
+import type { Prisma, InvitationTenant } from "@zenstackhq/runtime/models";
+import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/react-query';
+import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
+import type { PolicyCrudKind } from '@zenstackhq/runtime'
 import metadata from './__model_meta';
-
 type DefaultError = QueryError;
+import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
 
-export function useCreateInvitationTenant(options?: Omit<UseMutationOptions<InvitationTenant | undefined, DefaultError, Prisma.InvitationTenantCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.InvitationTenantCreateArgs, DefaultError, InvitationTenant, true>(
-    'InvitationTenant',
-    'POST',
-    `${endpoint}/invitationTenant/create`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.InvitationTenantCreateArgs>(
-      args: Prisma.SelectSubset<T, Prisma.InvitationTenantCreateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, InvitationTenant, Prisma.InvitationTenantGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.InvitationTenantCreateArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, InvitationTenant, Prisma.InvitationTenantGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
+export function useCreateInvitationTenant(options?: Omit<(UseMutationOptions<(InvitationTenant | undefined), DefaultError, Prisma.InvitationTenantCreateArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.InvitationTenantCreateArgs, DefaultError, InvitationTenant, true>('InvitationTenant', 'POST', `${endpoint}/invitationTenant/create`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.InvitationTenantCreateArgs>(
+            args: Prisma.SelectSubset<T, Prisma.InvitationTenantCreateArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, InvitationTenant, Prisma.InvitationTenantGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.InvitationTenantCreateArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, InvitationTenant, Prisma.InvitationTenantGetPayload<T>> | undefined);
+        },
+    };
+    return mutation;
 }
 
-export function useCreateManyInvitationTenant(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.InvitationTenantCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.InvitationTenantCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'InvitationTenant',
-    'POST',
-    `${endpoint}/invitationTenant/createMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.InvitationTenantCreateManyArgs>(
-      args: Prisma.SelectSubset<T, Prisma.InvitationTenantCreateManyArgs>,
-      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.InvitationTenantCreateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
-    },
-  };
-  return mutation;
+export function useCreateManyInvitationTenant(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.InvitationTenantCreateManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.InvitationTenantCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('InvitationTenant', 'POST', `${endpoint}/invitationTenant/createMany`, metadata, options, fetch, false)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.InvitationTenantCreateManyArgs>(
+            args: Prisma.SelectSubset<T, Prisma.InvitationTenantCreateManyArgs>,
+            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.InvitationTenantCreateManyArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as Prisma.BatchPayload;
+        },
+    };
+    return mutation;
 }
 
-export function useFindManyInvitationTenant<
-  TArgs extends Prisma.InvitationTenantFindManyArgs,
-  TQueryFnData = Array<Prisma.InvitationTenantGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/findMany`, args, options, fetch);
+export function useFindManyInvitationTenant<TArgs extends Prisma.InvitationTenantFindManyArgs, TQueryFnData = Array<Prisma.InvitationTenantGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantFindManyArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/findMany`, args, options, fetch);
 }
 
-export function useInfiniteFindManyInvitationTenant<
-  TArgs extends Prisma.InvitationTenantFindManyArgs,
-  TQueryFnData = Array<Prisma.InvitationTenantGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantFindManyArgs>, options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
-  options = options ?? { getNextPageParam: () => null };
-  const { endpoint, fetch } = getHooksContext();
-  return useInfiniteModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/findMany`, args, options, fetch);
+export function useInfiniteFindManyInvitationTenant<TArgs extends Prisma.InvitationTenantFindManyArgs, TQueryFnData = Array<Prisma.InvitationTenantGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantFindManyArgs>, options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
+    options = options ?? { getNextPageParam: () => null };
+    const { endpoint, fetch } = getHooksContext();
+    return useInfiniteModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/findMany`, args, options, fetch);
 }
 
-export function useSuspenseFindManyInvitationTenant<
-  TArgs extends Prisma.InvitationTenantFindManyArgs,
-  TQueryFnData = Array<Prisma.InvitationTenantGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/findMany`, args, options, fetch);
+export function useSuspenseFindManyInvitationTenant<TArgs extends Prisma.InvitationTenantFindManyArgs, TQueryFnData = Array<Prisma.InvitationTenantGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantFindManyArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/findMany`, args, options, fetch);
 }
 
-export function useSuspenseInfiniteFindManyInvitationTenant<
-  TArgs extends Prisma.InvitationTenantFindManyArgs,
-  TQueryFnData = Array<Prisma.InvitationTenantGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantFindManyArgs>, options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
-  options = options ?? { getNextPageParam: () => null };
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/findMany`, args, options, fetch);
+export function useSuspenseInfiniteFindManyInvitationTenant<TArgs extends Prisma.InvitationTenantFindManyArgs, TQueryFnData = Array<Prisma.InvitationTenantGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantFindManyArgs>, options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
+    options = options ?? { getNextPageParam: () => null };
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/findMany`, args, options, fetch);
 }
 
-export function useFindUniqueInvitationTenant<
-  TArgs extends Prisma.InvitationTenantFindUniqueArgs,
-  TQueryFnData = Prisma.InvitationTenantGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/findUnique`, args, options, fetch);
+export function useFindUniqueInvitationTenant<TArgs extends Prisma.InvitationTenantFindUniqueArgs, TQueryFnData = Prisma.InvitationTenantGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantFindUniqueArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/findUnique`, args, options, fetch);
 }
 
-export function useSuspenseFindUniqueInvitationTenant<
-  TArgs extends Prisma.InvitationTenantFindUniqueArgs,
-  TQueryFnData = Prisma.InvitationTenantGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/findUnique`, args, options, fetch);
+export function useSuspenseFindUniqueInvitationTenant<TArgs extends Prisma.InvitationTenantFindUniqueArgs, TQueryFnData = Prisma.InvitationTenantGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantFindUniqueArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstInvitationTenant<
-  TArgs extends Prisma.InvitationTenantFindFirstArgs,
-  TQueryFnData = Prisma.InvitationTenantGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/findFirst`, args, options, fetch);
+export function useFindFirstInvitationTenant<TArgs extends Prisma.InvitationTenantFindFirstArgs, TQueryFnData = Prisma.InvitationTenantGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantFindFirstArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/findFirst`, args, options, fetch);
 }
 
-export function useSuspenseFindFirstInvitationTenant<
-  TArgs extends Prisma.InvitationTenantFindFirstArgs,
-  TQueryFnData = Prisma.InvitationTenantGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/findFirst`, args, options, fetch);
+export function useSuspenseFindFirstInvitationTenant<TArgs extends Prisma.InvitationTenantFindFirstArgs, TQueryFnData = Prisma.InvitationTenantGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantFindFirstArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/findFirst`, args, options, fetch);
 }
 
-export function useUpdateInvitationTenant(options?: Omit<UseMutationOptions<InvitationTenant | undefined, DefaultError, Prisma.InvitationTenantUpdateArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.InvitationTenantUpdateArgs, DefaultError, InvitationTenant, true>(
-    'InvitationTenant',
-    'PUT',
-    `${endpoint}/invitationTenant/update`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.InvitationTenantUpdateArgs>(
-      args: Prisma.SelectSubset<T, Prisma.InvitationTenantUpdateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, InvitationTenant, Prisma.InvitationTenantGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.InvitationTenantUpdateArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, InvitationTenant, Prisma.InvitationTenantGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
+export function useUpdateInvitationTenant(options?: Omit<(UseMutationOptions<(InvitationTenant | undefined), DefaultError, Prisma.InvitationTenantUpdateArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.InvitationTenantUpdateArgs, DefaultError, InvitationTenant, true>('InvitationTenant', 'PUT', `${endpoint}/invitationTenant/update`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.InvitationTenantUpdateArgs>(
+            args: Prisma.SelectSubset<T, Prisma.InvitationTenantUpdateArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, InvitationTenant, Prisma.InvitationTenantGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.InvitationTenantUpdateArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, InvitationTenant, Prisma.InvitationTenantGetPayload<T>> | undefined);
+        },
+    };
+    return mutation;
 }
 
-export function useUpdateManyInvitationTenant(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.InvitationTenantUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.InvitationTenantUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'InvitationTenant',
-    'PUT',
-    `${endpoint}/invitationTenant/updateMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.InvitationTenantUpdateManyArgs>(
-      args: Prisma.SelectSubset<T, Prisma.InvitationTenantUpdateManyArgs>,
-      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.InvitationTenantUpdateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
-    },
-  };
-  return mutation;
+export function useUpdateManyInvitationTenant(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.InvitationTenantUpdateManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.InvitationTenantUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('InvitationTenant', 'PUT', `${endpoint}/invitationTenant/updateMany`, metadata, options, fetch, false)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.InvitationTenantUpdateManyArgs>(
+            args: Prisma.SelectSubset<T, Prisma.InvitationTenantUpdateManyArgs>,
+            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.InvitationTenantUpdateManyArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as Prisma.BatchPayload;
+        },
+    };
+    return mutation;
 }
 
-export function useUpsertInvitationTenant(options?: Omit<UseMutationOptions<InvitationTenant | undefined, DefaultError, Prisma.InvitationTenantUpsertArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.InvitationTenantUpsertArgs, DefaultError, InvitationTenant, true>(
-    'InvitationTenant',
-    'POST',
-    `${endpoint}/invitationTenant/upsert`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.InvitationTenantUpsertArgs>(
-      args: Prisma.SelectSubset<T, Prisma.InvitationTenantUpsertArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, InvitationTenant, Prisma.InvitationTenantGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.InvitationTenantUpsertArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, InvitationTenant, Prisma.InvitationTenantGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
+export function useUpsertInvitationTenant(options?: Omit<(UseMutationOptions<(InvitationTenant | undefined), DefaultError, Prisma.InvitationTenantUpsertArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.InvitationTenantUpsertArgs, DefaultError, InvitationTenant, true>('InvitationTenant', 'POST', `${endpoint}/invitationTenant/upsert`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.InvitationTenantUpsertArgs>(
+            args: Prisma.SelectSubset<T, Prisma.InvitationTenantUpsertArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, InvitationTenant, Prisma.InvitationTenantGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.InvitationTenantUpsertArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, InvitationTenant, Prisma.InvitationTenantGetPayload<T>> | undefined);
+        },
+    };
+    return mutation;
 }
 
-export function useDeleteInvitationTenant(options?: Omit<UseMutationOptions<InvitationTenant | undefined, DefaultError, Prisma.InvitationTenantDeleteArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.InvitationTenantDeleteArgs, DefaultError, InvitationTenant, true>(
-    'InvitationTenant',
-    'DELETE',
-    `${endpoint}/invitationTenant/delete`,
-    metadata,
-    options,
-    fetch,
-    true
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.InvitationTenantDeleteArgs>(
-      args: Prisma.SelectSubset<T, Prisma.InvitationTenantDeleteArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, InvitationTenant, Prisma.InvitationTenantGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.InvitationTenantDeleteArgs>> &
-          ExtraMutationOptions,
-        'mutationFn'
-      >
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, InvitationTenant, Prisma.InvitationTenantGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
+export function useDeleteInvitationTenant(options?: Omit<(UseMutationOptions<(InvitationTenant | undefined), DefaultError, Prisma.InvitationTenantDeleteArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.InvitationTenantDeleteArgs, DefaultError, InvitationTenant, true>('InvitationTenant', 'DELETE', `${endpoint}/invitationTenant/delete`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.InvitationTenantDeleteArgs>(
+            args: Prisma.SelectSubset<T, Prisma.InvitationTenantDeleteArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, InvitationTenant, Prisma.InvitationTenantGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.InvitationTenantDeleteArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, InvitationTenant, Prisma.InvitationTenantGetPayload<T>> | undefined);
+        },
+    };
+    return mutation;
 }
 
-export function useDeleteManyInvitationTenant(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.InvitationTenantDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.InvitationTenantDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'InvitationTenant',
-    'DELETE',
-    `${endpoint}/invitationTenant/deleteMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.InvitationTenantDeleteManyArgs>(
-      args: Prisma.SelectSubset<T, Prisma.InvitationTenantDeleteManyArgs>,
-      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.InvitationTenantDeleteManyArgs>> & ExtraMutationOptions, 'mutationFn'>
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
-    },
-  };
-  return mutation;
+export function useDeleteManyInvitationTenant(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.InvitationTenantDeleteManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.InvitationTenantDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('InvitationTenant', 'DELETE', `${endpoint}/invitationTenant/deleteMany`, metadata, options, fetch, false)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.InvitationTenantDeleteManyArgs>(
+            args: Prisma.SelectSubset<T, Prisma.InvitationTenantDeleteManyArgs>,
+            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.InvitationTenantDeleteManyArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as Prisma.BatchPayload;
+        },
+    };
+    return mutation;
 }
 
-export function useAggregateInvitationTenant<
-  TArgs extends Prisma.InvitationTenantAggregateArgs,
-  TQueryFnData = Prisma.GetInvitationTenantAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantAggregateArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/aggregate`, args, options, fetch);
+export function useAggregateInvitationTenant<TArgs extends Prisma.InvitationTenantAggregateArgs, TQueryFnData = Prisma.GetInvitationTenantAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantAggregateArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/aggregate`, args, options, fetch);
 }
 
-export function useSuspenseAggregateInvitationTenant<
-  TArgs extends Prisma.InvitationTenantAggregateArgs,
-  TQueryFnData = Prisma.GetInvitationTenantAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/aggregate`, args, options, fetch);
+export function useSuspenseAggregateInvitationTenant<TArgs extends Prisma.InvitationTenantAggregateArgs, TQueryFnData = Prisma.GetInvitationTenantAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantAggregateArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/aggregate`, args, options, fetch);
 }
 
-export function useGroupByInvitationTenant<
-  TArgs extends Prisma.InvitationTenantGroupByArgs,
-  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
-  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.InvitationTenantGroupByArgs['orderBy'] } : { orderBy?: Prisma.InvitationTenantGroupByArgs['orderBy'] },
-  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
-  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
-  ByValid extends Prisma.Has<ByFields, OrderFields>,
-  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
-  HavingValid extends Prisma.Has<ByFields, HavingFields>,
-  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
-  InputErrors extends ByEmpty extends Prisma.True
+export function useGroupByInvitationTenant<TArgs extends Prisma.InvitationTenantGroupByArgs, HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>, OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.InvitationTenantGroupByArgs['orderBy'] } : { orderBy?: Prisma.InvitationTenantGroupByArgs['orderBy'] }, OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>, ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>, ByValid extends Prisma.Has<ByFields, OrderFields>, HavingFields extends Prisma.GetHavingFields<TArgs['having']>, HavingValid extends Prisma.Has<ByFields, HavingFields>, ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False, InputErrors extends ByEmpty extends Prisma.True
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
-        }[HavingFields]
-      : 'take' extends Prisma.Keys<TArgs>
-        ? 'orderBy' extends Prisma.Keys<TArgs>
-          ? ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields]
-          : 'Error: If you provide "take", you also need to provide "orderBy"'
-        : 'skip' extends Prisma.Keys<TArgs>
-          ? 'orderBy' extends Prisma.Keys<TArgs>
-            ? ByValid extends Prisma.True
-              ? {}
-              : {
-                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-                }[OrderFields]
-            : 'Error: If you provide "skip", you also need to provide "orderBy"'
-          : ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields],
-  TQueryFnData = {} extends InputErrors
-    ? Array<
-        PickEnumerable<Prisma.InvitationTenantGroupByOutputType, TArgs['by']> & {
-          [P in keyof TArgs & keyof Prisma.InvitationTenantGroupByOutputType]: P extends '_count'
-            ? TArgs[P] extends boolean
-              ? number
-              : Prisma.GetScalarType<TArgs[P], Prisma.InvitationTenantGroupByOutputType[P]>
-            : Prisma.GetScalarType<TArgs[P], Prisma.InvitationTenantGroupByOutputType[P]>;
-        }
-      >
-    : InputErrors,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.InvitationTenantGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/groupBy`, args, options, fetch);
+    ? {
+        [P in HavingFields]: P extends ByFields
+        ? never
+        : P extends string
+        ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+        : [
+            Error,
+            'Field ',
+            P,
+            ` in "having" needs to be provided in "by"`,
+        ]
+    }[HavingFields]
+    : 'take' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "take", you also need to provide "orderBy"'
+    : 'skip' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "skip", you also need to provide "orderBy"'
+    : ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields], TQueryFnData = {} extends InputErrors ?
+    Array<PickEnumerable<Prisma.InvitationTenantGroupByOutputType, TArgs['by']> &
+    {
+        [P in ((keyof TArgs) & (keyof Prisma.InvitationTenantGroupByOutputType))]: P extends '_count'
+        ? TArgs[P] extends boolean
+        ? number
+        : Prisma.GetScalarType<TArgs[P], Prisma.InvitationTenantGroupByOutputType[P]>
+        : Prisma.GetScalarType<TArgs[P], Prisma.InvitationTenantGroupByOutputType[P]>
+    }
+    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.InvitationTenantGroupByArgs, OrderByArg> & InputErrors>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/groupBy`, args, options, fetch);
 }
 
-export function useSuspenseGroupByInvitationTenant<
-  TArgs extends Prisma.InvitationTenantGroupByArgs,
-  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
-  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.InvitationTenantGroupByArgs['orderBy'] } : { orderBy?: Prisma.InvitationTenantGroupByArgs['orderBy'] },
-  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
-  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
-  ByValid extends Prisma.Has<ByFields, OrderFields>,
-  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
-  HavingValid extends Prisma.Has<ByFields, HavingFields>,
-  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
-  InputErrors extends ByEmpty extends Prisma.True
+export function useSuspenseGroupByInvitationTenant<TArgs extends Prisma.InvitationTenantGroupByArgs, HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>, OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.InvitationTenantGroupByArgs['orderBy'] } : { orderBy?: Prisma.InvitationTenantGroupByArgs['orderBy'] }, OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>, ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>, ByValid extends Prisma.Has<ByFields, OrderFields>, HavingFields extends Prisma.GetHavingFields<TArgs['having']>, HavingValid extends Prisma.Has<ByFields, HavingFields>, ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False, InputErrors extends ByEmpty extends Prisma.True
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
-        }[HavingFields]
-      : 'take' extends Prisma.Keys<TArgs>
-        ? 'orderBy' extends Prisma.Keys<TArgs>
-          ? ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields]
-          : 'Error: If you provide "take", you also need to provide "orderBy"'
-        : 'skip' extends Prisma.Keys<TArgs>
-          ? 'orderBy' extends Prisma.Keys<TArgs>
-            ? ByValid extends Prisma.True
-              ? {}
-              : {
-                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-                }[OrderFields]
-            : 'Error: If you provide "skip", you also need to provide "orderBy"'
-          : ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields],
-  TQueryFnData = {} extends InputErrors
-    ? Array<
-        PickEnumerable<Prisma.InvitationTenantGroupByOutputType, TArgs['by']> & {
-          [P in keyof TArgs & keyof Prisma.InvitationTenantGroupByOutputType]: P extends '_count'
-            ? TArgs[P] extends boolean
-              ? number
-              : Prisma.GetScalarType<TArgs[P], Prisma.InvitationTenantGroupByOutputType[P]>
-            : Prisma.GetScalarType<TArgs[P], Prisma.InvitationTenantGroupByOutputType[P]>;
-        }
-      >
-    : InputErrors,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.InvitationTenantGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/groupBy`, args, options, fetch);
+    ? {
+        [P in HavingFields]: P extends ByFields
+        ? never
+        : P extends string
+        ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+        : [
+            Error,
+            'Field ',
+            P,
+            ` in "having" needs to be provided in "by"`,
+        ]
+    }[HavingFields]
+    : 'take' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "take", you also need to provide "orderBy"'
+    : 'skip' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "skip", you also need to provide "orderBy"'
+    : ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields], TQueryFnData = {} extends InputErrors ?
+    Array<PickEnumerable<Prisma.InvitationTenantGroupByOutputType, TArgs['by']> &
+    {
+        [P in ((keyof TArgs) & (keyof Prisma.InvitationTenantGroupByOutputType))]: P extends '_count'
+        ? TArgs[P] extends boolean
+        ? number
+        : Prisma.GetScalarType<TArgs[P], Prisma.InvitationTenantGroupByOutputType[P]>
+        : Prisma.GetScalarType<TArgs[P], Prisma.InvitationTenantGroupByOutputType[P]>
+    }
+    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.InvitationTenantGroupByArgs, OrderByArg> & InputErrors>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/groupBy`, args, options, fetch);
 }
 
-export function useCountInvitationTenant<
-  TArgs extends Prisma.InvitationTenantCountArgs,
-  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.InvitationTenantCountAggregateOutputType>) : number,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantCountArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/count`, args, options, fetch);
+export function useCountInvitationTenant<TArgs extends Prisma.InvitationTenantCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.InvitationTenantCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantCountArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/count`, args, options, fetch);
 }
 
-export function useSuspenseCountInvitationTenant<
-  TArgs extends Prisma.InvitationTenantCountArgs,
-  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.InvitationTenantCountAggregateOutputType>) : number,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantCountArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/count`, args, options, fetch);
+export function useSuspenseCountInvitationTenant<TArgs extends Prisma.InvitationTenantCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.InvitationTenantCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.InvitationTenantCountArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/count`, args, options, fetch);
 }
 
-export function useCheckInvitationTenant<TError = DefaultError>(
-  args: {
-    operation: PolicyCrudKind;
-    where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; email?: string; role?: string; status?: string; inviterId?: string; metadata?: string };
-  },
-  options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<boolean, boolean, TError>('InvitationTenant', `${endpoint}/invitationTenant/check`, args, options, fetch);
+export function useCheckInvitationTenant<TError = DefaultError>(args: { operation: PolicyCrudKind; where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; email?: string; role?: string; status?: string; inviterId?: string; metadata?: string }; }, options?: (Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<boolean, boolean, TError>('InvitationTenant', `${endpoint}/invitationTenant/check`, args, options, fetch);
 }

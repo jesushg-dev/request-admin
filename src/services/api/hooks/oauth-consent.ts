@@ -4,403 +4,330 @@
 
 /* eslint-disable */
 
-import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
-import type { PolicyCrudKind } from '@zenstackhq/runtime';
-import type { OauthConsent, Prisma } from '@zenstackhq/runtime/models';
-import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
-import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
-
+import type { Prisma, OauthConsent } from "@zenstackhq/runtime/models";
+import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/react-query';
+import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
+import type { PolicyCrudKind } from '@zenstackhq/runtime'
 import metadata from './__model_meta';
-
 type DefaultError = QueryError;
+import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
+import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
 
-export function useCreateOauthConsent(options?: Omit<UseMutationOptions<OauthConsent | undefined, DefaultError, Prisma.OauthConsentCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.OauthConsentCreateArgs, DefaultError, OauthConsent, true>('OauthConsent', 'POST', `${endpoint}/oauthConsent/create`, metadata, options, fetch, true);
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.OauthConsentCreateArgs>(
-      args: Prisma.SelectSubset<T, Prisma.OauthConsentCreateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, OauthConsent, Prisma.OauthConsentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.OauthConsentCreateArgs>> & ExtraMutationOptions,
-        'mutationFn'
-      >
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, OauthConsent, Prisma.OauthConsentGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
+export function useCreateOauthConsent(options?: Omit<(UseMutationOptions<(OauthConsent | undefined), DefaultError, Prisma.OauthConsentCreateArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.OauthConsentCreateArgs, DefaultError, OauthConsent, true>('OauthConsent', 'POST', `${endpoint}/oauthConsent/create`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.OauthConsentCreateArgs>(
+            args: Prisma.SelectSubset<T, Prisma.OauthConsentCreateArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, OauthConsent, Prisma.OauthConsentGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.OauthConsentCreateArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, OauthConsent, Prisma.OauthConsentGetPayload<T>> | undefined);
+        },
+    };
+    return mutation;
 }
 
-export function useCreateManyOauthConsent(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.OauthConsentCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.OauthConsentCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'OauthConsent',
-    'POST',
-    `${endpoint}/oauthConsent/createMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.OauthConsentCreateManyArgs>(
-      args: Prisma.SelectSubset<T, Prisma.OauthConsentCreateManyArgs>,
-      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.OauthConsentCreateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
-    },
-  };
-  return mutation;
+export function useCreateManyOauthConsent(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.OauthConsentCreateManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.OauthConsentCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('OauthConsent', 'POST', `${endpoint}/oauthConsent/createMany`, metadata, options, fetch, false)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.OauthConsentCreateManyArgs>(
+            args: Prisma.SelectSubset<T, Prisma.OauthConsentCreateManyArgs>,
+            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.OauthConsentCreateManyArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as Prisma.BatchPayload;
+        },
+    };
+    return mutation;
 }
 
-export function useFindManyOauthConsent<
-  TArgs extends Prisma.OauthConsentFindManyArgs,
-  TQueryFnData = Array<Prisma.OauthConsentGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.OauthConsentFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/findMany`, args, options, fetch);
+export function useFindManyOauthConsent<TArgs extends Prisma.OauthConsentFindManyArgs, TQueryFnData = Array<Prisma.OauthConsentGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.OauthConsentFindManyArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/findMany`, args, options, fetch);
 }
 
-export function useInfiniteFindManyOauthConsent<TArgs extends Prisma.OauthConsentFindManyArgs, TQueryFnData = Array<Prisma.OauthConsentGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
-  args?: Prisma.SelectSubset<TArgs, Prisma.OauthConsentFindManyArgs>,
-  options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
-) {
-  options = options ?? { getNextPageParam: () => null };
-  const { endpoint, fetch } = getHooksContext();
-  return useInfiniteModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/findMany`, args, options, fetch);
+export function useInfiniteFindManyOauthConsent<TArgs extends Prisma.OauthConsentFindManyArgs, TQueryFnData = Array<Prisma.OauthConsentGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.OauthConsentFindManyArgs>, options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
+    options = options ?? { getNextPageParam: () => null };
+    const { endpoint, fetch } = getHooksContext();
+    return useInfiniteModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/findMany`, args, options, fetch);
 }
 
-export function useSuspenseFindManyOauthConsent<
-  TArgs extends Prisma.OauthConsentFindManyArgs,
-  TQueryFnData = Array<Prisma.OauthConsentGetPayload<TArgs> & { $optimistic?: boolean }>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.OauthConsentFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/findMany`, args, options, fetch);
+export function useSuspenseFindManyOauthConsent<TArgs extends Prisma.OauthConsentFindManyArgs, TQueryFnData = Array<Prisma.OauthConsentGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.OauthConsentFindManyArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/findMany`, args, options, fetch);
 }
 
-export function useSuspenseInfiniteFindManyOauthConsent<
-  TArgs extends Prisma.OauthConsentFindManyArgs,
-  TQueryFnData = Array<Prisma.OauthConsentGetPayload<TArgs>>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.OauthConsentFindManyArgs>, options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
-  options = options ?? { getNextPageParam: () => null };
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/findMany`, args, options, fetch);
+export function useSuspenseInfiniteFindManyOauthConsent<TArgs extends Prisma.OauthConsentFindManyArgs, TQueryFnData = Array<Prisma.OauthConsentGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.OauthConsentFindManyArgs>, options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
+    options = options ?? { getNextPageParam: () => null };
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/findMany`, args, options, fetch);
 }
 
-export function useFindUniqueOauthConsent<
-  TArgs extends Prisma.OauthConsentFindUniqueArgs,
-  TQueryFnData = Prisma.OauthConsentGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.OauthConsentFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/findUnique`, args, options, fetch);
+export function useFindUniqueOauthConsent<TArgs extends Prisma.OauthConsentFindUniqueArgs, TQueryFnData = Prisma.OauthConsentGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.OauthConsentFindUniqueArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/findUnique`, args, options, fetch);
 }
 
-export function useSuspenseFindUniqueOauthConsent<
-  TArgs extends Prisma.OauthConsentFindUniqueArgs,
-  TQueryFnData = Prisma.OauthConsentGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.OauthConsentFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/findUnique`, args, options, fetch);
+export function useSuspenseFindUniqueOauthConsent<TArgs extends Prisma.OauthConsentFindUniqueArgs, TQueryFnData = Prisma.OauthConsentGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.OauthConsentFindUniqueArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstOauthConsent<
-  TArgs extends Prisma.OauthConsentFindFirstArgs,
-  TQueryFnData = Prisma.OauthConsentGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.OauthConsentFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/findFirst`, args, options, fetch);
+export function useFindFirstOauthConsent<TArgs extends Prisma.OauthConsentFindFirstArgs, TQueryFnData = Prisma.OauthConsentGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.OauthConsentFindFirstArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/findFirst`, args, options, fetch);
 }
 
-export function useSuspenseFindFirstOauthConsent<
-  TArgs extends Prisma.OauthConsentFindFirstArgs,
-  TQueryFnData = Prisma.OauthConsentGetPayload<TArgs> & { $optimistic?: boolean },
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.OauthConsentFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/findFirst`, args, options, fetch);
+export function useSuspenseFindFirstOauthConsent<TArgs extends Prisma.OauthConsentFindFirstArgs, TQueryFnData = Prisma.OauthConsentGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.OauthConsentFindFirstArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/findFirst`, args, options, fetch);
 }
 
-export function useUpdateOauthConsent(options?: Omit<UseMutationOptions<OauthConsent | undefined, DefaultError, Prisma.OauthConsentUpdateArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.OauthConsentUpdateArgs, DefaultError, OauthConsent, true>('OauthConsent', 'PUT', `${endpoint}/oauthConsent/update`, metadata, options, fetch, true);
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.OauthConsentUpdateArgs>(
-      args: Prisma.SelectSubset<T, Prisma.OauthConsentUpdateArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, OauthConsent, Prisma.OauthConsentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.OauthConsentUpdateArgs>> & ExtraMutationOptions,
-        'mutationFn'
-      >
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, OauthConsent, Prisma.OauthConsentGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
+export function useUpdateOauthConsent(options?: Omit<(UseMutationOptions<(OauthConsent | undefined), DefaultError, Prisma.OauthConsentUpdateArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.OauthConsentUpdateArgs, DefaultError, OauthConsent, true>('OauthConsent', 'PUT', `${endpoint}/oauthConsent/update`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.OauthConsentUpdateArgs>(
+            args: Prisma.SelectSubset<T, Prisma.OauthConsentUpdateArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, OauthConsent, Prisma.OauthConsentGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.OauthConsentUpdateArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, OauthConsent, Prisma.OauthConsentGetPayload<T>> | undefined);
+        },
+    };
+    return mutation;
 }
 
-export function useUpdateManyOauthConsent(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.OauthConsentUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.OauthConsentUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'OauthConsent',
-    'PUT',
-    `${endpoint}/oauthConsent/updateMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.OauthConsentUpdateManyArgs>(
-      args: Prisma.SelectSubset<T, Prisma.OauthConsentUpdateManyArgs>,
-      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.OauthConsentUpdateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
-    },
-  };
-  return mutation;
+export function useUpdateManyOauthConsent(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.OauthConsentUpdateManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.OauthConsentUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('OauthConsent', 'PUT', `${endpoint}/oauthConsent/updateMany`, metadata, options, fetch, false)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.OauthConsentUpdateManyArgs>(
+            args: Prisma.SelectSubset<T, Prisma.OauthConsentUpdateManyArgs>,
+            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.OauthConsentUpdateManyArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as Prisma.BatchPayload;
+        },
+    };
+    return mutation;
 }
 
-export function useUpsertOauthConsent(options?: Omit<UseMutationOptions<OauthConsent | undefined, DefaultError, Prisma.OauthConsentUpsertArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.OauthConsentUpsertArgs, DefaultError, OauthConsent, true>('OauthConsent', 'POST', `${endpoint}/oauthConsent/upsert`, metadata, options, fetch, true);
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.OauthConsentUpsertArgs>(
-      args: Prisma.SelectSubset<T, Prisma.OauthConsentUpsertArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, OauthConsent, Prisma.OauthConsentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.OauthConsentUpsertArgs>> & ExtraMutationOptions,
-        'mutationFn'
-      >
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, OauthConsent, Prisma.OauthConsentGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
+export function useUpsertOauthConsent(options?: Omit<(UseMutationOptions<(OauthConsent | undefined), DefaultError, Prisma.OauthConsentUpsertArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.OauthConsentUpsertArgs, DefaultError, OauthConsent, true>('OauthConsent', 'POST', `${endpoint}/oauthConsent/upsert`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.OauthConsentUpsertArgs>(
+            args: Prisma.SelectSubset<T, Prisma.OauthConsentUpsertArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, OauthConsent, Prisma.OauthConsentGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.OauthConsentUpsertArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, OauthConsent, Prisma.OauthConsentGetPayload<T>> | undefined);
+        },
+    };
+    return mutation;
 }
 
-export function useDeleteOauthConsent(options?: Omit<UseMutationOptions<OauthConsent | undefined, DefaultError, Prisma.OauthConsentDeleteArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.OauthConsentDeleteArgs, DefaultError, OauthConsent, true>('OauthConsent', 'DELETE', `${endpoint}/oauthConsent/delete`, metadata, options, fetch, true);
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.OauthConsentDeleteArgs>(
-      args: Prisma.SelectSubset<T, Prisma.OauthConsentDeleteArgs>,
-      options?: Omit<
-        UseMutationOptions<CheckSelect<T, OauthConsent, Prisma.OauthConsentGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.OauthConsentDeleteArgs>> & ExtraMutationOptions,
-        'mutationFn'
-      >
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, OauthConsent, Prisma.OauthConsentGetPayload<T>> | undefined;
-    },
-  };
-  return mutation;
+export function useDeleteOauthConsent(options?: Omit<(UseMutationOptions<(OauthConsent | undefined), DefaultError, Prisma.OauthConsentDeleteArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.OauthConsentDeleteArgs, DefaultError, OauthConsent, true>('OauthConsent', 'DELETE', `${endpoint}/oauthConsent/delete`, metadata, options, fetch, true)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.OauthConsentDeleteArgs>(
+            args: Prisma.SelectSubset<T, Prisma.OauthConsentDeleteArgs>,
+            options?: Omit<(UseMutationOptions<(CheckSelect<T, OauthConsent, Prisma.OauthConsentGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.OauthConsentDeleteArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as (CheckSelect<T, OauthConsent, Prisma.OauthConsentGetPayload<T>> | undefined);
+        },
+    };
+    return mutation;
 }
 
-export function useDeleteManyOauthConsent(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.OauthConsentDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
-  const { endpoint, fetch } = getHooksContext();
-  const _mutation = useModelMutation<Prisma.OauthConsentDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
-    'OauthConsent',
-    'DELETE',
-    `${endpoint}/oauthConsent/deleteMany`,
-    metadata,
-    options,
-    fetch,
-    false
-  );
-  const mutation = {
-    ..._mutation,
-    mutateAsync: async <T extends Prisma.OauthConsentDeleteManyArgs>(
-      args: Prisma.SelectSubset<T, Prisma.OauthConsentDeleteManyArgs>,
-      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.OauthConsentDeleteManyArgs>> & ExtraMutationOptions, 'mutationFn'>
-    ) => {
-      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
-    },
-  };
-  return mutation;
+export function useDeleteManyOauthConsent(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.OauthConsentDeleteManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
+    const { endpoint, fetch } = getHooksContext();
+    const _mutation =
+        useModelMutation<Prisma.OauthConsentDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('OauthConsent', 'DELETE', `${endpoint}/oauthConsent/deleteMany`, metadata, options, fetch, false)
+        ;
+    const mutation = {
+        ..._mutation,
+        mutateAsync: async <T extends Prisma.OauthConsentDeleteManyArgs>(
+            args: Prisma.SelectSubset<T, Prisma.OauthConsentDeleteManyArgs>,
+            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.OauthConsentDeleteManyArgs>> & ExtraMutationOptions), 'mutationFn'>
+        ) => {
+            return (await _mutation.mutateAsync(
+                args,
+                options as any
+            )) as Prisma.BatchPayload;
+        },
+    };
+    return mutation;
 }
 
-export function useAggregateOauthConsent<TArgs extends Prisma.OauthConsentAggregateArgs, TQueryFnData = Prisma.GetOauthConsentAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
-  args: Prisma.SelectSubset<TArgs, Prisma.OauthConsentAggregateArgs>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/aggregate`, args, options, fetch);
+export function useAggregateOauthConsent<TArgs extends Prisma.OauthConsentAggregateArgs, TQueryFnData = Prisma.GetOauthConsentAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.OauthConsentAggregateArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/aggregate`, args, options, fetch);
 }
 
-export function useSuspenseAggregateOauthConsent<
-  TArgs extends Prisma.OauthConsentAggregateArgs,
-  TQueryFnData = Prisma.GetOauthConsentAggregateType<TArgs>,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args: Prisma.SelectSubset<TArgs, Prisma.OauthConsentAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/aggregate`, args, options, fetch);
+export function useSuspenseAggregateOauthConsent<TArgs extends Prisma.OauthConsentAggregateArgs, TQueryFnData = Prisma.GetOauthConsentAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.OauthConsentAggregateArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/aggregate`, args, options, fetch);
 }
 
-export function useGroupByOauthConsent<
-  TArgs extends Prisma.OauthConsentGroupByArgs,
-  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
-  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.OauthConsentGroupByArgs['orderBy'] } : { orderBy?: Prisma.OauthConsentGroupByArgs['orderBy'] },
-  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
-  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
-  ByValid extends Prisma.Has<ByFields, OrderFields>,
-  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
-  HavingValid extends Prisma.Has<ByFields, HavingFields>,
-  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
-  InputErrors extends ByEmpty extends Prisma.True
+export function useGroupByOauthConsent<TArgs extends Prisma.OauthConsentGroupByArgs, HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>, OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.OauthConsentGroupByArgs['orderBy'] } : { orderBy?: Prisma.OauthConsentGroupByArgs['orderBy'] }, OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>, ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>, ByValid extends Prisma.Has<ByFields, OrderFields>, HavingFields extends Prisma.GetHavingFields<TArgs['having']>, HavingValid extends Prisma.Has<ByFields, HavingFields>, ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False, InputErrors extends ByEmpty extends Prisma.True
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
-        }[HavingFields]
-      : 'take' extends Prisma.Keys<TArgs>
-        ? 'orderBy' extends Prisma.Keys<TArgs>
-          ? ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields]
-          : 'Error: If you provide "take", you also need to provide "orderBy"'
-        : 'skip' extends Prisma.Keys<TArgs>
-          ? 'orderBy' extends Prisma.Keys<TArgs>
-            ? ByValid extends Prisma.True
-              ? {}
-              : {
-                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-                }[OrderFields]
-            : 'Error: If you provide "skip", you also need to provide "orderBy"'
-          : ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields],
-  TQueryFnData = {} extends InputErrors
-    ? Array<
-        PickEnumerable<Prisma.OauthConsentGroupByOutputType, TArgs['by']> & {
-          [P in keyof TArgs & keyof Prisma.OauthConsentGroupByOutputType]: P extends '_count'
-            ? TArgs[P] extends boolean
-              ? number
-              : Prisma.GetScalarType<TArgs[P], Prisma.OauthConsentGroupByOutputType[P]>
-            : Prisma.GetScalarType<TArgs[P], Prisma.OauthConsentGroupByOutputType[P]>;
-        }
-      >
-    : InputErrors,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.OauthConsentGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/groupBy`, args, options, fetch);
+    ? {
+        [P in HavingFields]: P extends ByFields
+        ? never
+        : P extends string
+        ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+        : [
+            Error,
+            'Field ',
+            P,
+            ` in "having" needs to be provided in "by"`,
+        ]
+    }[HavingFields]
+    : 'take' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "take", you also need to provide "orderBy"'
+    : 'skip' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "skip", you also need to provide "orderBy"'
+    : ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields], TQueryFnData = {} extends InputErrors ?
+    Array<PickEnumerable<Prisma.OauthConsentGroupByOutputType, TArgs['by']> &
+    {
+        [P in ((keyof TArgs) & (keyof Prisma.OauthConsentGroupByOutputType))]: P extends '_count'
+        ? TArgs[P] extends boolean
+        ? number
+        : Prisma.GetScalarType<TArgs[P], Prisma.OauthConsentGroupByOutputType[P]>
+        : Prisma.GetScalarType<TArgs[P], Prisma.OauthConsentGroupByOutputType[P]>
+    }
+    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.OauthConsentGroupByArgs, OrderByArg> & InputErrors>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/groupBy`, args, options, fetch);
 }
 
-export function useSuspenseGroupByOauthConsent<
-  TArgs extends Prisma.OauthConsentGroupByArgs,
-  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
-  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.OauthConsentGroupByArgs['orderBy'] } : { orderBy?: Prisma.OauthConsentGroupByArgs['orderBy'] },
-  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
-  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
-  ByValid extends Prisma.Has<ByFields, OrderFields>,
-  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
-  HavingValid extends Prisma.Has<ByFields, HavingFields>,
-  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
-  InputErrors extends ByEmpty extends Prisma.True
+export function useSuspenseGroupByOauthConsent<TArgs extends Prisma.OauthConsentGroupByArgs, HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>, OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.OauthConsentGroupByArgs['orderBy'] } : { orderBy?: Prisma.OauthConsentGroupByArgs['orderBy'] }, OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>, ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>, ByValid extends Prisma.Has<ByFields, OrderFields>, HavingFields extends Prisma.GetHavingFields<TArgs['having']>, HavingValid extends Prisma.Has<ByFields, HavingFields>, ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False, InputErrors extends ByEmpty extends Prisma.True
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
-        }[HavingFields]
-      : 'take' extends Prisma.Keys<TArgs>
-        ? 'orderBy' extends Prisma.Keys<TArgs>
-          ? ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields]
-          : 'Error: If you provide "take", you also need to provide "orderBy"'
-        : 'skip' extends Prisma.Keys<TArgs>
-          ? 'orderBy' extends Prisma.Keys<TArgs>
-            ? ByValid extends Prisma.True
-              ? {}
-              : {
-                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-                }[OrderFields]
-            : 'Error: If you provide "skip", you also need to provide "orderBy"'
-          : ByValid extends Prisma.True
-            ? {}
-            : {
-                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
-              }[OrderFields],
-  TQueryFnData = {} extends InputErrors
-    ? Array<
-        PickEnumerable<Prisma.OauthConsentGroupByOutputType, TArgs['by']> & {
-          [P in keyof TArgs & keyof Prisma.OauthConsentGroupByOutputType]: P extends '_count'
-            ? TArgs[P] extends boolean
-              ? number
-              : Prisma.GetScalarType<TArgs[P], Prisma.OauthConsentGroupByOutputType[P]>
-            : Prisma.GetScalarType<TArgs[P], Prisma.OauthConsentGroupByOutputType[P]>;
-        }
-      >
-    : InputErrors,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(
-  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.OauthConsentGroupByArgs, OrderByArg> & InputErrors>,
-  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/groupBy`, args, options, fetch);
+    ? {
+        [P in HavingFields]: P extends ByFields
+        ? never
+        : P extends string
+        ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+        : [
+            Error,
+            'Field ',
+            P,
+            ` in "having" needs to be provided in "by"`,
+        ]
+    }[HavingFields]
+    : 'take' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "take", you also need to provide "orderBy"'
+    : 'skip' extends Prisma.Keys<TArgs>
+    ? 'orderBy' extends Prisma.Keys<TArgs>
+    ? ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields]
+    : 'Error: If you provide "skip", you also need to provide "orderBy"'
+    : ByValid extends Prisma.True
+    ? {}
+    : {
+        [P in OrderFields]: P extends ByFields
+        ? never
+        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+    }[OrderFields], TQueryFnData = {} extends InputErrors ?
+    Array<PickEnumerable<Prisma.OauthConsentGroupByOutputType, TArgs['by']> &
+    {
+        [P in ((keyof TArgs) & (keyof Prisma.OauthConsentGroupByOutputType))]: P extends '_count'
+        ? TArgs[P] extends boolean
+        ? number
+        : Prisma.GetScalarType<TArgs[P], Prisma.OauthConsentGroupByOutputType[P]>
+        : Prisma.GetScalarType<TArgs[P], Prisma.OauthConsentGroupByOutputType[P]>
+    }
+    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.OauthConsentGroupByArgs, OrderByArg> & InputErrors>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/groupBy`, args, options, fetch);
 }
 
-export function useCountOauthConsent<
-  TArgs extends Prisma.OauthConsentCountArgs,
-  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.OauthConsentCountAggregateOutputType>) : number,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.OauthConsentCountArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/count`, args, options, fetch);
+export function useCountOauthConsent<TArgs extends Prisma.OauthConsentCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.OauthConsentCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.OauthConsentCountArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/count`, args, options, fetch);
 }
 
-export function useSuspenseCountOauthConsent<
-  TArgs extends Prisma.OauthConsentCountArgs,
-  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.OauthConsentCountAggregateOutputType>) : number,
-  TData = TQueryFnData,
-  TError = DefaultError,
->(args?: Prisma.SelectSubset<TArgs, Prisma.OauthConsentCountArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
-  const { endpoint, fetch } = getHooksContext();
-  return useSuspenseModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/count`, args, options, fetch);
+export function useSuspenseCountOauthConsent<TArgs extends Prisma.OauthConsentCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.OauthConsentCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.OauthConsentCountArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useSuspenseModelQuery<TQueryFnData, TData, TError>('OauthConsent', `${endpoint}/oauthConsent/count`, args, options, fetch);
 }
 
-export function useCheckOauthConsent<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { id?: string; clientId?: string; userId?: string; scopes?: string; consentGiven?: boolean } },
-  options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
-) {
-  const { endpoint, fetch } = getHooksContext();
-  return useModelQuery<boolean, boolean, TError>('OauthConsent', `${endpoint}/oauthConsent/check`, args, options, fetch);
+export function useCheckOauthConsent<TError = DefaultError>(args: { operation: PolicyCrudKind; where?: { id?: string; clientId?: string; userId?: string; scopes?: string; consentGiven?: boolean }; }, options?: (Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions)) {
+    const { endpoint, fetch } = getHooksContext();
+    return useModelQuery<boolean, boolean, TError>('OauthConsent', `${endpoint}/oauthConsent/check`, args, options, fetch);
 }
