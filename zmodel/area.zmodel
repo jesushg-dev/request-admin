@@ -13,6 +13,7 @@ model Area extends TenantScoped, Auditable, CatalogBase {
   userAreas             UserTenantArea[]          // Intermediate table to associate users with this area
   areaRole              AreaRole[]          // Links roles specifically defined for this area
   assignmentHierarchies AssignmentHierarchy[] // Links hierarchies to this area
+  invitations           InvitationTenant[] // Invitations targeting this team (area)
 
   // Index for efficient lookups by area name
   @@index([name, tenantId], name: "idx_area_name")

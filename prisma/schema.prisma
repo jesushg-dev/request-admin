@@ -4,9 +4,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -172,6 +171,8 @@ model InvitationTenant {
   inviterId String
   inviter   User      @relation(fields: [inviterId], references: [id], onDelete: Cascade)
   metadata  String    @default("")
+  teamId    String?
+  team      Area?     @relation(fields: [teamId], references: [id])
 }
 
 model Subscription {
@@ -1355,6 +1356,7 @@ model Area {
   userAreas             UserTenantArea[]
   areaRole              AreaRole[]
   assignmentHierarchies AssignmentHierarchy[]
+  invitations           InvitationTenant[]
 
   @@unique([name, tenantId])
   @@index([name, tenantId], name: "idx_area_name")

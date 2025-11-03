@@ -841,6 +841,20 @@ const metadata: ModelMeta = {
                     name: "metadata",
                     type: "String",
                     attributes: [{ "name": "@default", "args": [{ "name": "value", "value": "" }] }],
+                }, teamId: {
+                    name: "teamId",
+                    type: "String",
+                    isOptional: true,
+                    isForeignKey: true,
+                    relationField: 'team',
+                }, team: {
+                    name: "team",
+                    type: "Area",
+                    isDataModel: true,
+                    isOptional: true,
+                    backLink: 'invitations',
+                    isRelationOwner: true,
+                    foreignKeyMapping: { "id": "teamId" },
                 },
             }, uniqueConstraints: {
                 id: {
@@ -5870,6 +5884,12 @@ const metadata: ModelMeta = {
                     isDataModel: true,
                     isArray: true,
                     backLink: 'area',
+                }, invitations: {
+                    name: "invitations",
+                    type: "InvitationTenant",
+                    isDataModel: true,
+                    isArray: true,
+                    backLink: 'team',
                 },
             }, uniqueConstraints: {
                 id: {

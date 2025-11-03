@@ -184,6 +184,8 @@ model InvitationTenant extends TenantScoped, Auditable {
   inviterId      String
   inviter        User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
   metadata       String       @default("")  @omit
+  teamId         String?
+  team           Area?        @relation(fields: [teamId], references: [id])
 }
 
 model Subscription {

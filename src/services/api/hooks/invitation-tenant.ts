@@ -327,7 +327,7 @@ export function useSuspenseCountInvitationTenant<TArgs extends Prisma.Invitation
     return useSuspenseModelQuery<TQueryFnData, TData, TError>('InvitationTenant', `${endpoint}/invitationTenant/count`, args, options, fetch);
 }
 
-export function useCheckInvitationTenant<TError = DefaultError>(args: { operation: PolicyCrudKind; where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; email?: string; role?: string; status?: string; inviterId?: string; metadata?: string }; }, options?: (Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions)) {
+export function useCheckInvitationTenant<TError = DefaultError>(args: { operation: PolicyCrudKind; where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; email?: string; role?: string; status?: string; inviterId?: string; metadata?: string; teamId?: string }; }, options?: (Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions)) {
     const { endpoint, fetch } = getHooksContext();
     return useModelQuery<boolean, boolean, TError>('InvitationTenant', `${endpoint}/invitationTenant/check`, args, options, fetch);
 }
