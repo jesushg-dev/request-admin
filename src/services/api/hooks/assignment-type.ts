@@ -4,330 +4,433 @@
 
 /* eslint-disable */
 
-import type { Prisma, AssignmentType } from "@zenstackhq/runtime/models";
-import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/react-query';
-import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
-import type { PolicyCrudKind } from '@zenstackhq/runtime'
+import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
+import type { PolicyCrudKind } from '@zenstackhq/runtime';
+import type { AssignmentType, Prisma } from '@zenstackhq/runtime/models';
+import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
+import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
+
 import metadata from './__model_meta';
+
 type DefaultError = QueryError;
-import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
 
-export function useCreateAssignmentType(options?: Omit<(UseMutationOptions<(AssignmentType | undefined), DefaultError, Prisma.AssignmentTypeCreateArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.AssignmentTypeCreateArgs, DefaultError, AssignmentType, true>('AssignmentType', 'POST', `${endpoint}/assignmentType/create`, metadata, options, fetch, true)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.AssignmentTypeCreateArgs>(
-            args: Prisma.SelectSubset<T, Prisma.AssignmentTypeCreateArgs>,
-            options?: Omit<(UseMutationOptions<(CheckSelect<T, AssignmentType, Prisma.AssignmentTypeGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.AssignmentTypeCreateArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as (CheckSelect<T, AssignmentType, Prisma.AssignmentTypeGetPayload<T>> | undefined);
-        },
-    };
-    return mutation;
+export function useCreateAssignmentType(options?: Omit<UseMutationOptions<AssignmentType | undefined, DefaultError, Prisma.AssignmentTypeCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.AssignmentTypeCreateArgs, DefaultError, AssignmentType, true>(
+    'AssignmentType',
+    'POST',
+    `${endpoint}/assignmentType/create`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.AssignmentTypeCreateArgs>(
+      args: Prisma.SelectSubset<T, Prisma.AssignmentTypeCreateArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, AssignmentType, Prisma.AssignmentTypeGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AssignmentTypeCreateArgs>> &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, AssignmentType, Prisma.AssignmentTypeGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
 }
 
-export function useCreateManyAssignmentType(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.AssignmentTypeCreateManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.AssignmentTypeCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('AssignmentType', 'POST', `${endpoint}/assignmentType/createMany`, metadata, options, fetch, false)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.AssignmentTypeCreateManyArgs>(
-            args: Prisma.SelectSubset<T, Prisma.AssignmentTypeCreateManyArgs>,
-            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.AssignmentTypeCreateManyArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as Prisma.BatchPayload;
-        },
-    };
-    return mutation;
+export function useCreateManyAssignmentType(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.AssignmentTypeCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.AssignmentTypeCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'AssignmentType',
+    'POST',
+    `${endpoint}/assignmentType/createMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.AssignmentTypeCreateManyArgs>(
+      args: Prisma.SelectSubset<T, Prisma.AssignmentTypeCreateManyArgs>,
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.AssignmentTypeCreateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
+    },
+  };
+  return mutation;
 }
 
-export function useFindManyAssignmentType<TArgs extends Prisma.AssignmentTypeFindManyArgs, TQueryFnData = Array<Prisma.AssignmentTypeGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeFindManyArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/findMany`, args, options, fetch);
+export function useFindManyAssignmentType<
+  TArgs extends Prisma.AssignmentTypeFindManyArgs,
+  TQueryFnData = Array<Prisma.AssignmentTypeGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/findMany`, args, options, fetch);
 }
 
-export function useInfiniteFindManyAssignmentType<TArgs extends Prisma.AssignmentTypeFindManyArgs, TQueryFnData = Array<Prisma.AssignmentTypeGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeFindManyArgs>, options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
-    options = options ?? { getNextPageParam: () => null };
-    const { endpoint, fetch } = getHooksContext();
-    return useInfiniteModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/findMany`, args, options, fetch);
+export function useInfiniteFindManyAssignmentType<
+  TArgs extends Prisma.AssignmentTypeFindManyArgs,
+  TQueryFnData = Array<Prisma.AssignmentTypeGetPayload<TArgs>>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeFindManyArgs>, options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
+  options = options ?? { getNextPageParam: () => null };
+  const { endpoint, fetch } = getHooksContext();
+  return useInfiniteModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/findMany`, args, options, fetch);
 }
 
-export function useSuspenseFindManyAssignmentType<TArgs extends Prisma.AssignmentTypeFindManyArgs, TQueryFnData = Array<Prisma.AssignmentTypeGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeFindManyArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/findMany`, args, options, fetch);
+export function useSuspenseFindManyAssignmentType<
+  TArgs extends Prisma.AssignmentTypeFindManyArgs,
+  TQueryFnData = Array<Prisma.AssignmentTypeGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/findMany`, args, options, fetch);
 }
 
-export function useSuspenseInfiniteFindManyAssignmentType<TArgs extends Prisma.AssignmentTypeFindManyArgs, TQueryFnData = Array<Prisma.AssignmentTypeGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeFindManyArgs>, options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
-    options = options ?? { getNextPageParam: () => null };
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/findMany`, args, options, fetch);
+export function useSuspenseInfiniteFindManyAssignmentType<
+  TArgs extends Prisma.AssignmentTypeFindManyArgs,
+  TQueryFnData = Array<Prisma.AssignmentTypeGetPayload<TArgs>>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeFindManyArgs>, options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
+  options = options ?? { getNextPageParam: () => null };
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/findMany`, args, options, fetch);
 }
 
-export function useFindUniqueAssignmentType<TArgs extends Prisma.AssignmentTypeFindUniqueArgs, TQueryFnData = Prisma.AssignmentTypeGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeFindUniqueArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/findUnique`, args, options, fetch);
+export function useFindUniqueAssignmentType<
+  TArgs extends Prisma.AssignmentTypeFindUniqueArgs,
+  TQueryFnData = Prisma.AssignmentTypeGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/findUnique`, args, options, fetch);
 }
 
-export function useSuspenseFindUniqueAssignmentType<TArgs extends Prisma.AssignmentTypeFindUniqueArgs, TQueryFnData = Prisma.AssignmentTypeGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeFindUniqueArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/findUnique`, args, options, fetch);
+export function useSuspenseFindUniqueAssignmentType<
+  TArgs extends Prisma.AssignmentTypeFindUniqueArgs,
+  TQueryFnData = Prisma.AssignmentTypeGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstAssignmentType<TArgs extends Prisma.AssignmentTypeFindFirstArgs, TQueryFnData = Prisma.AssignmentTypeGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeFindFirstArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/findFirst`, args, options, fetch);
+export function useFindFirstAssignmentType<
+  TArgs extends Prisma.AssignmentTypeFindFirstArgs,
+  TQueryFnData = Prisma.AssignmentTypeGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/findFirst`, args, options, fetch);
 }
 
-export function useSuspenseFindFirstAssignmentType<TArgs extends Prisma.AssignmentTypeFindFirstArgs, TQueryFnData = Prisma.AssignmentTypeGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeFindFirstArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/findFirst`, args, options, fetch);
+export function useSuspenseFindFirstAssignmentType<
+  TArgs extends Prisma.AssignmentTypeFindFirstArgs,
+  TQueryFnData = Prisma.AssignmentTypeGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/findFirst`, args, options, fetch);
 }
 
-export function useUpdateAssignmentType(options?: Omit<(UseMutationOptions<(AssignmentType | undefined), DefaultError, Prisma.AssignmentTypeUpdateArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.AssignmentTypeUpdateArgs, DefaultError, AssignmentType, true>('AssignmentType', 'PUT', `${endpoint}/assignmentType/update`, metadata, options, fetch, true)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.AssignmentTypeUpdateArgs>(
-            args: Prisma.SelectSubset<T, Prisma.AssignmentTypeUpdateArgs>,
-            options?: Omit<(UseMutationOptions<(CheckSelect<T, AssignmentType, Prisma.AssignmentTypeGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.AssignmentTypeUpdateArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as (CheckSelect<T, AssignmentType, Prisma.AssignmentTypeGetPayload<T>> | undefined);
-        },
-    };
-    return mutation;
+export function useUpdateAssignmentType(options?: Omit<UseMutationOptions<AssignmentType | undefined, DefaultError, Prisma.AssignmentTypeUpdateArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.AssignmentTypeUpdateArgs, DefaultError, AssignmentType, true>('AssignmentType', 'PUT', `${endpoint}/assignmentType/update`, metadata, options, fetch, true);
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.AssignmentTypeUpdateArgs>(
+      args: Prisma.SelectSubset<T, Prisma.AssignmentTypeUpdateArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, AssignmentType, Prisma.AssignmentTypeGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AssignmentTypeUpdateArgs>> &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, AssignmentType, Prisma.AssignmentTypeGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
 }
 
-export function useUpdateManyAssignmentType(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.AssignmentTypeUpdateManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.AssignmentTypeUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('AssignmentType', 'PUT', `${endpoint}/assignmentType/updateMany`, metadata, options, fetch, false)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.AssignmentTypeUpdateManyArgs>(
-            args: Prisma.SelectSubset<T, Prisma.AssignmentTypeUpdateManyArgs>,
-            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.AssignmentTypeUpdateManyArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as Prisma.BatchPayload;
-        },
-    };
-    return mutation;
+export function useUpdateManyAssignmentType(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.AssignmentTypeUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.AssignmentTypeUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'AssignmentType',
+    'PUT',
+    `${endpoint}/assignmentType/updateMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.AssignmentTypeUpdateManyArgs>(
+      args: Prisma.SelectSubset<T, Prisma.AssignmentTypeUpdateManyArgs>,
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.AssignmentTypeUpdateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
+    },
+  };
+  return mutation;
 }
 
-export function useUpsertAssignmentType(options?: Omit<(UseMutationOptions<(AssignmentType | undefined), DefaultError, Prisma.AssignmentTypeUpsertArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.AssignmentTypeUpsertArgs, DefaultError, AssignmentType, true>('AssignmentType', 'POST', `${endpoint}/assignmentType/upsert`, metadata, options, fetch, true)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.AssignmentTypeUpsertArgs>(
-            args: Prisma.SelectSubset<T, Prisma.AssignmentTypeUpsertArgs>,
-            options?: Omit<(UseMutationOptions<(CheckSelect<T, AssignmentType, Prisma.AssignmentTypeGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.AssignmentTypeUpsertArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as (CheckSelect<T, AssignmentType, Prisma.AssignmentTypeGetPayload<T>> | undefined);
-        },
-    };
-    return mutation;
+export function useUpsertAssignmentType(options?: Omit<UseMutationOptions<AssignmentType | undefined, DefaultError, Prisma.AssignmentTypeUpsertArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.AssignmentTypeUpsertArgs, DefaultError, AssignmentType, true>(
+    'AssignmentType',
+    'POST',
+    `${endpoint}/assignmentType/upsert`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.AssignmentTypeUpsertArgs>(
+      args: Prisma.SelectSubset<T, Prisma.AssignmentTypeUpsertArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, AssignmentType, Prisma.AssignmentTypeGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AssignmentTypeUpsertArgs>> &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, AssignmentType, Prisma.AssignmentTypeGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
 }
 
-export function useDeleteAssignmentType(options?: Omit<(UseMutationOptions<(AssignmentType | undefined), DefaultError, Prisma.AssignmentTypeDeleteArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.AssignmentTypeDeleteArgs, DefaultError, AssignmentType, true>('AssignmentType', 'DELETE', `${endpoint}/assignmentType/delete`, metadata, options, fetch, true)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.AssignmentTypeDeleteArgs>(
-            args: Prisma.SelectSubset<T, Prisma.AssignmentTypeDeleteArgs>,
-            options?: Omit<(UseMutationOptions<(CheckSelect<T, AssignmentType, Prisma.AssignmentTypeGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.AssignmentTypeDeleteArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as (CheckSelect<T, AssignmentType, Prisma.AssignmentTypeGetPayload<T>> | undefined);
-        },
-    };
-    return mutation;
+export function useDeleteAssignmentType(options?: Omit<UseMutationOptions<AssignmentType | undefined, DefaultError, Prisma.AssignmentTypeDeleteArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.AssignmentTypeDeleteArgs, DefaultError, AssignmentType, true>(
+    'AssignmentType',
+    'DELETE',
+    `${endpoint}/assignmentType/delete`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.AssignmentTypeDeleteArgs>(
+      args: Prisma.SelectSubset<T, Prisma.AssignmentTypeDeleteArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, AssignmentType, Prisma.AssignmentTypeGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.AssignmentTypeDeleteArgs>> &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, AssignmentType, Prisma.AssignmentTypeGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
 }
 
-export function useDeleteManyAssignmentType(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.AssignmentTypeDeleteManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.AssignmentTypeDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('AssignmentType', 'DELETE', `${endpoint}/assignmentType/deleteMany`, metadata, options, fetch, false)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.AssignmentTypeDeleteManyArgs>(
-            args: Prisma.SelectSubset<T, Prisma.AssignmentTypeDeleteManyArgs>,
-            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.AssignmentTypeDeleteManyArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as Prisma.BatchPayload;
-        },
-    };
-    return mutation;
+export function useDeleteManyAssignmentType(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.AssignmentTypeDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.AssignmentTypeDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'AssignmentType',
+    'DELETE',
+    `${endpoint}/assignmentType/deleteMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.AssignmentTypeDeleteManyArgs>(
+      args: Prisma.SelectSubset<T, Prisma.AssignmentTypeDeleteManyArgs>,
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.AssignmentTypeDeleteManyArgs>> & ExtraMutationOptions, 'mutationFn'>
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
+    },
+  };
+  return mutation;
 }
 
-export function useAggregateAssignmentType<TArgs extends Prisma.AssignmentTypeAggregateArgs, TQueryFnData = Prisma.GetAssignmentTypeAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeAggregateArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/aggregate`, args, options, fetch);
+export function useAggregateAssignmentType<TArgs extends Prisma.AssignmentTypeAggregateArgs, TQueryFnData = Prisma.GetAssignmentTypeAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeAggregateArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/aggregate`, args, options, fetch);
 }
 
-export function useSuspenseAggregateAssignmentType<TArgs extends Prisma.AssignmentTypeAggregateArgs, TQueryFnData = Prisma.GetAssignmentTypeAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeAggregateArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/aggregate`, args, options, fetch);
+export function useSuspenseAggregateAssignmentType<
+  TArgs extends Prisma.AssignmentTypeAggregateArgs,
+  TQueryFnData = Prisma.GetAssignmentTypeAggregateType<TArgs>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/aggregate`, args, options, fetch);
 }
 
-export function useGroupByAssignmentType<TArgs extends Prisma.AssignmentTypeGroupByArgs, HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>, OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.AssignmentTypeGroupByArgs['orderBy'] } : { orderBy?: Prisma.AssignmentTypeGroupByArgs['orderBy'] }, OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>, ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>, ByValid extends Prisma.Has<ByFields, OrderFields>, HavingFields extends Prisma.GetHavingFields<TArgs['having']>, HavingValid extends Prisma.Has<ByFields, HavingFields>, ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False, InputErrors extends ByEmpty extends Prisma.True
+export function useGroupByAssignmentType<
+  TArgs extends Prisma.AssignmentTypeGroupByArgs,
+  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
+  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.AssignmentTypeGroupByArgs['orderBy'] } : { orderBy?: Prisma.AssignmentTypeGroupByArgs['orderBy'] },
+  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
+  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
+  ByValid extends Prisma.Has<ByFields, OrderFields>,
+  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
+  HavingValid extends Prisma.Has<ByFields, HavingFields>,
+  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
+  InputErrors extends ByEmpty extends Prisma.True
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
-    ? {
-        [P in HavingFields]: P extends ByFields
-        ? never
-        : P extends string
-        ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-        : [
-            Error,
-            'Field ',
-            P,
-            ` in "having" needs to be provided in "by"`,
-        ]
-    }[HavingFields]
-    : 'take' extends Prisma.Keys<TArgs>
-    ? 'orderBy' extends Prisma.Keys<TArgs>
-    ? ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields]
-    : 'Error: If you provide "take", you also need to provide "orderBy"'
-    : 'skip' extends Prisma.Keys<TArgs>
-    ? 'orderBy' extends Prisma.Keys<TArgs>
-    ? ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields]
-    : 'Error: If you provide "skip", you also need to provide "orderBy"'
-    : ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields], TQueryFnData = {} extends InputErrors ?
-    Array<PickEnumerable<Prisma.AssignmentTypeGroupByOutputType, TArgs['by']> &
-    {
-        [P in ((keyof TArgs) & (keyof Prisma.AssignmentTypeGroupByOutputType))]: P extends '_count'
-        ? TArgs[P] extends boolean
-        ? number
-        : Prisma.GetScalarType<TArgs[P], Prisma.AssignmentTypeGroupByOutputType[P]>
-        : Prisma.GetScalarType<TArgs[P], Prisma.AssignmentTypeGroupByOutputType[P]>
-    }
-    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.AssignmentTypeGroupByArgs, OrderByArg> & InputErrors>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/groupBy`, args, options, fetch);
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+        }[HavingFields]
+      : 'take' extends Prisma.Keys<TArgs>
+        ? 'orderBy' extends Prisma.Keys<TArgs>
+          ? ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields]
+          : 'Error: If you provide "take", you also need to provide "orderBy"'
+        : 'skip' extends Prisma.Keys<TArgs>
+          ? 'orderBy' extends Prisma.Keys<TArgs>
+            ? ByValid extends Prisma.True
+              ? {}
+              : {
+                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+                }[OrderFields]
+            : 'Error: If you provide "skip", you also need to provide "orderBy"'
+          : ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields],
+  TQueryFnData = {} extends InputErrors
+    ? Array<
+        PickEnumerable<Prisma.AssignmentTypeGroupByOutputType, TArgs['by']> & {
+          [P in keyof TArgs & keyof Prisma.AssignmentTypeGroupByOutputType]: P extends '_count'
+            ? TArgs[P] extends boolean
+              ? number
+              : Prisma.GetScalarType<TArgs[P], Prisma.AssignmentTypeGroupByOutputType[P]>
+            : Prisma.GetScalarType<TArgs[P], Prisma.AssignmentTypeGroupByOutputType[P]>;
+        }
+      >
+    : InputErrors,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.AssignmentTypeGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/groupBy`, args, options, fetch);
 }
 
-export function useSuspenseGroupByAssignmentType<TArgs extends Prisma.AssignmentTypeGroupByArgs, HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>, OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.AssignmentTypeGroupByArgs['orderBy'] } : { orderBy?: Prisma.AssignmentTypeGroupByArgs['orderBy'] }, OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>, ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>, ByValid extends Prisma.Has<ByFields, OrderFields>, HavingFields extends Prisma.GetHavingFields<TArgs['having']>, HavingValid extends Prisma.Has<ByFields, HavingFields>, ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False, InputErrors extends ByEmpty extends Prisma.True
+export function useSuspenseGroupByAssignmentType<
+  TArgs extends Prisma.AssignmentTypeGroupByArgs,
+  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
+  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.AssignmentTypeGroupByArgs['orderBy'] } : { orderBy?: Prisma.AssignmentTypeGroupByArgs['orderBy'] },
+  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
+  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
+  ByValid extends Prisma.Has<ByFields, OrderFields>,
+  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
+  HavingValid extends Prisma.Has<ByFields, HavingFields>,
+  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
+  InputErrors extends ByEmpty extends Prisma.True
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
-    ? {
-        [P in HavingFields]: P extends ByFields
-        ? never
-        : P extends string
-        ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-        : [
-            Error,
-            'Field ',
-            P,
-            ` in "having" needs to be provided in "by"`,
-        ]
-    }[HavingFields]
-    : 'take' extends Prisma.Keys<TArgs>
-    ? 'orderBy' extends Prisma.Keys<TArgs>
-    ? ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields]
-    : 'Error: If you provide "take", you also need to provide "orderBy"'
-    : 'skip' extends Prisma.Keys<TArgs>
-    ? 'orderBy' extends Prisma.Keys<TArgs>
-    ? ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields]
-    : 'Error: If you provide "skip", you also need to provide "orderBy"'
-    : ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields], TQueryFnData = {} extends InputErrors ?
-    Array<PickEnumerable<Prisma.AssignmentTypeGroupByOutputType, TArgs['by']> &
-    {
-        [P in ((keyof TArgs) & (keyof Prisma.AssignmentTypeGroupByOutputType))]: P extends '_count'
-        ? TArgs[P] extends boolean
-        ? number
-        : Prisma.GetScalarType<TArgs[P], Prisma.AssignmentTypeGroupByOutputType[P]>
-        : Prisma.GetScalarType<TArgs[P], Prisma.AssignmentTypeGroupByOutputType[P]>
-    }
-    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.AssignmentTypeGroupByArgs, OrderByArg> & InputErrors>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/groupBy`, args, options, fetch);
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+        }[HavingFields]
+      : 'take' extends Prisma.Keys<TArgs>
+        ? 'orderBy' extends Prisma.Keys<TArgs>
+          ? ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields]
+          : 'Error: If you provide "take", you also need to provide "orderBy"'
+        : 'skip' extends Prisma.Keys<TArgs>
+          ? 'orderBy' extends Prisma.Keys<TArgs>
+            ? ByValid extends Prisma.True
+              ? {}
+              : {
+                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+                }[OrderFields]
+            : 'Error: If you provide "skip", you also need to provide "orderBy"'
+          : ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields],
+  TQueryFnData = {} extends InputErrors
+    ? Array<
+        PickEnumerable<Prisma.AssignmentTypeGroupByOutputType, TArgs['by']> & {
+          [P in keyof TArgs & keyof Prisma.AssignmentTypeGroupByOutputType]: P extends '_count'
+            ? TArgs[P] extends boolean
+              ? number
+              : Prisma.GetScalarType<TArgs[P], Prisma.AssignmentTypeGroupByOutputType[P]>
+            : Prisma.GetScalarType<TArgs[P], Prisma.AssignmentTypeGroupByOutputType[P]>;
+        }
+      >
+    : InputErrors,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.AssignmentTypeGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/groupBy`, args, options, fetch);
 }
 
-export function useCountAssignmentType<TArgs extends Prisma.AssignmentTypeCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.AssignmentTypeCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeCountArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/count`, args, options, fetch);
+export function useCountAssignmentType<
+  TArgs extends Prisma.AssignmentTypeCountArgs,
+  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.AssignmentTypeCountAggregateOutputType>) : number,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeCountArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/count`, args, options, fetch);
 }
 
-export function useSuspenseCountAssignmentType<TArgs extends Prisma.AssignmentTypeCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.AssignmentTypeCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeCountArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/count`, args, options, fetch);
+export function useSuspenseCountAssignmentType<
+  TArgs extends Prisma.AssignmentTypeCountArgs,
+  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.AssignmentTypeCountAggregateOutputType>) : number,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.AssignmentTypeCountArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('AssignmentType', `${endpoint}/assignmentType/count`, args, options, fetch);
 }
 
-export function useCheckAssignmentType<TError = DefaultError>(args: { operation: PolicyCrudKind; where?: { id?: string; name?: string; description?: string; isActive?: boolean; createdBy?: string; updatedBy?: string; tenantId?: string; systemName?: string }; }, options?: (Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<boolean, boolean, TError>('AssignmentType', `${endpoint}/assignmentType/check`, args, options, fetch);
+export function useCheckAssignmentType<TError = DefaultError>(
+  args: { operation: PolicyCrudKind; where?: { id?: string; name?: string; description?: string; isActive?: boolean; createdBy?: string; updatedBy?: string; tenantId?: string; systemName?: string } },
+  options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<boolean, boolean, TError>('AssignmentType', `${endpoint}/assignmentType/check`, args, options, fetch);
 }

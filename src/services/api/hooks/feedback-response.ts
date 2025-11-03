@@ -4,330 +4,443 @@
 
 /* eslint-disable */
 
-import type { Prisma, FeedbackResponse } from "@zenstackhq/runtime/models";
-import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/react-query';
-import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
-import type { PolicyCrudKind } from '@zenstackhq/runtime'
+import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
+import type { PolicyCrudKind } from '@zenstackhq/runtime';
+import type { FeedbackResponse, Prisma } from '@zenstackhq/runtime/models';
+import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
+import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
+
 import metadata from './__model_meta';
+
 type DefaultError = QueryError;
-import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
 
-export function useCreateFeedbackResponse(options?: Omit<(UseMutationOptions<(FeedbackResponse | undefined), DefaultError, Prisma.FeedbackResponseCreateArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.FeedbackResponseCreateArgs, DefaultError, FeedbackResponse, true>('FeedbackResponse', 'POST', `${endpoint}/feedbackResponse/create`, metadata, options, fetch, true)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.FeedbackResponseCreateArgs>(
-            args: Prisma.SelectSubset<T, Prisma.FeedbackResponseCreateArgs>,
-            options?: Omit<(UseMutationOptions<(CheckSelect<T, FeedbackResponse, Prisma.FeedbackResponseGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.FeedbackResponseCreateArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as (CheckSelect<T, FeedbackResponse, Prisma.FeedbackResponseGetPayload<T>> | undefined);
-        },
-    };
-    return mutation;
+export function useCreateFeedbackResponse(options?: Omit<UseMutationOptions<FeedbackResponse | undefined, DefaultError, Prisma.FeedbackResponseCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.FeedbackResponseCreateArgs, DefaultError, FeedbackResponse, true>(
+    'FeedbackResponse',
+    'POST',
+    `${endpoint}/feedbackResponse/create`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.FeedbackResponseCreateArgs>(
+      args: Prisma.SelectSubset<T, Prisma.FeedbackResponseCreateArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, FeedbackResponse, Prisma.FeedbackResponseGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.FeedbackResponseCreateArgs>> &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, FeedbackResponse, Prisma.FeedbackResponseGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
 }
 
-export function useCreateManyFeedbackResponse(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.FeedbackResponseCreateManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.FeedbackResponseCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('FeedbackResponse', 'POST', `${endpoint}/feedbackResponse/createMany`, metadata, options, fetch, false)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.FeedbackResponseCreateManyArgs>(
-            args: Prisma.SelectSubset<T, Prisma.FeedbackResponseCreateManyArgs>,
-            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.FeedbackResponseCreateManyArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as Prisma.BatchPayload;
-        },
-    };
-    return mutation;
+export function useCreateManyFeedbackResponse(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.FeedbackResponseCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.FeedbackResponseCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'FeedbackResponse',
+    'POST',
+    `${endpoint}/feedbackResponse/createMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.FeedbackResponseCreateManyArgs>(
+      args: Prisma.SelectSubset<T, Prisma.FeedbackResponseCreateManyArgs>,
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.FeedbackResponseCreateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
+    },
+  };
+  return mutation;
 }
 
-export function useFindManyFeedbackResponse<TArgs extends Prisma.FeedbackResponseFindManyArgs, TQueryFnData = Array<Prisma.FeedbackResponseGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseFindManyArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/findMany`, args, options, fetch);
+export function useFindManyFeedbackResponse<
+  TArgs extends Prisma.FeedbackResponseFindManyArgs,
+  TQueryFnData = Array<Prisma.FeedbackResponseGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/findMany`, args, options, fetch);
 }
 
-export function useInfiniteFindManyFeedbackResponse<TArgs extends Prisma.FeedbackResponseFindManyArgs, TQueryFnData = Array<Prisma.FeedbackResponseGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseFindManyArgs>, options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
-    options = options ?? { getNextPageParam: () => null };
-    const { endpoint, fetch } = getHooksContext();
-    return useInfiniteModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/findMany`, args, options, fetch);
+export function useInfiniteFindManyFeedbackResponse<
+  TArgs extends Prisma.FeedbackResponseFindManyArgs,
+  TQueryFnData = Array<Prisma.FeedbackResponseGetPayload<TArgs>>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseFindManyArgs>, options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
+  options = options ?? { getNextPageParam: () => null };
+  const { endpoint, fetch } = getHooksContext();
+  return useInfiniteModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/findMany`, args, options, fetch);
 }
 
-export function useSuspenseFindManyFeedbackResponse<TArgs extends Prisma.FeedbackResponseFindManyArgs, TQueryFnData = Array<Prisma.FeedbackResponseGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseFindManyArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/findMany`, args, options, fetch);
+export function useSuspenseFindManyFeedbackResponse<
+  TArgs extends Prisma.FeedbackResponseFindManyArgs,
+  TQueryFnData = Array<Prisma.FeedbackResponseGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/findMany`, args, options, fetch);
 }
 
-export function useSuspenseInfiniteFindManyFeedbackResponse<TArgs extends Prisma.FeedbackResponseFindManyArgs, TQueryFnData = Array<Prisma.FeedbackResponseGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseFindManyArgs>, options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
-    options = options ?? { getNextPageParam: () => null };
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/findMany`, args, options, fetch);
+export function useSuspenseInfiniteFindManyFeedbackResponse<
+  TArgs extends Prisma.FeedbackResponseFindManyArgs,
+  TQueryFnData = Array<Prisma.FeedbackResponseGetPayload<TArgs>>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseFindManyArgs>, options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
+  options = options ?? { getNextPageParam: () => null };
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/findMany`, args, options, fetch);
 }
 
-export function useFindUniqueFeedbackResponse<TArgs extends Prisma.FeedbackResponseFindUniqueArgs, TQueryFnData = Prisma.FeedbackResponseGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseFindUniqueArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/findUnique`, args, options, fetch);
+export function useFindUniqueFeedbackResponse<
+  TArgs extends Prisma.FeedbackResponseFindUniqueArgs,
+  TQueryFnData = Prisma.FeedbackResponseGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/findUnique`, args, options, fetch);
 }
 
-export function useSuspenseFindUniqueFeedbackResponse<TArgs extends Prisma.FeedbackResponseFindUniqueArgs, TQueryFnData = Prisma.FeedbackResponseGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseFindUniqueArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/findUnique`, args, options, fetch);
+export function useSuspenseFindUniqueFeedbackResponse<
+  TArgs extends Prisma.FeedbackResponseFindUniqueArgs,
+  TQueryFnData = Prisma.FeedbackResponseGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstFeedbackResponse<TArgs extends Prisma.FeedbackResponseFindFirstArgs, TQueryFnData = Prisma.FeedbackResponseGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseFindFirstArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/findFirst`, args, options, fetch);
+export function useFindFirstFeedbackResponse<
+  TArgs extends Prisma.FeedbackResponseFindFirstArgs,
+  TQueryFnData = Prisma.FeedbackResponseGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/findFirst`, args, options, fetch);
 }
 
-export function useSuspenseFindFirstFeedbackResponse<TArgs extends Prisma.FeedbackResponseFindFirstArgs, TQueryFnData = Prisma.FeedbackResponseGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseFindFirstArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/findFirst`, args, options, fetch);
+export function useSuspenseFindFirstFeedbackResponse<
+  TArgs extends Prisma.FeedbackResponseFindFirstArgs,
+  TQueryFnData = Prisma.FeedbackResponseGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/findFirst`, args, options, fetch);
 }
 
-export function useUpdateFeedbackResponse(options?: Omit<(UseMutationOptions<(FeedbackResponse | undefined), DefaultError, Prisma.FeedbackResponseUpdateArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.FeedbackResponseUpdateArgs, DefaultError, FeedbackResponse, true>('FeedbackResponse', 'PUT', `${endpoint}/feedbackResponse/update`, metadata, options, fetch, true)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.FeedbackResponseUpdateArgs>(
-            args: Prisma.SelectSubset<T, Prisma.FeedbackResponseUpdateArgs>,
-            options?: Omit<(UseMutationOptions<(CheckSelect<T, FeedbackResponse, Prisma.FeedbackResponseGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.FeedbackResponseUpdateArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as (CheckSelect<T, FeedbackResponse, Prisma.FeedbackResponseGetPayload<T>> | undefined);
-        },
-    };
-    return mutation;
+export function useUpdateFeedbackResponse(options?: Omit<UseMutationOptions<FeedbackResponse | undefined, DefaultError, Prisma.FeedbackResponseUpdateArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.FeedbackResponseUpdateArgs, DefaultError, FeedbackResponse, true>(
+    'FeedbackResponse',
+    'PUT',
+    `${endpoint}/feedbackResponse/update`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.FeedbackResponseUpdateArgs>(
+      args: Prisma.SelectSubset<T, Prisma.FeedbackResponseUpdateArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, FeedbackResponse, Prisma.FeedbackResponseGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.FeedbackResponseUpdateArgs>> &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, FeedbackResponse, Prisma.FeedbackResponseGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
 }
 
-export function useUpdateManyFeedbackResponse(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.FeedbackResponseUpdateManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.FeedbackResponseUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('FeedbackResponse', 'PUT', `${endpoint}/feedbackResponse/updateMany`, metadata, options, fetch, false)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.FeedbackResponseUpdateManyArgs>(
-            args: Prisma.SelectSubset<T, Prisma.FeedbackResponseUpdateManyArgs>,
-            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.FeedbackResponseUpdateManyArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as Prisma.BatchPayload;
-        },
-    };
-    return mutation;
+export function useUpdateManyFeedbackResponse(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.FeedbackResponseUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.FeedbackResponseUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'FeedbackResponse',
+    'PUT',
+    `${endpoint}/feedbackResponse/updateMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.FeedbackResponseUpdateManyArgs>(
+      args: Prisma.SelectSubset<T, Prisma.FeedbackResponseUpdateManyArgs>,
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.FeedbackResponseUpdateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
+    },
+  };
+  return mutation;
 }
 
-export function useUpsertFeedbackResponse(options?: Omit<(UseMutationOptions<(FeedbackResponse | undefined), DefaultError, Prisma.FeedbackResponseUpsertArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.FeedbackResponseUpsertArgs, DefaultError, FeedbackResponse, true>('FeedbackResponse', 'POST', `${endpoint}/feedbackResponse/upsert`, metadata, options, fetch, true)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.FeedbackResponseUpsertArgs>(
-            args: Prisma.SelectSubset<T, Prisma.FeedbackResponseUpsertArgs>,
-            options?: Omit<(UseMutationOptions<(CheckSelect<T, FeedbackResponse, Prisma.FeedbackResponseGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.FeedbackResponseUpsertArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as (CheckSelect<T, FeedbackResponse, Prisma.FeedbackResponseGetPayload<T>> | undefined);
-        },
-    };
-    return mutation;
+export function useUpsertFeedbackResponse(options?: Omit<UseMutationOptions<FeedbackResponse | undefined, DefaultError, Prisma.FeedbackResponseUpsertArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.FeedbackResponseUpsertArgs, DefaultError, FeedbackResponse, true>(
+    'FeedbackResponse',
+    'POST',
+    `${endpoint}/feedbackResponse/upsert`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.FeedbackResponseUpsertArgs>(
+      args: Prisma.SelectSubset<T, Prisma.FeedbackResponseUpsertArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, FeedbackResponse, Prisma.FeedbackResponseGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.FeedbackResponseUpsertArgs>> &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, FeedbackResponse, Prisma.FeedbackResponseGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
 }
 
-export function useDeleteFeedbackResponse(options?: Omit<(UseMutationOptions<(FeedbackResponse | undefined), DefaultError, Prisma.FeedbackResponseDeleteArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.FeedbackResponseDeleteArgs, DefaultError, FeedbackResponse, true>('FeedbackResponse', 'DELETE', `${endpoint}/feedbackResponse/delete`, metadata, options, fetch, true)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.FeedbackResponseDeleteArgs>(
-            args: Prisma.SelectSubset<T, Prisma.FeedbackResponseDeleteArgs>,
-            options?: Omit<(UseMutationOptions<(CheckSelect<T, FeedbackResponse, Prisma.FeedbackResponseGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.FeedbackResponseDeleteArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as (CheckSelect<T, FeedbackResponse, Prisma.FeedbackResponseGetPayload<T>> | undefined);
-        },
-    };
-    return mutation;
+export function useDeleteFeedbackResponse(options?: Omit<UseMutationOptions<FeedbackResponse | undefined, DefaultError, Prisma.FeedbackResponseDeleteArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.FeedbackResponseDeleteArgs, DefaultError, FeedbackResponse, true>(
+    'FeedbackResponse',
+    'DELETE',
+    `${endpoint}/feedbackResponse/delete`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.FeedbackResponseDeleteArgs>(
+      args: Prisma.SelectSubset<T, Prisma.FeedbackResponseDeleteArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, FeedbackResponse, Prisma.FeedbackResponseGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.FeedbackResponseDeleteArgs>> &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, FeedbackResponse, Prisma.FeedbackResponseGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
 }
 
-export function useDeleteManyFeedbackResponse(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.FeedbackResponseDeleteManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.FeedbackResponseDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('FeedbackResponse', 'DELETE', `${endpoint}/feedbackResponse/deleteMany`, metadata, options, fetch, false)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.FeedbackResponseDeleteManyArgs>(
-            args: Prisma.SelectSubset<T, Prisma.FeedbackResponseDeleteManyArgs>,
-            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.FeedbackResponseDeleteManyArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as Prisma.BatchPayload;
-        },
-    };
-    return mutation;
+export function useDeleteManyFeedbackResponse(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.FeedbackResponseDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.FeedbackResponseDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'FeedbackResponse',
+    'DELETE',
+    `${endpoint}/feedbackResponse/deleteMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.FeedbackResponseDeleteManyArgs>(
+      args: Prisma.SelectSubset<T, Prisma.FeedbackResponseDeleteManyArgs>,
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.FeedbackResponseDeleteManyArgs>> & ExtraMutationOptions, 'mutationFn'>
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
+    },
+  };
+  return mutation;
 }
 
-export function useAggregateFeedbackResponse<TArgs extends Prisma.FeedbackResponseAggregateArgs, TQueryFnData = Prisma.GetFeedbackResponseAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseAggregateArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/aggregate`, args, options, fetch);
+export function useAggregateFeedbackResponse<
+  TArgs extends Prisma.FeedbackResponseAggregateArgs,
+  TQueryFnData = Prisma.GetFeedbackResponseAggregateType<TArgs>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseAggregateArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/aggregate`, args, options, fetch);
 }
 
-export function useSuspenseAggregateFeedbackResponse<TArgs extends Prisma.FeedbackResponseAggregateArgs, TQueryFnData = Prisma.GetFeedbackResponseAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseAggregateArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/aggregate`, args, options, fetch);
+export function useSuspenseAggregateFeedbackResponse<
+  TArgs extends Prisma.FeedbackResponseAggregateArgs,
+  TQueryFnData = Prisma.GetFeedbackResponseAggregateType<TArgs>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/aggregate`, args, options, fetch);
 }
 
-export function useGroupByFeedbackResponse<TArgs extends Prisma.FeedbackResponseGroupByArgs, HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>, OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.FeedbackResponseGroupByArgs['orderBy'] } : { orderBy?: Prisma.FeedbackResponseGroupByArgs['orderBy'] }, OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>, ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>, ByValid extends Prisma.Has<ByFields, OrderFields>, HavingFields extends Prisma.GetHavingFields<TArgs['having']>, HavingValid extends Prisma.Has<ByFields, HavingFields>, ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False, InputErrors extends ByEmpty extends Prisma.True
+export function useGroupByFeedbackResponse<
+  TArgs extends Prisma.FeedbackResponseGroupByArgs,
+  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
+  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.FeedbackResponseGroupByArgs['orderBy'] } : { orderBy?: Prisma.FeedbackResponseGroupByArgs['orderBy'] },
+  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
+  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
+  ByValid extends Prisma.Has<ByFields, OrderFields>,
+  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
+  HavingValid extends Prisma.Has<ByFields, HavingFields>,
+  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
+  InputErrors extends ByEmpty extends Prisma.True
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
-    ? {
-        [P in HavingFields]: P extends ByFields
-        ? never
-        : P extends string
-        ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-        : [
-            Error,
-            'Field ',
-            P,
-            ` in "having" needs to be provided in "by"`,
-        ]
-    }[HavingFields]
-    : 'take' extends Prisma.Keys<TArgs>
-    ? 'orderBy' extends Prisma.Keys<TArgs>
-    ? ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields]
-    : 'Error: If you provide "take", you also need to provide "orderBy"'
-    : 'skip' extends Prisma.Keys<TArgs>
-    ? 'orderBy' extends Prisma.Keys<TArgs>
-    ? ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields]
-    : 'Error: If you provide "skip", you also need to provide "orderBy"'
-    : ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields], TQueryFnData = {} extends InputErrors ?
-    Array<PickEnumerable<Prisma.FeedbackResponseGroupByOutputType, TArgs['by']> &
-    {
-        [P in ((keyof TArgs) & (keyof Prisma.FeedbackResponseGroupByOutputType))]: P extends '_count'
-        ? TArgs[P] extends boolean
-        ? number
-        : Prisma.GetScalarType<TArgs[P], Prisma.FeedbackResponseGroupByOutputType[P]>
-        : Prisma.GetScalarType<TArgs[P], Prisma.FeedbackResponseGroupByOutputType[P]>
-    }
-    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.FeedbackResponseGroupByArgs, OrderByArg> & InputErrors>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/groupBy`, args, options, fetch);
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+        }[HavingFields]
+      : 'take' extends Prisma.Keys<TArgs>
+        ? 'orderBy' extends Prisma.Keys<TArgs>
+          ? ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields]
+          : 'Error: If you provide "take", you also need to provide "orderBy"'
+        : 'skip' extends Prisma.Keys<TArgs>
+          ? 'orderBy' extends Prisma.Keys<TArgs>
+            ? ByValid extends Prisma.True
+              ? {}
+              : {
+                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+                }[OrderFields]
+            : 'Error: If you provide "skip", you also need to provide "orderBy"'
+          : ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields],
+  TQueryFnData = {} extends InputErrors
+    ? Array<
+        PickEnumerable<Prisma.FeedbackResponseGroupByOutputType, TArgs['by']> & {
+          [P in keyof TArgs & keyof Prisma.FeedbackResponseGroupByOutputType]: P extends '_count'
+            ? TArgs[P] extends boolean
+              ? number
+              : Prisma.GetScalarType<TArgs[P], Prisma.FeedbackResponseGroupByOutputType[P]>
+            : Prisma.GetScalarType<TArgs[P], Prisma.FeedbackResponseGroupByOutputType[P]>;
+        }
+      >
+    : InputErrors,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.FeedbackResponseGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/groupBy`, args, options, fetch);
 }
 
-export function useSuspenseGroupByFeedbackResponse<TArgs extends Prisma.FeedbackResponseGroupByArgs, HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>, OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.FeedbackResponseGroupByArgs['orderBy'] } : { orderBy?: Prisma.FeedbackResponseGroupByArgs['orderBy'] }, OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>, ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>, ByValid extends Prisma.Has<ByFields, OrderFields>, HavingFields extends Prisma.GetHavingFields<TArgs['having']>, HavingValid extends Prisma.Has<ByFields, HavingFields>, ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False, InputErrors extends ByEmpty extends Prisma.True
+export function useSuspenseGroupByFeedbackResponse<
+  TArgs extends Prisma.FeedbackResponseGroupByArgs,
+  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
+  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.FeedbackResponseGroupByArgs['orderBy'] } : { orderBy?: Prisma.FeedbackResponseGroupByArgs['orderBy'] },
+  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
+  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
+  ByValid extends Prisma.Has<ByFields, OrderFields>,
+  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
+  HavingValid extends Prisma.Has<ByFields, HavingFields>,
+  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
+  InputErrors extends ByEmpty extends Prisma.True
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
-    ? {
-        [P in HavingFields]: P extends ByFields
-        ? never
-        : P extends string
-        ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-        : [
-            Error,
-            'Field ',
-            P,
-            ` in "having" needs to be provided in "by"`,
-        ]
-    }[HavingFields]
-    : 'take' extends Prisma.Keys<TArgs>
-    ? 'orderBy' extends Prisma.Keys<TArgs>
-    ? ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields]
-    : 'Error: If you provide "take", you also need to provide "orderBy"'
-    : 'skip' extends Prisma.Keys<TArgs>
-    ? 'orderBy' extends Prisma.Keys<TArgs>
-    ? ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields]
-    : 'Error: If you provide "skip", you also need to provide "orderBy"'
-    : ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields], TQueryFnData = {} extends InputErrors ?
-    Array<PickEnumerable<Prisma.FeedbackResponseGroupByOutputType, TArgs['by']> &
-    {
-        [P in ((keyof TArgs) & (keyof Prisma.FeedbackResponseGroupByOutputType))]: P extends '_count'
-        ? TArgs[P] extends boolean
-        ? number
-        : Prisma.GetScalarType<TArgs[P], Prisma.FeedbackResponseGroupByOutputType[P]>
-        : Prisma.GetScalarType<TArgs[P], Prisma.FeedbackResponseGroupByOutputType[P]>
-    }
-    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.FeedbackResponseGroupByArgs, OrderByArg> & InputErrors>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/groupBy`, args, options, fetch);
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+        }[HavingFields]
+      : 'take' extends Prisma.Keys<TArgs>
+        ? 'orderBy' extends Prisma.Keys<TArgs>
+          ? ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields]
+          : 'Error: If you provide "take", you also need to provide "orderBy"'
+        : 'skip' extends Prisma.Keys<TArgs>
+          ? 'orderBy' extends Prisma.Keys<TArgs>
+            ? ByValid extends Prisma.True
+              ? {}
+              : {
+                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+                }[OrderFields]
+            : 'Error: If you provide "skip", you also need to provide "orderBy"'
+          : ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields],
+  TQueryFnData = {} extends InputErrors
+    ? Array<
+        PickEnumerable<Prisma.FeedbackResponseGroupByOutputType, TArgs['by']> & {
+          [P in keyof TArgs & keyof Prisma.FeedbackResponseGroupByOutputType]: P extends '_count'
+            ? TArgs[P] extends boolean
+              ? number
+              : Prisma.GetScalarType<TArgs[P], Prisma.FeedbackResponseGroupByOutputType[P]>
+            : Prisma.GetScalarType<TArgs[P], Prisma.FeedbackResponseGroupByOutputType[P]>;
+        }
+      >
+    : InputErrors,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.FeedbackResponseGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/groupBy`, args, options, fetch);
 }
 
-export function useCountFeedbackResponse<TArgs extends Prisma.FeedbackResponseCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.FeedbackResponseCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseCountArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/count`, args, options, fetch);
+export function useCountFeedbackResponse<
+  TArgs extends Prisma.FeedbackResponseCountArgs,
+  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.FeedbackResponseCountAggregateOutputType>) : number,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseCountArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/count`, args, options, fetch);
 }
 
-export function useSuspenseCountFeedbackResponse<TArgs extends Prisma.FeedbackResponseCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.FeedbackResponseCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseCountArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/count`, args, options, fetch);
+export function useSuspenseCountFeedbackResponse<
+  TArgs extends Prisma.FeedbackResponseCountArgs,
+  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.FeedbackResponseCountAggregateOutputType>) : number,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.FeedbackResponseCountArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/count`, args, options, fetch);
 }
 
-export function useCheckFeedbackResponse<TError = DefaultError>(args: { operation: PolicyCrudKind; where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; feedbackId?: string; data?: string; viewId?: string }; }, options?: (Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<boolean, boolean, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/check`, args, options, fetch);
+export function useCheckFeedbackResponse<TError = DefaultError>(
+  args: { operation: PolicyCrudKind; where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; feedbackId?: string; data?: string; viewId?: string } },
+  options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<boolean, boolean, TError>('FeedbackResponse', `${endpoint}/feedbackResponse/check`, args, options, fetch);
 }

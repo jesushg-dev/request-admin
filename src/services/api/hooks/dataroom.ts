@@ -4,330 +4,378 @@
 
 /* eslint-disable */
 
-import type { Prisma, Dataroom } from "@zenstackhq/runtime/models";
-import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/react-query';
-import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
-import type { PolicyCrudKind } from '@zenstackhq/runtime'
+import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
+import type { PolicyCrudKind } from '@zenstackhq/runtime';
+import type { Dataroom, Prisma } from '@zenstackhq/runtime/models';
+import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
+import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
+
 import metadata from './__model_meta';
+
 type DefaultError = QueryError;
-import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
 
-export function useCreateDataroom(options?: Omit<(UseMutationOptions<(Dataroom | undefined), DefaultError, Prisma.DataroomCreateArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.DataroomCreateArgs, DefaultError, Dataroom, true>('Dataroom', 'POST', `${endpoint}/dataroom/create`, metadata, options, fetch, true)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.DataroomCreateArgs>(
-            args: Prisma.SelectSubset<T, Prisma.DataroomCreateArgs>,
-            options?: Omit<(UseMutationOptions<(CheckSelect<T, Dataroom, Prisma.DataroomGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.DataroomCreateArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as (CheckSelect<T, Dataroom, Prisma.DataroomGetPayload<T>> | undefined);
-        },
-    };
-    return mutation;
+export function useCreateDataroom(options?: Omit<UseMutationOptions<Dataroom | undefined, DefaultError, Prisma.DataroomCreateArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.DataroomCreateArgs, DefaultError, Dataroom, true>('Dataroom', 'POST', `${endpoint}/dataroom/create`, metadata, options, fetch, true);
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.DataroomCreateArgs>(
+      args: Prisma.SelectSubset<T, Prisma.DataroomCreateArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, Dataroom, Prisma.DataroomGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.DataroomCreateArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Dataroom, Prisma.DataroomGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
 }
 
-export function useCreateManyDataroom(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.DataroomCreateManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.DataroomCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('Dataroom', 'POST', `${endpoint}/dataroom/createMany`, metadata, options, fetch, false)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.DataroomCreateManyArgs>(
-            args: Prisma.SelectSubset<T, Prisma.DataroomCreateManyArgs>,
-            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.DataroomCreateManyArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as Prisma.BatchPayload;
-        },
-    };
-    return mutation;
+export function useCreateManyDataroom(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.DataroomCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.DataroomCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('Dataroom', 'POST', `${endpoint}/dataroom/createMany`, metadata, options, fetch, false);
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.DataroomCreateManyArgs>(
+      args: Prisma.SelectSubset<T, Prisma.DataroomCreateManyArgs>,
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.DataroomCreateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
+    },
+  };
+  return mutation;
 }
 
-export function useFindManyDataroom<TArgs extends Prisma.DataroomFindManyArgs, TQueryFnData = Array<Prisma.DataroomGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.DataroomFindManyArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/findMany`, args, options, fetch);
+export function useFindManyDataroom<
+  TArgs extends Prisma.DataroomFindManyArgs,
+  TQueryFnData = Array<Prisma.DataroomGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.DataroomFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/findMany`, args, options, fetch);
 }
 
-export function useInfiniteFindManyDataroom<TArgs extends Prisma.DataroomFindManyArgs, TQueryFnData = Array<Prisma.DataroomGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.DataroomFindManyArgs>, options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
-    options = options ?? { getNextPageParam: () => null };
-    const { endpoint, fetch } = getHooksContext();
-    return useInfiniteModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/findMany`, args, options, fetch);
+export function useInfiniteFindManyDataroom<TArgs extends Prisma.DataroomFindManyArgs, TQueryFnData = Array<Prisma.DataroomGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.DataroomFindManyArgs>,
+  options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
+) {
+  options = options ?? { getNextPageParam: () => null };
+  const { endpoint, fetch } = getHooksContext();
+  return useInfiniteModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/findMany`, args, options, fetch);
 }
 
-export function useSuspenseFindManyDataroom<TArgs extends Prisma.DataroomFindManyArgs, TQueryFnData = Array<Prisma.DataroomGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.DataroomFindManyArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/findMany`, args, options, fetch);
+export function useSuspenseFindManyDataroom<
+  TArgs extends Prisma.DataroomFindManyArgs,
+  TQueryFnData = Array<Prisma.DataroomGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.DataroomFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/findMany`, args, options, fetch);
 }
 
-export function useSuspenseInfiniteFindManyDataroom<TArgs extends Prisma.DataroomFindManyArgs, TQueryFnData = Array<Prisma.DataroomGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.DataroomFindManyArgs>, options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
-    options = options ?? { getNextPageParam: () => null };
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/findMany`, args, options, fetch);
+export function useSuspenseInfiniteFindManyDataroom<TArgs extends Prisma.DataroomFindManyArgs, TQueryFnData = Array<Prisma.DataroomGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.DataroomFindManyArgs>,
+  options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
+) {
+  options = options ?? { getNextPageParam: () => null };
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/findMany`, args, options, fetch);
 }
 
-export function useFindUniqueDataroom<TArgs extends Prisma.DataroomFindUniqueArgs, TQueryFnData = Prisma.DataroomGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.DataroomFindUniqueArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/findUnique`, args, options, fetch);
+export function useFindUniqueDataroom<
+  TArgs extends Prisma.DataroomFindUniqueArgs,
+  TQueryFnData = Prisma.DataroomGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.DataroomFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/findUnique`, args, options, fetch);
 }
 
-export function useSuspenseFindUniqueDataroom<TArgs extends Prisma.DataroomFindUniqueArgs, TQueryFnData = Prisma.DataroomGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.DataroomFindUniqueArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/findUnique`, args, options, fetch);
+export function useSuspenseFindUniqueDataroom<
+  TArgs extends Prisma.DataroomFindUniqueArgs,
+  TQueryFnData = Prisma.DataroomGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.DataroomFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstDataroom<TArgs extends Prisma.DataroomFindFirstArgs, TQueryFnData = Prisma.DataroomGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.DataroomFindFirstArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/findFirst`, args, options, fetch);
+export function useFindFirstDataroom<
+  TArgs extends Prisma.DataroomFindFirstArgs,
+  TQueryFnData = Prisma.DataroomGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.DataroomFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/findFirst`, args, options, fetch);
 }
 
-export function useSuspenseFindFirstDataroom<TArgs extends Prisma.DataroomFindFirstArgs, TQueryFnData = Prisma.DataroomGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.DataroomFindFirstArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/findFirst`, args, options, fetch);
+export function useSuspenseFindFirstDataroom<
+  TArgs extends Prisma.DataroomFindFirstArgs,
+  TQueryFnData = Prisma.DataroomGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.DataroomFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/findFirst`, args, options, fetch);
 }
 
-export function useUpdateDataroom(options?: Omit<(UseMutationOptions<(Dataroom | undefined), DefaultError, Prisma.DataroomUpdateArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.DataroomUpdateArgs, DefaultError, Dataroom, true>('Dataroom', 'PUT', `${endpoint}/dataroom/update`, metadata, options, fetch, true)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.DataroomUpdateArgs>(
-            args: Prisma.SelectSubset<T, Prisma.DataroomUpdateArgs>,
-            options?: Omit<(UseMutationOptions<(CheckSelect<T, Dataroom, Prisma.DataroomGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.DataroomUpdateArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as (CheckSelect<T, Dataroom, Prisma.DataroomGetPayload<T>> | undefined);
-        },
-    };
-    return mutation;
+export function useUpdateDataroom(options?: Omit<UseMutationOptions<Dataroom | undefined, DefaultError, Prisma.DataroomUpdateArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.DataroomUpdateArgs, DefaultError, Dataroom, true>('Dataroom', 'PUT', `${endpoint}/dataroom/update`, metadata, options, fetch, true);
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.DataroomUpdateArgs>(
+      args: Prisma.SelectSubset<T, Prisma.DataroomUpdateArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, Dataroom, Prisma.DataroomGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.DataroomUpdateArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Dataroom, Prisma.DataroomGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
 }
 
-export function useUpdateManyDataroom(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.DataroomUpdateManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.DataroomUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('Dataroom', 'PUT', `${endpoint}/dataroom/updateMany`, metadata, options, fetch, false)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.DataroomUpdateManyArgs>(
-            args: Prisma.SelectSubset<T, Prisma.DataroomUpdateManyArgs>,
-            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.DataroomUpdateManyArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as Prisma.BatchPayload;
-        },
-    };
-    return mutation;
+export function useUpdateManyDataroom(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.DataroomUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.DataroomUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('Dataroom', 'PUT', `${endpoint}/dataroom/updateMany`, metadata, options, fetch, false);
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.DataroomUpdateManyArgs>(
+      args: Prisma.SelectSubset<T, Prisma.DataroomUpdateManyArgs>,
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.DataroomUpdateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
+    },
+  };
+  return mutation;
 }
 
-export function useUpsertDataroom(options?: Omit<(UseMutationOptions<(Dataroom | undefined), DefaultError, Prisma.DataroomUpsertArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.DataroomUpsertArgs, DefaultError, Dataroom, true>('Dataroom', 'POST', `${endpoint}/dataroom/upsert`, metadata, options, fetch, true)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.DataroomUpsertArgs>(
-            args: Prisma.SelectSubset<T, Prisma.DataroomUpsertArgs>,
-            options?: Omit<(UseMutationOptions<(CheckSelect<T, Dataroom, Prisma.DataroomGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.DataroomUpsertArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as (CheckSelect<T, Dataroom, Prisma.DataroomGetPayload<T>> | undefined);
-        },
-    };
-    return mutation;
+export function useUpsertDataroom(options?: Omit<UseMutationOptions<Dataroom | undefined, DefaultError, Prisma.DataroomUpsertArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.DataroomUpsertArgs, DefaultError, Dataroom, true>('Dataroom', 'POST', `${endpoint}/dataroom/upsert`, metadata, options, fetch, true);
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.DataroomUpsertArgs>(
+      args: Prisma.SelectSubset<T, Prisma.DataroomUpsertArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, Dataroom, Prisma.DataroomGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.DataroomUpsertArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Dataroom, Prisma.DataroomGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
 }
 
-export function useDeleteDataroom(options?: Omit<(UseMutationOptions<(Dataroom | undefined), DefaultError, Prisma.DataroomDeleteArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.DataroomDeleteArgs, DefaultError, Dataroom, true>('Dataroom', 'DELETE', `${endpoint}/dataroom/delete`, metadata, options, fetch, true)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.DataroomDeleteArgs>(
-            args: Prisma.SelectSubset<T, Prisma.DataroomDeleteArgs>,
-            options?: Omit<(UseMutationOptions<(CheckSelect<T, Dataroom, Prisma.DataroomGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.DataroomDeleteArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as (CheckSelect<T, Dataroom, Prisma.DataroomGetPayload<T>> | undefined);
-        },
-    };
-    return mutation;
+export function useDeleteDataroom(options?: Omit<UseMutationOptions<Dataroom | undefined, DefaultError, Prisma.DataroomDeleteArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.DataroomDeleteArgs, DefaultError, Dataroom, true>('Dataroom', 'DELETE', `${endpoint}/dataroom/delete`, metadata, options, fetch, true);
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.DataroomDeleteArgs>(
+      args: Prisma.SelectSubset<T, Prisma.DataroomDeleteArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, Dataroom, Prisma.DataroomGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.DataroomDeleteArgs>> & ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, Dataroom, Prisma.DataroomGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
 }
 
-export function useDeleteManyDataroom(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.DataroomDeleteManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.DataroomDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('Dataroom', 'DELETE', `${endpoint}/dataroom/deleteMany`, metadata, options, fetch, false)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.DataroomDeleteManyArgs>(
-            args: Prisma.SelectSubset<T, Prisma.DataroomDeleteManyArgs>,
-            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.DataroomDeleteManyArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as Prisma.BatchPayload;
-        },
-    };
-    return mutation;
+export function useDeleteManyDataroom(options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.DataroomDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.DataroomDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('Dataroom', 'DELETE', `${endpoint}/dataroom/deleteMany`, metadata, options, fetch, false);
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.DataroomDeleteManyArgs>(
+      args: Prisma.SelectSubset<T, Prisma.DataroomDeleteManyArgs>,
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.DataroomDeleteManyArgs>> & ExtraMutationOptions, 'mutationFn'>
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
+    },
+  };
+  return mutation;
 }
 
-export function useAggregateDataroom<TArgs extends Prisma.DataroomAggregateArgs, TQueryFnData = Prisma.GetDataroomAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.DataroomAggregateArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/aggregate`, args, options, fetch);
+export function useAggregateDataroom<TArgs extends Prisma.DataroomAggregateArgs, TQueryFnData = Prisma.GetDataroomAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.DataroomAggregateArgs>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/aggregate`, args, options, fetch);
 }
 
-export function useSuspenseAggregateDataroom<TArgs extends Prisma.DataroomAggregateArgs, TQueryFnData = Prisma.GetDataroomAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.DataroomAggregateArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/aggregate`, args, options, fetch);
+export function useSuspenseAggregateDataroom<TArgs extends Prisma.DataroomAggregateArgs, TQueryFnData = Prisma.GetDataroomAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(
+  args: Prisma.SelectSubset<TArgs, Prisma.DataroomAggregateArgs>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/aggregate`, args, options, fetch);
 }
 
-export function useGroupByDataroom<TArgs extends Prisma.DataroomGroupByArgs, HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>, OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.DataroomGroupByArgs['orderBy'] } : { orderBy?: Prisma.DataroomGroupByArgs['orderBy'] }, OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>, ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>, ByValid extends Prisma.Has<ByFields, OrderFields>, HavingFields extends Prisma.GetHavingFields<TArgs['having']>, HavingValid extends Prisma.Has<ByFields, HavingFields>, ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False, InputErrors extends ByEmpty extends Prisma.True
+export function useGroupByDataroom<
+  TArgs extends Prisma.DataroomGroupByArgs,
+  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
+  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.DataroomGroupByArgs['orderBy'] } : { orderBy?: Prisma.DataroomGroupByArgs['orderBy'] },
+  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
+  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
+  ByValid extends Prisma.Has<ByFields, OrderFields>,
+  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
+  HavingValid extends Prisma.Has<ByFields, HavingFields>,
+  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
+  InputErrors extends ByEmpty extends Prisma.True
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
-    ? {
-        [P in HavingFields]: P extends ByFields
-        ? never
-        : P extends string
-        ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-        : [
-            Error,
-            'Field ',
-            P,
-            ` in "having" needs to be provided in "by"`,
-        ]
-    }[HavingFields]
-    : 'take' extends Prisma.Keys<TArgs>
-    ? 'orderBy' extends Prisma.Keys<TArgs>
-    ? ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields]
-    : 'Error: If you provide "take", you also need to provide "orderBy"'
-    : 'skip' extends Prisma.Keys<TArgs>
-    ? 'orderBy' extends Prisma.Keys<TArgs>
-    ? ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields]
-    : 'Error: If you provide "skip", you also need to provide "orderBy"'
-    : ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields], TQueryFnData = {} extends InputErrors ?
-    Array<PickEnumerable<Prisma.DataroomGroupByOutputType, TArgs['by']> &
-    {
-        [P in ((keyof TArgs) & (keyof Prisma.DataroomGroupByOutputType))]: P extends '_count'
-        ? TArgs[P] extends boolean
-        ? number
-        : Prisma.GetScalarType<TArgs[P], Prisma.DataroomGroupByOutputType[P]>
-        : Prisma.GetScalarType<TArgs[P], Prisma.DataroomGroupByOutputType[P]>
-    }
-    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.DataroomGroupByArgs, OrderByArg> & InputErrors>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/groupBy`, args, options, fetch);
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+        }[HavingFields]
+      : 'take' extends Prisma.Keys<TArgs>
+        ? 'orderBy' extends Prisma.Keys<TArgs>
+          ? ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields]
+          : 'Error: If you provide "take", you also need to provide "orderBy"'
+        : 'skip' extends Prisma.Keys<TArgs>
+          ? 'orderBy' extends Prisma.Keys<TArgs>
+            ? ByValid extends Prisma.True
+              ? {}
+              : {
+                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+                }[OrderFields]
+            : 'Error: If you provide "skip", you also need to provide "orderBy"'
+          : ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields],
+  TQueryFnData = {} extends InputErrors
+    ? Array<
+        PickEnumerable<Prisma.DataroomGroupByOutputType, TArgs['by']> & {
+          [P in keyof TArgs & keyof Prisma.DataroomGroupByOutputType]: P extends '_count'
+            ? TArgs[P] extends boolean
+              ? number
+              : Prisma.GetScalarType<TArgs[P], Prisma.DataroomGroupByOutputType[P]>
+            : Prisma.GetScalarType<TArgs[P], Prisma.DataroomGroupByOutputType[P]>;
+        }
+      >
+    : InputErrors,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.DataroomGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/groupBy`, args, options, fetch);
 }
 
-export function useSuspenseGroupByDataroom<TArgs extends Prisma.DataroomGroupByArgs, HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>, OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.DataroomGroupByArgs['orderBy'] } : { orderBy?: Prisma.DataroomGroupByArgs['orderBy'] }, OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>, ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>, ByValid extends Prisma.Has<ByFields, OrderFields>, HavingFields extends Prisma.GetHavingFields<TArgs['having']>, HavingValid extends Prisma.Has<ByFields, HavingFields>, ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False, InputErrors extends ByEmpty extends Prisma.True
+export function useSuspenseGroupByDataroom<
+  TArgs extends Prisma.DataroomGroupByArgs,
+  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
+  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.DataroomGroupByArgs['orderBy'] } : { orderBy?: Prisma.DataroomGroupByArgs['orderBy'] },
+  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
+  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
+  ByValid extends Prisma.Has<ByFields, OrderFields>,
+  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
+  HavingValid extends Prisma.Has<ByFields, HavingFields>,
+  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
+  InputErrors extends ByEmpty extends Prisma.True
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
-    ? {
-        [P in HavingFields]: P extends ByFields
-        ? never
-        : P extends string
-        ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-        : [
-            Error,
-            'Field ',
-            P,
-            ` in "having" needs to be provided in "by"`,
-        ]
-    }[HavingFields]
-    : 'take' extends Prisma.Keys<TArgs>
-    ? 'orderBy' extends Prisma.Keys<TArgs>
-    ? ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields]
-    : 'Error: If you provide "take", you also need to provide "orderBy"'
-    : 'skip' extends Prisma.Keys<TArgs>
-    ? 'orderBy' extends Prisma.Keys<TArgs>
-    ? ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields]
-    : 'Error: If you provide "skip", you also need to provide "orderBy"'
-    : ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields], TQueryFnData = {} extends InputErrors ?
-    Array<PickEnumerable<Prisma.DataroomGroupByOutputType, TArgs['by']> &
-    {
-        [P in ((keyof TArgs) & (keyof Prisma.DataroomGroupByOutputType))]: P extends '_count'
-        ? TArgs[P] extends boolean
-        ? number
-        : Prisma.GetScalarType<TArgs[P], Prisma.DataroomGroupByOutputType[P]>
-        : Prisma.GetScalarType<TArgs[P], Prisma.DataroomGroupByOutputType[P]>
-    }
-    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.DataroomGroupByArgs, OrderByArg> & InputErrors>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/groupBy`, args, options, fetch);
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+        }[HavingFields]
+      : 'take' extends Prisma.Keys<TArgs>
+        ? 'orderBy' extends Prisma.Keys<TArgs>
+          ? ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields]
+          : 'Error: If you provide "take", you also need to provide "orderBy"'
+        : 'skip' extends Prisma.Keys<TArgs>
+          ? 'orderBy' extends Prisma.Keys<TArgs>
+            ? ByValid extends Prisma.True
+              ? {}
+              : {
+                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+                }[OrderFields]
+            : 'Error: If you provide "skip", you also need to provide "orderBy"'
+          : ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields],
+  TQueryFnData = {} extends InputErrors
+    ? Array<
+        PickEnumerable<Prisma.DataroomGroupByOutputType, TArgs['by']> & {
+          [P in keyof TArgs & keyof Prisma.DataroomGroupByOutputType]: P extends '_count'
+            ? TArgs[P] extends boolean
+              ? number
+              : Prisma.GetScalarType<TArgs[P], Prisma.DataroomGroupByOutputType[P]>
+            : Prisma.GetScalarType<TArgs[P], Prisma.DataroomGroupByOutputType[P]>;
+        }
+      >
+    : InputErrors,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.DataroomGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/groupBy`, args, options, fetch);
 }
 
-export function useCountDataroom<TArgs extends Prisma.DataroomCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.DataroomCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.DataroomCountArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/count`, args, options, fetch);
+export function useCountDataroom<
+  TArgs extends Prisma.DataroomCountArgs,
+  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.DataroomCountAggregateOutputType>) : number,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.DataroomCountArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/count`, args, options, fetch);
 }
 
-export function useSuspenseCountDataroom<TArgs extends Prisma.DataroomCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.DataroomCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.DataroomCountArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/count`, args, options, fetch);
+export function useSuspenseCountDataroom<
+  TArgs extends Prisma.DataroomCountArgs,
+  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.DataroomCountAggregateOutputType>) : number,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.DataroomCountArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('Dataroom', `${endpoint}/dataroom/count`, args, options, fetch);
 }
 
-export function useCheckDataroom<TError = DefaultError>(args: { operation: PolicyCrudKind; where?: { id?: string; name?: string; description?: string; isActive?: boolean; createdBy?: string; updatedBy?: string; tenantId?: string; pId?: string; requestId?: string }; }, options?: (Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<boolean, boolean, TError>('Dataroom', `${endpoint}/dataroom/check`, args, options, fetch);
+export function useCheckDataroom<TError = DefaultError>(
+  args: {
+    operation: PolicyCrudKind;
+    where?: { id?: string; name?: string; description?: string; isActive?: boolean; createdBy?: string; updatedBy?: string; tenantId?: string; pId?: string; requestId?: string };
+  },
+  options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<boolean, boolean, TError>('Dataroom', `${endpoint}/dataroom/check`, args, options, fetch);
 }

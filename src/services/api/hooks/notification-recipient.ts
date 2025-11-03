@@ -4,330 +4,460 @@
 
 /* eslint-disable */
 
-import type { Prisma, NotificationRecipient } from "@zenstackhq/runtime/models";
-import type { UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/react-query';
-import { getHooksContext } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import { useModelQuery, useInfiniteModelQuery, useModelMutation } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { PickEnumerable, CheckSelect, QueryError, ExtraQueryOptions, ExtraMutationOptions } from '@zenstackhq/tanstack-query/runtime-v5';
-import type { PolicyCrudKind } from '@zenstackhq/runtime'
+import type { InfiniteData, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions, UseSuspenseInfiniteQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
+import type { PolicyCrudKind } from '@zenstackhq/runtime';
+import type { NotificationRecipient, Prisma } from '@zenstackhq/runtime/models';
+import type { CheckSelect, ExtraMutationOptions, ExtraQueryOptions, PickEnumerable, QueryError } from '@zenstackhq/tanstack-query/runtime-v5';
+import { getHooksContext, useInfiniteModelQuery, useModelMutation, useModelQuery, useSuspenseInfiniteModelQuery, useSuspenseModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
+
 import metadata from './__model_meta';
+
 type DefaultError = QueryError;
-import { useSuspenseModelQuery, useSuspenseInfiniteModelQuery } from '@zenstackhq/tanstack-query/runtime-v5/react';
-import type { UseSuspenseQueryOptions, UseSuspenseInfiniteQueryOptions } from '@tanstack/react-query';
 
-export function useCreateNotificationRecipient(options?: Omit<(UseMutationOptions<(NotificationRecipient | undefined), DefaultError, Prisma.NotificationRecipientCreateArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.NotificationRecipientCreateArgs, DefaultError, NotificationRecipient, true>('NotificationRecipient', 'POST', `${endpoint}/notificationRecipient/create`, metadata, options, fetch, true)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.NotificationRecipientCreateArgs>(
-            args: Prisma.SelectSubset<T, Prisma.NotificationRecipientCreateArgs>,
-            options?: Omit<(UseMutationOptions<(CheckSelect<T, NotificationRecipient, Prisma.NotificationRecipientGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.NotificationRecipientCreateArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as (CheckSelect<T, NotificationRecipient, Prisma.NotificationRecipientGetPayload<T>> | undefined);
-        },
-    };
-    return mutation;
+export function useCreateNotificationRecipient(
+  options?: Omit<UseMutationOptions<NotificationRecipient | undefined, DefaultError, Prisma.NotificationRecipientCreateArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.NotificationRecipientCreateArgs, DefaultError, NotificationRecipient, true>(
+    'NotificationRecipient',
+    'POST',
+    `${endpoint}/notificationRecipient/create`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.NotificationRecipientCreateArgs>(
+      args: Prisma.SelectSubset<T, Prisma.NotificationRecipientCreateArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, NotificationRecipient, Prisma.NotificationRecipientGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.NotificationRecipientCreateArgs>> &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, NotificationRecipient, Prisma.NotificationRecipientGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
 }
 
-export function useCreateManyNotificationRecipient(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.NotificationRecipientCreateManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.NotificationRecipientCreateManyArgs, DefaultError, Prisma.BatchPayload, false>('NotificationRecipient', 'POST', `${endpoint}/notificationRecipient/createMany`, metadata, options, fetch, false)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.NotificationRecipientCreateManyArgs>(
-            args: Prisma.SelectSubset<T, Prisma.NotificationRecipientCreateManyArgs>,
-            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.NotificationRecipientCreateManyArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as Prisma.BatchPayload;
-        },
-    };
-    return mutation;
+export function useCreateManyNotificationRecipient(
+  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.NotificationRecipientCreateManyArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.NotificationRecipientCreateManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'NotificationRecipient',
+    'POST',
+    `${endpoint}/notificationRecipient/createMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.NotificationRecipientCreateManyArgs>(
+      args: Prisma.SelectSubset<T, Prisma.NotificationRecipientCreateManyArgs>,
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.NotificationRecipientCreateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
+    },
+  };
+  return mutation;
 }
 
-export function useFindManyNotificationRecipient<TArgs extends Prisma.NotificationRecipientFindManyArgs, TQueryFnData = Array<Prisma.NotificationRecipientGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientFindManyArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/findMany`, args, options, fetch);
+export function useFindManyNotificationRecipient<
+  TArgs extends Prisma.NotificationRecipientFindManyArgs,
+  TQueryFnData = Array<Prisma.NotificationRecipientGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientFindManyArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/findMany`, args, options, fetch);
 }
 
-export function useInfiniteFindManyNotificationRecipient<TArgs extends Prisma.NotificationRecipientFindManyArgs, TQueryFnData = Array<Prisma.NotificationRecipientGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientFindManyArgs>, options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
-    options = options ?? { getNextPageParam: () => null };
-    const { endpoint, fetch } = getHooksContext();
-    return useInfiniteModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/findMany`, args, options, fetch);
+export function useInfiniteFindManyNotificationRecipient<
+  TArgs extends Prisma.NotificationRecipientFindManyArgs,
+  TQueryFnData = Array<Prisma.NotificationRecipientGetPayload<TArgs>>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientFindManyArgs>, options?: Omit<UseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
+  options = options ?? { getNextPageParam: () => null };
+  const { endpoint, fetch } = getHooksContext();
+  return useInfiniteModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/findMany`, args, options, fetch);
 }
 
-export function useSuspenseFindManyNotificationRecipient<TArgs extends Prisma.NotificationRecipientFindManyArgs, TQueryFnData = Array<Prisma.NotificationRecipientGetPayload<TArgs> & { $optimistic?: boolean }>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientFindManyArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/findMany`, args, options, fetch);
+export function useSuspenseFindManyNotificationRecipient<
+  TArgs extends Prisma.NotificationRecipientFindManyArgs,
+  TQueryFnData = Array<Prisma.NotificationRecipientGetPayload<TArgs> & { $optimistic?: boolean }>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientFindManyArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/findMany`, args, options, fetch);
 }
 
-export function useSuspenseInfiniteFindManyNotificationRecipient<TArgs extends Prisma.NotificationRecipientFindManyArgs, TQueryFnData = Array<Prisma.NotificationRecipientGetPayload<TArgs>>, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientFindManyArgs>, options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>) {
-    options = options ?? { getNextPageParam: () => null };
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/findMany`, args, options, fetch);
+export function useSuspenseInfiniteFindManyNotificationRecipient<
+  TArgs extends Prisma.NotificationRecipientFindManyArgs,
+  TQueryFnData = Array<Prisma.NotificationRecipientGetPayload<TArgs>>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
+  args?: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientFindManyArgs>,
+  options?: Omit<UseSuspenseInfiniteQueryOptions<TQueryFnData, TError, InfiniteData<TData>>, 'queryKey' | 'initialPageParam'>
+) {
+  options = options ?? { getNextPageParam: () => null };
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseInfiniteModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/findMany`, args, options, fetch);
 }
 
-export function useFindUniqueNotificationRecipient<TArgs extends Prisma.NotificationRecipientFindUniqueArgs, TQueryFnData = Prisma.NotificationRecipientGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientFindUniqueArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/findUnique`, args, options, fetch);
+export function useFindUniqueNotificationRecipient<
+  TArgs extends Prisma.NotificationRecipientFindUniqueArgs,
+  TQueryFnData = Prisma.NotificationRecipientGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientFindUniqueArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/findUnique`, args, options, fetch);
 }
 
-export function useSuspenseFindUniqueNotificationRecipient<TArgs extends Prisma.NotificationRecipientFindUniqueArgs, TQueryFnData = Prisma.NotificationRecipientGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientFindUniqueArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/findUnique`, args, options, fetch);
+export function useSuspenseFindUniqueNotificationRecipient<
+  TArgs extends Prisma.NotificationRecipientFindUniqueArgs,
+  TQueryFnData = Prisma.NotificationRecipientGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientFindUniqueArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/findUnique`, args, options, fetch);
 }
 
-export function useFindFirstNotificationRecipient<TArgs extends Prisma.NotificationRecipientFindFirstArgs, TQueryFnData = Prisma.NotificationRecipientGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientFindFirstArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/findFirst`, args, options, fetch);
+export function useFindFirstNotificationRecipient<
+  TArgs extends Prisma.NotificationRecipientFindFirstArgs,
+  TQueryFnData = Prisma.NotificationRecipientGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientFindFirstArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/findFirst`, args, options, fetch);
 }
 
-export function useSuspenseFindFirstNotificationRecipient<TArgs extends Prisma.NotificationRecipientFindFirstArgs, TQueryFnData = Prisma.NotificationRecipientGetPayload<TArgs> & { $optimistic?: boolean }, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientFindFirstArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/findFirst`, args, options, fetch);
+export function useSuspenseFindFirstNotificationRecipient<
+  TArgs extends Prisma.NotificationRecipientFindFirstArgs,
+  TQueryFnData = Prisma.NotificationRecipientGetPayload<TArgs> & { $optimistic?: boolean },
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientFindFirstArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/findFirst`, args, options, fetch);
 }
 
-export function useUpdateNotificationRecipient(options?: Omit<(UseMutationOptions<(NotificationRecipient | undefined), DefaultError, Prisma.NotificationRecipientUpdateArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.NotificationRecipientUpdateArgs, DefaultError, NotificationRecipient, true>('NotificationRecipient', 'PUT', `${endpoint}/notificationRecipient/update`, metadata, options, fetch, true)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.NotificationRecipientUpdateArgs>(
-            args: Prisma.SelectSubset<T, Prisma.NotificationRecipientUpdateArgs>,
-            options?: Omit<(UseMutationOptions<(CheckSelect<T, NotificationRecipient, Prisma.NotificationRecipientGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.NotificationRecipientUpdateArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as (CheckSelect<T, NotificationRecipient, Prisma.NotificationRecipientGetPayload<T>> | undefined);
-        },
-    };
-    return mutation;
+export function useUpdateNotificationRecipient(
+  options?: Omit<UseMutationOptions<NotificationRecipient | undefined, DefaultError, Prisma.NotificationRecipientUpdateArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.NotificationRecipientUpdateArgs, DefaultError, NotificationRecipient, true>(
+    'NotificationRecipient',
+    'PUT',
+    `${endpoint}/notificationRecipient/update`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.NotificationRecipientUpdateArgs>(
+      args: Prisma.SelectSubset<T, Prisma.NotificationRecipientUpdateArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, NotificationRecipient, Prisma.NotificationRecipientGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.NotificationRecipientUpdateArgs>> &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, NotificationRecipient, Prisma.NotificationRecipientGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
 }
 
-export function useUpdateManyNotificationRecipient(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.NotificationRecipientUpdateManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.NotificationRecipientUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>('NotificationRecipient', 'PUT', `${endpoint}/notificationRecipient/updateMany`, metadata, options, fetch, false)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.NotificationRecipientUpdateManyArgs>(
-            args: Prisma.SelectSubset<T, Prisma.NotificationRecipientUpdateManyArgs>,
-            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.NotificationRecipientUpdateManyArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as Prisma.BatchPayload;
-        },
-    };
-    return mutation;
+export function useUpdateManyNotificationRecipient(
+  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.NotificationRecipientUpdateManyArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.NotificationRecipientUpdateManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'NotificationRecipient',
+    'PUT',
+    `${endpoint}/notificationRecipient/updateMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.NotificationRecipientUpdateManyArgs>(
+      args: Prisma.SelectSubset<T, Prisma.NotificationRecipientUpdateManyArgs>,
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.NotificationRecipientUpdateManyArgs>> & ExtraMutationOptions, 'mutationFn'>
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
+    },
+  };
+  return mutation;
 }
 
-export function useUpsertNotificationRecipient(options?: Omit<(UseMutationOptions<(NotificationRecipient | undefined), DefaultError, Prisma.NotificationRecipientUpsertArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.NotificationRecipientUpsertArgs, DefaultError, NotificationRecipient, true>('NotificationRecipient', 'POST', `${endpoint}/notificationRecipient/upsert`, metadata, options, fetch, true)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.NotificationRecipientUpsertArgs>(
-            args: Prisma.SelectSubset<T, Prisma.NotificationRecipientUpsertArgs>,
-            options?: Omit<(UseMutationOptions<(CheckSelect<T, NotificationRecipient, Prisma.NotificationRecipientGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.NotificationRecipientUpsertArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as (CheckSelect<T, NotificationRecipient, Prisma.NotificationRecipientGetPayload<T>> | undefined);
-        },
-    };
-    return mutation;
+export function useUpsertNotificationRecipient(
+  options?: Omit<UseMutationOptions<NotificationRecipient | undefined, DefaultError, Prisma.NotificationRecipientUpsertArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.NotificationRecipientUpsertArgs, DefaultError, NotificationRecipient, true>(
+    'NotificationRecipient',
+    'POST',
+    `${endpoint}/notificationRecipient/upsert`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.NotificationRecipientUpsertArgs>(
+      args: Prisma.SelectSubset<T, Prisma.NotificationRecipientUpsertArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, NotificationRecipient, Prisma.NotificationRecipientGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.NotificationRecipientUpsertArgs>> &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, NotificationRecipient, Prisma.NotificationRecipientGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
 }
 
-export function useDeleteNotificationRecipient(options?: Omit<(UseMutationOptions<(NotificationRecipient | undefined), DefaultError, Prisma.NotificationRecipientDeleteArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.NotificationRecipientDeleteArgs, DefaultError, NotificationRecipient, true>('NotificationRecipient', 'DELETE', `${endpoint}/notificationRecipient/delete`, metadata, options, fetch, true)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.NotificationRecipientDeleteArgs>(
-            args: Prisma.SelectSubset<T, Prisma.NotificationRecipientDeleteArgs>,
-            options?: Omit<(UseMutationOptions<(CheckSelect<T, NotificationRecipient, Prisma.NotificationRecipientGetPayload<T>> | undefined), DefaultError, Prisma.SelectSubset<T, Prisma.NotificationRecipientDeleteArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as (CheckSelect<T, NotificationRecipient, Prisma.NotificationRecipientGetPayload<T>> | undefined);
-        },
-    };
-    return mutation;
+export function useDeleteNotificationRecipient(
+  options?: Omit<UseMutationOptions<NotificationRecipient | undefined, DefaultError, Prisma.NotificationRecipientDeleteArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.NotificationRecipientDeleteArgs, DefaultError, NotificationRecipient, true>(
+    'NotificationRecipient',
+    'DELETE',
+    `${endpoint}/notificationRecipient/delete`,
+    metadata,
+    options,
+    fetch,
+    true
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.NotificationRecipientDeleteArgs>(
+      args: Prisma.SelectSubset<T, Prisma.NotificationRecipientDeleteArgs>,
+      options?: Omit<
+        UseMutationOptions<CheckSelect<T, NotificationRecipient, Prisma.NotificationRecipientGetPayload<T>> | undefined, DefaultError, Prisma.SelectSubset<T, Prisma.NotificationRecipientDeleteArgs>> &
+          ExtraMutationOptions,
+        'mutationFn'
+      >
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as CheckSelect<T, NotificationRecipient, Prisma.NotificationRecipientGetPayload<T>> | undefined;
+    },
+  };
+  return mutation;
 }
 
-export function useDeleteManyNotificationRecipient(options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.NotificationRecipientDeleteManyArgs> & ExtraMutationOptions), 'mutationFn'>) {
-    const { endpoint, fetch } = getHooksContext();
-    const _mutation =
-        useModelMutation<Prisma.NotificationRecipientDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>('NotificationRecipient', 'DELETE', `${endpoint}/notificationRecipient/deleteMany`, metadata, options, fetch, false)
-        ;
-    const mutation = {
-        ..._mutation,
-        mutateAsync: async <T extends Prisma.NotificationRecipientDeleteManyArgs>(
-            args: Prisma.SelectSubset<T, Prisma.NotificationRecipientDeleteManyArgs>,
-            options?: Omit<(UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.NotificationRecipientDeleteManyArgs>> & ExtraMutationOptions), 'mutationFn'>
-        ) => {
-            return (await _mutation.mutateAsync(
-                args,
-                options as any
-            )) as Prisma.BatchPayload;
-        },
-    };
-    return mutation;
+export function useDeleteManyNotificationRecipient(
+  options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.NotificationRecipientDeleteManyArgs> & ExtraMutationOptions, 'mutationFn'>
+) {
+  const { endpoint, fetch } = getHooksContext();
+  const _mutation = useModelMutation<Prisma.NotificationRecipientDeleteManyArgs, DefaultError, Prisma.BatchPayload, false>(
+    'NotificationRecipient',
+    'DELETE',
+    `${endpoint}/notificationRecipient/deleteMany`,
+    metadata,
+    options,
+    fetch,
+    false
+  );
+  const mutation = {
+    ..._mutation,
+    mutateAsync: async <T extends Prisma.NotificationRecipientDeleteManyArgs>(
+      args: Prisma.SelectSubset<T, Prisma.NotificationRecipientDeleteManyArgs>,
+      options?: Omit<UseMutationOptions<Prisma.BatchPayload, DefaultError, Prisma.SelectSubset<T, Prisma.NotificationRecipientDeleteManyArgs>> & ExtraMutationOptions, 'mutationFn'>
+    ) => {
+      return (await _mutation.mutateAsync(args, options as any)) as Prisma.BatchPayload;
+    },
+  };
+  return mutation;
 }
 
-export function useAggregateNotificationRecipient<TArgs extends Prisma.NotificationRecipientAggregateArgs, TQueryFnData = Prisma.GetNotificationRecipientAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientAggregateArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/aggregate`, args, options, fetch);
+export function useAggregateNotificationRecipient<
+  TArgs extends Prisma.NotificationRecipientAggregateArgs,
+  TQueryFnData = Prisma.GetNotificationRecipientAggregateType<TArgs>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientAggregateArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/aggregate`, args, options, fetch);
 }
 
-export function useSuspenseAggregateNotificationRecipient<TArgs extends Prisma.NotificationRecipientAggregateArgs, TQueryFnData = Prisma.GetNotificationRecipientAggregateType<TArgs>, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientAggregateArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/aggregate`, args, options, fetch);
+export function useSuspenseAggregateNotificationRecipient<
+  TArgs extends Prisma.NotificationRecipientAggregateArgs,
+  TQueryFnData = Prisma.GetNotificationRecipientAggregateType<TArgs>,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientAggregateArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/aggregate`, args, options, fetch);
 }
 
-export function useGroupByNotificationRecipient<TArgs extends Prisma.NotificationRecipientGroupByArgs, HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>, OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.NotificationRecipientGroupByArgs['orderBy'] } : { orderBy?: Prisma.NotificationRecipientGroupByArgs['orderBy'] }, OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>, ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>, ByValid extends Prisma.Has<ByFields, OrderFields>, HavingFields extends Prisma.GetHavingFields<TArgs['having']>, HavingValid extends Prisma.Has<ByFields, HavingFields>, ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False, InputErrors extends ByEmpty extends Prisma.True
+export function useGroupByNotificationRecipient<
+  TArgs extends Prisma.NotificationRecipientGroupByArgs,
+  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
+  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.NotificationRecipientGroupByArgs['orderBy'] } : { orderBy?: Prisma.NotificationRecipientGroupByArgs['orderBy'] },
+  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
+  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
+  ByValid extends Prisma.Has<ByFields, OrderFields>,
+  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
+  HavingValid extends Prisma.Has<ByFields, HavingFields>,
+  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
+  InputErrors extends ByEmpty extends Prisma.True
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
-    ? {
-        [P in HavingFields]: P extends ByFields
-        ? never
-        : P extends string
-        ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-        : [
-            Error,
-            'Field ',
-            P,
-            ` in "having" needs to be provided in "by"`,
-        ]
-    }[HavingFields]
-    : 'take' extends Prisma.Keys<TArgs>
-    ? 'orderBy' extends Prisma.Keys<TArgs>
-    ? ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields]
-    : 'Error: If you provide "take", you also need to provide "orderBy"'
-    : 'skip' extends Prisma.Keys<TArgs>
-    ? 'orderBy' extends Prisma.Keys<TArgs>
-    ? ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields]
-    : 'Error: If you provide "skip", you also need to provide "orderBy"'
-    : ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields], TQueryFnData = {} extends InputErrors ?
-    Array<PickEnumerable<Prisma.NotificationRecipientGroupByOutputType, TArgs['by']> &
-    {
-        [P in ((keyof TArgs) & (keyof Prisma.NotificationRecipientGroupByOutputType))]: P extends '_count'
-        ? TArgs[P] extends boolean
-        ? number
-        : Prisma.GetScalarType<TArgs[P], Prisma.NotificationRecipientGroupByOutputType[P]>
-        : Prisma.GetScalarType<TArgs[P], Prisma.NotificationRecipientGroupByOutputType[P]>
-    }
-    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.NotificationRecipientGroupByArgs, OrderByArg> & InputErrors>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/groupBy`, args, options, fetch);
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+        }[HavingFields]
+      : 'take' extends Prisma.Keys<TArgs>
+        ? 'orderBy' extends Prisma.Keys<TArgs>
+          ? ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields]
+          : 'Error: If you provide "take", you also need to provide "orderBy"'
+        : 'skip' extends Prisma.Keys<TArgs>
+          ? 'orderBy' extends Prisma.Keys<TArgs>
+            ? ByValid extends Prisma.True
+              ? {}
+              : {
+                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+                }[OrderFields]
+            : 'Error: If you provide "skip", you also need to provide "orderBy"'
+          : ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields],
+  TQueryFnData = {} extends InputErrors
+    ? Array<
+        PickEnumerable<Prisma.NotificationRecipientGroupByOutputType, TArgs['by']> & {
+          [P in keyof TArgs & keyof Prisma.NotificationRecipientGroupByOutputType]: P extends '_count'
+            ? TArgs[P] extends boolean
+              ? number
+              : Prisma.GetScalarType<TArgs[P], Prisma.NotificationRecipientGroupByOutputType[P]>
+            : Prisma.GetScalarType<TArgs[P], Prisma.NotificationRecipientGroupByOutputType[P]>;
+        }
+      >
+    : InputErrors,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.NotificationRecipientGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/groupBy`, args, options, fetch);
 }
 
-export function useSuspenseGroupByNotificationRecipient<TArgs extends Prisma.NotificationRecipientGroupByArgs, HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>, OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.NotificationRecipientGroupByArgs['orderBy'] } : { orderBy?: Prisma.NotificationRecipientGroupByArgs['orderBy'] }, OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>, ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>, ByValid extends Prisma.Has<ByFields, OrderFields>, HavingFields extends Prisma.GetHavingFields<TArgs['having']>, HavingValid extends Prisma.Has<ByFields, HavingFields>, ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False, InputErrors extends ByEmpty extends Prisma.True
+export function useSuspenseGroupByNotificationRecipient<
+  TArgs extends Prisma.NotificationRecipientGroupByArgs,
+  HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<TArgs>>, Prisma.Extends<'take', Prisma.Keys<TArgs>>>,
+  OrderByArg extends Prisma.True extends HasSelectOrTake ? { orderBy: Prisma.NotificationRecipientGroupByArgs['orderBy'] } : { orderBy?: Prisma.NotificationRecipientGroupByArgs['orderBy'] },
+  OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<TArgs['orderBy']>>>,
+  ByFields extends Prisma.MaybeTupleToUnion<TArgs['by']>,
+  ByValid extends Prisma.Has<ByFields, OrderFields>,
+  HavingFields extends Prisma.GetHavingFields<TArgs['having']>,
+  HavingValid extends Prisma.Has<ByFields, HavingFields>,
+  ByEmpty extends TArgs['by'] extends never[] ? Prisma.True : Prisma.False,
+  InputErrors extends ByEmpty extends Prisma.True
     ? `Error: "by" must not be empty.`
     : HavingValid extends Prisma.False
-    ? {
-        [P in HavingFields]: P extends ByFields
-        ? never
-        : P extends string
-        ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-        : [
-            Error,
-            'Field ',
-            P,
-            ` in "having" needs to be provided in "by"`,
-        ]
-    }[HavingFields]
-    : 'take' extends Prisma.Keys<TArgs>
-    ? 'orderBy' extends Prisma.Keys<TArgs>
-    ? ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields]
-    : 'Error: If you provide "take", you also need to provide "orderBy"'
-    : 'skip' extends Prisma.Keys<TArgs>
-    ? 'orderBy' extends Prisma.Keys<TArgs>
-    ? ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields]
-    : 'Error: If you provide "skip", you also need to provide "orderBy"'
-    : ByValid extends Prisma.True
-    ? {}
-    : {
-        [P in OrderFields]: P extends ByFields
-        ? never
-        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-    }[OrderFields], TQueryFnData = {} extends InputErrors ?
-    Array<PickEnumerable<Prisma.NotificationRecipientGroupByOutputType, TArgs['by']> &
-    {
-        [P in ((keyof TArgs) & (keyof Prisma.NotificationRecipientGroupByOutputType))]: P extends '_count'
-        ? TArgs[P] extends boolean
-        ? number
-        : Prisma.GetScalarType<TArgs[P], Prisma.NotificationRecipientGroupByOutputType[P]>
-        : Prisma.GetScalarType<TArgs[P], Prisma.NotificationRecipientGroupByOutputType[P]>
-    }
-    > : InputErrors, TData = TQueryFnData, TError = DefaultError>(args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.NotificationRecipientGroupByArgs, OrderByArg> & InputErrors>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/groupBy`, args, options, fetch);
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+              ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+              : [Error, 'Field ', P, ` in "having" needs to be provided in "by"`];
+        }[HavingFields]
+      : 'take' extends Prisma.Keys<TArgs>
+        ? 'orderBy' extends Prisma.Keys<TArgs>
+          ? ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields]
+          : 'Error: If you provide "take", you also need to provide "orderBy"'
+        : 'skip' extends Prisma.Keys<TArgs>
+          ? 'orderBy' extends Prisma.Keys<TArgs>
+            ? ByValid extends Prisma.True
+              ? {}
+              : {
+                  [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+                }[OrderFields]
+            : 'Error: If you provide "skip", you also need to provide "orderBy"'
+          : ByValid extends Prisma.True
+            ? {}
+            : {
+                [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+              }[OrderFields],
+  TQueryFnData = {} extends InputErrors
+    ? Array<
+        PickEnumerable<Prisma.NotificationRecipientGroupByOutputType, TArgs['by']> & {
+          [P in keyof TArgs & keyof Prisma.NotificationRecipientGroupByOutputType]: P extends '_count'
+            ? TArgs[P] extends boolean
+              ? number
+              : Prisma.GetScalarType<TArgs[P], Prisma.NotificationRecipientGroupByOutputType[P]>
+            : Prisma.GetScalarType<TArgs[P], Prisma.NotificationRecipientGroupByOutputType[P]>;
+        }
+      >
+    : InputErrors,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(
+  args: Prisma.SelectSubset<TArgs, Prisma.SubsetIntersection<TArgs, Prisma.NotificationRecipientGroupByArgs, OrderByArg> & InputErrors>,
+  options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/groupBy`, args, options, fetch);
 }
 
-export function useCountNotificationRecipient<TArgs extends Prisma.NotificationRecipientCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.NotificationRecipientCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientCountArgs>, options?: (Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/count`, args, options, fetch);
+export function useCountNotificationRecipient<
+  TArgs extends Prisma.NotificationRecipientCountArgs,
+  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.NotificationRecipientCountAggregateOutputType>) : number,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientCountArgs>, options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/count`, args, options, fetch);
 }
 
-export function useSuspenseCountNotificationRecipient<TArgs extends Prisma.NotificationRecipientCountArgs, TQueryFnData = TArgs extends { select: any; } ? TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.NotificationRecipientCountAggregateOutputType> : number, TData = TQueryFnData, TError = DefaultError>(args?: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientCountArgs>, options?: (Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useSuspenseModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/count`, args, options, fetch);
+export function useSuspenseCountNotificationRecipient<
+  TArgs extends Prisma.NotificationRecipientCountArgs,
+  TQueryFnData = TArgs extends { select: any } ? (TArgs['select'] extends true ? number : Prisma.GetScalarType<TArgs['select'], Prisma.NotificationRecipientCountAggregateOutputType>) : number,
+  TData = TQueryFnData,
+  TError = DefaultError,
+>(args?: Prisma.SelectSubset<TArgs, Prisma.NotificationRecipientCountArgs>, options?: Omit<UseSuspenseQueryOptions<TQueryFnData, TError, TData>, 'queryKey'> & ExtraQueryOptions) {
+  const { endpoint, fetch } = getHooksContext();
+  return useSuspenseModelQuery<TQueryFnData, TData, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/count`, args, options, fetch);
 }
 
-export function useCheckNotificationRecipient<TError = DefaultError>(args: { operation: PolicyCrudKind; where?: { tenantId?: string; id?: string; notificationId?: string; userTenantId?: string }; }, options?: (Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions)) {
-    const { endpoint, fetch } = getHooksContext();
-    return useModelQuery<boolean, boolean, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/check`, args, options, fetch);
+export function useCheckNotificationRecipient<TError = DefaultError>(
+  args: { operation: PolicyCrudKind; where?: { tenantId?: string; id?: string; notificationId?: string; userTenantId?: string } },
+  options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
+) {
+  const { endpoint, fetch } = getHooksContext();
+  return useModelQuery<boolean, boolean, TError>('NotificationRecipient', `${endpoint}/notificationRecipient/check`, args, options, fetch);
 }
