@@ -1,19 +1,18 @@
 'use client';
 
 import React, { memo, useMemo } from 'react';
-import Image from 'next/image';
-import { useCountUserTenant, useFindManyUserTenant } from '@/services/api/hooks';
 import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
-import { Prisma } from '@zenstackhq/runtime/models';
+import type { MemberWithRelations } from '@/actions/organization';
 import { ColumnDef } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
 import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 
 import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { useDataTable } from '@/hooks/use-data-table';
-import { useFetchTableData } from '@/hooks/use-fetch-table-data';
+import { useListMembers } from '@/hooks/use-list-members';
 import useTenantId from '@/hooks/use-tenant-id';
 import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
@@ -23,42 +22,7 @@ import { DataTableFloatingBar } from '@/components/data-table/data-table-floatin
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
 import { Hint } from '@/components/hint';
 
-const UserTenantDefaultArgs = Prisma.validator<Prisma.UserTenantDefaultArgs>()({
-  select: {
-    id: true,
-    person: {
-      select: {
-        firstName: true,
-        lastName: true,
-        image: true,
-      },
-    },
-    user: {
-      select: {
-        username: true,
-        email: true,
-      },
-    },
-    userRoles: {
-      select: {
-        role: {
-          select: {
-            name: true,
-          },
-        },
-      },
-    },
-    _count: {
-      select: {
-        userAreas: true,
-        userRoles: true,
-        assignedUsers: true,
-      },
-    },
-  },
-});
-
-type UserWithRelations = Prisma.UserTenantGetPayload<typeof UserTenantDefaultArgs>;
+type UserWithRelations = MemberWithRelations;
 
 const searchParamsParsers = {
   page: parseAsInteger.withDefault(1),
@@ -79,15 +43,17 @@ const UsersPageClient: React.FC<UsersPageClientProps> = ({ canCreate, canEdit, c
   const t = useTranslations('admin.user.main');
   const [search] = useQueryStates(searchParamsParsers);
 
-  const { data, isLoading, isError, error, refetch, pageCount } = useFetchTableData<UserWithRelations, Prisma.UserTenantFindManyArgs, Prisma.UserTenantCountArgs>({
-    search,
-    useCountHook: useCountUserTenant,
-    useFindManyHook: useFindManyUserTenant,
-    defaultArgs: {
-      ...UserTenantDefaultArgs,
-      where: { tenantId },
-    },
+  // Use Better Auth to fetch members
+  const { data: membersResult, isLoading, isError, error, refetch } = useListMembers({
+    organizationId: tenantId,
+    page: search.page,
+    perPage: search.perPage,
+    sort: search.sort,
+    filters: search.filters,
   });
+
+  const data = membersResult?.data ?? [];
+  const pageCount = membersResult?.pageCount ?? 0;
 
   const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t, canEdit, canDelete }), [t, canEdit, canDelete]);
 
@@ -143,11 +109,19 @@ function getTableConfiguration({ t, canEdit, canDelete }: GetTableConfigurationP
       cell: ({ row }) => {
         const person = row.original.person;
         const user = row.original.user;
+        const displayName = person ? `${person.firstName} ${person.lastName}` : user.username || user.email;
+        const initials = person
+          ? `${person.firstName?.[0] || ''}${person.lastName?.[0] || ''}`.toUpperCase()
+          : user.email?.[0]?.toUpperCase() || 'U';
+        
         return (
           <div className="flex items-center gap-4">
-            {person?.image && <Image src={person.image} alt={`${person.firstName} ${person.lastName}`} width={40} height={40} className="rounded-full" />}
+            <Avatar>
+              <AvatarImage src={person?.image || undefined} alt={displayName} />
+              <AvatarFallback>{initials}</AvatarFallback>
+            </Avatar>
             <div>
-              <div className="font-medium">{person ? `${person.firstName} ${person.lastName}` : user.username}</div>
+              <div className="font-medium">{displayName}</div>
               <Badge variant="outline" className="mt-1">
                 {user.email}
               </Badge>
@@ -192,7 +166,7 @@ function getTableConfiguration({ t, canEdit, canDelete }: GetTableConfigurationP
       cell: ({ cell }) => cell.getValue(),
     },
     {
-      accessorKey: '_count.requestAssignments',
+      accessorKey: '_count.assignedUsers',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.requestAssignments')} />,
       cell: ({ cell }) => cell.getValue(),
     },

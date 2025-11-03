@@ -104,6 +104,14 @@ export const auth = betterAuth({
           fields: {
             organizationId: 'tenantId',
           },
+          additionalFields: {
+            isActive: {
+              type: 'boolean',
+              input: true,
+              required: false,
+              defaultValue: true,
+            },
+          },
         },
         invitation: {
           modelName: 'InvitationTenant',

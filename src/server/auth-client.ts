@@ -38,6 +38,16 @@ export const authClient = createAuthClient({
       teams: {
         enabled: true,
       },
+      schema: {
+        member: {
+          additionalFields: {
+            isActive: {
+              type: 'boolean',
+              defaultValue: true,
+            },
+          },
+        },
+      },
     }),
     oidcClient(),
     ssoClient(),
