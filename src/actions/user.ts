@@ -282,6 +282,57 @@ export const upsertUser = async (tenantId: string, data: UserTenantScopedFormVal
   }
 };
 
+// Get a single user tenant and map to the form default values for editing
+export const getUserFormValuesByUserTenantId = async (tenantId: string, userTenantId: string): Promise<UserTenantScopedFormValues> => {
+  const session = await currentSession();
+  if (!session) throw new UserNotFoundErr();
+
+  const db = await getDb();
+  const ut = await db.userTenant.findFirstOrThrow({
+    where: { id: userTenantId, tenantId },
+    select: {
+      id: true,
+      isActive: true,
+      isTwoFactorRequired: true,
+      role: true,
+      user: { select: { email: true } },
+      person: { select: { firstName: true, lastName: true, phone: true, identificationNumber: true, identificationTypeId: true } },
+      userRoles: { select: { isActive: true, role: { select: { id: true, name: true } } } },
+      userAreas: { select: { isActive: true, area: { select: { id: true, name: true } }, role: { select: { id: true, name: true } } } },
+    },
+  });
+
+  return {
+    user: {
+      id: ut.id,
+      email: ut.user.email,
+      isActive: ut.isActive,
+      isAdmin: ut.role === 'admin',
+      isTwoFactorRequired: ut.isTwoFactorRequired,
+      firstName: ut.person?.firstName ?? '',
+      lastName: ut.person?.lastName ?? '',
+      phone: ut.person?.phone ?? '',
+      identificationNumber: ut.person?.identificationNumber ?? '',
+      identificationTypeId: {
+        value: ut.person?.identificationTypeId ?? '',
+        label: '',
+      },
+      isEditing: true,
+    },
+    roles: ut.userRoles.map((ur) => ({
+      id: '',
+      roleId: { value: ur.role.id, label: ur.role.name },
+      isActive: ur.isActive,
+    })),
+    areaRoles: ut.userAreas.map((ua) => ({
+      id: '',
+      areaId: { value: ua.area.id, label: ua.area.name },
+      roleId: { value: ua.role.id, label: ua.role.name },
+      isActive: ua.isActive,
+    })),
+  };
+};
+
 // Get users as options for selects
 export const getUsersAsOptions = async (tenantId: string) => {
   const session = await currentSession();

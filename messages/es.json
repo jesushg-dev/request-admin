@@ -788,6 +788,7 @@
       "security": "Seguridad y Acceso",
       "roles": "Roles",
       "users": "Usuarios",
+      "invitations": "Invitaciones",
       "agreements": "Acuerdos",
       "linksAndDocuments": "Enlaces y documentos",
       "requestHierarchy": "Jerarquía de solicitud",
@@ -2645,6 +2646,35 @@
         "adminDesc": "Otorga a este usuario privilegios administrativos para la organización.",
         "admin": "Administración",
         "gdprNotice": "Para cumplir con GDPR, algunos datos personales no se pueden almacenar al crear un usuario. \nUna vez que el usuario acepte la invitación, podrá completar y guardar su información personal."
+      }
+    },
+    "invitation": {
+      "main": {
+        "entityLabel": "Invitaciones",
+        "columns": {
+          "email": "Correo Electrónico",
+          "role": "Rol",
+          "status": "Estado",
+          "expiresAt": "Expira En"
+        },
+        "filters": {
+          "email": "Correo Electrónico",
+          "emailPlaceholder": "Filtrar por correo",
+          "role": "Rol",
+          "rolePlaceholder": "Filtrar por rol",
+          "status": "Estado",
+          "statusPlaceholder": "Filtrar por estado",
+          "expiresAt": "Expira En"
+        },
+        "actions": {
+          "cancel": "Cancelar Invitación"
+        },
+        "messages": {
+          "cancelling": "Cancelando invitación...",
+          "cancelSuccess": "Invitación cancelada exitosamente",
+          "cancelError": "Error al cancelar invitación: {error}",
+          "cannotCancel": "No se puede cancelar invitación con estado {status}"
+        }
       }
     },
     "form": {

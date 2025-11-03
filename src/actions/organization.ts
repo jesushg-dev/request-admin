@@ -384,3 +384,22 @@ export async function removeMember(
     throw new Error('Failed to remove member');
   }
 }
+
+/**
+ * Cancel an invitation using Better Auth
+ */
+export async function cancelInvitation(
+  invitationId: string
+): Promise<void> {
+  try {
+    await auth.api.cancelInvitation({
+      body: {
+        invitationId,
+      },
+      headers: await headers(),
+    });
+  } catch (error) {
+    console.error('Error cancelling invitation:', error);
+    throw new Error('Failed to cancel invitation');
+  }
+}

@@ -55,7 +55,7 @@ const UsersPageClient: React.FC<UsersPageClientProps> = ({ canCreate, canEdit, c
   const data = membersResult?.data ?? [];
   const pageCount = membersResult?.pageCount ?? 0;
 
-  const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t, canEdit, canDelete }), [t, canEdit, canDelete]);
+  const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t, canEdit, canDelete, tenantId }), [t, canEdit, canDelete, tenantId]);
 
   const { table } = useDataTable({
     data: data ?? [],
@@ -99,9 +99,10 @@ interface GetTableConfigurationProps {
   t: ReturnType<typeof useTranslations>;
   canEdit: boolean;
   canDelete: boolean;
+  tenantId: string;
 }
 
-function getTableConfiguration({ t, canEdit, canDelete }: GetTableConfigurationProps) {
+function getTableConfiguration({ t, canEdit, canDelete, tenantId }: GetTableConfigurationProps) {
   const columns: ColumnDef<UserWithRelations>[] = [
     {
       accessorKey: 'person',
@@ -176,7 +177,10 @@ function getTableConfiguration({ t, canEdit, canDelete }: GetTableConfigurationP
         <ActionCell
           row={row}
           onDelete={canDelete ? console.log : undefined}
-          onUpdate={canEdit ? console.log : undefined}
+          updateLink={canEdit ? {
+            pathname: '/admin/[tenantId]/security/users/[slug]',
+            params: { tenantId, slug: row.original.id },
+          } : undefined}
         />
       ),
       size: 20,

@@ -786,6 +786,7 @@
       "security": "Security",
       "roles": "Roles",
       "users": "Users",
+      "invitations": "Invitations",
       "agreements": "Agreements",
       "linksAndDocuments": "Links and Documents",
       "requestHierarchy": "Request Hierarchy",
@@ -2640,6 +2641,35 @@
         "adminDesc": "Grants this user administrative privileges for the tenant.",
         "admin": "Admin",
         "gdprNotice": "To comply with GDPR, some personal data cannot be stored when creating a user. Once the user accepts the invitation, they will be able to complete and save their personal information."
+      }
+    },
+    "invitation": {
+      "main": {
+        "entityLabel": "Invitations",
+        "columns": {
+          "email": "Email",
+          "role": "Role",
+          "status": "Status",
+          "expiresAt": "Expires At"
+        },
+        "filters": {
+          "email": "Email",
+          "emailPlaceholder": "Filter by email",
+          "role": "Role",
+          "rolePlaceholder": "Filter by role",
+          "status": "Status",
+          "statusPlaceholder": "Filter by status",
+          "expiresAt": "Expires At"
+        },
+        "actions": {
+          "cancel": "Cancel Invitation"
+        },
+        "messages": {
+          "cancelling": "Cancelling invitation...",
+          "cancelSuccess": "Invitation cancelled successfully",
+          "cancelError": "Failed to cancel invitation: {error}",
+          "cannotCancel": "Cannot cancel invitation with status {status}"
+        }
       }
     },
     "form": {

@@ -18,7 +18,7 @@ import {
   LandPlotIcon,
   LayersIcon,
   MessageCircleQuestionIcon,
-  //MessagesSquareIcon,
+  FileBadgeIcon,
   RadarIcon,
   RadioTowerIcon,
   ScaleIcon,
@@ -239,6 +239,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
   const systemMain = useMemo<MenuItem[]>(() => {
     const canViewUsers = hasPermission(PERMISSION.USER_MANAGEMENT.VIEW);
     const canViewRoles = hasPermission(PERMISSION.ROLE_MANAGEMENT.VIEW);
+    const canViewInvitations = hasPermission(PERMISSION.USER_MANAGEMENT.CREATE);
     const canViewIdentificationTypes = hasPermission(PERMISSION.IDENTIFICATION_TYPE.VIEW);
 
     const allItems: MenuItem[] = [
@@ -269,6 +270,12 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
             url: { pathname: '/admin/[tenantId]/security/users', params: { tenantId } },
             icon: UsersIcon,
             disabled: !canViewUsers,
+          },
+          {
+            title: t('invitations'),
+            url: { pathname: '/admin/[tenantId]/security/invitations', params: { tenantId } },
+            icon: FileBadgeIcon,
+            disabled: !canViewInvitations,
           },
         ],
         disabled:   !canViewUsers || !canViewRoles || !canViewIdentificationTypes, 
