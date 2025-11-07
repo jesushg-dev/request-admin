@@ -756,6 +756,25 @@ export const getRequestDetailsByRequest = async (tenantId: string, request: Requ
     select: { id: true },
   });
 
+  // Get execution logs if execution exists
+  const executionLogs =
+    executionId?.id
+      ? await db.executionModelLog.findMany({
+          where: { executionId: executionId.id, tenantId },
+          select: {
+            id: true,
+            nodeId: true,
+            eventType: true,
+            details: true,
+            outcome: true,
+            timestamp: true,
+          },
+          orderBy: {
+            timestamp: 'asc',
+          },
+        })
+      : [];
+
   return {
     guides,
     submissions: {
@@ -787,6 +806,7 @@ export const getRequestDetailsByRequest = async (tenantId: string, request: Requ
         ? {
             executionId: executionId.id,
             diagram: transformExecutionFlowToZodSchema(executionFlow),
+            logs: executionLogs,
           }
         : undefined,
   };

@@ -125,3 +125,26 @@ export async function createExecutionLog(tenantId: string, executionId: string, 
     return newLog;
   });
 }
+
+export async function getExecutionLogs(tenantId: string, executionId: string) {
+  const session = await currentSession();
+  if (!session) throw new UserNotFoundErr();
+
+  const db = await getDb();
+  const logs = await db.executionModelLog.findMany({
+    where: { executionId, tenantId },
+    select: {
+      id: true,
+      nodeId: true,
+      eventType: true,
+      details: true,
+      outcome: true,
+      timestamp: true,
+    },
+    orderBy: {
+      timestamp: 'asc',
+    },
+  });
+
+  return logs;
+}

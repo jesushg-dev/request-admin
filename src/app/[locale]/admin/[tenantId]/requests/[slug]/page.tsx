@@ -95,7 +95,7 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
             </TabsContent>
 
             <TabsContent value="executionModel" className="flex-1 flex flex-col overflow-hidden">
-              <ExecutionView processFlow={requestDetails.executionFlow?.diagram} tenantId={tenantId} executionId={requestDetails.executionFlow?.executionId ?? ''} locale={locale} />
+              <ExecutionView processFlow={requestDetails.executionFlow?.diagram} tenantId={tenantId} executionId={requestDetails.executionFlow?.executionId ?? ''} locale={locale} executionLogs={requestDetails.executionFlow?.logs} />
             </TabsContent>
 
             <TabsContent value="guides" className="flex-1 flex flex-col overflow-hidden">

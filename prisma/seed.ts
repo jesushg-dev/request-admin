@@ -198,7 +198,7 @@ async function main() {
             create: {
               firstName: 'Jesus',
               lastName: 'Hernandez',
-              phone: '89898989',
+              phone: '+50589898989',
               identificationNumber: '134-123456-0000A',
               identificationTypeId: dnIdentificationType.id,
               tenantId: UNSTABLE_TENANT_ID,
@@ -242,7 +242,7 @@ async function main() {
             create: {
               firstName: 'Danilo',
               lastName: 'Acevedo',
-              phone: '12345678',
+              phone: '+50512345678',
               identificationNumber: '254-555456-0000A',
               identificationTypeId: dnIdentificationType.id,
               tenantId: UNSTABLE_TENANT_ID,

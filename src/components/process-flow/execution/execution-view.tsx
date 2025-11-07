@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
 import { Hint } from '@/components/hint';
+import type { ExecutionLogType } from '@/types/zenstackhq/request';
 
 import { nodeTypes } from '../flow-builder/nodes';
 import { PendingDecisionPanel } from './execution-decision-control';
@@ -28,17 +29,18 @@ interface ExecutionViewProps {
   tenantId: string;
   executionId: string;
   processFlow?: ExecutionFlowValues;
+  executionLogs?: ExecutionLogType[];
 }
 
-const ExecutionView: FC<ExecutionViewProps> = ({ locale, tenantId, executionId, processFlow: initialProcessFlow }) => {
+const ExecutionView: FC<ExecutionViewProps> = ({ locale, tenantId, executionId, processFlow: initialProcessFlow, executionLogs }) => {
   const t = useTranslations('component.flowExecution.execution');
 
   const [state] = useAtom(stateAtom);
   const [, initializeProcessFlow] = useAtom(initializeProcessFlowAtom);
 
   const memoizedInitialize = useCallback(() => {
-    initializeProcessFlow([initialProcessFlow, locale]);
-  }, [initialProcessFlow, locale, initializeProcessFlow]);
+    initializeProcessFlow([initialProcessFlow, locale, executionLogs]);
+  }, [initialProcessFlow, locale, executionLogs, initializeProcessFlow]);
 
   useEffect(() => {
     memoizedInitialize();

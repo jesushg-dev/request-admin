@@ -20,6 +20,15 @@ export const RequestDefaultArgs = Prisma.validator<Prisma.RequestDefaultArgs>()(
 // Type for Requests with selected fields
 export type RequestType = Prisma.RequestGetPayload<typeof RequestDefaultArgs>;
 
+export type ExecutionLogType = {
+  id: string;
+  nodeId: string;
+  eventType: string;
+  details: string;
+  outcome: string;
+  timestamp: Date;
+};
+
 export type RequestDetailsType = {
   guides: {
     id: string;
@@ -74,6 +83,7 @@ export type RequestDetailsType = {
   executionFlow?: {
     executionId: string;
     diagram: ExecutionFlowValues;
+    logs: ExecutionLogType[];
   };
 };
 

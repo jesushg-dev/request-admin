@@ -13,16 +13,16 @@ export interface TestUserData {
 
 // List of test users with diverse information and their assigned roles
 export const TEST_USERS: TestUserData[] = [
-  { name: 'María González', email: 'maria.gonzalez@claro.com.ni', username: 'maria.gonzalez', firstName: 'María', lastName: 'González', phone: '88881234', roleName: 'Coordinador' },
-  { name: 'Carlos Ramírez', email: 'carlos.ramirez@claro.com.ni', username: 'carlos.ramirez', firstName: 'Carlos', lastName: 'Ramírez', phone: '88881235', roleName: 'Analista' },
-  { name: 'Ana Martínez', email: 'ana.martinez@claro.com.ni', username: 'ana.martinez', firstName: 'Ana', lastName: 'Martínez', phone: '88881236', roleName: 'Distribuidor' },
-  { name: 'Luis Fernández', email: 'luis.fernandez@claro.com.ni', username: 'luis.fernandez', firstName: 'Luis', lastName: 'Fernández', phone: '88881237', roleName: 'Coordinador' },
-  { name: 'Laura Sánchez', email: 'laura.sanchez@claro.com.ni', username: 'laura.sanchez', firstName: 'Laura', lastName: 'Sánchez', phone: '88881238', roleName: 'Analista' },
-  { name: 'Roberto Jiménez', email: 'roberto.jimenez@claro.com.ni', username: 'roberto.jimenez', firstName: 'Roberto', lastName: 'Jiménez', phone: '88881239', roleName: 'Distribuidor' },
-  { name: 'Carmen Díaz', email: 'carmen.diaz@claro.com.ni', username: 'carmen.diaz', firstName: 'Carmen', lastName: 'Díaz', phone: '88881240', roleName: 'Coordinador' },
-  { name: 'Diego Morales', email: 'diego.morales@claro.com.ni', username: 'diego.morales', firstName: 'Diego', lastName: 'Morales', phone: '88881241', roleName: 'Analista' },
-  { name: 'Patricia Vega', email: 'patricia.vega@claro.com.ni', username: 'patricia.vega', firstName: 'Patricia', lastName: 'Vega', phone: '88881242', roleName: 'Distribuidor' },
-  { name: 'Fernando Castro', email: 'fernando.castro@claro.com.ni', username: 'fernando.castro', firstName: 'Fernando', lastName: 'Castro', phone: '88881243', roleName: 'Analista' },
+  { name: 'María González', email: 'maria.gonzalez@claro.com.ni', username: 'maria.gonzalez', firstName: 'María', lastName: 'González', phone: '+50588881234', roleName: 'Coordinador' },
+  { name: 'Carlos Ramírez', email: 'carlos.ramirez@claro.com.ni', username: 'carlos.ramirez', firstName: 'Carlos', lastName: 'Ramírez', phone: '+50588881235', roleName: 'Analista' },
+  { name: 'Ana Martínez', email: 'ana.martinez@claro.com.ni', username: 'ana.martinez', firstName: 'Ana', lastName: 'Martínez', phone: '+50588881236', roleName: 'Distribuidor' },
+  { name: 'Luis Fernández', email: 'luis.fernandez@claro.com.ni', username: 'luis.fernandez', firstName: 'Luis', lastName: 'Fernández', phone: '+50588881237', roleName: 'Coordinador' },
+  { name: 'Laura Sánchez', email: 'laura.sanchez@claro.com.ni', username: 'laura.sanchez', firstName: 'Laura', lastName: 'Sánchez', phone: '+50588881238', roleName: 'Analista' },
+  { name: 'Roberto Jiménez', email: 'roberto.jimenez@claro.com.ni', username: 'roberto.jimenez', firstName: 'Roberto', lastName: 'Jiménez', phone: '+50588881239', roleName: 'Distribuidor' },
+  { name: 'Carmen Díaz', email: 'carmen.diaz@claro.com.ni', username: 'carmen.diaz', firstName: 'Carmen', lastName: 'Díaz', phone: '+50588881240', roleName: 'Coordinador' },
+  { name: 'Diego Morales', email: 'diego.morales@claro.com.ni', username: 'diego.morales', firstName: 'Diego', lastName: 'Morales', phone: '+50588881241', roleName: 'Analista' },
+  { name: 'Patricia Vega', email: 'patricia.vega@claro.com.ni', username: 'patricia.vega', firstName: 'Patricia', lastName: 'Vega', phone: '+50588881242', roleName: 'Distribuidor' },
+  { name: 'Fernando Castro', email: 'fernando.castro@claro.com.ni', username: 'fernando.castro', firstName: 'Fernando', lastName: 'Castro', phone: '+50588881243', roleName: 'Analista' },
 ];
 
 // Define common permissions for reuse
