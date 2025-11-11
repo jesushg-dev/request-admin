@@ -1,3 +1,4 @@
+import { type Metadata } from 'next';
 import { FC } from 'react';
 import { redirect } from '@/i18n/routing';
 import { getAuthContext } from '@/actions/authorization';
@@ -14,6 +15,23 @@ import { PageCardWrapper } from '@/components/shared/page-container';
 interface EditPageProps {
   params: Promise<{ locale: Locale; tenantId: string; slug: string }>;
   searchParams: Promise<SearchParams>;
+}
+
+export async function generateMetadata(props: { params: Promise<{ locale: string; tenantId: string; slug: string }> }): Promise<Metadata> {
+  const { locale, tenantId, slug } = await props.params;
+  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
+  
+  const db = await getDb();
+  const folder = await db.folder.findUnique({
+    where: { id: slug, tenantId },
+    select: { name: true },
+  });
+  const folderName = folder?.name || `Carpeta #${slug}`;
+
+  return {
+    title: `${folderName} - Editar Carpeta - ${t('brandName')}`,
+    description: 'Editar los detalles de la carpeta',
+  };
 }
 
 const EditPage: FC<EditPageProps> = async ({ params, searchParams }) => {

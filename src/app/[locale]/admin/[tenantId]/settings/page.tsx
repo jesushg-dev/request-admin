@@ -1,9 +1,17 @@
-import type { Metadata } from 'next';
+import { type Metadata } from 'next';
+import { type Locale } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
-export const metadata: Metadata = {
-  title: 'Settings',
-  description: 'Manage your account and organization settings',
-};
+export async function generateMetadata(props: { params: Promise<{ locale: string; tenantId: string }> }): Promise<Metadata> {
+  const params = await props.params;
+  const { locale } = params;
+  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
+
+  return {
+    title: `${t('pages.settings.title')} - ${t('brandName')}`,
+    description: t('pages.settings.description'),
+  };
+}
 
 export default function SettingsPage() {
   return <div>Settings</div>;

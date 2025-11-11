@@ -95,6 +95,355 @@
     },
     "filterDatePlaceholder": "Seleccionar fecha"
   },
+  "metadata": {
+    "brandName": "Request Engine",
+    "pages": {
+      "tenants": {
+        "title": "Seleccionar Organización",
+        "description": "Selecciona la organización con la que deseas trabajar"
+      },
+      "dashboard": {
+        "title": "Panel",
+        "description": "Vista general del sistema y métricas principales"
+      },
+      "requests": {
+        "title": "Solicitudes",
+        "description": "Gestiona y supervisa todas las solicitudes de servicio"
+      },
+      "settings": {
+        "title": "Configuraciones",
+        "description": "Administra la configuración de tu organización"
+      },
+      "security": {
+        "title": "Seguridad y Acceso",
+        "description": "Gestiona usuarios, roles y permisos de acceso"
+      },
+      "securityUsers": {
+        "title": "Usuarios",
+        "description": "Gestiona los usuarios del sistema"
+      },
+      "securityRoles": {
+        "title": "Roles",
+        "description": "Gestiona los roles y permisos del sistema"
+      },
+      "securityDashboard": {
+        "title": "Panel de Seguridad",
+        "description": "Una vista completa del estado de seguridad de su sistema"
+      },
+      "workflows": {
+        "title": "Flujos de Trabajo",
+        "description": "Configura y gestiona los flujos de trabajo del sistema"
+      },
+      "priorities": {
+        "title": "Prioridades",
+        "description": "Gestiona las prioridades de las solicitudes"
+      },
+      "formDesigner": {
+        "title": "Diseñador de Formularios",
+        "description": "Crea y edita formularios personalizados"
+      },
+      "formDetail": {
+        "title": "Formulario",
+        "description": "Detalles y estadísticas del formulario"
+      },
+      "requirements": {
+        "title": "Requisitos",
+        "description": "Gestiona los requisitos del sistema"
+      },
+      "requirementTypes": {
+        "title": "Tipos de Requisitos",
+        "description": "Gestiona los tipos de requisitos"
+      },
+      "requestTypes": {
+        "title": "Tipos de Solicitud",
+        "description": "Gestiona los tipos de solicitud"
+      },
+      "requestHierarchies": {
+        "title": "Jerarquía de Tipos de Solicitud",
+        "description": "Gestiona la jerarquía de tipos de solicitud"
+      },
+      "requestDetail": {
+        "title": "Detalle de Solicitud",
+        "description": "Ver y gestionar los detalles de la solicitud"
+      },
+      "requestEdit": {
+        "title": "Editar Solicitud",
+        "description": "Editar los detalles de la solicitud"
+      },
+      "invitations": {
+        "title": "Invitaciones",
+        "description": "Gestiona las invitaciones de usuarios"
+      },
+      "roleEdit": {
+        "title": "Editar Rol",
+        "description": "Editar los detalles del rol"
+      },
+      "roleNew": {
+        "title": "Nuevo Rol",
+        "description": "Crear un nuevo rol"
+      },
+      "userDetail": {
+        "title": "Detalle de Usuario",
+        "description": "Ver y gestionar los detalles del usuario"
+      },
+      "userNew": {
+        "title": "Nuevo Usuario",
+        "description": "Crear un nuevo usuario"
+      },
+      "identificationTypeEdit": {
+        "title": "Editar Tipo de Identificación",
+        "description": "Editar el tipo de identificación"
+      },
+      "documentDetail": {
+        "title": "Detalle de Documento",
+        "description": "Ver y gestionar los detalles del documento"
+      },
+      "documentEdit": {
+        "title": "Editar Documento",
+        "description": "Editar los detalles del documento"
+      },
+      "dataRoomDetail": {
+        "title": "Detalle de Sala de Datos",
+        "description": "Ver y gestionar los detalles de la sala de datos"
+      },
+      "dataRoomBranding": {
+        "title": "Personalización de Sala de Datos",
+        "description": "Personalizar la apariencia de la sala de datos"
+      },
+      "workflowEdit": {
+        "title": "Editar Flujo de Trabajo",
+        "description": "Editar el flujo de trabajo"
+      },
+      "workflowNew": {
+        "title": "Nuevo Flujo de Trabajo",
+        "description": "Crear un nuevo flujo de trabajo"
+      },
+      "priorityEdit": {
+        "title": "Editar Prioridad",
+        "description": "Editar los detalles de la prioridad"
+      },
+      "priorityNew": {
+        "title": "Nueva Prioridad",
+        "description": "Crear una nueva prioridad"
+      },
+      "requirementEdit": {
+        "title": "Editar Requisito",
+        "description": "Editar los detalles del requisito"
+      },
+      "requirementNew": {
+        "title": "Nuevo Requisito",
+        "description": "Crear un nuevo requisito"
+      },
+      "requirementTypeEdit": {
+        "title": "Editar Tipo de Requisito",
+        "description": "Editar el tipo de requisito"
+      },
+      "requirementTypeNew": {
+        "title": "Nuevo Tipo de Requisito",
+        "description": "Crear un nuevo tipo de requisito"
+      },
+      "requestTypeEdit": {
+        "title": "Editar Tipo de Solicitud",
+        "description": "Editar el tipo de solicitud"
+      },
+      "requestTypeNew": {
+        "title": "Nuevo Tipo de Solicitud",
+        "description": "Crear un nuevo tipo de solicitud"
+      },
+      "requestHierarchyEdit": {
+        "title": "Editar Jerarquía de Tipos de Solicitud",
+        "description": "Editar la jerarquía de tipos de solicitud"
+      },
+      "requestHierarchyNew": {
+        "title": "Nueva Jerarquía de Tipos de Solicitud",
+        "description": "Crear una nueva jerarquía de tipos de solicitud"
+      },
+      "apiKeys": {
+        "title": "Claves API",
+        "description": "Gestiona tus claves API para acceder a la API"
+      },
+      "sessions": {
+        "title": "Sesiones",
+        "description": "Gestiona las sesiones activas de tu cuenta"
+      },
+      "connectedAccounts": {
+        "title": "Cuentas Conectadas",
+        "description": "Gestiona las cuentas conectadas a tu perfil"
+      },
+      "rolesAndAccess": {
+        "title": "Roles y Acceso",
+        "description": "Gestiona los roles y permisos de acceso"
+      },
+      "reports": {
+        "title": "Reportes",
+        "description": "Genera y visualiza reportes del sistema"
+      },
+      "notifications": {
+        "title": "Notificaciones",
+        "description": "Gestiona tus notificaciones"
+      },
+      "messages": {
+        "title": "Mensajes",
+        "description": "Gestiona tus mensajes"
+      },
+      "help": {
+        "title": "Ayuda",
+        "description": "Centro de ayuda y documentación"
+      },
+      "linksAndDocuments": {
+        "title": "Enlaces y Documentos",
+        "description": "Gestiona enlaces y documentos compartidos"
+      },
+      "areas": {
+        "title": "Áreas",
+        "description": "Gestiona las áreas de la organización"
+      },
+      "assignmentHierarchies": {
+        "title": "Jerarquía de Asignación",
+        "description": "Gestiona la jerarquía de asignación"
+      },
+      "reports": {
+        "title": "Reportes",
+        "description": "Genera y visualiza reportes del sistema"
+      },
+      "notifications": {
+        "title": "Notificaciones",
+        "description": "Gestiona tus notificaciones"
+      },
+      "messages": {
+        "title": "Mensajes",
+        "description": "Gestiona tus mensajes"
+      },
+      "help": {
+        "title": "Ayuda",
+        "description": "Centro de ayuda y documentación"
+      },
+      "identificationTypes": {
+        "title": "Tipos de Identificación",
+        "description": "Gestiona los tipos de identificación"
+      },
+      "account": {
+        "title": "Cuenta",
+        "description": "Gestiona la configuración de tu cuenta"
+      },
+      "preferences": {
+        "title": "Preferencias",
+        "description": "Personaliza tus preferencias del sistema"
+      },
+      "preferencesNotifications": {
+        "title": "Preferencias de Notificaciones",
+        "description": "Configura cómo y cuándo recibir notificaciones"
+      },
+      "preferencesAppearance": {
+        "title": "Apariencia",
+        "description": "Personaliza la apariencia de la interfaz"
+      },
+      "organization": {
+        "title": "Organización",
+        "description": "Gestiona la configuración de tu organización"
+      },
+      "organizationPerson": {
+        "title": "Información Personal",
+        "description": "Gestiona tu información personal en la organización"
+      },
+      "organizationSubscription": {
+        "title": "Suscripción",
+        "description": "Gestiona la suscripción de tu organización"
+      },
+      "twoFactor": {
+        "title": "Autenticación de Dos Factores",
+        "description": "Configura la autenticación de dos factores para mayor seguridad"
+      },
+      "password": {
+        "title": "Contraseña",
+        "description": "Cambia tu contraseña de acceso"
+      },
+      "email": {
+        "title": "Correo Electrónico",
+        "description": "Gestiona tu dirección de correo electrónico"
+      },
+      "apiKeyNew": {
+        "title": "Nueva Clave API",
+        "description": "Crea una nueva clave API para acceso programático"
+      },
+      "formDesigner": {
+        "title": "Diseñador de Formularios",
+        "description": "Crea y edita formularios personalizados"
+      },
+      "dataRooms": {
+        "title": "Salas de Datos",
+        "description": "Gestiona las salas de datos de tu organización"
+      },
+      "documents": {
+        "title": "Documentos",
+        "description": "Gestiona los documentos de tu organización"
+      },
+      "links": {
+        "title": "Enlaces",
+        "description": "Gestiona los enlaces compartidos"
+      },
+      "agreements": {
+        "title": "Acuerdos",
+        "description": "Gestiona los acuerdos de tu organización"
+      },
+      "folders": {
+        "title": "Carpetas",
+        "description": "Gestiona las carpetas de documentos"
+      },
+      "requirementNew": {
+        "title": "Nuevo Requisito",
+        "description": "Crear un nuevo requisito"
+      },
+      "requirementTypeNew": {
+        "title": "Nuevo Tipo de Requisito",
+        "description": "Crear un nuevo tipo de requisito"
+      },
+      "requestTypeNew": {
+        "title": "Nuevo Tipo de Solicitud",
+        "description": "Crear un nuevo tipo de solicitud"
+      },
+      "requestHierarchyNew": {
+        "title": "Nueva Jerarquía de Tipos de Solicitud",
+        "description": "Crear una nueva jerarquía de tipos de solicitud"
+      },
+      "areaNew": {
+        "title": "Nueva Área",
+        "description": "Crear una nueva área"
+      },
+      "assignmentHierarchyNew": {
+        "title": "Nueva Jerarquía de Asignación",
+        "description": "Crear una nueva jerarquía de asignación"
+      },
+      "identificationTypeNew": {
+        "title": "Nuevo Tipo de Identificación",
+        "description": "Crear un nuevo tipo de identificación"
+      },
+      "formNew": {
+        "title": "Nuevo Formulario",
+        "description": "Crear un nuevo formulario"
+      },
+      "dataRoomNew": {
+        "title": "Nueva Sala de Datos",
+        "description": "Crear una nueva sala de datos"
+      },
+      "linkNew": {
+        "title": "Nuevo Enlace",
+        "description": "Crear un nuevo enlace compartido"
+      },
+      "agreementNew": {
+        "title": "Nuevo Acuerdo",
+        "description": "Crear un nuevo acuerdo"
+      },
+      "folderNew": {
+        "title": "Nueva Carpeta",
+        "description": "Crear una nueva carpeta de documentos"
+      },
+      "requestNew": {
+        "title": "Nueva Solicitud",
+        "description": "Crear una nueva solicitud"
+      }
+    }
+  },
   "home": {
     "title": "Request Engine",
     "description": "Un sistema robusto y escalable diseñado para optimizar la gestión de solicitudes de servicios de telecomunicaciones, siguiendo las mejores prácticas de ITIL.",

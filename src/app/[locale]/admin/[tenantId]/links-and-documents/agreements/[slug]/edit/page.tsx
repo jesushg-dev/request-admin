@@ -1,3 +1,4 @@
+import { type Metadata } from 'next';
 import { FC } from 'react';
 import { type Locale } from 'next-intl';
 import { redirect } from '@/i18n/routing';
@@ -11,6 +12,23 @@ import { PageCardWrapper } from '@/components/shared/page-container';
 
 interface EditPageProps {
   params: Promise<{ locale: Locale; tenantId: string; slug: string }>;
+}
+
+export async function generateMetadata(props: EditPageProps): Promise<Metadata> {
+  const { locale, tenantId, slug } = await props.params;
+  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
+  
+  const db = await getDb();
+  const agreement = await db.agreement.findUnique({
+    where: { id: slug, tenantId },
+    select: { name: true },
+  });
+  const agreementName = agreement?.name || `Acuerdo #${slug}`;
+
+  return {
+    title: `${agreementName} - Editar Acuerdo - ${t('brandName')}`,
+    description: 'Editar los detalles del acuerdo',
+  };
 }
 
 const EditPage: FC<EditPageProps> = async ({ params }) => {

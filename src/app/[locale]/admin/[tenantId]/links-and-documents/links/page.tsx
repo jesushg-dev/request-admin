@@ -1,7 +1,9 @@
+import { type Metadata } from 'next';
 import { type Locale } from 'next-intl';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
+import { getTranslations } from 'next-intl/server';
 import LinksPageClient from '@/components/common/shared-links/links-page-client';
 
 interface LinksPageProps {
@@ -9,6 +11,16 @@ interface LinksPageProps {
     locale: Locale;
     tenantId: string;
   }>;
+}
+
+export async function generateMetadata(props: LinksPageProps): Promise<Metadata> {
+  const { locale } = await props.params;
+  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
+
+  return {
+    title: `${t('pages.links.title')} - ${t('brandName')}`,
+    description: t('pages.links.description'),
+  };
 }
 
 export default async function LinksPage({ params }: LinksPageProps) {

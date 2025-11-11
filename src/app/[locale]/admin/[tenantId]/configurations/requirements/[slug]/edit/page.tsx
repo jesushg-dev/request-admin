@@ -1,3 +1,4 @@
+import { type Metadata } from 'next';
 import { FC } from 'react';
 import { type Locale } from 'next-intl';
 import { redirect } from '@/i18n/routing';
@@ -11,6 +12,19 @@ import { PageCardWrapper } from '@/components/shared/page-container';
 
 interface UpdateRequirementPageProps {
   params: Promise<{ locale: Locale; slug: string; tenantId: string }>;
+}
+
+export async function generateMetadata(props: UpdateRequirementPageProps): Promise<Metadata> {
+  const { locale, tenantId, slug } = await props.params;
+  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
+  
+  const requirement = await getRequirementAsFormById(tenantId, slug);
+  const requirementName = requirement?.name || `Requisito #${slug}`;
+
+  return {
+    title: `${requirementName} - ${t('pages.requirementEdit.title')} - ${t('brandName')}`,
+    description: t('pages.requirementEdit.description'),
+  };
 }
 
 const UpdateRequirementPage: FC<UpdateRequirementPageProps> = async ({ params }) => {

@@ -1,7 +1,9 @@
+import { type Metadata } from 'next';
 import { type Locale } from 'next-intl';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
+import { getTranslations } from 'next-intl/server';
 import FormDesignerPageClient from '@/components/common/form-designer/form-designer-page-client';
 
 interface FormDesignerPageProps {
@@ -9,6 +11,16 @@ interface FormDesignerPageProps {
     locale: Locale;
     tenantId: string;
   }>;
+}
+
+export async function generateMetadata(props: FormDesignerPageProps): Promise<Metadata> {
+  const { locale } = await props.params;
+  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
+
+  return {
+    title: `${t('pages.formDesigner.title')} - ${t('brandName')}`,
+    description: t('pages.formDesigner.description'),
+  };
 }
 
 export default async function FormDesignerPage({ params }: FormDesignerPageProps) {

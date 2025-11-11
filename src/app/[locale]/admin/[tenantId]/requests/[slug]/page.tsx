@@ -1,3 +1,4 @@
+import { type Metadata } from 'next';
 import { getAuthContext } from '@/actions/authorization';
 import { getAssignmentHierarchyAndLevelsByCategoryId, getRequestHierarchyAndLevelsByCategoryId } from '@/actions/hierarchy';
 import { getPrioritiesAsOptions, getRequestById, getRequestDetailsByRequest } from '@/actions/request';
@@ -22,6 +23,19 @@ import EmptyState from '@/components/shared/empty-state';
 
 interface CaseDetailPageProps {
   params: Promise<{ locale: Locale; tenantId: string; slug: string }>;
+}
+
+export async function generateMetadata(props: CaseDetailPageProps): Promise<Metadata> {
+  const { locale, tenantId, slug } = await props.params;
+  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
+  
+  const request = await getRequestById(tenantId, slug);
+  const requestTitle = request?.issueSubject || `Solicitud #${slug}`;
+
+  return {
+    title: `${requestTitle} - ${t('pages.requestDetail.title')} - ${t('brandName')}`,
+    description: t('pages.requestDetail.description'),
+  };
 }
 
 export default async function CaseDetailPage({ params }: CaseDetailPageProps) {

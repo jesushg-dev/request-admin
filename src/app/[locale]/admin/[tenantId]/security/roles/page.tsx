@@ -1,7 +1,9 @@
+import { type Metadata } from 'next';
 import { type Locale } from 'next-intl';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
+import { getTranslations } from 'next-intl/server';
 import RolesPageClient from '@/components/common/role/roles-page-client';
 
 interface RolesPageProps {
@@ -9,6 +11,16 @@ interface RolesPageProps {
     locale: Locale;
     tenantId: string;
   }>;
+}
+
+export async function generateMetadata(props: RolesPageProps): Promise<Metadata> {
+  const { locale } = await props.params;
+  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
+
+  return {
+    title: `${t('pages.securityRoles.title')} - ${t('brandName')}`,
+    description: t('pages.securityRoles.description'),
+  };
 }
 
 export default async function RolesPage({ params }: RolesPageProps) {

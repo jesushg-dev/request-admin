@@ -1,3 +1,4 @@
+import { type Metadata } from 'next';
 import { FC } from 'react';
 import { type Locale } from 'next-intl';
 import { redirect } from '@/i18n/routing';
@@ -11,6 +12,19 @@ import { PageCardWrapper } from '@/components/shared/page-container';
 
 interface EditPriorityPageProps {
   params: Promise<{ locale: Locale; slug: string; tenantId: string }>;
+}
+
+export async function generateMetadata(props: EditPriorityPageProps): Promise<Metadata> {
+  const { locale, tenantId, slug } = await props.params;
+  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
+  
+  const priority = await getRequestPriorityTypeAsFormById(tenantId, slug);
+  const priorityName = priority?.name || `Prioridad #${slug}`;
+
+  return {
+    title: `${priorityName} - ${t('pages.priorityEdit.title')} - ${t('brandName')}`,
+    description: t('pages.priorityEdit.description'),
+  };
 }
 
 const EditPriorityPage: FC<EditPriorityPageProps> = async ({ params }) => {

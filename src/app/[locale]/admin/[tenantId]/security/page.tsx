@@ -1,15 +1,18 @@
-import { Metadata } from 'next';
+import { type Metadata } from 'next';
+import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
 import { getSecurityStats } from '@/actions/security';
 import { SecurityDashboardClient } from '@/components/common/security/security-dashboard-client';
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('admin.security.dashboard');
-  
+export async function generateMetadata(props: { params: Promise<{ locale: string; tenantId: string }> }): Promise<Metadata> {
+  const params = await props.params;
+  const { locale } = params;
+  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
+
   return {
-    title: t('title'),
-    description: t('description'),
+    title: `${t('pages.securityDashboard.title')} - ${t('brandName')}`,
+    description: t('pages.securityDashboard.description'),
   };
 }
 

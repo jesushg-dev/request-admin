@@ -1,7 +1,9 @@
+import { type Metadata } from 'next';
 import { type Locale } from 'next-intl';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
+import { getTranslations } from 'next-intl/server';
 import AreasPageClient from '@/components/common/area/areas-page-client';
 
 interface AreasPageProps {
@@ -9,6 +11,16 @@ interface AreasPageProps {
     locale: Locale;
     tenantId: string;
   }>;
+}
+
+export async function generateMetadata(props: AreasPageProps): Promise<Metadata> {
+  const { locale } = await props.params;
+  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
+
+  return {
+    title: `${t('pages.areas.title')} - ${t('brandName')}`,
+    description: t('pages.areas.description'),
+  };
 }
 
 export default async function AreasPage({ params }: AreasPageProps) {

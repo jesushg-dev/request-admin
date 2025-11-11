@@ -1,3 +1,4 @@
+import { type Metadata } from 'next';
 import { FC } from 'react';
 import { type Locale } from 'next-intl';
 import { getAuthContext } from '@/actions/authorization';
@@ -10,6 +11,16 @@ import { PageCardWrapper } from '@/components/shared/page-container';
 
 interface NewPageProps {
   params: Promise<{ locale: Locale; tenantId: string }>;
+}
+
+export async function generateMetadata(props: NewPageProps): Promise<Metadata> {
+  const { locale } = await props.params;
+  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
+
+  return {
+    title: `${t('pages.agreementNew.title')} - ${t('brandName')}`,
+    description: t('pages.agreementNew.description'),
+  };
 }
 
 const NewPage: FC<NewPageProps> = async ({ params }) => {

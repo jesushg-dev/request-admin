@@ -1,3 +1,4 @@
+import { type Metadata } from 'next';
 import { FC } from 'react';
 import { type Locale } from 'next-intl';
 import { redirect } from '@/i18n/routing';
@@ -11,6 +12,23 @@ import { PageCardWrapper } from '@/components/shared/page-container';
 
 interface EditIdentificationTypePageProps {
   params: Promise<{ locale: Locale; slug: string; tenantId: string }>;
+}
+
+export async function generateMetadata(props: EditIdentificationTypePageProps): Promise<Metadata> {
+  const { locale, tenantId, slug } = await props.params;
+  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
+  
+  const db = await getDb();
+  const identificationType = await db.identificationType.findUnique({
+    where: { id: slug, tenantId },
+    select: { name: true },
+  });
+  const identificationTypeName = identificationType?.name || `Tipo de Identificación #${slug}`;
+
+  return {
+    title: `${identificationTypeName} - ${t('pages.identificationTypeEdit.title')} - ${t('brandName')}`,
+    description: t('pages.identificationTypeEdit.description'),
+  };
 }
 
 const EditIdentificationTypePage: FC<EditIdentificationTypePageProps> = async ({ params }) => {

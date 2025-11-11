@@ -21,6 +21,7 @@ import { useTranslations } from 'next-intl';
 import { PermissionEmptyState } from '@/components/shared/permission-empty-state';
 import { PermissionButton } from '@/components/shared/permission-button';
 
+// Note: This is a client component, so metadata should be handled in a layout or parent component
 export default function Home() {
   const { tenantId, userTenant, currentTenant } = useTenantContext();
   const { hasPermission } = useAuthorization(tenantId);

@@ -14,15 +14,17 @@ import { AppSidebar } from '@/components/layouts/admin/app-sidebar';
 import { DndSubmissionProvider } from '@/components/layouts/admin/dnd-submission-provider';
 import { Navbar } from '@/components/layouts/admin/nav-bar';
 
-export async function generateMetadata(props: { params: { locale: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ locale: string; tenantId: string }> }): Promise<Metadata> {
   const params = await props.params;
   const { locale } = params;
-  const t = await getTranslations({ locale: locale as Locale, namespace: 'admin' });
+  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
+  const tAdmin = await getTranslations({ locale: locale as Locale, namespace: 'admin' });
 
+  // Default metadata for dashboard (root page)
   return {
-    title: t('title'),
-    description: t('description'),
-    applicationName: t('applicationName'),
+    title: `${t('pages.dashboard.title')} - ${t('brandName')}`,
+    description: t('pages.dashboard.description'),
+    applicationName: tAdmin('applicationName'),
     icons: [{ rel: 'icon', url: '/favicon.ico' }],
     authors: [
       {
@@ -34,7 +36,7 @@ export async function generateMetadata(props: { params: { locale: string } }): P
         url: 'https://www.daniloacevedo.com',
       },
     ],
-    keywords: t('keywords'),
+    keywords: tAdmin('keywords'),
   };
 }
 

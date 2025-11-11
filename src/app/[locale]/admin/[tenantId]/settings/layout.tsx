@@ -1,12 +1,20 @@
-import { Metadata } from 'next';
+import { type Metadata } from 'next';
+import { type Locale } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { SettingsSidebar } from '@/components/common/setting/settings-sidebar';
 
-export const metadata: Metadata = {
-  title: 'Forms',
-  description: 'Advanced form example using react-hook-form and Zod.',
-};
+export async function generateMetadata(props: { params: Promise<{ locale: string; tenantId: string }> }): Promise<Metadata> {
+  const params = await props.params;
+  const { locale } = params;
+  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
+
+  return {
+    title: `${t('pages.settings.title')} - ${t('brandName')}`,
+    description: t('pages.settings.description'),
+  };
+}
 
 interface SettingsLayoutProps {
   children: React.ReactNode;

@@ -95,6 +95,355 @@
     },
     "filterDatePlaceholder": "Pick a date"
   },
+  "metadata": {
+    "brandName": "Request Engine",
+    "pages": {
+      "tenants": {
+        "title": "Select Organization",
+        "description": "Select the organization you want to work with"
+      },
+      "dashboard": {
+        "title": "Dashboard",
+        "description": "System overview and key metrics"
+      },
+      "requests": {
+        "title": "Requests",
+        "description": "Manage and monitor all service requests"
+      },
+      "settings": {
+        "title": "Settings",
+        "description": "Manage your organization settings"
+      },
+      "security": {
+        "title": "Security and Access",
+        "description": "Manage users, roles and access permissions"
+      },
+      "securityUsers": {
+        "title": "Users",
+        "description": "Manage system users"
+      },
+      "securityRoles": {
+        "title": "Roles",
+        "description": "Manage system roles and permissions"
+      },
+      "securityDashboard": {
+        "title": "Security Dashboard",
+        "description": "A comprehensive view of your system's security status"
+      },
+      "workflows": {
+        "title": "Workflows",
+        "description": "Configure and manage system workflows"
+      },
+      "priorities": {
+        "title": "Priorities",
+        "description": "Manage request priorities"
+      },
+      "formDesigner": {
+        "title": "Form Designer",
+        "description": "Create and edit custom forms"
+      },
+      "formDetail": {
+        "title": "Form",
+        "description": "Form details and statistics"
+      },
+      "requirements": {
+        "title": "Requirements",
+        "description": "Manage system requirements"
+      },
+      "requirementTypes": {
+        "title": "Requirement Types",
+        "description": "Manage requirement types"
+      },
+      "requestTypes": {
+        "title": "Request Types",
+        "description": "Manage request types"
+      },
+      "requestHierarchies": {
+        "title": "Request Types Hierarchy",
+        "description": "Manage request types hierarchy"
+      },
+      "requestDetail": {
+        "title": "Request Detail",
+        "description": "View and manage request details"
+      },
+      "requestEdit": {
+        "title": "Edit Request",
+        "description": "Edit request details"
+      },
+      "invitations": {
+        "title": "Invitations",
+        "description": "Manage user invitations"
+      },
+      "roleEdit": {
+        "title": "Edit Role",
+        "description": "Edit role details"
+      },
+      "roleNew": {
+        "title": "New Role",
+        "description": "Create a new role"
+      },
+      "userDetail": {
+        "title": "User Detail",
+        "description": "View and manage user details"
+      },
+      "userNew": {
+        "title": "New User",
+        "description": "Create a new user"
+      },
+      "identificationTypeEdit": {
+        "title": "Edit Identification Type",
+        "description": "Edit identification type"
+      },
+      "documentDetail": {
+        "title": "Document Detail",
+        "description": "View and manage document details"
+      },
+      "documentEdit": {
+        "title": "Edit Document",
+        "description": "Edit document details"
+      },
+      "dataRoomDetail": {
+        "title": "Data Room Detail",
+        "description": "View and manage data room details"
+      },
+      "dataRoomBranding": {
+        "title": "Data Room Branding",
+        "description": "Customize data room appearance"
+      },
+      "workflowEdit": {
+        "title": "Edit Workflow",
+        "description": "Edit workflow"
+      },
+      "workflowNew": {
+        "title": "New Workflow",
+        "description": "Create a new workflow"
+      },
+      "priorityEdit": {
+        "title": "Edit Priority",
+        "description": "Edit priority details"
+      },
+      "priorityNew": {
+        "title": "New Priority",
+        "description": "Create a new priority"
+      },
+      "requirementEdit": {
+        "title": "Edit Requirement",
+        "description": "Edit requirement details"
+      },
+      "requirementNew": {
+        "title": "New Requirement",
+        "description": "Create a new requirement"
+      },
+      "requirementTypeEdit": {
+        "title": "Edit Requirement Type",
+        "description": "Edit requirement type"
+      },
+      "requirementTypeNew": {
+        "title": "New Requirement Type",
+        "description": "Create a new requirement type"
+      },
+      "requestTypeEdit": {
+        "title": "Edit Request Type",
+        "description": "Edit request type"
+      },
+      "requestTypeNew": {
+        "title": "New Request Type",
+        "description": "Create a new request type"
+      },
+      "requestHierarchyEdit": {
+        "title": "Edit Request Types Hierarchy",
+        "description": "Edit request types hierarchy"
+      },
+      "requestHierarchyNew": {
+        "title": "New Request Types Hierarchy",
+        "description": "Create a new request types hierarchy"
+      },
+      "apiKeys": {
+        "title": "API Keys",
+        "description": "Manage your API keys for programmatic access"
+      },
+      "sessions": {
+        "title": "Sessions",
+        "description": "Manage your active account sessions"
+      },
+      "connectedAccounts": {
+        "title": "Connected Accounts",
+        "description": "Manage accounts connected to your profile"
+      },
+      "rolesAndAccess": {
+        "title": "Roles and Access",
+        "description": "Manage roles and access permissions"
+      },
+      "reports": {
+        "title": "Reports",
+        "description": "Generate and view system reports"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "description": "Manage your notifications"
+      },
+      "messages": {
+        "title": "Messages",
+        "description": "Manage your messages"
+      },
+      "help": {
+        "title": "Help",
+        "description": "Help center and documentation"
+      },
+      "linksAndDocuments": {
+        "title": "Links and Documents",
+        "description": "Manage shared links and documents"
+      },
+      "areas": {
+        "title": "Areas",
+        "description": "Manage organization areas"
+      },
+      "assignmentHierarchies": {
+        "title": "Assignment Hierarchy",
+        "description": "Manage assignment hierarchy"
+      },
+      "reports": {
+        "title": "Reports",
+        "description": "Generate and view system reports"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "description": "Manage your notifications"
+      },
+      "messages": {
+        "title": "Messages",
+        "description": "Manage your messages"
+      },
+      "help": {
+        "title": "Help",
+        "description": "Help center and documentation"
+      },
+      "identificationTypes": {
+        "title": "Identification Types",
+        "description": "Manage identification types"
+      },
+      "account": {
+        "title": "Account",
+        "description": "Manage your account settings"
+      },
+      "preferences": {
+        "title": "Preferences",
+        "description": "Customize your system preferences"
+      },
+      "preferencesNotifications": {
+        "title": "Notification Preferences",
+        "description": "Configure how and when to receive notifications"
+      },
+      "preferencesAppearance": {
+        "title": "Appearance",
+        "description": "Customize the interface appearance"
+      },
+      "organization": {
+        "title": "Organization",
+        "description": "Manage your organization settings"
+      },
+      "organizationPerson": {
+        "title": "Personal Information",
+        "description": "Manage your personal information in the organization"
+      },
+      "organizationSubscription": {
+        "title": "Subscription",
+        "description": "Manage your organization subscription"
+      },
+      "twoFactor": {
+        "title": "Two-Factor Authentication",
+        "description": "Configure two-factor authentication for enhanced security"
+      },
+      "password": {
+        "title": "Password",
+        "description": "Change your access password"
+      },
+      "email": {
+        "title": "Email",
+        "description": "Manage your email address"
+      },
+      "apiKeyNew": {
+        "title": "New API Key",
+        "description": "Create a new API key for programmatic access"
+      },
+      "formDesigner": {
+        "title": "Form Designer",
+        "description": "Create and edit custom forms"
+      },
+      "dataRooms": {
+        "title": "Data Rooms",
+        "description": "Manage your organization's data rooms"
+      },
+      "documents": {
+        "title": "Documents",
+        "description": "Manage your organization's documents"
+      },
+      "links": {
+        "title": "Links",
+        "description": "Manage shared links"
+      },
+      "agreements": {
+        "title": "Agreements",
+        "description": "Manage your organization's agreements"
+      },
+      "folders": {
+        "title": "Folders",
+        "description": "Manage document folders"
+      },
+      "requirementNew": {
+        "title": "New Requirement",
+        "description": "Create a new requirement"
+      },
+      "requirementTypeNew": {
+        "title": "New Requirement Type",
+        "description": "Create a new requirement type"
+      },
+      "requestTypeNew": {
+        "title": "New Request Type",
+        "description": "Create a new request type"
+      },
+      "requestHierarchyNew": {
+        "title": "New Request Types Hierarchy",
+        "description": "Create a new request types hierarchy"
+      },
+      "areaNew": {
+        "title": "New Area",
+        "description": "Create a new area"
+      },
+      "assignmentHierarchyNew": {
+        "title": "New Assignment Hierarchy",
+        "description": "Create a new assignment hierarchy"
+      },
+      "identificationTypeNew": {
+        "title": "New Identification Type",
+        "description": "Create a new identification type"
+      },
+      "formNew": {
+        "title": "New Form",
+        "description": "Create a new form"
+      },
+      "dataRoomNew": {
+        "title": "New Data Room",
+        "description": "Create a new data room"
+      },
+      "linkNew": {
+        "title": "New Link",
+        "description": "Create a new shared link"
+      },
+      "agreementNew": {
+        "title": "New Agreement",
+        "description": "Create a new agreement"
+      },
+      "folderNew": {
+        "title": "New Folder",
+        "description": "Create a new document folder"
+      },
+      "requestNew": {
+        "title": "New Request",
+        "description": "Create a new request"
+      }
+    }
+  },
   "home": {
     "title": "Request Engine",
     "description": "A robust and scalable system designed to streamline the management of telecommunication service requests, adhering to ITIL best practices.",

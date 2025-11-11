@@ -1,14 +1,29 @@
+import { type Metadata } from 'next';
 import { FC } from 'react';
 import { type Locale } from 'next-intl';
 import { redirect } from '@/i18n/routing';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
+import { getTranslations } from 'next-intl/server';
 import { getRequestHierarchyAndLevelsById, upsertRequestHierarchy } from '@/actions/hierarchy';
 
 import { HierarchyFormStepper } from '@/components/common/hierarchy/hierarchy-form-stepper';
 
 interface UpdateRequestHierarchyPageProps {
   params: Promise<{ locale: Locale; slug: string; tenantId: string }>;
+}
+
+export async function generateMetadata(props: UpdateRequestHierarchyPageProps): Promise<Metadata> {
+  const { locale, tenantId, slug } = await props.params;
+  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
+  
+  const hierarchy = await getRequestHierarchyAndLevelsById(tenantId, slug);
+  const hierarchyName = hierarchy?.name || `Jerarquía #${slug}`;
+
+  return {
+    title: `${hierarchyName} - ${t('pages.requestHierarchyEdit.title')} - ${t('brandName')}`,
+    description: t('pages.requestHierarchyEdit.description'),
+  };
 }
 
 const UpdateRequestHierarchyPage: FC<UpdateRequestHierarchyPageProps> = async ({ params }) => {

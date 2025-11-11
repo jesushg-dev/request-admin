@@ -1,8 +1,10 @@
+import { type Metadata } from 'next';
 import { FC } from 'react';
 import { type Locale } from 'next-intl';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
+import { getTranslations } from 'next-intl/server';
 import { getFormsAsOptions } from '@/actions/form';
 import { getRequestHierarchiesAndLevelsByTenantId } from '@/actions/hierarchy';
 import { getRequirementsAsOptions } from '@/actions/requirement';
@@ -12,6 +14,16 @@ import RequestTypeForm from '@/components/common/request-type/request-type-form'
 
 interface NewPageProps {
   params: Promise<{ locale: Locale; tenantId: string }>;
+}
+
+export async function generateMetadata(props: NewPageProps): Promise<Metadata> {
+  const { locale } = await props.params;
+  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
+
+  return {
+    title: `${t('pages.requestTypeNew.title')} - ${t('brandName')}`,
+    description: t('pages.requestTypeNew.description'),
+  };
 }
 
 const NewPage: FC<NewPageProps> = async ({ params }) => {

@@ -1,14 +1,29 @@
+import { type Metadata } from 'next';
 import React, { FC } from 'react';
 import { type Locale } from 'next-intl';
 import { redirect } from '@/i18n/routing';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
 import { getPrioritiesAsOptions, getRequestById } from '@/actions/request';
+import { getTranslations } from 'next-intl/server';
 
 import RequestFormStepper from '@/components/common/request/request-form-stepper';
 
 interface EditPageProps {
   params: Promise<{ locale: Locale; tenantId: string; slug: string }>;
+}
+
+export async function generateMetadata(props: EditPageProps): Promise<Metadata> {
+  const { locale, tenantId, slug } = await props.params;
+  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
+  
+  const request = await getRequestById(tenantId, slug);
+  const requestTitle = request?.issueSubject || `#${slug}`;
+
+  return {
+    title: `${requestTitle} - ${t('pages.requestEdit.title')} - ${t('brandName')}`,
+    description: t('pages.requestEdit.description'),
+  };
 }
 
 const EditPage: FC<EditPageProps> = async ({ params }) => {

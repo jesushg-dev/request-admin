@@ -1,14 +1,29 @@
-import { type FC } from 'react'
-import { type Locale } from 'next-intl'
-import { redirect } from '@/i18n/routing'
-import { PermissionActions } from '@/constants/permissions'
-import { getAuthContext } from '@/actions/authorization'
-import { getAreasWithRolesAsOptionsByTenantId } from '@/actions/area'
-import { getIdentityTypesAsOptions, getRolesAsOptions, getUserFormValuesByUserTenantId } from '@/actions/user'
-import UserTenantScopedForm from '@/components/common/user/user-tenant-scoped-form'
+import { type Metadata } from 'next';
+import { type FC } from 'react';
+import { type Locale } from 'next-intl';
+import { redirect } from '@/i18n/routing';
+import { PermissionActions } from '@/constants/permissions';
+import { getAuthContext } from '@/actions/authorization';
+import { getAreasWithRolesAsOptionsByTenantId } from '@/actions/area';
+import { getIdentityTypesAsOptions, getRolesAsOptions, getUserFormValuesByUserTenantId } from '@/actions/user';
+import { getTranslations } from 'next-intl/server';
+import UserTenantScopedForm from '@/components/common/user/user-tenant-scoped-form';
 
 interface EditUserPageProps {
-	params: Promise<{ locale: Locale; tenantId: string; slug: string }>
+	params: Promise<{ locale: Locale; tenantId: string; slug: string }>;
+}
+
+export async function generateMetadata(props: EditUserPageProps): Promise<Metadata> {
+	const { locale, tenantId, slug } = await props.params;
+	const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
+	
+	const userData = await getUserFormValuesByUserTenantId(tenantId, slug);
+	const userName = userData?.name || userData?.email || `Usuario #${slug}`;
+
+	return {
+		title: `${userName} - ${t('pages.userDetail.title')} - ${t('brandName')}`,
+		description: t('pages.userDetail.description'),
+	};
 }
 
 const EditUserPage: FC<EditUserPageProps> = async ({ params }) => {

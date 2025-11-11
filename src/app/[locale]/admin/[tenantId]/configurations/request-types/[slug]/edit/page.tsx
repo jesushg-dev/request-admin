@@ -1,8 +1,10 @@
+import { type Metadata } from 'next';
 import { FC } from 'react';
 import { type Locale } from 'next-intl';
 import { redirect } from '@/i18n/routing';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
+import { getTranslations } from 'next-intl/server';
 import { getFormsAsOptions } from '@/actions/form';
 import { getRequestHierarchiesAndLevelsByTenantId } from '@/actions/hierarchy';
 import { getRequestCategoriesByIds } from '@/actions/request-type';
@@ -13,6 +15,19 @@ import RequestTypeForm from '@/components/common/request-type/request-type-form'
 
 interface UpdateRequestTypePageProps {
   params: Promise<{ locale: Locale; slug: string; tenantId: string }>;
+}
+
+export async function generateMetadata(props: UpdateRequestTypePageProps): Promise<Metadata> {
+  const { locale, tenantId, slug } = await props.params;
+  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
+  
+  const requestType = await getRequestCategoriesByIds(tenantId, [slug]);
+  const requestTypeName = requestType?.[0]?.name || `Tipo de Solicitud #${slug}`;
+
+  return {
+    title: `${requestTypeName} - ${t('pages.requestTypeEdit.title')} - ${t('brandName')}`,
+    description: t('pages.requestTypeEdit.description'),
+  };
 }
 
 const UpdateRequestTypePage: FC<UpdateRequestTypePageProps> = async ({ params }) => {

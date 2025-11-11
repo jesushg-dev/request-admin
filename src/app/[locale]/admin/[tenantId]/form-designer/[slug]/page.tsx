@@ -1,3 +1,4 @@
+import { type Metadata } from 'next';
 import { GetFormById } from '@/actions/form';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
@@ -13,6 +14,19 @@ import DynamicDataTable from './table';
 
 interface FormDetailPageProps {
   params: Promise<{ locale: Locale; tenantId: string; slug: string }>;
+}
+
+export async function generateMetadata(props: FormDetailPageProps): Promise<Metadata> {
+  const { locale, tenantId, slug } = await props.params;
+  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
+  
+  const form = await GetFormById(slug, tenantId);
+  const formName = form?.name || t('pages.formDetail.title');
+
+  return {
+    title: `${formName} - ${t('pages.formDesigner.title')} - ${t('brandName')}`,
+    description: `${t('pages.formDesigner.description')}: ${formName}`,
+  };
 }
 
 export default async function FormDetailPage({ params }: FormDetailPageProps) {

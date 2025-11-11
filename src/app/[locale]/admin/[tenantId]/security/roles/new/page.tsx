@@ -1,3 +1,4 @@
+import { type Metadata } from 'next';
 import { FC } from 'react';
 import { type Locale } from 'next-intl';
 import { getAuthContext } from '@/actions/authorization';
@@ -6,11 +7,22 @@ import { redirect } from '@/i18n/routing';
 import { getModuleByTenantIdAndScope } from '@/actions/module';
 import { getRequirementsAsOptions } from '@/actions/requirement';
 import { getUsersAsOptions } from '@/actions/user';
+import { getTranslations } from 'next-intl/server';
 
 import RoleFormStepper from '@/components/common/role/role-form-stepper';
 
 interface NewPageProps {
   params: Promise<{ locale: Locale; tenantId: string }>;
+}
+
+export async function generateMetadata(props: NewPageProps): Promise<Metadata> {
+  const { locale } = await props.params;
+  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
+
+  return {
+    title: `${t('pages.roleNew.title')} - ${t('brandName')}`,
+    description: t('pages.roleNew.description'),
+  };
 }
 
 const NewPage: FC<NewPageProps> = async ({ params }) => {
