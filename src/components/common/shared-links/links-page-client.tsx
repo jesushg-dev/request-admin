@@ -12,7 +12,7 @@ import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { formatDate } from '@/lib/utils';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
-import useTenantId from '@/hooks/use-tenant-id';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
@@ -64,7 +64,7 @@ interface LinksPageClientProps {
 }
 
 export default function LinksPageClient({ canCreate, canEdit, canDelete }: LinksPageClientProps) {
-  const tenantId = useTenantId();
+  const { tenantId } = useTenantContext();
   const t = useTranslations('admin.link.main');
   const [search] = useQueryStates(searchParamsParsers);
 

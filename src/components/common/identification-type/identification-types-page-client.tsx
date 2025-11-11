@@ -12,7 +12,7 @@ import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { formatDate } from '@/lib/utils';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
-import useTenantId from '@/hooks/use-tenant-id';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
@@ -52,7 +52,7 @@ interface IdentificationTypesPageClientProps {
 }
 
 const IdentificationTypesPageClient: React.FC<IdentificationTypesPageClientProps> = ({ canCreate, canEdit, canDelete }) => {
-  const tenantId = useTenantId();
+  const { tenantId } = useTenantContext();
   const t = useTranslations('admin.identificationType.main');
   const [search] = useQueryStates(searchParamsParsers);
 

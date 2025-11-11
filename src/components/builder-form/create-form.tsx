@@ -9,7 +9,7 @@ import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import useTenantId from '@/hooks/use-tenant-id';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { Form, FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -20,7 +20,7 @@ import { Switch } from '../ui/switch';
 const CreateNewForm: FC = () => {
   const t = useTranslations('component.form');
   const router = useRouter();
-  const tenantId = useTenantId();
+  const { tenantId } = useTenantContext();
   const [isPending, startTransition] = useTransition();
 
   const form = useForm({

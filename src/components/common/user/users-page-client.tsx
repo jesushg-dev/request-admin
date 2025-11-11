@@ -10,7 +10,7 @@ import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useListMembers } from '@/hooks/use-list-members';
-import useTenantId from '@/hooks/use-tenant-id';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
@@ -39,7 +39,7 @@ interface UsersPageClientProps {
 }
 
 const UsersPageClient: React.FC<UsersPageClientProps> = ({ canCreate, canEdit, canDelete }) => {
-  const tenantId = useTenantId();
+  const { tenantId } = useTenantContext();
   const t = useTranslations('admin.user.main');
   const [search] = useQueryStates(searchParamsParsers);
 

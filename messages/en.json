@@ -4,10 +4,7 @@
       "errors": {
         "noFeature": "You do not have permission to view this content!",
         "noPermission": "You do not have permission to view this content!",
-        "noPermissionDescription": "Please contact your administrator to request access to this resource.",
-        "table": "Table",
-        "kanban": "Kanban",
-        "calendar": "Calendar"
+        "noPermissionDescription": "Please contact your administrator to request access to this resource."
       }
     }
   },
@@ -1899,6 +1896,11 @@
         "new": "New",
         "assignMassively": "Assign Massively",
         "entityLabel": "Requests",
+        "tabs": {
+          "table": "Table",
+          "kanban": "Kanban",
+          "calendar": "Calendar"
+        },
         "columns": {
           "id": "ID",
           "issueSubject": "Issue Subject",

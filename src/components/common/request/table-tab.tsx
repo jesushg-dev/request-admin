@@ -11,7 +11,7 @@ import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
-import useTenantId from '@/hooks/use-tenant-id';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { getRequestsFilteredByAreaAccess } from '@/actions/request';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
@@ -90,7 +90,7 @@ const searchParamsParsers = {
 };
 
 const RequestMainPage: React.FC = () => {
-  const tenantId = useTenantId();
+  const { tenantId } = useTenantContext();
   const t = useTranslations('admin.request.main');
   const [search] = useQueryStates(searchParamsParsers);
   const [baseWhereClause, setBaseWhereClause] = useState<any>(null);

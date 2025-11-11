@@ -13,7 +13,7 @@ import { parseAsInteger, parseAsString, parseAsStringEnum, useQueryStates } from
 import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
-import useTenantId from '@/hooks/use-tenant-id';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { AssignmentHierarchyLevelTable, useAssignmentLevelTableColumns } from '@/components/common/hierarchy/assignment-hierarchy-level-table';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
@@ -54,7 +54,7 @@ interface AssignmentHierarchiesPageClientProps {
 }
 
 const AssignmentHierarchiesPageClient: React.FC<AssignmentHierarchiesPageClientProps> = ({ canCreate, canEdit, canDelete }) => {
-  const tenantId = useTenantId();
+  const { tenantId } = useTenantContext();
   const t = useTranslations('admin.hierarchy.main');
   const [search] = useQueryStates(searchParamsParsers);
 

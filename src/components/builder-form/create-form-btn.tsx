@@ -4,12 +4,12 @@ import { Link } from '@/i18n/routing';
 import { FilePlus2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import useTenantId from '@/hooks/use-tenant-id';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 
 import { Button } from '../ui/button';
 
 const CreateFormBtn = () => {
-  const tenantId = useTenantId();
+  const { tenantId } = useTenantContext();
   const t = useTranslations('admin.form.main');
 
   return (

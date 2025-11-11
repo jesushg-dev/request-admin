@@ -6,7 +6,7 @@ import { Prisma } from '@zenstackhq/runtime/models';
 import Calendar from '@/components/calendar/calendar';
 import { CalendarEvent, Mode } from '@/components/calendar/calendar-types';
 import { useFindManyRequestAssignment } from '@/services/api/hooks';
-import useTenantId from '@/hooks/use-tenant-id';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { getRequestsFilteredByAreaAccess } from '@/actions/request';
 
 const RequestAssignmentCalendarSelect = Prisma.validator<Prisma.RequestAssignmentFindManyArgs>()({
@@ -98,7 +98,7 @@ function convertAssignmentsToEvents(assignments: AssignmentForCalendar[]): Calen
 }
 
 export default function CalendarTab() {
-  const tenantId = useTenantId();
+  const { tenantId } = useTenantContext();
   const [mode, setMode] = useState<Mode>('month');
   const [date, setDate] = useState<Date>(new Date());
   const [requestFilter, setRequestFilter] = useState<Prisma.RequestWhereInput | null>(null);

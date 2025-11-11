@@ -23,7 +23,7 @@ import {
   type KanbanMoveEvent,
 } from "@/components/ui/kanban";
 
-import useTenantId from "@/hooks/use-tenant-id";
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { cn } from "@/lib/utils";
 import { useFindManyRequestAssignment, useFindManyRequestWorkflow } from "@/services/api/hooks";
 import { RequestWorkflowDefaultArgs } from "@/types/zenstackhq/workflow";
@@ -226,7 +226,7 @@ function orderStatuses(workflow: WorkflowWithStatuses | null): WorkflowStatus[] 
 }
 
 export function KanbanTab() {
-  const tenantId = useTenantId();
+  const { tenantId } = useTenantContext();
   const t = useTranslations("admin.request.kanban");
   const [isPending, startTransition] = React.useTransition();
   const [requestFilter, setRequestFilter] = React.useState<Prisma.RequestWhereInput | null>(null);
@@ -806,7 +806,7 @@ interface TaskCardProps {
 
 function TaskCard({ task, ...props }: TaskCardProps) {
   const t = useTranslations("admin.request.kanban");
-  const tenantId = useTenantId();
+  const { tenantId } = useTenantContext();
   const assigneeLabel = React.useMemo(() => {
     if (!task.assignees.length) return t("unassigned");
     if (task.assignees.length === 1) return task.assignees[0];

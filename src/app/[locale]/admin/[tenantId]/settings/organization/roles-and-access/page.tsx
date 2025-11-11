@@ -13,7 +13,7 @@ import * as z from 'zod';
 
 import useMessage from '@/lib/message';
 import { PERMISSION, useAuthorization } from '@/hooks/use-authorization';
-import useTenantId from '@/hooks/use-tenant-id';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -41,7 +41,7 @@ export default function UserTenantForm() {
   const t = useTranslations('admin.setting.roleAndAccess');
   const locale = useLocale();
   const roles = getRoles(locale);
-  const organizationId = useTenantId();
+  const { tenantId: organizationId } = useTenantContext();
   const { mutateAsync: update } = useUpdateUserTenant();
   const { session, userTenant, hasPermission } = useAuthorization(organizationId);
 

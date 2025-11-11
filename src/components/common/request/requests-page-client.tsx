@@ -6,7 +6,7 @@ import { CircleFadingArrowUpIcon, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useQueryState } from 'nuqs';
 
-import useTenantId from '@/hooks/use-tenant-id';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -20,7 +20,7 @@ interface RequestsPageClientProps {
 }
 
 const RequestsPageClient: React.FC<RequestsPageClientProps> = ({ canCreate, canAssign }) => {
-  const tenantId = useTenantId();
+  const { tenantId } = useTenantContext();
   const t = useTranslations('admin.request.main');
   const tRoleErrors = useTranslations('system.roleGate.errors');
   const [view, setView] = useQueryState('view', { defaultValue: 'table' });
@@ -30,13 +30,13 @@ const RequestsPageClient: React.FC<RequestsPageClientProps> = ({ canCreate, canA
       <div className="flex w-full items-center justify-between gap-y-2 lg:flex-row">
         <TabsList className="h-8 w-full lg:w-auto">
           <TabsTrigger value="table" className="h-7 text-xs">
-            {t('table')}
+            {t('tabs.table')}
           </TabsTrigger>
           <TabsTrigger value="kanban" className="h-7 text-xs">
-            {t('kanban')}
+            {t('tabs.kanban')}
           </TabsTrigger>
           <TabsTrigger value="calendar" className="h-7 text-xs">
-            {t('calendar')}
+            {t('tabs.calendar')}
           </TabsTrigger>
         </TabsList>
         <div className="flex gap-2">

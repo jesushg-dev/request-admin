@@ -14,7 +14,7 @@ import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { formatDate } from '@/lib/utils';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
-import useTenantId from '@/hooks/use-tenant-id';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DraggableFormCard } from '@/components/builder-form/form-card';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
@@ -41,7 +41,7 @@ interface FormDesignerPageClientProps {
 }
 
 const FormDesignerPageClient: React.FC<FormDesignerPageClientProps> = ({ canCreate, canEdit, canDelete }) => {
-  const tenantId = useTenantId();
+  const { tenantId } = useTenantContext();
   const t = useTranslations('admin.form.main');
   const [search] = useQueryStates(searchParamsParsers);
 

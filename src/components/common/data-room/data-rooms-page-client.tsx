@@ -12,7 +12,7 @@ import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { formatDate } from '@/lib/utils';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
-import useTenantId from '@/hooks/use-tenant-id';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
@@ -54,7 +54,7 @@ interface DataRoomsPageClientProps {
 }
 
 export default function DataRoomsPageClient({ canCreate, canEdit, canDelete }: DataRoomsPageClientProps) {
-  const tenantId = useTenantId();
+  const { tenantId } = useTenantContext();
   const t = useTranslations('admin.dataroom.main');
   const [search] = useQueryStates(searchParamsParsers);
 

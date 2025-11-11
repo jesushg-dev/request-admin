@@ -4,10 +4,7 @@
       "errors": {
         "noFeature": "¡No tienes permiso para acceder a esta página!",
         "noPermission": "¡No tienes permiso para ver este contenido!",
-        "noPermissionDescription": "Por favor, contacta a tu administrador para solicitar acceso a este recurso.",
-        "calendar": "Calendario",
-        "kanban": "Kanban",
-        "table": "Tabla"
+        "noPermissionDescription": "Por favor, contacta a tu administrador para solicitar acceso a este recurso."
       }
     }
   },
@@ -1908,6 +1905,11 @@
         "new": "Nueva",
         "assignMassively": "Asignar Masivamente",
         "entityLabel": "Solicitudes",
+        "tabs": {
+          "table": "Tabla",
+          "kanban": "Kanban",
+          "calendar": "Calendario"
+        },
         "columns": {
           "id": "ID",
           "issueSubject": "Asunto",

@@ -13,7 +13,7 @@ import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
 import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
 import { useDataTable } from '@/hooks/use-data-table';
-import useTenantId from '@/hooks/use-tenant-id';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { cancelInvitation } from '@/actions/organization';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
@@ -54,7 +54,7 @@ interface InvitationsPageClientProps {
 }
 
 const InvitationsPageClient: React.FC<InvitationsPageClientProps> = ({ canCreateUser }) => {
-  const tenantId = useTenantId();
+  const { tenantId } = useTenantContext();
   const t = useTranslations('admin.invitation.main');
   const [isPending, startTransition] = useTransition();
   const [search] = useQueryStates(searchParamsParsers);
