@@ -4,7 +4,10 @@
       "errors": {
         "noFeature": "¡No tienes permiso para acceder a esta página!",
         "noPermission": "¡No tienes permiso para ver este contenido!",
-        "noPermissionDescription": "Por favor, contacta a tu administrador para solicitar acceso a este recurso."
+        "noPermissionDescription": "Por favor, contacta a tu administrador para solicitar acceso a este recurso.",
+        "calendar": "Calendario",
+        "kanban": "Kanban",
+        "table": "Tabla"
       }
     }
   },

@@ -7,7 +7,6 @@ import { useTranslations } from 'next-intl';
 import { useQueryState } from 'nuqs';
 
 import useTenantId from '@/hooks/use-tenant-id';
-import { useAuthorization, PERMISSION } from '@/hooks/use-authorization';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -31,15 +30,14 @@ const RequestsPageClient: React.FC<RequestsPageClientProps> = ({ canCreate, canA
       <div className="flex w-full items-center justify-between gap-y-2 lg:flex-row">
         <TabsList className="h-8 w-full lg:w-auto">
           <TabsTrigger value="table" className="h-7 text-xs">
-            Table
+            {t('table')}
           </TabsTrigger>
           <TabsTrigger value="kanban" className="h-7 text-xs">
-            Kanban
+            {t('kanban')}
           </TabsTrigger>
-          {/* TODO: Enable Calendar view once implementation is complete */}
-          {/* <TabsTrigger value="calendar" className="h-7 text-xs">
-            Calendar
-          </TabsTrigger> */}
+          <TabsTrigger value="calendar" className="h-7 text-xs">
+            {t('calendar')}
+          </TabsTrigger>
         </TabsList>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" asChild disabled={!canAssign} title={!canAssign ? tRoleErrors('noPermission') : undefined} aria-disabled={!canAssign}>
@@ -71,10 +69,9 @@ const RequestsPageClient: React.FC<RequestsPageClientProps> = ({ canCreate, canA
       <TabsContent value="kanban" className={`mt-0 ${view === 'kanban' ? 'flex flex-1' : ''}`}>
         <KanbanTab />
       </TabsContent> 
-      {/* TODO: Enable Calendar tab content once implementation is complete */}
-      {/* <TabsContent value="calendar" className={`mt-0 ${view === 'calendar' ? 'flex flex-1' : ''}`}>
+      <TabsContent value="calendar" className={`mt-0 ${view === 'calendar' ? 'flex flex-1' : ''}`}>
         <CalendarTab />
-      </TabsContent> */}
+      </TabsContent>
     </Tabs>
   );
 };
