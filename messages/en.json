@@ -830,10 +830,10 @@
           "workflow": "Workflow",
           "sla": "SLAs"
         },
-          "recentRequests": {
-            "title": "Recent Requests",
-            "titleWithWorkflow": "Recent Requests - {workflow}"
-          },
+        "recentRequests": {
+          "title": "Recent Requests",
+          "titleWithWorkflow": "Recent Requests - {workflow}"
+        },
         "searchApplied": {
           "title": "Search applied",
           "description": "Filters have been applied successfully"
@@ -849,17 +849,44 @@
           "description": "No requests with SLA information have been recorded yet.\nData will appear here once requests are created."
         },
         "cards": {
-          "compliance": { "title": "SLA Compliance" },
-          "avgResolutionTime": { "title": "Average Resolution Time", "unit": "days" },
-          "atRisk": { "title": "Requests at Risk" },
-          "overdue": { "title": "Overdue Requests" },
-          "avgSlaHours": { "title": "Average SLA per Request", "unit": "h", "description": "Assigned time average" },
-          "escalations": { "title": "SLA Escalations", "trendText": "N/A" },
-          "bestWorkflow": { "title": "Best Performing Team", "description": "{compliance}% compliance" },
-          "activeAlerts": { "title": "Active Alerts", "description": "Requests requiring attention" }
+          "compliance": {
+            "title": "SLA Compliance"
+          },
+          "avgResolutionTime": {
+            "title": "Average Resolution Time",
+            "unit": "days"
+          },
+          "atRisk": {
+            "title": "Requests at Risk"
+          },
+          "overdue": {
+            "title": "Overdue Requests"
+          },
+          "avgSlaHours": {
+            "title": "Average SLA per Request",
+            "unit": "h",
+            "description": "Assigned time average"
+          },
+          "escalations": {
+            "title": "SLA Escalations",
+            "trendText": "N/A"
+          },
+          "bestWorkflow": {
+            "title": "Best Performing Team",
+            "description": "{compliance}% compliance"
+          },
+          "activeAlerts": {
+            "title": "Active Alerts",
+            "description": "Requests requiring attention"
+          }
         },
         "charts": {
-          "pie": { "title": "SLA Status", "description": "Distribution of requests by SLA status", "tooltipUnit": "requests", "tooltipLabel": "Count" },
+          "pie": {
+            "title": "SLA Status",
+            "description": "Distribution of requests by SLA status",
+            "tooltipUnit": "requests",
+            "tooltipLabel": "Count"
+          },
           "workflow": {
             "title": "SLA by Workflow",
             "description": "SLA status distribution by workflow type",
@@ -883,25 +910,72 @@
           }
         },
         "panels": {
-          "dept": { "title": "SLA by Department", "description": "SLA compliance by department", "empty": "No data available" },
-          "avgTime": { "title": "Average Resolution Time", "description": "By request type (in hours)", "empty": "No data available" },
-          "alerts": { "title": "SLA Alerts", "description": "Requests requiring immediate attention", "empty": "No SLA alerts" }
+          "dept": {
+            "title": "SLA by Department",
+            "description": "SLA compliance by department",
+            "empty": "No data available"
+          },
+          "avgTime": {
+            "title": "Average Resolution Time",
+            "description": "By request type (in hours)",
+            "empty": "No data available"
+          },
+          "alerts": {
+            "title": "SLA Alerts",
+            "description": "Requests requiring immediate attention",
+            "empty": "No SLA alerts"
+          }
         }
       },
       "slaFilters": {
-        "labels": { "status": "SLA Status", "slaPercentage": "SLA Percentage Consumed", "timeRange": "Remaining SLA Time", "workflowType": "Workflow Type", "search": "Search by ID or description" },
-        "status": { "all": "All statuses", "onTime": "On time", "warning": "Approaching due", "overdue": "Overdue", "completed": "Completed" },
-        "badges": { "normal": "Normal" },
-        "placeholders": { "selectRange": "Select range", "selectWorkflow": "Select workflow", "search": "Search requests..." },
-        "timeRanges": { "all": "All ranges", "lessThan1h": "Less than 1 hour", "1to4h": "1 to 4 hours", "4to24h": "4 to 24 hours", "1to3d": "1 to 3 days", "moreThan3d": "More than 3 days", "overdue": "Overdue" },
-        "workflows": { "all": "All workflows" },
-        "buttons": { "search": "Search" }
+        "labels": {
+          "status": "SLA Status",
+          "slaPercentage": "SLA Percentage Consumed",
+          "timeRange": "Remaining SLA Time",
+          "workflowType": "Workflow Type",
+          "search": "Search by ID or description"
+        },
+        "status": {
+          "all": "All statuses",
+          "onTime": "On time",
+          "warning": "Approaching due",
+          "overdue": "Overdue",
+          "completed": "Completed"
+        },
+        "badges": {
+          "normal": "Normal"
+        },
+        "placeholders": {
+          "selectRange": "Select range",
+          "selectWorkflow": "Select workflow",
+          "search": "Search requests..."
+        },
+        "timeRanges": {
+          "all": "All ranges",
+          "lessThan1h": "Less than 1 hour",
+          "1to4h": "1 to 4 hours",
+          "4to24h": "4 to 24 hours",
+          "1to3d": "1 to 3 days",
+          "moreThan3d": "More than 3 days",
+          "overdue": "Overdue"
+        },
+        "workflows": {
+          "all": "All workflows"
+        },
+        "buttons": {
+          "search": "Search"
+        }
       },
       "workflowSelector": {
         "title": "Workflow Statistics",
         "subtitle": "Select a workflow to view specific metrics",
-        "placeholders": { "select": "Select a workflow" },
-        "options": { "all": "All workflows", "categories": "categories" },
+        "placeholders": {
+          "select": "Select a workflow"
+        },
+        "options": {
+          "all": "All workflows",
+          "categories": "categories"
+        },
         "helper": "Select a workflow or 'All workflows' to see overall metrics"
       },
       "recentRequests": {
@@ -921,47 +995,115 @@
         "view": "View"
       },
       "quickStats": {
-        "pending": { "title": "Pending Requests", "description": "Requests requiring attention", "highPriority": "{count} high priority" },
-        "completed": { "title": "Completed Requests", "description": "Requests resolved this month", "avgResolution": "Average time: {days} days" },
-        "reports": { "title": "Reports", "description": "Performance analysis", "ctaHint": "Access detailed reports" },
-        "actions": { "viewAll": "View all", "viewReports": "View reports" }
+        "pending": {
+          "title": "Pending Requests",
+          "description": "Requests requiring attention",
+          "highPriority": "{count} high priority"
+        },
+        "completed": {
+          "title": "Completed Requests",
+          "description": "Requests resolved this month",
+          "avgResolution": "Average time: {days} days"
+        },
+        "reports": {
+          "title": "Reports",
+          "description": "Performance analysis",
+          "ctaHint": "Access detailed reports"
+        },
+        "actions": {
+          "viewAll": "View all",
+          "viewReports": "View reports"
+        }
       },
       "stats": {
         "title": "Requests by Workflow Analysis",
         "description": "Requests distribution by workflow type in the last 6 months",
-        "empty": { "title": "No statistics available", "description": "No requests have been recorded yet.\nStatistics will appear here once requests are created." },
-        "tooltip": { "requests": "requests", "month": "Month" }
+        "empty": {
+          "title": "No statistics available",
+          "description": "No requests have been recorded yet.\nStatistics will appear here once requests are created."
+        },
+        "tooltip": {
+          "requests": "requests",
+          "month": "Month"
+        }
       },
       "metricsClient": {
-        "loadError": { "title": "Error loading metrics" }
-        },
-        "metrics": {
-          "general": {
-            "title": "General Metrics",
-            "vsLastMonth": "vs. last month",
-            "totalRequests": { "title": "Total Requests" },
-            "avgResolutionTime": { "title": "Average Resolution Time", "unit": "days" },
-            "resolutionRate": { "title": "Resolution Rate" },
-            "pending": { "title": "Pending Requests" }
+        "loadError": {
+          "title": "Error loading metrics"
+        }
+      },
+      "metrics": {
+        "general": {
+          "title": "General Metrics",
+          "vsLastMonth": "vs. last month",
+          "totalRequests": {
+            "title": "Total Requests"
           },
-          "sla": {
-            "title": "SLA Metrics and Fixed States",
-            "vsLastMonth": "vs. last month",
-            "overdue": { "title": "Overdue Requests (SLA)" },
-            "compliance": { "title": "Average SLA Met" },
-            "atRisk": { "title": "SLA At Risk" },
-            "draft": { "title": "Draft Requests" }
+          "avgResolutionTime": {
+            "title": "Average Resolution Time",
+            "unit": "days"
+          },
+          "resolutionRate": {
+            "title": "Resolution Rate"
+          },
+          "pending": {
+            "title": "Pending Requests"
+          }
+        },
+        "sla": {
+          "title": "SLA Metrics and Fixed States",
+          "vsLastMonth": "vs. last month",
+          "overdue": {
+            "title": "Overdue Requests (SLA)"
+          },
+          "compliance": {
+            "title": "Average SLA Met"
+          },
+          "atRisk": {
+            "title": "SLA At Risk"
+          },
+          "draft": {
+            "title": "Draft Requests"
           }
         }
+      }
     },
     "reports": {
       "page": {
         "title": "Reports",
         "subtitle": "Service request analysis and statistics",
-        "buttons": { "showFilters": "Show filters", "hideFilters": "Hide filters" },
-        "period": { "placeholder": "Period", "label": "Period", "month": "Last month", "quarter": "Last quarter", "year": "Last year" },
-        "export": { "title": "Export", "format": "Export format", "pdf": "PDF", "excel": "Excel", "json": "JSON", "exporting": "Exporting report in {format} format...", "success": "Report exported successfully in {format} format", "error": "Error exporting report", "noPermission": "You do not have permission to export reports" },
-        "tabs": { "overview": "Overview", "areas": "By Area", "status": "By Status", "performance": "Performance", "workflows": "Workflows", "execution": "Model Execution", "alerts": "Alerts", "monthlyTrends": "Monthly Trends" },
+        "buttons": {
+          "showFilters": "Show filters",
+          "hideFilters": "Hide filters"
+        },
+        "period": {
+          "placeholder": "Period",
+          "label": "Period",
+          "month": "Last month",
+          "quarter": "Last quarter",
+          "year": "Last year"
+        },
+        "export": {
+          "title": "Export",
+          "format": "Export format",
+          "pdf": "PDF",
+          "excel": "Excel",
+          "json": "JSON",
+          "exporting": "Exporting report in {format} format...",
+          "success": "Report exported successfully in {format} format",
+          "error": "Error exporting report",
+          "noPermission": "You do not have permission to export reports"
+        },
+        "tabs": {
+          "overview": "Overview",
+          "areas": "By Area",
+          "status": "By Status",
+          "performance": "Performance",
+          "workflows": "Workflows",
+          "execution": "Model Execution",
+          "alerts": "Alerts",
+          "monthlyTrends": "Monthly Trends"
+        },
         "overview": {
           "totalRequests": "Total Requests",
           "openRequests": "Open Requests",
@@ -990,19 +1132,54 @@
           "compliance": "Compliance"
         },
         "performance": {
-          "empty": { "title": "No performance data available", "description": "No resolution time data recorded yet.\nData will appear here once there are completed requests." },
-          "chart": { "title": "Response Time by Area", "description": "Average resolution time in days", "category": "Category", "timeDays": "Time (days)", "series": { "timeDays": "Time (days)" } }
+          "empty": {
+            "title": "No performance data available",
+            "description": "No resolution time data recorded yet.\nData will appear here once there are completed requests."
+          },
+          "chart": {
+            "title": "Response Time by Area",
+            "description": "Average resolution time in days",
+            "category": "Category",
+            "timeDays": "Time (days)",
+            "series": {
+              "timeDays": "Time (days)"
+            }
+          }
         },
         "workflows": {
-          "empty": { "title": "No workflow data available", "description": "No workflow data recorded yet.\nData will appear here once there are requests." },
-          "chart": { "title": "Workflow Analysis", "description": "Average time at each workflow state", "workflow": "Workflow", "requests": "Requests", "series": { "requests": "Requests" } }
+          "empty": {
+            "title": "No workflow data available",
+            "description": "No workflow data recorded yet.\nData will appear here once there are requests."
+          },
+          "chart": {
+            "title": "Workflow Analysis",
+            "description": "Average time at each workflow state",
+            "workflow": "Workflow",
+            "requests": "Requests",
+            "series": {
+              "requests": "Requests"
+            }
+          }
         },
         "alerts": {
           "title": "Alerts by Status",
           "subtitle": "Requests requiring immediate attention",
-          "empty": { "title": "No active alerts", "description": "All requests are in order.\nNo overdue or at-risk SLA alerts found." },
-          "levels": { "critical": "Critical", "warning": "Warning", "info": "Information", "type": "Type", "status": "Status", "count": "Count" },
-          "descriptions": { "critical": "These requests are overdue and require immediate attention.", "warning": "These requests are at risk of exceeding their SLA." },
+          "empty": {
+            "title": "No active alerts",
+            "description": "All requests are in order.\nNo overdue or at-risk SLA alerts found."
+          },
+          "levels": {
+            "critical": "Critical",
+            "warning": "Warning",
+            "info": "Information",
+            "type": "Type",
+            "status": "Status",
+            "count": "Count"
+          },
+          "descriptions": {
+            "critical": "These requests are overdue and require immediate attention.",
+            "warning": "These requests are at risk of exceeding their SLA."
+          },
           "requestCount": "{count} {count, plural, one {request} other {requests}} in \"{status}\" with {type, select, vencido {overdue} enRiesgo {at-risk} other {SLA}} SLA",
           "viewRequests": "View requests"
         },
@@ -1014,7 +1191,10 @@
           "exportDate": "Export Date"
         },
         "executionTab": {
-          "empty": { "title": "No execution models available", "description": "No execution models have been created yet.\nData will appear here once execution workflows are defined." },
+          "empty": {
+            "title": "No execution models available",
+            "description": "No execution models have been created yet.\nData will appear here once execution workflows are defined."
+          },
           "title": "Model Execution",
           "models": {
             "title": "Execution Models",
@@ -1037,7 +1217,10 @@
             "property": "Property",
             "value": "Value"
           },
-          "tabs": { "steps": "Process Steps", "metrics": "Execution Metrics" },
+          "tabs": {
+            "steps": "Process Steps",
+            "metrics": "Execution Metrics"
+          },
           "steps": {
             "title": "Process execution steps",
             "order": "Order",
@@ -1072,8 +1255,18 @@
               }
             }
           },
-          "footer": { "viewHistory": "View execution history", "manageWorkflows": "Manage workflows", "export": "Export", "exportFormat": "Export Format", "exportSuccess": "Report exported successfully in {format} format", "exportError": "Error exporting report" },
-          "selectModel": { "title": "Select an execution model", "description": "Choose a model from the list to view its execution details" }
+          "footer": {
+            "viewHistory": "View execution history",
+            "manageWorkflows": "Manage workflows",
+            "export": "Export",
+            "exportFormat": "Export Format",
+            "exportSuccess": "Report exported successfully in {format} format",
+            "exportError": "Error exporting report"
+          },
+          "selectModel": {
+            "title": "Select an execution model",
+            "description": "Choose a model from the list to view its execution details"
+          }
         }
       }
     },
@@ -2176,7 +2369,9 @@
         "draftCanOnlyMoveToInitialDescription": "A draft request can only be moved to an 'initial' status (like 'In Progress') once all requirements are fulfilled",
         "draftStatusName": "Draft",
         "draftBadge": "Draft",
-        "cannotMoveToDraft": "Cannot move a non-draft request to the draft column"
+        "cannotMoveToDraft": "Cannot move a non-draft request to the draft column",
+        "allowedDrop": "Allowed Drop",
+        "notAllowed": "No Allowed Drop"
       }
     },
     "requestType": {
@@ -3741,37 +3936,67 @@
         "firstSteps": {
           "title": "Getting Started",
           "description": "Learn the basics to start using the system",
-          "links": ["System Introduction", "Create your first request", "Dashboard navigation", "Configure your profile"],
+          "links": [
+            "System Introduction",
+            "Create your first request",
+            "Dashboard navigation",
+            "Configure your profile"
+          ],
           "viewAll": "View all basic guides"
         },
         "requestManagement": {
           "title": "Request Management",
           "description": "Learn to manage requests efficiently",
-          "links": ["Request statuses", "Request assignment", "Priority changes", "Comments and tracking"],
+          "links": [
+            "Request statuses",
+            "Request assignment",
+            "Priority changes",
+            "Comments and tracking"
+          ],
           "viewAll": "View all management guides"
         },
         "communication": {
           "title": "Communication",
           "description": "Learn to communicate effectively in the system",
-          "links": ["Messaging system", "Notifications and alerts", "Mentions and tags", "File sharing"],
+          "links": [
+            "Messaging system",
+            "Notifications and alerts",
+            "Mentions and tags",
+            "File sharing"
+          ],
           "viewAll": "View all communication guides"
         },
         "reports": {
           "title": "Reports and Analytics",
           "description": "Learn to use the analysis tools",
-          "links": ["Report generation", "Metrics analysis", "Data export", "Custom dashboards"],
+          "links": [
+            "Report generation",
+            "Metrics analysis",
+            "Data export",
+            "Custom dashboards"
+          ],
           "viewAll": "View all reports guides"
         },
         "administration": {
           "title": "Administration",
           "description": "Guides for system administrators",
-          "links": ["User management", "Workflow configuration", "System customization", "Security and permissions"],
+          "links": [
+            "User management",
+            "Workflow configuration",
+            "System customization",
+            "Security and permissions"
+          ],
           "viewAll": "View all administration guides"
         },
         "workflows": {
           "title": "Workflows",
           "description": "Learn to configure and use workflows",
-          "links": ["Creating custom workflows", "State transition rules", "Process automation", "Workflow templates"],
+          "links": [
+            "Creating custom workflows",
+            "State transition rules",
+            "Process automation",
+            "Workflow templates"
+          ],
           "viewAll": "View all workflow guides"
         }
       },

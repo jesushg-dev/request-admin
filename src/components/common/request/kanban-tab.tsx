@@ -13,7 +13,15 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import * as Kanban from "@/components/ui/kanban";
+import {
+  Kanban,
+  KanbanBoard,
+  KanbanColumn,
+  KanbanItem,
+  KanbanColumnContent,
+  KanbanOverlay,
+  type KanbanMoveEvent,
+} from "@/components/ui/kanban";
 
 import useTenantId from "@/hooks/use-tenant-id";
 import { cn } from "@/lib/utils";
@@ -109,8 +117,8 @@ interface KanbanBoardContextValue {
   isPending: boolean;
   validTransitions: Map<string, Set<string>>;
   assignmentsMap: Map<string, AssignmentWithRelations>;
-  activeTaskId: string | null;
   orderedStatuses: WorkflowStatus[];
+  activeTaskId: string | null;
 }
 
 const KanbanBoardDataContext = React.createContext<KanbanBoardContextValue | null>(null);
@@ -407,8 +415,8 @@ export function KanbanTab() {
   }, [assignments, orderedStatuses, t]);
 
   const [columns, setColumns] = React.useState<Record<string, KanbanTask[]>>({});
-  const [activeTaskId, setActiveTaskId] = React.useState<string | null>(null);
   const [pendingMoves, setPendingMoves] = React.useState<Map<string, string>>(new Map()); // Map<assignmentId, newStatusId>
+  const [activeTaskId, setActiveTaskId] = React.useState<string | null>(null);
   // Flag to avoid an immediate sync pass overriding a just-applied local move
   const skipNextSyncRef = React.useRef(false);
 
@@ -442,10 +450,10 @@ export function KanbanTab() {
 
     // Only sync from server when not dragging.
     // During drag, Kanban handles local visual updates.
-    if (!activeTaskId && pendingMoves.size === 0 && !isPending) {
+    if (pendingMoves.size === 0 && !isPending) {
       // No pending moves: rebuild from server-derived groupedTasks
       setColumns(groupedTasks);
-    } else if (!activeTaskId && pendingMoves.size > 0) {
+    } else if (pendingMoves.size > 0) {
       // Pending moves exist: overlay them on top of groupedTasks
       const updatedGroupedTasks = { ...groupedTasks };
       
@@ -468,12 +476,14 @@ export function KanbanTab() {
       
       setColumns(updatedGroupedTasks);
     }
-  }, [groupedTasks, pendingMoves, activeTaskId, isPending]);
+  }, [groupedTasks, pendingMoves, isPending]);
 
   const handleMove = React.useCallback(
-    async (event: any, activeColumn: string, overColumn: string) => {
+    async (moveEvent: KanbanMoveEvent) => {
+      const { event, activeContainer, overContainer } = moveEvent;
       const { active } = event;
-      if (!tenantId || !workflowAsRequestWorkflowType || activeColumn === overColumn) {
+      
+      if (!tenantId || !workflowAsRequestWorkflowType || activeContainer === overContainer) {
         return;
       }
 
@@ -493,15 +503,14 @@ export function KanbanTab() {
 
       // Handle Draft column special case
       const DRAFT_STATUS_ID = "__DRAFT__";
-      const isMovingFromDraft = activeColumn === DRAFT_STATUS_ID;
-      const isMovingToDraft = overColumn === DRAFT_STATUS_ID;
+      const isMovingFromDraft = activeContainer === DRAFT_STATUS_ID;
+      const isMovingToDraft = overContainer === DRAFT_STATUS_ID;
       
       // When moving out of Draft, allow only to "initial" statuses
       if (isMovingFromDraft) {
-        const targetStatus = orderedStatuses.find((s) => s.id === overColumn);
+          const targetStatus = orderedStatuses.find((s) => s.id === overContainer);
         if (!targetStatus) {
           toast.error(t("targetStatusNotFound"));
-          setActiveTaskId(null);
           await assignmentsQuery.refetch();
           return;
         }
@@ -511,7 +520,6 @@ export function KanbanTab() {
           toast.error(t("draftCanOnlyMoveToInitial"), {
             description: t("draftCanOnlyMoveToInitialDescription"),
           });
-          setActiveTaskId(null);
           await assignmentsQuery.refetch();
           return;
         }
@@ -523,7 +531,6 @@ export function KanbanTab() {
           
           if (!allRequirementsFulfilled) {
             toast.error(t("draftRequirementsNotFulfilled"));
-            setActiveTaskId(null);
             await assignmentsQuery.refetch();
             return;
           }
@@ -532,7 +539,6 @@ export function KanbanTab() {
           toast.error(t("updateError"), {
             description: t("unknownError"),
           });
-          setActiveTaskId(null);
           await assignmentsQuery.refetch();
           return;
         }
@@ -543,20 +549,19 @@ export function KanbanTab() {
         return;
       } else {
         // Normal transition validation for non-draft requests
-        const isValid = validateTransition(workflowAsRequestWorkflowType, currentStatusId, overColumn);
+        const isValid = validateTransition(workflowAsRequestWorkflowType, currentStatusId, overContainer);
         if (!isValid) {
           const fromName = assignment.status?.name ?? "N/A";
-          const toName = orderedStatuses.find((s) => s.id === overColumn)?.name ?? "N/A";
+          const toName = orderedStatuses.find((s) => s.id === overContainer)?.name ?? "N/A";
           toast.error(t("invalidTransition"), {
             description: t("invalidTransitionDescription", { from: fromName, to: toName }),
           });
-          setActiveTaskId(null);
           await assignmentsQuery.refetch();
           return;
         }
       }
 
-      const targetStatus = orderedStatuses.find((s) => s.id === overColumn);
+      const targetStatus = orderedStatuses.find((s) => s.id === overContainer);
       if (!targetStatus && !isMovingToDraft) {
         toast.error(t("targetStatusNotFound"));
         await assignmentsQuery.refetch();
@@ -564,9 +569,9 @@ export function KanbanTab() {
       }
 
       // Determine actual statusId to use:
-      // - From Draft: use destination status id (overColumn)
+      // - From Draft: use destination status id (overContainer)
       // - Otherwise: also use destination status id
-      const actualStatusId = targetStatus?.id ?? overColumn;
+      const actualStatusId = targetStatus?.id ?? overContainer;
       
       // If moving from Draft and status is the same as destination, we only
       // need to mark draft=false; `updateCurrentStatus` handles it.
@@ -576,26 +581,26 @@ export function KanbanTab() {
 
       // Add pending move and apply optimistic UI immediately
       const activeId = String(active.id);
-      setPendingMoves((prev) => new Map(prev).set(activeId, overColumn));
+      setPendingMoves((prev) => new Map(prev).set(activeId, overContainer));
       
       // Apply visual change immediately and mark this as a local update to avoid immediate overwrite
       skipNextSyncRef.current = true;
       setColumns((prevColumns) => {
         const newColumns = { ...prevColumns };
-        const activeColumn = Object.keys(prevColumns).find((colId) => 
+        const sourceColumn = Object.keys(prevColumns).find((colId) => 
           prevColumns[colId]?.some((task) => task.id === activeId)
         );
         
-        if (activeColumn && activeColumn !== overColumn) {
+        if (sourceColumn && sourceColumn !== overContainer) {
           // Remove from current column
-          newColumns[activeColumn] = prevColumns[activeColumn].filter((task) => task.id !== activeId);
+          newColumns[sourceColumn] = prevColumns[sourceColumn].filter((task) => task.id !== activeId);
           // Add to destination column
-          if (!newColumns[overColumn]) {
-            newColumns[overColumn] = [];
+          if (!newColumns[overContainer]) {
+            newColumns[overContainer] = [];
           }
-          const movedTask = prevColumns[activeColumn].find((task) => task.id === activeId);
+          const movedTask = prevColumns[sourceColumn].find((task) => task.id === activeId);
           if (movedTask) {
-            newColumns[overColumn] = [...newColumns[overColumn], movedTask];
+            newColumns[overContainer] = [...newColumns[overContainer], movedTask];
           }
         }
         
@@ -710,78 +715,81 @@ export function KanbanTab() {
       )}
 
         <div className="flex flex-1 flex-col overflow-hidden">
-          <div className="flex-1 overflow-x-auto">
-          <KanbanBoardDataContext.Provider value={{ statuses: orderedStatuses, columns, isLoading, isPending, validTransitions, assignmentsMap, activeTaskId, orderedStatuses }}>
-              <Kanban.Root
+          <div className="flex-1 overflow-x-auto overflow-y-hidden">
+          <KanbanBoardDataContext.Provider value={{ statuses: orderedStatuses, columns, isLoading, isPending, validTransitions, assignmentsMap, orderedStatuses, activeTaskId }}>
+              <Kanban
                 value={columns}
                 onValueChange={(newColumns) => {
                   // Permitir actualizaciones visuales durante el drag
                   setColumns(newColumns);
                   
-                  // Si hay un item activo, detectar cambios de columna
-                  if (activeTaskId) {
-                    const taskId = String(activeTaskId);
-                    const prevColumn = Object.keys(columns).find((colId) => 
-                      columns[colId]?.some((task) => task.id === taskId)
+                  // Detectar si hay un item siendo arrastrado comparando las columnas
+                  // Si un item cambió de columna, está siendo arrastrado
+                  const previousItemPositions = new Map<string, string>();
+                  Object.entries(columns).forEach(([colId, tasks]) => {
+                    tasks.forEach((task) => {
+                      previousItemPositions.set(task.id, colId);
+                    });
+                  });
+                  
+                  const newItemPositions = new Map<string, string>();
+                  Object.entries(newColumns).forEach(([colId, tasks]) => {
+                    tasks.forEach((task) => {
+                      newItemPositions.set(task.id, colId);
+                    });
+                  });
+                  
+                  // Encontrar items que cambiaron de columna
+                  for (const [taskId, newCol] of newItemPositions) {
+                    const prevCol = previousItemPositions.get(taskId);
+                    if (prevCol && prevCol !== newCol) {
+                      setActiveTaskId(taskId);
+                      break;
+                    }
+                  }
+                  
+                  // Si no hay cambios, limpiar activeTaskId después de un delay
+                  if (previousItemPositions.size === newItemPositions.size) {
+                    const hasChanges = Array.from(previousItemPositions.entries()).some(
+                      ([taskId, prevCol]) => newItemPositions.get(taskId) !== prevCol
                     );
-                    const newColumn = Object.keys(newColumns).find((colId) => 
-                      newColumns[colId]?.some((task) => task.id === taskId)
-                    );
-                    
-                    // Si el item cambió de columna, procesar el cambio
-                    if (prevColumn && newColumn && prevColumn !== newColumn) {
-                      handleMove({ active: { id: taskId }, over: { id: newColumn } } as any, prevColumn, newColumn);
+                    if (!hasChanges && activeTaskId) {
+                      setTimeout(() => setActiveTaskId(null), 100);
                     }
                   }
                 }}
-                onDragStart={(event) => {
-                  setActiveTaskId(String(event.active.id));
-                }}
-                onDragEnd={() => {
-                  // Resetear activeTaskId después de un breve delay para permitir que onValueChange procese el cambio
-                  setTimeout(() => {
-                    setActiveTaskId(null);
-                  }, 100);
-                }}
-                onDragCancel={() => {
-                  console.log("onDragCancel");
-                  const taskId = activeTaskId ? String(activeTaskId) : null;
-                  if (taskId) {
-                    // Remover cualquier movimiento pendiente si se cancela
-                    setPendingMoves((prev) => {
-                      const next = new Map(prev);
-                      next.delete(taskId);
-                      return next;
-                    });
-                  }
+                onMove={(moveEvent) => {
+                  // Limpiar activeTaskId cuando se completa el move
                   setActiveTaskId(null);
+                  handleMove(moveEvent);
                 }}
                 getItemValue={(item) => item.id}
-                flatCursor
               >
-              <Kanban.Board className="min-h-[24rem] min-w-max pr-2">
+              <KanbanBoard className="flex h-full min-w-max gap-4 pr-2">
                 {/* Draft column - always at the start */}
                 <TaskColumn key={DRAFT_STATUS_ID} value={DRAFT_STATUS_ID} />
                 {orderedStatuses.map((status) => (
                   <TaskColumn key={status.id} value={status.id} />
                 ))}
-              </Kanban.Board>
-              <Kanban.Overlay>
+              </KanbanBoard>
+              <KanbanOverlay>
                 {({ value, variant }) => {
                   if (variant === "column") {
-                    return <TaskColumn value={value} />;
+                    const columnValue = typeof value === "string" ? value : String(value);
+                    return <TaskColumn value={columnValue} />;
                   }
 
+                  const taskValue = typeof value === "string" ? value : String(value);
                   const task = Object.values(columns)
                     .flat()
-                    .find((item) => item.id === value);
+                    .find((item) => item.id === taskValue);
 
                   if (!task) return null;
 
                   return <TaskCard task={task} />;
                 }}
-              </Kanban.Overlay>
-            </Kanban.Root>
+              </KanbanOverlay>
+            </Kanban>
           </KanbanBoardDataContext.Provider>
         </div>
       </div>
@@ -789,8 +797,11 @@ export function KanbanTab() {
   );
 }
 
-interface TaskCardProps extends Omit<React.ComponentProps<typeof Kanban.Item>, "value"> {
+interface TaskCardProps {
   task: KanbanTask;
+  asChild?: boolean;
+  className?: string;
+  disabled?: boolean;
 }
 
 function TaskCard({ task, ...props }: TaskCardProps) {
@@ -803,7 +814,7 @@ function TaskCard({ task, ...props }: TaskCardProps) {
   }, [task.assignees, t]);
 
   return (
-    <Kanban.Item key={task.id} value={task.id} asChild {...props}>
+    <KanbanItem key={task.id} value={task.id} {...props}>
       <div className="rounded-md border bg-card p-3 shadow-xs cursor-pointer hover:bg-accent/50 transition-colors">
         <div className="flex flex-col gap-2">
           <div className="flex items-start justify-between gap-2">
@@ -852,11 +863,11 @@ function TaskCard({ task, ...props }: TaskCardProps) {
           </div>
         </div>
       </div>
-    </Kanban.Item>
+    </KanbanItem>
   );
 }
 
-interface TaskColumnProps extends Omit<React.ComponentProps<typeof Kanban.Column>, "children"> {}
+interface TaskColumnProps extends Omit<React.ComponentProps<typeof KanbanColumn>, "children"> {}
 
 function TaskColumn({ value, className, ...props }: TaskColumnProps) {
   const context = use(KanbanBoardDataContext);
@@ -866,7 +877,7 @@ function TaskColumn({ value, className, ...props }: TaskColumnProps) {
     throw new Error("TaskColumn must be rendered within a KanbanBoardDataContext provider");
   }
 
-  const { statuses, columns, isLoading, isPending, validTransitions, assignmentsMap, activeTaskId, orderedStatuses } = context;
+  const { statuses, columns, isLoading, isPending, validTransitions, assignmentsMap, orderedStatuses, activeTaskId } = context;
   
   // Manejar la columna especial de Draft
   const DRAFT_STATUS_ID = "__DRAFT__";
@@ -889,11 +900,16 @@ function TaskColumn({ value, className, ...props }: TaskColumnProps) {
 
   const tasks = columns[value] ?? [];
 
-  const isDropDisabled = React.useMemo(() => {
-    if (!activeTaskId) return false;
+  const { isDropDisabled, isDropAllowed } = React.useMemo(() => {
+    if (!activeTaskId) {
+      return { isDropDisabled: false, isDropAllowed: false };
+    }
+    
     const taskId = String(activeTaskId);
     const assignment = assignmentsMap.get(taskId);
-    if (!assignment) return false;
+    if (!assignment) {
+      return { isDropDisabled: false, isDropAllowed: false };
+    }
     
     const DRAFT_STATUS_ID = "__DRAFT__";
     const isDraftColumn = value === DRAFT_STATUS_ID;
@@ -901,36 +917,47 @@ function TaskColumn({ value, className, ...props }: TaskColumnProps) {
     
     // Si se está moviendo hacia Draft y la solicitud no está en borrador, deshabilitar
     if (isDraftColumn && !isDraft) {
-      return true;
+      return { isDropDisabled: true, isDropAllowed: false };
     }
     
     // Si se está moviendo desde Draft (solicitud en borrador), solo permitir estados "initial"
     if (isDraft) {
       const targetStatus = orderedStatuses.find((s) => s.id === value);
       if (targetStatus && targetStatus.type !== STATUS.INITIAL) {
-        return true; // Deshabilitar si no es un estado inicial
+        return { isDropDisabled: true, isDropAllowed: false };
       }
       // Permitir mover desde Draft a estados initial
-      return false;
+      return { isDropDisabled: false, isDropAllowed: true };
     }
     
     // Si se está moviendo hacia una columna normal, usar validación de transiciones
     const currentStatusId = assignment.status?.id ?? assignment.statusId;
-    if (!currentStatusId) return false;
-    if (currentStatusId === value) return false;
+    if (!currentStatusId) {
+      return { isDropDisabled: false, isDropAllowed: false };
+    }
+    if (currentStatusId === value) {
+      return { isDropDisabled: false, isDropAllowed: false };
+    }
     
     const allowedIds = validTransitions.get(assignment.id);
     const statusId = String(value);
-    return allowedIds ? !allowedIds.has(statusId) : true;
+    const allowed = allowedIds ? allowedIds.has(statusId) : false;
+    
+    return {
+      isDropDisabled: !allowed,
+      isDropAllowed: allowed,
+    };
   }, [activeTaskId, assignmentsMap, validTransitions, value, orderedStatuses]);
 
   return (
-    <Kanban.Column
+    <KanbanColumn
       value={value}
       disabled={isDropDisabled}
       className={cn(
-        "flex-shrink-0 basis-80 rounded-lg border bg-muted/20 p-3 transition-opacity relative",
-        isDropDisabled && "opacity-40",
+        "flex h-full flex-shrink-0 basis-80 flex-col rounded-lg border bg-muted/20 p-3 transition-all relative",
+        activeTaskId && !isDropDisabled && isDropAllowed && "ring-2 ring-sky-400/60 ring-offset-1 bg-sky-50/80 dark:bg-sky-950/30 border-sky-300/50 dark:border-sky-500/30",
+        activeTaskId && isDropDisabled && "opacity-40 border-dashed border-muted-foreground/30",
+        !activeTaskId && "border-border",
         className
       )}
       {...props}
@@ -951,15 +978,35 @@ function TaskColumn({ value, className, ...props }: TaskColumnProps) {
               {t("draftBadge")}
             </Badge>
           )}
+          {activeTaskId && isDropAllowed && (
+            <Badge variant="default" className="pointer-events-none rounded-sm text-xs bg-primary/20 text-primary border-primary/30">
+              {t("allowedDrop")}
+            </Badge>
+          )}
+          {activeTaskId && isDropDisabled && (
+            <Badge variant="outline" className="pointer-events-none rounded-sm text-xs opacity-50">
+              {t("notAllowed")}
+            </Badge>
+          )}
         </div>
       </div>
-      <div className="flex flex-col gap-2">
-        {isLoading && tasks.length === 0 && <ColumnSkeleton />}
-        {!isLoading && tasks.length === 0 && <EmptyColumn />}
-        {tasks.map((task) => (
-          <TaskCard key={task.id} task={task} asHandle />
-        ))}
-      </div>
+      {columns[value] ? (
+        <KanbanColumnContent value={value} className="flex-1 min-h-0 overflow-y-auto">
+          {isLoading && tasks.length === 0 && <ColumnSkeleton />}
+          {!isLoading && tasks.length === 0 && <EmptyColumn />}
+          {tasks.map((task) => (
+            <TaskCard key={task.id} task={task} />
+          ))}
+        </KanbanColumnContent>
+      ) : (
+        <div className="flex flex-1 min-h-0 flex-col gap-2 overflow-y-auto">
+          {isLoading && tasks.length === 0 && <ColumnSkeleton />}
+          {!isLoading && tasks.length === 0 && <EmptyColumn />}
+          {tasks.map((task) => (
+            <TaskCard key={task.id} task={task} />
+          ))}
+        </div>
+      )}
       {isPending && (
         <>
           <div className="pointer-events-none absolute inset-0 bg-background/40" />
@@ -971,7 +1018,7 @@ function TaskColumn({ value, className, ...props }: TaskColumnProps) {
           </div>
         </>
       )}
-    </Kanban.Column>
+    </KanbanColumn>
   );
 }
 

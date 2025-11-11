@@ -1,955 +1,82 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import * as React from 'react';
+import { cn } from '@/lib/utils';
 import {
-  closestCenter,
-  closestCorners,
+  defaultDropAnimation,
   defaultDropAnimationSideEffects,
   DndContext,
+  DragEndEvent,
+  DragOverEvent,
   DragOverlay,
-  getFirstCollision,
-  KeyboardCode,
+  DragStartEvent,
+  DropAnimation,
   KeyboardSensor,
-  MeasuringStrategy,
-  MouseSensor,
-  pointerWithin,
-  rectIntersection,
-  TouchSensor,
+  PointerSensor,
+  UniqueIdentifier,
   useSensor,
   useSensors,
-  type Announcements,
-  type CollisionDetection,
-  type DndContextProps,
-  type DragCancelEvent,
-  type DragEndEvent,
   type DraggableAttributes,
   type DraggableSyntheticListeners,
-  type DragOverEvent,
-  type DragStartEvent,
-  type DropAnimation,
-  type DroppableContainer,
-  type KeyboardCoordinateGetter,
-  type UniqueIdentifier,
 } from '@dnd-kit/core';
 import {
   arrayMove,
-  defaultAnimateLayoutChanges,
-  horizontalListSortingStrategy,
+  rectSortingStrategy,
   SortableContext,
+  sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
-  type AnimateLayoutChanges,
-  type SortableContextProps,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Slot } from '@radix-ui/react-slot';
-import * as ReactDOM from 'react-dom';
 
-import { useComposedRefs } from '@/lib/compose-refs';
-import { cn } from '@/lib/utils';
-
-const directions: string[] = [KeyboardCode.Down, KeyboardCode.Right, KeyboardCode.Up, KeyboardCode.Left];
-
-const coordinateGetter: KeyboardCoordinateGetter = (event, { context }) => {
-  const { active, droppableRects, droppableContainers, collisionRect } = context;
-
-  if (directions.includes(event.code)) {
-    event.preventDefault();
-
-    if (!active || !collisionRect) return;
-
-    const filteredContainers: DroppableContainer[] = [];
-
-    for (const entry of droppableContainers.getEnabled()) {
-      if (!entry || entry?.disabled) return;
-
-      const rect = droppableRects.get(entry.id);
-
-      if (!rect) return;
-
-      const data = entry.data.current;
-
-      if (data) {
-        const { type, children } = data;
-
-        if (type === 'container' && children?.length > 0) {
-          if (active.data.current?.type !== 'container') {
-            return;
-          }
-        }
-      }
-
-      switch (event.code) {
-        case KeyboardCode.Down:
-          if (collisionRect.top < rect.top) {
-            filteredContainers.push(entry);
-          }
-          break;
-        case KeyboardCode.Up:
-          if (collisionRect.top > rect.top) {
-            filteredContainers.push(entry);
-          }
-          break;
-        case KeyboardCode.Left:
-          if (collisionRect.left >= rect.left + rect.width) {
-            filteredContainers.push(entry);
-          }
-          break;
-        case KeyboardCode.Right:
-          if (collisionRect.left + collisionRect.width <= rect.left) {
-            filteredContainers.push(entry);
-          }
-          break;
-      }
-    }
-
-    const collisions = closestCorners({
-      active,
-      collisionRect: collisionRect,
-      droppableRects,
-      droppableContainers: filteredContainers,
-      pointerCoordinates: null,
-    });
-    const closestId = getFirstCollision(collisions, 'id');
-
-    if (closestId != null) {
-      const newDroppable = droppableContainers.get(closestId);
-      const newNode = newDroppable?.node.current;
-      const newRect = newDroppable?.rect.current;
-
-      if (newNode && newRect) {
-        if (newDroppable.id === 'placeholder') {
-          return {
-            x: newRect.left + (newRect.width - collisionRect.width) / 2,
-            y: newRect.top + (newRect.height - collisionRect.height) / 2,
-          };
-        }
-
-        if (newDroppable.data.current?.type === 'container') {
-          return {
-            x: newRect.left + 20,
-            y: newRect.top + 74,
-          };
-        }
-
-        return {
-          x: newRect.left,
-          y: newRect.top,
-        };
-      }
-    }
-  }
-
-  return undefined;
-};
-
-const ROOT_NAME = 'Kanban';
-const BOARD_NAME = 'KanbanBoard';
-const COLUMN_NAME = 'KanbanColumn';
-const COLUMN_HANDLE_NAME = 'KanbanColumnHandle';
-const ITEM_NAME = 'KanbanItem';
-const ITEM_HANDLE_NAME = 'KanbanItemHandle';
-const OVERLAY_NAME = 'KanbanOverlay';
-
-interface KanbanContextValue<T> {
-  id: string;
-  items: Record<UniqueIdentifier, T[]>;
-  modifiers: DndContextProps['modifiers'];
-  strategy: SortableContextProps['strategy'];
-  orientation: 'horizontal' | 'vertical';
+interface KanbanContextProps<T> {
+  columns: Record<string, T[]>;
+  setColumns: (columns: Record<string, T[]>) => void;
+  getItemId: (item: T) => string;
+  columnIds: string[];
   activeId: UniqueIdentifier | null;
   setActiveId: (id: UniqueIdentifier | null) => void;
-  getItemValue: (item: T) => UniqueIdentifier;
-  flatCursor: boolean;
+  findContainer: (id: UniqueIdentifier) => string | undefined;
+  isColumn: (id: UniqueIdentifier) => boolean;
 }
 
-const KanbanContext = React.createContext<KanbanContextValue<unknown> | null>(null);
-KanbanContext.displayName = ROOT_NAME;
-
-function useKanbanContext(consumerName: string) {
-  const context = React.useContext(KanbanContext);
-  if (!context) {
-    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
-  }
-  return context;
-}
-
-interface GetItemValue<T> {
-  /**
-   * Callback that returns a unique identifier for each kanban item. Required for array of objects.
-   * @example getItemValue={(item) => item.id}
-   */
-  getItemValue: (item: T) => UniqueIdentifier;
-}
-
-type KanbanRootProps<T> = Omit<DndContextProps, 'collisionDetection'> &
-  GetItemValue<T> & {
-    value: Record<UniqueIdentifier, T[]>;
-    onValueChange?: (columns: Record<UniqueIdentifier, T[]>) => void;
-    onMove?: (event: DragEndEvent & { activeIndex: number; overIndex: number }) => void;
-    strategy?: SortableContextProps['strategy'];
-    orientation?: 'horizontal' | 'vertical';
-    flatCursor?: boolean;
-  } & (T extends object ? GetItemValue<T> : Partial<GetItemValue<T>>);
-
-function KanbanRoot<T>(props: KanbanRootProps<T>) {
-  const {
-    value,
-    onValueChange,
-    modifiers,
-    strategy = verticalListSortingStrategy,
-    orientation = 'horizontal',
-    onMove,
-    getItemValue: getItemValueProp,
-    accessibility,
-    flatCursor = false,
-    ...kanbanProps
-  } = props;
-
-  const id = React.useId();
-  const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
-  const lastOverIdRef = React.useRef<UniqueIdentifier | null>(null);
-  const hasMovedRef = React.useRef(false);
-  const sensors = useSensors(
-    useSensor(MouseSensor),
-    useSensor(TouchSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter,
-    })
-  );
-
-  const getItemValue = React.useCallback(
-    (item: T): UniqueIdentifier => {
-      if (typeof item === 'object' && !getItemValueProp) {
-        throw new Error('getItemValue is required when using array of objects');
-      }
-      return getItemValueProp ? getItemValueProp(item) : (item as UniqueIdentifier);
-    },
-    [getItemValueProp]
-  );
-
-  const getColumn = React.useCallback(
-    (id: UniqueIdentifier) => {
-      if (id in value) return id;
-
-      for (const [columnId, items] of Object.entries(value)) {
-        if (items.some((item) => getItemValue(item) === id)) {
-          return columnId;
-        }
-      }
-
-      return null;
-    },
-    [value, getItemValue]
-  );
-
-  const collisionDetection: CollisionDetection = React.useCallback(
-    (args) => {
-      if (activeId && activeId in value) {
-        return closestCenter({
-          ...args,
-          droppableContainers: args.droppableContainers.filter((container) => container.id in value),
-        });
-      }
-
-      const pointerIntersections = pointerWithin(args);
-      const intersections = pointerIntersections.length > 0 ? pointerIntersections : rectIntersection(args);
-      let overId = getFirstCollision(intersections, 'id');
-
-      if (!overId) {
-        if (hasMovedRef.current) {
-          lastOverIdRef.current = activeId;
-        }
-        return lastOverIdRef.current ? [{ id: lastOverIdRef.current }] : [];
-      }
-
-      if (overId in value) {
-        const containerItems = value[overId];
-        if (containerItems && containerItems.length > 0) {
-          const closestItem = closestCenter({
-            ...args,
-            droppableContainers: args.droppableContainers.filter((container) => container.id !== overId && containerItems.some((item) => getItemValue(item) === container.id)),
-          });
-
-          if (closestItem.length > 0) {
-            overId = closestItem[0]?.id ?? overId;
-          }
-        }
-      }
-
-      lastOverIdRef.current = overId;
-      return [{ id: overId }];
-    },
-    [activeId, value, getItemValue]
-  );
-
-  const onDragStart = React.useCallback(
-    (event: DragStartEvent) => {
-      kanbanProps.onDragStart?.(event);
-
-      if (event.activatorEvent.defaultPrevented) return;
-      setActiveId(event.active.id);
-    },
-    [kanbanProps]
-  );
-
-  const onDragOver = React.useCallback(
-    (event: DragOverEvent) => {
-      kanbanProps.onDragOver?.(event);
-
-      if (event.activatorEvent.defaultPrevented) return;
-
-      const { active, over } = event;
-      if (!over) return;
-
-      const activeColumn = getColumn(active.id);
-      const overColumn = getColumn(over.id);
-
-      if (!activeColumn || !overColumn) return;
-
-      if (activeColumn === overColumn) {
-        const items = value[activeColumn];
-        if (!items) return;
-
-        const activeIndex = items.findIndex((item) => getItemValue(item) === active.id);
-        const overIndex = items.findIndex((item) => getItemValue(item) === over.id);
-
-        if (activeIndex !== overIndex) {
-          const newColumns = { ...value };
-          newColumns[activeColumn] = arrayMove(items, activeIndex, overIndex);
-          onValueChange?.(newColumns);
-        }
-      } else {
-        const activeItems = value[activeColumn];
-        const overItems = value[overColumn];
-
-        if (!activeItems || !overItems) return;
-
-        const activeIndex = activeItems.findIndex((item) => getItemValue(item) === active.id);
-
-        if (activeIndex === -1) return;
-
-        const activeItem = activeItems[activeIndex];
-        if (!activeItem) return;
-
-        const updatedItems = {
-          ...value,
-          [activeColumn]: activeItems.filter((item) => getItemValue(item) !== active.id),
-          [overColumn]: [...overItems, activeItem],
-        };
-
-        onValueChange?.(updatedItems);
-        hasMovedRef.current = true;
-      }
-    },
-    [kanbanProps, getColumn, value, getItemValue, onValueChange]
-  );
-
-  const onDragEnd = React.useCallback(
-    (event: DragEndEvent) => {
-      kanbanProps.onDragEnd?.(event);
-
-      if (event.activatorEvent.defaultPrevented) return;
-
-      const { active, over } = event;
-
-      if (!over) {
-        setActiveId(null);
-        return;
-      }
-
-      if (active.id in value && over.id in value) {
-        const activeIndex = Object.keys(value).indexOf(active.id as string);
-        const overIndex = Object.keys(value).indexOf(over.id as string);
-
-        if (activeIndex !== overIndex) {
-          const orderedColumns = Object.keys(value);
-          const newOrder = arrayMove(orderedColumns, activeIndex, overIndex);
-
-          const newColumns: Record<UniqueIdentifier, T[]> = {};
-          for (const key of newOrder) {
-            const items = value[key];
-            if (items) {
-              newColumns[key] = items;
-            }
-          }
-
-          if (onMove) {
-            onMove({ ...event, activeIndex, overIndex });
-          } else {
-            onValueChange?.(newColumns);
-          }
-        }
-      } else {
-        const activeColumn = getColumn(active.id);
-        const overColumn = getColumn(over.id);
-
-        if (!activeColumn || !overColumn) {
-          setActiveId(null);
-          return;
-        }
-
-        if (activeColumn === overColumn) {
-          const items = value[activeColumn];
-          if (!items) {
-            setActiveId(null);
-            return;
-          }
-
-          const activeIndex = items.findIndex((item) => getItemValue(item) === active.id);
-          const overIndex = items.findIndex((item) => getItemValue(item) === over.id);
-
-          if (activeIndex !== overIndex) {
-            const newColumns = { ...value };
-            newColumns[activeColumn] = arrayMove(items, activeIndex, overIndex);
-            if (onMove) {
-              onMove({
-                ...event,
-                activeIndex,
-                overIndex,
-              });
-            } else {
-              onValueChange?.(newColumns);
-            }
-          }
-        } else {
-          const activeItems = value[activeColumn];
-          const overItems = value[overColumn] || [];
-
-          if (!activeItems) {
-            setActiveId(null);
-            return;
-          }
-
-          const activeIndex = activeItems.findIndex((item) => getItemValue(item) === active.id);
-          
-          // Determine target index:
-          // If over.id is an item in the destination column, find its index.
-          // Otherwise, append at the end.
-          let overIndex = overItems.length;
-          if (over.id in value) {
-            // over.id is a column: append to the end
-            overIndex = overItems.length;
-          } else {
-            // over.id is an item: find its index
-            const overItemIndex = overItems.findIndex((item) => getItemValue(item) === over.id);
-            if (overItemIndex !== -1) {
-              overIndex = overItemIndex;
-            }
-          }
-
-          if (activeIndex !== -1) {
-            const newColumns = {
-              ...value,
-              [activeColumn]: activeItems.filter((item) => getItemValue(item) !== active.id),
-              [overColumn]: [...overItems],
-            };
-
-            if (onMove) {
-              onMove({
-                ...event,
-                activeIndex,
-                overIndex,
-              });
-            } else {
-              onValueChange?.(newColumns);
-            }
-          }
-        }
-      }
-
-      setActiveId(null);
-      hasMovedRef.current = false;
-    },
-    [kanbanProps, value, onMove, onValueChange, getColumn, getItemValue]
-  );
-
-  const onDragCancel = React.useCallback(
-    (event: DragCancelEvent) => {
-      kanbanProps.onDragCancel?.(event);
-
-      if (event.activatorEvent.defaultPrevented) return;
-
-      setActiveId(null);
-      hasMovedRef.current = false;
-    },
-    [kanbanProps]
-  );
-
-  const announcements: Announcements = React.useMemo(
-    () => ({
-      onDragStart({ active }) {
-        const isColumn = active.id in value;
-        const itemType = isColumn ? 'column' : 'item';
-        const position = isColumn
-          ? Object.keys(value).indexOf(active.id as string) + 1
-          : (() => {
-              const column = getColumn(active.id);
-              if (!column || !value[column]) return 1;
-              return value[column].findIndex((item) => getItemValue(item) === active.id) + 1;
-            })();
-        const total = isColumn
-          ? Object.keys(value).length
-          : (() => {
-              const column = getColumn(active.id);
-              return column ? (value[column]?.length ?? 0) : 0;
-            })();
-
-        return `Picked up ${itemType} at position ${position} of ${total}`;
-      },
-      onDragOver({ active, over }) {
-        if (!over) return;
-
-        const isColumn = active.id in value;
-        const itemType = isColumn ? 'column' : 'item';
-        const position = isColumn
-          ? Object.keys(value).indexOf(over.id as string) + 1
-          : (() => {
-              const column = getColumn(over.id);
-              if (!column || !value[column]) return 1;
-              return value[column].findIndex((item) => getItemValue(item) === over.id) + 1;
-            })();
-        const total = isColumn
-          ? Object.keys(value).length
-          : (() => {
-              const column = getColumn(over.id);
-              return column ? (value[column]?.length ?? 0) : 0;
-            })();
-
-        const overColumn = getColumn(over.id);
-        const activeColumn = getColumn(active.id);
-
-        if (isColumn) {
-          return `${itemType} is now at position ${position} of ${total}`;
-        }
-
-        if (activeColumn !== overColumn) {
-          return `${itemType} is now at position ${position} of ${total} in ${overColumn}`;
-        }
-
-        return `${itemType} is now at position ${position} of ${total}`;
-      },
-      onDragEnd({ active, over }) {
-        if (!over) return;
-
-        const isColumn = active.id in value;
-        const itemType = isColumn ? 'column' : 'item';
-        const position = isColumn
-          ? Object.keys(value).indexOf(over.id as string) + 1
-          : (() => {
-              const column = getColumn(over.id);
-              if (!column || !value[column]) return 1;
-              return value[column].findIndex((item) => getItemValue(item) === over.id) + 1;
-            })();
-        const total = isColumn
-          ? Object.keys(value).length
-          : (() => {
-              const column = getColumn(over.id);
-              return column ? (value[column]?.length ?? 0) : 0;
-            })();
-
-        const overColumn = getColumn(over.id);
-        const activeColumn = getColumn(active.id);
-
-        if (isColumn) {
-          return `${itemType} was dropped at position ${position} of ${total}`;
-        }
-
-        if (activeColumn !== overColumn) {
-          return `${itemType} was dropped at position ${position} of ${total} in ${overColumn}`;
-        }
-
-        return `${itemType} was dropped at position ${position} of ${total}`;
-      },
-      onDragCancel({ active }) {
-        const isColumn = active.id in value;
-        const itemType = isColumn ? 'column' : 'item';
-        return `Dragging was cancelled. ${itemType} was dropped.`;
-      },
-    }),
-    [value, getColumn, getItemValue]
-  );
-
-  const contextValue = React.useMemo<KanbanContextValue<T>>(
-    () => ({
-      id,
-      items: value,
-      modifiers,
-      strategy,
-      orientation,
-      activeId,
-      setActiveId,
-      getItemValue,
-      flatCursor,
-    }),
-    [id, value, activeId, modifiers, strategy, orientation, getItemValue, flatCursor]
-  );
-
-  return (
-    <KanbanContext.Provider value={contextValue as KanbanContextValue<unknown>}>
-      <DndContext
-        collisionDetection={collisionDetection}
-        modifiers={modifiers}
-        sensors={sensors}
-        {...kanbanProps}
-        id={id}
-        measuring={{
-          droppable: {
-            strategy: MeasuringStrategy.Always,
-          },
-        }}
-        onDragStart={onDragStart}
-        onDragOver={onDragOver}
-        onDragEnd={onDragEnd}
-        onDragCancel={onDragCancel}
-        accessibility={{
-          announcements,
-          screenReaderInstructions: {
-            draggable: `
-            To pick up a kanban item or column, press space or enter.
-            While dragging, use the arrow keys to move the item.
-            Press space or enter again to drop the item in its new position, or press escape to cancel.
-          `,
-          },
-          ...accessibility,
-        }}
-      />
-    </KanbanContext.Provider>
-  );
-}
-
-const KanbanBoardContext = React.createContext<boolean>(false);
-KanbanBoardContext.displayName = BOARD_NAME;
-
-interface KanbanBoardProps extends React.ComponentPropsWithoutRef<'div'> {
-  children: React.ReactNode;
-  asChild?: boolean;
-}
-
-const KanbanBoard = React.forwardRef<HTMLDivElement, KanbanBoardProps>((props, forwardedRef) => {
-  const { asChild, className, ...boardProps } = props;
-
-  const context = useKanbanContext(BOARD_NAME);
-
-  const columns = React.useMemo(() => {
-    return Object.keys(context.items);
-  }, [context.items]);
-
-  const BoardPrimitive = asChild ? Slot : 'div';
-
-  return (
-    <KanbanBoardContext.Provider value={true}>
-      <SortableContext items={columns} strategy={context.orientation === 'horizontal' ? horizontalListSortingStrategy : verticalListSortingStrategy}>
-        <BoardPrimitive
-          aria-orientation={context.orientation}
-          data-orientation={context.orientation}
-          data-slot="kanban-board"
-          {...boardProps}
-          ref={forwardedRef}
-          className={cn('flex size-full gap-4', context.orientation === 'horizontal' ? 'flex-row' : 'flex-col', className)}
-        />
-      </SortableContext>
-    </KanbanBoardContext.Provider>
-  );
+const KanbanContext = React.createContext<KanbanContextProps<any>>({
+  columns: {},
+  setColumns: () => {},
+  getItemId: () => '',
+  columnIds: [],
+  activeId: null,
+  setActiveId: () => {},
+  findContainer: () => undefined,
+  isColumn: () => false,
 });
-KanbanBoard.displayName = BOARD_NAME;
 
-interface KanbanColumnContextValue {
-  id: string;
+const ColumnContext = React.createContext<{
   attributes: DraggableAttributes;
   listeners: DraggableSyntheticListeners | undefined;
-  setActivatorNodeRef: (node: HTMLElement | null) => void;
   isDragging?: boolean;
   disabled?: boolean;
-}
-
-const KanbanColumnContext = React.createContext<KanbanColumnContextValue | null>(null);
-KanbanColumnContext.displayName = COLUMN_NAME;
-
-function useKanbanColumnContext(consumerName: string) {
-  const context = React.useContext(KanbanColumnContext);
-  if (!context) {
-    throw new Error(`\`${consumerName}\` must be used within \`${COLUMN_NAME}\``);
-  }
-  return context;
-}
-
-const animateLayoutChanges: AnimateLayoutChanges = (args) => defaultAnimateLayoutChanges({ ...args, wasDragging: true });
-
-interface KanbanColumnProps extends React.ComponentPropsWithoutRef<'div'> {
-  value: UniqueIdentifier;
-  children: React.ReactNode;
-  asChild?: boolean;
-  asHandle?: boolean;
-  disabled?: boolean;
-}
-
-const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>((props, forwardedRef) => {
-  const { value, asChild, asHandle, disabled, className, style, ...columnProps } = props;
-
-  const id = React.useId();
-  const context = useKanbanContext(COLUMN_NAME);
-  const inBoard = React.useContext(KanbanBoardContext);
-  const inOverlay = React.useContext(KanbanOverlayContext);
-
-  if (!inBoard && !inOverlay) {
-    throw new Error(`\`${COLUMN_NAME}\` must be used within \`${BOARD_NAME}\` or \`${OVERLAY_NAME}\``);
-  }
-
-  if (value === '') {
-    throw new Error(`\`${COLUMN_NAME}\` value cannot be an empty string`);
-  }
-
-  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({
-    id: value,
-    disabled,
-    animateLayoutChanges,
-  });
-
-  const composedRef = useComposedRefs(forwardedRef, (node) => {
-    if (disabled) return;
-    setNodeRef(node);
-  });
-
-  const composedStyle = React.useMemo<React.CSSProperties>(() => {
-    return {
-      transform: CSS.Transform.toString(transform),
-      transition,
-      ...style,
-    };
-  }, [transform, transition, style]);
-
-  const items = React.useMemo(() => {
-    const items = context.items[value] ?? [];
-    return items.map((item) => context.getItemValue(item));
-  }, [context, value]);
-
-  const columnContext = React.useMemo<KanbanColumnContextValue>(
-    () => ({
-      id,
-      attributes,
-      listeners,
-      setActivatorNodeRef,
-      isDragging,
-      disabled,
-    }),
-    [id, attributes, listeners, setActivatorNodeRef, isDragging, disabled]
-  );
-
-  const ColumnPrimitive = asChild ? Slot : 'div';
-
-  return (
-    <KanbanColumnContext.Provider value={columnContext}>
-      <SortableContext items={items} strategy={context.orientation === 'horizontal' ? horizontalListSortingStrategy : verticalListSortingStrategy}>
-        <ColumnPrimitive
-          id={id}
-          data-disabled={disabled}
-          data-dragging={isDragging ? '' : undefined}
-          data-slot="kanban-column"
-          {...columnProps}
-          {...(asHandle && !disabled ? attributes : {})}
-          {...(asHandle && !disabled ? listeners : {})}
-          ref={composedRef}
-          style={composedStyle}
-          className={cn(
-            'flex size-full flex-col gap-2 rounded-lg border bg-zinc-100 p-2.5 aria-disabled:pointer-events-none aria-disabled:opacity-50 dark:bg-zinc-900',
-            {
-              'touch-none select-none': asHandle,
-              'cursor-default': context.flatCursor,
-              'data-dragging:cursor-grabbing': !context.flatCursor,
-              'cursor-grab': !isDragging && asHandle && !context.flatCursor,
-              'opacity-50': isDragging,
-              'pointer-events-none opacity-50': disabled,
-            },
-            className
-          )}
-        />
-      </SortableContext>
-    </KanbanColumnContext.Provider>
-  );
+}>({
+  attributes: {} as DraggableAttributes,
+  listeners: undefined,
+  isDragging: false,
+  disabled: false,
 });
-KanbanColumn.displayName = COLUMN_NAME;
 
-interface KanbanColumnHandleProps extends React.ComponentPropsWithoutRef<'button'> {
-  asChild?: boolean;
-}
-
-const KanbanColumnHandle = React.forwardRef<HTMLButtonElement, KanbanColumnHandleProps>((props, forwardedRef) => {
-  const { asChild, disabled, className, ...columnHandleProps } = props;
-
-  const context = useKanbanContext(COLUMN_NAME);
-  const columnContext = useKanbanColumnContext(COLUMN_HANDLE_NAME);
-
-  const isDisabled = disabled ?? columnContext.disabled;
-
-  const composedRef = useComposedRefs(forwardedRef, (node) => {
-    if (isDisabled) return;
-    columnContext.setActivatorNodeRef(node);
-  });
-
-  const HandlePrimitive = asChild ? Slot : 'button';
-
-  return (
-    <HandlePrimitive
-      type="button"
-      aria-controls={columnContext.id}
-      data-disabled={isDisabled}
-      data-dragging={columnContext.isDragging ? '' : undefined}
-      data-slot="kanban-column-handle"
-      {...columnHandleProps}
-      {...(isDisabled ? {} : columnContext.attributes)}
-      {...(isDisabled ? {} : columnContext.listeners)}
-      ref={composedRef}
-      className={cn('select-none disabled:pointer-events-none disabled:opacity-50', context.flatCursor ? 'cursor-default' : 'cursor-grab data-dragging:cursor-grabbing', className)}
-      disabled={isDisabled}
-    />
-  );
-});
-KanbanColumnHandle.displayName = COLUMN_HANDLE_NAME;
-
-interface KanbanItemContextValue {
-  id: string;
-  attributes: DraggableAttributes;
+const ItemContext = React.createContext<{
   listeners: DraggableSyntheticListeners | undefined;
-  setActivatorNodeRef: (node: HTMLElement | null) => void;
   isDragging?: boolean;
   disabled?: boolean;
-}
-
-const KanbanItemContext = React.createContext<KanbanItemContextValue | null>(null);
-KanbanItemContext.displayName = ITEM_NAME;
-
-function useKanbanItemContext(consumerName: string) {
-  const context = React.useContext(KanbanItemContext);
-  if (!context) {
-    throw new Error(`\`${consumerName}\` must be used within \`${ITEM_NAME}\``);
-  }
-  return context;
-}
-
-interface KanbanItemProps extends React.ComponentPropsWithoutRef<'div'> {
-  value: UniqueIdentifier;
-  asHandle?: boolean;
-  asChild?: boolean;
-  disabled?: boolean;
-}
-
-const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>((props, forwardedRef) => {
-  const { value, style, asHandle, asChild, disabled, className, ...itemProps } = props;
-
-  const id = React.useId();
-  const context = useKanbanContext(ITEM_NAME);
-  const inBoard = React.useContext(KanbanBoardContext);
-  const inOverlay = React.useContext(KanbanOverlayContext);
-
-  if (!inBoard && !inOverlay) {
-    throw new Error(`\`${ITEM_NAME}\` must be used within \`${BOARD_NAME}\``);
-  }
-
-  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({ id: value, disabled });
-
-  if (value === '') {
-    throw new Error(`\`${ITEM_NAME}\` value cannot be an empty string`);
-  }
-
-  const composedRef = useComposedRefs(forwardedRef, (node) => {
-    if (disabled) return;
-    setNodeRef(node);
-  });
-
-  const composedStyle = React.useMemo<React.CSSProperties>(() => {
-    return {
-      transform: CSS.Transform.toString(transform),
-      transition,
-      ...style,
-    };
-  }, [transform, transition, style]);
-
-  const itemContext = React.useMemo<KanbanItemContextValue>(
-    () => ({
-      id,
-      attributes,
-      listeners,
-      setActivatorNodeRef,
-      isDragging,
-      disabled,
-    }),
-    [id, attributes, listeners, setActivatorNodeRef, isDragging, disabled]
-  );
-
-  const ItemPrimitive = asChild ? Slot : 'div';
-
-  return (
-    <KanbanItemContext.Provider value={itemContext}>
-      <ItemPrimitive
-        id={id}
-        data-disabled={disabled}
-        data-dragging={isDragging ? '' : undefined}
-        data-slot="kanban-item"
-        {...itemProps}
-        {...(asHandle && !disabled ? attributes : {})}
-        {...(asHandle && !disabled ? listeners : {})}
-        ref={composedRef}
-        style={composedStyle}
-        className={cn(
-          'focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1',
-          {
-            'touch-none select-none': asHandle,
-            'cursor-default': context.flatCursor,
-            'data-dragging:cursor-grabbing': !context.flatCursor,
-            'cursor-grab': !isDragging && asHandle && !context.flatCursor,
-            'opacity-50': isDragging,
-            'pointer-events-none opacity-50': disabled,
-          },
-          className
-        )}
-      />
-    </KanbanItemContext.Provider>
-  );
+}>({
+  listeners: undefined,
+  isDragging: false,
+  disabled: false,
 });
-KanbanItem.displayName = ITEM_NAME;
 
-interface KanbanItemHandleProps extends React.ComponentPropsWithoutRef<'button'> {
-  asChild?: boolean;
-}
-
-const KanbanItemHandle = React.forwardRef<HTMLButtonElement, KanbanItemHandleProps>((props, forwardedRef) => {
-  const { asChild, disabled, className, ...itemHandleProps } = props;
-
-  const context = useKanbanContext(ITEM_HANDLE_NAME);
-  const itemContext = useKanbanItemContext(ITEM_HANDLE_NAME);
-
-  const isDisabled = disabled ?? itemContext.disabled;
-
-  const composedRef = useComposedRefs(forwardedRef, (node) => {
-    if (isDisabled) return;
-    itemContext.setActivatorNodeRef(node);
-  });
-
-  const HandlePrimitive = asChild ? Slot : 'button';
-
-  return (
-    <HandlePrimitive
-      type="button"
-      aria-controls={itemContext.id}
-      data-disabled={isDisabled}
-      data-dragging={itemContext.isDragging ? '' : undefined}
-      data-slot="kanban-item-handle"
-      {...itemHandleProps}
-      {...(isDisabled ? {} : itemContext.attributes)}
-      {...(isDisabled ? {} : itemContext.listeners)}
-      ref={composedRef}
-      className={cn('select-none disabled:pointer-events-none disabled:opacity-50', context.flatCursor ? 'cursor-default' : 'cursor-grab data-dragging:cursor-grabbing', className)}
-      disabled={isDisabled}
-    />
-  );
-});
-KanbanItemHandle.displayName = ITEM_HANDLE_NAME;
-
-const KanbanOverlayContext = React.createContext(false);
-KanbanOverlayContext.displayName = OVERLAY_NAME;
-
-const dropAnimation: DropAnimation = {
+const dropAnimationConfig: DropAnimation = {
+  ...defaultDropAnimation,
   sideEffects: defaultDropAnimationSideEffects({
     styles: {
       active: {
@@ -959,56 +86,439 @@ const dropAnimation: DropAnimation = {
   }),
 };
 
-interface KanbanOverlayProps extends Omit<React.ComponentPropsWithoutRef<typeof DragOverlay>, 'children'> {
-  container?: Element | DocumentFragment | null;
-  children?: ((params: { value: UniqueIdentifier; variant: 'column' | 'item' }) => React.ReactNode) | React.ReactNode;
+export interface KanbanMoveEvent {
+  event: DragEndEvent;
+  activeContainer: string;
+  activeIndex: number;
+  overContainer: string;
+  overIndex: number;
 }
 
-function KanbanOverlay(props: KanbanOverlayProps) {
-  const { container: containerProp, children, ...overlayProps } = props;
+export interface KanbanRootProps<T> {
+  value: Record<string, T[]>;
+  onValueChange: (value: Record<string, T[]>) => void;
+  getItemValue: (item: T) => string;
+  children: React.ReactNode;
+  className?: string;
+  onMove?: (event: KanbanMoveEvent) => void;
+}
 
-  const context = useKanbanContext(OVERLAY_NAME);
+function Kanban<T>({ value, onValueChange, getItemValue, children, className, onMove }: KanbanRootProps<T>) {
+  const columns = value;
+  const setColumns = onValueChange;
+  const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
 
-  const [mounted, setMounted] = React.useState(false);
-  React.useLayoutEffect(() => setMounted(true), []);
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 10,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
 
-  const container = containerProp ?? (mounted ? globalThis.document?.body : null);
+  const columnIds = React.useMemo(() => Object.keys(columns), [columns]);
 
-  if (!container) return null;
+  const isColumn = React.useCallback((id: UniqueIdentifier) => columnIds.includes(id as string), [columnIds]);
 
-  const variant = context.activeId && context.activeId in context.items ? 'column' : 'item';
+  const findContainer = React.useCallback(
+    (id: UniqueIdentifier) => {
+      if (isColumn(id)) return id as string;
+      return columnIds.find((key) => columns[key].some((item) => getItemValue(item) === id));
+    },
+    [columns, columnIds, getItemValue, isColumn],
+  );
 
-  return ReactDOM.createPortal(
-    <DragOverlay dropAnimation={dropAnimation} modifiers={context.modifiers} className={cn(!context.flatCursor && 'cursor-grabbing')} {...overlayProps}>
-      <KanbanOverlayContext.Provider value={true}>
-        {context.activeId && children
-          ? typeof children === 'function'
-            ? children({
-                value: context.activeId,
-                variant,
-              })
-            : children
-          : null}
-      </KanbanOverlayContext.Provider>
-    </DragOverlay>,
-    container
+  const handleDragStart = React.useCallback((event: DragStartEvent) => {
+    setActiveId(event.active.id);
+  }, []);
+
+  const handleDragOver = React.useCallback(
+    (event: DragOverEvent) => {
+      if (onMove) {
+        return;
+      }
+
+      const { active, over } = event;
+      if (!over) return;
+
+      if (isColumn(active.id)) return;
+
+      const activeContainer = findContainer(active.id);
+      const overContainer = findContainer(over.id);
+
+      // Only handle moving items between different columns
+      if (!activeContainer || !overContainer || activeContainer === overContainer) {
+        return;
+      }
+
+      const activeItems = columns[activeContainer];
+      const overItems = columns[overContainer];
+
+      const activeIndex = activeItems.findIndex((item: T) => getItemValue(item) === active.id);
+      let overIndex = overItems.findIndex((item: T) => getItemValue(item) === over.id);
+
+      // If dropping on the column itself, not an item
+      if (isColumn(over.id)) {
+        overIndex = overItems.length;
+      }
+
+      const newOverItems = [...overItems];
+      const [movedItem] = activeItems.splice(activeIndex, 1);
+      newOverItems.splice(overIndex, 0, movedItem);
+
+      setColumns({
+        ...columns,
+        [activeContainer]: [...activeItems],
+        [overContainer]: newOverItems,
+      });
+    },
+    [findContainer, getItemValue, isColumn, setColumns, columns, onMove],
+  );
+
+  const handleDragEnd = React.useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+      setActiveId(null);
+
+      if (!over) return;
+
+      // Handle item move callback
+      if (onMove && !isColumn(active.id)) {
+        const activeContainer = findContainer(active.id);
+        const overContainer = findContainer(over.id);
+
+        if (activeContainer && overContainer) {
+          const activeIndex = columns[activeContainer].findIndex((item: T) => getItemValue(item) === active.id);
+          const overIndex = isColumn(over.id)
+            ? columns[overContainer].length
+            : columns[overContainer].findIndex((item: T) => getItemValue(item) === over.id);
+
+          onMove({
+            event,
+            activeContainer,
+            activeIndex,
+            overContainer,
+            overIndex,
+          });
+        }
+        return;
+      }
+
+      // Handle column reordering
+      if (isColumn(active.id) && isColumn(over.id)) {
+        const activeIndex = columnIds.indexOf(active.id as string);
+        const overIndex = columnIds.indexOf(over.id as string);
+        if (activeIndex !== overIndex) {
+          const newOrder = arrayMove(Object.keys(columns), activeIndex, overIndex);
+          const newColumns: Record<string, T[]> = {};
+          newOrder.forEach((key) => {
+            newColumns[key] = columns[key];
+          });
+          setColumns(newColumns);
+        }
+        return;
+      }
+
+      const activeContainer = findContainer(active.id);
+      const overContainer = findContainer(over.id);
+
+      // Handle item reordering within the same column
+      if (activeContainer && overContainer && activeContainer === overContainer) {
+        const container = activeContainer;
+        const activeIndex = columns[container].findIndex((item: T) => getItemValue(item) === active.id);
+        const overIndex = columns[container].findIndex((item: T) => getItemValue(item) === over.id);
+
+        if (activeIndex !== overIndex) {
+          setColumns({
+            ...columns,
+            [container]: arrayMove(columns[container], activeIndex, overIndex),
+          });
+        }
+      }
+    },
+    [columnIds, columns, findContainer, getItemValue, isColumn, setColumns, onMove],
+  );
+
+  const contextValue = React.useMemo(
+    () => ({
+      columns,
+      setColumns,
+      getItemId: getItemValue,
+      columnIds,
+      activeId,
+      setActiveId,
+      findContainer,
+      isColumn,
+    }),
+    [columns, setColumns, getItemValue, columnIds, activeId, findContainer, isColumn],
+  );
+
+  return (
+    <KanbanContext.Provider value={contextValue}>
+      <DndContext sensors={sensors} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
+        <div data-slot="kanban" data-dragging={activeId !== null} className={cn('h-full', className)}>
+          {children}
+        </div>
+      </DndContext>
+    </KanbanContext.Provider>
+  );
+}
+
+export interface KanbanBoardProps {
+  className?: string;
+  children: React.ReactNode;
+}
+
+function KanbanBoard({ children, className }: KanbanBoardProps) {
+  const { columnIds } = React.useContext(KanbanContext);
+
+  return (
+    <SortableContext items={columnIds} strategy={rectSortingStrategy}>
+      <div data-slot="kanban-board" className={cn('grid auto-rows-fr sm:grid-cols-3 gap-4 h-full', className)}>
+        {children}
+      </div>
+    </SortableContext>
+  );
+}
+
+export interface KanbanColumnProps {
+  value: string;
+  className?: string;
+  children: React.ReactNode;
+  disabled?: boolean;
+}
+
+function KanbanColumn({ value, className, children, disabled }: KanbanColumnProps) {
+  const {
+    setNodeRef,
+    transform,
+    transition,
+    attributes,
+    listeners,
+    isDragging: isSortableDragging,
+  } = useSortable({
+    id: value,
+    disabled,
+  });
+
+  const { activeId, isColumn } = React.useContext(KanbanContext);
+  const isColumnDragging = activeId ? isColumn(activeId) : false;
+
+  const style = {
+    transition,
+    transform: CSS.Translate.toString(transform),
+  } as React.CSSProperties;
+
+  return (
+    <ColumnContext.Provider value={{ attributes, listeners, isDragging: isColumnDragging, disabled }}>
+      <div
+        data-slot="kanban-column"
+        data-value={value}
+        data-dragging={isSortableDragging}
+        data-disabled={disabled}
+        ref={setNodeRef}
+        style={style}
+        className={cn(
+          'group/kanban-column flex flex-col h-full',
+          isSortableDragging && 'opacity-50',
+          disabled && 'opacity-50',
+          className,
+        )}
+      >
+        {children}
+      </div>
+    </ColumnContext.Provider>
+  );
+}
+
+export interface KanbanColumnHandleProps {
+  asChild?: boolean;
+  className?: string;
+  children?: React.ReactNode;
+  cursor?: boolean;
+}
+
+function KanbanColumnHandle({ asChild, className, children, cursor = true }: KanbanColumnHandleProps) {
+  const { attributes, listeners, isDragging, disabled } = React.useContext(ColumnContext);
+
+  const Comp = asChild ? Slot : 'div';
+
+  return (
+    <Comp
+      data-slot="kanban-column-handle"
+      data-dragging={isDragging}
+      data-disabled={disabled}
+      {...attributes}
+      {...listeners}
+      className={cn(
+        'opacity-0 transition-opacity group-hover/kanban-column:opacity-100',
+        cursor && (isDragging ? '!cursor-grabbing' : '!cursor-grab'),
+        className,
+      )}
+    >
+      {children}
+    </Comp>
+  );
+}
+
+export interface KanbanItemProps {
+  value: string;
+  asChild?: boolean;
+  className?: string;
+  children: React.ReactNode;
+  disabled?: boolean;
+}
+
+function KanbanItem({ value, asChild = false, className, children, disabled }: KanbanItemProps) {
+  const {
+    setNodeRef,
+    transform,
+    transition,
+    attributes,
+    listeners,
+    isDragging: isSortableDragging,
+  } = useSortable({
+    id: value,
+    disabled,
+  });
+
+  const { activeId, isColumn } = React.useContext(KanbanContext);
+  const isItemDragging = activeId ? !isColumn(activeId) : false;
+
+  const style = {
+    transition,
+    transform: CSS.Translate.toString(transform),
+  } as React.CSSProperties;
+
+  const Comp = asChild ? Slot : 'div';
+
+  return (
+    <ItemContext.Provider value={{ listeners, isDragging: isItemDragging, disabled }}>
+      <Comp
+        data-slot="kanban-item"
+        data-value={value}
+        data-dragging={isSortableDragging}
+        data-disabled={disabled}
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...(!disabled ? listeners : {})}
+        className={cn(isSortableDragging && 'opacity-50', disabled && 'opacity-50', className)}
+      >
+        {children}
+      </Comp>
+    </ItemContext.Provider>
+  );
+}
+
+export interface KanbanItemHandleProps {
+  asChild?: boolean;
+  className?: string;
+  children?: React.ReactNode;
+  cursor?: boolean;
+}
+
+function KanbanItemHandle({ asChild, className, children, cursor = true }: KanbanItemHandleProps) {
+  const { listeners, isDragging, disabled } = React.useContext(ItemContext);
+
+  const Comp = asChild ? Slot : 'div';
+
+  return (
+    <Comp
+      data-slot="kanban-item-handle"
+      data-dragging={isDragging}
+      data-disabled={disabled}
+      {...listeners}
+      className={cn(cursor && (isDragging ? '!cursor-grabbing' : '!cursor-grab'), className)}
+    >
+      {children}
+    </Comp>
+  );
+}
+
+export interface KanbanColumnContentProps {
+  value: string;
+  className?: string;
+  children: React.ReactNode;
+}
+
+function KanbanColumnContent({ value, className, children }: KanbanColumnContentProps) {
+  const { columns, getItemId } = React.useContext(KanbanContext);
+
+  const itemIds = React.useMemo(() => columns[value].map(getItemId), [columns, getItemId, value]);
+
+  return (
+    <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
+      <div data-slot="kanban-column-content" className={cn('flex flex-col gap-2 min-h-0', className)}>
+        {children}
+      </div>
+    </SortableContext>
+  );
+}
+
+export interface KanbanOverlayProps {
+  className?: string;
+  children?: React.ReactNode | ((params: { value: UniqueIdentifier; variant: 'column' | 'item' }) => React.ReactNode);
+}
+
+function KanbanOverlay({ children, className }: KanbanOverlayProps) {
+  const { activeId, isColumn } = React.useContext(KanbanContext);
+  const [dimensions, setDimensions] = React.useState<{ width: number; height: number } | null>(null);
+
+  React.useEffect(() => {
+    if (activeId) {
+      const element = document.querySelector(
+        `[data-slot="kanban-${isColumn(activeId) ? 'column' : 'item'}"][data-value="${activeId}"]`,
+      );
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        setDimensions({ width: rect.width, height: rect.height });
+      }
+    } else {
+      setDimensions(null);
+    }
+  }, [activeId]);
+
+  const style = {
+    width: dimensions?.width,
+    height: dimensions?.height,
+  } as React.CSSProperties;
+
+  const content = React.useMemo(() => {
+    if (!activeId) return null;
+    if (typeof children === 'function') {
+      return children({
+        value: activeId,
+        variant: isColumn(activeId) ? 'column' : 'item',
+      });
+    }
+    return children;
+  }, [activeId, children, isColumn]);
+
+  return (
+    <DragOverlay dropAnimation={dropAnimationConfig}>
+      <div
+        data-slot="kanban-overlay"
+        data-dragging={true}
+        style={style}
+        className={cn('pointer-events-none', className, activeId ? '!cursor-grabbing' : '')}
+      >
+        {content}
+      </div>
+    </DragOverlay>
   );
 }
 
 export {
-  KanbanRoot as Kanban,
+  Kanban,
   KanbanBoard,
   KanbanColumn,
   KanbanColumnHandle,
   KanbanItem,
   KanbanItemHandle,
+  KanbanColumnContent,
   KanbanOverlay,
-  //
-  KanbanRoot as Root,
-  KanbanBoard as Board,
-  KanbanColumn as Column,
-  KanbanColumnHandle as ColumnHandle,
-  KanbanItem as Item,
-  KanbanItemHandle as ItemHandle,
-  KanbanOverlay as Overlay,
 };

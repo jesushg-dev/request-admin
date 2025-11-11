@@ -832,10 +832,10 @@
           "workflow": "Flujo de Trabajo",
           "sla": "SLAs"
         },
-          "recentRequests": {
-            "title": "Solicitudes Recientes",
-            "titleWithWorkflow": "Solicitudes Recientes - {workflow}"
-          },
+        "recentRequests": {
+          "title": "Solicitudes Recientes",
+          "titleWithWorkflow": "Solicitudes Recientes - {workflow}"
+        },
         "searchApplied": {
           "title": "Búsqueda aplicada",
           "description": "Los filtros han sido aplicados correctamente"
@@ -851,17 +851,44 @@
           "description": "Aún no se han registrado solicitudes con información de SLA.\nLos datos aparecerán aquí una vez que se creen solicitudes."
         },
         "cards": {
-          "compliance": { "title": "Cumplimiento de SLA" },
-          "avgResolutionTime": { "title": "Tiempo Promedio de Resolución", "unit": "días" },
-          "atRisk": { "title": "Solicitudes en Riesgo" },
-          "overdue": { "title": "Solicitudes Vencidas" },
-          "avgSlaHours": { "title": "SLA Promedio por Solicitud", "unit": "h", "description": "Tiempo asignado promedio" },
-          "escalations": { "title": "Escalaciones por SLA", "trendText": "N/A" },
-          "bestWorkflow": { "title": "Equipos con Mejor SLA", "description": "{compliance}% de cumplimiento" },
-          "activeAlerts": { "title": "Alertas Activas", "description": "Solicitudes que requieren atención" }
+          "compliance": {
+            "title": "Cumplimiento de SLA"
+          },
+          "avgResolutionTime": {
+            "title": "Tiempo Promedio de Resolución",
+            "unit": "días"
+          },
+          "atRisk": {
+            "title": "Solicitudes en Riesgo"
+          },
+          "overdue": {
+            "title": "Solicitudes Vencidas"
+          },
+          "avgSlaHours": {
+            "title": "SLA Promedio por Solicitud",
+            "unit": "h",
+            "description": "Tiempo asignado promedio"
+          },
+          "escalations": {
+            "title": "Escalaciones por SLA",
+            "trendText": "N/A"
+          },
+          "bestWorkflow": {
+            "title": "Equipos con Mejor SLA",
+            "description": "{compliance}% de cumplimiento"
+          },
+          "activeAlerts": {
+            "title": "Alertas Activas",
+            "description": "Solicitudes que requieren atención"
+          }
         },
         "charts": {
-          "pie": { "title": "Estado de SLA", "description": "Distribución de solicitudes por estado de SLA", "tooltipUnit": "solicitudes", "tooltipLabel": "Cantidad" },
+          "pie": {
+            "title": "Estado de SLA",
+            "description": "Distribución de solicitudes por estado de SLA",
+            "tooltipUnit": "solicitudes",
+            "tooltipLabel": "Cantidad"
+          },
           "workflow": {
             "title": "SLA por Workflow",
             "description": "Distribución de estados de SLA por tipo de workflow",
@@ -885,25 +912,72 @@
           }
         },
         "panels": {
-          "dept": { "title": "SLA por Departamento", "description": "Cumplimiento de SLA por departamento", "empty": "No hay datos disponibles" },
-          "avgTime": { "title": "Tiempo Promedio de Resolución", "description": "Por tipo de solicitud (en horas)", "empty": "No hay datos disponibles" },
-          "alerts": { "title": "Alertas de SLA", "description": "Solicitudes que requieren atención inmediata", "empty": "No hay alertas de SLA" }
+          "dept": {
+            "title": "SLA por Departamento",
+            "description": "Cumplimiento de SLA por departamento",
+            "empty": "No hay datos disponibles"
+          },
+          "avgTime": {
+            "title": "Tiempo Promedio de Resolución",
+            "description": "Por tipo de solicitud (en horas)",
+            "empty": "No hay datos disponibles"
+          },
+          "alerts": {
+            "title": "Alertas de SLA",
+            "description": "Solicitudes que requieren atención inmediata",
+            "empty": "No hay alertas de SLA"
+          }
         }
       },
       "slaFilters": {
-        "labels": { "status": "Estado de SLA", "slaPercentage": "Porcentaje de SLA consumido", "timeRange": "Tiempo restante de SLA", "workflowType": "Tipo de Workflow", "search": "Buscar por ID o descripción" },
-        "status": { "all": "Todos los estados", "onTime": "A tiempo", "warning": "Próximo a vencer", "overdue": "Vencido", "completed": "Completado" },
-        "badges": { "normal": "Normal" },
-        "placeholders": { "selectRange": "Seleccionar rango", "selectWorkflow": "Seleccionar workflow", "search": "Buscar solicitudes..." },
-        "timeRanges": { "all": "Todos los rangos", "lessThan1h": "Menos de 1 hora", "1to4h": "1 a 4 horas", "4to24h": "4 a 24 horas", "1to3d": "1 a 3 días", "moreThan3d": "Más de 3 días", "overdue": "Tiempo vencido" },
-        "workflows": { "all": "Todos los workflows" },
-        "buttons": { "search": "Buscar" }
+        "labels": {
+          "status": "Estado de SLA",
+          "slaPercentage": "Porcentaje de SLA consumido",
+          "timeRange": "Tiempo restante de SLA",
+          "workflowType": "Tipo de Workflow",
+          "search": "Buscar por ID o descripción"
+        },
+        "status": {
+          "all": "Todos los estados",
+          "onTime": "A tiempo",
+          "warning": "Próximo a vencer",
+          "overdue": "Vencido",
+          "completed": "Completado"
+        },
+        "badges": {
+          "normal": "Normal"
+        },
+        "placeholders": {
+          "selectRange": "Seleccionar rango",
+          "selectWorkflow": "Seleccionar workflow",
+          "search": "Buscar solicitudes..."
+        },
+        "timeRanges": {
+          "all": "Todos los rangos",
+          "lessThan1h": "Menos de 1 hora",
+          "1to4h": "1 a 4 horas",
+          "4to24h": "4 a 24 horas",
+          "1to3d": "1 a 3 días",
+          "moreThan3d": "Más de 3 días",
+          "overdue": "Tiempo vencido"
+        },
+        "workflows": {
+          "all": "Todos los workflows"
+        },
+        "buttons": {
+          "search": "Buscar"
+        }
       },
       "workflowSelector": {
         "title": "Estadísticas por flujo de trabajo",
         "subtitle": "Selecciona un flujo de trabajo para ver métricas específicas",
-        "placeholders": { "select": "Seleccione un flujo de trabajo" },
-        "options": { "all": "Todos los flujos", "categories": "categorías" },
+        "placeholders": {
+          "select": "Seleccione un flujo de trabajo"
+        },
+        "options": {
+          "all": "Todos los flujos",
+          "categories": "categorías"
+        },
         "helper": "Selecciona un flujo de trabajo o 'Todos los flujos' para ver las métricas generales"
       },
       "recentRequests": {
@@ -923,47 +997,115 @@
         "view": "Ver"
       },
       "quickStats": {
-        "pending": { "title": "Solicitudes Pendientes", "description": "Solicitudes que requieren atención", "highPriority": "{count} con prioridad alta" },
-        "completed": { "title": "Solicitudes Completadas", "description": "Solicitudes resueltas este mes", "avgResolution": "Tiempo promedio: {days} días" },
-        "reports": { "title": "Reportes", "description": "Análisis de desempeño", "ctaHint": "Accede a reportes detallados" },
-        "actions": { "viewAll": "Ver todas", "viewReports": "Ver reportes" }
+        "pending": {
+          "title": "Solicitudes Pendientes",
+          "description": "Solicitudes que requieren atención",
+          "highPriority": "{count} con prioridad alta"
+        },
+        "completed": {
+          "title": "Solicitudes Completadas",
+          "description": "Solicitudes resueltas este mes",
+          "avgResolution": "Tiempo promedio: {days} días"
+        },
+        "reports": {
+          "title": "Reportes",
+          "description": "Análisis de desempeño",
+          "ctaHint": "Accede a reportes detallados"
+        },
+        "actions": {
+          "viewAll": "Ver todas",
+          "viewReports": "Ver reportes"
+        }
       },
       "stats": {
         "title": "Análisis de Solicitudes por Workflow",
         "description": "Distribución de solicitudes por tipo de workflow en los últimos 6 meses",
-        "empty": { "title": "No hay estadísticas disponibles", "description": "Aún no se han registrado solicitudes.\nLas estadísticas aparecerán aquí una vez que se creen solicitudes." },
-        "tooltip": { "requests": "solicitudes", "month": "Mes" }
+        "empty": {
+          "title": "No hay estadísticas disponibles",
+          "description": "Aún no se han registrado solicitudes.\nLas estadísticas aparecerán aquí una vez que se creen solicitudes."
+        },
+        "tooltip": {
+          "requests": "solicitudes",
+          "month": "Mes"
+        }
       },
       "metricsClient": {
-        "loadError": { "title": "Error al cargar métricas" }
-        },
-        "metrics": {
-          "general": {
-            "title": "Métricas Generales",
-            "vsLastMonth": "vs. mes anterior",
-            "totalRequests": { "title": "Total de Solicitudes" },
-            "avgResolutionTime": { "title": "Tiempo Promedio de Resolución", "unit": "días" },
-            "resolutionRate": { "title": "Tasa de Resolución" },
-            "pending": { "title": "Solicitudes Pendientes" }
+        "loadError": {
+          "title": "Error al cargar métricas"
+        }
+      },
+      "metrics": {
+        "general": {
+          "title": "Métricas Generales",
+          "vsLastMonth": "vs. mes anterior",
+          "totalRequests": {
+            "title": "Total de Solicitudes"
           },
-          "sla": {
-            "title": "Métricas de SLA y Estados Fijos",
-            "vsLastMonth": "vs. mes anterior",
-            "overdue": { "title": "Solicitudes Vencidas (SLA)" },
-            "compliance": { "title": "SLA Promedio Cumplido" },
-            "atRisk": { "title": "SLA en Riesgo" },
-            "draft": { "title": "Solicitudes en Borrador" }
+          "avgResolutionTime": {
+            "title": "Tiempo Promedio de Resolución",
+            "unit": "días"
+          },
+          "resolutionRate": {
+            "title": "Tasa de Resolución"
+          },
+          "pending": {
+            "title": "Solicitudes Pendientes"
+          }
+        },
+        "sla": {
+          "title": "Métricas de SLA y Estados Fijos",
+          "vsLastMonth": "vs. mes anterior",
+          "overdue": {
+            "title": "Solicitudes Vencidas (SLA)"
+          },
+          "compliance": {
+            "title": "SLA Promedio Cumplido"
+          },
+          "atRisk": {
+            "title": "SLA en Riesgo"
+          },
+          "draft": {
+            "title": "Solicitudes en Borrador"
           }
         }
+      }
     },
     "reports": {
       "page": {
         "title": "Reportes",
         "subtitle": "Análisis y estadísticas de solicitudes de servicios",
-        "buttons": { "showFilters": "Mostrar filtros", "hideFilters": "Ocultar filtros" },
-        "period": { "placeholder": "Período", "label": "Período", "month": "Último mes", "quarter": "Último trimestre", "year": "Último año" },
-        "export": { "title": "Exportar", "format": "Formato de exportación", "pdf": "PDF", "excel": "Excel", "json": "JSON", "exporting": "Exportando reporte en formato {format}...", "success": "Reporte exportado exitosamente en formato {format}", "error": "Error al exportar el reporte", "noPermission": "No tienes permiso para exportar reportes" },
-        "tabs": { "overview": "Resumen", "areas": "Por Área", "status": "Por Estado", "performance": "Desempeño", "workflows": "Flujos de Trabajo", "execution": "Ejecución de Modelos", "alerts": "Alertas", "monthlyTrends": "Tendencias Mensuales" },
+        "buttons": {
+          "showFilters": "Mostrar filtros",
+          "hideFilters": "Ocultar filtros"
+        },
+        "period": {
+          "placeholder": "Período",
+          "label": "Período",
+          "month": "Último mes",
+          "quarter": "Último trimestre",
+          "year": "Último año"
+        },
+        "export": {
+          "title": "Exportar",
+          "format": "Formato de exportación",
+          "pdf": "PDF",
+          "excel": "Excel",
+          "json": "JSON",
+          "exporting": "Exportando reporte en formato {format}...",
+          "success": "Reporte exportado exitosamente en formato {format}",
+          "error": "Error al exportar el reporte",
+          "noPermission": "No tienes permiso para exportar reportes"
+        },
+        "tabs": {
+          "overview": "Resumen",
+          "areas": "Por Área",
+          "status": "Por Estado",
+          "performance": "Desempeño",
+          "workflows": "Flujos de Trabajo",
+          "execution": "Ejecución de Modelos",
+          "alerts": "Alertas",
+          "monthlyTrends": "Tendencias Mensuales"
+        },
         "overview": {
           "totalRequests": "Total de Solicitudes",
           "openRequests": "Solicitudes Abiertas",
@@ -992,19 +1134,54 @@
           "compliance": "Cumplimiento"
         },
         "performance": {
-          "empty": { "title": "No hay datos de desempeño disponibles", "description": "Aún no se han registrado datos de tiempo de resolución.\nLos datos aparecerán aquí una vez que haya solicitudes completadas." },
-          "chart": { "title": "Tiempo de Respuesta por Área", "description": "Tiempo promedio de resolución en días", "category": "Categoría", "timeDays": "Tiempo (días)", "series": { "timeDays": "Tiempo (días)" } }
+          "empty": {
+            "title": "No hay datos de desempeño disponibles",
+            "description": "Aún no se han registrado datos de tiempo de resolución.\nLos datos aparecerán aquí una vez que haya solicitudes completadas."
+          },
+          "chart": {
+            "title": "Tiempo de Respuesta por Área",
+            "description": "Tiempo promedio de resolución en días",
+            "category": "Categoría",
+            "timeDays": "Tiempo (días)",
+            "series": {
+              "timeDays": "Tiempo (días)"
+            }
+          }
         },
         "workflows": {
-          "empty": { "title": "No hay datos de flujos de trabajo disponibles", "description": "Aún no se han registrado datos de workflows.\nLos datos aparecerán aquí una vez que haya solicitudes." },
-          "chart": { "title": "Análisis de Flujos de Trabajo", "description": "Tiempo promedio en cada estado del flujo", "workflow": "Workflow", "requests": "Solicitudes", "series": { "requests": "Solicitudes" } }
+          "empty": {
+            "title": "No hay datos de flujos de trabajo disponibles",
+            "description": "Aún no se han registrado datos de workflows.\nLos datos aparecerán aquí una vez que haya solicitudes."
+          },
+          "chart": {
+            "title": "Análisis de Flujos de Trabajo",
+            "description": "Tiempo promedio en cada estado del flujo",
+            "workflow": "Workflow",
+            "requests": "Solicitudes",
+            "series": {
+              "requests": "Solicitudes"
+            }
+          }
         },
         "alerts": {
           "title": "Alertas por Estado",
           "subtitle": "Solicitudes que requieren atención inmediata",
-          "empty": { "title": "No hay alertas activas", "description": "Todas las solicitudes están en orden.\nNo se encontraron alertas de SLA vencido o en riesgo." },
-          "levels": { "critical": "Crítico", "warning": "Advertencia", "info": "Información", "type": "Tipo", "status": "Estado", "count": "Cantidad" },
-          "descriptions": { "critical": "Estas solicitudes han vencido su SLA y requieren atención inmediata.", "warning": "Estas solicitudes están en riesgo de vencer su SLA." },
+          "empty": {
+            "title": "No hay alertas activas",
+            "description": "Todas las solicitudes están en orden.\nNo se encontraron alertas de SLA vencido o en riesgo."
+          },
+          "levels": {
+            "critical": "Crítico",
+            "warning": "Advertencia",
+            "info": "Información",
+            "type": "Tipo",
+            "status": "Estado",
+            "count": "Cantidad"
+          },
+          "descriptions": {
+            "critical": "Estas solicitudes han vencido su SLA y requieren atención inmediata.",
+            "warning": "Estas solicitudes están en riesgo de vencer su SLA."
+          },
           "requestCount": "{count} {count, plural, one {solicitud} other {solicitudes}} en \"{status}\" con SLA {type, select, vencido {vencido} enRiesgo {en riesgo} other {}}",
           "viewRequests": "Ver solicitudes"
         },
@@ -1016,7 +1193,10 @@
           "exportDate": "Fecha de Exportación"
         },
         "executionTab": {
-          "empty": { "title": "No hay modelos de ejecución disponibles", "description": "Aún no se han creado modelos de ejecución.\nLos datos aparecerán aquí una vez que se definan workflows de ejecución." },
+          "empty": {
+            "title": "No hay modelos de ejecución disponibles",
+            "description": "Aún no se han creado modelos de ejecución.\nLos datos aparecerán aquí una vez que se definan workflows de ejecución."
+          },
           "title": "Ejecución de Modelos",
           "models": {
             "title": "Modelos de Ejecución",
@@ -1039,7 +1219,10 @@
             "property": "Propiedad",
             "value": "Valor"
           },
-          "tabs": { "steps": "Pasos del Proceso", "metrics": "Métricas de Ejecución" },
+          "tabs": {
+            "steps": "Pasos del Proceso",
+            "metrics": "Métricas de Ejecución"
+          },
           "steps": {
             "title": "Pasos del proceso de ejecución",
             "order": "Orden",
@@ -1074,8 +1257,18 @@
               }
             }
           },
-          "footer": { "viewHistory": "Ver historial de ejecuciones", "manageWorkflows": "Gestionar workflows", "export": "Exportar", "exportFormat": "Formato de Exportación", "exportSuccess": "Reporte exportado exitosamente en formato {format}", "exportError": "Error al exportar el reporte" },
-          "selectModel": { "title": "Seleccione un modelo de ejecución", "description": "Elija un modelo de la lista para ver sus detalles de ejecución" }
+          "footer": {
+            "viewHistory": "Ver historial de ejecuciones",
+            "manageWorkflows": "Gestionar workflows",
+            "export": "Exportar",
+            "exportFormat": "Formato de Exportación",
+            "exportSuccess": "Reporte exportado exitosamente en formato {format}",
+            "exportError": "Error al exportar el reporte"
+          },
+          "selectModel": {
+            "title": "Seleccione un modelo de ejecución",
+            "description": "Elija un modelo de la lista para ver sus detalles de ejecución"
+          }
         }
       }
     },
@@ -2185,7 +2378,9 @@
         "draftCanOnlyMoveToInitialDescription": "Una solicitud en borrador solo puede moverse a un estado de tipo 'inicial' (como 'En Progreso') una vez que todos los requerimientos estén cumplidos",
         "draftStatusName": "Borrador",
         "draftBadge": "Borrador",
-        "cannotMoveToDraft": "No se puede mover una solicitud que no está en borrador a la columna de borradores"
+        "cannotMoveToDraft": "No se puede mover una solicitud que no está en borrador a la columna de borradores",
+        "allowedDrop": "Caída permitida",
+        "notAllowed": "No se permite la caída"
       }
     },
     "requestType": {
@@ -3750,37 +3945,67 @@
         "firstSteps": {
           "title": "Primeros Pasos",
           "description": "Aprende lo básico para comenzar a usar el sistema",
-          "links": ["Introducción al sistema", "Crea tu primera solicitud", "Navegación por el panel", "Configura tu perfil"],
+          "links": [
+            "Introducción al sistema",
+            "Crea tu primera solicitud",
+            "Navegación por el panel",
+            "Configura tu perfil"
+          ],
           "viewAll": "Ver todas las guías básicas"
         },
         "requestManagement": {
           "title": "Gestión de Solicitudes",
           "description": "Aprende a gestionar solicitudes eficientemente",
-          "links": ["Estados de las solicitudes", "Asignación de solicitudes", "Cambios de prioridad", "Comentarios y seguimiento"],
+          "links": [
+            "Estados de las solicitudes",
+            "Asignación de solicitudes",
+            "Cambios de prioridad",
+            "Comentarios y seguimiento"
+          ],
           "viewAll": "Ver todas las guías de gestión"
         },
         "communication": {
           "title": "Comunicación",
           "description": "Aprende a comunicarte eficazmente en el sistema",
-          "links": ["Sistema de mensajería", "Notificaciones y alertas", "Menciones y etiquetas", "Compartir archivos"],
+          "links": [
+            "Sistema de mensajería",
+            "Notificaciones y alertas",
+            "Menciones y etiquetas",
+            "Compartir archivos"
+          ],
           "viewAll": "Ver todas las guías de comunicación"
         },
         "reports": {
           "title": "Reportes y Analítica",
           "description": "Aprende a usar las herramientas de análisis",
-          "links": ["Generación de reportes", "Análisis de métricas", "Exportación de datos", "Tableros personalizados"],
+          "links": [
+            "Generación de reportes",
+            "Análisis de métricas",
+            "Exportación de datos",
+            "Tableros personalizados"
+          ],
           "viewAll": "Ver todas las guías de reportes"
         },
         "administration": {
           "title": "Administración",
           "description": "Guías para administradores del sistema",
-          "links": ["Gestión de usuarios", "Configuración de flujos de trabajo", "Personalización del sistema", "Seguridad y permisos"],
+          "links": [
+            "Gestión de usuarios",
+            "Configuración de flujos de trabajo",
+            "Personalización del sistema",
+            "Seguridad y permisos"
+          ],
           "viewAll": "Ver todas las guías de administración"
         },
         "workflows": {
           "title": "Flujos de Trabajo",
           "description": "Aprende a configurar y usar flujos de trabajo",
-          "links": ["Creación de flujos personalizados", "Reglas de transición de estados", "Automatización de procesos", "Plantillas de flujos de trabajo"],
+          "links": [
+            "Creación de flujos personalizados",
+            "Reglas de transición de estados",
+            "Automatización de procesos",
+            "Plantillas de flujos de trabajo"
+          ],
           "viewAll": "Ver todas las guías de flujos de trabajo"
         }
       },
