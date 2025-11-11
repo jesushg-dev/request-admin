@@ -33,10 +33,9 @@ const RequestsPageClient: React.FC<RequestsPageClientProps> = ({ canCreate, canA
           <TabsTrigger value="table" className="h-7 text-xs">
             Table
           </TabsTrigger>
-          {/* TODO: Enable Kanban view once implementation is complete */}
-          {/* <TabsTrigger value="kanban" className="h-7 text-xs">
+          <TabsTrigger value="kanban" className="h-7 text-xs">
             Kanban
-          </TabsTrigger> */}
+          </TabsTrigger>
           {/* TODO: Enable Calendar view once implementation is complete */}
           {/* <TabsTrigger value="calendar" className="h-7 text-xs">
             Calendar
@@ -69,10 +68,9 @@ const RequestsPageClient: React.FC<RequestsPageClientProps> = ({ canCreate, canA
       <TabsContent value="table" className={`mt-0 ${view === 'table' ? 'flex flex-1' : ''}`}>
         <TableTab />
       </TabsContent>
-      {/* TODO: Enable Kanban tab content once implementation is complete */}
-      {/* <TabsContent value="kanban" className={`mt-0 ${view === 'kanban' ? 'flex flex-1' : ''}`}>
+      <TabsContent value="kanban" className={`mt-0 ${view === 'kanban' ? 'flex flex-1' : ''}`}>
         <KanbanTab />
-      </TabsContent> */}
+      </TabsContent> 
       {/* TODO: Enable Calendar tab content once implementation is complete */}
       {/* <TabsContent value="calendar" className={`mt-0 ${view === 'calendar' ? 'flex flex-1' : ''}`}>
         <CalendarTab />

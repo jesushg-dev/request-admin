@@ -33,6 +33,7 @@ const InvitationTenantDefaultArgs = Prisma.validator<Prisma.InvitationTenantDefa
     role: true,
     status: true,
     expiresAt: true,
+    createdAt: true,
     inviter: { select: { id: true } },
     tenantId: true,
   },

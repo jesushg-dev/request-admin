@@ -54,15 +54,15 @@ const handleAssignmentUpdate = async ({
 }) => {
   const db = await getDb();
   try {
-    await db.$transaction([
-      db.requestAssignment.updateMany({
+    await db.$transaction(async (tx) => {
+      await tx.requestAssignment.updateMany({
         where: { requestId, tenantId, isActive: true },
         data: { isActive: false },
-      }),
-      db.requestAssignment.create({
+      });
+      await tx.requestAssignment.create({
         data: { ...newAssignmentData, isActive: true, tenantId, requestId },
-      }),
-      db.requestChangeLog.create({
+      });
+      await tx.requestChangeLog.create({
         data: {
           tenantId,
           requestId,
@@ -73,8 +73,8 @@ const handleAssignmentUpdate = async ({
           updatedBy: userId,
           updatedAt: new Date(),
         },
-      }),
-    ]);
+      });
+    });
   } catch (error) {
     throw new ConcurrentModificationError(`Failed to update ${fieldName}: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
@@ -122,13 +122,87 @@ export const updateCurrentStatus = async (tenantId: UUID, requestId: UUID, statu
   if (!session?.user?.id) throw new AuthorizationError('Authentication required');
 
   const db = await getDb();
+  const userId = session.user.id;
+  
+  // Fetch current active assignment for RBAC checks and baseline values
+  const lastAssignment = await db.requestAssignment.findFirstOrThrow({
+    where: { requestId, tenantId, isActive: true },
+    include: { assignedUsers: true },
+  });
+  
   // RBAC: require global or scoped permission to set status
-  const lastAssignment = await db.requestAssignment.findFirstOrThrow({ where: { requestId, tenantId, isActive: true }, select: { areaId: true } });
   const auth = await getAuthContext(tenantId);
   const canSetStatus =
     auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_STATUS]) ||
     auth.hasAreaPermissions(lastAssignment.areaId, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_STATUS]);
   if (!canSetStatus) throw new AuthorizationError('Forbidden: insufficient permissions to change status');
+
+  // Check if the request is currently a draft
+  const request = await db.request.findUnique({
+    where: { id: requestId, tenantId },
+    select: { isDraft: true },
+  });
+
+  const isDraft = request?.isDraft ?? false;
+  const statusIdUnchanged = lastAssignment.statusId === statusId;
+
+  if (isDraft) {
+    // When in draft, ensure all requirements are fulfilled first
+    const { areAllRequirementsFulfilled } = await import('./requirements');
+    const allRequirementsFulfilled = await areAllRequirementsFulfilled(requestId, tenantId);
+    
+    if (!allRequirementsFulfilled) {
+      const error = new Error('DRAFT_REQUIREMENTS_NOT_FULFILLED');
+      error.name = 'DraftRequirementsError';
+      throw error;
+    }
+
+    // If all requirements are fulfilled, mark draft=false.
+    // If statusId does not change, still create a new assignment record to log the change.
+    if (statusIdUnchanged) {
+      // Status remains the same, but we must update isDraft and log the change
+      await db.$transaction(async (tx) => {
+        await tx.request.update({
+          where: { id: requestId, tenantId },
+          data: { isDraft: false },
+        });
+        await tx.requestAssignment.updateMany({
+          where: { requestId, tenantId, isActive: true },
+          data: { isActive: false },
+        });
+        await tx.requestAssignment.create({
+          data: {
+            ...lastAssignment,
+            id: undefined,
+            statusId: statusId, // Keep same statusId
+            isActive: true,
+            tenantId,
+            requestId,
+            assignedUsers: { connect: lastAssignment.assignedUsers.map((user) => ({ id: user.id })) },
+          },
+        });
+        await tx.requestChangeLog.create({
+          data: {
+            tenantId,
+            requestId,
+            fieldName: 'status',
+            oldValue: String(lastAssignment.statusId),
+            newValue: String(statusId),
+            metadata: JSON.stringify(metadata),
+            updatedBy: userId,
+            updatedAt: new Date(),
+          },
+        });
+      });
+      return { statusId };
+    } else {
+      // Status changes: first mark draft=false, then proceed to update status
+      await db.request.update({
+        where: { id: requestId, tenantId },
+        data: { isDraft: false },
+      });
+    }
+  }
 
   return updateRequestField({
     tenantId,
@@ -442,15 +516,15 @@ export const assignRequestsMassively = async (tenantId: UUID, userTenantId: UUID
         },
       };
 
-      await db.$transaction([
-        db.requestAssignment.updateMany({
+      await db.$transaction(async (tx) => {
+        await tx.requestAssignment.updateMany({
           where: { requestId, tenantId, isActive: true },
           data: { isActive: false },
-        }),
-        db.requestAssignment.create({
+        });
+        await tx.requestAssignment.create({
           data: { ...newAssignmentData, isActive: true, tenantId, requestId },
-        }),
-        db.requestChangeLog.create({
+        });
+        await tx.requestChangeLog.create({
           data: {
             tenantId,
             requestId,
@@ -460,8 +534,8 @@ export const assignRequestsMassively = async (tenantId: UUID, userTenantId: UUID
             updatedBy: session.user.id,
             updatedAt: new Date(),
           },
-        }),
-      ]);
+        });
+      });
 
       await sendInAppNotification({
         tenantId,

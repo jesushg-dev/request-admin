@@ -31,6 +31,7 @@ export const RequestWorkflowDefaultArgs = Prisma.validator<Prisma.RequestWorkflo
         description: true,
         requiresApproval: true,
         requiresJustification: true,
+        priority: true,
       },
     },
   },

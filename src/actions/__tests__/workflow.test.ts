@@ -48,6 +48,7 @@ describe('Workflow Functions', () => {
         toStatusId: 'status-2',
         requiresApproval: true,
         requiresJustification: true,
+        priority: 1,
         description: 'Transition description',
       },
       {
@@ -57,6 +58,7 @@ describe('Workflow Functions', () => {
         toStatusId: 'status-3',
         requiresApproval: false,
         requiresJustification: false,
+        priority: 2,
         description: null,
       },
     ],

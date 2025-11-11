@@ -412,6 +412,49 @@ function KanbanRoot<T>(props: KanbanRootProps<T>) {
               onValueChange?.(newColumns);
             }
           }
+        } else {
+          const activeItems = value[activeColumn];
+          const overItems = value[overColumn] || [];
+
+          if (!activeItems) {
+            setActiveId(null);
+            return;
+          }
+
+          const activeIndex = activeItems.findIndex((item) => getItemValue(item) === active.id);
+          
+          // Determine target index:
+          // If over.id is an item in the destination column, find its index.
+          // Otherwise, append at the end.
+          let overIndex = overItems.length;
+          if (over.id in value) {
+            // over.id is a column: append to the end
+            overIndex = overItems.length;
+          } else {
+            // over.id is an item: find its index
+            const overItemIndex = overItems.findIndex((item) => getItemValue(item) === over.id);
+            if (overItemIndex !== -1) {
+              overIndex = overItemIndex;
+            }
+          }
+
+          if (activeIndex !== -1) {
+            const newColumns = {
+              ...value,
+              [activeColumn]: activeItems.filter((item) => getItemValue(item) !== active.id),
+              [overColumn]: [...overItems],
+            };
+
+            if (onMove) {
+              onMove({
+                ...event,
+                activeIndex,
+                overIndex,
+              });
+            } else {
+              onValueChange?.(newColumns);
+            }
+          }
         }
       }
 
