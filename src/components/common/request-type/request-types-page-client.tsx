@@ -80,9 +80,7 @@ const RequestTypesPageClient: React.FC<RequestTypesPageClientProps> = ({ canCrea
 
   const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t, tenantId, canEdit, canDelete }), [t, tenantId, canEdit, canDelete]);
 
-  const { columns: categoryColumns } = useRequestCategoryTableConfiguration({
-    entity: 'requestType',
-  });
+  const { columns: categoryColumns } = useRequestCategoryTableConfiguration();
 
   const { table } = useDataTable({
     data: data ?? [],
@@ -195,7 +193,7 @@ function getTableConfiguration({ t, tenantId, canEdit, canDelete }: GetTableConf
     {
       accessorKey: '_count.requestCategoryRequirements',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.requirements')} />,
-      cell: ({ cell }) => <RequirementDialogCell count={cell.getValue() as number} entity={t('entityLabel')} categoryId={cell.row.original.id} />,
+      cell: ({ cell }) => <RequirementDialogCell count={cell.getValue() as number} entity={cell.row.original.name} categoryId={cell.row.original.id} />,
       size: 20,
     },
     {

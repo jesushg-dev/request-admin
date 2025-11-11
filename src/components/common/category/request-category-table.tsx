@@ -120,7 +120,7 @@ export function RequestCategoryTable({ referenceId, visibleCellsCount, columns, 
   return <RequestCategorySubTable referenceId={referenceId} visibleCellsCount={visibleCellsCount} columns={columns} isExpanded={isExpanded} />;
 }
 
-export function useRequestCategoryTableConfiguration({ entity }: { entity?: string }) {
+export function useRequestCategoryTableConfiguration() {
   const t = useTranslations('component.categoryTable');
 
   const columns: ColumnDef<RequestCategory>[] = [
@@ -168,7 +168,7 @@ export function useRequestCategoryTableConfiguration({ entity }: { entity?: stri
     {
       accessorKey: '_count.requestCategoryRequirements',
       header: () => t('columns.requirements'),
-      cell: ({ cell }) => <RequirementDialogCell count={cell.getValue() as number} entity={entity || ''} categoryId={cell.row.original.id} />,
+      cell: ({ cell }) => <RequirementDialogCell count={cell.getValue() as number} entity={cell.row.original.name} categoryId={cell.row.original.id} />,
     },
   ];
 

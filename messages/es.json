@@ -3742,7 +3742,8 @@
       "form": {
         "header": {
           "title": "Información del Flujo de Trabajo",
-          "subtitle": "Configura los detalles de tu flujo de trabajo."
+          "subtitle": "Configura los detalles de tu flujo de trabajo.",
+          "description": "Ingrese los detalles del flujo de trabajo."
         },
         "messages": {
           "saving": "Guardando flujo de trabajo...",
