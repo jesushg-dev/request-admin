@@ -1,7 +1,10 @@
+'use client';
+
 import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { useForm } from 'react-hook-form';
+import { useTranslations } from 'next-intl';
 import { z } from 'zod';
 
 import {
@@ -24,35 +27,36 @@ import { DateTimePicker } from '@/components/form/date-time-picker';
 
 import { useCalendarContext } from '../calendar-context';
 
-const formSchema = z
-  .object({
-    title: z.string().min(1, 'Title is required'),
-    start: z.string().refine((val) => !isNaN(Date.parse(val)), {
-      message: 'Invalid start date',
-    }),
-    end: z.string().refine((val) => !isNaN(Date.parse(val)), {
-      message: 'Invalid end date',
-    }),
-    color: z.string(),
-  })
-  .refine(
-    (data) => {
-      try {
-        const start = new Date(data.start);
-        const end = new Date(data.end);
-        return end >= start;
-      } catch {
-        return false;
-      }
-    },
-    {
-      message: 'End time must be after start time',
-      path: ['end'],
-    }
-  );
-
 export default function CalendarManageEventDialog() {
   const { manageEventDialogOpen, setManageEventDialogOpen, selectedEvent, setSelectedEvent, events, setEvents } = useCalendarContext();
+  const t = useTranslations('component.calendar.manageEventDialog');
+
+  const formSchema = z
+    .object({
+      title: z.string().min(1, t('validation.titleRequired')),
+      start: z.string().refine((val) => !isNaN(Date.parse(val)), {
+        message: t('validation.invalidStartDate'),
+      }),
+      end: z.string().refine((val) => !isNaN(Date.parse(val)), {
+        message: t('validation.invalidEndDate'),
+      }),
+      color: z.string(),
+    })
+    .refine(
+      (data) => {
+        try {
+          const start = new Date(data.start);
+          const end = new Date(data.end);
+          return end >= start;
+        } catch {
+          return false;
+        }
+      },
+      {
+        message: t('validation.endAfterStart'),
+        path: ['end'],
+      }
+    );
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -106,7 +110,7 @@ export default function CalendarManageEventDialog() {
     <Dialog open={manageEventDialogOpen} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Manage event</DialogTitle>
+          <DialogTitle>{t('title')}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -115,9 +119,9 @@ export default function CalendarManageEventDialog() {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-bold">Title</FormLabel>
+                  <FormLabel className="font-bold">{t('eventTitle')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Event title" {...field} />
+                    <Input placeholder={t('eventTitlePlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -129,7 +133,7 @@ export default function CalendarManageEventDialog() {
               name="start"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-bold">Start</FormLabel>
+                  <FormLabel className="font-bold">{t('start')}</FormLabel>
                   <FormControl>
                     <DateTimePicker field={field} />
                   </FormControl>
@@ -143,7 +147,7 @@ export default function CalendarManageEventDialog() {
               name="end"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-bold">End</FormLabel>
+                  <FormLabel className="font-bold">{t('end')}</FormLabel>
                   <FormControl>
                     <DateTimePicker field={field} />
                   </FormControl>
@@ -157,7 +161,7 @@ export default function CalendarManageEventDialog() {
               name="color"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-bold">Color</FormLabel>
+                  <FormLabel className="font-bold">{t('color')}</FormLabel>
                   <FormControl>
                     <ColorPicker field={field} />
                   </FormControl>
@@ -170,21 +174,21 @@ export default function CalendarManageEventDialog() {
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="destructive" type="button">
-                    Delete
+                    {t('deleteButton')}
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Delete event</AlertDialogTitle>
-                    <AlertDialogDescription>Are you sure you want to delete this event? This action cannot be undone.</AlertDialogDescription>
+                    <AlertDialogTitle>{t('deleteTitle')}</AlertDialogTitle>
+                    <AlertDialogDescription>{t('deleteDescription')}</AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+                    <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDelete}>{t('deleteButton')}</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-              <Button type="submit">Update event</Button>
+              <Button type="submit">{t('updateButton')}</Button>
             </DialogFooter>
           </form>
         </Form>

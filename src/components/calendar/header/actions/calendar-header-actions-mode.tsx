@@ -1,6 +1,7 @@
 'use client';
 
 import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
+import { useTranslations } from 'next-intl';
 
 import { cn } from '@/lib/utils';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
@@ -11,6 +12,7 @@ import { calendarModes, Mode } from '../../calendar-types';
 
 export default function CalendarHeaderActionsMode() {
   const { mode, setMode } = useCalendarContext();
+  const t = useTranslations('component.calendar');
 
   return (
     <LayoutGroup>
@@ -107,7 +109,7 @@ export default function CalendarHeaderActionsMode() {
                             opacity: { duration: 0.1 },
                           },
                         }}>
-                        {modeValue.charAt(0).toUpperCase() + modeValue.slice(1)}
+                        {t(`modes.${modeValue}`)}
                       </motion.p>
                     )}
                   </AnimatePresence>

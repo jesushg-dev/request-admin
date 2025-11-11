@@ -4960,6 +4960,61 @@
         "more": "más",
         "noUsers": "No hay usuarios conectados."
       }
+    },
+    "calendar": {
+      "addEvent": "Agregar evento",
+      "events": "{count, plural, one {evento} other {eventos}}",
+      "modes": {
+        "day": "Día",
+        "week": "Semana",
+        "month": "Mes"
+      },
+      "newEventDialog": {
+        "title": "Crear evento",
+        "eventTitle": "Título",
+        "eventTitlePlaceholder": "Título del evento",
+        "start": "Inicio",
+        "end": "Fin",
+        "color": "Color",
+        "createButton": "Crear evento",
+        "validation": {
+          "titleRequired": "El título es obligatorio",
+          "endAfterStart": "La hora de fin debe ser posterior a la hora de inicio"
+        }
+      },
+      "manageEventDialog": {
+        "title": "Gestionar evento",
+        "eventTitle": "Título",
+        "eventTitlePlaceholder": "Título del evento",
+        "start": "Inicio",
+        "end": "Fin",
+        "color": "Color",
+        "updateButton": "Actualizar evento",
+        "deleteButton": "Eliminar",
+        "deleteTitle": "Eliminar evento",
+        "deleteDescription": "¿Estás seguro de que quieres eliminar este evento? Esta acción no se puede deshacer.",
+        "cancel": "Cancelar",
+        "validation": {
+          "titleRequired": "El título es obligatorio",
+          "invalidStartDate": "Fecha de inicio inválida",
+          "invalidEndDate": "Fecha de fin inválida",
+          "endAfterStart": "La hora de fin debe ser posterior a la hora de inicio"
+        }
+      },
+      "body": {
+        "events": "Eventos",
+        "noEventsToday": "No hay eventos hoy...",
+        "more": "+{count} más",
+        "weekDays": {
+          "mon": "Lun",
+          "tue": "Mar",
+          "wed": "Mié",
+          "thu": "Jue",
+          "fri": "Vie",
+          "sat": "Sáb",
+          "sun": "Dom"
+        }
+      }
     }
   }
 }

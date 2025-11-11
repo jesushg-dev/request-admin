@@ -9,7 +9,7 @@ import CalendarHeaderDate from './header/date/calendar-header-date';
 
 export default function Calendar({ events, setEvents, mode, setMode, date, setDate, calendarIconIsToday = true }: CalendarProps) {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col flex-1">
       <CalendarProvider events={events} setEvents={setEvents} mode={mode} setMode={setMode} date={date} setDate={setDate} calendarIconIsToday={calendarIconIsToday}>
         <CalendarHeader>
           <CalendarHeaderDate />

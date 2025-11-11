@@ -4942,6 +4942,61 @@
         "more": "more",
         "noUsers": "No users connected."
       }
+    },
+    "calendar": {
+      "addEvent": "Add Event",
+      "events": "{count, plural, one {event} other {events}}",
+      "modes": {
+        "day": "Day",
+        "week": "Week",
+        "month": "Month"
+      },
+      "newEventDialog": {
+        "title": "Create event",
+        "eventTitle": "Title",
+        "eventTitlePlaceholder": "Event title",
+        "start": "Start",
+        "end": "End",
+        "color": "Color",
+        "createButton": "Create event",
+        "validation": {
+          "titleRequired": "Title is required",
+          "endAfterStart": "End time must be after start time"
+        }
+      },
+      "manageEventDialog": {
+        "title": "Manage event",
+        "eventTitle": "Title",
+        "eventTitlePlaceholder": "Event title",
+        "start": "Start",
+        "end": "End",
+        "color": "Color",
+        "updateButton": "Update event",
+        "deleteButton": "Delete",
+        "deleteTitle": "Delete event",
+        "deleteDescription": "Are you sure you want to delete this event? This action cannot be undone.",
+        "cancel": "Cancel",
+        "validation": {
+          "titleRequired": "Title is required",
+          "invalidStartDate": "Invalid start date",
+          "invalidEndDate": "Invalid end date",
+          "endAfterStart": "End time must be after start time"
+        }
+      },
+      "body": {
+        "events": "Events",
+        "noEventsToday": "No events today...",
+        "more": "+{count} more",
+        "weekDays": {
+          "mon": "Mon",
+          "tue": "Tue",
+          "wed": "Wed",
+          "thu": "Thu",
+          "fri": "Fri",
+          "sat": "Sat",
+          "sun": "Sun"
+        }
+      }
     }
   }
 }

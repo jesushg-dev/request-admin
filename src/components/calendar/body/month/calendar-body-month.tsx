@@ -1,13 +1,35 @@
+'use client';
+
 import { eachDayOfInterval, endOfMonth, endOfWeek, format, isSameDay, isSameMonth, isWithinInterval, startOfMonth, startOfWeek } from 'date-fns';
+import { es, enUS, type Locale } from 'date-fns/locale';
 import { AnimatePresence, motion } from 'motion/react';
+import { useLocale, useTranslations } from 'next-intl';
 
 import { cn } from '@/lib/utils';
 
 import { useCalendarContext } from '../../calendar-context';
 import CalendarEvent from '../../calendar-event';
 
+const localeMap: Record<string, Locale> = {
+  es,
+  en: enUS,
+};
+
 export default function CalendarBodyMonth() {
   const { date, events, setDate, setMode } = useCalendarContext();
+  const locale = useLocale();
+  const dateFnsLocale = localeMap[locale] || enUS;
+  const t = useTranslations('component.calendar.body');
+
+  const weekDays = [
+    { key: 'mon', short: t('weekDays.mon') },
+    { key: 'tue', short: t('weekDays.tue') },
+    { key: 'wed', short: t('weekDays.wed') },
+    { key: 'thu', short: t('weekDays.thu') },
+    { key: 'fri', short: t('weekDays.fri') },
+    { key: 'sat', short: t('weekDays.sat') },
+    { key: 'sun', short: t('weekDays.sun') },
+  ];
 
   // Get the first day of the month
   const monthStart = startOfMonth(date);
@@ -39,9 +61,9 @@ export default function CalendarBodyMonth() {
   return (
     <div className="flex flex-grow flex-col overflow-hidden">
       <div className="border-border divide-border hidden grid-cols-7 divide-x md:grid">
-        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
-          <div key={day} className="text-muted-foreground border-border border-b py-2 text-center text-sm font-medium">
-            {day}
+        {weekDays.map((day) => (
+          <div key={day.key} className="text-muted-foreground border-border border-b py-2 text-center text-sm font-medium">
+            {day.short}
           </div>
         ))}
       </div>
@@ -94,7 +116,7 @@ export default function CalendarBodyMonth() {
                           setDate(day);
                           setMode('day');
                         }}>
-                        +{dayEvents.length - 3} more
+                        {t('more', { count: dayEvents.length - 3 })}
                       </motion.div>
                     )}
                   </div>

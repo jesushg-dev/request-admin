@@ -1,6 +1,9 @@
+'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { useForm } from 'react-hook-form';
+import { useTranslations } from 'next-intl';
 import { z } from 'zod';
 
 import { generateUuid } from '@/lib/id';
@@ -13,27 +16,28 @@ import { DateTimePicker } from '@/components/form/date-time-picker';
 
 import { useCalendarContext } from '../calendar-context';
 
-const formSchema = z
-  .object({
-    title: z.string().min(1, 'Title is required'),
-    start: z.string().datetime(),
-    end: z.string().datetime(),
-    color: z.string(),
-  })
-  .refine(
-    (data) => {
-      const start = new Date(data.start);
-      const end = new Date(data.end);
-      return end >= start;
-    },
-    {
-      message: 'End time must be after start time',
-      path: ['end'],
-    }
-  );
-
 export default function CalendarNewEventDialog() {
   const { newEventDialogOpen, setNewEventDialogOpen, date, events, setEvents } = useCalendarContext();
+  const t = useTranslations('component.calendar.newEventDialog');
+
+  const formSchema = z
+    .object({
+      title: z.string().min(1, t('validation.titleRequired')),
+      start: z.iso.datetime(),
+      end: z.iso.datetime(),
+      color: z.string(),
+    })
+    .refine(
+      (data) => {
+        const start = new Date(data.start);
+        const end = new Date(data.end);
+        return end >= start;
+      },
+      {
+        message: t('validation.endAfterStart'),
+        path: ['end'],
+      }
+    );
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -63,7 +67,7 @@ export default function CalendarNewEventDialog() {
     <Dialog open={newEventDialogOpen} onOpenChange={setNewEventDialogOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create event</DialogTitle>
+          <DialogTitle>{t('title')}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -72,9 +76,9 @@ export default function CalendarNewEventDialog() {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-bold">Title</FormLabel>
+                  <FormLabel className="font-bold">{t('eventTitle')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Event title" {...field} />
+                    <Input placeholder={t('eventTitlePlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -86,7 +90,7 @@ export default function CalendarNewEventDialog() {
               name="start"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-bold">Start</FormLabel>
+                  <FormLabel className="font-bold">{t('start')}</FormLabel>
                   <FormControl>
                     <DateTimePicker field={field} />
                   </FormControl>
@@ -100,7 +104,7 @@ export default function CalendarNewEventDialog() {
               name="end"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-bold">End</FormLabel>
+                  <FormLabel className="font-bold">{t('end')}</FormLabel>
                   <FormControl>
                     <DateTimePicker field={field} />
                   </FormControl>
@@ -114,7 +118,7 @@ export default function CalendarNewEventDialog() {
               name="color"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-bold">Color</FormLabel>
+                  <FormLabel className="font-bold">{t('color')}</FormLabel>
                   <FormControl>
                     <ColorPicker field={field} />
                   </FormControl>
@@ -124,7 +128,7 @@ export default function CalendarNewEventDialog() {
             />
 
             <div className="flex justify-end">
-              <Button type="submit">Create event</Button>
+              <Button type="submit">{t('createButton')}</Button>
             </div>
           </form>
         </Form>

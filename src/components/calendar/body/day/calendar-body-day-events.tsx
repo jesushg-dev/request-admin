@@ -1,14 +1,18 @@
+'use client';
+
 import { isSameDay } from 'date-fns';
+import { useTranslations } from 'next-intl';
 
 import { useCalendarContext } from '../../calendar-context';
 
 export default function CalendarBodyDayEvents() {
   const { events, date, setManageEventDialogOpen, setSelectedEvent } = useCalendarContext();
+  const t = useTranslations('component.calendar.body');
   const dayEvents = events.filter((event) => isSameDay(event.start, date));
 
   return !!dayEvents.length ? (
     <div className="flex flex-col gap-2">
-      <p className="font-heading p-2 pb-0 font-medium">Events</p>
+      <p className="font-heading p-2 pb-0 font-medium">{t('events')}</p>
       <div className="flex flex-col gap-2">
         {dayEvents.map((event) => (
           <div
@@ -27,6 +31,6 @@ export default function CalendarBodyDayEvents() {
       </div>
     </div>
   ) : (
-    <div className="text-muted-foreground p-2">No events today...</div>
+    <div className="text-muted-foreground p-2">{t('noEventsToday')}</div>
   );
 }
