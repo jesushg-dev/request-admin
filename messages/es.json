@@ -114,6 +114,10 @@
         "title": "Configuraciones",
         "description": "Administra la configuración de tu organización"
       },
+      "organizationPerson": {
+        "title": "Información Personal",
+        "description": "Gestiona tu información personal en la organización"
+      },
       "security": {
         "title": "Seguridad y Acceso",
         "description": "Gestiona usuarios, roles y permisos de acceso"
@@ -341,10 +345,6 @@
       "organization": {
         "title": "Organización",
         "description": "Gestiona la configuración de tu organización"
-      },
-      "organizationPerson": {
-        "title": "Información Personal",
-        "description": "Gestiona tu información personal en la organización"
       },
       "organizationSubscription": {
         "title": "Suscripción",
@@ -3821,6 +3821,94 @@
           "leaving": "Abandonando organización...",
           "leaveSuccess": "Has abandonado la organización exitosamente.",
           "leaveError": "Error al abandonar la organización: {error}"
+        }
+      },
+      "preferencesAppearance": {
+    "title": "Apariencia",
+    "description": "Personaliza la apariencia de la aplicación. Cambia automáticamente entre temas diurnos y nocturnos.",
+    "form": {
+      "font": {
+        "label": "Fuente",
+        "description": "Establece la fuente que deseas usar en el panel.",
+        "placeholder": "Selecciona una fuente",
+        "options": {
+          "inter": "Inter",
+          "manrope": "Manrope",
+          "system": "Sistema",
+          "mono": "Monospace",
+          "openDyslexic": "OpenDyslexic",
+          "lexend": "Lexend"
+        },
+        "error": "Por favor selecciona una fuente."
+      },
+      "language": {
+        "label": "Idioma",
+        "description": "Selecciona tu idioma preferido para la interfaz.",
+        "placeholder": "Selecciona un idioma",
+        "error": "Por favor selecciona un idioma."
+      },
+      "theme": {
+        "label": "Tema",
+        "description": "Selecciona el tema para el panel.",
+        "light": "Claro",
+        "dark": "Oscuro",
+        "error": "Por favor selecciona un tema."
+      },
+      "button": {
+        "update": "Actualizar preferencias",
+        "updating": "Actualizando..."
+      }
+    },
+    "toast": {
+      "success": "Preferencias de apariencia actualizadas exitosamente",
+      "error": "Error al guardar las preferencias de apariencia"
+    }
+      },
+      "organizationPerson": {
+        "title": "Información Personal",
+        "description": "Gestiona tu información personal en la organización",
+        "alert": {
+          "title": "Información específica de la organización",
+          "description": "Esta información es específica de tu perfil dentro de esta organización y puede diferir de tu perfil de cuenta u otras organizaciones."
+        },
+        "form": {
+          "firstName": {
+            "label": "Nombre",
+            "placeholder": "Nombre",
+            "error": "El nombre debe tener al menos 2 caracteres."
+          },
+          "lastName": {
+            "label": "Apellido",
+            "placeholder": "Apellido",
+            "error": "El apellido debe tener al menos 2 caracteres."
+          },
+          "phone": {
+            "label": "Número de Teléfono",
+            "placeholder": "+1 (555) 123-4567",
+            "description": "Este número de teléfono es único dentro de esta organización."
+          },
+          "identificationType": {
+            "label": "Tipo de Identificación",
+            "placeholder": "Selecciona un tipo de identificación",
+            "error": "Por favor selecciona un tipo de identificación."
+          },
+          "identificationNumber": {
+            "label": "Número de Identificación",
+            "placeholder": "123-45-6789",
+            "description": "Este número de identificación es único dentro de esta organización.",
+            "error": "El número de identificación es obligatorio."
+          },
+          "image": {
+            "changePhoto": "Cambiar foto"
+          },
+          "button": {
+            "save": "Guardar cambios",
+            "saving": "Guardando..."
+          }
+        },
+        "toast": {
+          "success": "Información personal actualizada exitosamente",
+          "error": "Error al actualizar la información personal"
         }
       }
     },

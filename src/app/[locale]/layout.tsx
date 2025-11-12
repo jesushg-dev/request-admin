@@ -1,5 +1,6 @@
 import { type Metadata } from 'next';
 import localFont from 'next/font/local';
+import { Lexend } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { NextIntlClientProvider, type Locale } from 'next-intl';
@@ -11,6 +12,7 @@ import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { Toaster } from '@/components/ui/sonner';
 import { ConfirmDialogProvider } from '@/components/custom-ui/confirm-dialog';
 import TanstackQueryProvider from '@/components/hoc/tanstack-query-provider';
+import { FontProvider } from '@/components/hoc/font-provider';
 
 // Font configuration
 const geistSans = localFont({
@@ -23,6 +25,41 @@ const geistMono = localFont({
   src: '../fonts/GeistMonoVF.woff',
   variable: '--font-geist-mono',
   weight: '100 900',
+});
+
+// Lexend font from Google Fonts
+const lexend = Lexend({
+  subsets: ['latin'],
+  variable: '--font-lexend',
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+});
+
+// OpenDyslexic font (local - requires font files in src/app/fonts/)
+const openDyslexic = localFont({
+  src: [
+    {
+      path: '../fonts/OpenDyslexic-Regular.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../fonts/OpenDyslexic-Bold.woff2',
+      weight: '700',
+      style: 'normal',
+    },
+    {
+      path: '../fonts/OpenDyslexic-Italic.woff2',
+      weight: '400',
+      style: 'italic',
+    },
+    {
+      path: '../fonts/OpenDyslexic-BoldItalic.woff2',
+      weight: '700',
+      style: 'italic',
+    },
+  ],
+  variable: '--font-open-dyslexic',
+  fallback: ['ui-sans-serif', 'system-ui', 'sans-serif'],
 });
 
 // Metadata configuration with localization support
@@ -73,17 +110,19 @@ export default async function RootLayout({ children, params }: Props) {
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body id="body" className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col antialiased`}>
+      <body id="body" className={`${geistSans.variable} ${geistMono.variable} ${lexend.variable} ${openDyslexic.variable} flex min-h-screen flex-col antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <NextIntlClientProvider locale={locale as Locale}>
-            <NextTopLoader />
-            <TanstackQueryProvider>
-              <NuqsAdapter>
-                <ConfirmDialogProvider>{children}</ConfirmDialogProvider>
-              </NuqsAdapter>
-              <Toaster position="top-right" closeButton />
-            </TanstackQueryProvider>
-          </NextIntlClientProvider>
+          <FontProvider>
+            <NextIntlClientProvider locale={locale as Locale}>
+              <NextTopLoader />
+              <TanstackQueryProvider>
+                <NuqsAdapter>
+                  <ConfirmDialogProvider>{children}</ConfirmDialogProvider>
+                </NuqsAdapter>
+                <Toaster position="top-right" closeButton />
+              </TanstackQueryProvider>
+            </NextIntlClientProvider>
+          </FontProvider>
         </ThemeProvider>
       </body>
     </html>

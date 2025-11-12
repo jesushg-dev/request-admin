@@ -1,52 +1,59 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { useTheme } from 'next-themes';
+import { useParams } from 'next/navigation';
+import { locales, usePathname, useRouter } from '@/i18n/routing';
+import { useLocale, useTranslations } from 'next-intl';
+import type { Locale } from 'next-intl';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useFont } from '@/components/hoc/font-provider';
+import { LanguageSelectOptions } from '@/components/language-select-options';
 
-// Eliminar la importación de toast
-// import { toast } from "@/hooks/use-toast"
 
+  // Create schema with translations
 const appearanceFormSchema = z.object({
-  font: z.string({
-    error: 'Please select a font.',
-  }),
-  theme: z.enum(['light', 'dark'], {
-    error: 'Please select a theme.',
-  }),
-  language: z.string({
-    error: 'Please select a language.',
-  }),
+  font: z.string(),
+  theme: z.string(),
+  language:z.string(),
 });
-
-type AppearanceFormValues = z.infer<typeof appearanceFormSchema>;
-
-// Language options
-const languages = [
-  { value: 'en', label: 'English' },
-  { value: 'es', label: 'Spanish' },
-  { value: 'fr', label: 'French' },
-  { value: 'de', label: 'German' },
-  { value: 'pt', label: 'Portuguese' },
-  { value: 'zh', label: 'Chinese' },
-  { value: 'ja', label: 'Japanese' },
-];
 
 export default function AppearanceForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
+  // Get translations
+  const t = useTranslations('admin.setting.preferencesAppearance');
+
+
+  type AppearanceFormValues = z.infer<typeof appearanceFormSchema>;
+
+  // Get current theme from next-themes
+  const { theme, setTheme } = useTheme();
+
+  // Get current locale from next-intl
+  const currentLocale = useLocale();
+  const router = useRouter();
+  const params = useParams();
+  const pathname = usePathname();
+
+  // Get font from FontProvider
+  const { font: currentFont, setFont: setFontProvider } = useFont();
 
   // Default values for the form
   const defaultValues: AppearanceFormValues = {
-    font: 'inter',
-    theme: 'light',
-    language: 'en',
+    font: currentFont,
+    theme: (theme === 'dark' ? 'dark' : 'light') as 'light' | 'dark',
+    language: currentLocale,
   };
 
   const form = useForm({
@@ -55,29 +62,71 @@ export default function AppearanceForm() {
     mode: 'onChange',
   });
 
+  // Update form when theme, locale, or font changes externally
+  useEffect(() => {
+    if (mounted && theme) {
+      form.setValue('theme', (theme === 'dark' ? 'dark' : 'light') as 'light' | 'dark');
+    }
+  }, [theme, mounted, form]);
+
+  useEffect(() => {
+    if (mounted) {
+      form.setValue('language', currentLocale);
+    }
+  }, [currentLocale, mounted, form]);
+
+  useEffect(() => {
+    if (mounted) {
+      form.setValue('font', currentFont);
+    }
+  }, [currentFont, mounted, form]);
+
   // This is needed to ensure the component is mounted before accessing window
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Eliminar todas las notificaciones y alertas
+  // Show toast when transition completes
+  useEffect(() => {
+    if (!isPending && isLoading) {
+      // Transition completed, show success toast
+      toast.success(t('toast.success'));
+      setIsLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPending]);
+
+  // Save preferences and apply changes
   function onSubmit(data: AppearanceFormValues) {
     setIsLoading(true);
 
-    // Simplemente usar console.log
-    console.log('Actualizando preferencias de apariencia:', data);
+    try {
+      // Set font using FontProvider
+      setFontProvider(data.font as 'inter' | 'manrope' | 'system' | 'mono' | 'openDyslexic' | 'lexend');
 
-    // Aplicar cambio de tema
-    if (data.theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+      // Set theme using next-themes
+      setTheme(data.theme);
 
-    setTimeout(() => {
-      console.log('Preferencias de apariencia actualizadas');
+      // Change language using next-intl router
+      if (data.language !== currentLocale) {
+        startTransition(() => {
+          router.replace(
+            // @ts-expect-error TypeScript ensures params and pathname are valid
+            { pathname, params },
+            { locale: data.language as Locale }
+          );
+        });
+        // isLoading will be set to false when isPending becomes false (handled in useEffect)
+      } else {
+        // If no language change, show toast immediately
+        toast.success(t('toast.success'));
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error('Error saving appearance preferences:', error);
+      toast.error(t('toast.error'));
       setIsLoading(false);
-    }, 1000);
+    }
   }
 
   if (!mounted) {
@@ -87,8 +136,8 @@ export default function AppearanceForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Appearance</CardTitle>
-        <CardDescription>Customize the appearance of the app. Automatically switch between day and night themes.</CardDescription>
+        <CardTitle>{t('title')}</CardTitle>
+        <CardDescription>{t('description')}</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -98,21 +147,23 @@ export default function AppearanceForm() {
               name="font"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Font</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormLabel>{t('form.font.label')}</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a font" />
+                        <SelectValue placeholder={t('form.font.placeholder')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="inter">Inter</SelectItem>
-                      <SelectItem value="manrope">Manrope</SelectItem>
-                      <SelectItem value="system">System</SelectItem>
-                      <SelectItem value="mono">Monospace</SelectItem>
+                      <SelectItem value="inter">{t('form.font.options.inter')}</SelectItem>
+                      <SelectItem value="manrope">{t('form.font.options.manrope')}</SelectItem>
+                      <SelectItem value="system">{t('form.font.options.system')}</SelectItem>
+                      <SelectItem value="mono">{t('form.font.options.mono')}</SelectItem>
+                      <SelectItem value="openDyslexic">{t('form.font.options.openDyslexic')}</SelectItem>
+                      <SelectItem value="lexend">{t('form.font.options.lexend')}</SelectItem>
                     </SelectContent>
                   </Select>
-                  <FormDescription>Set the font you want to use in the dashboard.</FormDescription>
+                  <FormDescription>{t('form.font.description')}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -123,22 +174,18 @@ export default function AppearanceForm() {
               name="language"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Language</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormLabel>{t('form.language.label')}</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value} disabled={isPending}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a language" />
+                        <SelectValue placeholder={t('form.language.placeholder')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {languages.map((language) => (
-                        <SelectItem key={language.value} value={language.value}>
-                          {language.label}
-                        </SelectItem>
-                      ))}
+                      <LanguageSelectOptions />
                     </SelectContent>
                   </Select>
-                  <FormDescription>Select your preferred language for the interface.</FormDescription>
+                  <FormDescription>{t('form.language.description')}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -149,8 +196,8 @@ export default function AppearanceForm() {
               name="theme"
               render={({ field }) => (
                 <FormItem className="space-y-1">
-                  <FormLabel>Theme</FormLabel>
-                  <FormDescription>Select the theme for the dashboard.</FormDescription>
+                  <FormLabel>{t('form.theme.label')}</FormLabel>
+                  <FormDescription>{t('form.theme.description')}</FormDescription>
                   <div className="grid max-w-md grid-cols-2 gap-8 pt-2">
                     <div
                       className={`cursor-pointer rounded-md border-2 ${field.value === 'light' ? 'border-primary' : 'border-muted'} p-1 hover:border-accent`}
@@ -169,7 +216,7 @@ export default function AppearanceForm() {
                           <div className="h-2 w-[100px] rounded-lg bg-[#e4e8ec]" />
                         </div>
                       </div>
-                      <span className="block w-full p-2 text-center font-normal">Light</span>
+                      <span className="block w-full p-2 text-center font-normal">{t('form.theme.light')}</span>
                     </div>
                     <div
                       className={`cursor-pointer rounded-md border-2 ${field.value === 'dark' ? 'border-primary' : 'border-muted'} p-1 hover:border-accent`}
@@ -188,7 +235,7 @@ export default function AppearanceForm() {
                           <div className="h-2 w-[100px] rounded-lg bg-slate-400" />
                         </div>
                       </div>
-                      <span className="block w-full p-2 text-center font-normal">Dark</span>
+                      <span className="block w-full p-2 text-center font-normal">{t('form.theme.dark')}</span>
                     </div>
                   </div>
                   <FormMessage />
@@ -197,8 +244,8 @@ export default function AppearanceForm() {
             />
 
             <div className="flex justify-end">
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? 'Updating...' : 'Update preferences'}
+              <Button type="submit" disabled={isLoading || isPending}>
+                {isLoading || isPending ? t('form.button.updating') : t('form.button.update')}
               </Button>
             </div>
           </form>

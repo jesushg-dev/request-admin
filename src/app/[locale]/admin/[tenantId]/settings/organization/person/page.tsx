@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { InfoIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { useTranslations } from 'next-intl';
 import * as z from 'zod';
+import { toast } from 'sonner';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -14,46 +16,86 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-
-const personFormSchema = z.object({
-  firstName: z.string().min(2, {
-    message: 'First name must be at least 2 characters.',
-  }),
-  lastName: z.string().min(2, {
-    message: 'Last name must be at least 2 characters.',
-  }),
-  phone: z.string().optional(),
-  identificationNumber: z.string().min(1, {
-    message: 'Identification number is required.',
-  }),
-  identificationTypeId: z.string({
-    error: 'Please select an identification type.',
-  }),
-  image: z.string().optional(),
-});
-
-type PersonFormValues = z.infer<typeof personFormSchema>;
-
-// Mock data for identification types
-const identificationTypes = [
-  { id: 'id_1', name: 'National ID' },
-  { id: 'id_2', name: 'Passport' },
-  { id: 'id_3', name: "Driver's License" },
-  { id: 'id_4', name: 'Social Security Number' },
-  { id: 'id_5', name: 'Tax ID' },
-];
+import { useTenantContext } from '@/components/hoc/tenant-provider';
+import { useFindFirstPerson, useUpsertPerson } from '@/services/api/hooks';
+import { useFindManyIdentificationType } from '@/services/api/hooks/identification-type';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function PersonForm() {
+  const t = useTranslations('admin.setting.organizationPerson');
+  const { tenantId, userTenant } = useTenantContext();
   const [isLoading, setIsLoading] = useState(false);
+
+  // Get current person data
+  const { data: personData, isLoading: isLoadingPerson } = useFindFirstPerson(
+    {
+      where: {
+        userTenantId: userTenant.userTenantId,
+        tenantId,
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        phone: true,
+        identificationNumber: true,
+        identificationTypeId: true,
+        image: true,
+      },
+    },
+    {
+      enabled: !!userTenant.userTenantId && !!tenantId,
+    }
+  );
+
+  // Get identification types
+  const { data: identificationTypes = [], isLoading: isLoadingTypes } = useFindManyIdentificationType(
+    {
+      where: {
+        tenantId,
+        isActive: true,
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+      orderBy: {
+        name: 'asc',
+      },
+    },
+    {
+      enabled: !!tenantId,
+    }
+  );
+
+  // Create schema with translations
+  const personFormSchema = z.object({
+    firstName: z.string().min(2, {
+      message: t('form.firstName.error'),
+    }),
+    lastName: z.string().min(2, {
+      message: t('form.lastName.error'),
+    }),
+    phone: z.string().optional(),
+    identificationNumber: z.string().min(1, {
+      message: t('form.identificationNumber.error'),
+    }),
+    identificationTypeId: z.string().min(1, {
+      message: t('form.identificationType.error'),
+    }),
+    image: z.string().optional(),
+  });
+
+  type PersonFormValues = z.infer<typeof personFormSchema>;
 
   // Default values for the form
   const defaultValues: PersonFormValues = {
-    firstName: 'John',
-    lastName: 'Doe',
-    phone: '+1 (555) 123-4567',
-    identificationNumber: '123-45-6789',
-    identificationTypeId: 'id_1',
-    image: '',
+    firstName: personData?.firstName || '',
+    lastName: personData?.lastName || '',
+    phone: personData?.phone || '',
+    identificationNumber: personData?.identificationNumber || '',
+    identificationTypeId: personData?.identificationTypeId || '',
+    image: personData?.image || '',
   };
 
   const form = useForm({
@@ -62,40 +104,90 @@ export default function PersonForm() {
     defaultValues,
   });
 
-  // Eliminar todas las notificaciones y alertas
-  function onSubmit(data: PersonFormValues) {
+  // Update form when person data loads
+  useEffect(() => {
+    if (personData) {
+      form.reset({
+        firstName: personData.firstName || '',
+        lastName: personData.lastName || '',
+        phone: personData.phone || '',
+        identificationNumber: personData.identificationNumber || '',
+        identificationTypeId: personData.identificationTypeId || '',
+        image: personData.image || '',
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [personData]);
+
+  // Mutation for updating/creating person
+  const updatePerson = useUpsertPerson();
+
+  async function onSubmit(data: PersonFormValues) {
     setIsLoading(true);
 
-    // Simplemente usar console.log
-    console.log('Actualizando información personal:', data);
+    try {
+      await updatePerson.mutateAsync({
+        where: {
+          userTenantId: userTenant.userTenantId,
+        },
+        create: {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          phone: data.phone || null,
+          identificationNumber: data.identificationNumber,
+          identificationTypeId: data.identificationTypeId || null,
+          image: data.image || null,
+          userTenantId: userTenant.userTenantId,
+          tenantId,
+        },
+        update: {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          phone: data.phone || null,
+          identificationNumber: data.identificationNumber,
+          identificationTypeId: data.identificationTypeId || null,
+          image: data.image || null,
+        },
+      });
 
-    setTimeout(() => {
-      console.log('Información personal actualizada');
+      toast.success(t('toast.success'));
       setIsLoading(false);
-    }, 1000);
+    } catch (error) {
+      console.error('Error saving person information:', error);
+      toast.error(t('toast.error'));
+      setIsLoading(false);
+    }
   }
+
+  if (isLoadingPerson || isLoadingTypes) {
+    return (
+     <Skeleton className="h-full w-full" />
+    );
+  }
+
+  const initials = `${personData?.firstName?.[0] || ''}${personData?.lastName?.[0] || ''}`.toUpperCase() || 'U';
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Person Information</CardTitle>
-        <CardDescription>Manage your personal information specific to this organization.</CardDescription>
+        <CardTitle>{t('title')}</CardTitle>
+        <CardDescription>{t('description')}</CardDescription>
       </CardHeader>
       <CardContent>
         <Alert className="mb-6">
           <InfoIcon className="h-4 w-4" />
-          <AlertTitle>Organization-specific information</AlertTitle>
-          <AlertDescription>This information is specific to your profile within this organization and may differ from your account profile or other organizations.</AlertDescription>
+          <AlertTitle>{t('alert.title')}</AlertTitle>
+          <AlertDescription>{t('alert.description')}</AlertDescription>
         </Alert>
 
         <div className="flex items-center space-x-4 mb-6">
           <Avatar className="h-20 w-20">
-            <AvatarImage src="/placeholder.svg?height=80&width=80" alt="Person" />
-            <AvatarFallback>JD</AvatarFallback>
+            <AvatarImage src={personData?.image || undefined} alt="Person" />
+            <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
           <div>
             <Button variant="outline" size="sm">
-              Change photo
+              {t('form.image.changePhoto')}
             </Button>
           </div>
         </div>
@@ -110,9 +202,9 @@ export default function PersonForm() {
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Name</FormLabel>
+                    <FormLabel>{t('form.firstName.label')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="First name" {...field} />
+                      <Input placeholder={t('form.firstName.placeholder')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -124,9 +216,9 @@ export default function PersonForm() {
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Last Name</FormLabel>
+                    <FormLabel>{t('form.lastName.label')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Last name" {...field} />
+                      <Input placeholder={t('form.lastName.placeholder')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -138,11 +230,11 @@ export default function PersonForm() {
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
+                    <FormLabel>{t('form.phone.label')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="+1 (555) 123-4567" {...field} />
+                      <Input placeholder={t('form.phone.placeholder')} {...field} />
                     </FormControl>
-                    <FormDescription>This phone number is unique within this organization.</FormDescription>
+                    <FormDescription>{t('form.phone.description')}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -153,11 +245,11 @@ export default function PersonForm() {
                 name="identificationTypeId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Identification Type</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormLabel>{t('form.identificationType.label')}</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select identification type" />
+                          <SelectValue placeholder={t('form.identificationType.placeholder')} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -178,11 +270,11 @@ export default function PersonForm() {
                 name="identificationNumber"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Identification Number</FormLabel>
+                    <FormLabel>{t('form.identificationNumber.label')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="123-45-6789" {...field} />
+                      <Input placeholder={t('form.identificationNumber.placeholder')} {...field} />
                     </FormControl>
-                    <FormDescription>This identification number is unique within this organization.</FormDescription>
+                    <FormDescription>{t('form.identificationNumber.description')}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -191,7 +283,7 @@ export default function PersonForm() {
 
             <div className="flex justify-end">
               <Button type="submit" disabled={isLoading}>
-                {isLoading ? 'Saving...' : 'Save changes'}
+                {isLoading ? t('form.button.saving') : t('form.button.save')}
               </Button>
             </div>
           </form>

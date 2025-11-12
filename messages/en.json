@@ -114,6 +114,10 @@
         "title": "Settings",
         "description": "Manage your organization settings"
       },
+      "organizationPerson": {
+        "title": "Personal Information",
+        "description": "Manage your personal information in the organization"
+      },
       "security": {
         "title": "Security and Access",
         "description": "Manage users, roles and access permissions"
@@ -342,10 +346,7 @@
         "title": "Organization",
         "description": "Manage your organization settings"
       },
-      "organizationPerson": {
-        "title": "Personal Information",
-        "description": "Manage your personal information in the organization"
-      },
+
       "organizationSubscription": {
         "title": "Subscription",
         "description": "Manage your organization subscription"
@@ -3817,8 +3818,95 @@
           "leaveSuccess": "Successfully left the organization.",
           "leaveError": "Failed to leave organization: {error}"
         }
-      }
-    },
+      },
+      "preferencesAppearance": {
+        "title": "Appearance",
+        "description": "Customize the appearance of the app. Automatically switch between day and night themes.",
+        "form": {
+          "font": {
+            "label": "Font",
+            "description": "Set the font you want to use in the dashboard.",
+            "placeholder": "Select a font",
+            "options": {
+              "inter": "Inter",
+              "manrope": "Manrope",
+              "system": "System",
+              "mono": "Monospace",
+              "openDyslexic": "OpenDyslexic",
+              "lexend": "Lexend"
+            },
+            "error": "Please select a font."
+          },
+          "language": {
+            "label": "Language",
+            "description": "Select your preferred language for the interface.",
+            "placeholder": "Select a language",
+            "error": "Please select a language."
+          },
+          "theme": {
+            "label": "Theme",
+            "description": "Select the theme for the dashboard.",
+            "light": "Light",
+            "dark": "Dark",
+            "error": "Please select a theme."
+          },
+          "button": {
+            "update": "Update preferences",
+            "updating": "Updating..."
+          }
+        },
+        "toast": {
+          "success": "Appearance preferences updated successfully",
+          "error": "Failed to save appearance preferences"
+        }
+      },
+      "organizationPerson": {
+        "title": "Personal Information",
+        "description": "Manage your personal information in the organization",
+        "alert": {
+          "title": "Organization-specific information",
+          "description": "This information is specific to your profile within this organization and may differ from your account profile or other organizations."
+        },
+        "form": {
+          "firstName": {
+            "label": "First Name",
+            "placeholder": "First name",
+            "error": "First name must be at least 2 characters."
+          },
+          "lastName": {
+            "label": "Last Name",
+            "placeholder": "Last name",
+            "error": "Last name must be at least 2 characters."
+          },
+          "phone": {
+            "label": "Phone Number",
+            "placeholder": "+1 (555) 123-4567",
+            "description": "This phone number is unique within this organization."
+          },
+          "identificationType": {
+            "label": "Identification Type",
+            "placeholder": "Select identification type",
+            "error": "Please select an identification type."
+          },
+          "identificationNumber": {
+            "label": "Identification Number",
+            "placeholder": "123-45-6789",
+            "description": "This identification number is unique within this organization.",
+            "error": "Identification number is required."
+          },
+          "image": {
+            "changePhoto": "Change photo"
+          },
+          "button": {
+            "save": "Save changes",
+            "saving": "Saving..."
+          }
+        },
+        "toast": {
+          "success": "Personal information updated successfully",
+          "error": "Failed to update personal information"
+        }
+      },
     "folder": {
       "create": {
         "title": "Create Folder",
@@ -4429,7 +4517,7 @@
         }
       }
     }
-  },
+  }},
   "component": {
     "categoryTable": {
       "columns": {

@@ -1,12 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { toast } from 'sonner';
 
-// Eliminar la importación de toast
-// import { toast } from "@/hooks/use-toast"
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -14,6 +13,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
+import useLocalStorage from '@/hooks/use-local-storage';
 
 const notificationsFormSchema = z.object({
   notifyType: z.enum(['all', 'mentions', 'none'], {
@@ -31,33 +31,44 @@ type NotificationsFormValues = z.infer<typeof notificationsFormSchema>;
 export default function NotificationsForm() {
   const [isLoading, setIsLoading] = useState(false);
 
-  // Default values for the form
-  const defaultValues: NotificationsFormValues = {
+  // Load saved preferences from localStorage
+  const [savedPreferences, setSavedPreferences] = useLocalStorage<NotificationsFormValues>('notification-preferences', {
     notifyType: 'all',
     communicationEmails: true,
     marketingEmails: false,
     socialEmails: true,
     securityEmails: true,
     mobileDifferent: false,
-  };
+  });
 
   const form = useForm({
     resolver: zodResolver(notificationsFormSchema),
-    defaultValues,
+    defaultValues: savedPreferences,
     mode: 'onChange',
   });
 
-  // Eliminar todas las notificaciones y alertas
+  // Update form values when savedPreferences change (e.g., on mount after localStorage loads)
+  useEffect(() => {
+    form.reset(savedPreferences);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [savedPreferences]);
+
+  // Save preferences to localStorage and show success message
   function onSubmit(data: NotificationsFormValues) {
     setIsLoading(true);
 
-    // Simplemente usar console.log
-    console.log('Actualizando preferencias de notificaciones:', data);
+    try {
+      // Save to localStorage
+      setSavedPreferences(data);
 
-    setTimeout(() => {
-      console.log('Preferencias de notificaciones actualizadas');
+      // Show success message
+      toast.success('Notification preferences updated successfully');
       setIsLoading(false);
-    }, 1000);
+    } catch (error) {
+      console.error('Error saving notification preferences:', error);
+      toast.error('Failed to save notification preferences');
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -80,7 +91,7 @@ export default function NotificationsForm() {
                 render={({ field }) => (
                   <FormItem className="space-y-3">
                     <FormControl>
-                      <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-1">
+                      <RadioGroup onValueChange={field.onChange} value={field.value} className="flex flex-col space-y-1">
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
                             <RadioGroupItem value="all" />

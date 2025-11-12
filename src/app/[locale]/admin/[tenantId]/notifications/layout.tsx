@@ -1,3 +1,5 @@
+import { getCurrentUserTenant } from '@/actions/user';
+import NotificationProvider from '@/components/notification/notification-context';
 import { type Metadata } from 'next';
 import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
@@ -13,7 +15,20 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
   };
 }
 
-export default function NotificationsLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+export default async function NotificationsLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ tenantId: string }>;
+}) {
+  const { tenantId } = await params;
+  const userTenant = await getCurrentUserTenant(tenantId);
+
+  return (
+    <NotificationProvider tenantId={tenantId} userTenantId={userTenant.userTenantId}>
+      {children}
+    </NotificationProvider>
+  );
 }
 
