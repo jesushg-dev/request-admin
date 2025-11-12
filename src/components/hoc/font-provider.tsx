@@ -23,12 +23,14 @@ const initialState: FontProviderState = {
 const FontProviderContext = createContext<FontProviderState>(initialState);
 
 // Font mappings to actual font families
+// Note: Local fonts (geist-sans, geist-mono, openDyslexic) are temporarily disabled
+// due to Turbopack bug. Using fallbacks until the issue is resolved.
 const fontFamilies: Record<Font, string> = {
-  inter: 'var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+  inter: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
   manrope: '"Manrope", ui-sans-serif, system-ui, sans-serif',
   system: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-  mono: 'var(--font-geist-mono), ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
-  openDyslexic: 'var(--font-open-dyslexic), ui-sans-serif, system-ui, sans-serif',
+  mono: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
+  openDyslexic: 'ui-sans-serif, system-ui, sans-serif', // Temporarily using system font fallback
   lexend: 'var(--font-lexend), ui-sans-serif, system-ui, sans-serif',
 };
 
