@@ -20,8 +20,8 @@ export async function generateMetadata(props: EditRolePageProps): Promise<Metada
   const { locale, tenantId, slug } = await props.params;
   const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
   
-  const role = await getRoleAsFormById(tenantId, slug);
-  const roleName = role?.name || `Rol #${slug}`;
+  const role = await getRoleAsFormById([slug], tenantId);
+  const roleName = role?.roles?.[0]?.name || `Rol #${slug}`;
 
   return {
     title: `${roleName} - ${t('pages.roleEdit.title')} - ${t('brandName')}`,

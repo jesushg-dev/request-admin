@@ -18,7 +18,7 @@ export async function generateMetadata(props: EditUserPageProps): Promise<Metada
 	const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
 	
 	const userData = await getUserFormValuesByUserTenantId(tenantId, slug);
-	const userName = userData?.name || userData?.email || `Usuario #${slug}`;
+	const userName = `${userData.user.firstName} ${userData.user.lastName}`;
 
 	return {
 		title: `${userName} - ${t('pages.userDetail.title')} - ${t('brandName')}`,

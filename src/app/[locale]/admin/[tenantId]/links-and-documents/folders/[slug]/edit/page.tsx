@@ -22,7 +22,7 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
   const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
   
   const db = await getDb();
-  const folder = await db.folder.findUnique({
+  const folder = await db.dataroomFolder.findUnique({
     where: { id: slug, tenantId },
     select: { name: true },
   });

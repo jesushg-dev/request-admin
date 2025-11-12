@@ -21,8 +21,8 @@ export async function generateMetadata(props: UpdateRequestTypePageProps): Promi
   const { locale, tenantId, slug } = await props.params;
   const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
   
-  const requestType = await getRequestCategoriesByIds(tenantId, [slug]);
-  const requestTypeName = requestType?.[0]?.name || `Tipo de Solicitud #${slug}`;
+  const requestType = await getRequestCategoriesByIds([slug], tenantId);
+  const requestTypeName = requestType?.categories?.[0]?.name || `Tipo de Solicitud #${slug}`;
 
   return {
     title: `${requestTypeName} - ${t('pages.requestTypeEdit.title')} - ${t('brandName')}`,

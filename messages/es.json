@@ -366,10 +366,6 @@
         "title": "Nueva Clave API",
         "description": "Crea una nueva clave API para acceso programático"
       },
-      "formDesigner": {
-        "title": "Diseñador de Formularios",
-        "description": "Crea y edita formularios personalizados"
-      },
       "dataRooms": {
         "title": "Salas de Datos",
         "description": "Gestiona las salas de datos de tu organización"
@@ -389,22 +385,6 @@
       "folders": {
         "title": "Carpetas",
         "description": "Gestiona las carpetas de documentos"
-      },
-      "requirementNew": {
-        "title": "Nuevo Requisito",
-        "description": "Crear un nuevo requisito"
-      },
-      "requirementTypeNew": {
-        "title": "Nuevo Tipo de Requisito",
-        "description": "Crear un nuevo tipo de requisito"
-      },
-      "requestTypeNew": {
-        "title": "Nuevo Tipo de Solicitud",
-        "description": "Crear un nuevo tipo de solicitud"
-      },
-      "requestHierarchyNew": {
-        "title": "Nueva Jerarquía de Tipos de Solicitud",
-        "description": "Crear una nueva jerarquía de tipos de solicitud"
       },
       "areaNew": {
         "title": "Nueva Área",
@@ -2905,25 +2885,6 @@
         "selectAction": "Crear una nueva jerarquía"
       }
     },
-    "role": {
-      "main": {
-        "entityLabel": "Roles",
-        "columns": {
-          "name": "Nombre",
-          "description": "Descripción",
-          "userCount": "Número de Usuarios",
-          "featureCount": "Número de Funcionalidades",
-          "createdAt": "Creado En"
-        },
-        "filters": {
-          "name": "Nombre",
-          "namePlaceholder": "Buscar por nombre",
-          "description": "Descripción",
-          "descriptionPlaceholder": "Buscar por descripción",
-          "createdAt": "Creado En"
-        }
-      }
-    },
     "requirement": {
       "main": {
         "entityLabel": "Requisito",
@@ -2995,6 +2956,25 @@
           "title": "Información de tipo de requisito",
           "descriptionUpdate": "Complete los campos requeridos para actualizar el tipo de requisito.",
           "descriptionCreate": "Complete los campos requeridos para crear un nuevo tipo de requisito."
+        }
+      }
+    },
+    "role": {
+      "main": {
+        "entityLabel": "Roles",
+        "columns": {
+          "name": "Nombre",
+          "description": "Descripción",
+          "userCount": "Número de Usuarios",
+          "featureCount": "Número de Funcionalidades",
+          "createdAt": "Creado En"
+        },
+        "filters": {
+          "name": "Nombre",
+          "namePlaceholder": "Buscar por nombre",
+          "description": "Descripción",
+          "descriptionPlaceholder": "Buscar por descripción",
+          "createdAt": "Creado En"
         }
       }
     },
@@ -3824,45 +3804,45 @@
         }
       },
       "preferencesAppearance": {
-    "title": "Apariencia",
-    "description": "Personaliza la apariencia de la aplicación. Cambia automáticamente entre temas diurnos y nocturnos.",
-    "form": {
-      "font": {
-        "label": "Fuente",
-        "description": "Establece la fuente que deseas usar en el panel.",
-        "placeholder": "Selecciona una fuente",
-        "options": {
-          "inter": "Inter",
-          "manrope": "Manrope",
-          "system": "Sistema",
-          "mono": "Monospace",
-          "openDyslexic": "OpenDyslexic",
-          "lexend": "Lexend"
+        "title": "Apariencia",
+        "description": "Personaliza la apariencia de la aplicación. Cambia automáticamente entre temas diurnos y nocturnos.",
+        "form": {
+          "font": {
+            "label": "Fuente",
+            "description": "Establece la fuente que deseas usar en el panel.",
+            "placeholder": "Selecciona una fuente",
+            "options": {
+              "inter": "Inter",
+              "manrope": "Manrope",
+              "system": "Sistema",
+              "mono": "Monospace",
+              "openDyslexic": "OpenDyslexic",
+              "lexend": "Lexend"
+            },
+            "error": "Por favor selecciona una fuente."
+          },
+          "language": {
+            "label": "Idioma",
+            "description": "Selecciona tu idioma preferido para la interfaz.",
+            "placeholder": "Selecciona un idioma",
+            "error": "Por favor selecciona un idioma."
+          },
+          "theme": {
+            "label": "Tema",
+            "description": "Selecciona el tema para el panel.",
+            "light": "Claro",
+            "dark": "Oscuro",
+            "error": "Por favor selecciona un tema."
+          },
+          "button": {
+            "update": "Actualizar preferencias",
+            "updating": "Actualizando..."
+          }
         },
-        "error": "Por favor selecciona una fuente."
-      },
-      "language": {
-        "label": "Idioma",
-        "description": "Selecciona tu idioma preferido para la interfaz.",
-        "placeholder": "Selecciona un idioma",
-        "error": "Por favor selecciona un idioma."
-      },
-      "theme": {
-        "label": "Tema",
-        "description": "Selecciona el tema para el panel.",
-        "light": "Claro",
-        "dark": "Oscuro",
-        "error": "Por favor selecciona un tema."
-      },
-      "button": {
-        "update": "Actualizar preferencias",
-        "updating": "Actualizando..."
-      }
-    },
-    "toast": {
-      "success": "Preferencias de apariencia actualizadas exitosamente",
-      "error": "Error al guardar las preferencias de apariencia"
-    }
+        "toast": {
+          "success": "Preferencias de apariencia actualizadas exitosamente",
+          "error": "Error al guardar las preferencias de apariencia"
+        }
       },
       "organizationPerson": {
         "title": "Información Personal",

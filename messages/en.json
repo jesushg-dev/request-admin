@@ -367,10 +367,6 @@
         "title": "New API Key",
         "description": "Create a new API key for programmatic access"
       },
-      "formDesigner": {
-        "title": "Form Designer",
-        "description": "Create and edit custom forms"
-      },
       "dataRooms": {
         "title": "Data Rooms",
         "description": "Manage your organization's data rooms"
@@ -390,22 +386,6 @@
       "folders": {
         "title": "Folders",
         "description": "Manage document folders"
-      },
-      "requirementNew": {
-        "title": "New Requirement",
-        "description": "Create a new requirement"
-      },
-      "requirementTypeNew": {
-        "title": "New Requirement Type",
-        "description": "Create a new requirement type"
-      },
-      "requestTypeNew": {
-        "title": "New Request Type",
-        "description": "Create a new request type"
-      },
-      "requestHierarchyNew": {
-        "title": "New Request Types Hierarchy",
-        "description": "Create a new request types hierarchy"
       },
       "areaNew": {
         "title": "New Area",
@@ -3906,8 +3886,9 @@
           "success": "Personal information updated successfully",
           "error": "Failed to update personal information"
         }
-      },
-    "folder": {
+      } 
+    },
+  "folder": {
       "create": {
         "title": "Create Folder",
         "subtitle": "Organize your documents and files.",
@@ -4516,8 +4497,8 @@
           "q5": "How do workflows work?"
         }
       }
-    }
-  }},
+    }  
+  },
   "component": {
     "categoryTable": {
       "columns": {

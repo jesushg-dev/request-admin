@@ -10,7 +10,7 @@ import { SelectItem } from './ui/select';
  * This component is separated to avoid re-rendering issues when used in form fields.
  */
 export function LanguageSelectOptions() {
-  const tLocale = useTranslations('admin.component.localeSwitcher');
+  const tLocale = useTranslations('component.localeSwitcher');
 
   return (
     <>
