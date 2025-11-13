@@ -46,7 +46,7 @@ export function createRolesSchema(t: TranslationFn) {
             ctx.addIssue({
               path: [`${index}.name`],
               code: z.ZodIssueCode.custom,
-              message: t('duplicateName', { name: role.name }),
+              message: t('duplicateName'),
             });
           } else {
             seen.add(role.name);

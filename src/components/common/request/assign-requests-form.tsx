@@ -86,7 +86,7 @@ export default function AssignRequestsForm() {
     const loadRequests = async () => {
       setIsLoadingRequests(true);
       try {
-        const requests = await getAvailableRequestsForUser(tenantId, selectedUserId.value);
+        const requests = await getAvailableRequestsForUser(tenantId, String(selectedUserId.value));
         setAvailableRequests(requests);
       } catch (error) {
         toast.error('Error loading available requests');
@@ -102,8 +102,8 @@ export default function AssignRequestsForm() {
   async function onSubmit(values: TAssignRequestsSchema) {
     setIsSubmitting(true);
     try {
-      const requestIds = values.requestIds.map((r) => r.requestId.value);
-      const results = await assignRequestsMassively(tenantId, values.userId.value, requestIds, values.comments);
+      const requestIds = values.requestIds.map((r) => String(r.requestId.value));
+      const results = await assignRequestsMassively(tenantId, String(values.userId.value), requestIds, values.comments);
 
       const successCount = results.filter((r) => r.success).length;
       const failCount = results.length - successCount;
