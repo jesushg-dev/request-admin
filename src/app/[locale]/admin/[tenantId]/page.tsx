@@ -15,10 +15,12 @@ import DashboardStats, { DashboardStatsFallback } from '@/components/common/dash
 import QuickStatsCardsServer, { QuickStatsFallback } from '@/components/common/dashboard/quick-stats-cards-server';
 import RecentRequests, { RecentRequestsFallback } from '@/components/common/dashboard/recent-requests';
 import WorkflowSelectorServer from '@/components/common/dashboard/workflow-selector-server';
-import DashboardSLATabClient from './dashboard-sla-tab-client';
 import { PermissionButton } from '@/components/shared/permission-button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+import { SLAFilters } from '@/components/common/dashboard/sla-filters';
+import SLADashboardServer, { SLADashboardFallback } from '@/components/common/dashboard/sla-dashboard-server';
 
 type DashboardPageProps = {
   params: Promise<{ locale: Locale; tenantId: string }>;
@@ -74,31 +76,31 @@ export default async function DashboardPage({ params, searchParams }: DashboardP
 
             <TabsContent value="general" className="h-full overflow-y-auto">
               <Suspense fallback={<DashboardMetricsFallback />}>
-                <div className="mt-8">
+              <div className="mt-8">
                   <DashboardMetricsServer tenantId={tenantId} workflowId={null} locale={locale} />
-                </div>
+              </div>
               </Suspense>
 
               <Suspense fallback={<DashboardStatsFallback />}>
-                <div className="mt-8">
-                  <DashboardStats tenantId={tenantId} workflowId={null} />
-                </div>
+              <div className="mt-8">
+                <DashboardStats tenantId={tenantId} workflowId={null} />
+              </div>
               </Suspense>
 
               <Suspense fallback={<QuickStatsFallback />}>
-                <div className="mt-8">
+              <div className="mt-8">
                   <QuickStatsCardsServer tenantId={tenantId} workflowId={null} locale={locale} />
-                </div>
+              </div>
               </Suspense>
 
               {canViewRequests && (
                 <Suspense fallback={<RecentRequestsFallback />}>
-                  <div className="mt-8">
-                    <h2 className="text-xl font-bold">{t('recentRequests.title')}</h2>
-                    <div className="mt-4">
-                      <RecentRequests tenantId={tenantId} />
-                    </div>
+                <div className="mt-8">
+                  <h2 className="text-xl font-bold">{t('recentRequests.title')}</h2>
+                  <div className="mt-4">
+                    <RecentRequests tenantId={tenantId} />
                   </div>
+                </div>
                 </Suspense>
               )}
             </TabsContent>
@@ -109,34 +111,41 @@ export default async function DashboardPage({ params, searchParams }: DashboardP
               </div>
 
               <Suspense fallback={<DashboardMetricsFallback />}>
-                <div className="mt-8">
+              <div className="mt-8">
                   <DashboardMetricsServer tenantId={tenantId} workflowId={selectedWorkflow} locale={locale} />
-                </div>
+              </div>
               </Suspense>
 
               <Suspense fallback={<DashboardStatsFallback />}>
-                <div className="mt-8">
-                  <DashboardStats tenantId={tenantId} workflowId={selectedWorkflow} />
-                </div>
+              <div className="mt-8">
+                <DashboardStats tenantId={tenantId} workflowId={selectedWorkflow} />
+              </div>
               </Suspense>
 
               {canViewRequests && (
                 <Suspense fallback={<RecentRequestsFallback />}>
-                  <div className="mt-8">
+                <div className="mt-8">
                     <h2 className="text-xl font-bold">
                       {selectedWorkflow ? t('recentRequests.titleWithWorkflow', { workflow: selectedWorkflow }) : t('recentRequests.title')}
                     </h2>
-                    <div className="mt-4">
-                      <RecentRequests tenantId={tenantId} workflowFilter={selectedWorkflow} />
-                    </div>
+                  <div className="mt-4">
+                    <RecentRequests tenantId={tenantId} workflowFilter={selectedWorkflow} />
                   </div>
+                </div>
                 </Suspense>
               )}
             </TabsContent>
 
             <TabsContent value="sla" className="h-full overflow-y-auto">
-              <DashboardSLATabClient tenantId={tenantId} />
-            </TabsContent>
+              <div className="mt-6">
+                <SLAFilters tenantId={tenantId} />
+              </div>
+
+              <div className="mt-8">
+                <Suspense fallback={<SLADashboardFallback />}>
+                  <SLADashboardServer tenantId={tenantId} locale={locale} />
+                </Suspense>
+              </div>            </TabsContent>
           </Tabs>
         </div>
       </div>

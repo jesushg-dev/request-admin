@@ -1,22 +1,19 @@
-// import localFont from 'next/font/local';
+import localFont from 'next/font/local';
 import { Lexend } from 'next/font/google';
 
-// TODO: Re-enable local fonts when Turbopack bug is fixed in Next.js
-// Temporarily disabled due to: "Module not found: Can't resolve 'next/font/local/target.css'"
+// Geist Sans font
+export const geistSans = localFont({
+  src: './fonts/GeistVF.woff',
+  variable: '--font-geist-sans',
+  weight: '100 900',
+});
 
-// Geist Sans font - DISABLED TEMPORARILY
-// export const geistSans = localFont({
-//   src: './fonts/GeistVF.woff',
-//   variable: '--font-geist-sans',
-//   weight: '100 900',
-// });
-
-// Geist Mono font - DISABLED TEMPORARILY
-// export const geistMono = localFont({
-//   src: './fonts/GeistMonoVF.woff',
-//   variable: '--font-geist-mono',
-//   weight: '100 900',
-// });
+// Geist Mono font
+export const geistMono = localFont({
+  src: './fonts/GeistMonoVF.woff',
+  variable: '--font-geist-mono',
+  weight: '100 900',
+});
 
 // Lexend font from Google Fonts - WORKING
 export const lexend = Lexend({
@@ -25,7 +22,8 @@ export const lexend = Lexend({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
 });
 
-// OpenDyslexic font (local) - DISABLED TEMPORARILY
+// OpenDyslexic font (local) - DISABLED
+// TODO: Re-enable when needed
 // export const openDyslexic = localFont({
 //   src: [
 //     {
@@ -53,8 +51,7 @@ export const lexend = Lexend({
 //   fallback: ['ui-sans-serif', 'system-ui', 'sans-serif'],
 // });
 
-// Placeholder exports to prevent import errors
-export const geistSans = { variable: '' };
-export const geistMono = { variable: '' };
+// Placeholder export for openDyslexic to prevent import errors
+// Remove this when re-enabling the font above
 export const openDyslexic = { variable: '' };
 

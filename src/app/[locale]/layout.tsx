@@ -11,7 +11,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { ConfirmDialogProvider } from '@/components/custom-ui/confirm-dialog';
 import TanstackQueryProvider from '@/components/hoc/tanstack-query-provider';
 import { FontProvider } from '@/components/hoc/font-provider';
-import { geistSans, geistMono, lexend, openDyslexic } from '../fonts';
+import { geistSans, geistMono, lexend } from '../fonts';
 
 // Metadata configuration with localization support
 export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -61,7 +61,7 @@ export default async function RootLayout({ children, params }: Props) {
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body id="body" className={`${lexend.variable} flex min-h-screen flex-col antialiased`}>
+      <body id="body" className={`${geistSans.variable} ${geistMono.variable} ${lexend.variable} flex min-h-screen flex-col antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <FontProvider>
             <NextIntlClientProvider locale={locale as Locale}>
