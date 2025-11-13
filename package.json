@@ -31,7 +31,7 @@
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "type": "npx tsc --noEmit --pretty",
-    "i18n:check": "i18n-check --locales messages --source en --format i18next --unused src",
+    "i18n:check": "i18n-check --locales messages --source en --format i18next",
     "i18n:check:missing": "i18n-check --locales messages --source en --format i18next --only missingKeys",
     "i18n:check:invalid": "i18n-check --locales messages --source en --format i18next --only invalidKeys",
     "i18n:check:unused": "i18n-check --locales messages --source en --format i18next --only unused --unused src",

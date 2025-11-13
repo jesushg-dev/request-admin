@@ -306,22 +306,6 @@
         "title": "Jerarquía de Asignación",
         "description": "Gestiona la jerarquía de asignación"
       },
-      "reports": {
-        "title": "Reportes",
-        "description": "Genera y visualiza reportes del sistema"
-      },
-      "notifications": {
-        "title": "Notificaciones",
-        "description": "Gestiona tus notificaciones"
-      },
-      "messages": {
-        "title": "Mensajes",
-        "description": "Gestiona tus mensajes"
-      },
-      "help": {
-        "title": "Ayuda",
-        "description": "Centro de ayuda y documentación"
-      },
       "identificationTypes": {
         "title": "Tipos de Identificación",
         "description": "Gestiona los tipos de identificación"
@@ -431,8 +415,6 @@
     "keywords": "telecomunicaciones, gestión de servicios, ITIL, cumplimiento de solicitudes, flujo de trabajo, multi-tenant",
     "subHeading": "Impulsa la eficiencia en la gestión de solicitudes de servicio con un sistema basado en las mejores prácticas de ITIL, adaptado para entornos empresariales modernos.",
     "signInButton": "Acceder al Sistema",
-    "headerAuthTitle": "¡Bienvenido de nuevo!",
-    "headerAuthLabel": "Regístrate para acceder a la plataforma",
     "brandName": "Request Engine – Acciones más rápidas, mejores resultados.",
     "pricingTitle": "Elige el plan que mejor se adapte a tus necesidades",
     "pricingDescription": "Nuestros planes están diseñados para adaptarse a las necesidades de tu negocio. Comienza con nuestro plan gratuito y actualiza a medida que crece tu organización.",
@@ -605,12 +587,7 @@
           "contentData": {
             "title": "Datos de Contenido",
             "content": "Almacenamos y procesamos contenido que usted crea o carga en el Servicio:",
-            "items": [
-              "Solicitudes y datos asociados",
-              "Configuraciones de flujos de trabajo",
-              "Documentos y archivos cargados",
-              "Comunicaciones y mensajes"
-            ]
+            "items": ["Solicitudes y datos asociados", "Configuraciones de flujos de trabajo", "Documentos y archivos cargados", "Comunicaciones y mensajes"]
           }
         },
         "howWeUse": {
@@ -1645,8 +1622,6 @@
         }
       },
       "create": {
-        "title": "Categoría de Asignación",
-        "subtitle": "Crea una nueva categoría de asignación. Una categoría puede tener múltiples subcategorías recursivas según las necesidades de tu negocio.",
         "steps": {
           "description": "Descripción",
           "assignmentCategory": "Categorías de Asignación",
@@ -1813,7 +1788,8 @@
           "manageViewers": "Gestionar Espectadores",
           "customizeBranding": "Personalizar Branding",
           "createShareableLink": "Crear Enlace Compartible",
-          "deleteDataroom": "Eliminar Dataroom"
+          "deleteDataroom": "Eliminar Dataroom",
+          "actions": "Acciones"
         },
         "metadata": {
           "documents": "Documentos",
@@ -2023,171 +1999,165 @@
         }
       },
       "view": {
-        "view": {
-          "document_not_found": "Documento no encontrado",
-          "created": "Creado el {date}",
-          "tabs": {
-            "preview": "Vista previa",
-            "metadata": "Metadatos",
-            "versions": "Versiones",
-            "links": "Enlaces compartidos",
-            "analytics": "Analíticas"
+        "documentNotFound": "Documento no encontrado",
+        "created": "Creado el {date}",
+        "tabs": {
+          "preview": "Vista previa",
+          "metadata": "Metadatos",
+          "versions": "Versiones",
+          "links": "Enlaces compartidos",
+          "analytics": "Analíticas"
+        },
+        "dropdown": {
+          "actions": "Acciones",
+          "edit_document": "Editar documento",
+          "upload_new_version": "Subir nueva versión",
+          "delete_document": "Eliminar documento"
+        },
+        "actions": {
+          "share": "Compartir",
+          "open_new_tab": "Abrir en nueva pestaña"
+        },
+        "file_info": {
+          "mb": "MB",
+          "na": "N/D"
+        },
+        "documentViewer": {
+          "preview_not_available": "Vista previa no disponible para este tipo de archivo.",
+          "download_file": "Descargar archivo",
+          "no_file_url": "No se proporcionó la URL del archivo.",
+          "default_document_name": "documento",
+          "aria": {
+            "document_preview": "Vista previa de {title}",
+            "pdf_document": "Documento PDF",
+            "video_player": "Reproductor de video",
+            "audio_player": "Reproductor de audio",
+            "text_content": "Contenido del archivo de texto"
+          },
+          "browser_no_support": {
+            "video": "Tu navegador no es compatible con la etiqueta de video.",
+            "audio": "Tu navegador no es compatible con el elemento de audio."
+          },
+          "actions": {
+            "download": "Descargar"
+          }
+        },
+        "metadata": {
+          "document_details": "Detalles del documento",
+          "edit": "Editar",
+          "metadata": {
+            "name": "Nombre",
+            "description": "Descripción",
+            "status": "Estado",
+            "file_type": "Tipo de archivo",
+            "size": "Tamaño",
+            "pages": "Páginas",
+            "folder": "Carpeta",
+            "expires": "Expira",
+            "created_by": "Creado por",
+            "created_date": "Fecha de creación",
+            "last_modified": "Última modificación",
+            "storage_type": "Tipo de almacenamiento",
+            "content_type": "Tipo de contenido",
+            "file_url": "URL del archivo",
+            "total_views": "Visualizaciones totales"
+          },
+          "file_information": "Información del archivo",
+          "features": {
+            "features_settings": "Características y configuraciones",
+            "features_description": "Funcionalidades especiales habilitadas para este documento",
+            "ai_assistant": "Asistente IA",
+            "ai_description": "La IA puede analizar y extraer datos de este documento",
+            "advanced_excel": "Excel avanzado",
+            "excel_description": "Funciones avanzadas de procesamiento de Excel",
+            "download_only": "Solo descarga",
+            "download_description": "El documento solo se puede descargar, no ver en el navegador"
+          },
+          "badges": {
+            "enabled": "Habilitado",
+            "disabled": "Deshabilitado"
+          },
+          "file_info": {
+            "mb": "MB"
+          },
+          "common": {
+            "na": "N/D"
+          }
+        },
+        "versionHistory": {
+          "empty_state": {
+            "title": "No se encontraron versiones",
+            "description": "Aún no hay versiones de este documento. Sube una nueva versión para comenzar."
+          },
+          "badges": {
+            "current": "Actual"
+          },
+          "version_number": "Versión {number}",
+          "pages": "{count} páginas",
+          "created_by": "Por {user}",
+          "n_a": "N/A",
+          "processed_status": "Procesado",
+          "datetime_format": "d 'de' MMM, yyyy 'a las' h:mm a",
+          "file_info": {
+            "mb": "MB"
+          },
+          "actions": {
+            "view": "Ver",
+            "download": "Descargar"
           },
           "dropdown": {
             "actions": "Acciones",
-            "edit_document": "Editar documento",
-            "upload_new_version": "Subir nueva versión",
-            "delete_document": "Eliminar documento"
+            "restore": "Establecer como versión principal",
+            "delete": "Eliminar"
           },
-          "actions": {
-            "share": "Compartir",
-            "open_new_tab": "Abrir en nueva pestaña"
+          "toast": {
+            "restore_success": "Versión restaurada correctamente"
           },
-          "file_info": {
-            "mb": "MB",
-            "na": "N/D"
-          },
-          "documentViewer": {
-            "preview_not_available": "Vista previa no disponible para este tipo de archivo.",
-            "download_file": "Descargar archivo",
-            "no_file_url": "No se proporcionó la URL del archivo.",
-            "default_document_name": "documento",
-            "aria": {
-              "document_preview": "Vista previa de {title}",
-              "pdf_document": "Documento PDF",
-              "video_player": "Reproductor de video",
-              "audio_player": "Reproductor de audio",
-              "text_content": "Contenido del archivo de texto"
-            },
-            "browser_no_support": {
-              "video": "Tu navegador no es compatible con la etiqueta de video.",
-              "audio": "Tu navegador no es compatible con el elemento de audio."
-            },
-            "actions": {
-              "download": "Descargar"
-            }
-          },
-          "metadata": {
-            "document_details": "Detalles del documento",
-            "edit": "Editar",
-            "metadata": {
-              "name": "Nombre",
-              "description": "Descripción",
-              "status": "Estado",
-              "file_type": "Tipo de archivo",
-              "size": "Tamaño",
-              "pages": "Páginas",
-              "folder": "Carpeta",
-              "expires": "Expira",
-              "created_by": "Creado por",
-              "created_date": "Fecha de creación",
-              "last_modified": "Última modificación",
-              "storage_type": "Tipo de almacenamiento",
-              "content_type": "Tipo de contenido",
-              "file_url": "URL del archivo",
-              "total_views": "Visualizaciones totales"
-            },
-            "file_information": "Información del archivo",
-            "features": {
-              "features_settings": "Características y configuraciones",
-              "features_description": "Funcionalidades especiales habilitadas para este documento",
-              "ai_assistant": "Asistente IA",
-              "ai_description": "La IA puede analizar y extraer datos de este documento",
-              "advanced_excel": "Excel avanzado",
-              "excel_description": "Funciones avanzadas de procesamiento de Excel",
-              "download_only": "Solo descarga",
-              "download_description": "El documento solo se puede descargar, no ver en el navegador"
-            },
-            "badges": {
-              "enabled": "Habilitado",
-              "disabled": "Deshabilitado"
-            },
-            "file_info": {
-              "mb": "MB"
-            },
-            "common": {
-              "na": "N/D"
-            }
-          },
-          "versionHistory": {
-            "empty_state": {
-              "title": "No se encontraron versiones",
-              "description": "Aún no hay versiones de este documento. Sube una nueva versión para comenzar."
-            },
-            "badges": {
-              "current": "Actual"
-            },
-            "version_number": "Versión {number}",
-            "pages": "{count} páginas",
-            "created_by": "Por {user}",
-            "n_a": "N/A",
-            "processed_status": "Procesado",
-            "datetime_format": "d 'de' MMM, yyyy 'a las' h:mm a",
-            "file_info": {
-              "mb": "MB"
-            },
-            "actions": {
-              "view": "Ver",
-              "download": "Descargar"
-            },
-            "dropdown": {
-              "actions": "Acciones",
-              "restore": "Establecer como versión principal",
-              "delete": "Eliminar"
-            },
-            "toast": {
-              "restore_success": "Versión restaurada correctamente"
-            },
-            "version_label": "Versión"
-          },
-          "sharedLinks": {
-            "empty_state": {
-              "title": "Sin enlaces compartidos",
-              "description": "Crea enlaces compartibles para este documento"
-            },
-            "badges": {
-              "archived": "Archivado"
-            },
-            "audience": {
-              "general": "General",
-              "specific": "Grupo específico"
-            },
-            "tooltips": {
-              "password": "Protegido con contraseña",
-              "email": "Correo electrónico requerido",
-              "email_verified": "Verificación de correo requerida",
-              "screenshot": "Protección contra capturas",
-              "watermark": "Con marca de agua",
-              "agreement": "Acuerdo requerido: {agreement}",
-              "download": "Descargable"
-            },
-            "created": "Creado el {date}",
-            "expires": "Expira el {date}",
-            "views": "{count} visualizaciones",
-            "actions": {
-              "open": "Abrir",
-              "edit": "Editar"
-            },
-            "dropdown": {
-              "actions": "Acciones",
-              "copy": "Copiar enlace",
-              "settings": "Configuración",
-              "archive": "Archivar",
-              "unarchive": "Desarchivar",
-              "saving": "Guardando...",
-              "delete": "Eliminar"
-            },
-            "toast": {
-              "progress": "Actualizando...",
-              "success": "Cambios guardados",
-              "error": "Error: {error}",
-              "copy_success": "Enlace copiado"
-            }
-          }
+          "version_label": "Versión"
         },
         "sharedLinks": {
+          "empty_state": {
+            "title": "Sin enlaces compartidos",
+            "description": "Crea enlaces compartibles para este documento"
+          },
+          "badges": {
+            "archived": "Archivado"
+          },
+          "audience": {
+            "general": "General",
+            "specific": "Grupo específico"
+          },
           "tooltips": {
+            "password": "Protegido con contraseña",
+            "email": "Correo electrónico requerido",
+            "email_verified": "Verificación de correo requerida",
+            "screenshot": "Protección contra capturas",
+            "watermark": "Con marca de agua",
+            "agreement": "Acuerdo requerido: {agreement}",
+            "download": "Descargable",
             "verified": "Verificado"
+          },
+          "created": "Creado el {date}",
+          "expires": "Expira el {date}",
+          "views": "{count} visualizaciones",
+          "actions": {
+            "open": "Abrir",
+            "edit": "Editar"
+          },
+          "dropdown": {
+            "actions": "Acciones",
+            "copy": "Copiar enlace",
+            "settings": "Configuración",
+            "archive": "Archivar",
+            "unarchive": "Desarchivar",
+            "saving": "Guardando...",
+            "delete": "Eliminar"
+          },
+          "toast": {
+            "progress": "Actualizando...",
+            "success": "Cambios guardados",
+            "error": "Error: {error}",
+            "copy_success": "Enlace copiado"
           }
         }
       },
@@ -2743,7 +2713,6 @@
         "assignmentRequired": "Permisos insuficientes",
         "assignmentRequiredDescription": "Póngase en contacto con el usuario que le asignó la solicitud o alguien con el permiso requerido para hacer el cambio.",
         "changeStatus": "Cambiar Estado",
-        "flowDescriptionShort": "Puede continuar: {to}.",
         "draft": "Borrador"
       },
       "priority": {
@@ -2964,7 +2933,13 @@
           "cancel": "Cancelar",
           "saveChanges": "Guardar cambios",
           "description": "Descripción",
-          "locale": "Locale"
+          "locale": "Locale",
+          "validation": {
+            "nameMinLength": "El título debe tener al menos 2 caracteres",
+            "fileUrlInvalid": "Debe ser una URL válida",
+            "versionRequired": "La versión es requerida",
+            "updatedAtRequired": "La fecha de actualización es requerida"
+          }
         },
         "category": {
           "loading": "Saving changes...",
@@ -2987,23 +2962,7 @@
         "manageAction": "Crear nueva categoría",
         "selectTitle": "Seleccione una jerarquía",
         "selectDescription": "Por favor selecciona una jerarquía desde la barra lateral para gestionar sus categorías.",
-        "selectAction": "Crear una nueva jerarquía",
-        "validation": {
-          "nameMinLength": "El nombre debe tener al menos 2 caracteres",
-          "nameMaxLength": "El nombre debe tener menos de 100 caracteres",
-          "sla": {
-            "resolutionTimeMin": "El tiempo de resolución no puede ser negativo",
-            "escalationTimeMin": "El tiempo de escalación no puede ser negativo"
-          }
-        },
-        "guidesTab": {
-          "validation": {
-            "nameMinLength": "El título debe tener al menos 2 caracteres",
-            "fileUrlInvalid": "Debe ser una URL válida",
-            "versionRequired": "La versión es requerida",
-            "updatedAtRequired": "La fecha de actualización es requerida"
-          }
-        }
+        "selectAction": "Crear una nueva jerarquía"
       }
     },
     "requirement": {
@@ -4362,7 +4321,6 @@
       "form": {
         "header": {
           "title": "Información del Flujo de Trabajo",
-          "subtitle": "Configura los detalles de tu flujo de trabajo.",
           "description": "Ingrese los detalles del flujo de trabajo."
         },
         "messages": {
@@ -4454,12 +4412,16 @@
           "deletedMessage": "El estado ha sido eliminado exitosamente."
         },
         "transition": {
+          "localeKey": "es",
           "updatedTitle": "Transición actualizada",
           "updatedMessage": "La transición \"{transitionName}\" ha sido actualizada exitosamente.",
           "addedTitle": "Transición agregada",
           "addedMessage": "La transición \"{transitionName}\" ha sido agregada exitosamente.",
           "deletedTitle": "Transición eliminada",
-          "deletedMessage": "La transición ha sido eliminada exitosamente."
+          "deletedMessage": "La transición ha sido eliminada exitosamente.",
+          "validation": {
+            "nameRequired": "El nombre es obligatorio"
+          }
         },
         "review": {
           "noName": "Sin nombre",
@@ -4527,7 +4489,6 @@
         "approvalDescription": "Necesita aprobación del supervisor",
         "cancel": "Cancelar",
         "save": "Guardar",
-        "localeKey": "es",
         "validation": {
           "nameRequired": "El nombre es obligatorio"
         }
@@ -4553,10 +4514,6 @@
           "red": "Rojo",
           "yellow": "Amarillo"
         },
-        "initialStateLabel": "Estado Inicial",
-        "initialStateDescription": "Primer estado en el flujo de trabajo",
-        "finalStateLabel": "Estado Final",
-        "finalStateDescription": "Estado de finalización del flujo de trabajo",
         "cancel": "Cancelar",
         "save": "Guardar",
         "typeLabel": "Tipo",
@@ -4580,67 +4537,37 @@
         "firstSteps": {
           "title": "Primeros Pasos",
           "description": "Aprende lo básico para comenzar a usar el sistema",
-          "links": [
-            "Introducción al sistema",
-            "Crea tu primera solicitud",
-            "Navegación por el panel",
-            "Configura tu perfil"
-          ],
+          "links": ["Introducción al sistema", "Crea tu primera solicitud", "Navegación por el panel", "Configura tu perfil"],
           "viewAll": "Ver todas las guías básicas"
         },
         "requestManagement": {
           "title": "Gestión de Solicitudes",
           "description": "Aprende a gestionar solicitudes eficientemente",
-          "links": [
-            "Estados de las solicitudes",
-            "Asignación de solicitudes",
-            "Cambios de prioridad",
-            "Comentarios y seguimiento"
-          ],
+          "links": ["Estados de las solicitudes", "Asignación de solicitudes", "Cambios de prioridad", "Comentarios y seguimiento"],
           "viewAll": "Ver todas las guías de gestión"
         },
         "communication": {
           "title": "Comunicación",
           "description": "Aprende a comunicarte eficazmente en el sistema",
-          "links": [
-            "Sistema de mensajería",
-            "Notificaciones y alertas",
-            "Menciones y etiquetas",
-            "Compartir archivos"
-          ],
+          "links": ["Sistema de mensajería", "Notificaciones y alertas", "Menciones y etiquetas", "Compartir archivos"],
           "viewAll": "Ver todas las guías de comunicación"
         },
         "reports": {
           "title": "Reportes y Analítica",
           "description": "Aprende a usar las herramientas de análisis",
-          "links": [
-            "Generación de reportes",
-            "Análisis de métricas",
-            "Exportación de datos",
-            "Tableros personalizados"
-          ],
+          "links": ["Generación de reportes", "Análisis de métricas", "Exportación de datos", "Tableros personalizados"],
           "viewAll": "Ver todas las guías de reportes"
         },
         "administration": {
           "title": "Administración",
           "description": "Guías para administradores del sistema",
-          "links": [
-            "Gestión de usuarios",
-            "Configuración de flujos de trabajo",
-            "Personalización del sistema",
-            "Seguridad y permisos"
-          ],
+          "links": ["Gestión de usuarios", "Configuración de flujos de trabajo", "Personalización del sistema", "Seguridad y permisos"],
           "viewAll": "Ver todas las guías de administración"
         },
         "workflows": {
           "title": "Flujos de Trabajo",
           "description": "Aprende a configurar y usar flujos de trabajo",
-          "links": [
-            "Creación de flujos personalizados",
-            "Reglas de transición de estados",
-            "Automatización de procesos",
-            "Plantillas de flujos de trabajo"
-          ],
+          "links": ["Creación de flujos personalizados", "Reglas de transición de estados", "Automatización de procesos", "Plantillas de flujos de trabajo"],
           "viewAll": "Ver todas las guías de flujos de trabajo"
         }
       },
@@ -5031,26 +4958,12 @@
       }
     },
     "stepper": {
-      "steps": {
-        "description": "Descripción",
-        "assignmentCategory": "Categoría de Asignación",
-        "role": "Rol",
-        "user": "Usuario",
-        "finish": "Finalizar",
-        "hierarchy": "Jerarquía",
-        "levels": "Niveles",
-        "summary": "Resumen",
-        "planInfo": "Información del Plan",
-        "planFeatures": "Características del Plan",
-        "tenant": "Detalles del Inquilino",
-        "plan": "Selección de Plan",
-        "transitions": "Transiciones"
-      },
       "navigationButtons": {
         "next": "Siguiente",
         "back": "Atrás",
         "finish": "Finalizar",
-        "reset": "Reiniciar"
+        "reset": "Reiniciar",
+        "cancel": "Cancelar"
       }
     },
     "fileUploader": {
@@ -5253,6 +5166,7 @@
           },
           "estimatedTime": "Tiempo estimado: {count} {unit}",
           "timeUnit": {
+            "seconds": "segundos",
             "minutes": "minutos",
             "hours": "horas",
             "days": "días"
@@ -5332,8 +5246,11 @@
           "continueLoop": "Continuar bucle",
           "exitLoop": "Salir del bucle",
           "nextStep": "Siguiente paso",
+          "condition": "Condición",
           "toast": {
-            "processing": "Bucle de procesamiento ..."
+            "processing": "Bucle de procesamiento ...",
+            "success": "Bucle procesado correctamente",
+            "error": "Error al procesar el bucle"
           }
         },
         "messageNode": {
@@ -5594,7 +5511,8 @@
         "sendInAppAndWhatsApp": "Enviar en la app y por WhatsApp",
         "sendAll": "Enviar en la app, correo y WhatsApp",
         "sendEmail": "Enviar correo",
-        "sendWhatsApp": "Enviar WhatsApp"
+        "sendWhatsApp": "Enviar WhatsApp",
+        "typingError": "Error de escritura: {error}"
       },
       "profile": {
         "title": "Perfil",

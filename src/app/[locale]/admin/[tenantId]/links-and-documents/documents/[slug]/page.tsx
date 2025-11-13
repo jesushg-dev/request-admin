@@ -45,7 +45,7 @@ export default async function DocumentDetailPage({ params }: DocumentDetailPageP
   });
 
   if (!document) {
-    return <div>{t('document_not_found')}</div>;
+    return <div>{t('documentNotFound')}</div>;
   }
 
   return (

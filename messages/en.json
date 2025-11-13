@@ -330,7 +330,6 @@
         "title": "Organization",
         "description": "Manage your organization settings"
       },
-
       "organizationSubscription": {
         "title": "Subscription",
         "description": "Manage your organization subscription"
@@ -588,12 +587,7 @@
           "contentData": {
             "title": "Content Data",
             "content": "We store and process content you create or upload to the Service:",
-            "items": [
-              "Requests and associated data",
-              "Workflow configurations",
-              "Uploaded documents and files",
-              "Communications and messages"
-            ]
+            "items": ["Requests and associated data", "Workflow configurations", "Uploaded documents and files", "Communications and messages"]
           }
         },
         "howWeUse": {
@@ -1690,8 +1684,8 @@
         "titleEdit": "Edit Agreement",
         "subtitleCreate": "Create a new agreement. \nMake sure to include all necessary terms and conditions.",
         "subtitleEdit": "Edit the agreement. \nMake sure to include all necessary terms and conditions.",
-        "name": "Nombre",
-        "namePlaceholder": "Ingrese nombre",
+        "name": "Name",
+        "namePlaceholder": "Enter name",
         "content": "Content",
         "contentPlaceholder": "Enter content",
         "requireName": "Require Name",
@@ -1704,7 +1698,7 @@
         "descriptionPlaceholder": "Enter a brief description",
         "descriptionDescription": "Type a brief explanation about this agreement."
       },
-      "cancel": "Cancelar",
+      "cancel": "Cancel",
       "saveChanges": "Save Changes",
       "create": "Create",
       "description": "Manage and organize agreements efficiently.",
@@ -2005,7 +1999,7 @@
         }
       },
       "view": {
-        "document_not_found": "Document not found",
+        "documentNotFound": "Document not found",
         "created": "Created {date}",
         "tabs": {
           "preview": "Preview",
@@ -2226,9 +2220,9 @@
           "createdAt": "Created At"
         },
         "filters": {
-          "name": "Nombre",
-          "namePlaceholder": "Filtrar por Nombre",
-          "createdAt": "Creado En"
+          "name": "Name",
+          "namePlaceholder": "Filter by Name",
+          "createdAt": "Created At"
         }
       }
     },
@@ -2948,9 +2942,9 @@
           "locale": "Locale"
         },
         "category": {
-          "loading": "Guardando cambios...",
-          "success": "Cambios guardados con éxito",
-          "error": "Error al guardar los cambios: {error}",
+          "loading": "Saving changes...",
+          "success": "Changes saved successfully",
+          "error": "Error saving changes: {error}",
           "executionLoading": "Saving execution flow..."
         },
         "blockedResourcesInfo": {
@@ -4039,7 +4033,7 @@
         }
       }
     },
-  "folder": {
+    "folder": {
       "create": {
         "title": "Create Folder",
         "subtitle": "Organize your documents and files.",
@@ -4543,67 +4537,37 @@
         "firstSteps": {
           "title": "Getting Started",
           "description": "Learn the basics to start using the system",
-          "links": [
-            "System Introduction",
-            "Create your first request",
-            "Dashboard navigation",
-            "Configure your profile"
-          ],
+          "links": ["System Introduction", "Create your first request", "Dashboard navigation", "Configure your profile"],
           "viewAll": "View all basic guides"
         },
         "requestManagement": {
           "title": "Request Management",
           "description": "Learn to manage requests efficiently",
-          "links": [
-            "Request statuses",
-            "Request assignment",
-            "Priority changes",
-            "Comments and tracking"
-          ],
+          "links": ["Request statuses", "Request assignment", "Priority changes", "Comments and tracking"],
           "viewAll": "View all management guides"
         },
         "communication": {
           "title": "Communication",
           "description": "Learn to communicate effectively in the system",
-          "links": [
-            "Messaging system",
-            "Notifications and alerts",
-            "Mentions and tags",
-            "File sharing"
-          ],
+          "links": ["Messaging system", "Notifications and alerts", "Mentions and tags", "File sharing"],
           "viewAll": "View all communication guides"
         },
         "reports": {
           "title": "Reports and Analytics",
           "description": "Learn to use the analysis tools",
-          "links": [
-            "Report generation",
-            "Metrics analysis",
-            "Data export",
-            "Custom dashboards"
-          ],
+          "links": ["Report generation", "Metrics analysis", "Data export", "Custom dashboards"],
           "viewAll": "View all reports guides"
         },
         "administration": {
           "title": "Administration",
           "description": "Guides for system administrators",
-          "links": [
-            "User management",
-            "Workflow configuration",
-            "System customization",
-            "Security and permissions"
-          ],
+          "links": ["User management", "Workflow configuration", "System customization", "Security and permissions"],
           "viewAll": "View all administration guides"
         },
         "workflows": {
           "title": "Workflows",
           "description": "Learn to configure and use workflows",
-          "links": [
-            "Creating custom workflows",
-            "State transition rules",
-            "Process automation",
-            "Workflow templates"
-          ],
+          "links": ["Creating custom workflows", "State transition rules", "Process automation", "Workflow templates"],
           "viewAll": "View all workflow guides"
         }
       },
@@ -4681,7 +4645,7 @@
           "q5": "How do workflows work?"
         }
       }
-    }  
+    }
   },
   "component": {
     "categoryTable": {
@@ -5278,15 +5242,15 @@
           }
         },
         "loopNode": {
-          "loop": "Ciclo",
-          "continueLoop": "Continuar ciclo",
-          "exitLoop": "Salir del ciclo",
-          "nextStep": "Siguiente paso",
-          "condition": "Condición",
+          "loop": "Loop",
+          "continueLoop": "Continue loop",
+          "exitLoop": "Exit loop",
+          "nextStep": "Next step",
+          "condition": "Condition",
           "toast": {
-            "processing": "Procesando ciclo...",
-            "success": "Ciclo procesado correctamente",
-            "error": "Error al procesar el ciclo"
+            "processing": "Processing loop...",
+            "success": "Loop processed successfully",
+            "error": "Error processing loop"
           }
         },
         "messageNode": {
