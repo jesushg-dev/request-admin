@@ -7,7 +7,6 @@ import { Loader } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useController, useForm, useFormContext } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,40 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { ColorPicker } from '@/components/custom-ui/color-picker';
-
-export const tenantFormSchema = z.object({
-  name: z.string().min(2, {
-    message: 'admin.setting.organization.form.validation.name',
-  }),
-  slug: z
-    .string()
-    .min(2, {
-      message: 'admin.setting.organization.form.validation.slug.min',
-    })
-    .regex(/^[a-z0-9-]+$/, 'admin.setting.organization.form.validation.slug.invalid'),
-
-  logo: z.string().optional(),
-  websiteUrl: z
-    .string()
-    .url({
-      message: 'admin.setting.organization.form.validation.website',
-    })
-    .optional()
-    .or(z.literal('')),
-  title: z.string().optional(),
-  description: z.string().optional(),
-  primaryColor: z.string().optional(),
-  secondaryColor: z.string().optional(),
-  contactEmail: z
-    .string()
-    .email({
-      message: 'admin.setting.organization.form.validation.email',
-    })
-    .optional()
-    .or(z.literal('')),
-  contactPhone: z.string().optional(),
-  address: z.string().optional(),
-});
+import { useTenantFormSchema, createTenantFormSchema, type TTenantFormSchema } from '@/services/schemas/tenant';
 
 export const getTenantFormDefaultValues = (): TenantFormValues => {
   return {
@@ -67,7 +33,16 @@ export const getTenantFormDefaultValues = (): TenantFormValues => {
   };
 };
 
-export type TenantFormValues = z.infer<typeof tenantFormSchema>;
+export type TenantFormValues = TTenantFormSchema;
+
+// Export schema for use in stepper (needs to be created at module level)
+// This is a workaround for stepper that needs schema at definition time
+export const getTenantFormSchema = () => {
+  // This will be called in a component context, so we can use useTranslations
+  // For now, we'll create a schema without translations for the stepper
+  // The actual validation will use the hook version
+  return createTenantFormSchema((key: string) => key);
+};
 
 interface TenantFormProps {
   defaultValues?: {
@@ -79,6 +54,7 @@ interface TenantFormProps {
 const TenantForm: FC<TenantFormProps> = ({ defaultValues }) => {
   const t = useTranslations('tenants.organization');
   const [isPending, startTransition] = useTransition();
+  const tenantFormSchema = useTenantFormSchema();
 
   const form = useForm({
     mode: 'onChange',

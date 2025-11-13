@@ -3,12 +3,12 @@
 import { useTransition } from 'react';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 import { authClient } from '@/server/auth-client';
+import { useEmailChangeSchema, type TEmailChangeSchema } from '@/services/schemas/settings.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as z from 'zod';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -16,22 +16,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
-// Defining form schema with validation
-const emailFormSchema = z.object({
-  newEmail: z.string().email({
-    message: 'Please enter a valid email address.',
-  }),
-  callbackURL: z.string().default('/dashboard'),
-});
-
-type EmailFormValues = z.infer<typeof emailFormSchema>;
-
 export default function SecurityForm() {
   const t = useTranslations('admin.setting.email');
   const [isPending, startTransition] = useTransition();
 
-  const emailForm = useForm({
-    resolver: zodResolver(emailFormSchema),
+  const emailSchema = useEmailChangeSchema();
+
+  const emailForm = useForm<TEmailChangeSchema>({
+    resolver: zodResolver(emailSchema),
     defaultValues: {
       newEmail: '',
       callbackURL: DEFAULT_LOGIN_REDIRECT,
@@ -39,7 +31,7 @@ export default function SecurityForm() {
     mode: 'onChange',
   });
 
-  function onEmailSubmit({ newEmail, callbackURL }: EmailFormValues) {
+  function onEmailSubmit({ newEmail, callbackURL }: TEmailChangeSchema) {
     startTransition(async () => {
       const toastId = toast.loading(t('updating'));
       await authClient.changeEmail(

@@ -4,7 +4,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { useForm } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
-import { z } from 'zod';
 
 import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
@@ -13,31 +12,14 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { ColorPicker } from '@/components/form/color-picker';
 import { DateTimePicker } from '@/components/form/date-time-picker';
+import { useNewEventSchema, type TNewEventSchema } from '@/services/schemas/calendar';
 
 import { useCalendarContext } from '../calendar-context';
 
 export default function CalendarNewEventDialog() {
   const { newEventDialogOpen, setNewEventDialogOpen, date, events, setEvents } = useCalendarContext();
   const t = useTranslations('component.calendar.newEventDialog');
-
-  const formSchema = z
-    .object({
-      title: z.string().min(1, t('validation.titleRequired')),
-      start: z.iso.datetime(),
-      end: z.iso.datetime(),
-      color: z.string(),
-    })
-    .refine(
-      (data) => {
-        const start = new Date(data.start);
-        const end = new Date(data.end);
-        return end >= start;
-      },
-      {
-        message: t('validation.endAfterStart'),
-        path: ['end'],
-      }
-    );
+  const formSchema = useNewEventSchema();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -49,7 +31,7 @@ export default function CalendarNewEventDialog() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: TNewEventSchema) {
     const newEvent = {
       id: generateUuid(),
       title: values.title,

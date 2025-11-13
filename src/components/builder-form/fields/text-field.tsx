@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { TypeIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import { cn } from '@/lib/utils';
 import useDesigner from '@/hooks/use-designer';
@@ -14,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { ElementsType, FormElement, FormElementInstance, SubmitFunction } from '@/components/builder-form/form-elements';
+import { useTextFieldPropertiesSchema, type TTextFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 
 const type: ElementsType = 'TextField';
 
@@ -23,13 +23,6 @@ const extraAttributes = {
   required: false,
   placeHolder: 'Value here...',
 };
-
-const propertiesSchema = z.object({
-  label: z.string().min(2).max(50),
-  helperText: z.string().max(200),
-  required: z.boolean().default(false),
-  placeHolder: z.string().max(50),
-});
 
 export const TextFieldFormElement: FormElement = {
   type,
@@ -126,12 +119,12 @@ function FormComponent({ elementInstance, submitValue, isInvalid, defaultValue }
   );
 }
 
-type propertiesFormSchemaType = z.infer<typeof propertiesSchema>;
 function PropertiesComponent({ elementInstance }: { elementInstance: FormElementInstance }) {
   const element = elementInstance as CustomInstance;
   const { updateElement } = useDesigner();
   const t = useTranslations('component.form.builderFields.common');
-  const form = useForm({
+  const propertiesSchema = useTextFieldPropertiesSchema();
+  const form = useForm<TTextFieldPropertiesSchema>({
     resolver: zodResolver(propertiesSchema),
     mode: 'onBlur',
     defaultValues: {
@@ -146,7 +139,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
     form.reset(element.extraAttributes);
   }, [element, form]);
 
-  function applyChanges(values: propertiesFormSchemaType) {
+  function applyChanges(values: TTextFieldPropertiesSchema) {
     const { label, helperText, placeHolder, required } = values;
     updateElement(element.id, {
       ...element,

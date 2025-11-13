@@ -18,8 +18,9 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/componen
 import Select, { OptionType } from '@/components/custom-ui/select';
 import EmptyState from '@/components/shared/empty-state';
 import { FormError, FormRoot } from '@/components/shared/form-root';
+import { useRequestCategorySchema } from '@/services/schemas/request-type';
 
-import { CategoryForm, getDefaultCategory, requestCategorySchema, RequestCategoryValues } from './category-form';
+import { CategoryForm, getDefaultCategory, RequestCategoryValues } from './category-form';
 import { CategoryTreeView } from './category-tree-view';
 
 type Mode = 'add' | 'edit' | 'none';
@@ -44,6 +45,7 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
   const ref = useRef<ImperativePanelHandle>(null);
   const [isPending, startTransition] = useTransition();
   const { mutateAsync: upsert, error, reset: resetError } = useUpsertRequestCategory();
+  const requestCategorySchema = useRequestCategorySchema();
 
   const [mode, setMode] = useState<Mode>('none');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);

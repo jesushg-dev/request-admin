@@ -13,19 +13,21 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import Select from '@/components/custom-ui/select';
+import { type TAreaRoleAssignmentSchema } from '@/services/schemas/user';
 
-// Schema for the area-role assignment form
+// Base schema for defineStepper (without internationalization)
+// This is used only for the stepper definition
 export const areaRoleAssignmentFormSchema = z.object({
   areaRoles: z
     .array(
       z.object({
         id: z.string().uuid().default(generateUuid),
         areaId: z.object({
-          value: z.string().min(1, 'Area is required'),
+          value: z.string().min(1),
           label: z.string().min(1),
         }),
         roleId: z.object({
-          value: z.string().min(1, 'Role is required'),
+          value: z.string().min(1),
           label: z.string().min(1),
         }),
         isActive: z.boolean().default(true),
@@ -50,11 +52,11 @@ export const areaRoleAssignmentFormSchema = z.object({
     }),
 });
 
+export type AreaRoleAssignmentFormValues = TAreaRoleAssignmentSchema;
+
 export const getDefaultAreaRoleAssignment = (): AreaRoleAssignmentFormValues => ({
   areaRoles: [],
 });
-
-export type AreaRoleAssignmentFormValues = z.infer<typeof areaRoleAssignmentFormSchema>;
 
 export interface AreaRoleAssignmentFormProps {
   areaOptions: AreaRoleOptionType[];

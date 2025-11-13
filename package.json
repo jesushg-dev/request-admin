@@ -30,7 +30,12 @@
     "test:watch": "jest --watch",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "type": "npx tsc --noEmit --pretty"
+    "type": "npx tsc --noEmit --pretty",
+    "i18n:check": "i18n-check --locales messages --source en --format i18next --unused src",
+    "i18n:check:missing": "i18n-check --locales messages --source en --format i18next --only missingKeys",
+    "i18n:check:invalid": "i18n-check --locales messages --source en --format i18next --only invalidKeys",
+    "i18n:check:unused": "i18n-check --locales messages --source en --format i18next --only unused --unused src",
+    "i18n:check:undefined": "i18n-check --locales messages --source en --format i18next --only undefined --unused src"
   },
   "prettier": {
     "endOfLine": "lf",
@@ -193,6 +198,7 @@
     "@hookform/devtools": "^4.4.0",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
     "@jest/globals": "^30.2.0",
+    "@lingual/i18n-check": "^0.8.12",
     "@next/eslint-plugin-next": "^16.0.2",
     "@playwright/test": "^1.56.1",
     "@tailwindcss/postcss": "^4.1.17",

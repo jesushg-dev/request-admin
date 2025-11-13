@@ -8,8 +8,11 @@ import { NotificationTypeEnum } from '@/types/notification';
 import { RequestMetadata } from '@/types/zenstackhq/request';
 import { AuthorizationError, ConcurrentModificationError, ValidationError } from '@/lib/error';
 import { normalizeValue } from '@/lib/utils';
-import { AssignRequestFormValues } from '@/components/common/request/detail/assign-request-modal';
-import { ReassignAreaFormValues } from '@/components/common/request/detail/reassign-area-modal';
+import { type TAssignRequestSchema } from '@/services/schemas/request';
+import { type TReassignAreaSchema } from '@/services/schemas/request';
+
+type AssignRequestFormValues = TAssignRequestSchema;
+type ReassignAreaFormValues = TReassignAreaSchema;
 
 import { sendInAppNotification } from './notification';
 import { getAuthContext } from '@/actions/authorization';

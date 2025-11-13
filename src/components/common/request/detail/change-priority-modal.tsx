@@ -7,7 +7,6 @@ import { SquarePen } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -15,18 +14,12 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Form, FormField } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import Select, { optionSchema, OptionType } from '@/components/custom-ui/select';
+import Select, { OptionType } from '@/components/custom-ui/select';
 import { Hint } from '@/components/hint';
 import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
+import { useChangePrioritySchema, type TChangePrioritySchema } from '@/services/schemas/request';
 
-// Zod schema for form validation
-export const changePrioritySchema = z.object({
-  reason: z.string().min(1, 'Este campo es obligatorio').max(500, 'Máximo 500 caracteres'),
-  newPriority: optionSchema,
-  notify: optionSchema,
-});
-
-export type ChangePriorityFormValues = z.infer<typeof changePrioritySchema>;
+export type ChangePriorityFormValues = TChangePrioritySchema;
 
 // Default values for the form
 export const getDefaultValues = (): ChangePriorityFormValues => ({
@@ -50,6 +43,7 @@ export function ChangePriorityModal({ isPriorityModalOpen, setIsPriorityModalOpe
   const t = useTranslations('admin.request.priority');
   const [isPending, startTransition] = useTransition();
   const [currentPriority, setCurrentPriority] = useState<OptionType | undefined>(defaultPriority);
+  const changePrioritySchema = useChangePrioritySchema();
 
   // Notify options for the select
   const notifyOptions: OptionType[] = [

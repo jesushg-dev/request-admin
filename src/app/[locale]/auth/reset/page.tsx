@@ -2,12 +2,11 @@
 
 import { useTransition } from 'react';
 import { authClient } from '@/server/auth-client';
-import { ResetSchema } from '@/services/schemas';
+import { useResetSchema, type TResetSchema } from '@/services/schemas/auth.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -15,17 +14,19 @@ import { Input } from '@/components/ui/input';
 import { CardWrapper } from '@/components/auth/card-wrapper';
 
 const ResetForm = () => {
-  const t = useTranslations('auth.resetForm'); // Namespace for translations
+  const t = useTranslations('auth.resetForm');
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm({
-    resolver: zodResolver(ResetSchema),
+  const resetSchema = useResetSchema();
+
+  const form = useForm<TResetSchema>({
+    resolver: zodResolver(resetSchema),
     defaultValues: {
       email: '',
     },
   });
 
-  const onSubmit = (values: z.infer<typeof ResetSchema>) => {
+  const onSubmit = (values: TResetSchema) => {
     startTransition(async () => {
       const toastId = toast('register-toast');
 

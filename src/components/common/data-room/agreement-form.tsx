@@ -3,11 +3,11 @@
 import React, { useTransition } from 'react';
 import { useRouter } from '@/i18n/routing';
 import { useUpsertAgreement } from '@/services/api/hooks';
+import { useAgreementSchema, type TAgreementSchema } from '@/services/schemas/data-room';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as z from 'zod';
 
 import { generateUuid } from '@/lib/id';
 import { Form, FormField } from '@/components/ui/form';
@@ -16,16 +16,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { FormActions, FormCheckboxItem, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
 
-// Define the schema for form validation
-const formSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1, 'Name is required').max(200, 'Name must be 200 characters or less').default(''),
-  description: z.string().max(500, 'Description must be 500 characters or less').default('').nullish(),
-  content: z.string().min(1, 'Content is required').max(500, 'Content must be 500 characters or less').default(''),
-  requireName: z.boolean().default(true),
-});
-
-export const getDefaultValues = () => ({
+export const getDefaultValues = (): AgreementFormValues => ({
   id: generateUuid(),
   name: '',
   description: '',
@@ -33,7 +24,7 @@ export const getDefaultValues = () => ({
   requireName: true,
 });
 
-export type AgreementFormValues = z.infer<typeof formSchema>;
+export type AgreementFormValues = TAgreementSchema;
 
 interface AgreementFormProps {
   tenantId: string;
@@ -46,8 +37,10 @@ export const AgreementForm: React.FC<AgreementFormProps> = ({ initialValues, ten
   const [isPending, startTransition] = useTransition();
   const { mutateAsync: upsert, error } = useUpsertAgreement();
 
-  const form = useForm({
-    resolver: zodResolver(formSchema),
+  const agreementSchema = useAgreementSchema();
+
+  const form = useForm<AgreementFormValues>({
+    resolver: zodResolver(agreementSchema),
     defaultValues: initialValues ?? getDefaultValues(),
     mode: 'onBlur',
   });

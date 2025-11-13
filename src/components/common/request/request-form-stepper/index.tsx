@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition, type FC } from 'react';
+import { useEffect, useMemo, useState, useTransition, type FC } from 'react';
 import { upsertRequest } from '@/actions/request';
 import { useRouter } from '@/i18n/routing';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,24 +17,25 @@ import { ChildSteps } from '@/components/stepper/child-steps';
 import { ChildStepsProvider } from '@/components/stepper/child-steps-context';
 import { StepNavigationModern } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
+import { getRequestDetailSchema, useRequestDetailSchema, type TRequestDetailSchema } from '@/services/schemas/request';
 
 import AttachmentsStep, { attachmentSchema, AttachmentsValues, getDefaultAttachmentsValues } from './attachments-step';
 import ClassificationStep, { combinedCategoriesSchema, CombinedCategoriesValues, getDefaultCombinedCategoriesValues } from './classification-step';
 import DynamicFormStep, { formResponseSchema, FormResponsesValues, getDefaultFormResponsesValues } from './dynamic-form-step';
-import RequestDetailsStep, { getDefaultDetailsValues, requestDetailSchema, RequestDetailValues } from './request-details-step';
+import RequestDetailsStep, { getDefaultDetailsValues } from './request-details-step';
 import RequirementComplianceStep, { getDefaultComplianceValues, requirementComplianceSchema, RequirementComplianceValues } from './requirement-compliance-step';
 import SummaryStep from './summary-step';
 
 const { useStepper, utils } = defineStepper(
   { id: 'classification', label: 'classification', schema: combinedCategoriesSchema },
   { id: 'requirementCompliance', label: 'compliance', schema: requirementComplianceSchema },
-  { id: 'requestDetails', label: 'details', schema: requestDetailSchema },
+  { id: 'requestDetails', label: 'details', schema: getRequestDetailSchema() },
   { id: 'attachments', label: 'attachments', schema: attachmentSchema },
   { id: 'dynamicForm', label: 'forms', schema: formResponseSchema },
   { id: 'summary', label: 'summary', schema: z.object({}) }
 );
 
-export type RequestFormStepperType = CombinedCategoriesValues & RequirementComplianceValues & RequestDetailValues & AttachmentsValues & FormResponsesValues;
+export type RequestFormStepperType = CombinedCategoriesValues & RequirementComplianceValues & TRequestDetailSchema & AttachmentsValues & FormResponsesValues;
 
 type CategoryIds = {
   requestCategory: string[];
@@ -55,9 +56,34 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, pr
   const [isDraftRemovable, setIsDraftRemovable] = useState(false);
   const [categoryIds, setCategoryIds] = useState<CategoryIds>({ requestCategory: [], assignmentCategory: [] });
 
+  // Get internationalized schema for request details
+  const requestDetailSchemaIntl = useRequestDetailSchema();
+
+  // Create a map of step IDs to internationalized schemas
+  const schemasMap = useMemo(
+    () => ({
+      classification: combinedCategoriesSchema,
+      requirementCompliance: requirementComplianceSchema,
+      requestDetails: requestDetailSchemaIntl,
+      attachments: attachmentSchema,
+      dynamicForm: formResponseSchema,
+      summary: z.object({}),
+    }),
+    [requestDetailSchemaIntl]
+  );
+
+  // Create a custom resolver that dynamically selects the correct internationalized schema
+  const dynamicResolver = useMemo(() => {
+    return (values: any, context: any, options: any) => {
+      const currentSchema = schemasMap[stepper.current.id as keyof typeof schemasMap] || stepper.current.schema;
+      const resolver = zodResolver(currentSchema);
+      return resolver(values, context, options);
+    };
+  }, [stepper.current.id, schemasMap]);
+
   const form = useForm({
     mode: 'onTouched',
-    resolver: zodResolver(stepper.current.schema),
+    resolver: dynamicResolver,
     defaultValues: defaultValues ?? {
       ...getDefaultCombinedCategoriesValues(),
       ...getDefaultComplianceValues(),
@@ -66,6 +92,11 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, pr
       ...getDefaultFormResponsesValues(),
     },
   });
+
+  // Clear errors when step changes
+  useEffect(() => {
+    form.clearErrors();
+  }, [stepper.current.id, form]);
 
   const onSubmit = (values: z.infer<typeof stepper.current.schema>) => {
     if (stepper.current.id === 'classification') {

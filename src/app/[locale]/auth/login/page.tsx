@@ -5,13 +5,12 @@ import { useSearchParams } from 'next/navigation';
 import { Link, useRouter } from '@/i18n/routing';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 import { authClient } from '@/server/auth-client';
-import { LoginSchema } from '@/services/schemas';
+import { useLoginSchema, type TLoginSchema } from '@/services/schemas/auth.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LoaderCircleIcon, OctagonAlert } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as z from 'zod';
 
 import { LoginErrorCodeEnum } from '@/types/user';
 import { Button } from '@/components/ui/button';
@@ -31,8 +30,10 @@ const LoginForm = () => {
 
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm({
-    resolver: zodResolver(LoginSchema),
+  const loginSchema = useLoginSchema();
+
+  const form = useForm<TLoginSchema>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
       password: '',
@@ -40,7 +41,7 @@ const LoginForm = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof LoginSchema>) => {
+  const onSubmit = (values: TLoginSchema) => {
     startTransition(async () => {
       const toastId = toast('login-toast');
 

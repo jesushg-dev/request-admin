@@ -2,9 +2,10 @@
 
 import { currentSession } from '@/server/auth-server';
 import { getDb } from '@/server/db-client';
-import { formSchema, formSchemaType, keysSchema } from '@/services/schemas/form';
+import { type formSchemaType, keysSchema, createFormSchema } from '@/services/schemas/form';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
+import { getTranslations } from 'next-intl/server';
 
 import { UserNotFoundErr } from '@/lib/error';
 
@@ -54,7 +55,9 @@ export async function CreateForm(data: formSchemaType, tenantId: string) {
     throw new Error('Forbidden: lacking permissions to create forms');
   }
 
-  const validation = formSchema.safeParse(data);
+  const t = await getTranslations('component.form.validation');
+  const schema = createFormSchema((key: string) => t(key as any));
+  const validation = schema.safeParse(data);
   if (!validation.success) {
     throw new Error('form not valid');
   }

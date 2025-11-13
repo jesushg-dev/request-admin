@@ -61,6 +61,10 @@ export const assignmentCategoryFormSchema: z.ZodType<AssignmentCategory> = z.obj
     }),
 });
 
+import { type TCategoriesSchema } from '@/services/schemas/category';
+
+// Base schema for defineStepper (without internationalization)
+// This is used only for the stepper definition
 export const categoriesSchema = z.object({
   categories: z.array(assignmentCategoryFormSchema).superRefine((categories, ctx) => {
     const seen = new Set<string>();
@@ -78,7 +82,7 @@ export const categoriesSchema = z.object({
   }),
 });
 
-export type AssignmentCategoryFormValues = z.infer<typeof categoriesSchema>;
+export type AssignmentCategoryFormValues = TCategoriesSchema;
 
 interface AssignmentCategoryFormProps {
   parentPath?: string;

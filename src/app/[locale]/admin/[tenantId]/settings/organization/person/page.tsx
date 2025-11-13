@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePersonSchema, type TPersonSchema } from '@/services/schemas/settings/organization';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { InfoIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
-import * as z from 'zod';
 import { toast } from 'sonner';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -68,25 +68,8 @@ export default function PersonForm() {
     }
   );
 
-  // Create schema with translations
-  const personFormSchema = z.object({
-    firstName: z.string().min(2, {
-      message: t('form.firstName.error'),
-    }),
-    lastName: z.string().min(2, {
-      message: t('form.lastName.error'),
-    }),
-    phone: z.string().optional(),
-    identificationNumber: z.string().min(1, {
-      message: t('form.identificationNumber.error'),
-    }),
-    identificationTypeId: z.string().min(1, {
-      message: t('form.identificationType.error'),
-    }),
-    image: z.string().optional(),
-  });
-
-  type PersonFormValues = z.infer<typeof personFormSchema>;
+  const personSchema = usePersonSchema();
+  type PersonFormValues = TPersonSchema;
 
   // Default values for the form
   const defaultValues: PersonFormValues = {
@@ -98,8 +81,8 @@ export default function PersonForm() {
     image: personData?.image || '',
   };
 
-  const form = useForm({
-    resolver: zodResolver(personFormSchema),
+  const form = useForm<PersonFormValues>({
+    resolver: zodResolver(personSchema),
     mode: 'onChange',
     defaultValues,
   });

@@ -3,7 +3,7 @@
 import { FC, useTransition } from 'react';
 import { CreateForm } from '@/actions/form';
 import { useRouter } from '@/i18n/routing';
-import { formSchema, formSchemaType, getDefaultFormValues } from '@/services/schemas/form';
+import { useFormSchema, getDefaultFormValues, type TFormSchema } from '@/services/schemas/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
@@ -23,13 +23,15 @@ const CreateNewForm: FC = () => {
   const { tenantId } = useTenantContext();
   const [isPending, startTransition] = useTransition();
 
+  const formSchema = useFormSchema();
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: getDefaultFormValues(),
     mode: 'onBlur',
   });
 
-  const onSubmit = (values: formSchemaType) => {
+  const onSubmit = (values: TFormSchema) => {
     startTransition(async () => {
       const promise = CreateForm(values, tenantId);
 

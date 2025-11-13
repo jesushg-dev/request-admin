@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { HashIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import { cn } from '@/lib/utils';
 import useDesigner from '@/hooks/use-designer';
@@ -14,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { ElementsType, FormElement, FormElementInstance, SubmitFunction } from '@/components/builder-form/form-elements';
+import { useNumberFieldPropertiesSchema, type TNumberFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 
 const type: ElementsType = 'NumberField';
 
@@ -23,13 +23,6 @@ const extraAttributes = {
   required: false,
   placeHolder: '0',
 };
-
-const propertiesSchema = z.object({
-  label: z.string().min(2).max(50),
-  helperText: z.string().max(200),
-  required: z.boolean().default(false),
-  placeHolder: z.string().max(50),
-});
 
 export const NumberFieldFormElement: FormElement = {
   type,
@@ -116,12 +109,12 @@ function FormComponent({ elementInstance, submitValue, isInvalid, defaultValue }
   );
 }
 
-type propertiesFormSchemaType = z.infer<typeof propertiesSchema>;
 function PropertiesComponent({ elementInstance }: { elementInstance: FormElementInstance }) {
   const element = elementInstance as CustomInstance;
   const { updateElement } = useDesigner();
   const t = useTranslations('component.form.builderFields.common');
-  const form = useForm({
+  const propertiesSchema = useNumberFieldPropertiesSchema();
+  const form = useForm<TNumberFieldPropertiesSchema>({
     resolver: zodResolver(propertiesSchema),
     mode: 'onBlur',
     defaultValues: {
@@ -136,7 +129,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
     form.reset(element.extraAttributes);
   }, [element, form]);
 
-  function applyChanges(values: propertiesFormSchemaType) {
+  function applyChanges(values: TNumberFieldPropertiesSchema) {
     const { label, helperText, placeHolder, required } = values;
     updateElement(element.id, {
       ...element,

@@ -2,6 +2,7 @@
 
 import { useTransition, type FC } from 'react';
 import { useUpsertLink } from '@/services/api/hooks';
+import { useLinkSchema, type TLinkSchema } from '@/services/schemas/documents';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -9,7 +10,6 @@ import { Bell, Calendar, Download, FileText, LinkIcon, MessageSquare } from 'luc
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as z from 'zod';
 
 import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
@@ -24,66 +24,7 @@ import { AccordionSection } from '../../../shared/accordion-section';
 import { CustomField } from './custom-field';
 import { Security } from './security';
 
-const linkFormSchema = z
-  .object({
-    id: z.string(),
-    name: z.string().min(1, 'Name is required').max(200, 'Name must be 200 characters or less').default(''),
-    expirationDate: z.date().optional(),
-    enablePassword: z.boolean().default(false),
-    password: z.string().optional(),
-    emailProtected: z.boolean().default(false),
-    emailAuthenticated: z.boolean().default(false),
-    enableScreenshotProtection: z.boolean().default(false),
-    enableWatermark: z.boolean().default(false),
-    enableAgreement: z.boolean().default(false),
-    agreementId: z.string().optional(),
-    allowDownload: z.boolean().default(false),
-    enableNotification: z.boolean().default(false),
-    enableFeedback: z.boolean().default(false),
-    enableQuestion: z.boolean().default(false),
-    allowSpecificViewers: z.boolean().default(false),
-    allowedViewers: z
-      .array(
-        z.object({
-          value: z.string().min(1, 'El valor no puede estar vacío'),
-          type: z.enum(['EMAIL', 'DOMAIN']),
-        })
-      )
-      .default([]),
-    blockSpecificViewers: z.boolean().default(false),
-    denyViewers: z
-      .array(
-        z.object({
-          value: z.string().min(1, 'El valor no puede estar vacío'),
-          type: z.enum(['EMAIL', 'DOMAIN']),
-        })
-      )
-      .default([]),
-    customFields: z
-      .array(
-        z.object({
-          id: z.string(),
-          type: z.string(),
-          label: z.string().min(1, 'La etiqueta es obligatoria'),
-          placeholder: z.string().optional(),
-          description: z.string().optional(),
-          required: z.boolean().default(false),
-          disabled: z.boolean().default(false),
-        })
-      )
-      .default([]),
-  })
-  .superRefine((data, ctx) => {
-    if (data.enablePassword && !data.password) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Contraseña es requerida cuando habilitas la protección por contraseña',
-        path: ['password'],
-      });
-    }
-  });
-
-export type LinkFormValues = z.infer<typeof linkFormSchema>;
+export type LinkFormValues = TLinkSchema;
 
 const getDefaultLinkValues = (): LinkFormValues => {
   return {
@@ -123,9 +64,11 @@ export const LinkForm: FC<LinkFormProps> = ({ tenantId, initialValues, linkType,
   //const router = useRouter();
   const t = useTranslations('admin.link.form');
 
-  const form = useForm({
+  const linkSchema = useLinkSchema();
+
+  const form = useForm<LinkFormValues>({
     mode: 'onBlur',
-    resolver: zodResolver(linkFormSchema),
+    resolver: zodResolver(linkSchema),
     defaultValues: initialValues ?? getDefaultLinkValues(),
   });
 

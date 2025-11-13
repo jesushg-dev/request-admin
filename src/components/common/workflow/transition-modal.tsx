@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
@@ -13,16 +12,9 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { FormCheckboxItem, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
+import { useTransitionSchema, type TTransitionSchema } from '@/services/schemas/workflow';
 
-export const transitionSchema = z.object({
-  id: z.string(),
-  label: z.string().min(1, 'validation.requiredName'),
-  description: z.string().optional(),
-  requiresApproval: z.boolean().default(false),
-  requiresJustification: z.boolean().default(false),
-});
-
-export type TransitionValues = z.infer<typeof transitionSchema>;
+export type TransitionValues = TTransitionSchema;
 
 export const getTransitionDefaultValue = (): TransitionValues => ({
   id: generateUuid(),
@@ -41,6 +33,7 @@ interface TransitionModalProps {
 
 export function TransitionModal({ onClose, defaultValues, onSave, showDescription }: TransitionModalProps) {
   const t = useTranslations('admin.workflow.transition');
+  const transitionSchema = useTransitionSchema();
 
   const form = useForm({
     resolver: zodResolver(transitionSchema),

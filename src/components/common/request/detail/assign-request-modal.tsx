@@ -6,7 +6,6 @@ import { Layers, MessageSquare, SquarePen, Trash2, User } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
 
 import { type RequestDetailsType } from '@/types/zenstackhq/request';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -21,40 +20,9 @@ import { Textarea } from '@/components/ui/textarea';
 import Select, { optionSchema, type OptionType } from '@/components/custom-ui/select';
 import { Hint } from '@/components/hint';
 import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
+import { useAssignRequestSchema, type TAssignRequestSchema } from '@/services/schemas/request';
 
-export const assignRequestSchema = z
-  .object({
-    assignees: z
-      .array(
-        z.object({
-          user: optionSchema,
-          isCoordinator: z.boolean(),
-        })
-      )
-      .min(1, 'Debe asignar al menos un usuario'),
-    comments: z.string().optional(),
-  })
-  .superRefine((data, ctx) => {
-    const coordinatorCount = data.assignees.filter((a) => a.isCoordinator).length;
-    if (coordinatorCount > 1) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Solo puede haber un coordinador',
-        path: ['assignees'],
-      });
-    }
-    if (coordinatorCount === 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Debe seleccionar al menos un coordinador',
-        path: ['assignees'],
-      });
-    }
-  });
-
-export type AssignRequestFormValues = z.infer<typeof assignRequestSchema>;
-
-export const getDefaultValues = (): AssignRequestFormValues => ({
+export const getDefaultValues = (): TAssignRequestSchema => ({
   assignees: [{ user: { label: '', value: '' }, isCoordinator: false }],
   comments: '',
 });
@@ -72,8 +40,9 @@ interface AssignRequestModalProps {
 export function AssignRequestModal({ enableAssignmentChange, isAssignModalOpen, setIsAssignModalOpen, requestId, area, defaultAssignedUsers, tenantId }: AssignRequestModalProps) {
   const formRef = useRef<HTMLDivElement>(null);
   const t = useTranslations('admin.request.assign');
+  const assignRequestSchema = useAssignRequestSchema();
 
-  const form = useForm<AssignRequestFormValues>({
+  const form = useForm<TAssignRequestSchema>({
     resolver: zodResolver(assignRequestSchema),
     defaultValues: { ...getDefaultValues(), assignees: defaultAssignedUsers },
   });
@@ -93,7 +62,7 @@ export function AssignRequestModal({ enableAssignmentChange, isAssignModalOpen, 
   }, [data]);
 
   const [isPending, startTransition] = useTransition();
-  const [currentAssignee, setCurrentAssignee] = useState<AssignRequestFormValues['assignees']>(defaultAssignedUsers);
+  const [currentAssignee, setCurrentAssignee] = useState<TAssignRequestSchema['assignees']>(defaultAssignedUsers);
 
   const selectedValues = form.watch('assignees', []).map((a) => a.user?.value ?? '');
 
@@ -101,7 +70,7 @@ export function AssignRequestModal({ enableAssignmentChange, isAssignModalOpen, 
     return areaUsers.filter((option) => !selectedValues.includes(option.value) || option.value === form.getValues(`assignees.${currentIdx}.user.value`));
   };
 
-  const handleSubmit = (data: AssignRequestFormValues) => {
+  const handleSubmit = (data: TAssignRequestSchema) => {
     const promise = updateCurrentAssignedUsers(tenantId, requestId, data);
 
     startTransition(() => {
@@ -256,7 +225,7 @@ const UserItem = ({ user, isCoordinator, t }: { user: OptionType; isCoordinator:
   );
 };
 
-const CoordinatorPreview = ({ assignees, t }: { assignees: AssignRequestFormValues['assignees']; t: ReturnType<typeof useTranslations> }) => {
+const CoordinatorPreview = ({ assignees, t }: { assignees: TAssignRequestSchema['assignees']; t: ReturnType<typeof useTranslations> }) => {
   const coordinator = assignees.find((u) => u.isCoordinator);
   if (!coordinator) return <span className="text-muted-foreground">N/A</span>;
 

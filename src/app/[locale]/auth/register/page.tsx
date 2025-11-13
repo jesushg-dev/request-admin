@@ -4,12 +4,11 @@ import { useTransition } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 import { authClient } from '@/server/auth-client';
-import { RegisterSchema } from '@/services/schemas';
+import { useRegisterSchema, type TRegisterSchema } from '@/services/schemas/auth.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -22,8 +21,10 @@ const RegisterForm = () => {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl');
 
-  const form = useForm({
-    resolver: zodResolver(RegisterSchema),
+  const registerSchema = useRegisterSchema();
+
+  const form = useForm<TRegisterSchema>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       email: '',
       password: '',
@@ -31,7 +32,7 @@ const RegisterForm = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
+  const onSubmit = (values: TRegisterSchema) => {
     startTransition(async () => {
       const toastId = toast('register-toast');
 

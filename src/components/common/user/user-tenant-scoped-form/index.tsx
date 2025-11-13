@@ -1,6 +1,6 @@
 'use client';
 
-import { useTransition, type FC } from 'react';
+import { useEffect, useMemo, useTransition, type FC } from 'react';
 import { upsertUser } from '@/actions/user';
 import { useRouter } from '@/i18n/routing';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,20 +16,21 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { OptionType } from '@/components/custom-ui/select';
 import { StepNavigationModern } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
+import { getUserSchema, useUserSchema, getUserRoleSchema, useUserRoleSchema, getAreaRoleAssignmentSchema, useAreaRoleAssignmentSchema, type TUserSchema, type TUserRoleSchema, type TAreaRoleAssignmentSchema } from '@/services/schemas/user';
 
-import AreaRoleAssignmentForm, { areaRoleAssignmentFormSchema, AreaRoleAssignmentFormValues, getDefaultAreaRoleAssignment } from './area-role-assignment-form';
-import UserForm, { getDefaultUser, userFormSchema, UserFormValues } from './user-form';
-import UserRoleForm, { getDefaultUserRole, userRoleFormSchema, UserRoleFormValues } from './user-role-form';
+import AreaRoleAssignmentForm, { getDefaultAreaRoleAssignment } from './area-role-assignment-form';
+import UserForm, { getDefaultUser } from './user-form';
+import UserRoleForm, { getDefaultUserRole } from './user-role-form';
 import UserTenantScopedReview from './user-tenant-scoped-review';
 
 const { useStepper, utils } = defineStepper(
-  { id: 'user', label: 'steps.user', schema: userFormSchema },
-  { id: 'globalRole', label: 'steps.globalRole', schema: userRoleFormSchema },
-  { id: 'areaRole', label: 'steps.areaRole', schema: areaRoleAssignmentFormSchema },
+  { id: 'user', label: 'steps.user', schema: getUserSchema() },
+  { id: 'globalRole', label: 'steps.globalRole', schema: getUserRoleSchema() },
+  { id: 'areaRole', label: 'steps.areaRole', schema: getAreaRoleAssignmentSchema() },
   { id: 'summary', label: 'steps.summary', schema: z.object({}) }
 );
 
-export type UserTenantScopedFormValues = UserFormValues & AreaRoleAssignmentFormValues & UserRoleFormValues;
+export type UserTenantScopedFormValues = TUserSchema & TAreaRoleAssignmentSchema & TUserRoleSchema;
 
 interface OptionTypeWithRegex extends OptionType {
   regex: string | null;
@@ -49,15 +50,45 @@ const UserTenantScopedForm: FC<UserTenantScopedFormProps> = ({ defaultValues, te
   const [isPending, startTransition] = useTransition();
   const t = useTranslations('admin.user.form');
 
+  // Get internationalized schemas
+  const userSchemaIntl = useUserSchema();
+  const userRoleSchemaIntl = useUserRoleSchema();
+  const areaRoleAssignmentSchemaIntl = useAreaRoleAssignmentSchema();
+
+  // Create a map of step IDs to internationalized schemas
+  const schemasMap = useMemo(
+    () => ({
+      user: userSchemaIntl,
+      globalRole: userRoleSchemaIntl,
+      areaRole: areaRoleAssignmentSchemaIntl,
+      summary: z.object({}),
+    }),
+    [userSchemaIntl, userRoleSchemaIntl, areaRoleAssignmentSchemaIntl]
+  );
+
+  // Create a custom resolver that dynamically selects the correct internationalized schema
+  const dynamicResolver = useMemo(() => {
+    return (values: any, context: any, options: any) => {
+      const currentSchema = schemasMap[stepper.current.id as keyof typeof schemasMap] || stepper.current.schema;
+      const resolver = zodResolver(currentSchema);
+      return resolver(values, context, options);
+    };
+  }, [stepper.current.id, schemasMap]);
+
   const form = useForm({
     mode: 'onTouched',
-    resolver: zodResolver(stepper.current.schema),
+    resolver: dynamicResolver,
     defaultValues: defaultValues ?? {
       ...getDefaultUser(),
       ...getDefaultUserRole(),
       ...getDefaultAreaRoleAssignment(),
     },
   });
+
+  // Clear errors when step changes
+  useEffect(() => {
+    form.clearErrors();
+  }, [stepper.current.id, form]);
 
   const onSubmit = async () => {
     if (!stepper.isLast) {

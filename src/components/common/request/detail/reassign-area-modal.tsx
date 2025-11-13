@@ -7,7 +7,6 @@ import { Building, CalendarDays, Info, Layers, SquarePen, Users } from 'lucide-r
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
 
 import { AssignmentLevelType, RequestLevelType } from '@/types/zenstackhq/hierarchy';
 import useMessage from '@/lib/message';
@@ -18,19 +17,15 @@ import { Form, FormField } from '@/components/ui/form';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
-import Select, { optionSchema, OptionType } from '@/components/custom-ui/select';
+import Select, { OptionType } from '@/components/custom-ui/select';
 import { Hint } from '@/components/hint';
 import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
+import { useReassignAreaSchema, type TReassignAreaSchema } from '@/services/schemas/request';
 
 import { RequestFormStepperType } from '../request-form-stepper';
-import { AssignmentCategoryFields, combinedCategoriesSchema, CombinedCategoriesValues, RequestCategoryFields } from '../request-form-stepper/classification-step';
+import { AssignmentCategoryFields, CombinedCategoriesValues, RequestCategoryFields } from '../request-form-stepper/classification-step';
 
-export const reassignAreaSchema = combinedCategoriesSchema.extend({
-  reason: z.string().min(1, 'Este campo es obligatorio'),
-  notify: optionSchema,
-});
-
-export type ReassignAreaFormValues = z.infer<typeof reassignAreaSchema>;
+export type ReassignAreaFormValues = TReassignAreaSchema;
 
 interface ReassignAreaModalProps {
   tenantId: string;
@@ -58,6 +53,7 @@ export function ReassignAreaModal({
   const formRef = useRef<HTMLDivElement>(null);
   const t = useTranslations('admin.request.form.classificationStep');
   const message = useMessage();
+  const reassignAreaSchema = useReassignAreaSchema();
 
   const form = useForm({
     resolver: zodResolver(reassignAreaSchema),

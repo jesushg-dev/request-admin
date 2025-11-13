@@ -3,12 +3,12 @@
 import { useTransition } from 'react';
 import { useRouter } from '@/i18n/routing';
 import { useUpsertDataroomBrand } from '@/services/api/hooks';
+import { useDataroomBrandingSchema, type TDataroomBrandingSchema } from '@/services/schemas/data-room';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LoaderCircle, Upload } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
 
 import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
@@ -17,24 +17,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '@/components/ui/input';
 import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
 
-export const brandingSchema = z.object({
-  id: z.string(),
-  dataroomId: z.string(),
-  logo: z.string().url().nullable().default(null),
-  banner: z.string().url().nullable().default(null),
-  brandColor: z
-    .string()
-    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
-    .nullable()
-    .default(null),
-  accentColor: z
-    .string()
-    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
-    .nullable()
-    .default(null),
-});
-
-export const getInitialValues = (dataroomId: string = '') => ({
+export const getInitialValues = (dataroomId: string = ''): BrandingFormValues => ({
   id: generateUuid(),
   dataroomId,
   logo: null,
@@ -43,7 +26,7 @@ export const getInitialValues = (dataroomId: string = '') => ({
   accentColor: '#818cf8',
 });
 
-type BrandingFormValues = z.infer<typeof brandingSchema>;
+type BrandingFormValues = TDataroomBrandingSchema;
 
 interface DataroomBrandingProps {
   tenantId: string;
@@ -56,9 +39,11 @@ export function DataroomBrandingForm({ tenantId, initialValues }: DataroomBrandi
   const [isPending, startTransition] = useTransition();
   const { mutateAsync: upsert, error } = useUpsertDataroomBrand();
 
-  const form = useForm({
+  const brandingSchema = useDataroomBrandingSchema();
+
+  const form = useForm<BrandingFormValues>({
     resolver: zodResolver(brandingSchema),
-    defaultValues: initialValues ?? getInitialValues(),
+    defaultValues: initialValues ?? getInitialValues(''),
     mode: 'onChange',
   });
 

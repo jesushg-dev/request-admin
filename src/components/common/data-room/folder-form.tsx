@@ -4,29 +4,23 @@ import React, { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { getPathname } from '@/i18n/routing';
 import { useUpsertDataroomFolder } from '@/services/api/hooks';
+import { useFolderSchema, type TFolderSchema } from '@/services/schemas/data-room';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Locale, useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as z from 'zod';
 
 import { generateUuid } from '@/lib/id';
 import { Form, FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
 
-// Define the schema for form validation
-const formSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1, 'Name is required').max(200, 'Name must be 200 characters or less').default(''),
-});
-
-export const getDefaultValues = () => ({
+export const getDefaultValues = (): FolderFormValues => ({
   id: generateUuid(),
   name: '',
 });
 
-export type FolderFormValues = z.infer<typeof formSchema>;
+export type FolderFormValues = TFolderSchema;
 
 interface FolderFormProps {
   tenantId: string;
@@ -44,8 +38,10 @@ export const FolderForm: React.FC<FolderFormProps> = ({ locale, initialValues, c
   const [isPending, startTransition] = useTransition();
   const { mutateAsync: upsertDataRoom, error } = useUpsertDataroomFolder();
 
-  const form = useForm({
-    resolver: zodResolver(formSchema),
+  const folderSchema = useFolderSchema();
+
+  const form = useForm<FolderFormValues>({
+    resolver: zodResolver(folderSchema),
     defaultValues: initialValues ?? getDefaultValues(),
     mode: 'onBlur',
   });

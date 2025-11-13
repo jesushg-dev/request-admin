@@ -1,0 +1,30 @@
+import { z } from 'zod';
+import { useTranslations } from 'next-intl';
+
+// Type helper for translation function
+type TranslationFn = (key: any) => string;
+
+/**
+ * Hook for use in client components
+ */
+export const useDateFieldPropertiesSchema = () => {
+  const t = useTranslations('component.form.builderFields.properties.validation');
+  return createDateFieldPropertiesSchema((key: string) => t(key as any));
+};
+
+/**
+ * Creates a date field properties schema with internationalized error messages
+ */
+export function createDateFieldPropertiesSchema(t: TranslationFn) {
+  return z.object({
+    label: z.string().min(2, { message: t('labelMinLength') }).max(50, { message: t('labelMaxLength') }),
+    helperText: z.string().max(200, { message: t('helperTextMaxLength') }),
+    required: z.boolean(),
+  });
+}
+
+/**
+ * Type inference for DateFieldPropertiesSchema
+ */
+export type TDateFieldPropertiesSchema = z.infer<ReturnType<typeof createDateFieldPropertiesSchema>>;
+

@@ -6,7 +6,6 @@ import { MousePointerClickIcon, PlusIcon, XIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
 
 import { cn } from '@/lib/utils';
 import useDesigner from '@/hooks/use-designer';
@@ -18,6 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { ElementsType, FormElement, FormElementInstance, SubmitFunction } from '@/components/builder-form/form-elements';
+import { useSelectFieldPropertiesSchema, type TSelectFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 
 const type: ElementsType = 'SelectField';
 
@@ -28,14 +28,6 @@ const extraAttributes = {
   placeHolder: 'Value here...',
   options: [],
 };
-
-const propertiesSchema = z.object({
-  label: z.string().min(2).max(50),
-  helperText: z.string().max(200),
-  required: z.boolean().default(false),
-  placeHolder: z.string().max(50),
-  options: z.array(z.string()).default([]),
-});
 
 export const SelectFieldFormElement: FormElement = {
   type,
@@ -132,13 +124,13 @@ function FormComponent({ elementInstance, submitValue, isInvalid, defaultValue }
   );
 }
 
-type propertiesFormSchemaType = z.infer<typeof propertiesSchema>;
 function PropertiesComponent({ elementInstance }: { elementInstance: FormElementInstance }) {
   const element = elementInstance as CustomInstance;
   const { updateElement, setSelectedElement } = useDesigner();
   const t = useTranslations('component.form.builderFields.common');
   const toastMessages = useTranslations('component.form.builderFields.messages');
-  const form = useForm({
+  const propertiesSchema = useSelectFieldPropertiesSchema();
+  const form = useForm<TSelectFieldPropertiesSchema>({
     resolver: zodResolver(propertiesSchema),
     mode: 'onSubmit',
     defaultValues: {
@@ -154,7 +146,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
     form.reset(element.extraAttributes);
   }, [element, form]);
 
-  function applyChanges(values: propertiesFormSchemaType) {
+  function applyChanges(values: TSelectFieldPropertiesSchema) {
     const { label, helperText, placeHolder, required, options } = values;
     updateElement(element.id, {
       ...element,

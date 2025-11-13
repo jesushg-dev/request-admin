@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { SquareCheckIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import { cn } from '@/lib/utils';
 import useDesigner from '@/hooks/use-designer';
@@ -15,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { ElementsType, FormElement, FormElementInstance, SubmitFunction } from '@/components/builder-form/form-elements';
+import { useCheckboxFieldPropertiesSchema, type TCheckboxFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 
 const type: ElementsType = 'CheckboxField';
 
@@ -23,12 +23,6 @@ const extraAttributes = {
   helperText: 'Helper text',
   required: false,
 };
-
-const propertiesSchema = z.object({
-  label: z.string().min(2).max(50),
-  helperText: z.string().max(200),
-  required: z.boolean().default(false),
-});
 
 export const CheckboxFieldFormElement: FormElement = {
   type,
@@ -129,12 +123,12 @@ function FormComponent({ elementInstance, submitValue, isInvalid, defaultValue }
   );
 }
 
-type propertiesFormSchemaType = z.infer<typeof propertiesSchema>;
 function PropertiesComponent({ elementInstance }: { elementInstance: FormElementInstance }) {
   const element = elementInstance as CustomInstance;
   const { updateElement } = useDesigner();
   const t = useTranslations('component.form.builderFields.common');
-  const form = useForm({
+  const propertiesSchema = useCheckboxFieldPropertiesSchema();
+  const form = useForm<TCheckboxFieldPropertiesSchema>({
     resolver: zodResolver(propertiesSchema),
     mode: 'onBlur',
     defaultValues: {
@@ -148,7 +142,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
     form.reset(element.extraAttributes);
   }, [element, form]);
 
-  function applyChanges(values: propertiesFormSchemaType) {
+  function applyChanges(values: TCheckboxFieldPropertiesSchema) {
     const { label, helperText, required } = values;
     updateElement(element.id, {
       ...element,

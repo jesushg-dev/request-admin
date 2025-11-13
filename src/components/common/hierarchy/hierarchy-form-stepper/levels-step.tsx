@@ -14,21 +14,9 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sortable, SortableDragHandle, SortableItem } from '@/components/ui/sortable';
 import { Textarea } from '@/components/ui/textarea';
+import { type TLevelsSchema } from '@/services/schemas/hierarchy';
 
-export const levelsSchema = z.object({
-  levels: z
-    .array(
-      z.object({
-        id: z.string(),
-        name: z.string().min(1, 'Level name is required').max(100, 'Level name must be 100 characters or less'),
-        description: z.string().max(255, 'Description must be 255 characters or less').optional(),
-        isActive: z.boolean().default(true),
-      })
-    )
-    .min(1, 'At least one hierarchy level is required'),
-});
-
-export type LevelsFormValues = z.infer<typeof levelsSchema>;
+export type LevelsFormValues = TLevelsSchema;
 
 export function LevelsStep({ isInUse = false }: { isInUse?: boolean }) {
   const t = useTranslations('admin.hierarchy.stepsForm');

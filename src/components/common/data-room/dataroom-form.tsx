@@ -3,11 +3,11 @@
 import React, { useTransition } from 'react';
 import { useRouter } from '@/i18n/routing';
 import { useUpsertDataroom } from '@/services/api/hooks';
+import { useDataroomSchema, type TDataroomSchema } from '@/services/schemas/data-room';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as z from 'zod';
 
 import { generateUuid } from '@/lib/id';
 import { Form, FormField } from '@/components/ui/form';
@@ -15,22 +15,14 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
 
-// Define the schema for form validation
-const formSchema = z.object({
-  id: z.string().uuid(),
-  slug: z.string(),
-  name: z.string().min(1, 'Name is required').max(200, 'Name must be 200 characters or less').default(''),
-  description: z.string().min(1, 'Description is required').max(500, 'Description must be 500 characters or less').default(''),
-});
-
-export const getDefaultValues = () => ({
+export const getDefaultValues = (): DataroomFormValues => ({
   id: generateUuid(),
   name: '',
   slug: '',
   description: '',
 });
 
-export type DataroomFormValues = z.infer<typeof formSchema>;
+export type DataroomFormValues = TDataroomSchema;
 
 interface DataroomFormProps {
   tenantId: string;
@@ -43,8 +35,10 @@ export const DataroomForm: React.FC<DataroomFormProps> = ({ initialValues, tenan
   const [isPending, startTransition] = useTransition();
   const { mutateAsync: upsert, error } = useUpsertDataroom();
 
-  const form = useForm({
-    resolver: zodResolver(formSchema),
+  const dataroomSchema = useDataroomSchema();
+
+  const form = useForm<DataroomFormValues>({
+    resolver: zodResolver(dataroomSchema),
     defaultValues: initialValues ?? getDefaultValues(),
     mode: 'onBlur',
   });

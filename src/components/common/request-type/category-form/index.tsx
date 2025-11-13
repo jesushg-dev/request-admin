@@ -1,8 +1,6 @@
 // category-form/index.tsx
-import { executionFlowSchema } from '@/services/schemas/execution-flow';
 import { useTranslations } from 'next-intl';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { z } from 'zod';
 
 import { RequestLevelType } from '@/types/zenstackhq/hierarchy';
 import { generateUuid } from '@/lib/id';
@@ -10,38 +8,19 @@ import { Button } from '@/components/ui/button';
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MultiSelector } from '@/components/custom-ui/multi-selector';
-import { optionSchema, OptionType } from '@/components/custom-ui/select';
+import { OptionType } from '@/components/custom-ui/select';
 import FlowBuilder from '@/components/process-flow/flow-builder/flow-builder';
 import { TabSection } from '@/components/shared/tab-section';
+import { useRequestCategorySchema, type TRequestCategorySchema } from '@/services/schemas/request-type';
 
 import { BlockedResourcesInfo } from '../blocked-resources-info';
 import { useHierarchicalResourceContext } from '../hierarchical-category-provider';
 import { RequestTypeFormValues } from '../request-type-form';
 import { BasicInfoTab } from './basic-info-tab';
-import { guideSchema, GuideTab } from './guides-tab';
+import { GuideTab } from './guides-tab';
 import { SlaTab } from './sla-tab';
 
-export const requestCategorySchema = z.object({
-  id: z.string(),
-  hierarchyLevelId: z.string(),
-  parentCategoryId: z.string().nullish(),
-  name: z.string().min(2, { message: 'Name must be at least 2 characters' }).max(100, { message: 'Name must be less than 100 characters' }),
-  description: z.string().nullish(),
-  isActive: z.boolean().default(true),
-  isEligibleForNewClients: z.boolean().default(true),
-  requirements: z.array(optionSchema).optional(),
-  forms: z.array(optionSchema).optional(),
-  sla: z.object({
-    id: z.string(),
-    resolutionTime: z.coerce.number().min(0, { message: 'Resolution time cannot be negative' }),
-    escalationTime: z.coerce.number().min(0, { message: 'Escalation time cannot be negative' }),
-  }),
-  guides: z.array(guideSchema),
-  children: z.array(z.string()),
-  executionSteps: executionFlowSchema.optional(),
-});
-
-export type RequestCategoryValues = z.infer<typeof requestCategorySchema>;
+export type RequestCategoryValues = TRequestCategorySchema;
 
 export const getDefaultCategory = (hierarchyLevelId: string, parentCategoryId?: string | null): RequestCategoryValues => ({
   id: generateUuid(),

@@ -11,17 +11,20 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { FormCheckboxItem, FormItem } from '@/components/shared/form-root';
+import { type TWorkflowSchema } from '@/services/schemas/workflow';
 
+// Base schema for defineStepper (without internationalization)
+// This is used only for the stepper definition
 export const workflowFormSchema = z.object({
   id: z.string(),
-  name: z.string().min(1, 'requiredName'),
+  name: z.string().min(1),
   description: z.string().optional(),
   isDefault: z.boolean().default(false),
   requireComments: z.boolean().default(false),
   notifyChanges: z.boolean().default(false),
 });
 
-export type WorkflowFormValues = z.infer<typeof workflowFormSchema>;
+export type WorkflowFormValues = TWorkflowSchema;
 
 export const getWorkflowDefaultValue = (): WorkflowFormValues => ({
   id: generateUuid(),

@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
+import { useAppearanceSchema, type TAppearanceSchema } from '@/services/schemas/settings.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
 import { useTheme } from 'next-themes';
 import { useParams } from 'next/navigation';
 import { locales, usePathname, useRouter } from '@/i18n/routing';
@@ -19,13 +19,6 @@ import { useFont } from '@/components/hoc/font-provider';
 import { LanguageSelectOptions } from '@/components/language-select-options';
 
 
-  // Create schema with translations
-const appearanceFormSchema = z.object({
-  font: z.string(),
-  theme: z.string(),
-  language:z.string(),
-});
-
 export default function AppearanceForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -34,8 +27,9 @@ export default function AppearanceForm() {
   // Get translations
   const t = useTranslations('admin.setting.preferencesAppearance');
 
+  const appearanceSchema = useAppearanceSchema();
 
-  type AppearanceFormValues = z.infer<typeof appearanceFormSchema>;
+  type AppearanceFormValues = TAppearanceSchema;
 
   // Get current theme from next-themes
   const { theme, setTheme } = useTheme();
@@ -56,8 +50,8 @@ export default function AppearanceForm() {
     language: currentLocale,
   };
 
-  const form = useForm({
-    resolver: zodResolver(appearanceFormSchema),
+  const form = useForm<AppearanceFormValues>({
+    resolver: zodResolver(appearanceSchema),
     defaultValues,
     mode: 'onChange',
   });

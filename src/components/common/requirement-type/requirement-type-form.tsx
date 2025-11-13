@@ -7,7 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as z from 'zod';
 
 import { generateUuid } from '@/lib/id';
 import { Form, FormField } from '@/components/ui/form';
@@ -15,17 +14,9 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { FormActions, FormCheckboxItem, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
+import { useRequirementTypeSchema, type TRequirementTypeSchema } from '@/services/schemas/requirement';
 
-// Schema definition for request priority type form
-const formSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1, 'Name is required').max(100, 'Name must be 100 characters or less'),
-  description: z.string().max(500, 'Description must be 500 characters or less').optional().default(''),
-  isActive: z.boolean().default(true),
-  isDefault: z.boolean().default(false),
-});
-
-export type RequirementTypeFormValues = z.infer<typeof formSchema>;
+export type RequirementTypeFormValues = TRequirementTypeSchema;
 
 // Default values generator
 export const getDefaultValues = (): RequirementTypeFormValues => ({
@@ -46,6 +37,7 @@ export default function RequirementTypeForm({ tenantId, initialValues }: Require
   const t = useTranslations('admin.requirementType.form');
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const formSchema = useRequirementTypeSchema();
 
   const form = useForm({
     resolver: zodResolver(formSchema),

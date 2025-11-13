@@ -3,43 +3,18 @@
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { getPathname } from '@/i18n/routing';
+import { useDocumentUploadSchema, type TDocumentUploadSchema } from '@/services/schemas/documents';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Locale } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
 
 import { uploadFiles } from '@/lib/uploadthing';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { ButtonLoading } from '@/components/shared/button-util';
 import { FileUploader } from '@/components/uploader/file-uploader';
 
-// Define the form schema based on the Document model
-const formSchema = z.object({
-  files: z
-    .array(z.instanceof(File))
-    .min(1, {
-      message: 'At least one file is required',
-    })
-    .max(3, {
-      message: 'Maximum of 3 files allowed',
-    })
-    .superRefine((val, ctx) => {
-      const files = val as File[];
-      for (const file of files) {
-        if (file.size > 4 * 1024 * 1024) {
-          ctx.addIssue({
-            path: ['files'],
-            message: `File ${file.name} exceeds the maximum size of 4MB`,
-            code: "custom",
-          });
-        }
-      }
-    }),
-  //storageType: z.enum(['S3_PATH', 'VERCEL_BLOB']).default('VERCEL_BLOB'),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = TDocumentUploadSchema;
 
 interface DocumentUploadProps {
   id?: string;
@@ -55,11 +30,12 @@ export function DocumentUpload({ id, locale, tenantId, folderId, callbackUrl, da
   const [pending, startTransition] = useTransition();
   //const [progresses, setProgresses] = useState<Record<string, number>>({});
 
-  const form = useForm({
-    resolver: zodResolver(formSchema),
+  const documentUploadSchema = useDocumentUploadSchema();
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(documentUploadSchema),
     defaultValues: {
       files: [],
-      //storageType: 'VERCEL_BLOB',
     },
   });
 

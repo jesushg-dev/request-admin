@@ -7,7 +7,6 @@ import { format } from 'date-fns';
 import { CalendarDaysIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import { cn } from '@/lib/utils';
 import useDesigner from '@/hooks/use-designer';
@@ -19,6 +18,7 @@ import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Switch } from '@/components/ui/switch';
 import { ElementsType, FormElement, FormElementInstance, SubmitFunction } from '@/components/builder-form/form-elements';
+import { useDateFieldPropertiesSchema, type TDateFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 
 const type: ElementsType = 'DateField';
 
@@ -27,12 +27,6 @@ const extraAttributes = {
   helperText: 'Pick a date',
   required: false,
 };
-
-const propertiesSchema = z.object({
-  label: z.string().min(2).max(50),
-  helperText: z.string().max(200),
-  required: z.boolean().default(false),
-});
 
 export const DateFieldFormElement: FormElement = {
   type,
@@ -139,12 +133,12 @@ function FormComponent({ elementInstance, submitValue, isInvalid, defaultValue }
   );
 }
 
-type propertiesFormSchemaType = z.infer<typeof propertiesSchema>;
 function PropertiesComponent({ elementInstance }: { elementInstance: FormElementInstance }) {
   const element = elementInstance as CustomInstance;
   const { updateElement } = useDesigner();
   const t = useTranslations('component.form.builderFields.common');
-  const form = useForm({
+  const propertiesSchema = useDateFieldPropertiesSchema();
+  const form = useForm<TDateFieldPropertiesSchema>({
     resolver: zodResolver(propertiesSchema),
     mode: 'onBlur',
     defaultValues: {
@@ -158,7 +152,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
     form.reset(element.extraAttributes);
   }, [element, form]);
 
-  function applyChanges(values: propertiesFormSchemaType) {
+  function applyChanges(values: TDateFieldPropertiesSchema) {
     const { label, helperText, required } = values;
     updateElement(element.id, {
       ...element,

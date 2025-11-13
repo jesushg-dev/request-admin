@@ -2,29 +2,24 @@
 
 import React, { useTransition } from 'react';
 import { useUpdateDataroomViewerGroup } from '@/services/api/hooks';
+import { useDomainSettingsSchema, type TDomainSettingsSchema } from '@/services/schemas/data-room';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Check } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as z from 'zod';
 
 import { Form, FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
 
-const formSchema = z.object({
-  allowedDomains: z.string(),
-  allowAll: z.boolean().default(false),
-});
-
-export const getDefaultValues = () => ({
+export const getDefaultValues = (): DomainSettingsFormValues => ({
   allowedDomains: '',
   allowAll: false,
 });
 
-export type DomainSettingsFormValues = z.infer<typeof formSchema>;
+export type DomainSettingsFormValues = TDomainSettingsSchema;
 
 interface DomainSettingsManagementProps {
   tenantId: string;
@@ -37,8 +32,10 @@ export function DomainSettingsManagement({ tenantId, dataroomId, selectedGroupId
   const t = useTranslations('admin.dataroom.groups.settings');
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm({
-    resolver: zodResolver(formSchema),
+  const domainSettingsSchema = useDomainSettingsSchema();
+
+  const form = useForm<DomainSettingsFormValues>({
+    resolver: zodResolver(domainSettingsSchema),
     defaultValues: initialValues ?? getDefaultValues(),
     mode: 'onBlur',
   });

@@ -4,12 +4,12 @@ import { useTransition } from 'react';
 import { getRoles } from '@/constants/system-role';
 import { authClient } from '@/server/auth-client';
 import { useUpdateUserTenant } from '@/services/api/hooks';
+import { useUserTenantSchema, type TUserTenantSchema } from '@/services/schemas/settings/organization';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, LogOut, ShieldCheck } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as z from 'zod';
 
 import useMessage from '@/lib/message';
 import { PERMISSION, useAuthorization } from '@/hooks/use-authorization';
@@ -21,13 +21,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { AlertBanner } from '@/components/custom-ui/alert-banner';
-import Select, { optionSchema } from '@/components/custom-ui/select';
-
-const userTenantFormSchema = z.object({
-  isActive: z.boolean(),
-  isTermAccepted: z.boolean(),
-  role: z.array(optionSchema),
-});
+import Select from '@/components/custom-ui/select';
 
 const defaultValues: UserTenantFormValues = {
   isActive: true,
@@ -35,7 +29,7 @@ const defaultValues: UserTenantFormValues = {
   role: [],
 };
 
-type UserTenantFormValues = z.infer<typeof userTenantFormSchema>;
+type UserTenantFormValues = TUserTenantSchema;
 
 export default function UserTenantForm() {
   const t = useTranslations('admin.setting.roleAndAccess');
@@ -49,8 +43,10 @@ export default function UserTenantForm() {
   const [isUpdating, startUpdating] = useTransition();
   const [isLeavingOrg, startLeavingOrg] = useTransition();
 
-  const form = useForm({
-    resolver: zodResolver(userTenantFormSchema),
+  const userTenantSchema = useUserTenantSchema();
+
+  const form = useForm<UserTenantFormValues>({
+    resolver: zodResolver(userTenantSchema),
     defaultValues: userTenant ? { ...userTenant, role: [], isActive: false } : defaultValues,
     mode: 'onChange',
   });

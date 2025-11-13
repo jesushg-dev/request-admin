@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { PilcrowIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import { cn } from '@/lib/utils';
 import useDesigner from '@/hooks/use-designer';
@@ -16,6 +15,7 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { ElementsType, FormElement, FormElementInstance, SubmitFunction } from '@/components/builder-form/form-elements';
+import { useTextAreaFieldPropertiesSchema, type TTextAreaFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 
 const type: ElementsType = 'TextAreaField';
 
@@ -26,14 +26,6 @@ const extraAttributes = {
   placeHolder: 'Value here...',
   rows: 3,
 };
-
-const propertiesSchema = z.object({
-  label: z.string().min(2).max(50),
-  helperText: z.string().max(200),
-  required: z.boolean().default(false),
-  placeHolder: z.string().max(50),
-  rows: z.number().min(1).max(10),
-});
 
 export const TextAreaFormElement: FormElement = {
   type,
@@ -127,13 +119,12 @@ function FormComponent({ elementInstance, submitValue, isInvalid, defaultValue }
   );
 }
 
-type propertiesFormSchemaType = z.infer<typeof propertiesSchema>;
-
 function PropertiesComponent({ elementInstance }: { elementInstance: FormElementInstance }) {
   const element = elementInstance as CustomInstance;
   const { updateElement } = useDesigner();
   const t = useTranslations('component.form.builderFields.common');
-  const form = useForm({
+  const propertiesSchema = useTextAreaFieldPropertiesSchema();
+  const form = useForm<TTextAreaFieldPropertiesSchema>({
     resolver: zodResolver(propertiesSchema),
     mode: 'onBlur',
     defaultValues: {
@@ -149,7 +140,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
     form.reset(element.extraAttributes);
   }, [element, form]);
 
-  function applyChanges(values: propertiesFormSchemaType) {
+  function applyChanges(values: TTextAreaFieldPropertiesSchema) {
     const { label, helperText, placeHolder, required, rows } = values;
     updateElement(element.id, {
       ...element,

@@ -5,23 +5,19 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Heading1Icon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import useDesigner from '@/hooks/use-designer';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ElementsType, FormElement, FormElementInstance } from '@/components/builder-form/form-elements';
+import { useTitleFieldPropertiesSchema, type TTitleFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 
 const type: ElementsType = 'TitleField';
 
 const extraAttributes = {
   title: 'Title field',
 };
-
-const propertiesSchema = z.object({
-  title: z.string().min(2).max(50),
-});
 
 export const TitleFieldFormElement: FormElement = {
   type,
@@ -63,13 +59,12 @@ function FormComponent({ elementInstance }: { elementInstance: FormElementInstan
   return <p className="text-xl">{title}</p>;
 }
 
-type propertiesFormSchemaType = z.infer<typeof propertiesSchema>;
-
 function PropertiesComponent({ elementInstance }: { elementInstance: FormElementInstance }) {
   const element = elementInstance as CustomInstance;
   const { updateElement } = useDesigner();
   const t = useTranslations('component.form.builderFields.common');
-  const form = useForm({
+  const propertiesSchema = useTitleFieldPropertiesSchema();
+  const form = useForm<TTitleFieldPropertiesSchema>({
     resolver: zodResolver(propertiesSchema),
     mode: 'onBlur',
     defaultValues: {
@@ -81,7 +76,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
     form.reset(element.extraAttributes);
   }, [element, form]);
 
-  function applyChanges(values: propertiesFormSchemaType) {
+  function applyChanges(values: TTitleFieldPropertiesSchema) {
     const { title } = values;
     updateElement(element.id, {
       ...element,

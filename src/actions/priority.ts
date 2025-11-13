@@ -4,7 +4,9 @@ import { currentSession } from '@/server/auth-server';
 import { getDb } from '@/server/db-client';
 
 import { RequestPriorityTypeDefaultArgs } from '@/types/zenstackhq/priority';
-import { RequestPriorityTypeFormValues } from '@/components/common/priority/priority-form';
+import { type TPrioritySchema } from '@/services/schemas/priority';
+
+type RequestPriorityTypeFormValues = TPrioritySchema;
 
 class UserNotFoundErr extends Error {}
 

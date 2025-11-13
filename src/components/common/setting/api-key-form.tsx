@@ -8,7 +8,6 @@ import { AlertCircle, Copy } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -16,16 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { JsonInput } from '@/components/custom-ui/json-input';
-
-export const apiKeyFormSchema = z.object({
-  name: z.string().min(1, { message: 'errors.nameRequired' }),
-  prefix: z.string().min(1, { message: 'errors.prefixRequired' }),
-  expiresIn: z.enum(['never', '7d', '30d', '90d', '1y']),
-  metadata: z.object({}),
-  rateLimitEnabled: z.boolean().default(false),
-  rateLimitMax: z.number().optional(),
-  rateLimitTimeWindow: z.number().optional(),
-});
+import { useApiKeyFormSchema, type TApiKeyFormSchema } from '@/services/schemas/settings/api-key.schema';
 
 export const getApiKeyDefaultValues = (): ApiKeyFormValues => ({
   name: '',
@@ -37,7 +27,7 @@ export const getApiKeyDefaultValues = (): ApiKeyFormValues => ({
   rateLimitTimeWindow: 60000,
 });
 
-export type ApiKeyFormValues = z.infer<typeof apiKeyFormSchema>;
+export type ApiKeyFormValues = TApiKeyFormSchema;
 
 interface ApiKeyCreateFormProps {
   tenantId: string;
@@ -56,6 +46,7 @@ export function ApiKeyCreateForm({ defaultValues, tenantId }: ApiKeyCreateFormPr
   const t = useTranslations('admin.setting.apiKeys.createForm');
   const [newApiKey, setNewApiKey] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const apiKeyFormSchema = useApiKeyFormSchema();
 
   const form = useForm({
     mode: 'onChange',

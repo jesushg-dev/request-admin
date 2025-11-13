@@ -849,6 +849,15 @@
       "cancelling": "Cancelando invitación...",
       "cancelSuccess": "Invitación cancelada.",
       "cancelError": "No se pudo cancelar la invitación"
+    },
+    "validation": {
+      "emailEmpty": "El correo electrónico es requerido",
+      "emailInvalid": "Dirección de correo electrónico inválida",
+      "passwordEmpty": "La contraseña es requerida",
+      "passwordMinLength": "La contraseña debe tener al menos 6 caracteres",
+      "usernameEmpty": "El nombre de usuario es requerido",
+      "newPasswordRequired": "La nueva contraseña es requerida al cambiar la contraseña",
+      "passwordRequired": "La contraseña actual es requerida al establecer una nueva contraseña"
     }
   },
   "tenants": {
@@ -1054,7 +1063,11 @@
           "yearly": "Anual"
         },
         "remove": "Eliminar",
-        "addFeature": "Agregar Característica"
+        "addFeature": "Agregar Característica",
+        "validation": {
+          "featureRequired": "La selección de característica es obligatoria",
+          "resetIntervalRequired": "El intervalo de reinicio es obligatorio"
+        }
       },
       "planStep": {
         "header": {
@@ -1069,7 +1082,12 @@
         "price": "Precio",
         "priceHelp": "Ingresa 0 para un plan gratuito",
         "duration": "Duración (en días)",
-        "durationHelp": "Déjalo vacío para duración ilimitada"
+        "durationHelp": "Déjalo vacío para duración ilimitada",
+        "validation": {
+          "nameRequired": "El nombre es obligatorio",
+          "descriptionRequired": "La descripción es obligatoria",
+          "priceMin": "El precio debe ser 0 o mayor"
+        }
       },
       "summaryStep": {
         "header": {
@@ -1656,6 +1674,15 @@
           "header": {
             "title": "Detalles del área",
             "description": "Administre la información y la jerarquía asociada para esta área."
+          },
+          "validation": {
+            "nameRequired": "El nombre es obligatorio"
+          },
+          "assignmentCategory": {
+            "validation": {
+              "nameMinLength": "El nombre debe tener al menos 2 caracteres",
+              "duplicateName": "Este nombre ya está en uso"
+            }
           }
         },
         "messages": {
@@ -1706,7 +1733,14 @@
         "notRequired": "No Requerido"
       },
       "saveError": "No pudimos guardar sus cambios: {error]",
-      "noContent": "Sin contenido"
+      "noContent": "Sin contenido",
+      "validation": {
+        "nameRequired": "El nombre es obligatorio",
+        "nameMaxLength": "El nombre debe tener 200 caracteres o menos",
+        "descriptionMaxLength": "La descripción debe tener 500 caracteres o menos",
+        "contentRequired": "El contenido es obligatorio",
+        "contentMaxLength": "El contenido debe tener 500 caracteres o menos"
+      }
     },
     "dataroom": {
       "main": {
@@ -1806,7 +1840,13 @@
         "create": "Crear",
         "saveError": "Ocurrió un error: {message}",
         "title": "Crear sala de datos",
-        "subtitle": "Administre sus documentos y enlaces en un solo lugar."
+        "subtitle": "Administre sus documentos y enlaces en un solo lugar.",
+        "validation": {
+          "nameRequired": "El nombre es obligatorio",
+          "nameMaxLength": "El nombre debe tener 200 caracteres o menos",
+          "descriptionRequired": "La descripción es obligatoria",
+          "descriptionMaxLength": "La descripción debe tener 500 caracteres o menos"
+        }
       },
       "branding": {
         "title": "Personalización del Dataroom",
@@ -1915,6 +1955,12 @@
           "saveDraft": "Guardar borrador",
           "downloadConfig": "Descargar configuración",
           "copyLink": "Copiar enlace de vista previa"
+        },
+        "validation": {
+          "logoInvalidUrl": "El logo debe ser una URL válida",
+          "bannerInvalidUrl": "El banner debe ser una URL válida",
+          "brandColorInvalid": "El color de marca debe ser un color hexadecimal válido (ej., #FF0000 o #F00)",
+          "accentColorInvalid": "El color de acento debe ser un color hexadecimal válido (ej., #FF0000 o #F00)"
         }
       },
       "viewerGroup": {
@@ -1929,7 +1975,11 @@
         "nameDescription": "Ingrese el nombre del grupo.",
         "namePlaceholder": "Nombre del grupo",
         "create": "Crear",
-        "saveChanges": "Guardar Cambios"
+        "saveChanges": "Guardar Cambios",
+        "validation": {
+          "nameRequired": "El nombre es obligatorio",
+          "nameMaxLength": "El nombre debe tener 200 caracteres o menos"
+        }
       },
       "groups": {
         "settings": {
@@ -1946,7 +1996,10 @@
           "saveSettings": "Guardar Configuración",
           "savingSettings": "Guardando configuración...",
           "saveSuccess": "¡Configuración actualizada exitosamente!",
-          "saveError": "Error guardando configuración: {{message}}"
+          "saveError": "Error guardando configuración: {{message}}",
+          "validation": {
+            "allowedDomainsRequired": "Los dominios permitidos son obligatorios"
+          }
         }
       }
     },
@@ -2168,7 +2221,19 @@
         "advancedExcelEnabled": "Funciones Avanzadas de Excel",
         "advancedExcelEnabledDescription": "Habilitar procesamiento avanzado de Excel",
         "downloadOnly": "Solo Descarga",
-        "downloadOnlyDescription": "El documento solo puede ser descargado, no visualizado"
+        "downloadOnlyDescription": "El documento solo puede ser descargado, no visualizado",
+        "validation": {
+          "nameRequired": "El nombre es obligatorio",
+          "nameMaxLength": "El nombre debe tener 200 caracteres o menos",
+          "statusInvalid": "Estado inválido"
+        }
+      }
+    },
+    "upload": {
+      "validation": {
+        "filesRequired": "Se requiere al menos un archivo",
+        "filesMaxCount": "Se permiten máximo 3 archivos",
+        "fileSizeExceeded": "El archivo {fileName} excede el tamaño máximo de 4MB"
       }
     },
     "client": {
@@ -2209,6 +2274,13 @@
         }
       },
       "form": {
+        "validation": {
+          "nameRequired": "El nombre es obligatorio",
+          "nameMaxLength": "El nombre debe tener 150 caracteres o menos",
+          "descriptionMaxLength": "La descripción debe tener 500 caracteres o menos",
+          "regexMaxLength": "El regex debe tener 500 caracteres o menos",
+          "testInputMaxLength": "La entrada de prueba debe tener 500 caracteres o menos"
+        },
         "name": "Nombre",
         "nameDescription": "El nombre del tipo de identificación (e.g., \"Pasaporte\")",
         "description": "Descripción",
@@ -2457,6 +2529,9 @@
               "description": "Esta acción modifica abruptamente la clasificación de solicitud, y será necesario actualizar la página para ver los cambios."
             }
           },
+          "validation": {
+            "reasonRequired": "Este campo es obligatorio"
+          },
           "requestCategory": {
             "title": "Categoría de Solicitud",
             "description": "Identifica la categoría de la solicitud brindando la información necesaria para su correcta gestión.",
@@ -2527,7 +2602,13 @@
           "isDraft": "Es borrador",
           "isDraftDescription": "Esta opción le permite guardar esta solicitud sin enviarla al área asignada, para deshabilitar esta opción, debe cumplir con los requisitos requeridos.",
           "detailsStep": "Solicitar información",
-          "detailsStepDescription": "Ingrese los detalles necesarios para iniciar su solicitud de servicio"
+          "detailsStepDescription": "Ingrese los detalles necesarios para iniciar su solicitud de servicio",
+          "validation": {
+            "issueSubjectRequired": "El asunto es obligatorio",
+            "issueSubjectMaxLength": "El asunto debe tener como máximo 255 caracteres",
+            "descriptionMaxLength": "La descripción debe tener como máximo 5000 caracteres",
+            "priorityRequired": "La prioridad es obligatoria"
+          }
         },
         "attachmentsStep": {
           "uploadFiles": "Subir archivos",
@@ -2570,6 +2651,11 @@
         }
       },
       "assign": {
+        "validation": {
+          "assigneesMin": "Debe asignar al menos un usuario",
+          "onlyOneCoordinator": "Solo puede haber un coordinador",
+          "atLeastOneCoordinator": "Debe seleccionar al menos un coordinador"
+        },
         "title": "Asignar solicitud",
         "description": "Asigna la solicitud #{requestId} a un usuario",
         "area": "Departamento",
@@ -2597,6 +2683,9 @@
         "addAssignee": "Agregar asignado"
       },
       "massiveAssign": {
+        "validation": {
+          "requestRequired": "Se requiere al menos una solicitud"
+        },
         "title": "Asignación Masiva de Solicitudes",
         "description": "Asigna múltiples solicitudes a un usuario seleccionado",
         "user": "Usuario",
@@ -2647,6 +2736,10 @@
           "error": "Ocurrió un error al cambiar el estado: {error}"
         },
         "flowDescription": "{count, plural, one {Una solicitud en el estado \"{from}\" puede avanzar al siguiente estado: {to}.} other {Una solicitud en el estado \"{from}\" puede avanzar a los siguientes estados: {to}.}}",
+        "flowDescriptionShort": "{count, plural, one {Puede avanzar a: {to}} other {Puede avanzar a: {to}}}",
+        "validation": {
+          "reasonRequired": "Se requiere una justificación para esta transición de estado"
+        },
         "assignmentRequired": "Permisos insuficientes",
         "assignmentRequiredDescription": "Póngase en contacto con el usuario que le asignó la solicitud o alguien con el permiso requerido para hacer el cambio.",
         "changeStatus": "Cambiar Estado",
@@ -2680,7 +2773,11 @@
           "error": "Ocurrió un error al cambiar la prioridad: {error}"
         },
         "priority": "Prioridad",
-        "changePriority": "Prioridad de cambio"
+        "changePriority": "Prioridad de cambio",
+        "validation": {
+          "reasonRequired": "Este campo es obligatorio",
+          "reasonMaxLength": "Máximo 500 caracteres"
+        }
       },
       "kanban": {
         "assignmentNotFound": "Asignación no encontrada",
@@ -2745,6 +2842,14 @@
         }
       },
       "create": {
+        "validation": {
+          "nameMinLength": "El nombre debe tener al menos 2 caracteres",
+          "nameMaxLength": "El nombre debe tener menos de 100 caracteres",
+          "sla": {
+            "resolutionTimeMin": "El tiempo de resolución no puede ser negativo",
+            "escalationTimeMin": "El tiempo de escalación no puede ser negativo"
+          }
+        },
         "title": "Categoría de Solicitud",
         "subtitle": "Crea una nueva categoría de solicitud. Una categoría puede tener múltiples subcategorías recursivas según las necesidades de tu negocio.",
         "hierarchyLabel": "Jerarquía asociada",
@@ -2882,7 +2987,23 @@
         "manageAction": "Crear nueva categoría",
         "selectTitle": "Seleccione una jerarquía",
         "selectDescription": "Por favor selecciona una jerarquía desde la barra lateral para gestionar sus categorías.",
-        "selectAction": "Crear una nueva jerarquía"
+        "selectAction": "Crear una nueva jerarquía",
+        "validation": {
+          "nameMinLength": "El nombre debe tener al menos 2 caracteres",
+          "nameMaxLength": "El nombre debe tener menos de 100 caracteres",
+          "sla": {
+            "resolutionTimeMin": "El tiempo de resolución no puede ser negativo",
+            "escalationTimeMin": "El tiempo de escalación no puede ser negativo"
+          }
+        },
+        "guidesTab": {
+          "validation": {
+            "nameMinLength": "El título debe tener al menos 2 caracteres",
+            "fileUrlInvalid": "Debe ser una URL válida",
+            "versionRequired": "La versión es requerida",
+            "updatedAtRequired": "La fecha de actualización es requerida"
+          }
+        }
       }
     },
     "requirement": {
@@ -2921,6 +3042,13 @@
           "title": "Información de requisito",
           "descriptionUpdate": "Complete los campos requeridos para actualizar el requisito.",
           "descriptionCreate": "Complete los campos requeridos para crear un nuevo requisito."
+        },
+        "validation": {
+          "nameRequired": "El nombre es obligatorio",
+          "nameMaxLength": "El nombre debe tener 200 caracteres o menos",
+          "descriptionRequired": "La descripción es obligatoria",
+          "descriptionMaxLength": "La descripción debe tener 500 caracteres o menos",
+          "requirementTypeRequired": "El tipo de requisito es obligatorio"
         }
       }
     },
@@ -2939,6 +3067,11 @@
         "createdAt": "Fecha de Creación"
       },
       "form": {
+        "validation": {
+          "nameRequired": "El nombre es obligatorio",
+          "nameMaxLength": "El nombre debe tener 100 caracteres o menos",
+          "descriptionMaxLength": "La descripción debe tener 500 caracteres o menos"
+        },
         "savingChanges": "Guardando cambios...",
         "successSave": "{name} se ha guardado correctamente.",
         "errorSave": "Error al guardar: {message}",
@@ -3098,6 +3231,11 @@
         "header": {
           "title": "Gestión de la jerarquía",
           "description": "Una jerarquía organiza categorías en niveles como padre, hijo o nieto, lo que facilita la estructura y clasificación de una solicitud"
+        },
+        "validation": {
+          "nameRequired": "El nombre es obligatorio",
+          "nameMaxLength": "El nombre debe tener como máximo 100 caracteres",
+          "descriptionMaxLength": "La descripción debe tener como máximo 255 caracteres"
         }
       },
       "stepsForm": {
@@ -3111,7 +3249,13 @@
         "levelDescriptionPlaceholder": "Ej: Especificaciones para {name}",
         "thisLevel": "este nivel",
         "add": "Agregar nuevo nivel",
-        "addDisabled": "No se pueden agregar nuevos niveles"
+        "addDisabled": "No se pueden agregar nuevos niveles",
+        "validation": {
+          "levelNameRequired": "El nombre del nivel es obligatorio",
+          "levelNameMaxLength": "El nombre del nivel debe tener como máximo 100 caracteres",
+          "levelDescriptionMaxLength": "La descripción debe tener como máximo 255 caracteres",
+          "atLeastOneLevelRequired": "Se requiere al menos un nivel de jerarquía"
+        }
       },
       "summaryStep": {
         "title": "Revisar Jerarquía",
@@ -3363,6 +3507,10 @@
             "prefixRequired": "El prefijo es obligatorio",
             "invalidMetadata": "Metadatos no válidos. Proporciona un JSON válido para los metadatos."
           },
+          "validation": {
+            "nameRequired": "El nombre es obligatorio",
+            "prefixRequired": "El prefijo es obligatorio"
+          },
           "name": {
             "label": "Nombre",
             "placeholder": "Mi clave API",
@@ -3509,6 +3657,9 @@
         "buttons": {
           "send": "Enviar correo de verificación",
           "sending": "Enviando..."
+        },
+        "validation": {
+          "emailInvalid": "Por favor ingresa una dirección de correo electrónico válida."
         }
       },
       "twoFactor": {
@@ -3741,6 +3892,12 @@
             "confirm": "Verificar",
             "cancel": "Cancelar"
           }
+        },
+        "validation": {
+          "nameMinLength": "El nombre debe tener al menos 2 caracteres.",
+          "emailInvalid": "Por favor ingresa una dirección de correo electrónico válida.",
+          "usernameMinLength": "El nombre de usuario debe tener al menos 2 caracteres.",
+          "displayUsernameMinLength": "El nombre de usuario para mostrar debe tener al menos 2 caracteres."
         }
       },
       "roleAndAccess": {
@@ -3890,6 +4047,16 @@
           "success": "Información personal actualizada exitosamente",
           "error": "Error al actualizar la información personal"
         }
+      },
+      "subscription": {
+        "validation": {
+          "planRequired": "Por favor selecciona un plan."
+        }
+      },
+      "notifications": {
+        "validation": {
+          "notifyTypeRequired": "Debes seleccionar un tipo de notificación."
+        }
       }
     },
     "folder": {
@@ -3906,7 +4073,11 @@
         "saveError": "Error al guardar la carpeta: {message}",
         "saveChanges": "Guardar Cambios",
         "create": "Crear",
-        "root": "raíz"
+        "root": "raíz",
+        "validation": {
+          "nameRequired": "El nombre es obligatorio",
+          "nameMaxLength": "El nombre debe tener 200 caracteres o menos"
+        }
       }
     },
     "link": {
@@ -4067,7 +4238,14 @@
         "subtitleCreate": "Puede compartir documentos con sus clientes creando enlaces.",
         "titleEdit": "Editar un enlace",
         "create": "Crear",
-        "saveChanges": "Guardar cambios"
+        "saveChanges": "Guardar cambios",
+        "validation": {
+          "nameRequired": "El nombre es obligatorio",
+          "nameMaxLength": "El nombre debe tener 200 caracteres o menos",
+          "viewerValueRequired": "El valor del visualizador no puede estar vacío",
+          "customFieldLabelRequired": "La etiqueta del campo personalizado es obligatoria",
+          "passwordRequiredWhenEnabled": "La contraseña es requerida cuando se habilita la protección por contraseña"
+        }
       }
     },
     "requestPriorityType": {
@@ -4078,6 +4256,16 @@
         "description": "Rellene los detalles para crear un nuevo tipo de prioridad de solicitud."
       },
       "form": {
+        "validation": {
+          "nameRequired": "El nombre es obligatorio",
+          "nameMaxLength": "El nombre debe tener 100 caracteres o menos",
+          "colorRequired": "El color es obligatorio",
+          "descriptionMaxLength": "La descripción debe tener 500 caracteres o menos",
+          "levelMin": "El nivel debe ser un número positivo",
+          "levelMax": "El nivel debe ser menor que 10",
+          "colorInvalid": "Formato de color inválido",
+          "maxPriorityTypes": "Se permiten máximo 5 tipos de prioridad"
+        },
         "name": "Nombre",
         "namePlaceholder": "Ingrese el nombre de la prioridad",
         "color": "Color",
@@ -4181,6 +4369,9 @@
         "defaultWorkflow": "Flujo Predeterminado",
         "defaultWorkflowDesc": "Establecer como flujo predeterminado para nuevas solicitudes",
         "requireComments": "Requerir Comentarios",
+        "validation": {
+          "nameRequired": "El nombre es obligatorio"
+        },
         "requireCommentsDesc": "Comentarios obligatorios para cambios de estado",
         "notifyChanges": "Notificar Cambios",
         "notifyChangesDesc": "Enviar notificaciones cuando el flujo cambie",
@@ -4321,7 +4512,10 @@
         "approvalDescription": "Necesita aprobación del supervisor",
         "cancel": "Cancelar",
         "save": "Guardar",
-        "localeKey": "es"
+        "localeKey": "es",
+        "validation": {
+          "nameRequired": "El nombre es obligatorio"
+        }
       },
       "state": {
         "addTitle": "Agregar Estado",
@@ -4351,7 +4545,10 @@
         "cancel": "Cancelar",
         "save": "Guardar",
         "typeLabel": "Tipo",
-        "typeDescription": "Tipo de estado"
+        "typeDescription": "Tipo de estado",
+        "validation": {
+          "nameRequired": "El nombre es obligatorio"
+        }
       }
     },
     "helpPage": {
@@ -4579,6 +4776,9 @@
       }
     },
     "form": {
+      "validation": {
+        "nameMinLength": "El nombre debe tener al menos 4 caracteres"
+      },
       "loading": "Cargando...",
       "formPublished": "🎊🎊 Formulario publicado 🎊🎊",
       "shareThisForm": "Comparte este formulario",
@@ -4691,6 +4891,22 @@
           "success": "Éxito",
           "height": "Altura",
           "noProperties": "No hay propiedades para este elemento"
+        },
+        "properties": {
+          "validation": {
+            "labelMinLength": "La etiqueta debe tener al menos 2 caracteres",
+            "labelMaxLength": "La etiqueta debe tener como máximo 50 caracteres",
+            "helperTextMaxLength": "El texto de ayuda debe tener como máximo 200 caracteres",
+            "placeholderMaxLength": "El marcador de posición debe tener como máximo 50 caracteres",
+            "rowsMin": "Las filas deben ser al menos 1",
+            "rowsMax": "Las filas deben ser como máximo 10",
+            "textMinLength": "El texto debe tener al menos 2 caracteres",
+            "textMaxLength": "El texto debe tener como máximo 500 caracteres",
+            "titleMinLength": "El título debe tener al menos 2 caracteres",
+            "titleMaxLength": "El título debe tener como máximo 50 caracteres",
+            "heightMin": "La altura debe ser al menos 5",
+            "heightMax": "La altura debe ser como máximo 200"
+          }
         }
       }
     },
@@ -4743,6 +4959,12 @@
         "saving": "Guardando roles...",
         "success": "{count, plural, one {Rol \"{names}\" guardado exitosamente.} other {Roles \"{names}\" guardados exitosamente.}}",
         "error": "No se pudieron guardar los roles: {error}"
+      },
+      "validation": {
+        "nameMinLength": "El nombre del rol debe tener al menos 3 caracteres",
+        "nameMaxLength": "El nombre del rol no debe exceder 100 caracteres",
+        "descriptionMaxLength": "La descripción no debe exceder 255 caracteres",
+        "duplicateName": "El nombre del rol \"{name}\" está duplicado"
       }
     },
     "userRoleAssignmentForm": {
@@ -4771,6 +4993,10 @@
       "header": {
         "description": "Gestionar a los usuarios y sus roles asignados dentro del área.",
         "title": "Asignación de roles de usuario"
+      },
+      "validation": {
+        "userRequired": "El usuario es obligatorio",
+        "roleRequired": "El rol es obligatorio"
       }
     },
     "categoryTreeView": {

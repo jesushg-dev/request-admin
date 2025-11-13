@@ -12,9 +12,13 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import Select, { OptionType } from '@/components/custom-ui/select';
 
+import { type TUserRoleSchema } from '@/services/schemas/user';
+
+// Base schema for defineStepper (without internationalization)
+// This is used only for the stepper definition
 export const roleSchema = z.object({
   id: z.string().uuid().default(generateUuid),
-  roleId: z.object({ value: z.string().min(1, 'Role is required'), label: z.string() }),
+  roleId: z.object({ value: z.string().min(1), label: z.string() }),
   isActive: z.boolean().default(true),
 });
 
@@ -26,7 +30,7 @@ export const getDefaultUserRole = (): UserRoleFormValues => ({
   roles: [{ id: generateUuid(), roleId: { value: '', label: '' }, isActive: true }],
 });
 
-export type UserRoleFormValues = z.infer<typeof userRoleFormSchema>;
+export type UserRoleFormValues = TUserRoleSchema;
 
 interface UserRoleFormProps {
   tenantId: string;

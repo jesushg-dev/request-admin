@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useTransition, type FC } from 'react';
+import React, { useEffect, useMemo, useState, useTransition, type FC } from 'react';
 import { useRouter } from '@/i18n/routing';
 import { useUpsertRequestWorkflow } from '@/services/api/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,19 +16,20 @@ import { Form } from '@/components/ui/form';
 import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
 import { StepNavigationModern } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
+import { getWorkflowSchema, useWorkflowSchema, type TWorkflowSchema } from '@/services/schemas/workflow';
 
 import { RequestFlowDiagramEditor, type WorkflowData } from './flow-diagram-editor';
-import RequestWorkflowForm, { getWorkflowDefaultValue, workflowFormSchema } from './request-workflow-form';
+import RequestWorkflowForm, { getWorkflowDefaultValue } from './request-workflow-form';
 import WorkflowReview from './workflow-review';
 
 // Stepper definition
 const { useStepper, utils } = defineStepper(
-  { id: 'description', label: 'steps.description', schema: workflowFormSchema },
+  { id: 'description', label: 'steps.description', schema: getWorkflowSchema() },
   { id: 'transitions', label: 'steps.transitions', schema: z.object({}) },
   { id: 'finish', label: 'steps.review', schema: z.object({}) }
 );
 
-export type WorkflowFormStepperType = z.infer<typeof workflowFormSchema>;
+export type WorkflowFormStepperType = TWorkflowSchema;
 
 interface WorkflowFormStepperProps {
   tenantId: string;
@@ -44,12 +45,39 @@ const WorkflowFormStepper: FC<WorkflowFormStepperProps> = ({ tenantId, defaultVa
   const [state, setState] = useState<WorkflowData>({ nodes: [], edges: [] });
   const t = useTranslations('admin.workflow.form');
 
+  // Get internationalized schema
+  const workflowSchemaIntl = useWorkflowSchema();
+
+  // Create a map of step IDs to internationalized schemas
+  const schemasMap = useMemo(
+    () => ({
+      description: workflowSchemaIntl,
+      transitions: z.object({}),
+      finish: z.object({}),
+    }),
+    [workflowSchemaIntl]
+  );
+
+  // Create a custom resolver that dynamically selects the correct internationalized schema
+  const dynamicResolver = useMemo(() => {
+    return (values: any, context: any, options: any) => {
+      const currentSchema = schemasMap[stepper.current.id as keyof typeof schemasMap] || stepper.current.schema;
+      const resolver = zodResolver(currentSchema);
+      return resolver(values, context, options);
+    };
+  }, [stepper.current.id, schemasMap]);
+
   // Initialize React Hook Form with current step schema
   const form = useForm({
     mode: 'onTouched',
-    resolver: zodResolver(stepper.current.schema),
+    resolver: dynamicResolver,
     defaultValues: defaultValues ? omit(defaultValues, ['nodes', 'edges']) : getWorkflowDefaultValue(),
   });
+
+  // Clear errors when step changes
+  useEffect(() => {
+    form.clearErrors();
+  }, [stepper.current.id, form]);
 
   // Handle form submission
   const onSubmit = async () => {

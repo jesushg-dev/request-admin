@@ -2,12 +2,12 @@
 
 import { useEffect, useState, useTransition } from 'react';
 import { authClient, useSession } from '@/server/auth-client';
+import { useProfileSchema, type TProfileSchema } from '@/services/schemas/settings.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CheckCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as z from 'zod';
 
 import useMessage from '@/lib/message';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -19,30 +19,7 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { PhoneInput } from '@/components/custom-ui/phone-input';
 
-const profileFormSchema = z.object({
-  name: z.string().min(2, {
-    message: 'Name must be at least 2 characters.',
-  }),
-  email: z.string().email({
-    message: 'Please enter a valid email address.',
-  }),
-  username: z
-    .string()
-    .min(2, {
-      message: 'Username must be at least 2 characters.',
-    })
-    .optional(),
-  displayUsername: z
-    .string()
-    .min(2, {
-      message: 'Display username must be at least 2 characters.',
-    })
-    .optional(),
-  phoneNumber: z.string().optional(),
-  image: z.string().optional(),
-});
-
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
+type ProfileFormValues = TProfileSchema;
 
 // Default values for the form
 const defaultValues: ProfileFormValues = {
@@ -65,8 +42,10 @@ export default function UserProfileForm() {
   const [emailVerified, setEmailVerified] = useState(false);
   const [phoneVerified, setPhoneVerified] = useState(false);
 
-  const form = useForm({
-    resolver: zodResolver(profileFormSchema),
+  const profileSchema = useProfileSchema();
+
+  const form = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileSchema),
     defaultValues,
     mode: 'onChange',
   });

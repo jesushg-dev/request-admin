@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useNotificationsSchema, type TNotificationsSchema } from '@/services/schemas/settings.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -15,21 +15,12 @@ import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import useLocalStorage from '@/hooks/use-local-storage';
 
-const notificationsFormSchema = z.object({
-  notifyType: z.enum(['all', 'mentions', 'none'], {
-    error: 'You need to select a notification type.',
-  }),
-  communicationEmails: z.boolean().default(false),
-  marketingEmails: z.boolean().default(false),
-  socialEmails: z.boolean().default(false),
-  securityEmails: z.boolean().default(true),
-  mobileDifferent: z.boolean().default(false),
-});
-
-type NotificationsFormValues = z.infer<typeof notificationsFormSchema>;
+type NotificationsFormValues = TNotificationsSchema;
 
 export default function NotificationsForm() {
   const [isLoading, setIsLoading] = useState(false);
+
+  const notificationsSchema = useNotificationsSchema();
 
   // Load saved preferences from localStorage
   const [savedPreferences, setSavedPreferences] = useLocalStorage<NotificationsFormValues>('notification-preferences', {
@@ -41,8 +32,8 @@ export default function NotificationsForm() {
     mobileDifferent: false,
   });
 
-  const form = useForm({
-    resolver: zodResolver(notificationsFormSchema),
+  const form = useForm<NotificationsFormValues>({
+    resolver: zodResolver(notificationsSchema),
     defaultValues: savedPreferences,
     mode: 'onChange',
   });

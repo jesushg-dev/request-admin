@@ -3,29 +3,23 @@
 import React, { useTransition } from 'react';
 import { useRouter } from '@/i18n/routing';
 import { useUpsertDataroomViewerGroup } from '@/services/api/hooks';
+import { useDataroomViewerGroupSchema, type TDataroomViewerGroupSchema } from '@/services/schemas/data-room';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as z from 'zod';
 
 import { generateUuid } from '@/lib/id';
 import { Form, FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
 
-// Define the schema for form validation
-const formSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1, 'Name is required').max(200, 'Name must be 200 characters or less').default(''),
-});
-
-export const getDefaultValues = () => ({
+export const getDefaultValues = (): DataroomViewerGroupFormValues => ({
   id: generateUuid(),
   name: '',
 });
 
-export type DataroomViewerGroupFormValues = z.infer<typeof formSchema>;
+export type DataroomViewerGroupFormValues = TDataroomViewerGroupSchema;
 
 interface DataroomViewerGroupFormProps {
   tenantId: string;
@@ -39,8 +33,10 @@ export const DataroomViewerGroupForm: React.FC<DataroomViewerGroupFormProps> = (
   const [isPending, startTransition] = useTransition();
   const { mutateAsync: upsert, error } = useUpsertDataroomViewerGroup();
 
-  const form = useForm({
-    resolver: zodResolver(formSchema),
+  const dataroomViewerGroupSchema = useDataroomViewerGroupSchema();
+
+  const form = useForm<DataroomViewerGroupFormValues>({
+    resolver: zodResolver(dataroomViewerGroupSchema),
     defaultValues: initialValues ?? getDefaultValues(),
     mode: 'onBlur',
   });

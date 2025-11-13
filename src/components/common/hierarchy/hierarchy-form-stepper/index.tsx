@@ -1,6 +1,6 @@
 'use client';
 
-import { useTransition, type FC } from 'react';
+import { useEffect, useMemo, useTransition, type FC } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { defineStepper } from '@stepperize/react';
 import { Locale, useTranslations } from 'next-intl';
@@ -11,18 +11,19 @@ import { z } from 'zod';
 import { Form } from '@/components/ui/form';
 import { StepNavigationModern } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
+import { useHierarchySchema, useLevelsSchema, getHierarchySchema, getLevelsSchema, type THierarchySchema, type TLevelsSchema } from '@/services/schemas/hierarchy';
 
-import { getDefaultHierarchyFormValues, HierarchyForm, hierarchySchema } from '../hierarchy-form';
-import { levelsSchema, LevelsStep } from './levels-step';
+import { getDefaultHierarchyFormValues, HierarchyForm } from '../hierarchy-form';
+import { LevelsStep } from './levels-step';
 import { SummaryStep } from './summary-step';
 
 const { useStepper, utils } = defineStepper(
-  { id: 'hierarchy', label: 'steps.hierarchy', schema: hierarchySchema },
-  { id: 'levels', label: 'steps.levels', schema: levelsSchema },
+  { id: 'hierarchy', label: 'steps.hierarchy', schema: getHierarchySchema() },
+  { id: 'levels', label: 'steps.levels', schema: getLevelsSchema() },
   { id: 'summary', label: 'steps.summary', schema: z.object({}) }
 );
 
-export type HierarchyFormStepperValues = z.infer<typeof hierarchySchema> & z.infer<typeof levelsSchema>;
+export type HierarchyFormStepperValues = THierarchySchema & TLevelsSchema;
 
 interface HierarchyFormStepperProps {
   tenantId: string;
@@ -36,13 +37,43 @@ const HierarchyFormStepper: FC<HierarchyFormStepperProps> = ({ tenantId, locale,
   const stepper = useStepper();
   const [isPending, startTransition] = useTransition();
   const t = useTranslations('admin.hierarchy');
+  
+  // Get internationalized schemas
+  const hierarchySchemaIntl = useHierarchySchema();
+  const levelsSchemaIntl = useLevelsSchema();
+  
+  // Create a map of step IDs to internationalized schemas
+  const schemasMap = useMemo(
+    () => ({
+      hierarchy: hierarchySchemaIntl,
+      levels: levelsSchemaIntl,
+      summary: z.object({}),
+    }),
+    [hierarchySchemaIntl, levelsSchemaIntl]
+  );
+  
+  // Create a custom resolver that dynamically selects the correct internationalized schema
+  // based on the current step. This allows us to use internationalized schemas even though
+  // defineStepper requires static schemas.
+  const dynamicResolver = useMemo(() => {
+    return (values: any, context: any, options: any) => {
+      const currentSchema = schemasMap[stepper.current.id as keyof typeof schemasMap] || stepper.current.schema;
+      const resolver = zodResolver(currentSchema);
+      return resolver(values, context, options);
+    };
+  }, [stepper.current.id, schemasMap]);
 
   const form = useForm({
-    resolver: zodResolver(stepper.current.schema),
+    resolver: dynamicResolver,
     defaultValues: defaultValues ?? {
       ...getDefaultHierarchyFormValues(),
     },
   });
+  
+  // Clear errors when step changes to ensure clean validation state
+  useEffect(() => {
+    form.clearErrors();
+  }, [stepper.current.id, form]);
 
   const onSubmit = () => {
     if (!stepper.isLast) {

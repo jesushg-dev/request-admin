@@ -8,7 +8,6 @@ import { Tag } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as z from 'zod';
 
 import { generateUuid } from '@/lib/id';
 import { Badge } from '@/components/ui/badge';
@@ -16,22 +15,10 @@ import { Form, FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { FormActions, FormCheckboxItem, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
-
-// Schema definition for request priority type form
-const formSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1, 'Name is required').max(100, 'Name must be 100 characters or less'),
-  primaryColor: z.string().min(1, 'Color is required'),
-  description: z.string().max(500, 'Description must be 500 characters or less').optional().default(''),
-  level: z.number().min(0, 'Level must be a positive number').max(10, 'Level must be less than 10').default(0),
-  isActive: z.boolean().default(true),
-  isDefault: z.boolean().default(false),
-});
-
-export type RequestPriorityTypeFormValues = z.infer<typeof formSchema>;
+import { usePrioritySchema, type TPrioritySchema } from '@/services/schemas/priority';
 
 // Default values generator
-export const getDefaultValues = (): RequestPriorityTypeFormValues => ({
+export const getDefaultValues = (): TPrioritySchema => ({
   id: generateUuid(),
   name: '',
   primaryColor: '#000000',
@@ -43,7 +30,7 @@ export const getDefaultValues = (): RequestPriorityTypeFormValues => ({
 
 interface RequestPriorityTypeFormProps {
   tenantId: string;
-  initialValues?: RequestPriorityTypeFormValues | null;
+  initialValues?: TPrioritySchema | null;
 }
 
 // Main component for creating or editing a request priority type
@@ -51,13 +38,14 @@ export default function PriorityForm({ tenantId, initialValues }: RequestPriorit
   const t = useTranslations('admin.requestPriorityType.form');
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const formSchema = usePrioritySchema();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: initialValues ?? getDefaultValues(),
   });
 
-  const onSubmit = (values: RequestPriorityTypeFormValues) => {
+  const onSubmit = (values: TPrioritySchema) => {
     startTransition(async () => {
       try {
         const formData = {

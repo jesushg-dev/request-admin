@@ -27,14 +27,17 @@ export const getDefaultRole = () => ({
   isActive: true,
 });
 
-// Validation Schema
+import { type TRolesSchema } from '@/services/schemas/role';
+
+// Base schema for defineStepper (without internationalization)
+// This is used only for the stepper definition
 export const rolesFormSchema = z.object({
   roles: z
     .array(
       z.object({
         id: z.string().uuid().default(generateUuid),
-        name: z.string().min(3, 'Role Name must be at least 3 characters').max(100, 'Role Name must not exceed 100 characters'),
-        description: z.string().max(255, 'Description must not exceed 255 characters').optional(),
+        name: z.string().min(3).max(100),
+        description: z.string().max(255).optional(),
         isActive: z.boolean(),
         features: z.array(
           z.object({
@@ -67,7 +70,7 @@ export const rolesFormSchema = z.object({
 });
 
 // Types
-export type RoleFormBatchValues = z.infer<typeof rolesFormSchema>;
+export type RoleFormBatchValues = TRolesSchema;
 
 interface RolesFormProps {
   isBatch?: boolean;

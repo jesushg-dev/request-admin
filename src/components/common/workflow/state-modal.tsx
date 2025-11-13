@@ -5,24 +5,16 @@ import { colorOptions, typeOptions } from '@/constants/workflow';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
 import { Form, FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import Select, { optionSchema } from '@/components/custom-ui/select';
+import Select from '@/components/custom-ui/select';
 import { FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
+import { useStateSchema, type TStateSchema } from '@/services/schemas/workflow';
 
-export const stateSchema = z.object({
-  id: z.string(),
-  label: z.string().min(1, 'validation.requiredName'),
-  description: z.string().optional(),
-  color: optionSchema,
-  type: optionSchema,
-});
-
-export type StateValues = z.infer<typeof stateSchema>;
+export type StateValues = TStateSchema;
 
 export const getStateDefaultValue = (): StateValues => ({
   id: '',
@@ -41,6 +33,7 @@ interface StateModalProps {
 
 export function StateModal({ onClose, defaultValues, onSave, showDescription }: StateModalProps) {
   const t = useTranslations('admin.workflow.state');
+  const stateSchema = useStateSchema();
 
   const form = useForm({
     resolver: zodResolver(stateSchema),

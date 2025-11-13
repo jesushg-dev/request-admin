@@ -14,7 +14,10 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import Select, { OptionType } from '@/components/custom-ui/select';
 import { FormCheckboxItem, FormItem, FormSection } from '@/components/shared/form-root';
+import { type TRequestDetailSchema } from '@/services/schemas/request';
 
+// Base schema for defineStepper (without internationalization)
+// This is used only for the stepper definition
 export const requestDetailSchema = z.object({
   id: z.string(),
   slug: z.number().optional(),
@@ -25,7 +28,7 @@ export const requestDetailSchema = z.object({
   isDraft: z.boolean(),
 });
 
-export type RequestDetailValues = z.infer<typeof requestDetailSchema>;
+export type RequestDetailValues = TRequestDetailSchema;
 
 export const getDefaultDetailsValues = (): RequestDetailValues => ({
   id: generateUuid(),

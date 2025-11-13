@@ -15,24 +15,28 @@ import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessa
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Select, { OptionType } from '@/components/custom-ui/select';
 
+import { type TUserRoleAssignmentSchema } from '@/services/schemas/role';
+
+// Base schema for defineStepper (without internationalization)
+// This is used only for the stepper definition
 export const userRoleAssignmentFormSchema = z.object({
   userRoles: z.array(
     z.object({
       id: z.string().uuid().default(generateUuid),
       isActive: z.boolean().default(true),
       userId: z.object({
-        value: z.string().min(1, 'User is required'),
+        value: z.string().min(1),
         label: z.string().min(1),
       }),
       roleId: z.object({
-        value: z.string().min(1, 'Role is required'),
+        value: z.string().min(1),
         label: z.string().min(1),
       }),
     })
   ),
 });
 
-export type userRoleAssignmentFormValues = z.infer<typeof userRoleAssignmentFormSchema>;
+export type userRoleAssignmentFormValues = TUserRoleAssignmentSchema;
 
 export const getDefaultUserRole = (role: OptionType) => ({
   id: generateUuid(),

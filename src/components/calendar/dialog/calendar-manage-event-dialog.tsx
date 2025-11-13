@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { useForm } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
-import { z } from 'zod';
 
 import {
   AlertDialog,
@@ -24,39 +23,14 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { ColorPicker } from '@/components/form/color-picker';
 import { DateTimePicker } from '@/components/form/date-time-picker';
+import { useManageEventSchema, type TManageEventSchema } from '@/services/schemas/calendar';
 
 import { useCalendarContext } from '../calendar-context';
 
 export default function CalendarManageEventDialog() {
   const { manageEventDialogOpen, setManageEventDialogOpen, selectedEvent, setSelectedEvent, events, setEvents } = useCalendarContext();
   const t = useTranslations('component.calendar.manageEventDialog');
-
-  const formSchema = z
-    .object({
-      title: z.string().min(1, t('validation.titleRequired')),
-      start: z.string().refine((val) => !isNaN(Date.parse(val)), {
-        message: t('validation.invalidStartDate'),
-      }),
-      end: z.string().refine((val) => !isNaN(Date.parse(val)), {
-        message: t('validation.invalidEndDate'),
-      }),
-      color: z.string(),
-    })
-    .refine(
-      (data) => {
-        try {
-          const start = new Date(data.start);
-          const end = new Date(data.end);
-          return end >= start;
-        } catch {
-          return false;
-        }
-      },
-      {
-        message: t('validation.endAfterStart'),
-        path: ['end'],
-      }
-    );
+  const formSchema = useManageEventSchema();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -79,7 +53,7 @@ export default function CalendarManageEventDialog() {
     }
   }, [selectedEvent, form]);
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: TManageEventSchema) {
     if (!selectedEvent) return;
 
     const updatedEvent = {

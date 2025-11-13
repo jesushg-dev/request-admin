@@ -2,11 +2,11 @@
 
 import { useTransition } from 'react';
 import { authClient } from '@/server/auth-client';
+import { usePasswordChangeSchema, type TPasswordChangeSchema } from '@/services/schemas/settings.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,33 +25,15 @@ export default function SecurityForm() {
   const t = useTranslations('admin.setting.password');
   const [isPending, startTransition] = useTransition();
 
-  const passwordFormSchema = z
-    .object({
-      currentPassword: z.string().min(8, {
-        message: t('errors.minLength'),
-      }),
-      newPassword: z.string().min(8, {
-        message: t('errors.minLength'),
-      }),
-      confirmPassword: z.string().min(8, {
-        message: t('errors.minLength'),
-      }),
-      revokeOtherSessions: z.boolean().default(false),
-    })
-    .refine((data) => data.newPassword === data.confirmPassword, {
-      message: t('errors.passwordMismatch'),
-      path: ['confirmPassword'],
-    });
+  const passwordSchema = usePasswordChangeSchema();
 
-  type PasswordFormValues = z.infer<typeof passwordFormSchema>;
-
-  const passwordForm = useForm({
-    resolver: zodResolver(passwordFormSchema),
+  const passwordForm = useForm<TPasswordChangeSchema>({
+    resolver: zodResolver(passwordSchema),
     defaultValues: passwordDefaultValues,
     mode: 'onChange',
   });
 
-  function onPasswordSubmit({ newPassword, currentPassword, revokeOtherSessions }: PasswordFormValues) {
+  function onPasswordSubmit({ newPassword, currentPassword, revokeOtherSessions }: TPasswordChangeSchema) {
     startTransition(async () => {
       const toastId = toast.loading(t('updating'));
       await authClient.changePassword(

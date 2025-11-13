@@ -7,7 +7,6 @@ import { BookOpen, Edit, FileText, Plus, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useForm, useFormContext } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
 
 import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
@@ -18,21 +17,11 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
+import { useGuideSchema, type TGuideSchema } from '@/services/schemas/request-type';
 
 import { RequestCategoryValues } from '.';
 
-export const guideSchema = z.object({
-  id: z.string(),
-  name: z.string().min(2, 'El título debe tener al menos 2 caracteres'),
-  description: z.string().nullish(),
-  fileType: z.enum(['PDF', 'Excel', 'Video', 'DOCX', 'XLSX']),
-  fileUrl: z.string().url('Debe ser una URL válida'),
-  version: z.string().min(1, 'La versión es requerida'),
-  updatedAt: z.string().datetime('Fecha inválida'),
-  isActive: z.boolean().default(true),
-});
-
-export type GuideFormValues = z.infer<typeof guideSchema>;
+export type GuideFormValues = TGuideSchema;
 
 export function GuideTab() {
   const t = useTranslations('admin.requestType.create.guidesTab');
@@ -168,6 +157,7 @@ const getDefaultGuideValues = (): GuideFormValues => ({
 
 function GuideModal({ open, onClose, onSave, initialData }: { open: boolean; onClose: () => void; onSave: (data: GuideFormValues) => void; initialData?: GuideFormValues }) {
   const t = useTranslations('admin.requestType.create.guidesTab');
+  const guideSchema = useGuideSchema();
   const form = useForm({
     resolver: zodResolver(guideSchema),
     defaultValues: initialData ?? getDefaultGuideValues(),

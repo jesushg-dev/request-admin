@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { useSubscriptionSchema, type TSubscriptionSchema } from '@/services/schemas/settings.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { format } from 'date-fns';
 import { CalendarIcon, CheckCircle, CreditCard, Package } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
 
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -20,16 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
-const subscriptionFormSchema = z.object({
-  planId: z.string().min(1, {
-    message: 'Please select a plan.',
-  }),
-  isLifetime: z.boolean().default(false),
-  startDate: z.date(),
-  endDate: z.date(),
-});
-
-type SubscriptionFormValues = z.infer<typeof subscriptionFormSchema>;
+type SubscriptionFormValues = TSubscriptionSchema;
 
 // Mock data for plans
 const plans = [
@@ -82,6 +74,8 @@ const payments = [
 export default function SubscriptionForm() {
   const [isLoading, setIsLoading] = useState(false);
 
+  const subscriptionSchema = useSubscriptionSchema();
+
   // Default values for the form
   const defaultValues: SubscriptionFormValues = {
     planId: 'pro',
@@ -90,8 +84,8 @@ export default function SubscriptionForm() {
     endDate: new Date(2024, 9, 15),
   };
 
-  const form = useForm({
-    resolver: zodResolver(subscriptionFormSchema),
+  const form = useForm<SubscriptionFormValues>({
+    resolver: zodResolver(subscriptionSchema),
     defaultValues,
     mode: 'onChange',
   });

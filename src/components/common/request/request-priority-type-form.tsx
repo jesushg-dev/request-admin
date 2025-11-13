@@ -1,30 +1,19 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react';
 import { useFieldArray, useForm } from 'react-hook-form';
-import * as z from 'zod';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useRequestPriorityTypeSchema, type TRequestPriorityTypeSchema } from '@/services/schemas/request';
 
 const MAX_PRIORITY_TYPES = 5;
 
-const requestPriorityTypeSchema = z.object({
-  name: z.string().min(1, 'Required').max(100, 'Max 100 chars'),
-  description: z.string().max(255, 'Max 255 chars').optional(),
-  isActive: z.boolean().default(true),
-  primaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Invalid color'),
-});
-
-const formSchema = z.object({
-  priorityTypes: z.array(requestPriorityTypeSchema).max(MAX_PRIORITY_TYPES, `Maximum of ${MAX_PRIORITY_TYPES} priority types allowed`),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
 export default function RequestPriorityTypeForm() {
+  const formSchema = useRequestPriorityTypeSchema();
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,7 +26,7 @@ export default function RequestPriorityTypeForm() {
     name: 'priorityTypes',
   });
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = (data: TRequestPriorityTypeSchema) => {
     console.log(data);
     // Here you would typically send the data to your API
   };

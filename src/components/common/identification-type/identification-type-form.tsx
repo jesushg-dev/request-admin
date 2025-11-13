@@ -7,7 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as z from 'zod';
 
 import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
@@ -15,18 +14,9 @@ import { Form, FormControl, FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { FormActions, FormContent, FormItem, FormRoot, FormSection, FormValidationStatus } from '@/components/shared/form-root';
+import { useIdentificationTypeSchema, type TIdentificationTypeSchema } from '@/services/schemas/identification-type';
 
-const identificationTypeFormSchema = z.object({
-  id: z.string().optional(),
-  name: z.string().min(1, 'Name is required').max(150, 'Name must be 150 characters or less'),
-  description: z.string().max(500, 'Description must be 500 characters or less').optional(),
-  regex: z.string().max(500, 'Regex must be 500 characters or less').optional(),
-  testInput: z.string().max(500, 'Test input must be 500 characters or less').optional(),
-});
-
-type identificationTypeFormValues = z.infer<typeof identificationTypeFormSchema>;
-
-const getDefaultValues = (): identificationTypeFormValues => ({
+const getDefaultValues = (): TIdentificationTypeSchema => ({
   id: generateUuid(),
   name: '',
   description: '',
@@ -36,12 +26,14 @@ const getDefaultValues = (): identificationTypeFormValues => ({
 
 interface IdentificationTypeFormProps {
   tenantId: string;
-  defaultValues?: identificationTypeFormValues;
+  defaultValues?: TIdentificationTypeSchema;
 }
 
 export const IdentificationTypeForm: FC<IdentificationTypeFormProps> = ({ tenantId, defaultValues }) => {
   const router = useRouter();
   const t = useTranslations('admin.identificationType.form');
+  const identificationTypeFormSchema = useIdentificationTypeSchema();
+
   const form = useForm({
     resolver: zodResolver(identificationTypeFormSchema),
     defaultValues: defaultValues ?? getDefaultValues(),
@@ -63,7 +55,7 @@ export const IdentificationTypeForm: FC<IdentificationTypeFormProps> = ({ tenant
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onSubmit = ({ testInput, ...data }: identificationTypeFormValues) => {
+  const onSubmit = ({ testInput, ...data }: TIdentificationTypeSchema) => {
     startTransition(async () => {
       const promise = upsert({
         create: { ...data, tenantId },

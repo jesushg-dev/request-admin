@@ -848,6 +848,15 @@
       "cancelling": "Cancelling invitation...",
       "cancelSuccess": "Invitation cancelled.",
       "cancelError": "Failed to cancel invitation"
+    },
+    "validation": {
+      "emailEmpty": "Email is required",
+      "emailInvalid": "Invalid email address",
+      "passwordEmpty": "Password is required",
+      "passwordMinLength": "Password must be at least 6 characters",
+      "usernameEmpty": "Username is required",
+      "newPasswordRequired": "New password is required when changing password",
+      "passwordRequired": "Current password is required when setting a new password"
     }
   },
   "tenants": {
@@ -1053,7 +1062,11 @@
           "yearly": "Yearly"
         },
         "remove": "Remove",
-        "addFeature": "Add Feature"
+        "addFeature": "Add Feature",
+        "validation": {
+          "featureRequired": "Feature selection is required",
+          "resetIntervalRequired": "Reset interval is required"
+        }
       },
       "planStep": {
         "header": {
@@ -1068,7 +1081,12 @@
         "price": "Price",
         "priceHelp": "Enter 0 for a free plan",
         "duration": "Duration (in days)",
-        "durationHelp": "Leave empty for unlimited duration"
+        "durationHelp": "Leave empty for unlimited duration",
+        "validation": {
+          "nameRequired": "Name is required",
+          "descriptionRequired": "Description is required",
+          "priceMin": "Price must be 0 or greater"
+        }
       },
       "summaryStep": {
         "header": {
@@ -1653,6 +1671,15 @@
           "header": {
             "title": "Area Details",
             "description": "Manage the information and associated hierarchy for this area."
+          },
+          "validation": {
+            "nameRequired": "Name is required"
+          },
+          "assignmentCategory": {
+            "validation": {
+              "nameMinLength": "Name must be at least 2 characters",
+              "duplicateName": "This name is already in use"
+            }
           }
         },
         "messages": {
@@ -1703,7 +1730,14 @@
         "notRequired": "Not Required"
       },
       "saveError": "We couldn't save your changes: {error]",
-      "noContent": "No content"
+      "noContent": "No content",
+      "validation": {
+        "nameRequired": "Name is required",
+        "nameMaxLength": "Name must be 200 characters or less",
+        "descriptionMaxLength": "Description must be 500 characters or less",
+        "contentRequired": "Content is required",
+        "contentMaxLength": "Content must be 500 characters or less"
+      }
     },
     "dataroom": {
       "main": {
@@ -1804,7 +1838,13 @@
         "saveSuccess": "Data room saved successfully!",
         "saveChanges": "Save changes",
         "create": "Create",
-        "saveError": "An error occurred: {message}"
+        "saveError": "An error occurred: {message}",
+        "validation": {
+          "nameRequired": "Name is required",
+          "nameMaxLength": "Name must be 200 characters or less",
+          "descriptionRequired": "Description is required",
+          "descriptionMaxLength": "Description must be 500 characters or less"
+        }
       },
       "branding": {
         "title": "Dataroom Branding",
@@ -1913,6 +1953,12 @@
           "saveDraft": "Save Draft",
           "downloadConfig": "Download Configuration",
           "copyLink": "Copy Preview Link"
+        },
+        "validation": {
+          "logoInvalidUrl": "Logo must be a valid URL",
+          "bannerInvalidUrl": "Banner must be a valid URL",
+          "brandColorInvalid": "Brand color must be a valid hex color (e.g., #FF0000 or #F00)",
+          "accentColorInvalid": "Accent color must be a valid hex color (e.g., #FF0000 or #F00)"
         }
       },
       "viewerGroup": {
@@ -1927,7 +1973,11 @@
         "nameDescription": "Enter the name of the group.",
         "namePlaceholder": "Group name",
         "create": "Create",
-        "saveChanges": "Save Changes"
+        "saveChanges": "Save Changes",
+        "validation": {
+          "nameRequired": "Name is required",
+          "nameMaxLength": "Name must be 200 characters or less"
+        }
       },
       "groups": {
         "settings": {
@@ -1944,7 +1994,10 @@
           "saveSettings": "Save Settings",
           "savingSettings": "Saving settings...",
           "saveSuccess": "Settings updated successfully!",
-          "saveError": "Error saving settings: {message}"
+          "saveError": "Error saving settings: {message}",
+          "validation": {
+            "allowedDomainsRequired": "Allowed domains is required"
+          }
         }
       }
     },
@@ -2160,7 +2213,19 @@
         "advancedExcelEnabled": "Advanced Excel Features",
         "advancedExcelEnabledDescription": "Enable advanced Excel processing",
         "downloadOnly": "Download Only",
-        "downloadOnlyDescription": "Document can only be downloaded, not viewed"
+        "downloadOnlyDescription": "Document can only be downloaded, not viewed",
+        "validation": {
+          "nameRequired": "Name is required",
+          "nameMaxLength": "Name must be 200 characters or less",
+          "statusInvalid": "Invalid status"
+        }
+      }
+    },
+    "upload": {
+      "validation": {
+        "filesRequired": "At least one file is required",
+        "filesMaxCount": "Maximum of 3 files allowed",
+        "fileSizeExceeded": "File {fileName} exceeds the maximum size of 4MB"
       }
     },
     "client": {
@@ -2201,6 +2266,13 @@
         }
       },
       "form": {
+        "validation": {
+          "nameRequired": "Name is required",
+          "nameMaxLength": "Name must be 150 characters or less",
+          "descriptionMaxLength": "Description must be 500 characters or less",
+          "regexMaxLength": "Regex must be 500 characters or less",
+          "testInputMaxLength": "Test input must be 500 characters or less"
+        },
         "name": "Name",
         "nameDescription": "The name of the identification type (e.g., \"Passport\")",
         "description": "Description",
@@ -2483,7 +2555,10 @@
           },
           "requestCategoryUpdated": "Updated {date}",
           "relatedRequestCount": "{count} similar requests",
-          "relatedAssignmentCount": "{count} similar assignment"
+          "relatedAssignmentCount": "{count} similar assignment",
+          "validation": {
+            "reasonRequired": "This field is required"
+          }
         },
         "requirementsStep": {
           "emptyTitle": "No requirements found",
@@ -2519,7 +2594,13 @@
           "isDraft": "Is Draft",
           "isDraftDescription": "This option allows you to save this request without sending it to the assigned area, to disable this option, you must fulfilling the required requirements.",
           "detailsStep": "Request Information",
-          "detailsStepDescription": "Enter necessary details to initiate your service request"
+          "detailsStepDescription": "Enter necessary details to initiate your service request",
+          "validation": {
+            "issueSubjectRequired": "Issue subject is required",
+            "issueSubjectMaxLength": "Issue subject must be 255 characters or less",
+            "descriptionMaxLength": "Description must be 5000 characters or less",
+            "priorityRequired": "Priority is required"
+          }
         },
         "attachmentsStep": {
           "uploadFiles": "Upload Files",
@@ -2562,6 +2643,11 @@
         }
       },
       "assign": {
+        "validation": {
+          "assigneesMin": "At least one user must be assigned",
+          "onlyOneCoordinator": "Only one coordinator is allowed",
+          "atLeastOneCoordinator": "At least one coordinator must be selected"
+        },
         "title": "Assign request",
         "description": "Assign request #{requestId} to a user",
         "area": "Area",
@@ -2589,6 +2675,9 @@
         "addAssignee": "Add Assignee"
       },
       "massiveAssign": {
+        "validation": {
+          "requestRequired": "At least one request is required"
+        },
         "title": "Massive Request Assignment",
         "description": "Assign multiple requests to a selected user",
         "user": "User",
@@ -2643,7 +2732,10 @@
         "assignmentRequired": "Insufficient permissions",
         "assignmentRequiredDescription": "Please contact the user who assigned you the request or someone with the required permission to make the change.",
         "changeStatus": "Change Status",
-        "draft": "Draft"
+        "draft": "Draft",
+        "validation": {
+          "reasonRequired": "Reason is required for this state transition"
+        }
       },
       "priority": {
         "title": "Change request priority",
@@ -2672,7 +2764,11 @@
           "error": "An error occurred while changing the priority: {error}"
         },
         "priority": "Priority",
-        "changePriority": "Change Priority"
+        "changePriority": "Change Priority",
+        "validation": {
+          "reasonRequired": "This field is required",
+          "reasonMaxLength": "Maximum 500 characters"
+        }
       },
       "kanban": {
         "assignmentNotFound": "Assignment not found",
@@ -2737,6 +2833,14 @@
         }
       },
       "create": {
+        "validation": {
+          "nameMinLength": "Name must be at least 2 characters",
+          "nameMaxLength": "Name must be less than 100 characters",
+          "sla": {
+            "resolutionTimeMin": "Resolution time cannot be negative",
+            "escalationTimeMin": "Escalation time cannot be negative"
+          }
+        },
         "title": "Request Category",
         "subtitle": "Create a new request category. A category can have multiple recursive subcategories according to the needs of your business.",
         "hierarchyLabel": "Associated Hierarchy",
@@ -2813,6 +2917,12 @@
           "escalationDescription": "Time before the request is escalated"
         },
         "guidesTab": {
+          "validation": {
+            "nameMinLength": "Title must be at least 2 characters",
+            "fileUrlInvalid": "Must be a valid URL",
+            "versionRequired": "Version is required",
+            "updatedAtRequired": "Updated date is required"
+          },
           "header": {
             "title": "User Guides",
             "description": "The User Guides provide detailed instructions on how to resolve the request type."
@@ -2894,6 +3004,13 @@
         }
       },
       "form": {
+        "validation": {
+          "nameRequired": "Name is required",
+          "nameMaxLength": "Name must be 200 characters or less",
+          "descriptionRequired": "Description is required",
+          "descriptionMaxLength": "Description must be 500 characters or less",
+          "requirementTypeRequired": "Requirement type is required"
+        },
         "name": "Name",
         "nameDescription": "The name of the requirement",
         "description": "Description",
@@ -2931,6 +3048,11 @@
         "createdAt": "Created At"
       },
       "form": {
+        "validation": {
+          "nameRequired": "Name is required",
+          "nameMaxLength": "Name must be 100 characters or less",
+          "descriptionMaxLength": "Description must be 500 characters or less"
+        },
         "savingChanges": "Saving changes...",
         "successSave": "{name} has been saved successfully.",
         "errorSave": "Error saving: {message}",
@@ -3090,6 +3212,11 @@
         "header": {
           "title": "Hierarchy Management",
           "description": "A hierarchy organizes categories into levels such as parent, child, or grandchild, making it easier to structure and classify a request"
+        },
+        "validation": {
+          "nameRequired": "Name is required",
+          "nameMaxLength": "Name must be 100 characters or less",
+          "descriptionMaxLength": "Description must be 255 characters or less"
         }
       },
       "stepsForm": {
@@ -3103,7 +3230,13 @@
         "levelDescriptionPlaceholder": "E.g. Specifications for {name}",
         "thisLevel": "this level",
         "add": "Add new level",
-        "addDisabled": "Cannot add new levels"
+        "addDisabled": "Cannot add new levels",
+        "validation": {
+          "levelNameRequired": "Level name is required",
+          "levelNameMaxLength": "Level name must be 100 characters or less",
+          "levelDescriptionMaxLength": "Description must be 255 characters or less",
+          "atLeastOneLevelRequired": "At least one hierarchy level is required"
+        }
       },
       "summaryStep": {
         "title": "Review Hierarchy",
@@ -3199,6 +3332,17 @@
         "error": {
           "usernameRequired": "Username is required.",
           "invalidEmail": "Please enter a valid email address."
+        },
+        "validation": {
+          "emailInvalid": "Please enter a valid email address",
+          "firstNameRequired": "First name is required",
+          "lastNameRequired": "Last name is required",
+          "phoneRequired": "Phone number is required",
+          "identificationNumberRequired": "Identification number is required",
+          "identificationTypeRequired": "Identification type is required",
+          "roleRequired": "Role is required",
+          "areaRequired": "Area is required",
+          "duplicateArea": "This area was selected multiple times. Only one role per area is allowed"
         },
         "adminDesc": "Grants this user administrative privileges for the tenant.",
         "admin": "Admin",
@@ -3354,6 +3498,10 @@
         "createForm": {
           "title": "Create API Key",
           "subtitle": "Create a new API key for programmatic access to the API.",
+          "validation": {
+            "nameRequired": "Name is required",
+            "prefixRequired": "Prefix is required"
+          },
           "errors": {
             "nameRequired": "Name is required",
             "prefixRequired": "Prefix is required",
@@ -3505,6 +3653,9 @@
         "buttons": {
           "send": "Send Verification Email",
           "sending": "Sending..."
+        },
+        "validation": {
+          "emailInvalid": "Please enter a valid email address."
         }
       },
       "twoFactor": {
@@ -3737,6 +3888,12 @@
             "confirm": "Verify",
             "cancel": "Cancel"
           }
+        },
+        "validation": {
+          "nameMinLength": "Name must be at least 2 characters.",
+          "emailInvalid": "Please enter a valid email address.",
+          "usernameMinLength": "Username must be at least 2 characters.",
+          "displayUsernameMinLength": "Display username must be at least 2 characters."
         }
       },
       "roleAndAccess": {
@@ -3886,7 +4043,17 @@
           "success": "Personal information updated successfully",
           "error": "Failed to update personal information"
         }
-      } 
+      },
+      "subscription": {
+        "validation": {
+          "planRequired": "Please select a plan."
+        }
+      },
+      "notifications": {
+        "validation": {
+          "notifyTypeRequired": "You need to select a notification type."
+        }
+      }
     },
   "folder": {
       "create": {
@@ -3902,7 +4069,11 @@
         "saveError": "Failed to save folder: {message}",
         "saveChanges": "Save Changes",
         "create": "Create",
-        "root": "root"
+        "root": "root",
+        "validation": {
+          "nameRequired": "Name is required",
+          "nameMaxLength": "Name must be 200 characters or less"
+        }
       }
     },
     "link": {
@@ -4063,7 +4234,14 @@
         "subtitleCreate": "You can share documents with your clients by creating links.",
         "titleEdit": "Edit link",
         "saveChanges": "Save changes",
-        "create": "Create"
+        "create": "Create",
+        "validation": {
+          "nameRequired": "Name is required",
+          "nameMaxLength": "Name must be 200 characters or less",
+          "viewerValueRequired": "Viewer value cannot be empty",
+          "customFieldLabelRequired": "Custom field label is required",
+          "passwordRequiredWhenEnabled": "Password is required when password protection is enabled"
+        }
       }
     },
     "requestPriorityType": {
@@ -4074,6 +4252,16 @@
         "description": "Fill in the details to create a new request priority type."
       },
       "form": {
+        "validation": {
+          "nameRequired": "Name is required",
+          "nameMaxLength": "Name must be 100 characters or less",
+          "colorRequired": "Color is required",
+          "descriptionMaxLength": "Description must be 500 characters or less",
+          "levelMin": "Level must be a positive number",
+          "levelMax": "Level must be less than 10",
+          "colorInvalid": "Invalid color format",
+          "maxPriorityTypes": "Maximum of 5 priority types allowed"
+        },
         "name": "Name",
         "namePlaceholder": "Enter priority name",
         "color": "Color",
@@ -4176,6 +4364,9 @@
         "defaultWorkflow": "Default Workflow",
         "defaultWorkflowDesc": "Set as default workflow for new requests",
         "requireComments": "Require Comments",
+        "validation": {
+          "nameRequired": "Name is required"
+        },
         "requireCommentsDesc": "Mandatory comments for status changes",
         "notifyChanges": "Notify Changes",
         "notifyChangesDesc": "Send notifications when workflow changes",
@@ -4249,7 +4440,10 @@
           "addedTitle": "Transition added",
           "addedMessage": "The transition \"{transitionName}\" has been successfully added.",
           "deletedTitle": "Transition deleted",
-          "deletedMessage": "The transition has been successfully deleted."
+          "deletedMessage": "The transition has been successfully deleted.",
+          "validation": {
+            "nameRequired": "Name is required"
+          }
         },
         "review": {
           "header": {
@@ -4316,7 +4510,10 @@
         "approvalLabel": "Requires Approval",
         "approvalDescription": "Needs supervisor approval",
         "cancel": "Cancel",
-        "save": "Save"
+        "save": "Save",
+        "validation": {
+          "nameRequired": "Name is required"
+        }
       },
       "state": {
         "addTitle": "Add State",
@@ -4342,7 +4539,10 @@
         "typeLabel": "Type",
         "typeDescription": "Type of state",
         "cancel": "Cancel",
-        "save": "Save"
+        "save": "Save",
+        "validation": {
+          "nameRequired": "Name is required"
+        }
       }
     },
     "helpPage": {
@@ -4570,6 +4770,9 @@
       }
     },
     "form": {
+      "validation": {
+        "nameMinLength": "Name must be at least 4 characters"
+      },
       "loading": "Loading...",
       "formPublished": "🎊🎊 Form Published 🎊🎊",
       "shareThisForm": "Share this form",
@@ -4682,6 +4885,22 @@
           "success": "Success",
           "height": "Height",
           "noProperties": "No properties for this element"
+        },
+        "properties": {
+          "validation": {
+            "labelMinLength": "Label must be at least 2 characters",
+            "labelMaxLength": "Label must be at most 50 characters",
+            "helperTextMaxLength": "Helper text must be at most 200 characters",
+            "placeholderMaxLength": "Placeholder must be at most 50 characters",
+            "rowsMin": "Rows must be at least 1",
+            "rowsMax": "Rows must be at most 10",
+            "textMinLength": "Text must be at least 2 characters",
+            "textMaxLength": "Text must be at most 500 characters",
+            "titleMinLength": "Title must be at least 2 characters",
+            "titleMaxLength": "Title must be at most 50 characters",
+            "heightMin": "Height must be at least 5",
+            "heightMax": "Height must be at most 200"
+          }
         }
       }
     },
@@ -4734,6 +4953,12 @@
         "saving": "Saving roles...",
         "success": "{count, plural, one {Role \"{names}\" saved successfully.} other {Roles \"{names}\" saved successfully.}}",
         "error": "Failed to save roles: {error}"
+      },
+      "validation": {
+        "nameMinLength": "Role name must be at least 3 characters",
+        "nameMaxLength": "Role name must not exceed 100 characters",
+        "descriptionMaxLength": "Description must not exceed 255 characters",
+        "duplicateName": "The role name \"{name}\" is duplicated"
       }
     },
     "userRoleAssignmentForm": {
@@ -4762,6 +4987,10 @@
       "header": {
         "title": "User Role Assignment",
         "description": "Manage users and their assigned roles within the area."
+      },
+      "validation": {
+        "userRequired": "User is required",
+        "roleRequired": "Role is required"
       }
     },
     "categoryTreeView": {

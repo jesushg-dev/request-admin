@@ -3,12 +3,11 @@
 import { useTransition } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { authClient } from '@/server/auth-client';
-import { NewPasswordSchema } from '@/services/schemas';
+import { useNewPasswordSchema, type TNewPasswordSchema } from '@/services/schemas/auth.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -22,14 +21,16 @@ const NewPasswordForm = () => {
 
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm({
-    resolver: zodResolver(NewPasswordSchema),
+  const newPasswordSchema = useNewPasswordSchema();
+
+  const form = useForm<TNewPasswordSchema>({
+    resolver: zodResolver(newPasswordSchema),
     defaultValues: {
       password: '',
     },
   });
 
-  const onSubmit = (values: z.infer<typeof NewPasswordSchema>) => {
+  const onSubmit = (values: TNewPasswordSchema) => {
     if (!token) {
       toast.error(t('tokenNoFound'), { id: 'new-password-toast' });
       return;

@@ -5,23 +5,19 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { SeparatorHorizontalIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import useDesigner from '@/hooks/use-designer';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { ElementsType, FormElement, FormElementInstance } from '@/components/builder-form/form-elements';
+import { useSpacerFieldPropertiesSchema, type TSpacerFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 
 const type: ElementsType = 'SpacerField';
 
 const extraAttributes = {
   height: 20, // px
 };
-
-const propertiesSchema = z.object({
-  height: z.number().min(5).max(200),
-});
 
 export const SpacerFieldFormElement: FormElement = {
   type,
@@ -63,13 +59,12 @@ function FormComponent({ elementInstance }: { elementInstance: FormElementInstan
   return <div style={{ height, width: '100%' }}></div>;
 }
 
-type propertiesFormSchemaType = z.infer<typeof propertiesSchema>;
-
 function PropertiesComponent({ elementInstance }: { elementInstance: FormElementInstance }) {
   const element = elementInstance as CustomInstance;
   const { updateElement } = useDesigner();
   const t = useTranslations('component.form.builderFields.common');
-  const form = useForm({
+  const propertiesSchema = useSpacerFieldPropertiesSchema();
+  const form = useForm<TSpacerFieldPropertiesSchema>({
     resolver: zodResolver(propertiesSchema),
     mode: 'onBlur',
     defaultValues: {
@@ -81,7 +76,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
     form.reset(element.extraAttributes);
   }, [element, form]);
 
-  function applyChanges(values: propertiesFormSchemaType) {
+  function applyChanges(values: TSpacerFieldPropertiesSchema) {
     const { height } = values;
     updateElement(element.id, {
       ...element,

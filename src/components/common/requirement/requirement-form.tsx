@@ -7,7 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as z from 'zod';
 
 import { generateUuid } from '@/lib/id';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -16,20 +15,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import Select from '@/components/custom-ui/select';
 import { FormActions, FormCheckboxItem, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
+import { useRequirementSchema, type TRequirementSchema } from '@/services/schemas/requirement';
 
-const formSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1, 'Name is required').max(200, 'Name must be 200 characters or less').default(''),
-  description: z.string().min(1, 'Description is required').max(500, 'Description must be 500 characters or less').default(''),
-  isRequiredOnlyOnce: z.boolean().default(false),
-  isActive: z.boolean().default(true),
-  requirementType: z.object({
-    label: z.string(),
-    value: z.string().nonempty('This field is required.'),
-  }),
-});
-
-export type RequirementFormValues = z.infer<typeof formSchema>;
+export type RequirementFormValues = TRequirementSchema;
 
 export const getDefaultValues = (): RequirementFormValues => ({
   id: generateUuid(),
@@ -51,6 +39,7 @@ export function RequirementForm({ tenantId, initialValues }: RequirementFormProp
   const [isPending, startTransition] = useTransition();
   const { data: requirementTypes, isLoading: isLoadingTypes } = useFindManyRequirementType();
   const { mutateAsync: upsert, error } = useUpsertRequirement();
+  const formSchema = useRequirementSchema();
 
   const form = useForm({
     resolver: zodResolver(formSchema),

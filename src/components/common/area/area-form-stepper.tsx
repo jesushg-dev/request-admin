@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useTransition, type FC } from 'react';
+import React, { useEffect, useMemo, useState, useTransition, type FC } from 'react';
 import { upsertCategoriesFlat } from '@/actions/assignment-type';
 import { useRouter } from '@/i18n/routing';
 import { useUpsertArea } from '@/services/api/hooks';
@@ -16,28 +16,31 @@ import { ModuleWithFeaturesType } from '@/types/zenstackhq/module';
 import { RequirementOptionType } from '@/types/zenstackhq/requirement';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import AreaForm, { areaFormSchema, getAreaDefaultValue } from '@/components/common/area/area-form';
-import AssignmentCategoryForm, { categoriesSchema } from '@/components/common/category/assignment-category-form';
-import RolesForm, { rolesFormSchema } from '@/components/common/role/role-form';
-import UserRoleAssignmentForm, { userRoleAssignmentFormSchema } from '@/components/common/role/user-role-assignment-form';
+import AreaForm, { getAreaDefaultValue } from '@/components/common/area/area-form';
+import AssignmentCategoryForm from '@/components/common/category/assignment-category-form';
+import RolesForm from '@/components/common/role/role-form';
+import UserRoleAssignmentForm from '@/components/common/role/user-role-assignment-form';
 import { OptionType } from '@/components/custom-ui/select';
 import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
 import { StepNavigationModern } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
+import { getAreaSchema, useAreaSchema, type TAreaSchema } from '@/services/schemas/area';
+import { getCategoriesSchema, useCategoriesSchema, type TCategoriesSchema } from '@/services/schemas/category';
+import { getRolesSchema, useRolesSchema, getUserRoleAssignmentSchema, useUserRoleAssignmentSchema, type TRolesSchema, type TUserRoleAssignmentSchema } from '@/services/schemas/role';
 
 import AssignmentCategoriesReview from '../category/assignment-categories-review';
 import RoleFormReview from '../role/role-form-review';
 
 // Stepper definition
 const { useStepper, utils } = defineStepper(
-  { id: 'description', label: 'steps.description', schema: areaFormSchema },
-  { id: 'assignmentCategory', label: 'steps.assignmentCategory', schema: categoriesSchema },
-  { id: 'role', label: 'steps.role', schema: rolesFormSchema },
-  { id: 'user', label: 'steps.user', schema: userRoleAssignmentFormSchema },
+  { id: 'description', label: 'steps.description', schema: getAreaSchema() },
+  { id: 'assignmentCategory', label: 'steps.assignmentCategory', schema: getCategoriesSchema() },
+  { id: 'role', label: 'steps.role', schema: getRolesSchema() },
+  { id: 'user', label: 'steps.user', schema: getUserRoleAssignmentSchema() },
   { id: 'finish', label: 'steps.finish', schema: z.object({}) }
 );
 
-export type AreaFormStepperType = z.infer<typeof areaFormSchema> & z.infer<typeof categoriesSchema> & z.infer<typeof rolesFormSchema> & z.infer<typeof userRoleAssignmentFormSchema>;
+export type AreaFormStepperType = TAreaSchema & TCategoriesSchema & TRolesSchema & TUserRoleAssignmentSchema;
 
 interface AreaFormStepperProps {
   tenantId: string;
@@ -57,12 +60,44 @@ const AreaFormStepper: FC<AreaFormStepperProps> = ({ tenantId, assignmentHierarc
   const [selectedHierarchy, setSelectedHierarchy] = useState<AssignmentHierarchyWithLevelsType | null>(null);
   const t = useTranslations('admin.area.create');
 
+  // Get internationalized schemas
+  const areaSchemaIntl = useAreaSchema();
+  const categoriesSchemaIntl = useCategoriesSchema();
+  const rolesSchemaIntl = useRolesSchema();
+  const userRoleAssignmentSchemaIntl = useUserRoleAssignmentSchema();
+
+  // Create a map of step IDs to internationalized schemas
+  const schemasMap = useMemo(
+    () => ({
+      description: areaSchemaIntl,
+      assignmentCategory: categoriesSchemaIntl,
+      role: rolesSchemaIntl,
+      user: userRoleAssignmentSchemaIntl,
+      finish: z.object({}),
+    }),
+    [areaSchemaIntl, categoriesSchemaIntl, rolesSchemaIntl, userRoleAssignmentSchemaIntl]
+  );
+
+  // Create a custom resolver that dynamically selects the correct internationalized schema
+  const dynamicResolver = useMemo(() => {
+    return (values: any, context: any, options: any) => {
+      const currentSchema = schemasMap[stepper.current.id as keyof typeof schemasMap] || stepper.current.schema;
+      const resolver = zodResolver(currentSchema);
+      return resolver(values, context, options);
+    };
+  }, [stepper.current.id, schemasMap]);
+
   // Initialize React Hook Form with current step schema
   const form = useForm({
     mode: 'onTouched',
-    resolver: zodResolver(stepper.current.schema),
+    resolver: dynamicResolver,
     defaultValues: defaultValues ? defaultValues : stepper.current.id === 'description' ? getAreaDefaultValue() : {},
   });
+
+  // Clear errors when step changes
+  useEffect(() => {
+    form.clearErrors();
+  }, [stepper.current.id, form]);
 
   const [roleOptions, setRoleOptions] = useState<OptionType[]>([]);
 

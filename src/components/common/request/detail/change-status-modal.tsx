@@ -7,7 +7,6 @@ import { AlertCircle, SquarePen } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
 
 import { RequestWorkflowType } from '@/types/zenstackhq/workflow';
 import { normalizeValue } from '@/lib/utils';
@@ -18,29 +17,14 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Form, FormField } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { AlertBanner } from '@/components/custom-ui/alert-banner';
-import Select, { optionSchema, OptionType } from '@/components/custom-ui/select';
+import Select, { OptionType } from '@/components/custom-ui/select';
 import { Hint } from '@/components/hint';
 import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
+import { useChangeStatusSchema, type TChangeStatusSchema } from '@/services/schemas/request';
 
 import { RequestFormStepperType } from '../request-form-stepper';
 
-// Zod schema for form validation
-export const changeStatusSchema = z
-  .object({
-    newStatus: optionSchema,
-    requiredReason: z.boolean(),
-    comments: z.string().optional(),
-  })
-  .superRefine((data, ctx) => {
-    if (data.requiredReason && (!data.comments || data.comments.trim() === '')) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Reason is required for this state transition',
-      });
-    }
-  });
-
-export type ChangeStatusFormValues = z.infer<typeof changeStatusSchema>;
+export type ChangeStatusFormValues = TChangeStatusSchema;
 
 // Default values for the form
 export const getDefaultValues = (): ChangeStatusFormValues => ({
@@ -67,6 +51,7 @@ interface ChangeStatusModalProps {
 export function ChangeStatusModal({ IsStatusModalOpen, tenantId, request, workflow, enableAssignmentChange, enableStatusChange, setIsStatusModalOpen }: ChangeStatusModalProps) {
   const formRef = useRef<HTMLDivElement>(null);
   const t = useTranslations('admin.request.status');
+  const changeStatusSchema = useChangeStatusSchema();
 
   const [isPending, startTransition] = useTransition();
   const [requiresReason, setRequiresReason] = useState(false);

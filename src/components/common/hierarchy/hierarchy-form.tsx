@@ -10,15 +10,9 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { FormCheckboxItem, FormContent, FormItem, FormSection } from '@/components/shared/form-root';
+import { type THierarchySchema } from '@/services/schemas/hierarchy';
 
-export const hierarchySchema = z.object({
-  id: z.string(),
-  name: z.string().min(1, 'Name is required').max(100, 'Name must be 100 characters or less'),
-  description: z.string().max(255, 'Description must be 255 characters or less').optional(),
-  isActive: z.boolean().optional(),
-});
-
-export type HierarchyFormValues = z.infer<typeof hierarchySchema>;
+export type HierarchyFormValues = THierarchySchema;
 
 export const getDefaultHierarchyFormValues = (): HierarchyFormValues => ({
   id: generateUuid(),

@@ -17,15 +17,19 @@ import { FormCheckboxItem, FormContent, FormItem } from '@/components/shared/for
 
 import { PillChain } from '../hierarchy/hierarchy-viewer-with-alternatives';
 
+import { type TAreaSchema } from '@/services/schemas/area';
+
+// Base schema for defineStepper (without internationalization)
+// This is used only for the stepper definition
 export const areaFormSchema = z.object({
   id: z.string(),
-  name: z.string().min(1, 'requiredName'),
+  name: z.string().min(1),
   description: z.string().optional(),
   isActive: z.boolean().default(true),
   hierarchyId: optionSchema,
 });
 
-export type AreaFormValues = z.infer<typeof areaFormSchema>;
+export type AreaFormValues = TAreaSchema;
 
 export const getAreaDefaultValue = (): AreaFormValues => ({
   id: generateUuid(),

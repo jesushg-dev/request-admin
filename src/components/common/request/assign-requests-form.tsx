@@ -7,7 +7,6 @@ import { PlusCircle, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as z from 'zod';
 
 import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { Button } from '@/components/ui/button';
@@ -16,6 +15,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
 import { Textarea } from '@/components/ui/textarea';
 import Select, { type OptionType } from '@/components/custom-ui/select';
+import { useAssignRequestsSchema, type TAssignRequestsSchema } from '@/services/schemas/request';
 
 // ===================
 // Type Definitions
@@ -29,23 +29,6 @@ export interface Request {
 }
 
 // ===================
-// Zod Schema
-// ===================
-const formSchema = z.object({
-  userId: z.object({ label: z.string(), value: z.string() }),
-  requestIds: z
-    .array(
-      z.object({
-        requestId: z.object({ label: z.string(), value: z.string() }),
-      })
-    )
-    .min(1, { message: 'error.requestRequired' }),
-  comments: z.string().optional(),
-});
-
-export type AssignRequestsFormValues = z.infer<typeof formSchema>;
-
-// ===================
 // Component
 // ===================
 export default function AssignRequestsForm() {
@@ -56,6 +39,7 @@ export default function AssignRequestsForm() {
   const [availableRequests, setAvailableRequests] = useState<Request[]>([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(true);
   const [isLoadingRequests, setIsLoadingRequests] = useState(false);
+  const formSchema = useAssignRequestsSchema();
 
   // Initialize the form with the Zod schema resolver and default values
   const form = useForm({
@@ -115,7 +99,7 @@ export default function AssignRequestsForm() {
     loadRequests();
   }, [selectedUserId?.value, tenantId]);
 
-  async function onSubmit(values: AssignRequestsFormValues) {
+  async function onSubmit(values: TAssignRequestsSchema) {
     setIsSubmitting(true);
     try {
       const requestIds = values.requestIds.map((r) => r.requestId.value);

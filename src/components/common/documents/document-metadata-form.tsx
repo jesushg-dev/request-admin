@@ -3,13 +3,13 @@
 import { useTransition } from 'react';
 import { useRouter } from '@/i18n/routing';
 import { useUpsertDocument } from '@/services/api/hooks';
+import { useDocumentMetadataSchema, type TDocumentMetadataSchema } from '@/services/schemas/documents';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as z from 'zod';
 
 import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
@@ -22,20 +22,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { FormActions, FormCheckboxItem, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
 
-export const formSchema = z.object({
-  id: z.string(),
-  name: z.string().min(1, 'Name is required').max(200, 'Name must be 200 characters or less'),
-  description: z.string().nullish(),
-  status: z.string().refine((val) => ['DRAFT', 'PUBLISHED', 'ARCHIVED'].includes(val), {
-    message: 'Invalid status',
-  }),
-  expirationDate: z.date().nullish(),
-  assistantEnabled: z.boolean(),
-  advancedExcelEnabled: z.boolean(),
-  downloadOnly: z.boolean(),
-});
-
-export type FormValues = z.infer<typeof formSchema>;
+export type FormValues = TDocumentMetadataSchema;
 
 export const getDefaultValues = (): FormValues => ({
   id: generateUuid(),
@@ -59,8 +46,10 @@ export default function DocumentMetadataForm({ tenantId, initialValues }: Docume
   const [isPending, startTransition] = useTransition();
   const { mutateAsync: upsert, error } = useUpsertDocument();
 
-  const form = useForm({
-    resolver: zodResolver(formSchema),
+  const documentMetadataSchema = useDocumentMetadataSchema();
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(documentMetadataSchema),
     defaultValues: initialValues ?? getDefaultValues(),
     mode: 'onBlur',
   });

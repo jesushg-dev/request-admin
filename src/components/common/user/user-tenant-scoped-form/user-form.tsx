@@ -12,18 +12,20 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { PhoneInput } from '@/components/custom-ui/phone-input';
 import Select, { OptionType } from '@/components/custom-ui/select';
+import { type TUserSchema } from '@/services/schemas/user';
 
-// Define Schema
+// Base schema for defineStepper (without internationalization)
+// This is used only for the stepper definition
 export const userFormSchema = z.object({
   user: z
     .object({
       id: z.string(),
-      email: z.string().email({ message: 'error.invalidEmail' }),
+      email: z.string().email(),
       isActive: z.boolean().default(true),
       isTwoFactorRequired: z.boolean().default(false),
       isAdmin: z.boolean().default(false),
-      firstName: z.string().min(1, { message: 'error.firstNameRequired' }),
-      lastName: z.string().min(1, { message: 'error.lastNameRequired' }),
+      firstName: z.string().min(1),
+      lastName: z.string().min(1),
       phone: z.string(),
       identificationNumber: z.string(),
       identificationTypeId: z.object({
@@ -52,7 +54,7 @@ export const userFormSchema = z.object({
           ctx.addIssue({
             path: ['identificationTypeId', 'value'],
             code: z.ZodIssueCode.custom,
-            message: 'This field is required.',
+            message: 'error.identificationTypeRequired',
           });
         }
       }
@@ -75,7 +77,7 @@ export const getDefaultUser = (): UserFormValues => ({
   },
 });
 
-export type UserFormValues = z.infer<typeof userFormSchema>;
+export type UserFormValues = TUserSchema;
 
 interface UserFormProps {
   identificationTypes: OptionType[];
