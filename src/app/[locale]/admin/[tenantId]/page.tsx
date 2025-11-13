@@ -1,68 +1,49 @@
-'use client';
-
-import { useState } from 'react';
-import { Link } from '@/i18n/routing';
+import { Suspense } from 'react';
+import { getAuthContext } from '@/actions/authorization';
+import { PermissionActions } from '@/constants/permissions';
+import { getTranslations } from 'next-intl/server';
+import { getCurrentUserTenant } from '@/actions/user';
+import { getDb } from '@/server/db-client';
+import { Locale } from 'next-intl';
 import { PlusCircle } from 'lucide-react';
-import { toast } from 'sonner';
+import type { SearchParams } from 'nuqs/server';
 
-import { Button } from '@/components/ui/button';
+import DashboardPermissionDenied from './dashboard-permission-denied';
+import { dashboardSearchParamsCache } from './dashboard-search-params';
+import DashboardMetricsServer, { DashboardMetricsFallback } from '@/components/common/dashboard/dashboard-metrics-server';
+import DashboardStats, { DashboardStatsFallback } from '@/components/common/dashboard/dashboard-stats';
+import QuickStatsCardsServer, { QuickStatsFallback } from '@/components/common/dashboard/quick-stats-cards-server';
+import RecentRequests, { RecentRequestsFallback } from '@/components/common/dashboard/recent-requests';
+import WorkflowSelectorServer from '@/components/common/dashboard/workflow-selector-server';
+import DashboardSLATabClient from './dashboard-sla-tab-client';
+import { PermissionButton } from '@/components/shared/permission-button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import DashboardMetricsClient from '@/components/common/dashboard/dashboard-metrics-client';
-import DashboardStats from '@/components/common/dashboard/dashboard-stats';
-import QuickStatsCards from '@/components/common/dashboard/quick-stats-cards';
-import RecentRequests from '@/components/common/dashboard/recent-requests';
-import { SLADashboard } from '@/components/common/dashboard/sla-dashboard';
-import { SLAFilters, SLAFilterValues } from '@/components/common/dashboard/sla-filters';
-import { WorkflowSelector } from '@/components/common/dashboard/workflow-selector';
-import { useTenantContext } from '@/components/hoc/tenant-provider';
-import { useAuthorization, PERMISSION } from '@/hooks/use-authorization';
-import { useTranslations } from 'next-intl';
-import { PermissionEmptyState } from '@/components/shared/permission-empty-state';
-import { PermissionButton } from '@/components/shared/permission-button';
 
-// Note: This is a client component, so metadata should be handled in a layout or parent component
-export default function Home() {
-  const { tenantId, userTenant, currentTenant } = useTenantContext();
-  const { hasPermission } = useAuthorization(tenantId);
-  const t = useTranslations('admin.dashboard.page');
-  const [selectedWorkflow, setSelectedWorkflow] = useState<string | null>(null);
-  const [slaFilters, setSlaFilters] = useState<SLAFilterValues | null>(null);
-  
-  // Permission checks
-  const canViewDashboard = hasPermission(PERMISSION.DASHBOARD.VIEW);
-  const canCreateRequests = hasPermission(PERMISSION.REQUEST_MANAGEMENT.CREATE);
-  const canViewRequests = hasPermission(PERMISSION.REQUEST_MANAGEMENT.VIEW);
-  
-  // If user doesn't have dashboard view permission, show empty state
+type DashboardPageProps = {
+  params: Promise<{ locale: Locale; tenantId: string }>;
+  searchParams: Promise<SearchParams>;
+};
+
+export default async function DashboardPage({ params, searchParams }: DashboardPageProps) {
+  const { tenantId, locale } = await params;
+  const auth = await getAuthContext(tenantId);
+
+  const canViewDashboard = auth.hasPermissions([PermissionActions.DASHBOARD.VIEW]);
   if (!canViewDashboard) {
-    return (
-      <ScrollArea className="flex-grow min-h-0">
-        <div className="container py-6 flex flex-col h-full">
-          <PermissionEmptyState />
-        </div>
-      </ScrollArea>
-    );
+    return <DashboardPermissionDenied />;
   }
 
-  const handleSearch = (filters: SLAFilterValues): void => {
-    setSlaFilters(filters);
-    console.log('Searching with filters:', filters);
-    toast.info(t('searchApplied.title'), {
-      description: t('searchApplied.description'),
-    });
-  };
+  // Parse search params server-side
+  await dashboardSearchParamsCache.parse(searchParams);
+  const selectedWorkflow = dashboardSearchParamsCache.get('workflow');
 
-  const handleWorkflowChange = (workflowId: string | null): void => {
-    setSelectedWorkflow(workflowId);
-    console.log('Selected workflow:', workflowId);
-
-    if (workflowId) {
-      toast.success(t('workflowSelected.title'), {
-        description: t('workflowSelected.description', { workflowId }),
-      });
-    }
-  };
+  const canCreateRequests = auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.CREATE]);
+  const canViewRequests = auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.VIEW]);
+  const t = await getTranslations({ locale, namespace: 'admin.dashboard.page' });
+  const userTenant = await getCurrentUserTenant(tenantId);
+  const db = await getDb();
+  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { name: true } });
 
   return (
     <ScrollArea className="flex-grow min-h-0">
@@ -70,7 +51,9 @@ export default function Home() {
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">{t('dashboardTitle')}</h1>
-            <p className="text-muted-foreground">{t('welcome', { user: userTenant.displayUserName, tenant: currentTenant ? currentTenant.name : '' })}</p>
+            <p className="text-muted-foreground">
+              {t('welcome', { user: userTenant.displayUserName, tenant: tenant?.name ?? '' })}
+            </p>
           </div>
           <PermissionButton
             hasPermission={canCreateRequests}
@@ -90,59 +73,69 @@ export default function Home() {
             </TabsList>
 
             <TabsContent value="general" className="h-full overflow-y-auto">
-              <div className="mt-8">
-                <DashboardMetricsClient tenantId={tenantId} workflowId={null} />
-              </div>
+              <Suspense fallback={<DashboardMetricsFallback />}>
+                <div className="mt-8">
+                  <DashboardMetricsServer tenantId={tenantId} workflowId={null} locale={locale} />
+                </div>
+              </Suspense>
 
-              <div className="mt-8">
-                <DashboardStats tenantId={tenantId} workflowId={null} />
-              </div>
+              <Suspense fallback={<DashboardStatsFallback />}>
+                <div className="mt-8">
+                  <DashboardStats tenantId={tenantId} workflowId={null} />
+                </div>
+              </Suspense>
 
-              <div className="mt-8">
-                <QuickStatsCards tenantId={tenantId} workflowId={null} />
-              </div>
+              <Suspense fallback={<QuickStatsFallback />}>
+                <div className="mt-8">
+                  <QuickStatsCardsServer tenantId={tenantId} workflowId={null} locale={locale} />
+                </div>
+              </Suspense>
 
               {canViewRequests && (
-                <div className="mt-8">
-                  <h2 className="text-xl font-bold">{t('recentRequests.title')}</h2>
-                  <div className="mt-4">
-                    <RecentRequests tenantId={tenantId} />
+                <Suspense fallback={<RecentRequestsFallback />}>
+                  <div className="mt-8">
+                    <h2 className="text-xl font-bold">{t('recentRequests.title')}</h2>
+                    <div className="mt-4">
+                      <RecentRequests tenantId={tenantId} />
+                    </div>
                   </div>
-                </div>
+                </Suspense>
               )}
             </TabsContent>
 
             <TabsContent value="workflow" className="h-full overflow-y-auto">
               <div className="mt-8">
-                <WorkflowSelector tenantId={tenantId} selectedWorkflow={selectedWorkflow} onWorkflowChange={handleWorkflowChange} />
+                <WorkflowSelectorServer tenantId={tenantId} selectedWorkflow={selectedWorkflow} locale={locale} />
               </div>
 
-              <div className="mt-8">
-                <DashboardMetricsClient tenantId={tenantId} workflowId={selectedWorkflow} />
-              </div>
+              <Suspense fallback={<DashboardMetricsFallback />}>
+                <div className="mt-8">
+                  <DashboardMetricsServer tenantId={tenantId} workflowId={selectedWorkflow} locale={locale} />
+                </div>
+              </Suspense>
 
-              <div className="mt-8">
-                <DashboardStats tenantId={tenantId} workflowId={selectedWorkflow} />
-              </div>
+              <Suspense fallback={<DashboardStatsFallback />}>
+                <div className="mt-8">
+                  <DashboardStats tenantId={tenantId} workflowId={selectedWorkflow} />
+                </div>
+              </Suspense>
 
               {canViewRequests && (
-                <div className="mt-8">
-                  <h2 className="text-xl font-bold">{selectedWorkflow ? t('recentRequests.titleWithWorkflow', { workflow: selectedWorkflow }) : t('recentRequests.title')}</h2>
-                  <div className="mt-4">
-                    <RecentRequests tenantId={tenantId} workflowFilter={selectedWorkflow} />
+                <Suspense fallback={<RecentRequestsFallback />}>
+                  <div className="mt-8">
+                    <h2 className="text-xl font-bold">
+                      {selectedWorkflow ? t('recentRequests.titleWithWorkflow', { workflow: selectedWorkflow }) : t('recentRequests.title')}
+                    </h2>
+                    <div className="mt-4">
+                      <RecentRequests tenantId={tenantId} workflowFilter={selectedWorkflow} />
+                    </div>
                   </div>
-                </div>
+                </Suspense>
               )}
             </TabsContent>
 
             <TabsContent value="sla" className="h-full overflow-y-auto">
-              <div className="mt-6">
-                <SLAFilters tenantId={tenantId} onSearch={handleSearch} />
-              </div>
-
-              <div className="mt-8">
-                <SLADashboard tenantId={tenantId} filters={slaFilters} />
-              </div>
+              <DashboardSLATabClient tenantId={tenantId} />
             </TabsContent>
           </Tabs>
         </div>

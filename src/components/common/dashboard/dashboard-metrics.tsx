@@ -1,11 +1,9 @@
-'use client';
-
-import { useMemo } from 'react';
+import { getTranslations } from 'next-intl/server';
 import type React from 'react';
 import { AlertTriangle, ArrowDown, ArrowUp, CheckCircle, Clock, FileText, Target, XCircle } from 'lucide-react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useTranslations } from 'next-intl';
+import { Locale } from 'next-intl';
 
 interface MetricCardProps {
   title: string;
@@ -56,59 +54,43 @@ interface MetricsData {
 }
 
 // Métricas generales del sistema (independientes del workflow)
-export function GeneralMetrics({ data }: { data: MetricsData }) {
-  const t = useTranslations('admin.dashboard.metrics');
-  const generalMetrics = useMemo(
-    () => [
-      {
-        id: 'total',
-        title: t('general.totalRequests.title'),
-        value: data.totalRequests.value.toLocaleString(),
-        trend: { value: data.totalRequests.trend.value, isPositive: data.totalRequests.trend.isPositive, text: t('general.vsLastMonth') },
-        icon: <FileText className="h-4 w-4" />,
-        iconColor: 'text-blue-500',
-      },
-      {
-        id: 'avg-resolution',
-        title: t('general.avgResolutionTime.title'),
-        value: data.avgResolutionTime > 0 ? `${data.avgResolutionTime.toFixed(1)} ${t('general.avgResolutionTime.unit')}` : 'N/A',
-        trend: data.avgResolutionTimeTrend ? { ...data.avgResolutionTimeTrend, text: t('general.vsLastMonth') } : undefined,
-        icon: <Clock className="h-4 w-4" />,
-        iconColor: 'text-indigo-500',
-      },
-      {
-        id: 'resolution-rate',
-        title: t('general.resolutionRate.title'),
-        value: `${data.resolutionRate.value.toFixed(1)}%`,
-        trend: { ...data.resolutionRate.trend, text: t('general.vsLastMonth') },
-        icon: <CheckCircle className="h-4 w-4" />,
-        iconColor: 'text-emerald-500',
-      },
-      {
-        id: 'pending',
-        title: t('general.pending.title'),
-        value: data.pendingRequests.value.toString(),
-        trend: { ...data.pendingRequests.trend, text: t('general.vsLastMonth') },
-        icon: <AlertTriangle className="h-4 w-4" />,
-        iconColor: 'text-amber-500',
-      },
-    ],
-    [
-      t,
-      data.totalRequests.value,
-      data.totalRequests.trend.value,
-      data.totalRequests.trend.isPositive,
-      data.avgResolutionTime,
-      data.avgResolutionTimeTrend?.value,
-      data.avgResolutionTimeTrend?.isPositive,
-      data.resolutionRate.value,
-      data.resolutionRate.trend.value,
-      data.resolutionRate.trend.isPositive,
-      data.pendingRequests.value,
-      data.pendingRequests.trend.value,
-      data.pendingRequests.trend.isPositive,
-    ]
-  );
+export async function GeneralMetrics({ data, locale }: { data: MetricsData; locale: Locale }) {
+  const t = await getTranslations({ locale, namespace: 'admin.dashboard.metrics' });
+  
+  const generalMetrics = [
+    {
+      id: 'total',
+      title: t('general.totalRequests.title'),
+      value: data.totalRequests.value.toLocaleString(),
+      trend: { value: data.totalRequests.trend.value, isPositive: data.totalRequests.trend.isPositive, text: t('general.vsLastMonth') },
+      icon: <FileText className="h-4 w-4" />,
+      iconColor: 'text-blue-500',
+    },
+    {
+      id: 'avg-resolution',
+      title: t('general.avgResolutionTime.title'),
+      value: data.avgResolutionTime > 0 ? `${data.avgResolutionTime.toFixed(1)} ${t('general.avgResolutionTime.unit')}` : 'N/A',
+      trend: data.avgResolutionTimeTrend ? { ...data.avgResolutionTimeTrend, text: t('general.vsLastMonth') } : undefined,
+      icon: <Clock className="h-4 w-4" />,
+      iconColor: 'text-indigo-500',
+    },
+    {
+      id: 'resolution-rate',
+      title: t('general.resolutionRate.title'),
+      value: `${data.resolutionRate.value.toFixed(1)}%`,
+      trend: { ...data.resolutionRate.trend, text: t('general.vsLastMonth') },
+      icon: <CheckCircle className="h-4 w-4" />,
+      iconColor: 'text-emerald-500',
+    },
+    {
+      id: 'pending',
+      title: t('general.pending.title'),
+      value: data.pendingRequests.value.toString(),
+      trend: { ...data.pendingRequests.trend, text: t('general.vsLastMonth') },
+      icon: <AlertTriangle className="h-4 w-4" />,
+      iconColor: 'text-amber-500',
+    },
+  ];
 
   return (
     <div className="space-y-4">
@@ -126,59 +108,43 @@ export function GeneralMetrics({ data }: { data: MetricsData }) {
 }
 
 // Métricas de SLA (independientes del workflow)
-export function SLAMetrics({ data }: { data: MetricsData }) {
-  const t = useTranslations('admin.dashboard.metrics');
-  const slaMetrics = useMemo(
-    () => [
-      {
-        id: 'sla-overdue',
-        title: t('sla.overdue.title'),
-        value: data.slaOverdue.value.toString(),
-        trend: { value: data.slaOverdue.trend.value, isPositive: data.slaOverdue.trend.isPositive, text: t('sla.vsLastMonth') },
-        icon: <AlertTriangle className="h-4 w-4" />,
-        iconColor: 'text-red-500',
-      },
-      {
-        id: 'sla-compliance',
-        title: t('sla.compliance.title'),
-        value: `${data.slaCompliance.value.toFixed(0)}%`,
-        trend: { ...data.slaCompliance.trend, text: t('sla.vsLastMonth') },
-        icon: <Target className="h-4 w-4" />,
-        iconColor: 'text-blue-500',
-      },
-      {
-        id: 'sla-warning',
-        title: t('sla.atRisk.title'),
-        value: data.slaAtRisk.value.toString(),
-        trend: { value: data.slaAtRisk.trend.value, isPositive: data.slaAtRisk.trend.isPositive, text: t('sla.vsLastMonth') },
-        icon: <Clock className="h-4 w-4" />,
-        iconColor: 'text-amber-500',
-      },
-      {
-        id: 'draft',
-        title: t('sla.draft.title'),
-        value: data.draftRequests.value.toString(),
-        trend: { value: data.draftRequests.trend.value, isPositive: data.draftRequests.trend.isPositive, text: t('sla.vsLastMonth') },
-        icon: <XCircle className="h-4 w-4" />,
-        iconColor: 'text-gray-500',
-      },
-    ],
-    [
-      t,
-      data.slaOverdue.value,
-      data.slaOverdue.trend.value,
-      data.slaOverdue.trend.isPositive,
-      data.slaCompliance.value,
-      data.slaCompliance.trend.value,
-      data.slaCompliance.trend.isPositive,
-      data.slaAtRisk.value,
-      data.slaAtRisk.trend.value,
-      data.slaAtRisk.trend.isPositive,
-      data.draftRequests.value,
-      data.draftRequests.trend.value,
-      data.draftRequests.trend.isPositive,
-    ]
-  );
+export async function SLAMetrics({ data, locale }: { data: MetricsData; locale: Locale }) {
+  const t = await getTranslations({ locale, namespace: 'admin.dashboard.metrics' });
+  
+  const slaMetrics = [
+    {
+      id: 'sla-overdue',
+      title: t('sla.overdue.title'),
+      value: data.slaOverdue.value.toString(),
+      trend: { value: data.slaOverdue.trend.value, isPositive: data.slaOverdue.trend.isPositive, text: t('sla.vsLastMonth') },
+      icon: <AlertTriangle className="h-4 w-4" />,
+      iconColor: 'text-red-500',
+    },
+    {
+      id: 'sla-compliance',
+      title: t('sla.compliance.title'),
+      value: `${data.slaCompliance.value.toFixed(0)}%`,
+      trend: { ...data.slaCompliance.trend, text: t('sla.vsLastMonth') },
+      icon: <Target className="h-4 w-4" />,
+      iconColor: 'text-blue-500',
+    },
+    {
+      id: 'sla-warning',
+      title: t('sla.atRisk.title'),
+      value: data.slaAtRisk.value.toString(),
+      trend: { value: data.slaAtRisk.trend.value, isPositive: data.slaAtRisk.trend.isPositive, text: t('sla.vsLastMonth') },
+      icon: <Clock className="h-4 w-4" />,
+      iconColor: 'text-amber-500',
+    },
+    {
+      id: 'draft',
+      title: t('sla.draft.title'),
+      value: data.draftRequests.value.toString(),
+      trend: { value: data.draftRequests.trend.value, isPositive: data.draftRequests.trend.isPositive, text: t('sla.vsLastMonth') },
+      icon: <XCircle className="h-4 w-4" />,
+      iconColor: 'text-gray-500',
+    },
+  ];
 
   return (
     <div className="space-y-4">
@@ -196,14 +162,13 @@ export function SLAMetrics({ data }: { data: MetricsData }) {
 }
 
 // Componente principal que combina todas las métricas
-export function DashboardMetrics({ data }: { data: MetricsData }) {
+export async function DashboardMetrics({ data, locale }: { data: MetricsData; locale: Locale }) {
   return (
     <div className="space-y-8">
-      <GeneralMetrics data={data} />
-      <SLAMetrics data={data} />
+      <GeneralMetrics data={data} locale={locale} />
+      <SLAMetrics data={data} locale={locale} />
     </div>
   );
 }
 
-// Export para compatibilidad
 export default DashboardMetrics;

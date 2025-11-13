@@ -24,7 +24,6 @@ import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-adv
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
-import { PermissionButton } from '@/components/shared/permission-button';
 
 const searchParamsParsers = {
   page: parseAsInteger.withDefault(1),

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { getRecentRequests } from '@/actions/dashboard';
 import { Link } from '@/i18n/routing';
 
@@ -23,6 +23,14 @@ interface Request {
 interface RecentRequestsProps {
   tenantId: string;
   workflowFilter?: string | null;
+}
+
+export function RecentRequestsFallback() {
+  return (
+    <div className="mt-8">
+      <div className="h-64 animate-pulse rounded-lg bg-muted" />
+    </div>
+  );
 }
 
 // Determine badge variant for status

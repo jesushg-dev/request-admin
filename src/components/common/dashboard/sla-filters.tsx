@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { getWorkflows } from '@/actions/dashboard';
 import { AlertTriangle, CheckCircle, Clock, Search } from 'lucide-react';
+import { useQueryStates } from 'nuqs';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -13,6 +14,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { useTranslations } from 'next-intl';
+import { dashboardSearchParamsParsers } from '@/app/[locale]/admin/[tenantId]/dashboard-search-params';
 
 export interface SLAFilterValues {
   slaStatus: string;
@@ -23,7 +25,6 @@ export interface SLAFilterValues {
 
 interface SLAFiltersProps {
   tenantId: string;
-  onSearch: (filters: SLAFilterValues) => void;
 }
 
 interface Workflow {
@@ -34,12 +35,14 @@ interface Workflow {
   };
 }
 
-export function SLAFilters({ tenantId, onSearch }: SLAFiltersProps) {
+export function SLAFilters({ tenantId }: SLAFiltersProps) {
   const t = useTranslations('admin.dashboard.slaFilters');
-  const [slaStatus, setSlaStatus] = useState<string>('all');
-  const [slaPercentage, setSlaPercentage] = useState<number[]>([0, 100]);
-  const [slaTimeRange, setSlaTimeRange] = useState<string>('all');
-  const [workflowType, setWorkflowType] = useState<string>('all');
+  const [{ slaStatus, slaPercentage, slaTimeRange, slaWorkflowType }, setSearchParams] = useQueryStates({
+    slaStatus: dashboardSearchParamsParsers.slaStatus,
+    slaPercentage: dashboardSearchParamsParsers.slaPercentage,
+    slaTimeRange: dashboardSearchParamsParsers.slaTimeRange,
+    slaWorkflowType: dashboardSearchParamsParsers.slaWorkflowType,
+  });
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
   const [searchText, setSearchText] = useState<string>('');
 
@@ -57,11 +60,11 @@ export function SLAFilters({ tenantId, onSearch }: SLAFiltersProps) {
   }, [tenantId]);
 
   const handleSearch = () => {
-    onSearch({
-      slaStatus,
-      slaPercentage,
-      slaTimeRange,
-      workflowType,
+    void setSearchParams({
+      slaStatus: slaStatus ?? 'all',
+      slaPercentage: slaPercentage ?? [0, 100],
+      slaTimeRange: slaTimeRange ?? 'all',
+      slaWorkflowType: slaWorkflowType ?? 'all',
     });
   };
 
@@ -70,7 +73,11 @@ export function SLAFilters({ tenantId, onSearch }: SLAFiltersProps) {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <div className="space-y-2">
           <Label htmlFor="sla-status">{t('labels.status')}</Label>
-          <RadioGroup id="sla-status" value={slaStatus} onValueChange={setSlaStatus} className="flex flex-col space-y-1">
+          <RadioGroup
+            id="sla-status"
+            value={slaStatus ?? 'all'}
+            onValueChange={(value) => void setSearchParams({ slaStatus: value })}
+            className="flex flex-col space-y-1">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="all" id="all" />
               <Label htmlFor="all" className="flex items-center">
@@ -119,10 +126,17 @@ export function SLAFilters({ tenantId, onSearch }: SLAFiltersProps) {
         <div className="space-y-2">
           <Label>{t('labels.slaPercentage')}</Label>
           <div className="pt-6 px-2">
-            <Slider value={slaPercentage} min={0} max={150} step={5} onValueChange={setSlaPercentage} className="mb-6" />
+            <Slider
+              value={slaPercentage ?? [0, 100]}
+              min={0}
+              max={150}
+              step={5}
+              onValueChange={(value) => void setSearchParams({ slaPercentage: value })}
+              className="mb-6"
+            />
             <div className="flex justify-between text-xs text-muted-foreground">
-              <span>{slaPercentage[0]}%</span>
-              <span>{slaPercentage[1]}%</span>
+              <span>{(slaPercentage ?? [0, 100])[0]}%</span>
+              <span>{(slaPercentage ?? [0, 100])[1]}%</span>
             </div>
           </div>
           <div className="flex justify-between text-xs text-muted-foreground mt-2">
@@ -135,7 +149,7 @@ export function SLAFilters({ tenantId, onSearch }: SLAFiltersProps) {
 
         <div className="space-y-2">
           <Label htmlFor="sla-time">{t('labels.timeRange')}</Label>
-          <Select value={slaTimeRange} onValueChange={setSlaTimeRange}>
+          <Select value={slaTimeRange ?? 'all'} onValueChange={(value) => void setSearchParams({ slaTimeRange: value })}>
             <SelectTrigger id="sla-time">
               <SelectValue placeholder={t('placeholders.selectRange')} />
             </SelectTrigger>
@@ -153,7 +167,7 @@ export function SLAFilters({ tenantId, onSearch }: SLAFiltersProps) {
           <Label htmlFor="workflow-type" className="mt-4 block">
             {t('labels.workflowType')}
           </Label>
-          <Select value={workflowType} onValueChange={setWorkflowType}>
+          <Select value={slaWorkflowType ?? 'all'} onValueChange={(value) => void setSearchParams({ slaWorkflowType: value })}>
             <SelectTrigger id="workflow-type">
               <SelectValue placeholder={t('placeholders.selectWorkflow')} />
             </SelectTrigger>

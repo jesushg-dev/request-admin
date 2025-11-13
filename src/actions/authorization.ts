@@ -17,12 +17,6 @@ type AuthResult = {
 export const getAuthContext = async (tenantId: string): Promise<AuthResult> => {
   const session = await currentSession();
   if (!session?.user) throw new AuthorizationError('Unauthorized');
-  console.log('session', session);
-  console.log('tenantId', tenantId);
-  console.log('session.user', session.user);
-  console.log('session.user.isGlobalAdmin', session.user.isGlobalAdmin);
-  console.log('session.user.role', session.user.role);
-  console.log('session.user.role', session.user.role);
 
   // Local cache is used to avoid multiple database calls for the same user in the same request
   let permissionsCache: Set<string> | null = null;
@@ -43,8 +37,6 @@ export const getAuthContext = async (tenantId: string): Promise<AuthResult> => {
       permissionsCache = new Set();
       return;
     }
-
-    console.log('userTenant', userTenant);
 
     // Global permissions are loaded from user roles and areas
     const rolePerms = userTenant.userRoles.flatMap((ur) => ur.role.roleFeature.map((rf) => rf.feature.key));
