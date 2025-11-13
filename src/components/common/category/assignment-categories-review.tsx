@@ -66,7 +66,7 @@ const CategoryTreeGrid: React.FC<{ categories: Categories }> = ({ categories }) 
 
   const visibleRows = treeData.filter((item, index) => {
     if (item.level === 0) return true;
-    const parentIndex = treeData.findIndex((parent) => parent.subcategories.some((sub) => sub.id === item.id));
+    const parentIndex = treeData.findIndex((parent) => parent.subcategories.some((sub: Category) => sub.id === item.id));
     return treeData.slice(0, index).every((ancestor, i) => (i === parentIndex ? ancestor.isExpanded : true));
   });
 
