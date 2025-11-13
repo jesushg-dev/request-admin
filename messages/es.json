@@ -3350,7 +3350,22 @@
         "enableTwoFactorDesc": "Requiere autenticación de dos factores para mayor seguridad.",
         "adminDesc": "Otorga a este usuario privilegios administrativos para la organización.",
         "admin": "Administración",
-        "gdprNotice": "Para cumplir con GDPR, algunos datos personales no se pueden almacenar al crear un usuario. \nUna vez que el usuario acepte la invitación, podrá completar y guardar su información personal."
+        "gdprNotice": "Para cumplir con GDPR, algunos datos personales no se pueden almacenar al crear un usuario. \nUna vez que el usuario acepte la invitación, podrá completar y guardar su información personal.",
+        "error": {
+          "usernameRequired": "El nombre de usuario es obligatorio.",
+          "invalidEmail": "Por favor ingresa un correo electrónico válido."
+        },
+        "validation": {
+          "emailInvalid": "Por favor ingresa un correo electrónico válido",
+          "firstNameRequired": "El nombre es obligatorio",
+          "lastNameRequired": "El apellido es obligatorio",
+          "phoneRequired": "El número de teléfono es obligatorio",
+          "identificationNumberRequired": "El número de identificación es obligatorio",
+          "identificationTypeRequired": "El tipo de identificación es obligatorio",
+          "roleRequired": "El rol es obligatorio",
+          "areaRequired": "El área es obligatoria",
+          "duplicateArea": "Esta área fue seleccionada múltiples veces. Solo se permite un rol por área"
+        }
       }
     },
     "invitation": {

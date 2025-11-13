@@ -306,22 +306,6 @@
         "title": "Assignment Hierarchy",
         "description": "Manage assignment hierarchy"
       },
-      "reports": {
-        "title": "Reports",
-        "description": "Generate and view system reports"
-      },
-      "notifications": {
-        "title": "Notifications",
-        "description": "Manage your notifications"
-      },
-      "messages": {
-        "title": "Messages",
-        "description": "Manage your messages"
-      },
-      "help": {
-        "title": "Help",
-        "description": "Help center and documentation"
-      },
       "identificationTypes": {
         "title": "Identification Types",
         "description": "Manage identification types"

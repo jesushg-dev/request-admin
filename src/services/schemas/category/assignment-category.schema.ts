@@ -40,7 +40,7 @@ export function createAssignmentCategorySchema(t: TranslationFn): z.ZodType<any>
  * Hook for use in client components
  */
 export function useCategoriesSchema() {
-  const t = useTranslations('admin.area.create.assignmentCategory.validation');
+  const t = useTranslations('admin.area.create.form.assignmentCategory.validation');
   const assignmentCategorySchema = createAssignmentCategorySchema((key: string) => t(key as any));
   
   return z.object({
