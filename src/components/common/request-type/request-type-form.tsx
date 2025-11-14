@@ -8,14 +8,13 @@ import { BookCopyIcon, BookIcon, ChevronLeft, ChevronRight, ContainerIcon, FileC
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { ImperativePanelHandle } from 'react-resizable-panels';
-import { SingleValue } from 'react-select';
 import { toast } from 'sonner';
 
 import { RequestHierarchyWithLevelsType } from '@/types/zenstackhq/hierarchy';
 import { buildRequestCategoryUpsertArgs } from '@/lib/request-type';
 import { Form } from '@/components/ui/form';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
-import Select, { OptionType } from '@/components/custom-ui/select';
+import { OptionType } from '@/components/custom-ui/select';
 import EmptyState from '@/components/shared/empty-state';
 import { FormError, FormRoot } from '@/components/shared/form-root';
 import { useRequestCategorySchema } from '@/services/schemas/request-type';
@@ -34,12 +33,11 @@ interface RequestTypeFormProps {
   tenantId: string;
   forms: OptionType[];
   requirements: OptionType[];
-  requestHierarchies: RequestHierarchyWithLevelsType[];
-  initialValues?: RequestTypeFormValues | null;
-  disableHierarchyChange?: boolean;
+  requestHierarchy: RequestHierarchyWithLevelsType;
+  initialValues: RequestTypeFormValues;
 }
 
-const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements, forms, requestHierarchies, tenantId, disableHierarchyChange = false }) => {
+const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements, forms, requestHierarchy, tenantId }) => {
   const t = useTranslations('admin.requestType.create');
 
   const ref = useRef<ImperativePanelHandle>(null);
@@ -49,8 +47,7 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
 
   const [mode, setMode] = useState<Mode>('none');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
-  const [selectedHierarchy, setSelectedHierarchy] = useState<SingleValue<OptionType>>();
-  const [currentState, setCurrentState] = useState<RequestTypeFormValues['categories']>([]);
+  const [currentState, setCurrentState] = useState<RequestTypeFormValues['categories']>(initialValues.categories);
 
   const form = useForm({
     resolver: zodResolver(requestCategorySchema),
@@ -58,8 +55,6 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
 
   const formsOptions = useMemo(() => forms, [forms]);
   const requirementsOptions = useMemo(() => requirements, [requirements]);
-  const hierarchyOptions = useMemo(() => requestHierarchies.map((h) => ({ label: h.name, value: h.id })), [requestHierarchies]);
-  const selectedHierarchyData = useMemo(() => requestHierarchies.find((h) => h.id === selectedHierarchy?.value), [requestHierarchies, selectedHierarchy]);
 
   const toggleSidebar = () => {
     if (ref.current) {
@@ -87,15 +82,13 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
 
   const handleCancelForm = useCallback(() => {
     setMode('none');
-    const defaultLevelId = selectedHierarchyData?.levels[0].id ?? '';
+    const defaultLevelId = requestHierarchy.levels[0]?.id ?? '';
     form.reset(getDefaultCategory(defaultLevelId));
     resetError();
-  }, [form, resetError, selectedHierarchyData]);
-
-  const handleHierarchyChange = useCallback((newValue: SingleValue<OptionType>) => setSelectedHierarchy(newValue), []);
+  }, [form, resetError, requestHierarchy]);
 
   const onSubmit = (cat: RequestCategoryValues) => {
-    if (!selectedHierarchy?.value) return;
+    if (!initialValues.hierarchyId.value) return;
 
     startTransition(async () => {
       try {
@@ -103,7 +96,7 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
 
         const toastId = toast.loading(t('category.loading'));
 
-        const response = await upsert(buildRequestCategoryUpsertArgs(cat, tenantId, String(selectedHierarchy.value)));
+        const response = await upsert(buildRequestCategoryUpsertArgs(cat, tenantId, String(initialValues.hierarchyId.value)));
         if (cat.executionSteps && response) {
           toast.loading(t('category.executionLoading'), { id: toastId });
           await createExecutionFlow(cat.executionSteps, cat.id, tenantId);
@@ -152,36 +145,16 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
   };
 
   useEffect(() => {
-    if (initialValues) {
-      setCurrentState(initialValues.categories);
-      setSelectedHierarchy(initialValues.hierarchyId);
-    } else if (requestHierarchies.length === 1) {
-      const defaultHierarchy = hierarchyOptions[0];
-      setSelectedHierarchy(defaultHierarchy);
-    }
-  }, [initialValues, requestHierarchies, hierarchyOptions]);
+    setCurrentState(initialValues.categories);
+  }, [initialValues.categories]);
 
   const isFormActive = mode !== 'none';
-  const firstLevelId = selectedHierarchyData?.levels[0].id ?? '';
 
   return (
     <ResizablePanelGroup direction="horizontal" className="flex-1">
       <ResizablePanel defaultSize={30} collapsible ref={ref} minSize={0}>
         <div className="flex flex-col h-full overflow-hidden">
-          <div className="flex flex-col border-b bg-background/50 px-4 py-2">
-            <h2 className="text-sm font-medium mb-2">{t('hierarchyLabel')}</h2>
-            <Select
-              isSearchable
-              menuPortalTarget={null}
-              isClearable={!disableHierarchyChange && hierarchyOptions.length > 1}
-              options={hierarchyOptions}
-              isDisabled={disableHierarchyChange || hierarchyOptions.length === 1}
-              onChange={handleHierarchyChange}
-              value={selectedHierarchy}
-            />
-            <span className="text-xs text-muted-foreground">{t('hierarchyDescription')}</span>
-          </div>
-          {selectedHierarchyData && <CategoryTreeView categories={currentState} onAddCategory={handleAddCategory} onEditCategory={handleEditCategory} hierarchy={selectedHierarchyData} />}
+          <CategoryTreeView categories={currentState} onAddCategory={handleAddCategory} onEditCategory={handleEditCategory} hierarchy={requestHierarchy} />
         </div>
       </ResizablePanel>
       <ResizableHandle />
@@ -192,49 +165,26 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
             {isSidebarCollapsed ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
           </button>
 
-          {selectedHierarchy && selectedHierarchyData ? (
-            isFormActive ? (
-              <Form {...form}>
-                <FormRoot className="h-full" onSubmit={form.handleSubmit(onSubmit)}>
-                  <FormError error={error} />
-                  <CategoryForm
-                    mode={mode}
-                    isPending={isPending}
-                    formsOptions={formsOptions}
-                    currentState={currentState}
-                    levels={selectedHierarchyData.levels}
-                    requirementsOptions={requirementsOptions}
-                    handleCancelForm={handleCancelForm}
-                  />
-                </FormRoot>
-              </Form>
-            ) : (
-              <EmptyState
-                title={t('manageTitle')}
-                description={t('manageDescription')}
-                icons={[FileStackIcon, BookCopyIcon, ContainerIcon]}
-                actions={[
-                  {
-                    label: t('manageAction'),
-                    onClick: () => handleAddCategory(firstLevelId),
-                  },
-                ]}
-              />
-            )
+          {isFormActive ? (
+            <Form {...form}>
+              <FormRoot className="h-full" onSubmit={form.handleSubmit(onSubmit)}>
+                <FormError error={error} />
+                <CategoryForm
+                  mode={mode}
+                  isPending={isPending}
+                  formsOptions={formsOptions}
+                  currentState={currentState}
+                  levels={requestHierarchy.levels}
+                  requirementsOptions={requirementsOptions}
+                  handleCancelForm={handleCancelForm}
+                />
+              </FormRoot>
+            </Form>
           ) : (
             <EmptyState
-              title={t('selectTitle')}
-              description={t('selectDescription')}
-              icons={[PackageOpenIcon, FileCogIcon, BookIcon]}
-              actions={[
-                {
-                  label: t('selectAction'),
-                  href: {
-                    pathname: '/admin/[tenantId]/configurations/request-hierarchies/new',
-                    params: { tenantId },
-                  },
-                },
-              ]}
+              title={t('manageTitle')}
+              description={t('manageDescription')}
+              icons={[FileStackIcon, BookCopyIcon, ContainerIcon]}
             />
           )}
         </div>

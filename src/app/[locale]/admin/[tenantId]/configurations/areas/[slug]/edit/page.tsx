@@ -51,7 +51,6 @@ const EditPage: FC<EditPageProps> = async ({ params }) => {
 
   const modules = await getModuleByTenantIdAndScope(tenantId, 'area');
   const hierarchies = await getAssignmentHierarchiesAndLevelsByTenantId(locale, tenantId);
-
   return <AreaFormStepper tenantId={tenantId} defaultValues={area} assignmentHierarchies={hierarchies} requirements={requirements} userOptions={userOptions} moduleWithFeatures={modules} />;
 };
 

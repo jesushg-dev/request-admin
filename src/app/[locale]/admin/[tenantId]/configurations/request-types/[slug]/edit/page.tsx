@@ -6,7 +6,7 @@ import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
 import { getTranslations } from 'next-intl/server';
 import { getFormsAsOptions } from '@/actions/form';
-import { getRequestHierarchiesAndLevelsByTenantId } from '@/actions/hierarchy';
+import { getRequestHierarchyById } from '@/actions/hierarchy';
 import { getRequestCategoriesByIds } from '@/actions/request-type';
 import { getRequirementsAsOptions } from '@/actions/requirement';
 
@@ -42,16 +42,27 @@ const UpdateRequestTypePage: FC<UpdateRequestTypePageProps> = async ({ params })
 
   const forms = await getFormsAsOptions(tenantId);
   const requirements = await getRequirementsAsOptions(tenantId);
-  const hierarchies = await getRequestHierarchiesAndLevelsByTenantId(locale, tenantId);
   const initialValues = await getRequestCategoriesByIds([slug], tenantId);
 
-  if (!initialValues) {
+  if (!initialValues || initialValues.categories.length === 0) {
+    return redirect({ locale, href: { pathname: '/admin/[tenantId]/configurations/request-types', params: { tenantId } } });
+  }
+
+  const hierarchy = await getRequestHierarchyById(String(initialValues.hierarchyId.value), tenantId);
+
+  if (!hierarchy) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/configurations/request-types', params: { tenantId } } });
   }
 
   return (
     <HierarchicalResourceProvider initialCategories={initialValues.categories}>
-      <RequestTypeForm initialValues={initialValues} forms={forms} requirements={requirements} requestHierarchies={hierarchies} tenantId={tenantId} />
+      <RequestTypeForm
+        initialValues={initialValues}
+        forms={forms}
+        requirements={requirements}
+        requestHierarchy={hierarchy}
+        tenantId={tenantId}
+      />
     </HierarchicalResourceProvider>
   );
 };

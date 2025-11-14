@@ -209,6 +209,19 @@ export const getRequestHierarchiesAndLevelsByTenantId = async (locale: Locale, t
   return hierarchies;
 };
 
+export const getRequestHierarchyById = async (hierarchyId: string, tenantId: string): Promise<RequestHierarchyWithLevelsType | null> => {
+  const session = await currentSession();
+  if (!session) throw new UserNotFoundErr('User not found');
+
+  const db = await getDb();
+  const hierarchy = await db.requestHierarchy.findFirst({
+    ...RequestHierarchyDefaultArgs,
+    where: { id: hierarchyId, tenantId },
+  });
+
+  return hierarchy;
+};
+
 export const getAssignmentHierarchiesAndLevelsByTenantId = async (locale: Locale, tenantId: string): Promise<AssignmentHierarchyWithLevelsType[]> => {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');

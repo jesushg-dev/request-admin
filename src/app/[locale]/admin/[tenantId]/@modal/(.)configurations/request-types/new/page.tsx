@@ -1,30 +1,19 @@
-import { type Metadata } from 'next';
 import { FC } from 'react';
 import { type Locale } from 'next-intl';
+import { redirect } from '@/i18n/routing';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
-import { redirect } from '@/i18n/routing';
 import { getTranslations } from 'next-intl/server';
 import { getRequestHierarchiesAndLevelsByTenantId } from '@/actions/hierarchy';
 
 import CreateNewRequestType from '@/components/common/request-type/create-request-type';
-import { PageCardWrapper } from '@/components/shared/page-container';
+import { PageDialogWrapper } from '@/components/shared/page-container';
 
-interface NewPageProps {
+interface NewRequestTypePageProps {
   params: Promise<{ locale: Locale; tenantId: string }>;
 }
 
-export async function generateMetadata(props: NewPageProps): Promise<Metadata> {
-  const { locale } = await props.params;
-  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
-
-  return {
-    title: `${t('pages.requestTypeNew.title')} - ${t('brandName')}`,
-    description: t('pages.requestTypeNew.description'),
-  };
-}
-
-const NewPage: FC<NewPageProps> = async ({ params }) => {
+const NewRequestTypePage: FC<NewRequestTypePageProps> = async ({ params }) => {
   const { locale, tenantId } = await params;
 
   const auth = await getAuthContext(tenantId);
@@ -42,10 +31,11 @@ const NewPage: FC<NewPageProps> = async ({ params }) => {
   }
 
   return (
-    <PageCardWrapper title={t('createNewRequestType')} description={t('createNewRequestTypeDescription')}>
+    <PageDialogWrapper title={t('createNewRequestType')} description={t('createNewRequestTypeDescription')}>
       <CreateNewRequestType requestHierarchies={hierarchies} />
-    </PageCardWrapper>
+    </PageDialogWrapper>
   );
 };
 
-export default NewPage;
+export default NewRequestTypePage;
+

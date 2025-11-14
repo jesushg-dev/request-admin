@@ -14,7 +14,6 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import Select, { optionSchema } from '@/components/custom-ui/select';
 import { FormCheckboxItem, FormContent, FormItem } from '@/components/shared/form-root';
-
 import { PillChain } from '../hierarchy/hierarchy-viewer-with-alternatives';
 
 import { type TAreaSchema } from '@/services/schemas/area';
@@ -38,6 +37,13 @@ export const getAreaDefaultValue = (): AreaFormValues => ({
   isActive: true,
   hierarchyId: { label: '', value: '' },
 });
+
+function AreaHierarchyView({ control, hierarchies }: { control: Control<AreaFormValues>; hierarchies: AssignmentHierarchyWithLevelsType[] }) {
+  const hierarchyId = useWatch({ control, name: 'hierarchyId' });
+  const selectedHierarchy = hierarchies.find((h) => h.id === hierarchyId?.value);
+  if (!selectedHierarchy) return null;
+  return <PillChain hierarchy={selectedHierarchy} />;
+}
 
 export default function AreaForm({ assignmentHierarchies = [], disableHierarchyChange = false }: { assignmentHierarchies: AssignmentHierarchyWithLevelsType[]; disableHierarchyChange?: boolean }) {
   const t = useTranslations('admin.area.create.form');
@@ -97,7 +103,7 @@ export default function AreaForm({ assignmentHierarchies = [], disableHierarchyC
           />
 
           {/* Hierarchy View */}
-          <HierarchyView control={control} assignmentHierarchies={assignmentHierarchies} />
+          <AreaHierarchyView control={control} hierarchies={assignmentHierarchies} />
 
           {/* Description Field */}
           <FormField
@@ -126,15 +132,3 @@ export default function AreaForm({ assignmentHierarchies = [], disableHierarchyC
   );
 }
 
-const HierarchyView = ({ control, assignmentHierarchies }: { control: Control<AreaFormValues>; assignmentHierarchies: AssignmentHierarchyWithLevelsType[] }) => {
-  const hierarchy = useWatch({
-    control,
-    name: 'hierarchyId',
-    defaultValue: { label: '', value: '' },
-  });
-
-  const selectedHierarchy = assignmentHierarchies.find((h) => h.id === hierarchy.value);
-  if (!selectedHierarchy) return null;
-
-  return <PillChain hierarchy={selectedHierarchy} />;
-};

@@ -1,5 +1,6 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import { getDb } from '@/server/db-client';
 
 import { ExecutionFlowDefaultArgs } from '@/types/zenstackhq/execution-flow';
@@ -233,4 +234,51 @@ function prepareCategoryUpsert(categories: RequestCategoryValues[]) {
     sortedCategories: sortedIds.map((id) => categoryMap.get(id)).filter((cat): cat is RequestCategoryValues => !!cat),
     parentChildMap: reverseList,
   };
+}
+
+/**
+ * Creates an initial parent category for a request type
+ */
+export async function createInitialRequestCategory({
+  hierarchyId,
+  hierarchyLevelId,
+  name,
+  tenantId,
+}: {
+  hierarchyId: string;
+  hierarchyLevelId: string;
+  name: string;
+  tenantId: string;
+}): Promise<string> {
+  const db = await getDb();
+  
+  const categoryId = generateUuid();
+  const slaId = generateUuid();
+
+  const category = {
+    id: categoryId,
+    hierarchyLevelId,
+    parentCategoryId: null,
+    name,
+    description: '',
+    isActive: true,
+    isEligibleForNewClients: true,
+    sla: {
+      id: slaId,
+      resolutionTime: 24,
+      escalationTime: 4,
+    },
+    requirements: [],
+    forms: [],
+    guides: [],
+    children: [],
+  } as RequestCategoryValues;
+
+  const upsertArgs = buildRequestCategoryUpsertArgs(category, tenantId, hierarchyId);
+  await db.requestCategory.upsert(upsertArgs);
+
+  // Revalidar la ruta para asegurar que los datos se actualicen
+  revalidatePath(`/admin/${tenantId}/configurations/request-types/${categoryId}/edit`);
+
+  return categoryId;
 }
