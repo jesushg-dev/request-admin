@@ -2961,7 +2961,17 @@
           "loading": "Saving changes...",
           "success": "Changes saved successfully",
           "error": "Error saving changes: {error}",
-          "executionLoading": "Saving execution flow..."
+          "executionLoading": "Saving execution flow...",
+          "errors": {
+            "duplicateName": "A category with the same name already exists at this level with the same parent",
+            "firstLevelNoParent": "First level categories cannot have a parent category",
+            "invalidLevel": "Cannot add a subcategory to an invalid level",
+            "onlyOneRootAllowed": "Only one root category (without parent) can exist at the first level",
+            "sameNameAsParent": "The category cannot have the same name as its parent category",
+            "incompleteHierarchy": "The hierarchy is incomplete. Missing level {levelName} in the ancestor chain. All levels must be present from the root level to this level.",
+            "incompleteChildrenChain": "The parent category ({levelName}) does not have a complete chain of children down to the last level. This would prevent completing the request form. Please create the missing categories in the following levels before using this category as a parent.",
+            "cannotActivateIncomplete": "Cannot activate category \"{categoryName}\"."
+          }
         },
         "blockedResourcesInfo": {
           "blockedTitle": "{title}",
@@ -2978,7 +2988,25 @@
         "manageAction": "Create New Category",
         "selectTitle": "Select a Hierarchy",
         "selectDescription": "Please select a hierarchy from the sidebar to manage its categories.",
-        "selectAction": "Create New Hierarchy"
+        "selectAction": "Create New Hierarchy",
+        "hierarchyDiagram": {
+          "incompleteCategoriesTitle": "Categories with Incomplete Hierarchy",
+          "incompleteCategoriesDescription": "The following categories do not have a complete chain of children down to the last level. This would prevent completing the request form.",
+          "problemDemoTitle": "How does it affect?",
+          "problemDemoDescription": "When a user selects a category that doesn't have a complete chain of children, they cannot complete the form:",
+          "cannotActivateDescription": "This category does not have a complete chain of children down to the last level. Please complete the missing categories before activating.",
+          "defaultCategoryName": "This category",
+          "levelLabel": "Level",
+          "problemDemoReset": "Reset",
+          "problemDemoFormTitle": "Select Request Category",
+          "problemDemoSelectPlaceholder": "Select...",
+          "problemDemoSelecting": "Selecting category...",
+          "problemDemoNoOptions": "No options",
+          "problemDemoExplanationTitle": "Problem Detected",
+          "problemDemoExplanation": "The category \"{categoryName}\" ({levelName}) does not have children in {nextLevelName} and following levels. This prevents completing the request form.",
+          "problemDemoNoIncompleteCategories": "This is a demonstration of the problem. If there were categories with incomplete hierarchy, they would appear here.",
+          "incompleteChildrenChainWarning": "⚠️ This category ({levelName}) does not have a complete chain of children down to the last level. This would prevent completing the request form. Please create the missing categories in the following levels."
+        }
       }
     },
     "requirement": {
@@ -4994,7 +5022,19 @@
       "rename": "Rename",
       "edit": "Edit",
       "delete": "Delete",
-      "addSubcategory": "Add \"{levelName}\""
+      "addSubcategory": "Add '{levelName}'",
+      "addSibling": "Add '{levelName}'",
+      "addCategoryButton": "Add {categoryName}",
+      "creating": "Creating {levelName}...",
+      "noMoreLevels": "No more levels available in the hierarchy",
+      "incompleteHierarchyWarning": "⚠️ The hierarchy is incomplete. This category ({levelName}) cannot have children until the ancestor chain is complete. Missing intermediate levels in the hierarchy.",
+      "incompleteChildrenChainWarning": "⚠️ This category ({levelName}) does not have a complete chain of children down to the last level. This would prevent completing the request form. Please create the missing categories in the following levels.",
+      "active": "Active",
+      "inactive": "Inactive",
+      "activateCategoryAndChildren": "Activate category and children",
+      "activatingCategories": "Activating {count} categor(ies)...",
+      "categoriesActivated": "{count} categor(ies) activated successfully",
+      "errorActivatingCategories": "Error activating categories"
     },
     "localeSwitcher": {
       "label": "Select language",

@@ -31,12 +31,27 @@ type AssignmentCategoriesSelectProps = {
 export const AssignmentCategoriesSelect: React.FC<AssignmentCategoriesSelectProps> = ({ levels, areaId, isDisabled, menuPortalTarget }) => {
   const { control, watch, setValue } = useFormContext<AssignmentCategorySelectArrayValues>();
   const watchedFields = watch('assignmentCategory', []);
-  const lastSelectedIndex = watchedFields.findLastIndex((field) => !!field?.value);
+  
+  // Calculate activeLevel based on current levels array length, not previous selections
+  const lastSelectedIndex = watchedFields.findLastIndex((field, index) => {
+    // Only consider fields that are within the current levels array
+    return index < levels.length && !!field?.value;
+  });
   const activeLevel = lastSelectedIndex === -1 ? 0 : lastSelectedIndex + 1;
 
+  // Clear fields that are beyond the current levels array
+  useEffect(() => {
+    const currentLevelsCount = levels.length;
+    for (let i = currentLevelsCount; i < watchedFields.length; i++) {
+      setValue(`assignmentCategory.${i}`, { label: '', value: '', position: i });
+    }
+  }, [levels.length, watchedFields.length, setValue]);
+
   const handleClearLevels = (startIndex: number) => {
-    for (let i = startIndex; i < levels.length; i++) {
-      setValue(`assignmentCategory.${i}`, { label: '', value: '', position: levels[i].position });
+    // Only clear up to the current levels array length
+    const maxIndex = Math.min(startIndex, levels.length);
+    for (let i = maxIndex; i < levels.length; i++) {
+      setValue(`assignmentCategory.${i}`, { label: '', value: '', position: levels[i]?.position ?? i + 1 });
     }
   };
 
@@ -103,7 +118,7 @@ const SingleAssignmentCategorySelect: React.FC<SingleAssignmentCategorySelectPro
   const t = useTranslations('admin.request.form.classificationStep');
   const where = useMemo(() => {
     const baseFilter = parentCategoryId ? { parentCategoryId } : { hierarchyLevelId };
-    return areaId ? { ...baseFilter, areaId } : baseFilter;
+    return areaId ? { ...baseFilter, areaId, isActive: true } : { ...baseFilter, isActive: true };
   }, [parentCategoryId, hierarchyLevelId, areaId]);
 
   const { data: categories = [], isLoading } = useFindManyAssignmentCategory(

@@ -2961,7 +2961,17 @@
           "loading": "Saving changes...",
           "success": "Changes saved successfully",
           "error": "Error saving changes: {error}",
-          "executionLoading": "Guardar flujo de ejecución ..."
+          "executionLoading": "Guardar flujo de ejecución ...",
+          "errors": {
+            "duplicateName": "Ya existe una categoría con el mismo nombre en este nivel y con el mismo padre",
+            "firstLevelNoParent": "Las categorías del primer nivel no pueden tener una categoría padre",
+            "invalidLevel": "No se puede agregar una subcategoría en un nivel inválido",
+            "onlyOneRootAllowed": "Solo puede haber una categoría raíz (sin padre) en el primer nivel",
+            "sameNameAsParent": "La categoría no puede tener el mismo nombre que su categoría padre",
+            "incompleteHierarchy": "La jerarquía está incompleta. Falta el nivel {levelName} en la cadena de ancestros. Todos los niveles deben estar presentes desde el nivel raíz hasta este nivel.",
+            "incompleteChildrenChain": "La categoría padre ({levelName}) no tiene una cadena completa de hijos hasta el último nivel. Esto impediría completar el formulario de solicitud. Por favor, crea las categorías faltantes en los niveles siguientes antes de usar esta categoría como padre.",
+            "cannotActivateIncomplete": "No se puede activar la categoría \"{categoryName}\"."
+          }
         },
         "blockedResourcesInfo": {
           "blockedTitle": "{title}",
@@ -2978,7 +2988,25 @@
         "manageAction": "Crear nueva categoría",
         "selectTitle": "Seleccione una jerarquía",
         "selectDescription": "Por favor selecciona una jerarquía desde la barra lateral para gestionar sus categorías.",
-        "selectAction": "Crear una nueva jerarquía"
+        "selectAction": "Crear una nueva jerarquía",
+        "hierarchyDiagram": {
+          "incompleteCategoriesTitle": "Categorías con Jerarquía Incompleta",
+          "incompleteCategoriesDescription": "Las siguientes categorías no tienen una cadena completa de hijos hasta el último nivel. Esto impediría completar el formulario de solicitud.",
+          "problemDemoTitle": "¿En qué afecta?",
+          "problemDemoDescription": "Cuando el usuario selecciona una categoría que no tiene una cadena completa de hijos, no puede completar el formulario:",
+          "cannotActivateDescription": "Esta categoría no tiene una cadena completa de hijos hasta el último nivel. Por favor, completa las categorías faltantes antes de activar.",
+          "defaultCategoryName": "Esta categoría",
+          "levelLabel": "Nivel",
+          "problemDemoReset": "Reiniciar",
+          "problemDemoFormTitle": "Seleccionar Categoría de Solicitud",
+          "problemDemoSelectPlaceholder": "Seleccionar...",
+          "problemDemoSelecting": "Seleccionando categoría...",
+          "problemDemoNoOptions": "No hay opciones",
+          "problemDemoExplanationTitle": "Problema Detectado",
+          "problemDemoExplanation": "La categoría \"{categoryName}\" ({levelName}) no tiene hijos en {nextLevelName} y niveles siguientes. Esto impide completar el formulario de solicitud.",
+          "problemDemoNoIncompleteCategories": "Esta es una demostración del problema. Si hubiera categorías con jerarquía incompleta, aparecerían aquí.",
+          "incompleteChildrenChainWarning": "⚠️ Esta categoría ({levelName}) no tiene una cadena completa de hijos hasta el último nivel. Esto impediría completar el formulario de solicitud. Por favor, crea las categorías faltantes en los niveles siguientes."
+        }
       }
     },
     "requirement": {
@@ -4994,7 +5022,19 @@
       "rename": "Renombrar",
       "edit": "Editar",
       "delete": "Eliminar",
-      "addSubcategory": "Agregar \"{levelName}\""
+      "addSubcategory": "Agregar '{levelName}'",
+      "addSibling": "Agregar '{levelName}'",
+      "addCategoryButton": "Agregar {categoryName}",
+      "creating": "Creando {levelName}...",
+      "noMoreLevels": "No hay más niveles disponibles en la jerarquía",
+      "incompleteHierarchyWarning": "⚠️ La jerarquía está incompleta. Esta categoría ({levelName}) no puede tener hijos hasta que la cadena de ancestros esté completa. Faltan niveles intermedios en la jerarquía.",
+      "incompleteChildrenChainWarning": "⚠️ Esta categoría ({levelName}) no tiene una cadena completa de hijos hasta el último nivel. Esto impediría completar el formulario de solicitud. Por favor, crea las categorías faltantes en los niveles siguientes.",
+      "active": "Activa",
+      "inactive": "Inactiva",
+      "activateCategoryAndChildren": "Activar categoría y sus hijos",
+      "activatingCategories": "Activando {count} categoría(s)...",
+      "categoriesActivated": "{count} categoría(s) activada(s) correctamente",
+      "errorActivatingCategories": "Error al activar las categorías"
     },
     "localeSwitcher": {
       "label": "Seleccionar idioma",

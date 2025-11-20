@@ -12,7 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { OptionType } from '@/components/custom-ui/select';
 
-import { BlockedResource, ResourceGroup } from './hierarchical-category-provider';
+import { BlockedResource, ResourceGroup } from './types';
 
 interface BlockedResourcesInfoProps {
   defaultOpen?: boolean;
@@ -106,7 +106,9 @@ export function BlockedResourcesInfo({
                                       const firstCategory = item.categories[0];
                                       if (firstCategory) {
                                         onPromoteResource(item.resource, {
+                                          level: firstCategory.level,
                                           parentLabel: firstCategory.parentLabel,
+                                          levelName: firstCategory.level?.name,
                                           resources: [item.resource],
                                           hierarchyLevelId: firstCategory.groupId,
                                         });

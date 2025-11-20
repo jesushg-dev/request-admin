@@ -10,7 +10,6 @@ import { getRequestHierarchyById } from '@/actions/hierarchy';
 import { getRequestCategoriesByIds } from '@/actions/request-type';
 import { getRequirementsAsOptions } from '@/actions/requirement';
 
-import { HierarchicalResourceProvider } from '@/components/common/request-type/hierarchical-category-provider';
 import RequestTypeForm from '@/components/common/request-type/request-type-form';
 
 interface UpdateRequestTypePageProps {
@@ -55,15 +54,13 @@ const UpdateRequestTypePage: FC<UpdateRequestTypePageProps> = async ({ params })
   }
 
   return (
-    <HierarchicalResourceProvider initialCategories={initialValues.categories}>
-      <RequestTypeForm
-        initialValues={initialValues}
-        forms={forms}
-        requirements={requirements}
-        requestHierarchy={hierarchy}
-        tenantId={tenantId}
-      />
-    </HierarchicalResourceProvider>
+    <RequestTypeForm
+      initialValues={initialValues}
+      forms={forms}
+      requirements={requirements}
+      requestHierarchy={hierarchy}
+      tenantId={tenantId}
+    />
   );
 };
 

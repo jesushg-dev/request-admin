@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { getDb } from '@/server/db-client';
+import { currentSession } from '@/server/auth-server';
 
 import { ExecutionFlowDefaultArgs } from '@/types/zenstackhq/execution-flow';
 import { transformExecutionFlowToZodSchema } from '@/lib/execution-flow';
@@ -9,6 +10,11 @@ import { generateUuid } from '@/lib/id';
 import { buildRequestCategoryUpsertArgs } from '@/lib/request-type';
 import { RequestCategoryValues } from '@/components/common/request-type/category-form';
 import { RequestTypeFormValues } from '@/components/common/request-type/request-type-form';
+import { canActivateCategory } from '@/lib/category-validation';
+import { Prisma } from '@zenstackhq/runtime/models';
+import { IncompleteCategoryChainError } from '@/lib/errors';
+
+class UserNotFoundErr extends Error {}
 
 export async function getRequestCategoriesByIds(rootIds: string[], tenantId: string): Promise<RequestTypeFormValues> {
   const db = await getDb();
@@ -234,6 +240,93 @@ function prepareCategoryUpsert(categories: RequestCategoryValues[]) {
     sortedCategories: sortedIds.map((id) => categoryMap.get(id)).filter((cat): cat is RequestCategoryValues => !!cat),
     parentChildMap: reverseList,
   };
+}
+
+/**
+ * Updates only the isActive status of a category (lightweight operation).
+ * Use this when you only need to change the active status without updating other fields.
+ * Validates that the category has a complete chain of children before activating.
+ */
+export async function updateCategoryActiveStatus(
+  categoryId: string,
+  isActive: boolean,
+  tenantId: string
+): Promise<void> {
+  const session = await currentSession();
+  if (!session) throw new UserNotFoundErr('User not found');
+
+  const db = await getDb();
+
+  // If activating, validate that the category has a complete chain of children
+  if (isActive) {
+    const existingCategory = await db.requestCategory.findUnique({
+      where: { id: categoryId, tenantId },
+      select: { isActive: true, name: true },
+    });
+
+    // Only validate if category exists and is being activated (was inactive, now active)
+    if (existingCategory && !existingCategory.isActive) {
+      const canActivate = await canActivateCategory(categoryId, tenantId);
+      if (!canActivate) {
+        const categoryName = existingCategory.name || 'Esta categoría';
+        throw new IncompleteCategoryChainError(categoryName);
+      }
+    }
+  }
+
+  await db.requestCategory.update({
+    where: { id: categoryId, tenantId },
+    data: { isActive },
+  });
+
+  // Revalidate the path
+  revalidatePath(`/admin/${tenantId}/configurations/request-types/${categoryId}/edit`);
+}
+
+/**
+ * Upserts a single RequestCategory with validation when activating.
+ * Validates that the category has a complete chain of children down to the last level
+ * before allowing activation (isActive = true).
+ */
+export async function upsertRequestCategory(
+  category: RequestCategoryValues,
+  tenantId: string,
+  hierarchyId: string
+): Promise<void> {
+  const session = await currentSession();
+  if (!session) throw new UserNotFoundErr('User not found');
+
+  const db = await getDb();
+
+  // Check if category is being activated (isActive = true)
+  if (category.isActive) {
+    // Check if this is a new category or if it was previously inactive
+    const existingCategory = await db.requestCategory.findUnique({
+      where: { id: category.id, tenantId },
+      select: { isActive: true, name: true },
+    });
+
+    // Only validate if:
+    // 1. Existing category being activated (was inactive, now active)
+    // Note: New categories are validated in the client before calling this action
+    const isActivating = existingCategory && !existingCategory.isActive;
+
+    if (isActivating) {
+      // Validate that the category has a complete chain of children
+      const canActivate = await canActivateCategory(category.id, tenantId);
+      if (!canActivate) {
+        const categoryName = existingCategory.name || category.name;
+        throw new IncompleteCategoryChainError(categoryName);
+      }
+    }
+  }
+
+  // Proceed with the upsert
+  const upsertArgs = buildRequestCategoryUpsertArgs(category, tenantId, hierarchyId);
+  await db.requestCategory.upsert(upsertArgs);
+
+  // Revalidate the path
+  revalidatePath(`/admin/${tenantId}/configurations/request-types/${category.id}/edit`);
 }
 
 /**

@@ -1,8 +1,10 @@
 // category-form/index.tsx
 import { useTranslations } from 'next-intl';
 import { useFormContext, useWatch } from 'react-hook-form';
+import { useAtom, useAtomValue } from 'jotai';
+import { useMemo } from 'react';
 
-import { RequestLevelType } from '@/types/zenstackhq/hierarchy';
+import { RequestLevelType, RequestHierarchyWithLevelsType } from '@/types/zenstackhq/hierarchy';
 import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
@@ -14,8 +16,8 @@ import { TabSection } from '@/components/shared/tab-section';
 import { useRequestCategorySchema, type TRequestCategorySchema } from '@/services/schemas/request-type';
 
 import { BlockedResourcesInfo } from '../blocked-resources-info';
-import { useHierarchicalResourceContext } from '../hierarchical-category-provider';
-import { RequestTypeFormValues } from '../request-type-form';
+import { getChildGroupsAtom, getInheritedGroupsAtom, promoteResourceAtom } from '../store/category-store';
+import { ResourceGroup } from '../types';
 import { BasicInfoTab } from './basic-info-tab';
 import { GuideTab } from './guides-tab';
 import { SlaTab } from './sla-tab';
@@ -28,7 +30,7 @@ export const getDefaultCategory = (hierarchyLevelId: string, parentCategoryId?: 
   parentCategoryId,
   name: '',
   description: '',
-  isActive: true,
+  isActive: false,
   isEligibleForNewClients: true,
   sla: {
     id: generateUuid(),
@@ -47,17 +49,38 @@ interface CategoryFormProps {
   handleCancelForm: () => void;
   isPending: boolean;
   mode: 'add' | 'edit';
-  currentState: RequestTypeFormValues['categories'];
   levels: RequestLevelType[];
+  hierarchy: RequestHierarchyWithLevelsType;
 }
 
-export function CategoryForm({ levels, formsOptions = [], requirementsOptions = [], handleCancelForm, isPending, mode }: CategoryFormProps) {
+export function CategoryForm({ levels, formsOptions = [], requirementsOptions = [], handleCancelForm, isPending, mode, hierarchy }: CategoryFormProps) {
   const t = useTranslations('admin.requestType.create');
   const { control, setValue } = useFormContext<RequestCategoryValues>();
   const formTitle = mode === 'add' ? t('create') : t('update');
   const currentCategoryId = useWatch({ control, name: 'id' });
 
-  const { getInheritedGroups, getChildGroups, promoteResource } = useHierarchicalResourceContext();
+  // Use Jotai atoms for hierarchical resource management
+  const getInheritedGroups = useAtomValue(getInheritedGroupsAtom);
+  const getChildGroups = useAtomValue(getChildGroupsAtom);
+  const [, promoteResource] = useAtom(promoteResourceAtom);
+  
+  // Memoize the results to avoid unnecessary recalculations
+  const requirementInheritedGroups = useMemo(
+    () => getInheritedGroups(currentCategoryId, 'requirements', levels),
+    [getInheritedGroups, currentCategoryId, levels]
+  );
+  const requirementChildGroups = useMemo(
+    () => getChildGroups(currentCategoryId, 'requirements', levels),
+    [getChildGroups, currentCategoryId, levels]
+  );
+  const formInheritedGroups = useMemo(
+    () => getInheritedGroups(currentCategoryId, 'forms', levels),
+    [getInheritedGroups, currentCategoryId, levels]
+  );
+  const formChildGroups = useMemo(
+    () => getChildGroups(currentCategoryId, 'forms', levels),
+    [getChildGroups, currentCategoryId, levels]
+  );
 
   // Helper para filtrar seleccionables
   function getSelectableResources(allOptions: OptionType[], currentSelected: OptionType[], inheritedGroups: { resources: OptionType[] }[], childGroups: { resource: OptionType }[]): OptionType[] {
@@ -72,11 +95,12 @@ export function CategoryForm({ levels, formsOptions = [], requirementsOptions = 
   const currentForms = useWatch({ control, name: 'forms' }) ?? [];
 
   // Requirements
-  const requirementInheritedGroups = getInheritedGroups(currentCategoryId, 'requirements', levels);
-  const requirementChildGroups = getChildGroups(currentCategoryId, 'requirements', levels);
-  const requirementBlockedCount = requirementChildGroups.reduce((total, group) => total + (group.resource ? 1 : 0), 0);
-  const selectableRequirements = getSelectableResources(requirementsOptions, currentRequirements, requirementInheritedGroups, requirementChildGroups);
-  const onPromoteRequirement = (resource: OptionType) => {
+  const requirementBlockedCount = requirementChildGroups.length;
+  const selectableRequirements = useMemo(
+    () => getSelectableResources(requirementsOptions, currentRequirements, requirementInheritedGroups, requirementChildGroups),
+    [requirementsOptions, currentRequirements, requirementInheritedGroups, requirementChildGroups]
+  );
+  const onPromoteRequirement = (resource: OptionType, groupInfo: ResourceGroup) => {
     promoteResource(currentCategoryId, 'requirements', resource);
     // Agregar el recurso promovido al campo del formulario si no está
     if (!currentRequirements.some((r) => r.value === resource.value)) {
@@ -85,11 +109,12 @@ export function CategoryForm({ levels, formsOptions = [], requirementsOptions = 
   };
 
   // Forms
-  const formInheritedGroups = getInheritedGroups(currentCategoryId, 'forms', levels);
-  const formChildGroups = getChildGroups(currentCategoryId, 'forms', levels);
-  const formBlockedCount = formChildGroups.reduce((total, group) => total + (group.resource ? 1 : 0), 0);
-  const selectableForms = getSelectableResources(formsOptions, currentForms, formInheritedGroups, formChildGroups);
-  const onPromoteForm = (resource: OptionType) => {
+  const formBlockedCount = formChildGroups.length;
+  const selectableForms = useMemo(
+    () => getSelectableResources(formsOptions, currentForms, formInheritedGroups, formChildGroups),
+    [formsOptions, currentForms, formInheritedGroups, formChildGroups]
+  );
+  const onPromoteForm = (resource: OptionType, groupInfo: ResourceGroup) => {
     promoteResource(currentCategoryId, 'forms', resource);
     if (!currentForms.some((r) => r.value === resource.value)) {
       setValue('forms', [...currentForms, resource]);
@@ -118,7 +143,7 @@ export function CategoryForm({ levels, formsOptions = [], requirementsOptions = 
             {t('cancel')}
           </Button>
         }>
-        <BasicInfoTab />
+        <BasicInfoTab levels={levels} hierarchy={hierarchy} />
       </TabSection>
 
       <TabSection

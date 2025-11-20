@@ -30,12 +30,27 @@ type RequestCategoriesSelectProps = {
 export const RequestCategoriesSelect: FC<RequestCategoriesSelectProps> = ({ levels, menuPortalTarget }) => {
   const { control, watch, setValue } = useFormContext<RequestCategorySelectArrayValues>();
   const watchedFields = watch('requestCategory', []);
-  const lastSelectedIndex = watchedFields.findLastIndex((field) => !!field?.value);
+  
+  // Calculate activeLevel based on current levels array length, not previous selections
+  const lastSelectedIndex = watchedFields.findLastIndex((field, index) => {
+    // Only consider fields that are within the current levels array
+    return index < levels.length && !!field?.value;
+  });
   const activeLevel = lastSelectedIndex === -1 ? 0 : lastSelectedIndex + 1;
 
+  // Clear fields that are beyond the current levels array
+  useEffect(() => {
+    const currentLevelsCount = levels.length;
+    for (let i = currentLevelsCount; i < watchedFields.length; i++) {
+      setValue(`requestCategory.${i}`, { label: '', value: '', position: i });
+    }
+  }, [levels.length, watchedFields.length, setValue]);
+
   const handleClearLevels = (startIndex: number) => {
-    for (let i = startIndex; i < levels.length; i++) {
-      setValue(`requestCategory.${i}`, { label: '', value: '', position: levels[i].position });
+    // Only clear up to the current levels array length
+    const maxIndex = Math.min(startIndex, levels.length);
+    for (let i = maxIndex; i < levels.length; i++) {
+      setValue(`requestCategory.${i}`, { label: '', value: '', position: levels[i]?.position ?? i + 1 });
     }
   };
 
@@ -85,7 +100,10 @@ const SingleRequestCategorySelect: React.FC<SingleRequestCategorySelectProps> = 
   const { data: categories = [], isLoading } = useFindManyRequestCategory(
     {
       select: { id: true, name: true, description: true },
-      where: { parentCategoryId: parentCategoryId ?? null },
+      where: { 
+        parentCategoryId: parentCategoryId ?? null,
+        isActive: true,
+      },
     },
     { enabled, staleTime: 60000 }
   );

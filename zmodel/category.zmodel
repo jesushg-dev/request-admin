@@ -28,6 +28,9 @@ model RequestHierarchyLevel extends TenantScoped, Auditable, CatalogBase {
 }
 
 /// Represents a request category, with SLA and required documents.
+/// Business Rule: A category should only be activated (isActive = true) if it has a complete chain of children
+/// down to the last hierarchy level. This ensures users can complete request forms without encountering
+/// "No options" errors. Validation is enforced at the application level.
 model RequestCategory extends TenantScoped, Auditable, CatalogBase {
   sla                        SLA?                  // SLA specific to this category
   isEligibleForNewClients    Boolean                      @default(true) // Indicates if the category accepts new clients

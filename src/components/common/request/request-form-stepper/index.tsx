@@ -9,6 +9,7 @@ import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { DevTool } from "@hookform/devtools";
 
 import { uploadFiles } from '@/lib/uploadthing';
 import { Form } from '@/components/ui/form';
@@ -171,6 +172,7 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, pr
           </form>
         </Form>
       </ChildStepsProvider>
+      <DevTool control={form.control} />
     </div>
   );
 };
