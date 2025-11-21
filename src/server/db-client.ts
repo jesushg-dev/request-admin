@@ -77,7 +77,6 @@ export function getDbSync(user?: User | null) {
 }
 
 /**
- * @deprecated Use getDb() instead. This exports the base Prisma client for backward compatibility.
  * Only use this for auth-server or other cases where you need direct Prisma access.
  */
 export const db = prismaClient;

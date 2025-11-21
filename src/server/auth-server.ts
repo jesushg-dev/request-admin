@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { headers } from 'next/headers';
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
@@ -167,8 +168,13 @@ export const auth = betterAuth({
   ],
 });
 
-export const currentSession = async () => {
+/**
+ * Gets the current session with request-level caching.
+ * Uses React's cache() to ensure the session is only fetched once per request,
+ * avoiding duplicate database queries.
+ */
+export const currentSession = cache(async () => {
   return await auth.api.getSession({
     headers: await headers(),
   });
-};
+});

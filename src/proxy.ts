@@ -1,5 +1,4 @@
 import { type NextRequest } from 'next/server';
-import { betterFetch } from '@better-fetch/fetch';
 import createIntlMiddleware from 'next-intl/middleware';
 
 import { locales, routing } from './i18n/routing';
@@ -8,8 +7,6 @@ import { extractTenantId } from './lib/utils';
 import { authRoutes, DEFAULT_LOGIN_REDIRECT, isPublicPage } from './routes';
 import { auth } from './server/auth-server';
 import { LoginErrorCodeEnum } from './types/user';
-
-type Session = typeof auth.$Infer.Session;
 
 const intlMiddleware = createIntlMiddleware(routing);
 
@@ -28,7 +25,12 @@ function isSafeCallbackUrl(url: string) {
 
 // comment: locate this code in your middleware config file (e.g., middleware.ts or middleware.js)
 export const config = {
-  matcher: ['/((?!.+\\.[\\w]+$|_next|api/auth).*)', '/', '/(api)(.*)'],
+  // Exclude API routes for tenants to avoid infinite loops, since we now use DB directly
+  matcher: [
+    // Match all routes except static files, _next, api/auth, and api/tenants
+    '/((?!.+\\.[\\w]+$|_next|api/auth|api/tenants).*)',
+    '/',
+  ],
 };
 
 export default async function proxy(req: NextRequest) {
@@ -40,11 +42,15 @@ export default async function proxy(req: NextRequest) {
     return intlMiddleware(req);
   }
 
-  const { data: session } = await betterFetch<Session>('/api/auth/get-session', {
-    baseURL: req.nextUrl.origin,
-    headers: {
-      cookie: req.headers.get('cookie') || '',
-    },
+  // Use auth.api.getSession directly instead of HTTP call to avoid duplicate queries
+  // Convert NextRequest headers to Headers that Better Auth can use
+  const headers = new Headers();
+  req.headers.forEach((value, key) => {
+    headers.set(key, value);
+  });
+
+  const session = await auth.api.getSession({
+    headers,
   });
 
   if (!session) {
@@ -88,7 +94,7 @@ export default async function proxy(req: NextRequest) {
   // Redirect to login if the user is trying to access a tenant page without being a member of that tenant
   const tenantId = extractTenantId(req.nextUrl.pathname, locales);
   if (tenantId) {
-    const isValid = await validateTenantId(tenantId);
+    const isValid = await validateTenantId(tenantId, session.user.id);
     if (!isValid) {
       const encodedCallbackUrl = encodeURIComponent(req.nextUrl.pathname);
       return Response.redirect(new URL(`/auth/login?callbackUrl=${encodedCallbackUrl}&error=${LoginErrorCodeEnum.TENANT_NOT_AUTHORIZED}`, req.nextUrl));

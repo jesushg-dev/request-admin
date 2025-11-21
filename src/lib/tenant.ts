@@ -1,47 +1,48 @@
-import { cookies } from 'next/headers';
+import { db } from '@/server/db-client';
 
-function getBaseUrl() {
-  if (process.env.BETTER_AUTH_URL) return process.env.BETTER_AUTH_URL;
-  return `http://localhost:${process.env.PORT ?? 3000}`;
-}
-
-async function getCookies() {
-  const _cookies = await cookies();
-  return _cookies?.toString() ?? '';
-}
-
+/**
+ * Gets all tenants for a given user by querying the database directly.
+ * This avoids HTTP calls that could cause infinite loops in proxy.
+ * Uses the base Prisma client directly since we don't need ZenStack policies for this simple query.
+ */
 export async function getTenantsForUser(userId: string): Promise<{ id: string }[]> {
-  const response = await fetch(`${getBaseUrl()}/api/tenants`, {
-    method: 'POST',
-    body: JSON.stringify({ userId }),
-    headers: {
-      Cookie: await getCookies(), // Forward cookies to the API
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to get tenants for user' + response.statusText);
+  try {
+    const tenants = await db.tenant.findMany({
+      select: { id: true },
+      where: { userTenants: { some: { userId } } },
+    });
+    return tenants;
+  } catch (error) {
+    console.error('Failed to get tenants for user:', error);
+    throw new Error('Failed to get tenants for user');
   }
-
-  const data = await response.json();
-  return data.tenants;
 }
 
-export async function validateTenantId(tenantId: string | undefined): Promise<boolean> {
+/**
+ * Validates if a tenant exists and the user has access to it.
+ * This avoids HTTP calls that could cause infinite loops in proxy.
+ * Uses the base Prisma client directly since we don't need ZenStack policies for this simple query.
+ * 
+ * @param tenantId - The tenant ID to validate
+ * @param userId - The user ID to check access for
+ * @returns true if the tenant exists and the user has access, false otherwise
+ */
+export async function validateTenantId(tenantId: string | undefined, userId: string): Promise<boolean> {
   if (!tenantId) return false;
 
-  const response = await fetch(`${getBaseUrl()}/api/tenants/validate`, {
-    method: 'POST',
-    body: JSON.stringify({ tenantId }),
-    headers: {
-      Cookie: await getCookies(), // Forward cookies to the API
-    },
-  });
-
-  if (!response.ok) {
+  try {
+    // Check if the tenant exists and the user has access to it
+    const userTenant = await db.userTenant.findUnique({
+      where: {
+        userId_tenantId: {
+          userId,
+          tenantId,
+        },
+      },
+    });
+    return !!userTenant;
+  } catch (error) {
+    console.error('Failed to validate tenant ID:', error);
     return false;
   }
-
-  const data = await response.json();
-  return data.isValid;
 }
