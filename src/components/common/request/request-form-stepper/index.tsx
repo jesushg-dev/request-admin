@@ -9,7 +9,6 @@ import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { DevTool } from "@hookform/devtools";
 
 import { uploadFiles } from '@/lib/uploadthing';
 import { Form } from '@/components/ui/form';
@@ -98,6 +97,7 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, pr
   useEffect(() => {
     form.clearErrors();
   }, [stepper.current.id, form]);
+  console.log(form.formState.errors);
 
   const onSubmit = (values: z.infer<typeof stepper.current.schema>) => {
     if (stepper.current.id === 'classification') {
@@ -172,7 +172,6 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, pr
           </form>
         </Form>
       </ChildStepsProvider>
-      <DevTool control={form.control} />
     </div>
   );
 };

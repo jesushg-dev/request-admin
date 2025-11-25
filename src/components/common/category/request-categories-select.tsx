@@ -1,12 +1,15 @@
-import { useEffect, useMemo, type FC } from 'react';
+import { useEffect, useMemo, useTransition, type FC } from 'react';
 import { useFindManyRequestCategory } from '@/services/api/hooks';
 import { useTranslations } from 'next-intl';
 import { ControllerRenderProps, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { RequestLevelType } from '@/types/zenstackhq/hierarchy';
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { FormControl, FormField, FormMessage } from '@/components/ui/form';
+import { FormItem } from '@/components/shared/form-root';
 import Select from '@/components/custom-ui/select';
+import { CombinedCategoriesValues } from '@/components/common/request/request-form-stepper/classification-step';
+import { useCategoryLoading } from './category-loading-context';
 
 export const requestCategorySelectSchema = z.object({
   label: z.string(),
@@ -28,55 +31,77 @@ type RequestCategoriesSelectProps = {
 };
 
 export const RequestCategoriesSelect: FC<RequestCategoriesSelectProps> = ({ levels, menuPortalTarget }) => {
-  const { control, watch, setValue } = useFormContext<RequestCategorySelectArrayValues>();
-  const watchedFields = watch('requestCategory', []);
+  const t = useTranslations('admin.request.form.classificationStep');
+  const { control, watch, setValue } = useFormContext<CombinedCategoriesValues>();
+  const watchedFields = watch('requestCategory', []) || [];
+  const [isPending, startTransition] = useTransition();
+  const { reset: resetLoading } = useCategoryLoading();
   
-  // Calculate activeLevel based on current levels array length, not previous selections
-  const lastSelectedIndex = watchedFields.findLastIndex((field, index) => {
-    // Only consider fields that are within the current levels array
-    return index < levels.length && !!field?.value;
-  });
-  const activeLevel = lastSelectedIndex === -1 ? 0 : lastSelectedIndex + 1;
-
-  // Clear fields that are beyond the current levels array
+  // Reset loading state when levels change
   useEffect(() => {
-    const currentLevelsCount = levels.length;
-    for (let i = currentLevelsCount; i < watchedFields.length; i++) {
-      setValue(`requestCategory.${i}`, { label: '', value: '', position: i });
+    resetLoading();
+  }, [levels, resetLoading]);
+  
+  // Calculate which levels should be enabled
+  // Enable all levels up to the last one that has a value, plus the next one
+  const lastSelectedPosition = levels.length > 0
+    ? levels.findLastIndex((level) => {
+        const arrayIndex = level.position - 1;
+        return !!watchedFields[arrayIndex]?.value;
+      })
+    : -1;
+  const activeLevelIndex = lastSelectedPosition === -1 ? 0 : lastSelectedPosition + 1;
+
+  // Clear fields that are no longer represented by the available levels
+  useEffect(() => {
+    if (levels.length === 0) return;
+    const allowedPositions = new Set<number>([0, ...levels.map((level) => level.position - 1)]);
+    for (let i = 0; i < watchedFields.length; i++) {
+      if (!allowedPositions.has(i)) {
+        setValue(`requestCategory.${i}`, { label: '', value: '', position: i });
+      }
     }
-  }, [levels.length, watchedFields.length, setValue]);
+  }, [levels, watchedFields.length, setValue]);
 
   const handleClearLevels = (startIndex: number) => {
-    // Only clear up to the current levels array length
-    const maxIndex = Math.min(startIndex, levels.length);
-    for (let i = maxIndex; i < levels.length; i++) {
-      setValue(`requestCategory.${i}`, { label: '', value: '', position: levels[i]?.position ?? i + 1 });
-    }
+    startTransition(() => {
+      for (let i = startIndex; i < watchedFields.length; i++) {
+        setValue(`requestCategory.${i}`, { label: '', value: '', position: i });
+      }
+    });
   };
 
   return (
     <>
-      {levels.map((level) => {
+      {levels.map((level, levelIndex) => {
         const currentPosition = level.position - 1;
+        // Enable the level if it's within the active levels OR if it has a default value
+        // Also check if previous level is ready
+        const hasDefaultValue = !!watchedFields[currentPosition]?.value;
+        const isLevelEnabled = (levelIndex <= activeLevelIndex || hasDefaultValue);
         return (
           <FormField
             key={`${level.id}-${currentPosition}`}
             control={control}
             name={`requestCategory.${currentPosition}`}
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>{level.name}</FormLabel>
-                <SingleRequestCategorySelect
-                  field={field}
-                  position={currentPosition}
-                  hierarchyLevelName={level.name}
-                  enabled={currentPosition <= activeLevel}
-                  onClearNextLevels={() => handleClearLevels(currentPosition + 1)}
-                  parentCategoryId={currentPosition > 0 ? watchedFields[currentPosition - 1]?.value : ''}
-                  menuPortalTarget={menuPortalTarget}
-                />
+              <>
+                <FormItem 
+                  label={level.name}
+                  description={t('requestCategory.selectDescription', { level: level.name.toLowerCase() })}
+                >
+                  <SingleRequestCategorySelect
+                    field={field}
+                    position={currentPosition}
+                    enabled={isLevelEnabled}
+                    onClearNextLevels={() => handleClearLevels(currentPosition + 1)}
+                    parentCategoryId={currentPosition > 0 ? watchedFields[currentPosition - 1]?.value : ''}
+                    menuPortalTarget={menuPortalTarget}
+                    isTransitioning={isPending}
+                  />
+                </FormItem>
                 <FormMessage />
-              </FormItem>
+              </>
             )}
           />
         );
@@ -88,15 +113,23 @@ export const RequestCategoriesSelect: FC<RequestCategoriesSelectProps> = ({ leve
 type SingleRequestCategorySelectProps = {
   enabled: boolean;
   position: number;
-  hierarchyLevelName: string;
   parentCategoryId?: string;
   onClearNextLevels: () => void;
   menuPortalTarget?: HTMLElement;
-  field: ControllerRenderProps<RequestCategorySelectArrayValues, `requestCategory.${number}`>;
+  field: ControllerRenderProps<CombinedCategoriesValues, `requestCategory.${number}`>;
+  isTransitioning?: boolean;
 };
 
-const SingleRequestCategorySelect: React.FC<SingleRequestCategorySelectProps> = ({ field, parentCategoryId, hierarchyLevelName, enabled, position, menuPortalTarget, onClearNextLevels }) => {
+const SingleRequestCategorySelect: React.FC<SingleRequestCategorySelectProps> = ({ field, parentCategoryId, enabled, position, menuPortalTarget, onClearNextLevels, isTransitioning }) => {
   const t = useTranslations('admin.request.form.classificationStep');
+  const { setLevelLoading, isPreviousLevelReady } = useCategoryLoading();
+  
+  const hasValue = !!field.value?.value;
+  // Always wait for previous level to finish loading, even with default values
+  // This ensures parentCategoryId is available and correct
+  const previousReady = isPreviousLevelReady(position);
+  const shouldFetchData = (enabled || hasValue) && previousReady;
+  
   const { data: categories = [], isLoading } = useFindManyRequestCategory(
     {
       select: { id: true, name: true, description: true },
@@ -105,44 +138,58 @@ const SingleRequestCategorySelect: React.FC<SingleRequestCategorySelectProps> = 
         isActive: true,
       },
     },
-    { enabled, staleTime: 60000 }
+    { enabled: shouldFetchData, staleTime: 60000 }
   );
+
+  // Update loading state
+  // If query is disabled, mark as not loading immediately
+  // Otherwise, update based on actual loading state
+  useEffect(() => {
+    if (!shouldFetchData) {
+      // Query is disabled, mark as ready immediately
+      setLevelLoading(position, false);
+    } else {
+      // Query is enabled, update based on actual loading state
+      setLevelLoading(position, isLoading);
+    }
+  }, [position, isLoading, setLevelLoading, shouldFetchData]);
 
   const options = useMemo(() => categories.map(({ id, name }) => ({ label: name, value: id })), [categories]);
 
+  // Validate default value exists in options once loaded
   useEffect(() => {
-    if (!enabled || !field.value?.value || isLoading) return;
+    if (!hasValue || isLoading || categories.length === 0) return;
     const currentValue = field.value.value;
     const exists = categories.some((c) => c.id === currentValue);
     if (!exists) {
       field.onChange({ label: '', value: '', position });
       onClearNextLevels();
     }
-  }, [categories, enabled, onClearNextLevels, position, field, isLoading]);
+  }, [categories, hasValue, onClearNextLevels, position, field, isLoading]);
 
   return (
-    <>
-      <FormControl>
-        <Select
-          isClearable
-          isSearchable
-          options={options}
-          isLoading={isLoading}
-          onChange={(option) => {
-            const newValue = option ? { ...option, position } : { label: '', value: '', position };
-            if (newValue.value !== field.value?.value) {
-              field.onChange(newValue);
+    <FormControl>
+      <Select
+        isClearable
+        isSearchable
+        options={options}
+        isLoading={isLoading || isTransitioning}
+        onChange={(option) => {
+          const newValue = option ? { ...option, position } : { label: '', value: '', position };
+          if (newValue.value !== field.value?.value) {
+            field.onChange(newValue);
+            // Use setTimeout to defer the clear operation to avoid state updates during render
+            setTimeout(() => {
               onClearNextLevels();
-            }
-          }}
-          value={field.value}
-          menuShouldScrollIntoView={false}
-          placeholder={t('requestCategory.selectPlaceholder')}
-          isDisabled={!enabled}
-          menuPortalTarget={menuPortalTarget}
-        />
-      </FormControl>
-      <FormDescription>{isLoading ? t('common.loading') : t('assignmentCategory.selectDescription', { level: hierarchyLevelName.toLowerCase() })}</FormDescription>{' '}
-    </>
+            }, 0);
+          }
+        }}
+        value={field.value}
+        menuShouldScrollIntoView={false}
+        placeholder={t('requestCategory.selectPlaceholder')}
+        isDisabled={!enabled}
+        menuPortalTarget={menuPortalTarget}
+      />
+    </FormControl>
   );
 };

@@ -184,8 +184,7 @@
     "xlsx": "^0.18.5",
     "yarn": "^1.22.22",
     "zod": "^4.1.12",
-    "zod-validation-error": "^5.0.0",
-    "zustand": "^5.0.8"
+    "zod-validation-error": "^5.0.0"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^2.3.1",

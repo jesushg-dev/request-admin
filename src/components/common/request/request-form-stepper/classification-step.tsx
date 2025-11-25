@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState, useTransition } from 'react';
 import { useFindManyArea, useFindManyAssignmentCategory, useFindManyRequestCategory } from '@/services/api/hooks';
 import { Rotate3DIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -12,12 +12,14 @@ import { AssignmentHierarchyDefaultArgs, AssignmentLevelType, RequestHierarchyDe
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FormField } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
 import { AlertBanner } from '@/components/custom-ui/alert-banner';
 import Select from '@/components/custom-ui/select';
 import { FormItem } from '@/components/shared/form-root';
 
 import { AssignmentCategoriesSelect, assignmentCategorySelectSchema } from '../../category/assignment-categories-select';
 import { RequestCategoriesSelect, requestCategorySelectSchema } from '../../category/request-categories-select';
+import { CategoryLoadingProvider } from '../../category/category-loading-context';
 
 export const combinedCategoriesSchema = z.object({
   areaId: z.object({ value: z.string(), label: z.string() }),
@@ -39,8 +41,12 @@ interface CategoryFieldsProps {
 
 export const RequestCategoryFields: FC<CategoryFieldsProps> = ({ menuPortalTarget }) => {
   const t = useTranslations('admin.request.form.classificationStep');
-  const { control } = useFormContext<CombinedCategoriesValues>();
+  const { control, watch, getValues, setValue, resetField, unregister } = useFormContext<CombinedCategoriesValues>();
   const [requestLevelTypes, setRequestLevelTypes] = useState<RequestLevelType[]>([]);
+  const [isPending, startTransition] = useTransition();
+  const [isHierarchyLoading, setIsHierarchyLoading] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const firstRequestCategory = watch('requestCategory.0');
 
   const { data: requestCategories = [], isLoading: isRequestCategoriesLoading } = useFindManyRequestCategory({
     select: {
@@ -54,6 +60,103 @@ export const RequestCategoryFields: FC<CategoryFieldsProps> = ({ menuPortalTarge
 
   const requestCategoryOptions = useMemo(() => requestCategories.map(({ id, name }) => ({ label: name, value: id })), [requestCategories]);
 
+  const requestSubLevels = useMemo(() => requestLevelTypes.filter((level) => level.position !== 1), [requestLevelTypes]);
+
+  // Clean up fields that are beyond the current hierarchy levels
+  useEffect(() => {
+    if (isHierarchyLoading || !isInitialized) return;
+    
+    // Use setTimeout to ensure components are unmounted
+    const timeoutId = setTimeout(() => {
+      const currentValues = getValues('requestCategory') ?? [];
+      // Calculate max allowed index based on all levels in the hierarchy
+      const maxAllowedIndex = requestLevelTypes.length > 0 
+        ? Math.max(...requestLevelTypes.map(level => level.position - 1))
+        : 0;
+      
+      // Instead of leaving null values, update the array to only include valid indices
+      if (currentValues.length > maxAllowedIndex + 1) {
+        const validValues = currentValues.slice(0, maxAllowedIndex + 1);
+        setValue('requestCategory', validValues, { shouldDirty: false, shouldTouch: false, shouldValidate: false });
+        
+        // Unregister fields beyond the valid range
+        for (let index = maxAllowedIndex + 1; index < currentValues.length; index++) {
+          const fieldPath = `requestCategory.${index}` as const;
+          unregister(fieldPath, { keepDefaultValue: false, keepError: false, keepDirty: false, keepTouched: false, keepIsValid: false });
+        }
+      }
+    }, 100); // Increased delay to ensure react-select cleanup
+    
+    return () => clearTimeout(timeoutId);
+  }, [requestLevelTypes, isHierarchyLoading, isInitialized, getValues, setValue, unregister]);
+
+  const clearNestedRequestCategories = useCallback(() => {
+    const currentValues = getValues('requestCategory') ?? [];
+    if (currentValues.length > 1) {
+      // Keep only the first element (index 0) and remove all others
+      const firstValue = currentValues[0] || { label: '', value: '', position: 0 };
+      setValue('requestCategory', [firstValue], { shouldDirty: false, shouldTouch: false, shouldValidate: false });
+      
+      // Unregister all fields beyond index 0
+      for (let index = 1; index < currentValues.length; index++) {
+        const fieldPath = `requestCategory.${index}` as const;
+        unregister(fieldPath, { keepDefaultValue: false, keepError: false, keepDirty: false, keepTouched: false, keepIsValid: false });
+      }
+    }
+  }, [getValues, setValue, unregister]);
+
+  // Initialize levels from default values on mount or when categories load
+  useEffect(() => {
+    if (!firstRequestCategory?.value || requestCategories.length === 0) {
+      // Reset levels when first category is cleared or categories not loaded yet
+      if (requestLevelTypes.length > 0 && !firstRequestCategory?.value) {
+        startTransition(() => {
+          setRequestLevelTypes([]);
+          setIsHierarchyLoading(false);
+        });
+        // Clean up nested fields after unmounting
+        clearNestedRequestCategories();
+        setIsInitialized(false);
+      }
+      return;
+    }
+
+    const category = requestCategories.find((c) => c.id === firstRequestCategory.value);
+    if (category?.hierarchy?.levels && category.hierarchy.levels.length > 0) {
+      // Only update if levels are different to avoid unnecessary re-renders
+      const currentLevelIds = requestLevelTypes.map((l) => l.id).join(',');
+      const newLevelIds = category.hierarchy.levels.map((l) => l.id).join(',');
+      if (currentLevelIds !== newLevelIds) {
+        const wasInitialized = isInitialized;
+        startTransition(() => {
+          setRequestLevelTypes(category.hierarchy.levels);
+          setIsHierarchyLoading(false);
+        });
+        setIsInitialized(true);
+        // Only clean up if we're changing categories, not on initial load
+        if (wasInitialized && requestLevelTypes.length > 0) {
+          setTimeout(() => {
+            clearNestedRequestCategories();
+          }, 0);
+        }
+      } else if (isHierarchyLoading) {
+        setIsHierarchyLoading(false);
+        setIsInitialized(true);
+        // Only clean up if we're changing categories, not on initial load
+        if (isInitialized && requestLevelTypes.length > 0) {
+          clearNestedRequestCategories();
+        }
+      } else if (!isInitialized) {
+        setIsInitialized(true);
+      }
+    } else if (isHierarchyLoading) {
+      setIsHierarchyLoading(false);
+      if (requestLevelTypes.length > 0) {
+        clearNestedRequestCategories();
+      }
+    }
+  }, [firstRequestCategory?.value, requestCategories, isHierarchyLoading, requestLevelTypes, clearNestedRequestCategories, isInitialized]);
+
   return (
     <>
       <FormField
@@ -64,15 +167,18 @@ export const RequestCategoryFields: FC<CategoryFieldsProps> = ({ menuPortalTarge
             label={requestLevelTypes[0]?.name || t('requestCategory.defaultLabel')}
             description={requestLevelTypes[0]?.name ? t('requestCategory.dynamicDescription', { category: requestLevelTypes[0].name }) : t('requestCategory.defaultDescription')}>
             <Select
-              isLoading={isRequestCategoriesLoading}
+              isLoading={isRequestCategoriesLoading || isPending}
               isSearchable
               isClearable
               placeholder={t('requestCategory.selectPlaceholder')}
               options={requestCategoryOptions}
               onChange={(e) => {
-                field.onChange({ ...e, position: 0 });
-                const levelTypes = requestCategories.find((c) => c.id === e?.value)?.hierarchy.levels || [];
-                setRequestLevelTypes(levelTypes);
+                startTransition(() => {
+                  setIsHierarchyLoading(true);
+                });
+                // Clear nested fields before changing
+                clearNestedRequestCategories();
+                field.onChange(e ? { ...e, position: 0 } : { label: '', value: '', position: 0 });
               }}
               value={field.value}
               menuPortalTarget={menuPortalTarget}
@@ -81,16 +187,29 @@ export const RequestCategoryFields: FC<CategoryFieldsProps> = ({ menuPortalTarge
           </FormItem>
         )}
       />
-      <RequestCategoriesSelect levels={requestLevelTypes.filter((l) => l.position !== 1)} />
+      {isHierarchyLoading ? (
+        <div className="space-y-4">
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+      ) : (
+        <CategoryLoadingProvider>
+          <RequestCategoriesSelect levels={requestSubLevels} />
+        </CategoryLoadingProvider>
+      )}
     </>
   );
 };
 
 export const AssignmentCategoryFields: FC<CategoryFieldsProps> = ({ menuPortalTarget }) => {
   const t = useTranslations('admin.request.form.classificationStep');
-  const { control, watch } = useFormContext<CombinedCategoriesValues>();
+  const { control, watch, getValues, setValue, resetField, unregister } = useFormContext<CombinedCategoriesValues>();
   const [assignmentLevelTypes, setAssignmentLevelTypes] = useState<AssignmentLevelType[]>([]);
+  const [isPending, startTransition] = useTransition();
+  const [isHierarchyLoading, setIsHierarchyLoading] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const areaId = watch('areaId.value');
+  const firstAssignmentCategory = watch('assignmentCategory.0');
 
   const { data: areas = [], isLoading } = useFindManyArea({
     select: { id: true, name: true, description: true },
@@ -112,6 +231,108 @@ export const AssignmentCategoryFields: FC<CategoryFieldsProps> = ({ menuPortalTa
   );
 
   const assignmentCategoryOptions = useMemo(() => assignmentCategories.map(({ id, name }) => ({ label: name, value: id })), [assignmentCategories]);
+  const assignmentSubLevels = useMemo(() => assignmentLevelTypes.filter((level) => level.position !== 1), [assignmentLevelTypes]);
+
+  // Clean up fields that are beyond the current hierarchy levels
+  useEffect(() => {
+    if (isHierarchyLoading || !isInitialized) return;
+    
+    // Use setTimeout to ensure components are unmounted
+    const timeoutId = setTimeout(() => {
+      const currentValues = getValues('assignmentCategory') ?? [];
+      // Calculate max allowed index based on all levels in the hierarchy
+      const maxAllowedIndex = assignmentLevelTypes.length > 0 
+        ? Math.max(...assignmentLevelTypes.map(level => level.position - 1))
+        : 0;
+      
+      // Instead of leaving null values, update the array to only include valid indices
+      if (currentValues.length > maxAllowedIndex + 1) {
+        const validValues = currentValues.slice(0, maxAllowedIndex + 1);
+        setValue('assignmentCategory', validValues, { shouldDirty: false, shouldTouch: false, shouldValidate: false });
+        
+        // Unregister fields beyond the valid range
+        for (let index = maxAllowedIndex + 1; index < currentValues.length; index++) {
+          const fieldPath = `assignmentCategory.${index}` as const;
+          unregister(fieldPath, { keepDefaultValue: false, keepError: false, keepDirty: false, keepTouched: false, keepIsValid: false });
+        }
+      }
+    }, 100); // Increased delay to ensure react-select cleanup
+    
+    return () => clearTimeout(timeoutId);
+  }, [assignmentLevelTypes, isHierarchyLoading, isInitialized, getValues, setValue, unregister]);
+
+  const clearNestedAssignmentCategories = useCallback(() => {
+    const currentValues = getValues('assignmentCategory') ?? [];
+    if (currentValues.length > 1) {
+      // Keep only the first element (index 0) and remove all others
+      const firstValue = currentValues[0] || { label: '', value: '', position: 0 };
+      setValue('assignmentCategory', [firstValue], { shouldDirty: false, shouldTouch: false, shouldValidate: false });
+      
+      // Unregister all fields beyond index 0
+      for (let index = 1; index < currentValues.length; index++) {
+        const fieldPath = `assignmentCategory.${index}` as const;
+        unregister(fieldPath, { keepDefaultValue: false, keepError: false, keepDirty: false, keepTouched: false, keepIsValid: false });
+      }
+    }
+  }, [getValues, setValue, unregister]);
+
+  // Initialize levels from default values or reset when cleared/changed
+  useEffect(() => {
+    // Reset levels when area changes or first category is cleared
+    if (!areaId || !firstAssignmentCategory?.value || assignmentCategories.length === 0) {
+      if (assignmentLevelTypes.length > 0 && (!areaId || !firstAssignmentCategory?.value)) {
+        startTransition(() => {
+          setAssignmentLevelTypes([]);
+          setIsHierarchyLoading(false);
+        });
+        // Clean up nested fields after unmounting
+        clearNestedAssignmentCategories();
+        setIsInitialized(false);
+      }
+      return;
+    }
+
+    const category = assignmentCategories.find((c) => c.id === firstAssignmentCategory.value);
+    if (category?.hierarchy?.levels && category.hierarchy.levels.length > 0) {
+      // Only update if levels are different to avoid unnecessary re-renders
+      const currentLevelIds = assignmentLevelTypes.map((l) => l.id).join(',');
+      const newLevelIds = category.hierarchy.levels.map((l) => l.id).join(',');
+      if (currentLevelIds !== newLevelIds) {
+        const wasInitialized = isInitialized;
+        startTransition(() => {
+          setAssignmentLevelTypes(category.hierarchy.levels);
+          setIsHierarchyLoading(false);
+        });
+        setIsInitialized(true);
+        // Only clean up if we're changing categories, not on initial load
+        if (wasInitialized && assignmentLevelTypes.length > 0) {
+          setTimeout(() => {
+            clearNestedAssignmentCategories();
+          }, 0);
+        }
+      } else if (isHierarchyLoading) {
+        setIsHierarchyLoading(false);
+        setIsInitialized(true);
+        // Only clean up if we're changing categories, not on initial load
+        if (isInitialized && assignmentLevelTypes.length > 0) {
+          clearNestedAssignmentCategories();
+        }
+      } else if (!isInitialized) {
+        setIsInitialized(true);
+      }
+    } else {
+      // Category not found in current area, reset levels
+      if (assignmentLevelTypes.length > 0) {
+        startTransition(() => {
+          setAssignmentLevelTypes([]);
+          setIsHierarchyLoading(false);
+        });
+        clearNestedAssignmentCategories();
+      } else if (isHierarchyLoading) {
+        setIsHierarchyLoading(false);
+      }
+    }
+  }, [firstAssignmentCategory?.value, assignmentCategories, areaId, assignmentLevelTypes, isHierarchyLoading, clearNestedAssignmentCategories, isInitialized]);
 
   return (
     <>
@@ -126,7 +347,15 @@ export const AssignmentCategoryFields: FC<CategoryFieldsProps> = ({ menuPortalTa
               isSearchable
               isClearable
               options={areaOptions}
-              onChange={field.onChange}
+              onChange={(option) => {
+                startTransition(() => {
+                  setAssignmentLevelTypes([]);
+                  setIsHierarchyLoading(!!option);
+                });
+                // Clear nested fields before changing
+                clearNestedAssignmentCategories();
+                field.onChange(option ?? { label: '', value: '' });
+              }}
               value={field.value}
               menuPortalTarget={menuPortalTarget}
               dataTestId="select-area"
@@ -142,14 +371,17 @@ export const AssignmentCategoryFields: FC<CategoryFieldsProps> = ({ menuPortalTa
             label={assignmentLevelTypes[0]?.name || t('assignmentCategory.defaultLabel')}
             description={assignmentLevelTypes[0]?.name ? t('assignmentCategory.dynamicDescription', { category: assignmentLevelTypes[0].name }) : t('assignmentCategory.defaultDescription')}>
             <Select
-              isLoading={isAssignmentCategoriesLoading}
+              isLoading={isAssignmentCategoriesLoading || isPending}
               isSearchable
               isClearable
               options={assignmentCategoryOptions}
               onChange={(e) => {
-                field.onChange({ ...e, position: 0 });
-                const levelTypes = assignmentCategories.find((c) => c.id === e?.value)?.hierarchy.levels || [];
-                setAssignmentLevelTypes(levelTypes);
+                startTransition(() => {
+                  setIsHierarchyLoading(true);
+                });
+                // Clear nested fields before changing
+                clearNestedAssignmentCategories();
+                field.onChange(e ? { ...e, position: 0 } : { label: '', value: '', position: 0 });
               }}
               value={field.value}
               isDisabled={!areaId}
@@ -160,7 +392,16 @@ export const AssignmentCategoryFields: FC<CategoryFieldsProps> = ({ menuPortalTa
           </FormItem>
         )}
       />
-      <AssignmentCategoriesSelect levels={assignmentLevelTypes.filter((l) => l.position !== 1)} areaId={areaId} menuPortalTarget={menuPortalTarget} />
+      {isHierarchyLoading ? (
+        <div className="space-y-4">
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+      ) : (
+        <CategoryLoadingProvider>
+          <AssignmentCategoriesSelect levels={assignmentSubLevels} areaId={areaId} menuPortalTarget={menuPortalTarget} />
+        </CategoryLoadingProvider>
+      )}
     </>
   );
 };
