@@ -1017,4 +1017,61 @@ export const PrismaModules: PrismaModulesDefinition = {
       },
     },
   },
+  API_KEY: {
+    name: {
+      en: ModuleName.API_KEY,
+      es: 'Claves API',
+    },
+    description: {
+      en: 'Module to create, manage, and audit API keys for programmatic access.',
+      es: 'Módulo para crear, administrar y auditar claves API para acceso programático.',
+    },
+    features: {
+      VIEW: {
+        action: PermissionActions.API_KEY.VIEW,
+        name: { en: 'View', es: 'Ver' },
+        description: {
+          en: 'Permission to list and view API keys and their details.',
+          es: 'Permiso para listar y ver las claves API y sus detalles.',
+        },
+        scope: 'global',
+      },
+      CREATE: {
+        action: PermissionActions.API_KEY.CREATE,
+        name: { en: 'Create', es: 'Crear' },
+        description: {
+          en: 'Permission to create new API keys.',
+          es: 'Permiso para crear nuevas claves API.',
+        },
+        scope: 'global',
+      },
+      UPDATE: {
+        action: PermissionActions.API_KEY.UPDATE,
+        name: { en: 'Update', es: 'Actualizar' },
+        description: {
+          en: 'Permission to update API key metadata and status.',
+          es: 'Permiso para actualizar la metadata y el estado de las claves API.',
+        },
+        scope: 'global',
+      },
+      DELETE: {
+        action: PermissionActions.API_KEY.DELETE,
+        name: { en: 'Delete', es: 'Eliminar' },
+        description: {
+          en: 'Permission to delete API keys.',
+          es: 'Permiso para eliminar claves API.',
+        },
+        scope: 'global',
+      },
+      MANAGE_RATE_LIMIT: {
+        action: PermissionActions.API_KEY.MANAGE_RATE_LIMIT,
+        name: { en: 'Manage Rate Limit', es: 'Gestionar límites' },
+        description: {
+          en: 'Permission to configure rate limits and usage quotas for API keys.',
+          es: 'Permiso para configurar límites y cuotas de uso para las claves API.',
+        },
+        scope: 'global',
+      },
+    },
+  },
 };

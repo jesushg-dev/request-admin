@@ -350,6 +350,14 @@
         "title": "New API Key",
         "description": "Create a new API key for programmatic access"
       },
+      "apiKeysDetail": {
+        "title": "API Key Details",
+        "description": "Inspect configuration, limits, and metadata for a specific API key."
+      },
+      "apiKeysEdit": {
+        "title": "Edit API Key",
+        "description": "Update API key configuration, limits, and metadata"
+      },
       "dataRooms": {
         "title": "Data Rooms",
         "description": "Manage your organization's data rooms"
@@ -3492,6 +3500,12 @@
           "status": "Status",
           "actions": "Actions",
           "never": "Never",
+          "remaining": "Remaining",
+          "unlimited": "Unlimited",
+          "rateLimit": "Rate Limit",
+          "rateLimitDisabled": "Disabled",
+          "rateLimitSummary": "{max} requests",
+          "rateLimitWindow": "{window} ms window",
           "empty": "No API keys found. Create your first API key to get started.",
           "lastRequest": "Last Request"
         },
@@ -3522,7 +3536,11 @@
           "subtitle": "Create a new API key for programmatic access to the API.",
           "validation": {
             "nameRequired": "Name is required",
-            "prefixRequired": "Prefix is required"
+            "prefixRequired": "Prefix is required",
+            "invalidMetadata": "Invalid metadata. Please provide valid JSON for metadata",
+            "rateLimitMaxRequired": "Max requests is required when rate limiting is enabled",
+            "rateLimitTimeWindowRequired": "Time window is required when rate limiting is enabled",
+            "refillFieldsRequired": "Provide both refill amount and refill interval to enable automatic refills"
           },
           "errors": {
             "nameRequired": "Name is required",
@@ -3564,6 +3582,16 @@
             "timeWindow": "Time Window (ms)",
             "timeWindowDesc": "Time window in milliseconds (e.g., 60000 for 1 minute)."
           },
+          "usageLimits": {
+            "label": "Usage Limits",
+            "description": "Optional hard limits and automatic refills for this API key.",
+            "remaining": "Remaining Requests",
+            "remainingDesc": "Disable the key automatically once the counter reaches zero.",
+            "refillAmount": "Refill Amount",
+            "refillAmountDesc": "How many requests to restore when the refill interval elapses.",
+            "refillInterval": "Refill Interval (ms)",
+            "refillIntervalDesc": "Interval in milliseconds before the remaining counter resets."
+          },
           "cancel": "Cancel",
           "creating": "Creating...",
           "createButton": "Create API Key",
@@ -3576,9 +3604,48 @@
           "createSuccess": "API Key created succesfully!",
           "createError": "We have faced a problem: {error}"
         },
+        "editForm": {
+          "title": "Edit API Key",
+          "description": "Update the configuration and settings for this API key.",
+          "name": {
+            "label": "Name",
+            "placeholder": "My API Key",
+            "description": "A descriptive name for this API key."
+          },
+          "enabled": {
+            "label": "Enabled",
+            "description": "Enable or disable this API key."
+          },
+          "rateLimit": {
+            "label": "Rate Limiting",
+            "description": "Enable rate limiting to control request frequency.",
+            "maxRequests": "Max Requests",
+            "maxRequestsDesc": "Maximum number of requests allowed in the time window.",
+            "timeWindow": "Time Window (ms)",
+            "timeWindowDesc": "Duration in milliseconds where requests are counted."
+          },
+          "usageLimits": {
+            "remaining": "Remaining Requests",
+            "remainingDesc": "Disable the key automatically once the counter reaches zero.",
+            "refillAmount": "Refill Amount",
+            "refillAmountDesc": "How many requests to restore when the refill interval elapses.",
+            "refillInterval": "Refill Interval (ms)",
+            "refillIntervalDesc": "Interval in milliseconds before the remaining counter resets."
+          },
+          "metadata": {
+            "label": "Metadata",
+            "description": "Optional JSON metadata to store with this API key."
+          },
+          "updating": "Updating...",
+          "updateButton": "Update API Key",
+          "updateSuccess": "API Key updated successfully!",
+          "updateError": "We have faced a problem: {error}"
+        },
         "copySuccess": "Copied succesfully!",
         "entityLabel": "Api Key",
         "actions": {
+          "view": "View",
+          "edit": "Edit",
           "delete": "Delete",
           "deleteExpiredKeys": "Delete Expired Keys"
         },
@@ -3587,7 +3654,56 @@
         "statusSuccess": "Status updated to {status}!",
         "deleteLoading": "Deleting...",
         "deleteSuccess": " Key deleted successfully!",
-        "deleteError": "An error occurred: {error}"
+        "deleteError": "An error occurred: {error}",
+        "tester": {
+          "title": "Test an API Key",
+          "description": "Quickly verify if a key is valid and whether it meets the required permissions.",
+          "apiKeyLabel": "API Key",
+          "apiKeyPlaceholder": "sk_live_xxx",
+          "apiKeyHint": "Paste the key you received after creation. Keys are validated securely on the server.",
+          "permissionsLabel": "Permissions (JSON)",
+          "permissionsPlaceholder": "'{ \"projects\": [\"read\"] }'",
+          "permissionsHint": "Optional. Provide a JSON object where each property lists the actions a key must allow.",
+          "testButton": "Test Key",
+          "testing": "Testing...",
+          "endpoint": "POST /api-key/verify",
+          "success": "API key is valid",
+          "invalid": "API key is invalid",
+          "valid": "Valid",
+          "error": "Unable to verify key: {error}",
+          "missingKey": "Provide an API key to test.",
+          "invalidPermissions": "Permissions must be valid JSON."
+        },
+        "detail": {
+          "backLink": "Back to API keys",
+          "title": "API Key details",
+          "subtitle": "Inspect usage, limits, and metadata for this key.",
+          "summary": {
+            "title": "Summary",
+            "description": "Configuration and lifecycle information for this key.",
+            "prefix": "Prefix",
+            "createdAt": "Created",
+            "expiresAt": "Expires",
+            "lastRequest": "Last request",
+            "remaining": "Remaining requests",
+            "rateLimit": "Rate limit",
+            "status": "Status",
+            "identifier": "Identifier",
+            "notSet": "Not set",
+            "rateLimitDisabled": "Rate limit disabled",
+            "rateLimitEnabled": "{max} requests every {window} ms"
+          },
+          "metadata": {
+            "title": "Metadata",
+            "description": "Key metadata stored alongside this API key.",
+            "empty": "No metadata stored for this key."
+          },
+          "apiUsage": {
+            "title": "API endpoints",
+            "description": "Use these endpoints to manage or validate the key programmatically.",
+            "instructions": "Send your API key through the 'x-api-key' header or via Bearer authentication when calling these endpoints."
+          }
+        }
       },
       "sessions": {
         "title": "Session Management",

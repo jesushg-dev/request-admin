@@ -63,7 +63,6 @@ export const auth = betterAuth({
     },
   },
   plugins: [
-    nextCookies(),
     twoFactor({
       issuer: process.env.APP_NAME || 'Requestum',
       otpOptions: {
@@ -142,7 +141,7 @@ export const auth = betterAuth({
         maxRequests: 1000, // 1,000 requests per day
       },
       keyExpiration: {
-        minExpiresIn: 24, // 1 day
+        minExpiresIn: 1, // 1 day
         maxExpiresIn: 365, // 1 year
         defaultExpiresIn: 7, // 7 days
       },
@@ -165,6 +164,7 @@ export const auth = betterAuth({
     phoneNumber(),
     anonymous(),
     username(),
+    nextCookies(), // make sure this is the last plugin in the array
   ],
 });
 
@@ -178,3 +178,17 @@ export const currentSession = cache(async () => {
     headers: await headers(),
   });
 });
+
+export async function requireSession() {
+  const session = await currentSession();
+  if (!session?.user) {
+    throw new Error('Unauthorized');
+  }
+
+  return session;
+}
+
+export async function requireUser() {
+  const session = await requireSession();
+  return session.user;
+}

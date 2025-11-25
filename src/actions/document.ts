@@ -1,14 +1,14 @@
 'use server';
 
-import { currentSession } from '@/server/auth-server';
+import { requireUser } from '@/server/auth-server';
 import { getDb } from '@/server/db-client';
 
 import { UserNotFoundErr } from '@/lib/error';
 import { generateUuid } from '@/lib/id';
 
 export async function cloneDocumentsAndFolders(documentIds: string[], folderIds: string[], dataroomId: string, currentFolderId: string | null) {
-  const session = await currentSession();
-  if (!session) throw new UserNotFoundErr();
+  const user = await requireUser();
+  if (!user) throw new UserNotFoundErr();
 
   const db = await getDb();
   const documents = await db.document.findMany({

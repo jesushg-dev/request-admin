@@ -18,6 +18,7 @@ export enum ModuleName {
   ASSIGNMENT_HIERARCHY = 'Assignment Hierarchy',
   REQUEST_HIERARCHY = 'Request Hierarchy',
   DASHBOARD = 'Dashboard',
+  API_KEY = 'API Key',
 }
 
 export const PermissionActions = {
@@ -143,6 +144,13 @@ export const PermissionActions = {
   DASHBOARD: {
     VIEW: 'dashboard_view',
     EXPORT: 'dashboard_export',
+  },
+  API_KEY: {
+    VIEW: 'api_key_view',
+    CREATE: 'api_key_create',
+    UPDATE: 'api_key_update',
+    DELETE: 'api_key_delete',
+    MANAGE_RATE_LIMIT: 'api_key_manage_rate_limit',
   },
 } satisfies PermissionActionsDefinition;
 

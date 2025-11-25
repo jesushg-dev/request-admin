@@ -350,6 +350,14 @@
         "title": "Nueva Clave API",
         "description": "Crea una nueva clave API para acceso programático"
       },
+      "apiKeysDetail": {
+        "title": "Detalles de la Clave API",
+        "description": "Consulta la configuración, los límites y la metadata de una clave específica."
+      },
+      "apiKeysEdit": {
+        "title": "Editar Clave API",
+        "description": "Actualiza la configuración, los límites y la metadata de la clave API"
+      },
       "dataRooms": {
         "title": "Salas de Datos",
         "description": "Gestiona las salas de datos de tu organización"
@@ -3492,6 +3500,12 @@
           "status": "Estado",
           "actions": "Acciones",
           "never": "Nunca",
+          "remaining": "Restantes",
+          "unlimited": "Ilimitado",
+          "rateLimit": "Límite de tasa",
+          "rateLimitDisabled": "Deshabilitado",
+          "rateLimitSummary": "{max} solicitudes",
+          "rateLimitWindow": "Ventana de {window} ms",
           "empty": "No se encontraron claves API. Crea tu primera clave API para comenzar.",
           "lastRequest": "Última solicitud"
         },
@@ -3527,7 +3541,11 @@
           },
           "validation": {
             "nameRequired": "El nombre es obligatorio",
-            "prefixRequired": "El prefijo es obligatorio"
+            "prefixRequired": "El prefijo es obligatorio",
+            "invalidMetadata": "Metadatos no válidos. Proporciona un JSON válido.",
+            "rateLimitMaxRequired": "Debes indicar el máximo de solicitudes cuando habilitas el límite de tasa",
+            "rateLimitTimeWindowRequired": "Debes indicar la ventana de tiempo cuando habilitas el límite de tasa",
+            "refillFieldsRequired": "Indica el monto y el intervalo de recarga para habilitar la recarga automática"
           },
           "name": {
             "label": "Nombre",
@@ -3564,6 +3582,16 @@
             "timeWindow": "Ventana de tiempo (ms)",
             "timeWindowDesc": "Ventana de tiempo en milisegundos (por ejemplo, 60000 para 1 minuto)."
           },
+          "usageLimits": {
+            "label": "Límites de uso",
+            "description": "Controles opcionales para limitar y recargar automáticamente esta clave.",
+            "remaining": "Solicitudes restantes",
+            "remainingDesc": "La clave se deshabilita automáticamente cuando el contador llega a cero.",
+            "refillAmount": "Cantidad de recarga",
+            "refillAmountDesc": "Número de solicitudes que se restauran cuando se cumple el intervalo.",
+            "refillInterval": "Intervalo de recarga (ms)",
+            "refillIntervalDesc": "Intervalo en milisegundos antes de reiniciar el contador restante."
+          },
           "cancel": "Cancelar",
           "creating": "Creando...",
           "createButton": "Crear clave API",
@@ -3576,9 +3604,48 @@
           "createSuccess": "¡Llave API creada con éxito!",
           "createError": "Hemos enfrentado un problema: {error}"
         },
+        "editForm": {
+          "title": "Editar clave API",
+          "description": "Actualiza la configuración y los ajustes de esta clave API.",
+          "name": {
+            "label": "Nombre",
+            "placeholder": "Mi clave API",
+            "description": "Un nombre descriptivo para esta clave API."
+          },
+          "enabled": {
+            "label": "Habilitada",
+            "description": "Habilita o deshabilita esta clave API."
+          },
+          "rateLimit": {
+            "label": "Limitación de tasa",
+            "description": "Habilita la limitación de tasa para controlar la frecuencia de solicitudes.",
+            "maxRequests": "Solicitudes máximas",
+            "maxRequestsDesc": "Número máximo de solicitudes permitidas en la ventana de tiempo.",
+            "timeWindow": "Ventana de tiempo (ms)",
+            "timeWindowDesc": "Duración en milisegundos donde se cuentan las solicitudes."
+          },
+          "usageLimits": {
+            "remaining": "Solicitudes restantes",
+            "remainingDesc": "La clave se deshabilita automáticamente cuando el contador llega a cero.",
+            "refillAmount": "Cantidad de recarga",
+            "refillAmountDesc": "Número de solicitudes que se restauran cuando se cumple el intervalo.",
+            "refillInterval": "Intervalo de recarga (ms)",
+            "refillIntervalDesc": "Intervalo en milisegundos antes de reiniciar el contador restante."
+          },
+          "metadata": {
+            "label": "Metadatos",
+            "description": "Metadatos JSON opcionales para almacenar con esta clave API."
+          },
+          "updating": "Actualizando...",
+          "updateButton": "Actualizar clave API",
+          "updateSuccess": "¡Clave API actualizada con éxito!",
+          "updateError": "Hemos enfrentado un problema: {error}"
+        },
         "copySuccess": "¡Copiado con éxito!",
         "entityLabel": "Claves de Api",
         "actions": {
+          "view": "Ver",
+          "edit": "Editar",
           "delete": "Eliminar",
           "deleteExpiredKeys": "Eliminar claves caducadas"
         },
@@ -3587,7 +3654,56 @@
         "statusSuccess": "¡Estado actualizado a {status}!",
         "deleteLoading": "Eliminando...",
         "deleteSuccess": "¡Clave API eliminada con éxito!",
-        "deleteError": "Ha ocurrido un error: {error}"
+        "deleteError": "Ha ocurrido un error: {error}",
+        "tester": {
+          "title": "Probar una clave API",
+          "description": "Verifica rápidamente si la clave es válida y cumple con los permisos requeridos.",
+          "apiKeyLabel": "Clave API",
+          "apiKeyPlaceholder": "sk_live_xxx",
+          "apiKeyHint": "Pega la clave que recibiste al crearla. La validación se hace de forma segura en el servidor.",
+          "permissionsLabel": "Permisos (JSON)",
+          "permissionsPlaceholder": "'{ \"projects\": [\"read\"] }'",
+          "permissionsHint": "Opcional. Proporciona un objeto JSON donde cada propiedad liste las acciones permitidas.",
+          "testButton": "Probar clave",
+          "testing": "Probando...",
+          "endpoint": "POST /api-key/verify",
+          "success": "La clave API es válida",
+          "invalid": "La clave API no es válida",
+          "valid": "Válida",
+          "error": "No se pudo verificar la clave: {error}",
+          "missingKey": "Ingresa una clave API para probar.",
+          "invalidPermissions": "Los permisos deben ser JSON válido."
+        },
+        "detail": {
+          "backLink": "Volver a las claves API",
+          "title": "Detalles de la clave API",
+          "subtitle": "Revisa el uso, los límites y la metadata de esta clave.",
+          "summary": {
+            "title": "Resumen",
+            "description": "Información de configuración y ciclo de vida de la clave.",
+            "prefix": "Prefijo",
+            "createdAt": "Creada",
+            "expiresAt": "Expira",
+            "lastRequest": "Última solicitud",
+            "remaining": "Solicitudes restantes",
+            "rateLimit": "Límite de tasa",
+            "status": "Estado",
+            "identifier": "Identificador",
+            "notSet": "Sin definir",
+            "rateLimitDisabled": "Limitación deshabilitada",
+            "rateLimitEnabled": "{max} solicitudes cada {window} ms"
+          },
+          "metadata": {
+            "title": "Metadatos",
+            "description": "Información adicional almacenada junto a esta clave.",
+            "empty": "Aún no hay metadatos para esta clave."
+          },
+          "apiUsage": {
+            "title": "Endpoints disponibles",
+            "description": "Usa estos endpoints para administrar o validar la clave de forma programática.",
+            "instructions": "Envía la clave a través del encabezado 'x-api-key' o mediante autenticación Bearer al llamar estos endpoints."
+          }
+        }
       },
       "sessions": {
         "title": "Gestión de Sesiones",

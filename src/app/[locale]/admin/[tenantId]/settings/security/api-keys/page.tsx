@@ -5,7 +5,7 @@ import { authClient, useSession } from '@/server/auth-client';
 import { useCountApikey, useFindManyApikey } from '@/services/api/hooks';
 import { Prisma } from '@zenstackhq/runtime/models';
 import { ColumnDef } from '@tanstack/react-table';
-import { RefreshCw, Trash2 } from 'lucide-react';
+import { RefreshCw, Trash2, Eye } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 import { toast } from 'sonner';
@@ -23,6 +23,8 @@ import { Switch } from '@/components/ui/switch';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
+import { ApiKeyTesterCard } from '@/components/common/setting/api-key-tester-card';
+import { Link } from '@/i18n/routing';
 
 const ApiKeyDefaultArgs = Prisma.validator<Prisma.ApikeyDefaultArgs>()({
   select: {
@@ -70,7 +72,7 @@ export default function ApiKeyManagementForm() {
     },
   });
 
-  const { columns } = useMemo(() => getTableConfiguration({ t }), [t]);
+  const { columns } = useMemo(() => getTableConfiguration({ t, tenantId, onChange: refetch }), [t, tenantId, refetch]);
 
   const { table } = useDataTable({
     data: data || [],
@@ -134,22 +136,30 @@ export default function ApiKeyManagementForm() {
           </div>
         </CardContent>
       </Card>
+
+      <ApiKeyTesterCard />
     </div>
   );
 }
 
 interface GetTableConfigurationProps {
   t: ReturnType<typeof useTranslations>;
+  tenantId: string;
+  onChange?: () => void;
 }
 
-function getTableConfiguration({ t }: GetTableConfigurationProps) {
+function getTableConfiguration({ t, tenantId, onChange }: GetTableConfigurationProps) {
   const columns: ColumnDef<ApiKey>[] = [
     {
       accessorKey: 'name',
       header: t('table.name'),
       cell: ({ row }) => (
         <div>
-          <div className="font-medium">{row.original.name}</div>
+          <Link
+            href={{ pathname: '/admin/[tenantId]/settings/security/api-keys/[keyId]', params: { tenantId, keyId: row.original.id } }}
+            className="font-medium hover:underline">
+            {row.original.name}
+          </Link>
           <div className="text-xs text-muted-foreground">{row.original.prefix}_***</div>
         </div>
       ),
@@ -174,6 +184,27 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
       size: 120,
     },
     {
+      accessorKey: 'remaining',
+      header: t('table.remaining'),
+      cell: ({ row }) =>
+        typeof row.original.remaining === 'number' ? row.original.remaining.toLocaleString() : <span className="text-muted-foreground">{t('table.unlimited')}</span>,
+      size: 120,
+    },
+    {
+      accessorKey: 'rateLimitEnabled',
+      header: t('table.rateLimit'),
+      cell: ({ row }) =>
+        row.original.rateLimitEnabled ? (
+          <div>
+            <div className="font-medium">{t('table.rateLimitSummary', { max: (row.original.rateLimitMax ?? 0).toLocaleString() })}</div>
+            <div className="text-xs text-muted-foreground">{t('table.rateLimitWindow', { window: (row.original.rateLimitTimeWindow ?? 0).toLocaleString() })}</div>
+          </div>
+        ) : (
+          <span className="text-muted-foreground">{t('table.rateLimitDisabled')}</span>
+        ),
+      size: 170,
+    },
+    {
       accessorKey: 'enabled',
       header: t('table.status'),
       cell: ({ row }) => (row.original.enabled ? <Badge className="bg-green-600 hover:bg-green-700">{t('status.active')}</Badge> : <Badge variant="outline">{t('status.inactive')}</Badge>),
@@ -181,7 +212,7 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
     },
     {
       id: 'actions',
-      cell: ({ row }) => <ActionTableCell row={row} />,
+      cell: ({ row }) => <ActionTableCell row={row} tenantId={tenantId} onChange={onChange} />,
       size: 100,
     },
   ];
@@ -189,7 +220,7 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
   return { columns };
 }
 
-const ActionTableCell: React.FC<{ row: { original: ApiKey } }> = ({ row }) => {
+const ActionTableCell: React.FC<{ row: { original: ApiKey }; tenantId: string; onChange?: () => void }> = ({ row, tenantId, onChange }) => {
   const message = useMessage();
   const [pending, startTransition] = useTransition();
   const t = useTranslations('admin.setting.apiKeys');
@@ -202,6 +233,7 @@ const ActionTableCell: React.FC<{ row: { original: ApiKey } }> = ({ row }) => {
         {
           onSuccess: () => {
             toast.success(t('statusSuccess', { status: enabled ? t('status.active') : t('status.inactive') }), { id: toastId });
+            onChange?.();
           },
           onError: ({ error }) => {
             toast.error(t('statusError', { error: error.message ?? 'N/A' }), { id: toastId });
@@ -227,6 +259,7 @@ const ActionTableCell: React.FC<{ row: { original: ApiKey } }> = ({ row }) => {
         {
           onSuccess: () => {
             toast.success(t('deleteSuccess'), { id: toastId });
+            onChange?.();
           },
           onError: ({ error }) => {
             toast.error(t('deleteError', { error: error.message ?? 'N/A' }), { id: toastId });
@@ -238,6 +271,11 @@ const ActionTableCell: React.FC<{ row: { original: ApiKey } }> = ({ row }) => {
 
   return (
     <div className="flex items-center justify-end space-x-2">
+      <Button asChild variant="ghost" size="icon" aria-label={t('actions.view')} disabled={pending}>
+        <Link href={{ pathname: '/admin/[tenantId]/settings/security/api-keys/[keyId]', params: { tenantId, keyId: row.original.id } }}>
+          <Eye className="h-4 w-4" />
+        </Link>
+      </Button>
       <Switch checked={row.original.enabled ?? false} disabled={pending} onCheckedChange={(checked) => toggleStatus(row.original.id, checked)} aria-label="Toggle API key status" />
       <Button variant="ghost" onClick={() => deleteKey(row.original.id)} disabled={pending} size="icon" className="text-destructive hover:text-destructive" aria-label={t('actions.delete')}>
         <Trash2 className="h-4 w-4" />
@@ -246,3 +284,4 @@ const ActionTableCell: React.FC<{ row: { original: ApiKey } }> = ({ row }) => {
   );
 };
 ActionTableCell.displayName = 'ActionTableCell';
+

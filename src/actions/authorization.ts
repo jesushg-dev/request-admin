@@ -1,7 +1,7 @@
 'use server';
 
 import { PermissionAction } from '@/constants/permissions';
-import { currentSession } from '@/server/auth-server';
+import { requireUser } from '@/server/auth-server';
 import { getDb } from '@/server/db-client';
 
 import { UserTenantDefaultArgs } from '@/types/zenstackhq/authorization';
@@ -15,14 +15,14 @@ type AuthResult = {
 };
 
 export const getAuthContext = async (tenantId: string): Promise<AuthResult> => {
-  const session = await currentSession();
-  if (!session?.user) throw new AuthorizationError('Unauthorized');
+  const user = await requireUser();
+  if (!user) throw new AuthorizationError('Unauthorized');
 
   // Local cache is used to avoid multiple database calls for the same user in the same request
   let permissionsCache: Set<string> | null = null;
   const areaPermissionsCache = new Map<string, Set<string>>();
 
-  const isAdmin = session.user.isGlobalAdmin || ['owner', 'admin'].includes(session.user.role || '');
+  const isAdmin = user.isGlobalAdmin || ['owner', 'admin'].includes(user.role || '');
 
   const loadPermissions = async () => {
     if (permissionsCache) return;
@@ -30,7 +30,7 @@ export const getAuthContext = async (tenantId: string): Promise<AuthResult> => {
     const db = await getDb();
     const userTenant = await db.userTenant.findUnique({
       ...UserTenantDefaultArgs,
-      where: { userId_tenantId: { userId: session!.user!.id, tenantId } },
+      where: { userId_tenantId: { userId: user.id, tenantId } },
     });
 
     if (!userTenant) {

@@ -466,6 +466,14 @@ const settingsPathnames = {
     en: '/admin/[tenantId]/settings/security/api-keys/new',
     es: '/admin/[tenantId]/configuracion/seguridad/claves-api/nuevo',
   },
+  '/admin/[tenantId]/settings/security/api-keys/[keyId]': {
+    en: '/admin/[tenantId]/settings/security/api-keys/[keyId]',
+    es: '/admin/[tenantId]/configuracion/seguridad/claves-api/[keyId]',
+  },
+  '/admin/[tenantId]/settings/security/api-keys/[keyId]/edit': {
+    en: '/admin/[tenantId]/settings/security/api-keys/[keyId]/edit',
+    es: '/admin/[tenantId]/configuracion/seguridad/claves-api/[keyId]/editar',
+  },
   '/admin/[tenantId]/settings/security/connected-accounts': {
     en: '/admin/[tenantId]/settings/security/connected-accounts',
     es: '/admin/[tenantId]/configuracion/seguridad/cuentas-conectadas',

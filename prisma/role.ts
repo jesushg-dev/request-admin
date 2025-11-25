@@ -139,6 +139,12 @@ const ADMINISTRADOR_FEATURES = [
   PermissionActions.FORM_DESIGNER.EDIT,
   PermissionActions.FORM_DESIGNER.DELETE,
   PermissionActions.FORM_DESIGNER.PUBLISH,
+  // API Keys
+  PermissionActions.API_KEY.VIEW,
+  PermissionActions.API_KEY.CREATE,
+  PermissionActions.API_KEY.UPDATE,
+  PermissionActions.API_KEY.DELETE,
+  PermissionActions.API_KEY.MANAGE_RATE_LIMIT,
 ];
 
 const COORDINADOR_FEATURES = [
@@ -163,6 +169,8 @@ const COORDINADOR_FEATURES = [
   PermissionActions.DATA_ROOM.VIEW,
   PermissionActions.SHARED_LINK.VIEW,
   PermissionActions.AGREEMENT.VIEW,
+  // API Keys - read only
+  PermissionActions.API_KEY.VIEW,
 ];
 
 const ANALISTA_FEATURES = [
@@ -179,6 +187,8 @@ const ANALISTA_FEATURES = [
   PermissionActions.DOCUMENT_MANAGEMENT.VIEW,
   PermissionActions.DATA_ROOM.VIEW,
   PermissionActions.SHARED_LINK.VIEW,
+  // API Keys - read only
+  PermissionActions.API_KEY.VIEW,
 ];
 
 const DISTRIBUIDOR_FEATURES = [
@@ -190,6 +200,8 @@ const DISTRIBUIDOR_FEATURES = [
   PermissionActions.REQUEST_MANAGEMENT.SCOPED_SEND_DOCUMENTS,
   // Document Management - Basic view
   PermissionActions.DOCUMENT_MANAGEMENT.VIEW,
+  // API Keys - read only (if needed to view)
+  PermissionActions.API_KEY.VIEW,
 ];
 
 // System roles configuration

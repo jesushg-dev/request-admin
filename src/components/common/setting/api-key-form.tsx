@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from 'react';
 import { Link } from '@/i18n/routing';
-import { authClient } from '@/server/auth-client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, Copy } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -15,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { JsonInput } from '@/components/custom-ui/json-input';
+import { createApiKeyAction } from '@/actions/api-key';
 import { useApiKeyFormSchema, type TApiKeyFormSchema } from '@/services/schemas/settings/api-key.schema';
 
 export const getApiKeyDefaultValues = (): ApiKeyFormValues => ({
@@ -25,6 +25,9 @@ export const getApiKeyDefaultValues = (): ApiKeyFormValues => ({
   rateLimitEnabled: false,
   rateLimitMax: 100,
   rateLimitTimeWindow: 60000,
+  remaining: undefined,
+  refillAmount: undefined,
+  refillInterval: undefined,
 });
 
 export type ApiKeyFormValues = TApiKeyFormSchema;
@@ -33,14 +36,6 @@ interface ApiKeyCreateFormProps {
   tenantId: string;
   defaultValues?: ApiKeyFormValues | null;
 }
-
-const expiresIn = {
-  never: undefined,
-  '7d': 60 * 60 * 24 * 7,
-  '30d': 60 * 60 * 24 * 30,
-  '90d': 60 * 60 * 24 * 90,
-  '1y': 60 * 60 * 24 * 365,
-};
 
 export function ApiKeyCreateForm({ defaultValues, tenantId }: ApiKeyCreateFormProps) {
   const t = useTranslations('admin.setting.apiKeys.createForm');
@@ -56,30 +51,25 @@ export function ApiKeyCreateForm({ defaultValues, tenantId }: ApiKeyCreateFormPr
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    console.log(t('copySuccess'));
+    toast.success(t('copySuccess'));
   };
 
   const onSubmit = async (values: ApiKeyFormValues) => {
     startTransition(async () => {
       const toastId = toast.loading(t('creating'));
-      const { data } = await authClient.apiKey.create(
-        {
-          name: values.name,
-          prefix: values.prefix,
-          metadata: values.metadata,
-          expiresIn: values.expiresIn ? expiresIn[values.expiresIn as keyof typeof expiresIn] : undefined,
-        },
-        {
-          onError: (error) => {
-            toast.error(t('createError', { error: error.error.message }), { id: toastId });
-          },
+      try {
+        const apiKey = await createApiKeyAction(values);
+
+        if (!apiKey?.key) {
+          throw new Error('API key missing from response');
         }
-      );
 
-      if (!data?.key) return;
-
-      setNewApiKey(data.key);
-      toast.success(t('createSuccess'), { id: toastId });
+        setNewApiKey(apiKey.key);
+        toast.success(t('createSuccess'), { id: toastId });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'N/A';
+        toast.error(t('createError', { error: message }), { id: toastId });
+      }
     });
   };
 
@@ -175,51 +165,130 @@ export function ApiKeyCreateForm({ defaultValues, tenantId }: ApiKeyCreateFormPr
               control={form.control}
               name="rateLimitEnabled"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                <div className="space-y-4 rounded-lg border p-4">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-base">{t('rateLimit.label')}</FormLabel>
-                    <FormDescription>{t('rateLimit.description')}</FormDescription>
+                    <FormLabel className="text-base">{t('usageLimits.label')}</FormLabel>
+                    <p className="text-sm text-muted-foreground">{t('usageLimits.description')}</p>
                   </div>
-                  <FormControl>
-                    <Switch checked={field.value} onCheckedChange={field.onChange} />
-                  </FormControl>
-                </FormItem>
+
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">{t('rateLimit.label')}</FormLabel>
+                      <FormDescription>{t('rateLimit.description')}</FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
+                    </FormControl>
+                  </FormItem>
+
+                  {form.watch('rateLimitEnabled') && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="rateLimitMax"
+                        render={({ field: rateMaxField }) => (
+                          <FormItem>
+                            <FormLabel>{t('rateLimit.maxRequests')}</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder="100"
+                                {...rateMaxField}
+                                onChange={(e) => rateMaxField.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                              />
+                            </FormControl>
+                            <FormDescription>{t('rateLimit.maxRequestsDesc')}</FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="rateLimitTimeWindow"
+                        render={({ field: rateWindowField }) => (
+                          <FormItem>
+                            <FormLabel>{t('rateLimit.timeWindow')}</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder="60000"
+                                {...rateWindowField}
+                                onChange={(e) => rateWindowField.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                              />
+                            </FormControl>
+                            <FormDescription>{t('rateLimit.timeWindowDesc')}</FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <FormField
+                      control={form.control}
+                      name="remaining"
+                      render={({ field: remainingField }) => (
+                        <FormItem>
+                          <FormLabel>{t('usageLimits.remaining')}</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              placeholder="1000"
+                              {...remainingField}
+                              onChange={(e) => remainingField.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                            />
+                          </FormControl>
+                          <FormDescription>{t('usageLimits.remainingDesc')}</FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="refillAmount"
+                      render={({ field: refillAmountField }) => (
+                        <FormItem>
+                          <FormLabel>{t('usageLimits.refillAmount')}</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              placeholder="100"
+                              {...refillAmountField}
+                              onChange={(e) => refillAmountField.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                            />
+                          </FormControl>
+                          <FormDescription>{t('usageLimits.refillAmountDesc')}</FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="refillInterval"
+                      render={({ field: refillIntervalField }) => (
+                        <FormItem>
+                          <FormLabel>{t('usageLimits.refillInterval')}</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              placeholder="3600000"
+                              {...refillIntervalField}
+                              onChange={(e) => refillIntervalField.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                            />
+                          </FormControl>
+                          <FormDescription>{t('usageLimits.refillIntervalDesc')}</FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
               )}
             />
-
-            {form.watch('rateLimitEnabled') && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="rateLimitMax"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('rateLimit.maxRequests')}</FormLabel>
-                      <FormControl>
-                        <Input type="number" placeholder="100" {...field} onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)} />
-                      </FormControl>
-                      <FormDescription>{t('rateLimit.maxRequestsDesc')}</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="rateLimitTimeWindow"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('rateLimit.timeWindow')}</FormLabel>
-                      <FormControl>
-                        <Input type="number" placeholder="60000" {...field} onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)} />
-                      </FormControl>
-                      <FormDescription>{t('rateLimit.timeWindowDesc')}</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            )}
 
             <FormField
               control={form.control}
@@ -228,13 +297,14 @@ export function ApiKeyCreateForm({ defaultValues, tenantId }: ApiKeyCreateFormPr
                 <FormItem>
                   <FormLabel>{t('metadata.label')}</FormLabel>
                   <FormControl>
-                    <JsonInput value={field.value} onChange={(value) => field.onChange(value)} />
+                    <JsonInput value={field.value ?? {}} onChange={(value) => field.onChange(value)} />
                   </FormControl>
                   <FormDescription>{t('metadata.description')}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
           </div>
         </div>
         <div className="mt-4 flex justify-end">
