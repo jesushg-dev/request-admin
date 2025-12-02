@@ -77,9 +77,10 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     image?: string | null;
     isGlobalAdmin?: boolean | null;
   };
+  isOnPremise?: boolean;
 }
 
-export function AppSidebar({ user, ...props }: AppSidebarProps) {
+export function AppSidebar({ user, isOnPremise, ...props }: AppSidebarProps) {
   const pathname = usePathname();
   const t = useTranslations('admin.sidebar');
   const { tenantId, tenants } = useTenantContext();
@@ -167,7 +168,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
             disabled: !canViewAgreements,
           },
         ],
-        disabled: !canViewDataRooms || !canViewDocuments || !canViewSharedLinks || !canViewAgreements, 
+        disabled: !canViewDataRooms || !canViewDocuments || !canViewSharedLinks || !canViewAgreements,
       },
       {
         title: t('configuration'),
@@ -228,8 +229,8 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
             disabled: !canViewWorkflows,
           },
         ],
-        disabled: 
-        !canViewAreas || !canViewAssignmentHierarchy || !canViewRequestTypes || !canViewRequestHierarchy || !canViewRequirements || !canViewRequirementTypes || !canViewPriorities || !canViewWorkflows,
+        disabled:
+          !canViewAreas || !canViewAssignmentHierarchy || !canViewRequestTypes || !canViewRequestHierarchy || !canViewRequirements || !canViewRequirementTypes || !canViewPriorities || !canViewWorkflows,
       },
     ];
 
@@ -278,7 +279,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
             disabled: !canViewInvitations,
           },
         ],
-        disabled:   !canViewUsers || !canViewRoles || !canViewIdentificationTypes, 
+        disabled: !canViewUsers || !canViewRoles || !canViewIdentificationTypes,
       },
       {
         title: t('settings'),
@@ -302,7 +303,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TenantSwitcher isGlobalAdmin={user.isGlobalAdmin} />
+        <TenantSwitcher isGlobalAdmin={user.isGlobalAdmin} isOnPremise={isOnPremise} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain title={t('request')} items={navMain} currentPath={pathname} />

@@ -10,7 +10,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
 import { useTenantContext } from '@/components/hoc/tenant-provider';
 
-export function TenantSwitcher({ isGlobalAdmin = false }: { isGlobalAdmin?: boolean | null }) {
+export function TenantSwitcher({ isGlobalAdmin = false, isOnPremise = false }: { isGlobalAdmin?: boolean | null; isOnPremise?: boolean }) {
   const t = useTranslations('admin.sidebar.tenantSwitcher');
   const { isMobile } = useSidebar();
   const { tenants, tenantId } = useTenantContext();
@@ -63,7 +63,7 @@ export function TenantSwitcher({ isGlobalAdmin = false }: { isGlobalAdmin?: bool
                 <DropdownMenuSeparator />
               </>
             )}
-            {isGlobalAdmin && (
+            {isGlobalAdmin && !isOnPremise && (
               <DropdownMenuItem className="p-0">
                 <Link className="hover:bg-accent flex w-full cursor-pointer items-center gap-2 p-2" href="/admin/global/tenants/new" passHref>
                   <div className="bg-background flex size-6 items-center justify-center rounded-md border">
