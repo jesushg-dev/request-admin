@@ -409,6 +409,7 @@ model Apikey {
   key                 String
   userId              String
   user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenantId            String?
   refillInterval      Int?
   refillAmount        Int?
   lastRefillAt        DateTime?
@@ -1471,6 +1472,9 @@ model RequestHierarchyLevel {
 }
 
 /// Represents a request category, with SLA and required documents.
+/// Business Rule: A category should only be activated (isActive = true) if it has a complete chain of children
+/// down to the last hierarchy level. This ensures users can complete request forms without encountering
+/// "No options" errors. Validation is enforced at the application level.
 model RequestCategory {
   id                          String                       @id() @default(uuid())
   name                        String                       @db.VarChar(100)

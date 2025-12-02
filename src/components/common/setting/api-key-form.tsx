@@ -58,7 +58,7 @@ export function ApiKeyCreateForm({ defaultValues, tenantId }: ApiKeyCreateFormPr
     startTransition(async () => {
       const toastId = toast.loading(t('creating'));
       try {
-        const apiKey = await createApiKeyAction(values);
+        const apiKey = await createApiKeyAction({ ...values, tenantId });
 
         if (!apiKey?.key) {
           throw new Error('API key missing from response');

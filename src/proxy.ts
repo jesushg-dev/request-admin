@@ -25,10 +25,10 @@ function isSafeCallbackUrl(url: string) {
 
 // comment: locate this code in your middleware config file (e.g., middleware.ts or middleware.js)
 export const config = {
-  // Exclude API routes for tenants to avoid infinite loops, since we now use DB directly
+  // Exclude API routes to avoid infinite loops and allow API key authentication
   matcher: [
-    // Match all routes except static files, _next, api/auth, and api/tenants
-    '/((?!.+\\.[\\w]+$|_next|api/auth|api/tenants).*)',
+    // Match all routes except static files, _next, and all api routes
+    '/((?!.+\\.[\\w]+$|_next|api).*)',
     '/',
   ],
 };
@@ -44,10 +44,13 @@ export default async function proxy(req: NextRequest) {
 
   // Use auth.api.getSession directly instead of HTTP call to avoid duplicate queries
   // Convert NextRequest headers to Headers that Better Auth can use
-  const headers = new Headers();
+  // Note: NextRequest headers are immutable, so we need to create a new Headers object
+  // by iterating and using Object.fromEntries approach
+  const headerEntries: [string, string][] = [];
   req.headers.forEach((value, key) => {
-    headers.set(key, value);
+    headerEntries.push([key, value]);
   });
+  const headers = new Headers(headerEntries);
 
   const session = await auth.api.getSession({
     headers,

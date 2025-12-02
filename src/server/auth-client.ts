@@ -5,6 +5,7 @@ import {
   emailOTPClient,
   genericOAuthClient,
   inferAdditionalFields,
+  jwtClient,
   magicLinkClient,
   multiSessionClient,
   oidcClient,
@@ -33,6 +34,7 @@ export const authClient = createAuthClient({
     genericOAuthClient(),
     oneTapClient({ clientId: 'MY_CLIENT_ID' }),
     apiKeyClient(),
+    jwtClient(),
     adminClient(),
     organizationClient({
       teams: {
