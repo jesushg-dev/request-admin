@@ -19,6 +19,37 @@ import { getInitialStatusFromDatabase } from './workflow';
 
 class UserNotFoundErr extends Error {}
 
+/**
+ * Validates that a category is a leaf node (no subcategories) and at the last level of the hierarchy.
+ * @param categoryName - Name of the category for error messages
+ * @param subcategoryCount - Number of subcategories the category has
+ * @param levelPosition - Position of the category's hierarchy level
+ * @param totalLevels - Total number of levels in the hierarchy
+ * @param categoryType - Type of category ('Request' or 'Assignment') for error messages
+ * @throws Error if the category is not a valid leaf category
+ */
+const validateLeafCategory = (
+  categoryName: string,
+  subcategoryCount: number,
+  levelPosition: number,
+  totalLevels: number,
+  categoryType: 'Request' | 'Assignment'
+): void => {
+  // Check if category has subcategories (not a leaf node)
+  if (subcategoryCount > 0) {
+    throw new Error(
+      `${categoryType} category "${categoryName}" cannot be selected directly. Please select a more specific subcategory.`
+    );
+  }
+
+  // Check if category is at the last level of the hierarchy
+  if (levelPosition !== totalLevels) {
+    throw new Error(
+      `${categoryType} category "${categoryName}" is not at the last level of the hierarchy (level ${levelPosition} of ${totalLevels}). Please select a category from the final level.`
+    );
+  }
+};
+
 type AssignmentWithRelations = {
   status: { id: string; name: string };
   priority: { id: string; name: string };
@@ -45,6 +76,84 @@ export const upsertRequest = async (tenantId: string, data: RequestFormStepperTy
   // Validate categories
   if (data.requestCategory.length === 0) throw new Error('Request category is required');
   if (data.assignmentCategory.length === 0) throw new Error('Assignment category is required');
+
+  // Validate that only leaf categories (last level, no subcategories) are selected
+  const finalRequestCategoryId = data.requestCategory.slice(-1)[0].value;
+  const finalAssignmentCategoryId = data.assignmentCategory.slice(-1)[0].value;
+
+  const [requestCategory, assignmentCategory] = await Promise.all([
+    db.requestCategory.findUnique({
+      where: { id: finalRequestCategoryId, tenantId },
+      select: {
+        id: true,
+        name: true,
+        subcategories: { select: { id: true } },
+        hierarchyLevel: {
+          select: {
+            id: true,
+            position: true,
+            hierarchy: {
+              select: {
+                id: true,
+                levels: {
+                  select: { id: true, position: true },
+                  orderBy: { position: 'asc' },
+                },
+              },
+            },
+          },
+        },
+      },
+    }),
+    db.assignmentCategory.findUnique({
+      where: { id: finalAssignmentCategoryId, tenantId },
+      select: {
+        id: true,
+        name: true,
+        subcategories: { select: { id: true } },
+        hierarchyLevel: {
+          select: {
+            id: true,
+            position: true,
+            hierarchy: {
+              select: {
+                id: true,
+                levels: {
+                  select: { id: true, position: true },
+                  orderBy: { position: 'asc' },
+                },
+              },
+            },
+          },
+        },
+      },
+    }),
+  ]);
+
+  if (!requestCategory) {
+    throw new Error('Request category not found');
+  }
+  if (!assignmentCategory) {
+    throw new Error('Assignment category not found');
+  }
+
+  // Validate request category: must be a leaf node (no subcategories) and at the last hierarchy level
+  validateLeafCategory(
+    requestCategory.name,
+    requestCategory.subcategories.length,
+    requestCategory.hierarchyLevel.position,
+    requestCategory.hierarchyLevel.hierarchy.levels.length,
+    'Request'
+  );
+
+  // Validate assignment category: must be a leaf node (no subcategories) and at the last hierarchy level
+  validateLeafCategory(
+    assignmentCategory.name,
+    assignmentCategory.subcategories.length,
+    assignmentCategory.hierarchyLevel.position,
+    assignmentCategory.hierarchyLevel.hierarchy.levels.length,
+    'Assignment'
+  );
 
   // Get existing request with relations
   const existingRequest = await db.request.findUnique({

@@ -22,8 +22,8 @@ import {
   twoFactor,
   username,
 } from 'better-auth/plugins';
-import { passkey } from 'better-auth/plugins/passkey';
-import { sso } from 'better-auth/plugins/sso';
+import { passkey } from '@better-auth/passkey';
+import { sso } from '@better-auth/sso';
 
 import { sendChangeEmailVerification, sendInvitationEmail, sendMagicLink, sendResetPassword, sendVerificationEmail, sendVerificationOTP } from '@/lib/mail';
 import { comparePassword, hashPassword } from '@/lib/password';

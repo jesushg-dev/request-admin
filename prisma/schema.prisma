@@ -1474,6 +1474,8 @@ model RequestHierarchyLevel {
 /// Business Rule: A category should only be activated (isActive = true) if it has a complete chain of children
 /// down to the last hierarchy level. This ensures users can complete request forms without encountering
 /// "No options" errors. Validation is enforced at the application level.
+/// Business Rule: Only leaf categories (categories without subcategories) can be selected directly in requests.
+/// Parent/intermediate categories are used for navigation and organization but cannot be the final selection.
 model RequestCategory {
   id                          String                       @id() @default(uuid())
   name                        String                       @db.VarChar(100)
@@ -1696,7 +1698,8 @@ model AssignmentHierarchyLevel {
 }
 
 /// Represents an assignment category, linked to specific rules and an area.
-/// Represents an assignment category, linked to specific rules and an area.
+/// Business Rule: Only leaf categories (categories without subcategories) can be selected directly in requests.
+/// Parent/intermediate categories are used for navigation and organization but cannot be the final selection.
 model AssignmentCategory {
   id                      String                   @id() @default(uuid())
   name                    String                   @db.VarChar(100)

@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto';
 
 import { PrismaClient } from '@prisma/client';
 
-import { hashPassword } from '@/lib/password';
+import { hashPassword } from '../src/lib/password.js';
 
 import { createActivacionArea } from './area-seed/activacion.area';
 import { createAprobadosCreditoMesaControlArea } from './area-seed/aprobados-credito-mesa-control.area';

@@ -31,6 +31,8 @@ model RequestHierarchyLevel extends TenantScoped, Auditable, CatalogBase {
 /// Business Rule: A category should only be activated (isActive = true) if it has a complete chain of children
 /// down to the last hierarchy level. This ensures users can complete request forms without encountering
 /// "No options" errors. Validation is enforced at the application level.
+/// Business Rule: Only leaf categories (categories without subcategories) can be selected directly in requests.
+/// Parent/intermediate categories are used for navigation and organization but cannot be the final selection.
 model RequestCategory extends TenantScoped, Auditable, CatalogBase {
   sla                        SLA?                  // SLA specific to this category
   isEligibleForNewClients    Boolean                      @default(true) // Indicates if the category accepts new clients
@@ -174,7 +176,8 @@ model AssignmentHierarchyLevel extends TenantScoped, Auditable, CatalogBase {
 }
 
 /// Represents an assignment category, linked to specific rules and an area.
-/// Represents an assignment category, linked to specific rules and an area.
+/// Business Rule: Only leaf categories (categories without subcategories) can be selected directly in requests.
+/// Parent/intermediate categories are used for navigation and organization but cannot be the final selection.
 model AssignmentCategory extends TenantScoped, Auditable, CatalogBase {
   parentCategoryId   String? // ID of the parent category
   parentCategory     AssignmentCategory?      @relation("ParentAssignmentCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Handle self-relation correctly
