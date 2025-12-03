@@ -4,7 +4,7 @@ import { resolveExpiresInSeconds, normalizeNumber, normalizeRecord } from '@/con
 import { auth, requireUser } from '@/server/auth-server';
 import type { TApiKeyFormSchema } from '@/services/schemas/settings/api-key.schema';
 
-type CreateApiKeyInput = TApiKeyFormSchema;
+type CreateApiKeyInput = TApiKeyFormSchema & { tenantId?: string };
 
 export async function createApiKeyAction(values: CreateApiKeyInput) {
   console.log('createApiKeyAction', values);
@@ -12,10 +12,16 @@ export async function createApiKeyAction(values: CreateApiKeyInput) {
 
   const expiresIn = values.expiresIn === 'never' ? undefined : resolveExpiresInSeconds(values.expiresIn);
 
+  // Merge tenantId into metadata if provided
+  const metadata = {
+    ...(values.metadata || {}),
+    ...(values.tenantId ? { tenantId: values.tenantId } : {}),
+  };
+
   const payload = {
     name: values.name,
     prefix: values.prefix,
-    metadata: normalizeRecord(values.metadata),
+    metadata: normalizeRecord(metadata),
     expiresIn,
     rateLimitEnabled: values.rateLimitEnabled,
     rateLimitMax: values.rateLimitEnabled ? normalizeNumber(values.rateLimitMax) : undefined,
@@ -30,6 +36,15 @@ export async function createApiKeyAction(values: CreateApiKeyInput) {
     const apiKey = await auth.api.createApiKey({
       body: payload,
     });
+
+    // Update the API key with tenantId directly in the database
+    if (values.tenantId && apiKey.id) {
+      const { db } = await import('@/server/db-client');
+      await db.apikey.update({
+        where: { id: apiKey.id },
+        data: { tenantId: values.tenantId },
+      });
+    }
 
     return apiKey;
   } catch (error) {

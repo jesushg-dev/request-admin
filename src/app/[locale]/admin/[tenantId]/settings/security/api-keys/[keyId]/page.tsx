@@ -127,13 +127,42 @@ const ApiKeyDetailPage = async ({ params }: ApiKeyDetailPageProps) => {
           <CardDescription>{t('detail.apiUsage.description')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="outline">POST /api-key/verify</Badge>
-            <Badge variant="outline">GET /api-key/get</Badge>
-            <Badge variant="outline">DELETE /api-key/delete</Badge>
+          <div>
+            <h4 className="text-sm font-semibold mb-2">API Key Management</h4>
+            <div className="flex flex-wrap gap-2">
+              <Badge variant="outline">POST /api-key/verify</Badge>
+              <Badge variant="outline">GET /api-key/get</Badge>
+              <Badge variant="outline">DELETE /api-key/delete</Badge>
+            </div>
           </div>
           <Separator />
-          <p className="text-sm text-muted-foreground">{t('detail.apiUsage.instructions')}</p>
+          <div>
+            <h4 className="text-sm font-semibold mb-2">Forms API</h4>
+            <div className="flex flex-wrap gap-2">
+              <Badge variant="outline">GET /api/forms?tenantId=xxx</Badge>
+              <Badge variant="outline">GET /api/forms/[id]?tenantId=xxx</Badge>
+              <Badge variant="outline">GET /api/forms/[id]/submissions?tenantId=xxx</Badge>
+              <Badge variant="outline">GET /api/submissions/[id]?tenantId=xxx</Badge>
+              <Badge variant="outline">GET /api/menu-items?tenantId=xxx</Badge>
+            </div>
+          </div>
+          <Separator />
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">{t('detail.apiUsage.instructions')}</p>
+            <p className="text-xs text-muted-foreground">
+              <strong>Authentication:</strong> You can use either:
+            </p>
+            <ul className="text-xs text-muted-foreground list-disc list-inside ml-2 space-y-1">
+              <li>API Key: <code className="bg-muted px-1 py-0.5 rounded">Authorization: Bearer YOUR_API_KEY</code></li>
+              <li>JWT Token: <code className="bg-muted px-1 py-0.5 rounded">Authorization: Bearer YOUR_JWT_TOKEN</code></li>
+            </ul>
+            <p className="text-xs text-muted-foreground">
+              <strong>Getting JWT Token:</strong> Call <code className="bg-muted px-1 py-0.5 rounded">GET /api/auth/token</code> with your session to get a JWT token.
+            </p>
+            <p className="text-xs text-muted-foreground">
+              <strong>Tenant ID:</strong> All form-related endpoints require a <code className="bg-muted px-1 py-0.5 rounded">tenantId</code> query parameter.
+            </p>
+          </div>
         </CardContent>
       </Card>
 

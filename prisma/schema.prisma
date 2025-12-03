@@ -409,6 +409,7 @@ model Apikey {
   key                 String
   userId              String
   user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenantId            String?
   refillInterval      Int?
   refillAmount        Int?
   lastRefillAt        DateTime?
