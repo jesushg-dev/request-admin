@@ -2,9 +2,11 @@ ignoredBuiltDependencies:
   - '@prisma/client'
   - prisma
   - zenstack
+
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - '@prisma/engines'
+  - '@swc/core'
   - '@tailwindcss/oxide'
   - core-js
   - cypress
