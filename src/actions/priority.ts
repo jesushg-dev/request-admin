@@ -2,9 +2,9 @@
 
 import { currentSession } from '@/server/auth-server';
 import { getDb } from '@/server/db-client';
+import { type TPrioritySchema } from '@/services/schemas/priority';
 
 import { RequestPriorityTypeDefaultArgs } from '@/types/zenstackhq/priority';
-import { type TPrioritySchema } from '@/services/schemas/priority';
 
 type RequestPriorityTypeFormValues = TPrioritySchema;
 

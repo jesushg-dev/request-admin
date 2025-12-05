@@ -1,12 +1,11 @@
 import { FC } from 'react';
-import { type Locale } from 'next-intl';
-import { redirect } from '@/i18n/routing';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
-import { getPathname } from '@/i18n/routing';
+import { getPathname, redirect } from '@/i18n/routing';
+import { getDb } from '@/server/db-client';
+import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import { SearchParams } from 'nuqs/server';
-import { getDb } from '@/server/db-client';
 
 import { documentReferencesLoader } from '@/lib/document';
 import { LinkForm } from '@/components/common/data-room/link-form';
@@ -22,7 +21,7 @@ const EditPage: FC<EditPageProps> = async ({ params, searchParams }) => {
 
   const auth = await getAuthContext(tenantId);
   const canEdit = auth.hasPermissions([PermissionActions.SHARED_LINK.EDIT]);
-  
+
   if (!canEdit) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/links', params: { tenantId } } });
   }

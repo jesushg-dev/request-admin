@@ -1,5 +1,6 @@
 'use client';
 
+import { type TWorkflowSchema } from '@/services/schemas/workflow';
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
@@ -11,7 +12,6 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { FormCheckboxItem, FormItem } from '@/components/shared/form-root';
-import { type TWorkflowSchema } from '@/services/schemas/workflow';
 
 // Base schema for defineStepper (without internationalization)
 // This is used only for the stepper definition

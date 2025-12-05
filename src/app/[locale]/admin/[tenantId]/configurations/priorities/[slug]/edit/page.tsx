@@ -1,10 +1,10 @@
-import { type Metadata } from 'next';
 import { FC } from 'react';
-import { type Locale } from 'next-intl';
-import { redirect } from '@/i18n/routing';
+import { type Metadata } from 'next';
 import { getAuthContext } from '@/actions/authorization';
-import { PermissionActions } from '@/constants/permissions';
 import { getRequestPriorityTypeAsFormById } from '@/actions/priority';
+import { PermissionActions } from '@/constants/permissions';
+import { redirect } from '@/i18n/routing';
+import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
 import PriorityForm from '@/components/common/priority/priority-form';
@@ -17,7 +17,7 @@ interface EditPriorityPageProps {
 export async function generateMetadata(props: EditPriorityPageProps): Promise<Metadata> {
   const { locale, tenantId, slug } = await props.params;
   const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
-  
+
   const priority = await getRequestPriorityTypeAsFormById(tenantId, slug);
   const priorityName = priority?.name || `Prioridad #${slug}`;
 
@@ -32,7 +32,7 @@ const EditPriorityPage: FC<EditPriorityPageProps> = async ({ params }) => {
 
   const auth = await getAuthContext(tenantId);
   const canEdit = auth.hasPermissions([PermissionActions.PRIORITY.EDIT]);
-  
+
   if (!canEdit) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/configurations/priorities', params: { tenantId } } });
   }

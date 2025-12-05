@@ -1,9 +1,10 @@
 import { type Metadata } from 'next';
-import { type Locale } from 'next-intl';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
+import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
+
 import FormDesignerPageClient from '@/components/common/form-designer/form-designer-page-client';
 
 interface FormDesignerPageProps {
@@ -29,7 +30,7 @@ export default async function FormDesignerPage({ params }: FormDesignerPageProps
   // Server-side permission check - blocks access before any client component renders
   const auth = await getAuthContext(tenantId);
   const canViewForms = auth.hasPermissions([PermissionActions.FORM_DESIGNER.VIEW]);
-  
+
   if (!canViewForms) {
     // Redirect to dashboard if user doesn't have permission
     return redirect({ locale, href: { pathname: '/admin/[tenantId]', params: { tenantId } } });

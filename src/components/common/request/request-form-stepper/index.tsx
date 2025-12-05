@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, useTransition, type FC } from 'react';
 import { upsertRequest } from '@/actions/request';
 import { useRouter } from '@/i18n/routing';
+import { getRequestDetailSchema, useRequestDetailSchema, type TRequestDetailSchema } from '@/services/schemas/request';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { defineStepper } from '@stepperize/react';
 import { useTranslations } from 'next-intl';
@@ -17,7 +18,6 @@ import { ChildSteps } from '@/components/stepper/child-steps';
 import { ChildStepsProvider } from '@/components/stepper/child-steps-context';
 import { StepNavigationModern } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
-import { getRequestDetailSchema, useRequestDetailSchema, type TRequestDetailSchema } from '@/services/schemas/request';
 
 import AttachmentsStep, { attachmentSchema, AttachmentsValues, getDefaultAttachmentsValues } from './attachments-step';
 import ClassificationStep, { combinedCategoriesSchema, CombinedCategoriesValues, getDefaultCombinedCategoriesValues } from './classification-step';

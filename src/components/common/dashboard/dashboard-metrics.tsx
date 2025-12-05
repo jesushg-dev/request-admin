@@ -1,9 +1,9 @@
-import { getTranslations } from 'next-intl/server';
 import type React from 'react';
 import { AlertTriangle, ArrowDown, ArrowUp, CheckCircle, Clock, FileText, Target, XCircle } from 'lucide-react';
+import { Locale } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Locale } from 'next-intl';
 
 interface MetricCardProps {
   title: string;
@@ -56,7 +56,7 @@ interface MetricsData {
 // Métricas generales del sistema (independientes del workflow)
 export async function GeneralMetrics({ data, locale }: { data: MetricsData; locale: Locale }) {
   const t = await getTranslations({ locale, namespace: 'admin.dashboard.metrics' });
-  
+
   const generalMetrics = [
     {
       id: 'total',
@@ -110,7 +110,7 @@ export async function GeneralMetrics({ data, locale }: { data: MetricsData; loca
 // Métricas de SLA (independientes del workflow)
 export async function SLAMetrics({ data, locale }: { data: MetricsData; locale: Locale }) {
   const t = await getTranslations({ locale, namespace: 'admin.dashboard.metrics' });
-  
+
   const slaMetrics = [
     {
       id: 'sla-overdue',

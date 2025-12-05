@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { colorOptions, typeOptions } from '@/constants/workflow';
+import { useStateSchema, type TStateSchema } from '@/services/schemas/workflow';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
@@ -12,7 +13,6 @@ import { Form, FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import Select from '@/components/custom-ui/select';
 import { FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
-import { useStateSchema, type TStateSchema } from '@/services/schemas/workflow';
 
 export type StateValues = TStateSchema;
 

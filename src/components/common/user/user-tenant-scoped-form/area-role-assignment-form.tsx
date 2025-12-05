@@ -2,6 +2,7 @@
 'use client';
 
 import React, { FC, useMemo } from 'react';
+import { type TAreaRoleAssignmentSchema } from '@/services/schemas/user';
 import { Plus, Trash } from 'lucide-react';
 import { Control, FieldErrors, useController, useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -13,7 +14,6 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import Select from '@/components/custom-ui/select';
-import { type TAreaRoleAssignmentSchema } from '@/services/schemas/user';
 
 // Base schema for defineStepper (without internationalization)
 // This is used only for the stepper definition

@@ -1,8 +1,8 @@
 'use client';
 
-import { useQueryStates } from 'nuqs';
-import { useTranslations } from 'next-intl';
 import { ChevronDown } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useQueryStates } from 'nuqs';
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -68,4 +68,3 @@ export default function WorkflowSelectorClient({ workflows, selectedWorkflow }: 
     </div>
   );
 }
-

@@ -50,7 +50,7 @@ describe('updateRequirementCompliance', () => {
 
   it('should handle errors and return error response', async () => {
     // Mock the transaction to throw an error
-      (mockDb.$transaction as jest.Mock).mockRejectedValue(new Error('Database error'));
+    (mockDb.$transaction as jest.Mock).mockRejectedValue(new Error('Database error'));
 
     const result = await updateRequirementCompliance(mockRequestId, mockTenantId, mockCompliances);
 

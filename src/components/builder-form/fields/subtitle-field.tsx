@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useSubtitleFieldPropertiesSchema, type TSubtitleFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Heading2Icon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -11,7 +12,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ElementsType, FormElement, FormElementInstance } from '@/components/builder-form/form-elements';
-import { useSubtitleFieldPropertiesSchema, type TSubtitleFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 
 const type: ElementsType = 'SubTitleField';
 

@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import { useSubscriptionSchema, type TSubscriptionSchema } from '@/services/schemas/settings.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { format } from 'date-fns';
 import { CalendarIcon, CheckCircle, CreditCard, Package } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';

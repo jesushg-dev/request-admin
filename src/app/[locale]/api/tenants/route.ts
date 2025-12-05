@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { authenticateWithApiKeyOrJWT } from '@/lib/api-key-auth';
 import { db } from '@/server/db-client';
+
+import { authenticateWithApiKeyOrJWT } from '@/lib/api-key-auth';
 
 export async function GET(request: NextRequest) {
   // Authenticate with API key or JWT token

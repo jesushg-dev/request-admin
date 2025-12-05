@@ -2,6 +2,7 @@
 
 import { useRef, useState, useTransition } from 'react';
 import { updateCurrentPriority } from '@/actions/request-assignment';
+import { useChangePrioritySchema, type TChangePrioritySchema } from '@/services/schemas/request';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SquarePen } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -17,7 +18,6 @@ import { Textarea } from '@/components/ui/textarea';
 import Select, { OptionType } from '@/components/custom-ui/select';
 import { Hint } from '@/components/hint';
 import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
-import { useChangePrioritySchema, type TChangePrioritySchema } from '@/services/schemas/request';
 
 export type ChangePriorityFormValues = TChangePrioritySchema;
 

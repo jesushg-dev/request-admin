@@ -14,4 +14,3 @@ export const dashboardSearchParamsParsers = {
 
 // Create search params cache for server-side usage
 export const dashboardSearchParamsCache = createSearchParamsCache(dashboardSearchParamsParsers);
-

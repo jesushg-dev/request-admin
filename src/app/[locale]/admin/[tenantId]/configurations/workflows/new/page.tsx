@@ -1,9 +1,9 @@
-import { type Metadata } from 'next';
 import { FC } from 'react';
-import { type Locale } from 'next-intl';
+import { type Metadata } from 'next';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
+import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
 import WorkflowFormStepper from '@/components/common/workflow/workflow-stepper';
@@ -27,7 +27,7 @@ const NewPage: FC<NewPageProps> = async ({ params }) => {
 
   const auth = await getAuthContext(tenantId);
   const canCreate = auth.hasPermissions([PermissionActions.WORKFLOW.CREATE]);
-  
+
   if (!canCreate) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/configurations/workflows', params: { tenantId } } });
   }

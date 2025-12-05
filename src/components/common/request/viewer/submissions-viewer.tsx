@@ -2,8 +2,8 @@
 
 import React, { memo, useMemo } from 'react';
 import { useCountFormSubmission, useFindManyFormSubmission } from '@/services/api/hooks';
-import { Prisma } from '@zenstackhq/runtime/models';
 import { ColumnDef } from '@tanstack/react-table';
+import { Prisma } from '@zenstackhq/runtime/models';
 import { useTranslations } from 'next-intl';
 import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 

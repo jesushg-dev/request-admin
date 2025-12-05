@@ -2,6 +2,7 @@
 'use client';
 
 import React, { memo } from 'react';
+import { type TCategoriesSchema } from '@/services/schemas/category';
 import { ChevronDown, ChevronRight, FileCogIcon, FilePlus2, FileX2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
@@ -60,8 +61,6 @@ export const assignmentCategoryFormSchema: z.ZodType<AssignmentCategory> = z.obj
       });
     }),
 });
-
-import { type TCategoriesSchema } from '@/services/schemas/category';
 
 // Base schema for defineStepper (without internationalization)
 // This is used only for the stepper definition

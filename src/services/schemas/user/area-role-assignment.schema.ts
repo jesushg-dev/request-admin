@@ -1,5 +1,6 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
+
 import { generateUuid } from '@/lib/id';
 
 // Type helper for translation function
@@ -64,4 +65,3 @@ export type TAreaRoleAssignmentSchema = z.infer<ReturnType<typeof createAreaRole
 export function getAreaRoleAssignmentSchema() {
   return createAreaRoleAssignmentSchema((key: string) => key);
 }
-

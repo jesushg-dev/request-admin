@@ -1,9 +1,10 @@
 import { type Metadata } from 'next';
-import { type Locale } from 'next-intl';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
+import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
+
 import AreasPageClient from '@/components/common/area/areas-page-client';
 
 interface AreasPageProps {
@@ -28,7 +29,7 @@ export default async function AreasPage({ params }: AreasPageProps) {
 
   const auth = await getAuthContext(tenantId);
   const canViewAreas = auth.hasPermissions([PermissionActions.AREA.VIEW]);
-  
+
   if (!canViewAreas) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]', params: { tenantId } } });
   }

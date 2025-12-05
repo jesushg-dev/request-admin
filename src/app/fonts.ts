@@ -1,5 +1,5 @@
-import localFont from 'next/font/local';
 import { Lexend } from 'next/font/google';
+import localFont from 'next/font/local';
 
 // Geist Sans font
 export const geistSans = localFont({
@@ -54,4 +54,3 @@ export const lexend = Lexend({
 // Placeholder export for openDyslexic to prevent import errors
 // Remove this when re-enabling the font above
 export const openDyslexic = { variable: '' };
-

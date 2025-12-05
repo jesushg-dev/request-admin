@@ -1,12 +1,12 @@
 'use client';
 
 import { FC, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useTransition } from 'react';
-import { useAtom, useAtomValue } from 'jotai';
 import { createExecutionFlow } from '@/actions/execution-flow';
 import { upsertRequestCategory } from '@/actions/request-type';
-import { IncompleteCategoryChainError } from '@/lib/errors';
 import { useUpsertRequestCategory } from '@/services/api/hooks';
+import { useRequestCategorySchema } from '@/services/schemas/request-type';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useAtom, useAtomValue } from 'jotai';
 import { BookCopyIcon, BookIcon, ChevronLeft, ChevronRight, ContainerIcon, FileCogIcon, FileStackIcon, PackageOpenIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
@@ -14,17 +14,25 @@ import { ImperativePanelHandle } from 'react-resizable-panels';
 import { toast } from 'sonner';
 
 import { RequestHierarchyWithLevelsType, RequestLevelType } from '@/types/zenstackhq/hierarchy';
+import { IncompleteCategoryChainError } from '@/lib/errors';
 import { buildRequestCategoryUpsertArgs } from '@/lib/request-type';
 import { Form } from '@/components/ui/form';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { OptionType } from '@/components/custom-ui/select';
 import { FormError, FormRoot } from '@/components/shared/form-root';
-import { useRequestCategorySchema } from '@/services/schemas/request-type';
 
 import { CategoryForm, getDefaultCategory, RequestCategoryValues } from './category-form';
 import { CategoryTreeView } from './category-tree-view';
 import { HierarchyDiagram } from './hierarchy-diagram';
-import { categoriesAtom, upsertCategoryAtom, addCreatingCategoryAtom, removeCreatingCategoryAtom, convertCreatingToRealAtom, creatingCategoriesAtom, selectedCategoryIdAtom } from './store/category-store';
+import {
+  addCreatingCategoryAtom,
+  categoriesAtom,
+  convertCreatingToRealAtom,
+  creatingCategoriesAtom,
+  removeCreatingCategoryAtom,
+  selectedCategoryIdAtom,
+  upsertCategoryAtom,
+} from './store/category-store';
 
 type Mode = 'add' | 'edit' | 'none';
 
@@ -51,7 +59,7 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
 
   const [mode, setMode] = useState<Mode>('none');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
-  
+
   // Use Jotai for global category state
   const [categories, setCategories] = useAtom(categoriesAtom);
   const creatingCategories = useAtomValue(creatingCategoriesAtom);
@@ -60,14 +68,14 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
   const [, removeCreatingCategory] = useAtom(removeCreatingCategoryAtom);
   const [, convertCreatingToReal] = useAtom(convertCreatingToRealAtom);
   const [, setSelectedCategoryId] = useAtom(selectedCategoryIdAtom);
-  
+
   // Initialize categories atom with initial values
   useLayoutEffect(() => {
     if (initialValues.categories.length > 0) {
       setCategories(initialValues.categories);
     }
   }, [initialValues.categories.length, setCategories]);
-  
+
   // Update when initialValues change (after initial load)
   useEffect(() => {
     if (initialValues.categories.length > 0) {
@@ -96,7 +104,7 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
   const validateCompleteHierarchy = useCallback(
     (category: RequestCategoryValues): { isValid: boolean; missingLevel?: number } => {
       const allCategories = [...categories, ...Array.from(creatingCategories.values())];
-      
+
       // If this is a root category (level 1, index 0), it's always valid
       const currentLevelInfo = levelsMap.get(category.hierarchyLevelId);
       if (!currentLevelInfo || currentLevelInfo.index === 0) {
@@ -126,7 +134,7 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
 
         // Check if we have a category at this level in the ancestor chain
         const hasLevel = ancestorChain.some((ancestor) => ancestor.hierarchyLevelId === expectedLevelId);
-        
+
         if (!hasLevel) {
           // Missing level in the chain - return the level number (1-based) for the error message
           return { isValid: false, missingLevel: i };
@@ -156,41 +164,39 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
     (category: RequestCategoryValues): boolean => {
       const allCategories = [...categories, ...Array.from(creatingCategories.values())];
       const currentLevelInfo = levelsMap.get(category.hierarchyLevelId);
-      
+
       if (!currentLevelInfo) return false;
-      
+
       // If this is the last level, it's always valid (no children needed)
       if (currentLevelInfo.index === requestHierarchy.levels.length - 1) {
         return true;
       }
-      
+
       // Recursive function to check if there's a complete chain from this category to the last level
       const checkChain = (cat: RequestCategoryValues, targetLevelIndex: number): boolean => {
         // If we've reached the target level, the chain is complete
         const catLevelInfo = levelsMap.get(cat.hierarchyLevelId);
         if (!catLevelInfo) return false;
-        
+
         if (catLevelInfo.index >= targetLevelIndex) {
           return true;
         }
-        
+
         // Check if this category has at least one child at the next level
         const nextLevelId = requestHierarchy.levels[catLevelInfo.index + 1]?.id;
         if (!nextLevelId) return false;
-        
-        const children = allCategories.filter(
-          (c) => c.parentCategoryId === cat.id && c.hierarchyLevelId === nextLevelId
-        );
-        
+
+        const children = allCategories.filter((c) => c.parentCategoryId === cat.id && c.hierarchyLevelId === nextLevelId);
+
         if (children.length === 0) {
           // No children at the next level - chain is incomplete
           return false;
         }
-        
+
         // Check if at least one child has a complete chain to the target level
         return children.some((child) => checkChain(child, targetLevelIndex));
       };
-      
+
       // Check if there's a complete chain from this category to the last level
       return checkChain(category, requestHierarchy.levels.length - 1);
     },
@@ -234,7 +240,7 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
       // Create temporary category for "creating" state
       const tempCategory = getDefaultCategory(hierarchyLevelId, parentCategoryId);
       addCreatingCategory(tempCategory);
-      
+
       // If has parent, add to parent's children array temporarily
       if (parentCategoryId) {
         const parent = categories.find((c) => c.id === parentCategoryId);
@@ -246,10 +252,10 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
           upsertCategory(updatedParent);
         }
       }
-      
+
       // Select the newly created category
       setSelectedCategoryId(tempCategory.id);
-      
+
       setMode('add');
       form.reset(tempCategory);
     },
@@ -266,13 +272,13 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
 
   const handleCancelForm = useCallback(() => {
     const currentCategory = form.getValues();
-    
+
     // Only remove temporary category if it's actually a creating category (not an edit)
     const isCreatingCategory = creatingCategories.has(currentCategory.id);
-    
+
     if (isCreatingCategory && currentCategory.id) {
       removeCreatingCategory(currentCategory.id);
-      
+
       // Remove from parent's children if it has a parent
       if (currentCategory.parentCategoryId) {
         const parent = categories.find((c) => c.id === currentCategory.parentCategoryId);
@@ -285,7 +291,7 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
         }
       }
     }
-    
+
     setMode('none');
     const defaultLevelId = requestHierarchy.levels[0]?.id ?? '';
     form.reset(getDefaultCategory(defaultLevelId));
@@ -363,7 +369,7 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
         if (cat.isActive) {
           // Check if category is being activated (new active category or changing from inactive to active)
           const isActivating = !previousCategory || !previousCategory.isActive;
-          
+
           if (isActivating) {
             // Validate in client first (using local state) before calling server
             const canActivate = hasCompleteChildrenChain(cat);
@@ -396,7 +402,7 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
         // Update Jotai atom
         setCategories((prev) => {
           const prevCategories = [...prev];
-          
+
           // Remove from old parent if parent changed
           if (previousCategory?.parentCategoryId && previousCategory.parentCategoryId !== cat.parentCategoryId) {
             const oldParent = prevCategories.find((c) => c.id === previousCategory.parentCategoryId);
@@ -455,9 +461,9 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
     <ResizablePanelGroup direction="horizontal" className="flex-1">
       <ResizablePanel defaultSize={30} collapsible ref={ref} minSize={0}>
         <div className="flex flex-col h-full overflow-hidden">
-          <CategoryTreeView 
-            onAddCategory={handleAddCategory} 
-            onEditCategory={handleEditCategory} 
+          <CategoryTreeView
+            onAddCategory={handleAddCategory}
+            onEditCategory={handleEditCategory}
             hierarchy={requestHierarchy}
             tenantId={tenantId}
             hierarchyId={String(initialValues.hierarchyId.value)}
@@ -476,15 +482,15 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
             <Form {...form}>
               <FormRoot className="h-full" onSubmit={form.handleSubmit(onSubmit)}>
                 <FormError error={error} />
-                  <CategoryForm
-                    mode={mode}
-                    isPending={isPending}
-                    formsOptions={formsOptions}
-                    levels={requestHierarchy.levels}
-                    requirementsOptions={requirementsOptions}
-                    handleCancelForm={handleCancelForm}
-                    hierarchy={requestHierarchy}
-                  />
+                <CategoryForm
+                  mode={mode}
+                  isPending={isPending}
+                  formsOptions={formsOptions}
+                  levels={requestHierarchy.levels}
+                  requirementsOptions={requirementsOptions}
+                  handleCancelForm={handleCancelForm}
+                  hierarchy={requestHierarchy}
+                />
               </FormRoot>
             </Form>
           ) : (

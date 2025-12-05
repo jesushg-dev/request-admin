@@ -1,9 +1,10 @@
 import { type Metadata } from 'next';
-import { type Locale } from 'next-intl';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
+import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
+
 import AgreementsPageClient from '@/components/common/agreements/agreements-page-client';
 
 interface AgreementsPageProps {
@@ -28,7 +29,7 @@ export default async function AgreementsPage({ params }: AgreementsPageProps) {
 
   const auth = await getAuthContext(tenantId);
   const canViewAgreements = auth.hasPermissions([PermissionActions.AGREEMENT.VIEW]);
-  
+
   if (!canViewAgreements) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]', params: { tenantId } } });
   }

@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -54,4 +54,3 @@ export function createTenantFormSchema(t: TranslationFn) {
  * Type inference for TenantFormSchema
  */
 export type TTenantFormSchema = z.infer<ReturnType<typeof createTenantFormSchema>>;
-

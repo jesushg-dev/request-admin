@@ -1,9 +1,10 @@
 import { type Metadata } from 'next';
-import { type Locale } from 'next-intl';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
+import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
+
 import { ReportsPageClient } from '@/components/common/reports/reports-page-client';
 
 interface ReportsPageProps {
@@ -29,7 +30,7 @@ export default async function ReportsPage({ params }: ReportsPageProps) {
   // Server-side permission check - blocks access before any client component renders
   const auth = await getAuthContext(tenantId);
   const canViewReports = auth.hasPermissions([PermissionActions.REPORTS.VIEW]);
-  
+
   if (!canViewReports) {
     // Redirect to dashboard if user doesn't have permission
     return redirect({ locale, href: { pathname: '/admin/[tenantId]', params: { tenantId } } });

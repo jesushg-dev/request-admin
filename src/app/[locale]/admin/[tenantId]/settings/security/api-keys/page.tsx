@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useMemo, useTransition } from 'react';
+import { Link } from '@/i18n/routing';
 import { authClient, useSession } from '@/server/auth-client';
 import { useCountApikey, useFindManyApikey } from '@/services/api/hooks';
-import { Prisma } from '@zenstackhq/runtime/models';
 import { ColumnDef } from '@tanstack/react-table';
-import { RefreshCw, Trash2, Eye } from 'lucide-react';
+import { Prisma } from '@zenstackhq/runtime/models';
+import { Eye, RefreshCw, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 import { toast } from 'sonner';
@@ -15,16 +16,15 @@ import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { formatDate } from '@/lib/utils';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
-import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
+import { ApiKeyTesterCard } from '@/components/common/setting/api-key-tester-card';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
-import { ApiKeyTesterCard } from '@/components/common/setting/api-key-tester-card';
-import { Link } from '@/i18n/routing';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 
 const ApiKeyDefaultArgs = Prisma.validator<Prisma.ApikeyDefaultArgs>()({
   select: {
@@ -155,9 +155,7 @@ function getTableConfiguration({ t, tenantId, onChange }: GetTableConfigurationP
       header: t('table.name'),
       cell: ({ row }) => (
         <div>
-          <Link
-            href={{ pathname: '/admin/[tenantId]/settings/security/api-keys/[keyId]', params: { tenantId, keyId: row.original.id } }}
-            className="font-medium hover:underline">
+          <Link href={{ pathname: '/admin/[tenantId]/settings/security/api-keys/[keyId]', params: { tenantId, keyId: row.original.id } }} className="font-medium hover:underline">
             {row.original.name}
           </Link>
           <div className="text-xs text-muted-foreground">{row.original.prefix}_***</div>
@@ -186,8 +184,7 @@ function getTableConfiguration({ t, tenantId, onChange }: GetTableConfigurationP
     {
       accessorKey: 'remaining',
       header: t('table.remaining'),
-      cell: ({ row }) =>
-        typeof row.original.remaining === 'number' ? row.original.remaining.toLocaleString() : <span className="text-muted-foreground">{t('table.unlimited')}</span>,
+      cell: ({ row }) => (typeof row.original.remaining === 'number' ? row.original.remaining.toLocaleString() : <span className="text-muted-foreground">{t('table.unlimited')}</span>),
       size: 120,
     },
     {
@@ -284,4 +281,3 @@ const ActionTableCell: React.FC<{ row: { original: ApiKey }; tenantId: string; o
   );
 };
 ActionTableCell.displayName = 'ActionTableCell';
-

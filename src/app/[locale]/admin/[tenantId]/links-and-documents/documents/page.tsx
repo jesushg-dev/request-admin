@@ -1,9 +1,10 @@
 import { type Metadata } from 'next';
-import { type Locale } from 'next-intl';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
+import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
+
 import DocumentsPageClient from '@/components/common/documents/documents-page-client';
 
 interface DocumentsPageProps {
@@ -28,7 +29,7 @@ export default async function DocumentsPage({ params }: DocumentsPageProps) {
 
   const auth = await getAuthContext(tenantId);
   const canViewDocuments = auth.hasPermissions([PermissionActions.DOCUMENT_MANAGEMENT.VIEW]);
-  
+
   if (!canViewDocuments) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]', params: { tenantId } } });
   }

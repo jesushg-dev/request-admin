@@ -22,7 +22,7 @@ export async function getTenantsForUser(userId: string): Promise<{ id: string }[
  * Validates if a tenant exists and the user has access to it.
  * This avoids HTTP calls that could cause infinite loops in proxy.
  * Uses the base Prisma client directly since we don't need ZenStack policies for this simple query.
- * 
+ *
  * @param tenantId - The tenant ID to validate
  * @param userId - The user ID to check access for
  * @returns true if the tenant exists and the user has access, false otherwise

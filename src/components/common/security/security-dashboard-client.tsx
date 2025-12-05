@@ -1,11 +1,12 @@
 'use client';
 
+import { SecurityStats } from '@/actions/security';
 import { useTranslations } from 'next-intl';
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RolesTable } from '@/components/common/security/roles-table';
 import { UsersTable } from '@/components/common/security/users-table';
 import StatCard from '@/components/stat-card';
-import { SecurityStats } from '@/actions/security';
 
 interface SecurityDashboardClientProps {
   tenantId: string;
@@ -66,4 +67,3 @@ export function SecurityDashboardClient({ tenantId, initialStats }: SecurityDash
     </div>
   );
 }
-

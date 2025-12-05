@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useSpacerFieldPropertiesSchema, type TSpacerFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SeparatorHorizontalIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -11,7 +12,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { ElementsType, FormElement, FormElementInstance } from '@/components/builder-form/form-elements';
-import { useSpacerFieldPropertiesSchema, type TSpacerFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 
 const type: ElementsType = 'SpacerField';
 
@@ -99,10 +99,12 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
           name="height"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('height')} (px): {form.watch('height')}</FormLabel>
+              <FormLabel>
+                {t('height')} (px): {form.watch('height')}
+              </FormLabel>
               <FormControl className="pt-2">
                 <Slider
-                  defaultValue={[field.value]}
+                  defaultValue={[field.value ?? 20]}
                   min={5}
                   max={200}
                   step={1}

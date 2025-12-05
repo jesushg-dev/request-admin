@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useCheckboxFieldPropertiesSchema, type TCheckboxFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SquareCheckIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -14,7 +15,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { ElementsType, FormElement, FormElementInstance, SubmitFunction } from '@/components/builder-form/form-elements';
-import { useCheckboxFieldPropertiesSchema, type TCheckboxFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 
 const type: ElementsType = 'CheckboxField';
 
@@ -58,11 +58,11 @@ function DesignerComponent({ elementInstance }: { elementInstance: FormElementIn
   const tDefaults = useTranslations('component.form.builderFields.defaults');
   const { required } = element.extraAttributes;
   const id = `checkbox-${element.id}`;
-  
+
   // Translate default values, otherwise use custom user values
   const label = element.extraAttributes.label === extraAttributes.label ? tDefaults('checkboxFieldLabel') : element.extraAttributes.label;
   const helperText = element.extraAttributes.helperText === extraAttributes.helperText ? tDefaults('checkboxFieldHelperText') : element.extraAttributes.helperText;
-  
+
   return (
     <div className="items-top flex space-x-2">
       <Checkbox id={id} />
@@ -89,7 +89,7 @@ function FormComponent({ elementInstance, submitValue, isInvalid, defaultValue }
   }, [isInvalid]);
 
   const { required } = element.extraAttributes;
-  
+
   // Translate default values, otherwise use custom user values
   const label = element.extraAttributes.label === extraAttributes.label ? tDefaults('checkboxFieldLabel') : element.extraAttributes.label;
   const helperText = element.extraAttributes.helperText === extraAttributes.helperText ? tDefaults('checkboxFieldHelperText') : element.extraAttributes.helperText;
@@ -176,9 +176,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                   }}
                 />
               </FormControl>
-              <FormDescription>
-                {t('labelDescription')}
-              </FormDescription>
+              <FormDescription>{t('labelDescription')}</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -197,9 +195,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                   }}
                 />
               </FormControl>
-              <FormDescription>
-                {t('helperTextDescription')}
-              </FormDescription>
+              <FormDescription>{t('helperTextDescription')}</FormDescription>
               <FormMessage />
             </FormItem>
           )}

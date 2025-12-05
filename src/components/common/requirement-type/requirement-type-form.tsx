@@ -3,6 +3,7 @@
 import { useTransition } from 'react';
 import { CreateRequirementType, UpdateRequirementType } from '@/actions/requirementType';
 import { useRouter } from '@/i18n/routing';
+import { useRequirementTypeSchema, type TRequirementTypeSchema } from '@/services/schemas/requirement';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
@@ -14,7 +15,6 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { FormActions, FormCheckboxItem, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
-import { useRequirementTypeSchema, type TRequirementTypeSchema } from '@/services/schemas/requirement';
 
 export type RequirementTypeFormValues = TRequirementTypeSchema;
 

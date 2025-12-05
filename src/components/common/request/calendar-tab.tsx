@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { getRequestsFilteredByAreaAccess } from '@/actions/request';
+import { useFindManyRequestAssignment } from '@/services/api/hooks';
 import { Prisma } from '@zenstackhq/runtime/models';
 
 import Calendar from '@/components/calendar/calendar';
 import { CalendarEvent, Mode } from '@/components/calendar/calendar-types';
-import { useFindManyRequestAssignment } from '@/services/api/hooks';
 import { useTenantContext } from '@/components/hoc/tenant-provider';
-import { getRequestsFilteredByAreaAccess } from '@/actions/request';
 
 const RequestAssignmentCalendarSelect = Prisma.validator<Prisma.RequestAssignmentFindManyArgs>()({
   select: {
@@ -43,13 +43,13 @@ type AssignmentForCalendar = Prisma.RequestAssignmentGetPayload<typeof RequestAs
 // Mapea colores hex a colores del calendario
 function getCalendarColorFromHex(hexColor: string | null | undefined): string {
   if (!hexColor) return 'blue';
-  
+
   // Convertir hex a RGB
   const hex = hexColor.replace('#', '');
   const r = parseInt(hex.substring(0, 2), 16);
   const g = parseInt(hex.substring(2, 4), 16);
   const b = parseInt(hex.substring(4, 6), 16);
-  
+
   // Determinar el color más cercano basado en RGB
   // Rojo
   if (r > g && r > b && r > 200) return 'red';
@@ -63,7 +63,7 @@ function getCalendarColorFromHex(hexColor: string | null | undefined): string {
   if (b > r && b > g) return 'blue';
   // Rosa/Pink
   if (r > 200 && g < 150 && b > 150) return 'pink';
-  
+
   // Por defecto
   return 'blue';
 }
@@ -76,17 +76,15 @@ function convertAssignmentsToEvents(assignments: AssignmentForCalendar[]): Calen
       // Crear un evento de un día (de inicio del día a fin del día)
       const start = new Date(slaDeadline);
       start.setHours(0, 0, 0, 0);
-      
+
       const end = new Date(slaDeadline);
       end.setHours(23, 59, 59, 999);
-      
+
       // Usar el color de la prioridad o del estado, o azul por defecto
-      const color = getCalendarColorFromHex(
-        assignment.priority?.primaryColor ?? assignment.status?.color ?? null
-      );
-      
+      const color = getCalendarColorFromHex(assignment.priority?.primaryColor ?? assignment.status?.color ?? null);
+
       const title = assignment.request.issueSubject || `Request #${assignment.request.slug || assignment.requestId}`;
-      
+
       return {
         id: assignment.id,
         title,
@@ -135,7 +133,7 @@ export default function CalendarTab() {
   // Query para obtener assignments con SLA
   const assignmentsArgs = useMemo(() => {
     if (!tenantId || !requestFilter) return undefined;
-    
+
     return {
       ...RequestAssignmentCalendarSelect,
       where: {
@@ -153,10 +151,7 @@ export default function CalendarTab() {
     staleTime: 15_000,
   });
 
-  const assignments = useMemo(
-    () => (assignmentsQuery.data ?? []) as AssignmentForCalendar[],
-    [assignmentsQuery.data]
-  );
+  const assignments = useMemo(() => (assignmentsQuery.data ?? []) as AssignmentForCalendar[], [assignmentsQuery.data]);
 
   // Convertir assignments a eventos del calendario
   const events = useMemo(() => {

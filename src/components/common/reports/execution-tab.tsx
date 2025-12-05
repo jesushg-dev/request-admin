@@ -5,9 +5,10 @@ import Link from 'next/link';
 import type { ExecutionFlowInfo, ExecutionStep } from '@/actions/report';
 import { getExecutionFlowDetails, getExecutionFlows } from '@/actions/report';
 import { ArrowRight, CheckCircle2, Clock, Download, FileJson, FileSpreadsheet, FileText } from 'lucide-react';
-import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useTranslations } from 'next-intl';
+import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
+import { useExecutionExport } from '@/hooks/use-execution-export';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,7 +18,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import EmptyState from '@/components/shared/empty-state';
-import { useExecutionExport } from '@/hooks/use-execution-export';
 
 interface ExecutionTabProps {
   tenantId: string;
@@ -107,11 +107,7 @@ export function ExecutionTab({ tenantId, loading: initialLoading }: ExecutionTab
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-12">
-          <EmptyState
-            title={t('empty.title')}
-            description={t('empty.description')}
-            icons={[FileText, Clock, CheckCircle2]}
-          />
+          <EmptyState title={t('empty.title')} description={t('empty.description')} icons={[FileText, Clock, CheckCircle2]} />
         </CardContent>
       </Card>
     );
@@ -185,7 +181,8 @@ export function ExecutionTab({ tenantId, loading: initialLoading }: ExecutionTab
                 <div>
                   <CardTitle>{selectedFlow.name}</CardTitle>
                   <CardDescription>
-                    {t('details.version', { version: selectedFlow.version })} | {t('details.nodes', { count: selectedFlow.nodeCount })} | {t('details.executions', { count: selectedFlow.executionCount })}
+                    {t('details.version', { version: selectedFlow.version })} | {t('details.nodes', { count: selectedFlow.nodeCount })} |{' '}
+                    {t('details.executions', { count: selectedFlow.executionCount })}
                   </CardDescription>
                 </div>
                 <Badge variant="outline" className="px-3 py-1">

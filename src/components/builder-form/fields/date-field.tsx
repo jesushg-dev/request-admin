@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useDateFieldPropertiesSchema, type TDateFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CalendarIcon } from '@radix-ui/react-icons';
 import { format } from 'date-fns';
@@ -18,7 +19,6 @@ import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Switch } from '@/components/ui/switch';
 import { ElementsType, FormElement, FormElementInstance, SubmitFunction } from '@/components/builder-form/form-elements';
-import { useDateFieldPropertiesSchema, type TDateFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 
 const type: ElementsType = 'DateField';
 
@@ -61,11 +61,11 @@ function DesignerComponent({ elementInstance }: { elementInstance: FormElementIn
   const element = elementInstance as CustomInstance;
   const tDefaults = useTranslations('component.form.builderFields.defaults');
   const { required } = element.extraAttributes;
-  
+
   // Translate default values, otherwise use custom user values
   const label = element.extraAttributes.label === extraAttributes.label ? tDefaults('dateFieldLabel') : element.extraAttributes.label;
   const helperText = element.extraAttributes.helperText === extraAttributes.helperText ? tDefaults('dateFieldHelperText') : element.extraAttributes.helperText;
-  
+
   return (
     <div className="flex w-full flex-col gap-2">
       <Label>
@@ -94,11 +94,11 @@ function FormComponent({ elementInstance, submitValue, isInvalid, defaultValue }
   }, [isInvalid]);
 
   const { required } = element.extraAttributes;
-  
+
   // Translate default values, otherwise use custom user values
   const label = element.extraAttributes.label === extraAttributes.label ? tDefaults('dateFieldLabel') : element.extraAttributes.label;
   const helperText = element.extraAttributes.helperText === extraAttributes.helperText ? tDefaults('dateFieldHelperText') : element.extraAttributes.helperText;
-  
+
   return (
     <div className="flex w-full flex-col gap-2">
       <Label className={cn(error && 'text-red-500')}>
@@ -186,9 +186,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                   }}
                 />
               </FormControl>
-              <FormDescription>
-                {t('labelDescription')}
-              </FormDescription>
+              <FormDescription>{t('labelDescription')}</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -207,9 +205,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                   }}
                 />
               </FormControl>
-              <FormDescription>
-                {t('helperTextDescription')}
-              </FormDescription>
+              <FormDescription>{t('helperTextDescription')}</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -221,9 +217,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
             <FormItem className="flex items-center justify-between rounded-lg border p-3 shadow-xs">
               <div className="space-y-0.5">
                 <FormLabel>{t('required')}</FormLabel>
-                <FormDescription>
-                  {t('requiredDescription')}
-                </FormDescription>
+                <FormDescription>{t('requiredDescription')}</FormDescription>
               </div>
               <FormControl>
                 <Switch checked={field.value} onCheckedChange={field.onChange} />

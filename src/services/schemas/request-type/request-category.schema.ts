@@ -1,7 +1,9 @@
-import { z } from 'zod';
-import { useTranslations } from 'next-intl';
-import { optionSchema } from '@/components/custom-ui/select';
 import { executionFlowSchema } from '@/services/schemas/execution-flow';
+import { useTranslations } from 'next-intl';
+import { z } from 'zod';
+
+import { optionSchema } from '@/components/custom-ui/select';
+
 import { useGuideSchema } from './guide.schema';
 
 // Type helper for translation function
@@ -24,7 +26,10 @@ export function createRequestCategorySchema(t: TranslationFn, guideSchema: Retur
     id: z.string(),
     hierarchyLevelId: z.string(),
     parentCategoryId: z.string().nullish(),
-    name: z.string().min(2, { message: t('nameMinLength') }).max(100, { message: t('nameMaxLength') }),
+    name: z
+      .string()
+      .min(2, { message: t('nameMinLength') })
+      .max(100, { message: t('nameMaxLength') }),
     description: z.string().nullish(),
     isActive: z.boolean().default(true),
     isEligibleForNewClients: z.boolean().default(true),
@@ -45,4 +50,3 @@ export function createRequestCategorySchema(t: TranslationFn, guideSchema: Retur
  * Type inference for RequestCategorySchema
  */
 export type TRequestCategorySchema = z.infer<ReturnType<typeof createRequestCategorySchema>>;
-

@@ -1,8 +1,9 @@
 import { type Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import { Shell } from '@/components/shell';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { Shell } from '@/components/shell';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('about.privacyPolicy');
@@ -15,13 +16,15 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function PrivacyPolicyPage() {
   const t = await getTranslations('about.privacyPolicy');
   const lastUpdated = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  
+
   return (
     <Shell variant="markdown">
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="space-y-2">
           <h1 className="text-4xl font-bold tracking-tight">{t('title')}</h1>
-          <p className="text-muted-foreground">{t('lastUpdated')}: {lastUpdated}</p>
+          <p className="text-muted-foreground">
+            {t('lastUpdated')}: {lastUpdated}
+          </p>
         </div>
 
         <Separator />
@@ -189,7 +192,8 @@ export default async function PrivacyPolicyPage() {
           <CardContent>
             <p className="text-muted-foreground">{t('sections.contact.content')}</p>
             <p className="text-muted-foreground mt-2">
-              Email: {t('sections.contact.email')}<br />
+              Email: {t('sections.contact.email')}
+              <br />
               Address: {t('sections.contact.address')}
             </p>
           </CardContent>

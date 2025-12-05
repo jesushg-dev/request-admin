@@ -1,10 +1,10 @@
-import { type Metadata } from 'next';
 import { FC } from 'react';
-import { type Locale } from 'next-intl';
-import { redirect } from '@/i18n/routing';
+import { type Metadata } from 'next';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
+import { redirect } from '@/i18n/routing';
 import { getDb } from '@/server/db-client';
+import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
 import { AgreementForm } from '@/components/common/data-room/agreement-form';
@@ -17,7 +17,7 @@ interface EditPageProps {
 export async function generateMetadata(props: EditPageProps): Promise<Metadata> {
   const { locale, tenantId, slug } = await props.params;
   const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
-  
+
   const db = await getDb();
   const agreement = await db.agreement.findUnique({
     where: { id: slug, tenantId },
@@ -36,7 +36,7 @@ const EditPage: FC<EditPageProps> = async ({ params }) => {
 
   const auth = await getAuthContext(tenantId);
   const canEdit = auth.hasPermissions([PermissionActions.AGREEMENT.EDIT]);
-  
+
   if (!canEdit) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/agreements', params: { tenantId } } });
   }

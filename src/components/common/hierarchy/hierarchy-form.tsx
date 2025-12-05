@@ -1,3 +1,4 @@
+import { type THierarchySchema } from '@/services/schemas/hierarchy';
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
@@ -10,7 +11,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { FormCheckboxItem, FormContent, FormItem, FormSection } from '@/components/shared/form-root';
-import { type THierarchySchema } from '@/services/schemas/hierarchy';
 
 export type HierarchyFormValues = THierarchySchema;
 

@@ -1,16 +1,16 @@
-import { type Metadata } from 'next';
 import React, { FC } from 'react';
-import { type Locale } from 'next-intl';
-import { getPrioritiesAsOptions } from '@/actions/request';
+import { type Metadata } from 'next';
 import { getAuthContext } from '@/actions/authorization';
+import { getPrioritiesAsOptions } from '@/actions/request';
 import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
+import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
 import RequestFormStepper from '@/components/common/request/request-form-stepper';
 
 interface NewPageProps {
-    params: Promise<{ locale: Locale, tenantId: string }>;
+  params: Promise<{ locale: Locale; tenantId: string }>;
 }
 
 export async function generateMetadata(props: NewPageProps): Promise<Metadata> {

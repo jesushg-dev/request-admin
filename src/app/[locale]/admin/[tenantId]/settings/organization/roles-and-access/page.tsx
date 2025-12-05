@@ -13,7 +13,6 @@ import { toast } from 'sonner';
 
 import useMessage from '@/lib/message';
 import { PERMISSION, useAuthorization } from '@/hooks/use-authorization';
-import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,6 +21,7 @@ import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { AlertBanner } from '@/components/custom-ui/alert-banner';
 import Select from '@/components/custom-ui/select';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 
 const defaultValues: UserTenantFormValues = {
   isActive: true,

@@ -1,5 +1,5 @@
-import { Prisma } from '@zenstackhq/runtime/models';
 import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { Prisma } from '@zenstackhq/runtime/models';
 import { useTranslations } from 'next-intl';
 
 import { TableCell, TableRow } from '@/components/ui/table';

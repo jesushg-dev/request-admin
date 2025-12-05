@@ -3,8 +3,8 @@ import { ChatClientProvider, ChatRoomProvider } from '@ably/chat/react';
 import { AlertTriangle, XIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { MessageDefaultArgs } from '@/types/zenstackhq/message';
 import { UserTenant } from '@/types/user';
+import { MessageDefaultArgs } from '@/types/zenstackhq/message';
 import { getAblyChatClient } from '@/lib/ablyClient';
 import { Button } from '@/components/ui/button';
 import { Message } from '@/components/chat/message';

@@ -26,8 +26,7 @@ import { getSortingStateParser } from '@/lib/parsers';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
 interface UseDataTableProps<TData>
-  extends Omit<TableOptions<TData>, 'state' | 'pageCount' | 'getCoreRowModel' | 'manualFiltering' | 'manualPagination' | 'manualSorting'>,
-    Required<Pick<TableOptions<TData>, 'pageCount'>> {
+  extends Omit<TableOptions<TData>, 'state' | 'pageCount' | 'getCoreRowModel' | 'manualFiltering' | 'manualPagination' | 'manualSorting'>, Required<Pick<TableOptions<TData>, 'pageCount'>> {
   /**
    * Defines filter fields for the table. Supports both dynamic faceted filters and search filters.
    * - Faceted filters are rendered when `options` are provided for a filter field.

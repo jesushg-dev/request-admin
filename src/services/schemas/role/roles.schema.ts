@@ -1,5 +1,6 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
+
 import { generateUuid } from '@/lib/id';
 
 // Type helper for translation function
@@ -22,8 +23,14 @@ export function createRolesSchema(t: TranslationFn) {
       .array(
         z.object({
           id: z.string().uuid().default(generateUuid),
-          name: z.string().min(3, { message: t('nameMinLength') }).max(100, { message: t('nameMaxLength') }),
-          description: z.string().max(255, { message: t('descriptionMaxLength') }).optional(),
+          name: z
+            .string()
+            .min(3, { message: t('nameMinLength') })
+            .max(100, { message: t('nameMaxLength') }),
+          description: z
+            .string()
+            .max(255, { message: t('descriptionMaxLength') })
+            .optional(),
           isActive: z.boolean(),
           features: z.array(
             z.object({
@@ -67,4 +74,3 @@ export type TRolesSchema = z.infer<ReturnType<typeof createRolesSchema>>;
 export function getRolesSchema() {
   return createRolesSchema((key: string) => key);
 }
-

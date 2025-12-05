@@ -6,13 +6,13 @@ import { CircleFadingArrowUpIcon, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useQueryState } from 'nuqs';
 
-import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CalendarTab from '@/components/common/request/calendar-tab';
 import { KanbanTab } from '@/components/common/request/kanban-tab';
 import TableTab from '@/components/common/request/table-tab';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 
 interface RequestsPageClientProps {
   canCreate: boolean;
@@ -68,7 +68,7 @@ const RequestsPageClient: React.FC<RequestsPageClientProps> = ({ canCreate, canA
       </TabsContent>
       <TabsContent value="kanban" className={`mt-0 ${view === 'kanban' ? 'flex flex-1' : ''}`}>
         <KanbanTab />
-      </TabsContent> 
+      </TabsContent>
       <TabsContent value="calendar" className={`mt-0 ${view === 'calendar' ? 'flex flex-1' : ''}`}>
         <CalendarTab />
       </TabsContent>
@@ -77,4 +77,3 @@ const RequestsPageClient: React.FC<RequestsPageClientProps> = ({ canCreate, canA
 };
 
 export default memo(RequestsPageClient);
-

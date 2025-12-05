@@ -3,8 +3,8 @@
 import React, { memo, useMemo } from 'react';
 import { useCountRequestWorkflow, useFindManyRequestWorkflow } from '@/services/api/hooks';
 import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
-import { Prisma } from '@zenstackhq/runtime/models';
 import { ColumnDef } from '@tanstack/react-table';
+import { Prisma } from '@zenstackhq/runtime/models';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
@@ -13,7 +13,6 @@ import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { formatDate } from '@/lib/utils';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
-import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
@@ -23,6 +22,7 @@ import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-adv
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 
 const RequestWorkflowDefaultArgs = Prisma.validator<Prisma.RequestWorkflowDefaultArgs>()({
   select: {
@@ -102,10 +102,14 @@ const WorkflowsPageClient: React.FC<WorkflowsPageClientProps> = ({ canCreate, ca
             table={table}
             exportFilename="workflows"
             entityLabel={t('entityLabel')}
-            addLink={canCreate ? {
-              pathname: '/admin/[tenantId]/configurations/workflows/new',
-              params: { tenantId },
-            } : undefined}
+            addLink={
+              canCreate
+                ? {
+                    pathname: '/admin/[tenantId]/configurations/workflows/new',
+                    params: { tenantId },
+                  }
+                : undefined
+            }
           />
         </DataTableAdvancedToolbar>
       </DataTable>
@@ -202,10 +206,14 @@ function getTableConfiguration({ t, tenantId, canEdit, canDelete }: GetTableConf
         <ActionCell
           row={row}
           onDelete={canDelete ? () => console.log('Delete', row.original) : undefined}
-          updateLink={canEdit ? {
-            pathname: '/admin/[tenantId]/configurations/workflows/[slug]/edit',
-            params: { tenantId, slug: row.original.id },
-          } : undefined}
+          updateLink={
+            canEdit
+              ? {
+                  pathname: '/admin/[tenantId]/configurations/workflows/[slug]/edit',
+                  params: { tenantId, slug: row.original.id },
+                }
+              : undefined
+          }
           viewLink={{
             pathname: '/admin/[tenantId]/configurations/workflows/[slug]',
             params: { tenantId, slug: row.original.id },
@@ -228,4 +236,3 @@ function getTableConfiguration({ t, tenantId, canEdit, canDelete }: GetTableConf
 }
 
 export default memo(WorkflowsPageClient);
-

@@ -1,21 +1,21 @@
 'use client';
 
 import { FC, useTransition } from 'react';
+import { createInitialRequestCategory } from '@/actions/request-type';
 import { useRouter } from '@/i18n/routing';
+import { useCreateRequestTypeSchema, type TCreateRequestTypeSchema } from '@/services/schemas/request-type/create-request-type.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { Control, useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { RequestHierarchyWithLevelsType } from '@/types/zenstackhq/hierarchy';
-import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { Form, FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
-import Select from '@/components/custom-ui/select';
-import { createInitialRequestCategory } from '@/actions/request-type';
 import { PillChain } from '@/components/common/hierarchy/hierarchy-viewer-with-alternatives';
-import { useCreateRequestTypeSchema, type TCreateRequestTypeSchema } from '@/services/schemas/request-type/create-request-type.schema';
+import Select from '@/components/custom-ui/select';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
+import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
 
 interface CreateNewRequestTypeProps {
   requestHierarchies: RequestHierarchyWithLevelsType[];
@@ -37,7 +37,6 @@ const CreateNewRequestType: FC<CreateNewRequestTypeProps> = ({ requestHierarchie
   const hierarchyOptions = requestHierarchies.map((h) => ({ label: h.name, value: h.id }));
 
   const createRequestTypeSchema = useCreateRequestTypeSchema();
-
 
   const form = useForm<TCreateRequestTypeSchema>({
     resolver: zodResolver(createRequestTypeSchema),
@@ -61,7 +60,7 @@ const CreateNewRequestType: FC<CreateNewRequestTypeProps> = ({ requestHierarchie
         if (!firstLevel) {
           toast.error(t('hierarchyHasNoLevels'));
           return;
-        }   
+        }
 
         // Crear la categoría padre inicial
         const categoryId = await createInitialRequestCategory({
@@ -96,13 +95,7 @@ const CreateNewRequestType: FC<CreateNewRequestTypeProps> = ({ requestHierarchie
               name="hierarchyId"
               render={({ field }) => (
                 <FormItem label={t('hierarchyLabel')} description={t('hierarchyDescription')}>
-                  <Select
-                    isSearchable
-                    menuPortalTarget={null}
-                    options={hierarchyOptions}
-                    value={field.value}
-                    onChange={(newValue) => field.onChange(newValue)}
-                  />
+                  <Select isSearchable menuPortalTarget={null} options={hierarchyOptions} value={field.value} onChange={(newValue) => field.onChange(newValue)} />
                 </FormItem>
               )}
             />
@@ -128,4 +121,3 @@ const CreateNewRequestType: FC<CreateNewRequestTypeProps> = ({ requestHierarchie
 };
 
 export default CreateNewRequestType;
-

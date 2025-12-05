@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useTransitionSchema, type TTransitionSchema } from '@/services/schemas/workflow';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
@@ -12,7 +13,6 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { FormCheckboxItem, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
-import { useTransitionSchema, type TTransitionSchema } from '@/services/schemas/workflow';
 
 export type TransitionValues = TTransitionSchema;
 

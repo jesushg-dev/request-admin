@@ -1,9 +1,11 @@
+import type { ExecutionFlowInfo, ExecutionStep } from '@/actions/report';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
+
 import type { AreaDistribution, MonthlyTrend, OverviewData, SLACompliance, StatusDistribution } from '@/components/common/reports/types';
-import type { ExecutionFlowInfo, ExecutionStep } from '@/actions/report';
-import type { ReportExportTranslations, ExecutionExportTranslations } from './report-export-translations';
+
+import type { ExecutionExportTranslations, ReportExportTranslations } from './report-export-translations';
 
 interface ReportExportData {
   overviewData: OverviewData | null;
@@ -308,7 +310,11 @@ export function exportReportsToExcel(data: ReportExportData, translations: Repor
   }
 
   // Metadata Sheet
-  const metadataData = [[translations.metadata.key, translations.metadata.value], [translations.metadata.dateRange, data.dateRange], [translations.metadata.exportDate, new Date().toISOString()]];
+  const metadataData = [
+    [translations.metadata.key, translations.metadata.value],
+    [translations.metadata.dateRange, data.dateRange],
+    [translations.metadata.exportDate, new Date().toISOString()],
+  ];
   const metadataSheet = XLSX.utils.aoa_to_sheet(metadataData);
   XLSX.utils.book_append_sheet(workbook, metadataSheet, translations.metadata.title);
 
@@ -411,12 +417,7 @@ export function exportExecutionToPDF(data: ExecutionExportData, translations: Ex
       doc.text(translations.steps.title, 14, yPos);
       yPos += 8;
 
-      const stepsRows = data.flowDetails.steps.map((step, index) => [
-        (index + 1).toString(),
-        step.name,
-        `${step.avgTime.toFixed(1)} ${translations.steps.days}`,
-        `${step.compliance.toFixed(1)}%`,
-      ]);
+      const stepsRows = data.flowDetails.steps.map((step, index) => [(index + 1).toString(), step.name, `${step.avgTime.toFixed(1)} ${translations.steps.days}`, `${step.compliance.toFixed(1)}%`]);
 
       autoTable(doc, {
         startY: yPos,

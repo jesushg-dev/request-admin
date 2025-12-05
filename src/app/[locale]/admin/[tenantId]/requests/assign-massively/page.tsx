@@ -1,14 +1,15 @@
 import { FC } from 'react';
-import { getTranslations } from 'next-intl/server';
-import { type Locale } from 'next-intl';
-import AssignRequestsForm from '@/components/common/request/assign-requests-form';
-import { PageCardWrapper } from '@/components/shared/page-container';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
+import { type Locale } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
+
+import AssignRequestsForm from '@/components/common/request/assign-requests-form';
+import { PageCardWrapper } from '@/components/shared/page-container';
 
 interface AssignMassivelyRequestsPageProps {
-  params: Promise<{ tenantId: string, locale: Locale }>;
+  params: Promise<{ tenantId: string; locale: Locale }>;
 }
 
 const AssignMassivelyRequestsPage: FC<AssignMassivelyRequestsPageProps> = async ({ params }) => {

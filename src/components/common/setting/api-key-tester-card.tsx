@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
-import { toast } from 'sonner';
-import { useTranslations } from 'next-intl';
-
 import { verifyApiKeyAction } from '@/actions/api-key';
+import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -109,9 +109,7 @@ export const ApiKeyTesterCard: React.FC<ApiKeyTesterCardProps> = ({ defaultKey }
         {result ? (
           <div className="rounded-lg border p-4 space-y-2 bg-muted/30">
             <div className="flex items-center gap-2">
-              <Badge variant={(result as { valid?: boolean }).valid ? 'default' : 'destructive'}>
-                {(result as { valid?: boolean }).valid ? t('tester.valid') : t('tester.invalid')}
-              </Badge>
+              <Badge variant={(result as { valid?: boolean }).valid ? 'default' : 'destructive'}>{(result as { valid?: boolean }).valid ? t('tester.valid') : t('tester.invalid')}</Badge>
               {'error' in result && result.error ? <span className="text-sm text-muted-foreground">{String((result as { error?: { message?: string } }).error?.message)}</span> : null}
             </div>
             <pre className="text-xs font-mono whitespace-pre-wrap break-all bg-background border rounded-md p-3 max-h-64 overflow-auto">{JSON.stringify(result, null, 2)}</pre>
@@ -121,4 +119,3 @@ export const ApiKeyTesterCard: React.FC<ApiKeyTesterCardProps> = ({ defaultKey }
     </Card>
   );
 };
-

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+
 import { optionSchema } from '@/components/custom-ui/select';
 
 // Type helper for translation function (for future use)
@@ -27,4 +28,3 @@ export function createUserTenantSchema(t?: TranslationFn) {
  * Type inference for UserTenantSchema
  */
 export type TUserTenantSchema = z.infer<ReturnType<typeof createUserTenantSchema>>;
-

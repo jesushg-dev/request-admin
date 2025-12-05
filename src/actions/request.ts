@@ -1,8 +1,8 @@
 'use server';
 
+import { getAuthContext } from '@/actions/authorization';
 import { AssignmentTypeEnum } from '@/constants/assignment-type';
 import { PermissionActions } from '@/constants/permissions';
-import { getAuthContext } from '@/actions/authorization';
 import { currentSession } from '@/server/auth-server';
 import { getDb } from '@/server/db-client';
 
@@ -28,25 +28,15 @@ class UserNotFoundErr extends Error {}
  * @param categoryType - Type of category ('Request' or 'Assignment') for error messages
  * @throws Error if the category is not a valid leaf category
  */
-const validateLeafCategory = (
-  categoryName: string,
-  subcategoryCount: number,
-  levelPosition: number,
-  totalLevels: number,
-  categoryType: 'Request' | 'Assignment'
-): void => {
+const validateLeafCategory = (categoryName: string, subcategoryCount: number, levelPosition: number, totalLevels: number, categoryType: 'Request' | 'Assignment'): void => {
   // Check if category has subcategories (not a leaf node)
   if (subcategoryCount > 0) {
-    throw new Error(
-      `${categoryType} category "${categoryName}" cannot be selected directly. Please select a more specific subcategory.`
-    );
+    throw new Error(`${categoryType} category "${categoryName}" cannot be selected directly. Please select a more specific subcategory.`);
   }
 
   // Check if category is at the last level of the hierarchy
   if (levelPosition !== totalLevels) {
-    throw new Error(
-      `${categoryType} category "${categoryName}" is not at the last level of the hierarchy (level ${levelPosition} of ${totalLevels}). Please select a category from the final level.`
-    );
+    throw new Error(`${categoryType} category "${categoryName}" is not at the last level of the hierarchy (level ${levelPosition} of ${totalLevels}). Please select a category from the final level.`);
   }
 };
 
@@ -138,13 +128,7 @@ export const upsertRequest = async (tenantId: string, data: RequestFormStepperTy
   }
 
   // Validate request category: must be a leaf node (no subcategories) and at the last hierarchy level
-  validateLeafCategory(
-    requestCategory.name,
-    requestCategory.subcategories.length,
-    requestCategory.hierarchyLevel.position,
-    requestCategory.hierarchyLevel.hierarchy.levels.length,
-    'Request'
-  );
+  validateLeafCategory(requestCategory.name, requestCategory.subcategories.length, requestCategory.hierarchyLevel.position, requestCategory.hierarchyLevel.hierarchy.levels.length, 'Request');
 
   // Validate assignment category: must be a leaf node (no subcategories) and at the last hierarchy level
   validateLeafCategory(
@@ -163,21 +147,15 @@ export const upsertRequest = async (tenantId: string, data: RequestFormStepperTy
 
   // RBAC checks
   const auth = await getAuthContext(tenantId);
-  const targetAreaId = existingRequest
-    ? existingRequest.requestAssignments.find((ra) => ra.isActive)?.areaId || existingRequest.requestAssignments[0]?.areaId
-    : data.areaId.value;
+  const targetAreaId = existingRequest ? existingRequest.requestAssignments.find((ra) => ra.isActive)?.areaId || existingRequest.requestAssignments[0]?.areaId : data.areaId.value;
 
   if (existingRequest) {
-    const canEdit =
-      auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.EDIT]) ||
-      auth.hasAreaPermissions(targetAreaId, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_EDIT]);
+    const canEdit = auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.EDIT]) || auth.hasAreaPermissions(targetAreaId, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_EDIT]);
     if (!canEdit) {
       throw new Error('Forbidden: lacking permissions to edit this request');
     }
   } else {
-    const canCreate =
-      auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.CREATE]) ||
-      auth.hasAreaPermissions(targetAreaId, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_CREATE]);
+    const canCreate = auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.CREATE]) || auth.hasAreaPermissions(targetAreaId, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_CREATE]);
     if (!canCreate) {
       throw new Error('Forbidden: lacking permissions to create request in this area');
     }
@@ -866,23 +844,22 @@ export const getRequestDetailsByRequest = async (tenantId: string, request: Requ
   });
 
   // Get execution logs if execution exists
-  const executionLogs =
-    executionId?.id
-      ? await db.executionModelLog.findMany({
-          where: { executionId: executionId.id, tenantId },
-          select: {
-            id: true,
-            nodeId: true,
-            eventType: true,
-            details: true,
-            outcome: true,
-            timestamp: true,
-          },
-          orderBy: {
-            timestamp: 'asc',
-          },
-        })
-      : [];
+  const executionLogs = executionId?.id
+    ? await db.executionModelLog.findMany({
+        where: { executionId: executionId.id, tenantId },
+        select: {
+          id: true,
+          nodeId: true,
+          eventType: true,
+          details: true,
+          outcome: true,
+          timestamp: true,
+        },
+        orderBy: {
+          timestamp: 'asc',
+        },
+      })
+    : [];
 
   return {
     guides,
@@ -979,10 +956,10 @@ export const getRequestsFilteredByAreaAccess = async (tenantId: string) => {
 
   const db = await getDb();
   const auth = await getAuthContext(tenantId);
-  
+
   // Check if user has global VIEW permission
   const hasGlobalView = auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.VIEW]);
-  
+
   if (hasGlobalView) {
     // User can see all requests, no filtering needed
     return { tenantId };

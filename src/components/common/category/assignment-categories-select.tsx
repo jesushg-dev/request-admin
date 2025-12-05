@@ -6,9 +6,10 @@ import { z } from 'zod';
 
 import { AssignmentLevelType } from '@/types/zenstackhq/hierarchy';
 import { FormControl, FormField, FormMessage } from '@/components/ui/form';
-import { FormItem } from '@/components/shared/form-root';
-import Select from '@/components/custom-ui/select';
 import { CombinedCategoriesValues } from '@/components/common/request/request-form-stepper/classification-step';
+import Select from '@/components/custom-ui/select';
+import { FormItem } from '@/components/shared/form-root';
+
 import { useCategoryLoading } from './category-loading-context';
 
 // Zod schemas
@@ -37,20 +38,21 @@ export const AssignmentCategoriesSelect: React.FC<AssignmentCategoriesSelectProp
   const watchedFields = watch('assignmentCategory', []) || [];
   const [isPending, startTransition] = useTransition();
   const { reset: resetLoading } = useCategoryLoading();
-  
+
   // Reset loading state when levels or areaId change
   useEffect(() => {
     resetLoading();
   }, [levels, areaId, resetLoading]);
-  
+
   // Calculate which levels should be enabled
   // Enable all levels up to the last one that has a value, plus the next one
-  const lastSelectedPosition = levels.length > 0
-    ? levels.findLastIndex((level) => {
-        const arrayIndex = level.position - 1;
-        return !!watchedFields[arrayIndex]?.value;
-      })
-    : -1;
+  const lastSelectedPosition =
+    levels.length > 0
+      ? levels.findLastIndex((level) => {
+          const arrayIndex = level.position - 1;
+          return !!watchedFields[arrayIndex]?.value;
+        })
+      : -1;
   const activeLevelIndex = lastSelectedPosition === -1 ? 0 : lastSelectedPosition + 1;
 
   // Clear fields that are no longer represented by the available levels
@@ -87,10 +89,7 @@ export const AssignmentCategoriesSelect: React.FC<AssignmentCategoriesSelectProp
             name={`assignmentCategory.${currentPosition}`}
             render={({ field }) => (
               <>
-                <FormItem 
-                  label={level.name}
-                  description={t('assignmentCategory.selectDescription', { level: level.name.toLowerCase() })}
-                >
+                <FormItem label={level.name} description={t('assignmentCategory.selectDescription', { level: level.name.toLowerCase() })}>
                   <SingleAssignmentCategorySelect
                     field={field}
                     hierarchyLevelId={level.id}
@@ -140,7 +139,7 @@ const SingleAssignmentCategorySelect: React.FC<SingleAssignmentCategorySelectPro
 }) => {
   const t = useTranslations('admin.request.form.classificationStep');
   const { setLevelLoading, isPreviousLevelReady } = useCategoryLoading();
-  
+
   const where = useMemo(() => {
     const baseFilter = parentCategoryId ? { parentCategoryId } : { hierarchyLevelId };
     return areaId ? { ...baseFilter, areaId, isActive: true } : { ...baseFilter, isActive: true };
@@ -151,7 +150,7 @@ const SingleAssignmentCategorySelect: React.FC<SingleAssignmentCategorySelectPro
   // This ensures parentCategoryId is available and correct
   const previousReady = isPreviousLevelReady(position);
   const shouldFetchData = (enabled || hasValue) && !!areaId && previousReady;
-  
+
   const { data: categories = [], isLoading } = useFindManyAssignmentCategory(
     {
       select: {
@@ -185,7 +184,7 @@ const SingleAssignmentCategorySelect: React.FC<SingleAssignmentCategorySelectPro
   useEffect(() => {
     if (!hasValue || isLoading || categories.length === 0) return;
 
-    const exists = categories.some((c) => c.id === field.value.value);
+    const exists = categories.some((c) => c.id === field.value?.value);
     if (!exists) {
       field.onChange({ label: '', value: '', position });
       onClearNextLevels();

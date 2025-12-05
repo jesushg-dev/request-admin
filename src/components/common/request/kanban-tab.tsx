@@ -1,40 +1,31 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { use } from "react";
-import { Eye, Loader2 } from "lucide-react";
-import { Prisma } from "@zenstackhq/runtime/models";
+import * as React from 'react';
+import { use } from 'react';
+import { getRequestsFilteredByAreaAccess } from '@/actions/request';
+import { updateCurrentStatus } from '@/actions/request-assignment';
+import { STATUS } from '@/constants/requests';
+import { Link } from '@/i18n/routing';
+import { useFindManyRequestAssignment, useFindManyRequestWorkflow } from '@/services/api/hooks';
+import type { DragEndEvent } from '@dnd-kit/core';
+import { Prisma } from '@zenstackhq/runtime/models';
+import { Eye, Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
-import { getRequestsFilteredByAreaAccess } from "@/actions/request";
-import { updateCurrentStatus } from "@/actions/request-assignment";
-import ErrorRetryFallback from "@/components/common/error-retry-fallback";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Kanban,
-  KanbanBoard,
-  KanbanColumn,
-  KanbanItem,
-  KanbanColumnContent,
-  KanbanOverlay,
-  type KanbanMoveEvent,
-} from "@/components/ui/kanban";
-
+import { RequestWorkflowDefaultArgs } from '@/types/zenstackhq/workflow';
+import type { RequestWorkflowType } from '@/types/zenstackhq/workflow';
+import { cn } from '@/lib/utils';
+import { getStatusTransitions, validateTransition } from '@/lib/workflow';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Kanban, KanbanBoard, KanbanColumn, KanbanColumnContent, KanbanItem, KanbanOverlay, type KanbanMoveEvent } from '@/components/ui/kanban';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
+import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { useTenantContext } from '@/components/hoc/tenant-provider';
-import { cn } from "@/lib/utils";
-import { useFindManyRequestAssignment, useFindManyRequestWorkflow } from "@/services/api/hooks";
-import { RequestWorkflowDefaultArgs } from "@/types/zenstackhq/workflow";
-import { STATUS } from "@/constants/requests";
-import { validateTransition, getStatusTransitions } from "@/lib/workflow";
-import type { RequestWorkflowType } from "@/types/zenstackhq/workflow";
-import { toast } from "sonner";
-import { useTranslations } from "next-intl";
-import type { DragEndEvent } from "@dnd-kit/core";
-import { Link } from "@/i18n/routing";
-import { Button } from "@/components/ui/button";
 
 const RequestAssignmentKanbanSelect = Prisma.validator<Prisma.RequestAssignmentFindManyArgs>()({
   select: {
@@ -95,7 +86,7 @@ const RequestAssignmentKanbanSelect = Prisma.validator<Prisma.RequestAssignmentF
 
 type WorkflowWithStatuses = Prisma.RequestWorkflowGetPayload<typeof RequestWorkflowDefaultArgs>;
 type AssignmentWithRelations = Prisma.RequestAssignmentGetPayload<typeof RequestAssignmentKanbanSelect>;
-type WorkflowStatus = WorkflowWithStatuses["requestWorkflowStatus"][number];
+type WorkflowStatus = WorkflowWithStatuses['requestWorkflowStatus'][number];
 
 interface KanbanTask {
   id: string;
@@ -141,7 +132,7 @@ function orderStatuses(workflow: WorkflowWithStatuses | null): WorkflowStatus[] 
     incomingCounts.set(status.id, 0);
   });
 
-  transitions.forEach((transition: WorkflowWithStatuses["requestWorkflowTransition"][number]) => {
+  transitions.forEach((transition: WorkflowWithStatuses['requestWorkflowTransition'][number]) => {
     if (!transition.fromStatusId || !transition.toStatusId) return;
     const neighbors = adjacency.get(transition.fromStatusId);
     if (neighbors) {
@@ -167,7 +158,7 @@ function orderStatuses(workflow: WorkflowWithStatuses | null): WorkflowStatus[] 
     const positionYDiff = (a.positionY ?? 0) - (b.positionY ?? 0);
     if (positionYDiff !== 0) return positionYDiff;
 
-    return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+    return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
   };
 
   const getNeighborOrder = (fromId: string) => {
@@ -216,9 +207,7 @@ function orderStatuses(workflow: WorkflowWithStatuses | null): WorkflowStatus[] 
   }
 
   if (result.length < statuses.length) {
-    const remaining = statuses
-      .filter((status: WorkflowStatus) => !visited.has(status.id))
-      .sort(compareStatuses);
+    const remaining = statuses.filter((status: WorkflowStatus) => !visited.has(status.id)).sort(compareStatuses);
     result.push(...remaining);
   }
 
@@ -227,7 +216,7 @@ function orderStatuses(workflow: WorkflowWithStatuses | null): WorkflowStatus[] 
 
 export function KanbanTab() {
   const { tenantId } = useTenantContext();
-  const t = useTranslations("admin.request.kanban");
+  const t = useTranslations('admin.request.kanban');
   const [isPending, startTransition] = React.useTransition();
   const [requestFilter, setRequestFilter] = React.useState<Prisma.RequestWhereInput | null>(null);
   const [isFilterLoading, setIsFilterLoading] = React.useState(true);
@@ -246,9 +235,9 @@ export function KanbanTab() {
         setRequestFilter(where);
         setFilterError(null);
       } catch (error) {
-        console.error("Error fetching request filters", error);
+        console.error('Error fetching request filters', error);
         if (!active) return;
-        setFilterError(t("filterError"));
+        setFilterError(t('filterError'));
         setRequestFilter({ id: { in: [] } });
       } finally {
         if (!active) return;
@@ -271,7 +260,7 @@ export function KanbanTab() {
         tenantId,
         isActive: true,
       },
-      orderBy: [{ name: "asc" as const }],
+      orderBy: [{ name: 'asc' as const }],
     } satisfies Prisma.RequestWorkflowFindManyArgs;
   }, [tenantId]);
 
@@ -309,7 +298,7 @@ export function KanbanTab() {
     return {
       ...RequestAssignmentKanbanSelect,
       where: assignmentWhere,
-      orderBy: [{ assignmentDate: "desc" as const }],
+      orderBy: [{ assignmentDate: 'desc' as const }],
     } satisfies Prisma.RequestAssignmentFindManyArgs;
   }, [assignmentWhere]);
 
@@ -331,11 +320,11 @@ export function KanbanTab() {
   const workflowAsRequestWorkflowType = React.useMemo((): RequestWorkflowType | null => {
     if (!selectedWorkflow) return null;
     const typedStatuses = selectedWorkflow.requestWorkflowStatus.map((status: WorkflowStatus) => {
-      let statusType: "initial" | "default" | "final" = "default";
-      if (status.type === "initial") statusType = "initial";
-      else if (status.type === "default") statusType = "default";
-      else if (status.type === "final") statusType = "final";
-      
+      let statusType: 'initial' | 'default' | 'final' = 'default';
+      if (status.type === 'initial') statusType = 'initial';
+      else if (status.type === 'default') statusType = 'default';
+      else if (status.type === 'final') statusType = 'final';
+
       return {
         id: status.id,
         name: status.name,
@@ -372,7 +361,7 @@ export function KanbanTab() {
     return transitions;
   }, [assignments, workflowAsRequestWorkflowType]);
 
-  const DRAFT_STATUS_ID = "__DRAFT__"; // Special ID for Draft column
+  const DRAFT_STATUS_ID = '__DRAFT__'; // Special ID for Draft column
 
   const groupedTasks = React.useMemo(() => {
     const base: Record<string, KanbanTask[]> = {};
@@ -387,7 +376,7 @@ export function KanbanTab() {
 
     assignments.forEach((assignment) => {
       const isDraft = assignment.request?.isDraft ?? false;
-      
+
       // If Draft, push into Draft column
       const statusId = isDraft ? DRAFT_STATUS_ID : (assignment.status?.id ?? assignment.statusId);
       if (!statusId) return;
@@ -396,15 +385,16 @@ export function KanbanTab() {
         base[statusId] = [];
       }
 
-      const assignees = assignment.assignedUsers
-        ?.map((assigned: AssignmentWithRelations["assignedUsers"][number]) => getAssigneeLabel(assigned.userTenant))
-        .filter((value: string | null): value is string => Boolean(value)) ?? [];
+      const assignees =
+        assignment.assignedUsers
+          ?.map((assigned: AssignmentWithRelations['assignedUsers'][number]) => getAssigneeLabel(assigned.userTenant))
+          .filter((value: string | null): value is string => Boolean(value)) ?? [];
 
       base[statusId].push({
         id: assignment.id,
         requestId: assignment.request?.id ?? assignment.requestId,
         slug: assignment.request?.slug ?? null,
-        title: assignment.request?.issueSubject ?? t("noSubject"),
+        title: assignment.request?.issueSubject ?? t('noSubject'),
         priority: assignment.priority ? { name: assignment.priority.name, color: assignment.priority.primaryColor } : undefined,
         assignees,
         dueDate: formatDueDate(assignment.slaDeadline),
@@ -431,7 +421,7 @@ export function KanbanTab() {
         movesToClean.push(assignmentId);
       }
     });
-    
+
     if (movesToClean.length > 0) {
       setPendingMoves((prev) => {
         const next = new Map(prev);
@@ -456,7 +446,7 @@ export function KanbanTab() {
     } else if (pendingMoves.size > 0) {
       // Pending moves exist: overlay them on top of groupedTasks
       const updatedGroupedTasks = { ...groupedTasks };
-      
+
       pendingMoves.forEach((newStatusId, assignmentId) => {
         // Find task across columns
         for (const [statusId, tasks] of Object.entries(updatedGroupedTasks)) {
@@ -473,7 +463,7 @@ export function KanbanTab() {
           }
         }
       });
-      
+
       setColumns(updatedGroupedTasks);
     }
   }, [groupedTasks, pendingMoves, isPending]);
@@ -482,43 +472,43 @@ export function KanbanTab() {
     async (moveEvent: KanbanMoveEvent) => {
       const { event, activeContainer, overContainer } = moveEvent;
       const { active } = event;
-      
+
       if (!tenantId || !workflowAsRequestWorkflowType || activeContainer === overContainer) {
         return;
       }
 
       const assignment = assignmentsMap.get(String(active.id));
       if (!assignment) {
-        toast.error(t("assignmentNotFound"));
+        toast.error(t('assignmentNotFound'));
         await assignmentsQuery.refetch();
         return;
       }
 
       const currentStatusId = assignment.status?.id ?? assignment.statusId;
       if (!currentStatusId) {
-        toast.error(t("statusNotFound"));
+        toast.error(t('statusNotFound'));
         await assignmentsQuery.refetch();
         return;
       }
 
       // Handle Draft column special case
-      const DRAFT_STATUS_ID = "__DRAFT__";
+      const DRAFT_STATUS_ID = '__DRAFT__';
       const isMovingFromDraft = activeContainer === DRAFT_STATUS_ID;
       const isMovingToDraft = overContainer === DRAFT_STATUS_ID;
-      
+
       // When moving out of Draft, allow only to "initial" statuses
       if (isMovingFromDraft) {
-          const targetStatus = orderedStatuses.find((s) => s.id === overContainer);
+        const targetStatus = orderedStatuses.find((s) => s.id === overContainer);
         if (!targetStatus) {
-          toast.error(t("targetStatusNotFound"));
+          toast.error(t('targetStatusNotFound'));
           await assignmentsQuery.refetch();
           return;
         }
-        
+
         // Only allow moving to "initial" statuses
         if (targetStatus.type !== STATUS.INITIAL) {
-          toast.error(t("draftCanOnlyMoveToInitial"), {
-            description: t("draftCanOnlyMoveToInitialDescription"),
+          toast.error(t('draftCanOnlyMoveToInitial'), {
+            description: t('draftCanOnlyMoveToInitialDescription'),
           });
           await assignmentsQuery.refetch();
           return;
@@ -526,35 +516,35 @@ export function KanbanTab() {
 
         // Ensure all requirements are fulfilled before leaving Draft
         try {
-          const { areAllRequirementsFulfilled } = await import("@/actions/requirements");
+          const { areAllRequirementsFulfilled } = await import('@/actions/requirements');
           const allRequirementsFulfilled = await areAllRequirementsFulfilled(assignment.requestId, tenantId);
-          
+
           if (!allRequirementsFulfilled) {
-            toast.error(t("draftRequirementsNotFulfilled"));
+            toast.error(t('draftRequirementsNotFulfilled'));
             await assignmentsQuery.refetch();
             return;
           }
         } catch (error) {
-          console.error("Error checking requirements:", error);
-          toast.error(t("updateError"), {
-            description: t("unknownError"),
+          console.error('Error checking requirements:', error);
+          toast.error(t('updateError'), {
+            description: t('unknownError'),
           });
           await assignmentsQuery.refetch();
           return;
         }
       } else if (isMovingToDraft) {
         // Cannot move a non-draft request back to Draft
-        toast.error(t("cannotMoveToDraft"));
+        toast.error(t('cannotMoveToDraft'));
         await assignmentsQuery.refetch();
         return;
       } else {
         // Normal transition validation for non-draft requests
         const isValid = validateTransition(workflowAsRequestWorkflowType, currentStatusId, overContainer);
         if (!isValid) {
-          const fromName = assignment.status?.name ?? "N/A";
-          const toName = orderedStatuses.find((s) => s.id === overContainer)?.name ?? "N/A";
-          toast.error(t("invalidTransition"), {
-            description: t("invalidTransitionDescription", { from: fromName, to: toName }),
+          const fromName = assignment.status?.name ?? 'N/A';
+          const toName = orderedStatuses.find((s) => s.id === overContainer)?.name ?? 'N/A';
+          toast.error(t('invalidTransition'), {
+            description: t('invalidTransitionDescription', { from: fromName, to: toName }),
           });
           await assignmentsQuery.refetch();
           return;
@@ -563,7 +553,7 @@ export function KanbanTab() {
 
       const targetStatus = orderedStatuses.find((s) => s.id === overContainer);
       if (!targetStatus && !isMovingToDraft) {
-        toast.error(t("targetStatusNotFound"));
+        toast.error(t('targetStatusNotFound'));
         await assignmentsQuery.refetch();
         return;
       }
@@ -572,7 +562,7 @@ export function KanbanTab() {
       // - From Draft: use destination status id (overContainer)
       // - Otherwise: also use destination status id
       const actualStatusId = targetStatus?.id ?? overContainer;
-      
+
       // If moving from Draft and status is the same as destination, we only
       // need to mark draft=false; `updateCurrentStatus` handles it.
       if (isMovingFromDraft && currentStatusId === actualStatusId) {
@@ -582,15 +572,13 @@ export function KanbanTab() {
       // Add pending move and apply optimistic UI immediately
       const activeId = String(active.id);
       setPendingMoves((prev) => new Map(prev).set(activeId, overContainer));
-      
+
       // Apply visual change immediately and mark this as a local update to avoid immediate overwrite
       skipNextSyncRef.current = true;
       setColumns((prevColumns) => {
         const newColumns = { ...prevColumns };
-        const sourceColumn = Object.keys(prevColumns).find((colId) => 
-          prevColumns[colId]?.some((task) => task.id === activeId)
-        );
-        
+        const sourceColumn = Object.keys(prevColumns).find((colId) => prevColumns[colId]?.some((task) => task.id === activeId));
+
         if (sourceColumn && sourceColumn !== overContainer) {
           // Remove from current column
           newColumns[sourceColumn] = prevColumns[sourceColumn].filter((task) => task.id !== activeId);
@@ -603,29 +591,29 @@ export function KanbanTab() {
             newColumns[overContainer] = [...newColumns[overContainer], movedTask];
           }
         }
-        
+
         return newColumns;
       });
 
       startTransition(async () => {
         try {
           await updateCurrentStatus(tenantId, assignment.requestId, actualStatusId, {
-            type: "STATUS_CHANGE",
+            type: 'STATUS_CHANGE',
             requiredReason: false,
-            comments: t("statusChangedViaKanban"),
+            comments: t('statusChangedViaKanban'),
           });
 
-          const fromName = isMovingFromDraft ? t("draftStatusName") : (assignment.status?.name ?? "N/A");
-          const toName = targetStatus?.name ?? t("draftStatusName");
-          toast.success(t("statusUpdated"), {
-            description: t("statusUpdatedDescription", { from: fromName, to: toName }),
+          const fromName = isMovingFromDraft ? t('draftStatusName') : (assignment.status?.name ?? 'N/A');
+          const toName = targetStatus?.name ?? t('draftStatusName');
+          toast.success(t('statusUpdated'), {
+            description: t('statusUpdatedDescription', { from: fromName, to: toName }),
           });
 
           // Refetch para obtener los datos actualizados del servidor
           // Refetch to sync latest server state
           await assignmentsQuery.refetch();
         } catch (error) {
-          console.error("Error updating status:", error);
+          console.error('Error updating status:', error);
           // Remove pending mark on error
           setPendingMoves((prev) => {
             const next = new Map(prev);
@@ -633,16 +621,16 @@ export function KanbanTab() {
             return next;
           });
           // Specific error handling
-          let errorMessage = t("unknownError");
+          let errorMessage = t('unknownError');
           if (error instanceof Error) {
             if (error.name === 'DraftRequirementsError' || error.message === 'DRAFT_REQUIREMENTS_NOT_FULFILLED') {
-              errorMessage = t("draftRequirementsNotFulfilled");
+              errorMessage = t('draftRequirementsNotFulfilled');
             } else {
               errorMessage = error.message;
             }
           }
-          
-          toast.error(t("updateError"), {
+
+          toast.error(t('updateError'), {
             description: errorMessage,
           });
           await assignmentsQuery.refetch();
@@ -663,12 +651,7 @@ export function KanbanTab() {
   }
 
   if (!isLoading && (!workflows.length || !selectedWorkflow)) {
-    return (
-      <EmptyState
-        title={t("noWorkflowsTitle")}
-        description={t("noWorkflowsDescription")}
-      />
-    );
+    return <EmptyState title={t('noWorkflowsTitle')} description={t('noWorkflowsDescription')} />;
   }
 
   return (
@@ -676,15 +659,11 @@ export function KanbanTab() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Label htmlFor="workflow-select" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            {t("workflowLabel")}
+            {t('workflowLabel')}
           </Label>
-          <Select
-            value={selectedWorkflowId ?? undefined}
-            onValueChange={setSelectedWorkflowId}
-            disabled={!workflows.length || workflowsQuery.isLoading}
-          >
+          <Select value={selectedWorkflowId ?? undefined} onValueChange={setSelectedWorkflowId} disabled={!workflows.length || workflowsQuery.isLoading}>
             <SelectTrigger id="workflow-select" className="w-64">
-              <SelectValue placeholder={workflowsQuery.isLoading ? t("loadingWorkflows") : t("selectWorkflow")} />
+              <SelectValue placeholder={workflowsQuery.isLoading ? t('loadingWorkflows') : t('selectWorkflow')} />
             </SelectTrigger>
             <SelectContent>
               {workflows.map((workflow) => (
@@ -700,71 +679,70 @@ export function KanbanTab() {
           {(assignmentsQuery.isFetching || isPending) && (
             <span className="flex items-center gap-1">
               <Loader2 className="size-4 animate-spin" />
-              {t("updating")}
+              {t('updating')}
             </span>
           )}
-          <span>{assignments.length} {t("requests")}</span>
+          <span>
+            {assignments.length} {t('requests')}
+          </span>
         </div>
       </div>
 
       {filterError && (
         <Alert variant="warning">
-          <AlertTitle>{t("noFullAccess")}</AlertTitle>
+          <AlertTitle>{t('noFullAccess')}</AlertTitle>
           <AlertDescription>{filterError}</AlertDescription>
         </Alert>
       )}
 
-        <div className="flex flex-1 flex-col overflow-hidden">
-          <div className="flex-1 overflow-x-auto overflow-y-hidden">
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <div className="flex-1 overflow-x-auto overflow-y-hidden">
           <KanbanBoardDataContext.Provider value={{ statuses: orderedStatuses, columns, isLoading, isPending, validTransitions, assignmentsMap, orderedStatuses, activeTaskId }}>
-              <Kanban
-                value={columns}
-                onValueChange={(newColumns) => {
-                  // Permitir actualizaciones visuales durante el drag
-                  setColumns(newColumns);
-                  
-                  // Detectar si hay un item siendo arrastrado comparando las columnas
-                  // Si un item cambió de columna, está siendo arrastrado
-                  const previousItemPositions = new Map<string, string>();
-                  Object.entries(columns).forEach(([colId, tasks]) => {
-                    tasks.forEach((task) => {
-                      previousItemPositions.set(task.id, colId);
-                    });
+            <Kanban
+              value={columns}
+              onValueChange={(newColumns) => {
+                // Permitir actualizaciones visuales durante el drag
+                setColumns(newColumns);
+
+                // Detectar si hay un item siendo arrastrado comparando las columnas
+                // Si un item cambió de columna, está siendo arrastrado
+                const previousItemPositions = new Map<string, string>();
+                Object.entries(columns).forEach(([colId, tasks]) => {
+                  tasks.forEach((task) => {
+                    previousItemPositions.set(task.id, colId);
                   });
-                  
-                  const newItemPositions = new Map<string, string>();
-                  Object.entries(newColumns).forEach(([colId, tasks]) => {
-                    tasks.forEach((task) => {
-                      newItemPositions.set(task.id, colId);
-                    });
+                });
+
+                const newItemPositions = new Map<string, string>();
+                Object.entries(newColumns).forEach(([colId, tasks]) => {
+                  tasks.forEach((task) => {
+                    newItemPositions.set(task.id, colId);
                   });
-                  
-                  // Encontrar items que cambiaron de columna
-                  for (const [taskId, newCol] of newItemPositions) {
-                    const prevCol = previousItemPositions.get(taskId);
-                    if (prevCol && prevCol !== newCol) {
-                      setActiveTaskId(taskId);
-                      break;
-                    }
+                });
+
+                // Encontrar items que cambiaron de columna
+                for (const [taskId, newCol] of newItemPositions) {
+                  const prevCol = previousItemPositions.get(taskId);
+                  if (prevCol && prevCol !== newCol) {
+                    setActiveTaskId(taskId);
+                    break;
                   }
-                  
-                  // Si no hay cambios, limpiar activeTaskId después de un delay
-                  if (previousItemPositions.size === newItemPositions.size) {
-                    const hasChanges = Array.from(previousItemPositions.entries()).some(
-                      ([taskId, prevCol]) => newItemPositions.get(taskId) !== prevCol
-                    );
-                    if (!hasChanges && activeTaskId) {
-                      setTimeout(() => setActiveTaskId(null), 100);
-                    }
+                }
+
+                // Si no hay cambios, limpiar activeTaskId después de un delay
+                if (previousItemPositions.size === newItemPositions.size) {
+                  const hasChanges = Array.from(previousItemPositions.entries()).some(([taskId, prevCol]) => newItemPositions.get(taskId) !== prevCol);
+                  if (!hasChanges && activeTaskId) {
+                    setTimeout(() => setActiveTaskId(null), 100);
                   }
-                }}
-                onMove={(moveEvent) => {
-                  // Limpiar activeTaskId cuando se completa el move
-                  setActiveTaskId(null);
-                  handleMove(moveEvent);
-                }}
-                getItemValue={(item) => item.id}
-              >
+                }
+              }}
+              onMove={(moveEvent) => {
+                // Limpiar activeTaskId cuando se completa el move
+                setActiveTaskId(null);
+                handleMove(moveEvent);
+              }}
+              getItemValue={(item) => item.id}>
               <KanbanBoard className="flex h-full min-w-max gap-4 pr-2">
                 {/* Draft column - always at the start */}
                 <TaskColumn key={DRAFT_STATUS_ID} value={DRAFT_STATUS_ID} />
@@ -774,12 +752,12 @@ export function KanbanTab() {
               </KanbanBoard>
               <KanbanOverlay>
                 {({ value, variant }) => {
-                  if (variant === "column") {
-                    const columnValue = typeof value === "string" ? value : String(value);
+                  if (variant === 'column') {
+                    const columnValue = typeof value === 'string' ? value : String(value);
                     return <TaskColumn value={columnValue} />;
                   }
 
-                  const taskValue = typeof value === "string" ? value : String(value);
+                  const taskValue = typeof value === 'string' ? value : String(value);
                   const task = Object.values(columns)
                     .flat()
                     .find((item) => item.id === taskValue);
@@ -805,10 +783,10 @@ interface TaskCardProps {
 }
 
 function TaskCard({ task, ...props }: TaskCardProps) {
-  const t = useTranslations("admin.request.kanban");
+  const t = useTranslations('admin.request.kanban');
   const { tenantId } = useTenantContext();
   const assigneeLabel = React.useMemo(() => {
-    if (!task.assignees.length) return t("unassigned");
+    if (!task.assignees.length) return t('unassigned');
     if (task.assignees.length === 1) return task.assignees[0];
     return `${task.assignees[0]} +${task.assignees.length - 1}`;
   }, [task.assignees, t]);
@@ -825,12 +803,8 @@ function TaskCard({ task, ...props }: TaskCardProps) {
             <div className="flex items-start gap-1 flex-shrink-0">
               {task.priority && (
                 <Badge
-                  className={cn(
-                    "pointer-events-none h-5 rounded-sm px-1.5 text-[11px]",
-                    task.priority.color ? "border-transparent" : "bg-muted"
-                  )}
-                  style={task.priority.color ? getPriorityStyles(task.priority.color) : undefined}
-                >
+                  className={cn('pointer-events-none h-5 rounded-sm px-1.5 text-[11px]', task.priority.color ? 'border-transparent' : 'bg-muted')}
+                  style={task.priority.color ? getPriorityStyles(task.priority.color) : undefined}>
                   {task.priority.name}
                 </Badge>
               )}
@@ -842,14 +816,12 @@ function TaskCard({ task, ...props }: TaskCardProps) {
                   asChild
                   onClick={(e) => {
                     e.stopPropagation();
-                  }}
-                >
+                  }}>
                   <Link
                     href={{
-                      pathname: "/admin/[tenantId]/requests/[slug]",
+                      pathname: '/admin/[tenantId]/requests/[slug]',
                       params: { tenantId, slug: task.requestId },
-                    }}
-                  >
+                    }}>
                     <Eye className="h-3.5 w-3.5" />
                     <span className="sr-only">Ver</span>
                   </Link>
@@ -867,30 +839,30 @@ function TaskCard({ task, ...props }: TaskCardProps) {
   );
 }
 
-interface TaskColumnProps extends Omit<React.ComponentProps<typeof KanbanColumn>, "children"> {}
+interface TaskColumnProps extends Omit<React.ComponentProps<typeof KanbanColumn>, 'children'> {}
 
 function TaskColumn({ value, className, ...props }: TaskColumnProps) {
   const context = use(KanbanBoardDataContext);
-  const t = useTranslations("admin.request.kanban");
+  const t = useTranslations('admin.request.kanban');
 
   if (!context) {
-    throw new Error("TaskColumn must be rendered within a KanbanBoardDataContext provider");
+    throw new Error('TaskColumn must be rendered within a KanbanBoardDataContext provider');
   }
 
   const { statuses, columns, isLoading, isPending, validTransitions, assignmentsMap, orderedStatuses, activeTaskId } = context;
-  
+
   // Manejar la columna especial de Draft
-  const DRAFT_STATUS_ID = "__DRAFT__";
+  const DRAFT_STATUS_ID = '__DRAFT__';
   const isDraftColumn = value === DRAFT_STATUS_ID;
-  
+
   const status = React.useMemo(() => {
     if (isDraftColumn) {
       // Create a virtual status for Draft
       return {
         id: DRAFT_STATUS_ID,
-        name: t("draftStatusName"),
-        color: "#9ca3af", // gray
-        type: "initial" as const,
+        name: t('draftStatusName'),
+        color: '#9ca3af', // gray
+        type: 'initial' as const,
       };
     }
     return statuses.find((item) => item.id === value);
@@ -904,22 +876,22 @@ function TaskColumn({ value, className, ...props }: TaskColumnProps) {
     if (!activeTaskId) {
       return { isDropDisabled: false, isDropAllowed: false };
     }
-    
+
     const taskId = String(activeTaskId);
     const assignment = assignmentsMap.get(taskId);
     if (!assignment) {
       return { isDropDisabled: false, isDropAllowed: false };
     }
-    
-    const DRAFT_STATUS_ID = "__DRAFT__";
+
+    const DRAFT_STATUS_ID = '__DRAFT__';
     const isDraftColumn = value === DRAFT_STATUS_ID;
     const isDraft = assignment.request?.isDraft ?? false;
-    
+
     // Si se está moviendo hacia Draft y la solicitud no está en borrador, deshabilitar
     if (isDraftColumn && !isDraft) {
       return { isDropDisabled: true, isDropAllowed: false };
     }
-    
+
     // Si se está moviendo desde Draft (solicitud en borrador), solo permitir estados "initial"
     if (isDraft) {
       const targetStatus = orderedStatuses.find((s) => s.id === value);
@@ -929,7 +901,7 @@ function TaskColumn({ value, className, ...props }: TaskColumnProps) {
       // Permitir mover desde Draft a estados initial
       return { isDropDisabled: false, isDropAllowed: true };
     }
-    
+
     // Si se está moviendo hacia una columna normal, usar validación de transiciones
     const currentStatusId = assignment.status?.id ?? assignment.statusId;
     if (!currentStatusId) {
@@ -938,11 +910,11 @@ function TaskColumn({ value, className, ...props }: TaskColumnProps) {
     if (currentStatusId === value) {
       return { isDropDisabled: false, isDropAllowed: false };
     }
-    
+
     const allowedIds = validTransitions.get(assignment.id);
     const statusId = String(value);
     const allowed = allowedIds ? allowedIds.has(statusId) : false;
-    
+
     return {
       isDropDisabled: !allowed,
       isDropAllowed: allowed,
@@ -954,38 +926,33 @@ function TaskColumn({ value, className, ...props }: TaskColumnProps) {
       value={value}
       disabled={isDropDisabled}
       className={cn(
-        "flex h-full flex-shrink-0 basis-80 flex-col rounded-lg border bg-muted/20 p-3 transition-all relative",
-        activeTaskId && !isDropDisabled && isDropAllowed && "ring-2 ring-sky-400/60 ring-offset-1 bg-sky-50/80 dark:bg-sky-950/30 border-sky-300/50 dark:border-sky-500/30",
-        activeTaskId && isDropDisabled && "opacity-40 border-dashed border-muted-foreground/30",
-        !activeTaskId && "border-border",
+        'flex h-full flex-shrink-0 basis-80 flex-col rounded-lg border bg-muted/20 p-3 transition-all relative',
+        activeTaskId && !isDropDisabled && isDropAllowed && 'ring-2 ring-sky-400/60 ring-offset-1 bg-sky-50/80 dark:bg-sky-950/30 border-sky-300/50 dark:border-sky-500/30',
+        activeTaskId && isDropDisabled && 'opacity-40 border-dashed border-muted-foreground/30',
+        !activeTaskId && 'border-border',
         className
       )}
-      {...props}
-    >
+      {...props}>
       <div className="mb-3 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span
-            className="size-2.5 rounded-full"
-            style={{ backgroundColor: status.color ?? "var(--color-primary)" }}
-            aria-hidden="true"
-          />
+          <span className="size-2.5 rounded-full" style={{ backgroundColor: status.color ?? 'var(--color-primary)' }} aria-hidden="true" />
           <span className="font-semibold text-sm">{status.name}</span>
           <Badge variant="secondary" className="pointer-events-none rounded-sm">
             {tasks.length}
           </Badge>
           {isDraftColumn && (
             <Badge variant="outline" className="pointer-events-none rounded-sm text-xs">
-              {t("draftBadge")}
+              {t('draftBadge')}
             </Badge>
           )}
           {activeTaskId && isDropAllowed && (
             <Badge variant="default" className="pointer-events-none rounded-sm text-xs bg-primary/20 text-primary border-primary/30">
-              {t("allowedDrop")}
+              {t('allowedDrop')}
             </Badge>
           )}
           {activeTaskId && isDropDisabled && (
             <Badge variant="outline" className="pointer-events-none rounded-sm text-xs opacity-50">
-              {t("notAllowed")}
+              {t('notAllowed')}
             </Badge>
           )}
         </div>
@@ -1013,7 +980,7 @@ function TaskColumn({ value, className, ...props }: TaskColumnProps) {
           <div className="pointer-events-none absolute inset-x-0 top-2 flex items-center justify-center">
             <span className="inline-flex items-center gap-1 rounded-sm bg-background/90 px-2 py-1 text-[11px] text-muted-foreground shadow-xs">
               <Loader2 className="size-3 animate-spin" />
-              {t("updating")}
+              {t('updating')}
             </span>
           </div>
         </>
@@ -1033,12 +1000,8 @@ function ColumnSkeleton() {
 }
 
 function EmptyColumn() {
-  const t = useTranslations("admin.request.kanban");
-  return (
-    <div className="border-border text-muted-foreground flex h-20 items-center justify-center rounded-md border border-dashed text-xs">
-      {t("noRequests")}
-    </div>
-  );
+  const t = useTranslations('admin.request.kanban');
+  return <div className="border-border text-muted-foreground flex h-20 items-center justify-center rounded-md border border-dashed text-xs">{t('noRequests')}</div>;
 }
 
 interface EmptyStateProps {
@@ -1055,9 +1018,9 @@ function EmptyState({ title, description }: EmptyStateProps) {
   );
 }
 
-function getAssigneeLabel(userTenant: AssignmentWithRelations["assignedUsers"][number]["userTenant"]) {
-  const firstName = userTenant.person?.firstName ?? "";
-  const lastName = userTenant.person?.lastName ?? "";
+function getAssigneeLabel(userTenant: AssignmentWithRelations['assignedUsers'][number]['userTenant']) {
+  const firstName = userTenant.person?.firstName ?? '';
+  const lastName = userTenant.person?.lastName ?? '';
   const fullName = `${firstName} ${lastName}`.trim();
   if (fullName) return fullName;
   return userTenant.user?.email ?? null;
@@ -1065,7 +1028,7 @@ function getAssigneeLabel(userTenant: AssignmentWithRelations["assignedUsers"][n
 
 function formatDueDate(value: Date | string | null | undefined) {
   if (!value) return undefined;
-  const date = typeof value === "string" ? new Date(value) : value;
+  const date = typeof value === 'string' ? new Date(value) : value;
   if (Number.isNaN(date.getTime())) return undefined;
   return date.toLocaleDateString();
 }
@@ -1077,18 +1040,18 @@ function getPriorityStyles(color: string) {
       color,
     } satisfies React.CSSProperties;
   } catch (error) {
-    console.error("Invalid priority color", error);
+    console.error('Invalid priority color', error);
     return undefined;
   }
 }
 
 function hexToRgba(hex: string, alpha: number) {
-  let sanitized = hex.replace("#", "");
+  let sanitized = hex.replace('#', '');
   if (sanitized.length === 3) {
     sanitized = sanitized
-      .split("")
+      .split('')
       .map((char) => char + char)
-      .join("");
+      .join('');
   }
 
   const bigint = Number.parseInt(sanitized, 16);
@@ -1098,4 +1061,3 @@ function hexToRgba(hex: string, alpha: number) {
 
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
-

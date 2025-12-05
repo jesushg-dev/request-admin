@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -18,10 +18,21 @@ export const usePrioritySchema = () => {
 export function createPrioritySchema(t: TranslationFn) {
   return z.object({
     id: z.string().uuid(),
-    name: z.string().min(1, { message: t('nameRequired') }).max(100, { message: t('nameMaxLength') }),
+    name: z
+      .string()
+      .min(1, { message: t('nameRequired') })
+      .max(100, { message: t('nameMaxLength') }),
     primaryColor: z.string().min(1, { message: t('colorRequired') }),
-    description: z.string().max(500, { message: t('descriptionMaxLength') }).optional().default(''),
-    level: z.number().min(0, { message: t('levelMin') }).max(10, { message: t('levelMax') }).default(0),
+    description: z
+      .string()
+      .max(500, { message: t('descriptionMaxLength') })
+      .optional()
+      .default(''),
+    level: z
+      .number()
+      .min(0, { message: t('levelMin') })
+      .max(10, { message: t('levelMax') })
+      .default(0),
     isActive: z.boolean().default(true),
     isDefault: z.boolean().default(false),
   });
@@ -31,4 +42,3 @@ export function createPrioritySchema(t: TranslationFn) {
  * Type inference for PrioritySchema
  */
 export type TPrioritySchema = z.infer<ReturnType<typeof createPrioritySchema>>;
-

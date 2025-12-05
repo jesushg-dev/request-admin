@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -17,7 +17,10 @@ export const useTextFieldPropertiesSchema = () => {
  */
 export function createTextFieldPropertiesSchema(t: TranslationFn) {
   return z.object({
-    label: z.string().min(2, { message: t('labelMinLength') }).max(50, { message: t('labelMaxLength') }),
+    label: z
+      .string()
+      .min(2, { message: t('labelMinLength') })
+      .max(50, { message: t('labelMaxLength') }),
     helperText: z.string().max(200, { message: t('helperTextMaxLength') }),
     required: z.boolean(),
     placeHolder: z.string().max(50, { message: t('placeholderMaxLength') }),
@@ -28,4 +31,3 @@ export function createTextFieldPropertiesSchema(t: TranslationFn) {
  * Type inference for TextFieldPropertiesSchema
  */
 export type TTextFieldPropertiesSchema = z.infer<ReturnType<typeof createTextFieldPropertiesSchema>>;
-

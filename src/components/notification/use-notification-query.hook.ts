@@ -95,7 +95,7 @@ export function useNotificationsQuery(tenantId: string, userTenantId: string): U
       tenantId,
       recipients: { some: { userTenantId } },
       ...(filterState.notificationType !== NotificationTypeEnum.ALL && { type: filterState.notificationType }),
-      ...(filterState.search && { body: { contains: filterState.search,  } }),
+      ...(filterState.search && { body: { contains: filterState.search } }),
     },
     orderBy: { createdAt: 'desc' },
     skip: (filterState.page - 1) * filterState.pageSize,
@@ -122,7 +122,7 @@ export function useNotificationsQuery(tenantId: string, userTenantId: string): U
       recipients: { some: { userTenantId } },
       ...(filterState.notificationType !== NotificationTypeEnum.ALL && { type: filterState.notificationType }),
       ...(filterState.search && {
-        OR: [{ body: { contains: filterState.search,  } }],
+        OR: [{ body: { contains: filterState.search } }],
       }),
     },
   });

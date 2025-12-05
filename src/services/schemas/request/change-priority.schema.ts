@@ -1,5 +1,6 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
+
 import { optionSchema } from '@/components/custom-ui/select';
 
 // Type helper for translation function
@@ -18,7 +19,10 @@ export const useChangePrioritySchema = () => {
  */
 export function createChangePrioritySchema(t: TranslationFn) {
   return z.object({
-    reason: z.string().min(1, { message: t('reasonRequired') }).max(500, { message: t('reasonMaxLength') }),
+    reason: z
+      .string()
+      .min(1, { message: t('reasonRequired') })
+      .max(500, { message: t('reasonMaxLength') }),
     newPriority: optionSchema,
     notify: optionSchema,
   });
@@ -28,4 +32,3 @@ export function createChangePrioritySchema(t: TranslationFn) {
  * Type inference for ChangePrioritySchema
  */
 export type TChangePrioritySchema = z.infer<ReturnType<typeof createChangePrioritySchema>>;
-

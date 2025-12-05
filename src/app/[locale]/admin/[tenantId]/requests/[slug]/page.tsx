@@ -28,7 +28,7 @@ interface CaseDetailPageProps {
 export async function generateMetadata(props: CaseDetailPageProps): Promise<Metadata> {
   const { locale, tenantId, slug } = await props.params;
   const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
-  
+
   const request = await getRequestById(tenantId, slug);
   const requestTitle = request?.issueSubject || `Solicitud #${slug}`;
 
@@ -109,7 +109,13 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
             </TabsContent>
 
             <TabsContent value="executionModel" className="flex-1 flex flex-col overflow-hidden">
-              <ExecutionView processFlow={requestDetails.executionFlow?.diagram} tenantId={tenantId} executionId={requestDetails.executionFlow?.executionId ?? ''} locale={locale} executionLogs={requestDetails.executionFlow?.logs} />
+              <ExecutionView
+                processFlow={requestDetails.executionFlow?.diagram}
+                tenantId={tenantId}
+                executionId={requestDetails.executionFlow?.executionId ?? ''}
+                locale={locale}
+                executionLogs={requestDetails.executionFlow?.logs}
+              />
             </TabsContent>
 
             <TabsContent value="guides" className="flex-1 flex flex-col overflow-hidden">

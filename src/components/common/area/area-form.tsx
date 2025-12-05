@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo } from 'react';
+import { type TAreaSchema } from '@/services/schemas/area';
 import { useTranslations } from 'next-intl';
 import { Control, useFormContext, useWatch } from 'react-hook-form';
 import { z } from 'zod';
@@ -14,9 +15,8 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import Select, { optionSchema } from '@/components/custom-ui/select';
 import { FormCheckboxItem, FormContent, FormItem } from '@/components/shared/form-root';
-import { PillChain } from '../hierarchy/hierarchy-viewer-with-alternatives';
 
-import { type TAreaSchema } from '@/services/schemas/area';
+import { PillChain } from '../hierarchy/hierarchy-viewer-with-alternatives';
 
 // Base schema for defineStepper (without internationalization)
 // This is used only for the stepper definition
@@ -131,4 +131,3 @@ export default function AreaForm({ assignmentHierarchies = [], disableHierarchyC
     </Card>
   );
 }
-

@@ -1,14 +1,14 @@
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
-import { useAppearanceSchema, type TAppearanceSchema } from '@/services/schemas/settings.schema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { useTheme } from 'next-themes';
 import { useParams } from 'next/navigation';
 import { locales, usePathname, useRouter } from '@/i18n/routing';
+import { useAppearanceSchema, type TAppearanceSchema } from '@/services/schemas/settings.schema';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocale, useTranslations } from 'next-intl';
 import type { Locale } from 'next-intl';
+import { useTheme } from 'next-themes';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -17,7 +17,6 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useFont } from '@/components/hoc/font-provider';
 import { LanguageSelectOptions } from '@/components/language-select-options';
-
 
 export default function AppearanceForm() {
   const [isLoading, setIsLoading] = useState(false);

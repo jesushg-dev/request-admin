@@ -1,11 +1,11 @@
-import { type Metadata } from 'next';
 import { type FC } from 'react';
-import { type Locale } from 'next-intl';
+import { type Metadata } from 'next';
+import { getAreasWithRolesAsOptionsByTenantId } from '@/actions/area';
 import { getAuthContext } from '@/actions/authorization';
+import { getIdentityTypesAsOptions, getRolesAsOptions } from '@/actions/user';
 import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
-import { getAreasWithRolesAsOptionsByTenantId } from '@/actions/area';
-import { getIdentityTypesAsOptions, getRolesAsOptions } from '@/actions/user';
+import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
 import UserTenantScopedForm from '@/components/common/user/user-tenant-scoped-form';
@@ -29,7 +29,7 @@ const NewPage: FC<NewPageProps> = async ({ params }) => {
 
   const auth = await getAuthContext(tenantId);
   const canCreate = auth.hasPermissions([PermissionActions.USER_MANAGEMENT.CREATE]);
-  
+
   if (!canCreate) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/security/users', params: { tenantId } } });
   }
@@ -37,7 +37,7 @@ const NewPage: FC<NewPageProps> = async ({ params }) => {
   const roles = await getRolesAsOptions(tenantId);
   const areas = await getAreasWithRolesAsOptionsByTenantId(tenantId);
   const identificationTypes = await getIdentityTypesAsOptions(tenantId);
-  
+
   return <UserTenantScopedForm tenantId={tenantId} identificationTypes={identificationTypes} roles={roles} areas={areas} />;
 };
 

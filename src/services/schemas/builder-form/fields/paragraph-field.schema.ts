@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -17,7 +17,10 @@ export const useParagraphFieldPropertiesSchema = () => {
  */
 export function createParagraphFieldPropertiesSchema(t: TranslationFn) {
   return z.object({
-    text: z.string().min(2, { message: t('textMinLength') }).max(500, { message: t('textMaxLength') }),
+    text: z
+      .string()
+      .min(2, { message: t('textMinLength') })
+      .max(500, { message: t('textMaxLength') }),
   });
 }
 
@@ -25,4 +28,3 @@ export function createParagraphFieldPropertiesSchema(t: TranslationFn) {
  * Type inference for ParagraphFieldPropertiesSchema
  */
 export type TParagraphFieldPropertiesSchema = z.infer<ReturnType<typeof createParagraphFieldPropertiesSchema>>;
-

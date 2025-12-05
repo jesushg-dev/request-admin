@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -19,8 +19,14 @@ export function createDataroomBrandingSchema(t: TranslationFn) {
   return z.object({
     id: z.string(),
     dataroomId: z.string(),
-    logo: z.string().url({ message: t('logoInvalidUrl') }).nullable(),
-    banner: z.string().url({ message: t('bannerInvalidUrl') }).nullable(),
+    logo: z
+      .string()
+      .url({ message: t('logoInvalidUrl') })
+      .nullable(),
+    banner: z
+      .string()
+      .url({ message: t('bannerInvalidUrl') })
+      .nullable(),
     brandColor: z
       .string()
       .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: t('brandColorInvalid') })
@@ -36,4 +42,3 @@ export function createDataroomBrandingSchema(t: TranslationFn) {
  * Type inference for DataroomBrandingSchema
  */
 export type TDataroomBrandingSchema = z.infer<ReturnType<typeof createDataroomBrandingSchema>>;
-

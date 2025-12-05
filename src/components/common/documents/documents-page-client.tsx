@@ -3,8 +3,8 @@
 import React, { useMemo } from 'react';
 import { Link } from '@/i18n/routing';
 import { useCountDocument, useFindManyDocument } from '@/services/api/hooks';
-import { Prisma } from '@zenstackhq/runtime/models';
 import { ColumnDef, Row } from '@tanstack/react-table';
+import { Prisma } from '@zenstackhq/runtime/models';
 import { Download, Share2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
@@ -14,7 +14,6 @@ import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { formatDate } from '@/lib/utils';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
-import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
@@ -22,6 +21,7 @@ import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 
 const DocumentDefaultArgs = Prisma.validator<Prisma.DocumentDefaultArgs>()({
   select: {
@@ -175,10 +175,14 @@ function getTableConfiguration({ t, tenantId, canEdit, canDelete }: TableConfigP
             pathname: '/admin/[tenantId]/links-and-documents/documents/[slug]',
             params: { tenantId, slug: row.original.id },
           }}
-          updateLink={canEdit ? {
-            pathname: '/admin/[tenantId]/links-and-documents/documents/[slug]/edit',
-            params: { tenantId, slug: row.original.id },
-          } : undefined}>
+          updateLink={
+            canEdit
+              ? {
+                  pathname: '/admin/[tenantId]/links-and-documents/documents/[slug]/edit',
+                  params: { tenantId, slug: row.original.id },
+                }
+              : undefined
+          }>
           <DropdownMenuItem onClick={() => downloadFile(row.original.file, `${row.original.name}.${row.original.type}`)}>
             <Download className="h-4 w-4" />
             {t('actions.download')}
@@ -216,10 +220,14 @@ function getTableConfiguration({ t, tenantId, canEdit, canDelete }: TableConfigP
               pathname: '/admin/[tenantId]/links-and-documents/documents/[slug]',
               params: { tenantId, slug: row.original.id },
             }}
-            updateLink={canEdit ? {
-              pathname: '/admin/[tenantId]/links-and-documents/documents/[slug]/edit',
-              params: { tenantId, slug: row.original.id },
-            } : undefined}>
+            updateLink={
+              canEdit
+                ? {
+                    pathname: '/admin/[tenantId]/links-and-documents/documents/[slug]/edit',
+                    params: { tenantId, slug: row.original.id },
+                  }
+                : undefined
+            }>
             <DropdownMenuItem onClick={() => downloadFile(row.original.file, `${row.original.name}.${row.original.type}`)}>
               <Download className="h-4 w-4" />
               {t('actions.download')}
@@ -261,4 +269,3 @@ const StatBadge = ({ label, value }: { label: string; value: string | number }) 
     </Badge>
   </div>
 );
-

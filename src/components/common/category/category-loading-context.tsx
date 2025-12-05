@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, ReactNode, useCallback, useContext, useState } from 'react';
 
 type LoadingState = Record<number, boolean>;
 
@@ -34,7 +34,7 @@ export const CategoryLoadingProvider: React.FC<{ children: ReactNode }> = ({ chi
     (position: number) => {
       // Level 0 (position 0) is always ready (it's the root)
       if (position === 0) return true;
-      
+
       // Check if the previous level (position - 1) is ready
       // If previous level is not in state, assume it's ready (initial state)
       const previousPosition = position - 1;
@@ -67,4 +67,3 @@ export const useCategoryLoading = () => {
   }
   return context;
 };
-

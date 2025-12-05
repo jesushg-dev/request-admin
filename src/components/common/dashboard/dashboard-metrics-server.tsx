@@ -1,7 +1,8 @@
 import { getDashboardMetrics } from '@/actions/dashboard';
+import { Locale } from 'next-intl';
+
 import DashboardMetrics from './dashboard-metrics';
 
-import { Locale } from 'next-intl';
 interface DashboardMetricsServerProps {
   tenantId: string;
   workflowId?: string | null;
@@ -25,4 +26,3 @@ export default async function DashboardMetricsServer({ tenantId, workflowId, loc
 
   return <DashboardMetrics data={metrics} locale={locale} />;
 }
-

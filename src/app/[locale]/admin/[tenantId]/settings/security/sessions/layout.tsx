@@ -16,4 +16,3 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
 export default function SessionsLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
-

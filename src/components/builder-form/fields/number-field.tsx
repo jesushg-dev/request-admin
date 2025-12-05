@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useNumberFieldPropertiesSchema, type TNumberFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { HashIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -13,7 +14,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { ElementsType, FormElement, FormElementInstance, SubmitFunction } from '@/components/builder-form/form-elements';
-import { useNumberFieldPropertiesSchema, type TNumberFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 
 const type: ElementsType = 'NumberField';
 
@@ -50,11 +50,11 @@ function DesignerComponent({ elementInstance }: { elementInstance: FormElementIn
   const element = elementInstance as CustomInstance;
   const tDefaults = useTranslations('component.form.builderFields.defaults');
   const { required, placeHolder } = element.extraAttributes;
-  
+
   // Translate default values, otherwise use custom user values
   const label = element.extraAttributes.label === extraAttributes.label ? tDefaults('numberFieldLabel') : element.extraAttributes.label;
   const helperText = element.extraAttributes.helperText === extraAttributes.helperText ? tDefaults('numberFieldHelperText') : element.extraAttributes.helperText;
-  
+
   return (
     <div className="flex w-full flex-col gap-2">
       <Label>
@@ -79,11 +79,11 @@ function FormComponent({ elementInstance, submitValue, isInvalid, defaultValue }
   }, [isInvalid]);
 
   const { required, placeHolder } = element.extraAttributes;
-  
+
   // Translate default values, otherwise use custom user values
   const label = element.extraAttributes.label === extraAttributes.label ? tDefaults('numberFieldLabel') : element.extraAttributes.label;
   const helperText = element.extraAttributes.helperText === extraAttributes.helperText ? tDefaults('numberFieldHelperText') : element.extraAttributes.helperText;
-  
+
   return (
     <div className="flex w-full flex-col gap-2">
       <Label className={cn(error && 'text-red-500')}>
@@ -159,9 +159,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                   }}
                 />
               </FormControl>
-              <FormDescription>
-                {t('labelDescription')}
-              </FormDescription>
+              <FormDescription>{t('labelDescription')}</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -199,9 +197,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                   }}
                 />
               </FormControl>
-              <FormDescription>
-                {t('helperTextDescription')}
-              </FormDescription>
+              <FormDescription>{t('helperTextDescription')}</FormDescription>
               <FormMessage />
             </FormItem>
           )}

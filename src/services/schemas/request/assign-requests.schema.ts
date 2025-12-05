@@ -1,5 +1,6 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
+
 import { optionSchema } from '@/components/custom-ui/select';
 
 // Type helper for translation function
@@ -34,4 +35,3 @@ export function createAssignRequestsSchema(t: TranslationFn) {
  * Type inference for AssignRequestsSchema
  */
 export type TAssignRequestsSchema = z.infer<ReturnType<typeof createAssignRequestsSchema>>;
-

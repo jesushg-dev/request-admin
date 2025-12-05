@@ -1,7 +1,8 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
-import { optionSchema } from '@/components/custom-ui/select';
+import { z } from 'zod';
+
 import { combinedCategoriesSchema } from '@/components/common/request/request-form-stepper/classification-step';
+import { optionSchema } from '@/components/custom-ui/select';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -28,4 +29,3 @@ export function createReassignAreaSchema(t: TranslationFn) {
  * Type inference for ReassignAreaSchema
  */
 export type TReassignAreaSchema = z.infer<ReturnType<typeof createReassignAreaSchema>>;
-

@@ -1,7 +1,7 @@
 import { FC } from 'react';
-import { redirect } from '@/i18n/routing';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
+import { redirect } from '@/i18n/routing';
 import { getDb } from '@/server/db-client';
 import type { Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
@@ -18,7 +18,7 @@ const EditPage: FC<EditPageProps> = async ({ params }) => {
 
   const auth = await getAuthContext(tenantId);
   const canEdit = auth.hasPermissions([PermissionActions.DOCUMENT_MANAGEMENT.EDIT]);
-  
+
   if (!canEdit) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/documents/[slug]', params: { tenantId, slug } } });
   }

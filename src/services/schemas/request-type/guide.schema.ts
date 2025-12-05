@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -32,4 +32,3 @@ export function createGuideSchema(t: TranslationFn) {
  * Type inference for GuideSchema
  */
 export type TGuideSchema = z.infer<ReturnType<typeof createGuideSchema>>;
-

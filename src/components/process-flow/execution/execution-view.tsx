@@ -6,6 +6,7 @@ import { useAtom } from 'jotai';
 import { Eye, RotateCcw } from 'lucide-react';
 import { Locale, useTranslations } from 'next-intl';
 
+import type { ExecutionLogType } from '@/types/zenstackhq/request';
 import { isNodeWithEstimatedTime, isStepNode } from '@/lib/execution-flow';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -13,7 +14,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
 import { Hint } from '@/components/hint';
-import type { ExecutionLogType } from '@/types/zenstackhq/request';
 
 import { nodeTypes } from '../flow-builder/nodes';
 import { PendingDecisionPanel } from './execution-decision-control';

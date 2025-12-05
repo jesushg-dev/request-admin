@@ -1,9 +1,9 @@
 import { FC } from 'react';
-import { type Locale } from 'next-intl';
-import { redirect } from '@/i18n/routing';
 import { getAuthContext } from '@/actions/authorization';
-import { PermissionActions } from '@/constants/permissions';
 import { getRequestPriorityTypeAsFormById } from '@/actions/priority';
+import { PermissionActions } from '@/constants/permissions';
+import { redirect } from '@/i18n/routing';
+import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
 import PriorityForm from '@/components/common/priority/priority-form';
@@ -18,7 +18,7 @@ const UpdatePriorityPage: FC<UpdatePriorityPageProps> = async ({ params }) => {
 
   const auth = await getAuthContext(tenantId);
   const canEdit = auth.hasPermissions([PermissionActions.PRIORITY.EDIT]);
-  
+
   if (!canEdit) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/configurations/priorities', params: { tenantId } } });
   }

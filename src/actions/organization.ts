@@ -71,7 +71,7 @@ function transformMemberToComponentFormat(member: BetterAuthMember): MemberWithR
   const lastName = nameParts.slice(1).join(' ') || '';
 
   // Convert role(s) to userRoles format expected by component
-  const roles = Array.isArray(member.role) ? member.role : member.role.split(',').map(r => r.trim());
+  const roles = Array.isArray(member.role) ? member.role : member.role.split(',').map((r) => r.trim());
   const userRoles = roles.map((role) => ({
     role: {
       name: role,
@@ -80,11 +80,14 @@ function transformMemberToComponentFormat(member: BetterAuthMember): MemberWithR
 
   return {
     id: member.id,
-    person: firstName || lastName ? {
-      firstName,
-      lastName,
-      image: member.user.image,
-    } : null,
+    person:
+      firstName || lastName
+        ? {
+            firstName,
+            lastName,
+            image: member.user.image,
+          }
+        : null,
     user: {
       username: member.user.username || null,
       email: member.user.email,
@@ -108,12 +111,12 @@ function mapSortingToBetterAuth(sort: ExtendedSortingState<any>): { sortBy?: str
 
   const firstSort = sort[0];
   let sortBy = firstSort.id;
-  
+
   // Map nested fields to Better Auth expected fields
   if (sortBy.includes('.')) {
     sortBy = sortBy.split('.').pop() || sortBy;
   }
-  
+
   // Map common field names that Better Auth supports
   const fieldMap: Record<string, string> = {
     id: 'createdAt',
@@ -132,23 +135,21 @@ function mapSortingToBetterAuth(sort: ExtendedSortingState<any>): { sortBy?: str
  * Maps table filters to Better Auth filter parameters
  * Note: Better Auth listMembers only supports single field filtering
  */
-function mapFiltersToBetterAuth(
-  filters: Filter<any>[]
-): { filterField?: string; filterOperator?: 'eq' | 'ne' | 'lt' | 'lte' | 'gt' | 'gte' | 'contains'; filterValue?: string } {
+function mapFiltersToBetterAuth(filters: Filter<any>[]): { filterField?: string; filterOperator?: 'eq' | 'ne' | 'lt' | 'lte' | 'gt' | 'gte' | 'contains'; filterValue?: string } {
   if (!filters || filters.length === 0) {
     return {};
   }
 
   const firstFilter = filters[0];
   let filterField = firstFilter.id;
-  
+
   // Map nested paths to Better Auth field names
   if (filterField.startsWith('user.')) {
     filterField = filterField.split('.').pop() || filterField;
   }
   // Better Auth doesn't support filtering by person fields directly
   // Would need to filter client-side or use a different approach
-  
+
   const operatorMap: Record<string, 'eq' | 'ne' | 'lt' | 'lte' | 'gt' | 'gte' | 'contains'> = {
     equals: 'eq',
     eq: 'eq',
@@ -228,16 +229,16 @@ export async function listMembers(params: ListMembersParams): Promise<ListMember
 
     // Better Auth returns { members: [...], total: number }
     const members = (authResult.members || []) as BetterAuthMember[];
-    
+
     // Get member IDs to fetch additional counts from Prisma
     const memberIds = members.map((m) => m.id);
-    
+
     // Fetch counts from Prisma in a single efficient query
     let memberCountsMap = new Map<string, { userAreas: number; assignedUsers: number }>();
-    
+
     if (memberIds.length > 0) {
       const { db } = await import('@/server/db-client');
-      
+
       // Fetch all counts in parallel for better performance using aggregation
       const [userAreasCounts, assignedUsersCounts] = await Promise.all([
         db.userTenantArea.groupBy({
@@ -274,7 +275,7 @@ export async function listMembers(params: ListMembersParams): Promise<ListMember
         memberCountsMap.set(item.userTenantId, { ...existing, assignedUsers: item._count?.id ?? 0 });
       });
     }
-    
+
     // Transform Better Auth members to component format with counts from Prisma
     const transformedMembers = members.map((member) => {
       const base = transformMemberToComponentFormat(member);
@@ -304,7 +305,7 @@ export async function listMembers(params: ListMembersParams): Promise<ListMember
             if (!member.person) return false;
             const value = (member.person as any)[field];
             const filterValue = String(filter.value).toLowerCase();
-            
+
             const operator = filter.operator as string;
             if (operator === 'equals' || operator === 'eq') {
               return String(value).toLowerCase() === filterValue;
@@ -339,16 +340,12 @@ export async function listMembers(params: ListMembersParams): Promise<ListMember
  * Note: Better Auth doesn't provide a direct API for updating member additional fields,
  * so we use the base Prisma client for this specific operation since isActive is a custom field
  */
-export async function updateMemberStatus(
-  memberId: string,
-  organizationId: string,
-  isActive: boolean
-): Promise<void> {
+export async function updateMemberStatus(memberId: string, organizationId: string, isActive: boolean): Promise<void> {
   try {
     // Import the base Prisma client (not ZenStack) for direct database access
     // This is necessary because Better Auth doesn't expose APIs for additional fields
     const { db } = await import('@/server/db-client');
-    
+
     await db.userTenant.update({
       where: {
         id: memberId,
@@ -367,10 +364,7 @@ export async function updateMemberStatus(
 /**
  * Remove a member from an organization using Better Auth
  */
-export async function removeMember(
-  memberIdOrEmail: string,
-  organizationId: string
-): Promise<void> {
+export async function removeMember(memberIdOrEmail: string, organizationId: string): Promise<void> {
   try {
     await auth.api.removeMember({
       body: {
@@ -388,9 +382,7 @@ export async function removeMember(
 /**
  * Cancel an invitation using Better Auth
  */
-export async function cancelInvitation(
-  invitationId: string
-): Promise<void> {
+export async function cancelInvitation(invitationId: string): Promise<void> {
   try {
     await auth.api.cancelInvitation({
       body: {

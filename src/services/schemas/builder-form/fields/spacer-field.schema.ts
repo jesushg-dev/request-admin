@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -17,7 +17,10 @@ export const useSpacerFieldPropertiesSchema = () => {
  */
 export function createSpacerFieldPropertiesSchema(t: TranslationFn) {
   return z.object({
-    height: z.number().min(5, { message: t('heightMin') }).max(200, { message: t('heightMax') }),
+    height: z
+      .number()
+      .min(5, { message: t('heightMin') })
+      .max(200, { message: t('heightMax') }),
   });
 }
 
@@ -25,4 +28,3 @@ export function createSpacerFieldPropertiesSchema(t: TranslationFn) {
  * Type inference for SpacerFieldPropertiesSchema
  */
 export type TSpacerFieldPropertiesSchema = z.infer<ReturnType<typeof createSpacerFieldPropertiesSchema>>;
-

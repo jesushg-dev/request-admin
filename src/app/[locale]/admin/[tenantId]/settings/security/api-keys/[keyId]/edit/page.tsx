@@ -1,13 +1,13 @@
-import { type Metadata } from 'next';
 import { FC } from 'react';
-import { type Locale } from 'next-intl';
+import { type Metadata } from 'next';
 import { headers } from 'next/headers';
 import { notFound, redirect } from 'next/navigation';
+import { auth } from '@/server/auth-server';
+import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
 import { ApiKeyEditForm } from '@/components/common/setting/api-key-edit-form';
 import { PageCardWrapper } from '@/components/shared/page-container';
-import { auth } from '@/server/auth-server';
 
 interface EditApiKeyPageProps {
   params: Promise<{ locale: Locale; tenantId: string; keyId: string }>;
@@ -66,4 +66,3 @@ const EditApiKeyPage: FC<EditApiKeyPageProps> = async ({ params }) => {
 };
 
 export default EditApiKeyPage;
-

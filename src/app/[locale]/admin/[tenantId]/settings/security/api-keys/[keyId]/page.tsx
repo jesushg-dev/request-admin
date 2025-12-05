@@ -1,19 +1,19 @@
+import type { ReactNode } from 'react';
 import { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
+import { Link } from '@/i18n/routing';
+import { auth } from '@/server/auth-server';
+import { Pencil } from 'lucide-react';
+import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
-import type { ReactNode } from 'react';
 
-import { ApiKeyTesterCard } from '@/components/common/setting/api-key-tester-card';
+import { formatDate } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { formatDate } from '@/lib/utils';
-import { Link } from '@/i18n/routing';
-import { auth } from '@/server/auth-server';
-import { type Locale } from 'next-intl';
-import { Pencil } from 'lucide-react';
+import { ApiKeyTesterCard } from '@/components/common/setting/api-key-tester-card';
 
 interface ApiKeyDetailPageProps {
   params: Promise<{ locale: Locale; tenantId: string; keyId: string }>;
@@ -87,10 +87,7 @@ const ApiKeyDetailPage = async ({ params }: ApiKeyDetailPageProps) => {
           <DetailField label={t('detail.summary.createdAt')} value={formatDate(apiKey.createdAt)} />
           <DetailField label={t('detail.summary.expiresAt')} value={apiKey.expiresAt ? formatDate(apiKey.expiresAt) : t('table.never')} />
           <DetailField label={t('detail.summary.lastRequest')} value={apiKey.lastRequest ? formatDate(apiKey.lastRequest) : t('table.never')} />
-          <DetailField
-            label={t('detail.summary.remaining')}
-            value={typeof apiKey.remaining === 'number' ? apiKey.remaining.toLocaleString() : t('table.unlimited')}
-          />
+          <DetailField label={t('detail.summary.remaining')} value={typeof apiKey.remaining === 'number' ? apiKey.remaining.toLocaleString() : t('table.unlimited')} />
           <DetailField
             label={t('detail.summary.rateLimit')}
             value={
@@ -153,8 +150,12 @@ const ApiKeyDetailPage = async ({ params }: ApiKeyDetailPageProps) => {
               <strong>Authentication:</strong> You can use either:
             </p>
             <ul className="text-xs text-muted-foreground list-disc list-inside ml-2 space-y-1">
-              <li>API Key: <code className="bg-muted px-1 py-0.5 rounded">Authorization: Bearer YOUR_API_KEY</code></li>
-              <li>JWT Token: <code className="bg-muted px-1 py-0.5 rounded">Authorization: Bearer YOUR_JWT_TOKEN</code></li>
+              <li>
+                API Key: <code className="bg-muted px-1 py-0.5 rounded">Authorization: Bearer YOUR_API_KEY</code>
+              </li>
+              <li>
+                JWT Token: <code className="bg-muted px-1 py-0.5 rounded">Authorization: Bearer YOUR_JWT_TOKEN</code>
+              </li>
             </ul>
             <p className="text-xs text-muted-foreground">
               <strong>Getting JWT Token:</strong> Call <code className="bg-muted px-1 py-0.5 rounded">GET /api/auth/token</code> with your session to get a JWT token.
@@ -194,4 +195,3 @@ const normalizeMetadata = (metadata: unknown) => {
     return null;
   }
 };
-

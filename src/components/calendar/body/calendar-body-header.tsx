@@ -1,7 +1,7 @@
 'use client';
 
 import { format, isSameDay } from 'date-fns';
-import { es, enUS, type Locale } from 'date-fns/locale';
+import { enUS, es, type Locale } from 'date-fns/locale';
 import { useLocale } from 'next-intl';
 
 import { cn } from '../../../lib/utils';

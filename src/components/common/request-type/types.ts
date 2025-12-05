@@ -1,5 +1,5 @@
-import { OptionType } from '@/components/custom-ui/select';
 import { RequestLevelType } from '@/types/zenstackhq/hierarchy';
+import { OptionType } from '@/components/custom-ui/select';
 
 export interface ResourceGroup {
   level: RequestLevelType;
@@ -20,4 +20,3 @@ export interface BlockedResource {
   resource: OptionType;
   categories: BlockedResourceCategory[];
 }
-

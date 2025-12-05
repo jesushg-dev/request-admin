@@ -1,8 +1,8 @@
 'use client';
 
 import React, { memo, useMemo } from 'react';
-import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
 import type { MemberWithRelations } from '@/actions/organization';
+import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
 import { ColumnDef } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
 import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
@@ -10,9 +10,8 @@ import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useListMembers } from '@/hooks/use-list-members';
-import { useTenantContext } from '@/components/hoc/tenant-provider';
-import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
@@ -21,6 +20,7 @@ import { DataTableColumnHeader } from '@/components/data-table/data-table-column
 import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
 import { Hint } from '@/components/hint';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 
 type UserWithRelations = MemberWithRelations;
 
@@ -44,7 +44,13 @@ const UsersPageClient: React.FC<UsersPageClientProps> = ({ canCreate, canEdit, c
   const [search] = useQueryStates(searchParamsParsers);
 
   // Use Better Auth to fetch members
-  const { data: membersResult, isLoading, isError, error, refetch } = useListMembers({
+  const {
+    data: membersResult,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useListMembers({
     organizationId: tenantId,
     page: search.page,
     perPage: search.perPage,
@@ -84,10 +90,14 @@ const UsersPageClient: React.FC<UsersPageClientProps> = ({ canCreate, canEdit, c
             table={table}
             exportFilename="users"
             entityLabel={t('entityLabel')}
-            addLink={canCreate ? {
-              pathname: '/admin/[tenantId]/security/users/new',
-              params: { tenantId },
-            } : undefined}
+            addLink={
+              canCreate
+                ? {
+                    pathname: '/admin/[tenantId]/security/users/new',
+                    params: { tenantId },
+                  }
+                : undefined
+            }
           />
         </DataTableAdvancedToolbar>
       </DataTable>
@@ -111,10 +121,8 @@ function getTableConfiguration({ t, canEdit, canDelete, tenantId }: GetTableConf
         const person = row.original.person;
         const user = row.original.user;
         const displayName = person ? `${person.firstName} ${person.lastName}` : user.username || user.email;
-        const initials = person
-          ? `${person.firstName?.[0] || ''}${person.lastName?.[0] || ''}`.toUpperCase()
-          : user.email?.[0]?.toUpperCase() || 'U';
-        
+        const initials = person ? `${person.firstName?.[0] || ''}${person.lastName?.[0] || ''}`.toUpperCase() : user.email?.[0]?.toUpperCase() || 'U';
+
         return (
           <div className="flex items-center gap-4">
             <Avatar>
@@ -177,10 +185,14 @@ function getTableConfiguration({ t, canEdit, canDelete, tenantId }: GetTableConf
         <ActionCell
           row={row}
           onDelete={canDelete ? console.log : undefined}
-          updateLink={canEdit ? {
-            pathname: '/admin/[tenantId]/security/users/[slug]',
-            params: { tenantId, slug: row.original.id },
-          } : undefined}
+          updateLink={
+            canEdit
+              ? {
+                  pathname: '/admin/[tenantId]/security/users/[slug]',
+                  params: { tenantId, slug: row.original.id },
+                }
+              : undefined
+          }
         />
       ),
       size: 20,
@@ -205,4 +217,3 @@ function getTableConfiguration({ t, canEdit, canDelete, tenantId }: GetTableConf
 }
 
 export default memo(UsersPageClient);
-

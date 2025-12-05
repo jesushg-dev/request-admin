@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -35,4 +35,3 @@ export type TPlanInfoSchema = z.infer<ReturnType<typeof createPlanInfoSchema>>;
 export function getPlanInfoSchema() {
   return createPlanInfoSchema((key: string) => key);
 }
-

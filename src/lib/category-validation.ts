@@ -5,7 +5,7 @@ import { getDb } from '@/server/db-client';
 /**
  * Checks if a category can be activated (has a complete chain of children down to the last level).
  * This ensures users can complete request forms without encountering "No options" errors.
- * 
+ *
  * @param categoryId - The ID of the category to check
  * @param tenantId - The tenant ID for security
  * @returns true if the category can be activated, false otherwise
@@ -55,7 +55,7 @@ export async function canActivateCategory(categoryId: string, tenantId: string):
   }
 
   // Recursive function to check if there's a complete chain from this category to the last level
-  const checkChain = (cat: typeof allCategories[0], targetLevelIndex: number): boolean => {
+  const checkChain = (cat: (typeof allCategories)[0], targetLevelIndex: number): boolean => {
     const catLevelIndex = levels.findIndex((l) => l.id === cat.hierarchyLevelId);
     if (catLevelIndex === -1) return false;
 
@@ -68,9 +68,7 @@ export async function canActivateCategory(categoryId: string, tenantId: string):
     const nextLevelId = levels[catLevelIndex + 1]?.id;
     if (!nextLevelId) return false;
 
-    const children = allCategories.filter(
-      (c) => c.parentCategoryId === cat.id && c.hierarchyLevelId === nextLevelId
-    );
+    const children = allCategories.filter((c) => c.parentCategoryId === cat.id && c.hierarchyLevelId === nextLevelId);
 
     if (children.length === 0) {
       // No children at the next level - chain is incomplete
@@ -84,4 +82,3 @@ export async function canActivateCategory(categoryId: string, tenantId: string):
   // Check if there's a complete chain from this category to the last level
   return checkChain(category, levels.length - 1);
 }
-

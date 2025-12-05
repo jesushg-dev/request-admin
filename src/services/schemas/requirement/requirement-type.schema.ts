@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -18,8 +18,15 @@ export const useRequirementTypeSchema = () => {
 export function createRequirementTypeSchema(t: TranslationFn) {
   return z.object({
     id: z.string().uuid(),
-    name: z.string().min(1, { message: t('nameRequired') }).max(100, { message: t('nameMaxLength') }),
-    description: z.string().max(500, { message: t('descriptionMaxLength') }).optional().default(''),
+    name: z
+      .string()
+      .min(1, { message: t('nameRequired') })
+      .max(100, { message: t('nameMaxLength') }),
+    description: z
+      .string()
+      .max(500, { message: t('descriptionMaxLength') })
+      .optional()
+      .default(''),
     isActive: z.boolean().default(true),
     isDefault: z.boolean().default(false),
   });
@@ -29,4 +36,3 @@ export function createRequirementTypeSchema(t: TranslationFn) {
  * Type inference for RequirementTypeSchema
  */
 export type TRequirementTypeSchema = z.infer<ReturnType<typeof createRequirementTypeSchema>>;
-

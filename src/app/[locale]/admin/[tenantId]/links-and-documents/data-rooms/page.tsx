@@ -1,9 +1,10 @@
 import { type Metadata } from 'next';
-import { type Locale } from 'next-intl';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
+import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
+
 import DataRoomsPageClient from '@/components/common/data-room/data-rooms-page-client';
 
 interface DataRoomsPageProps {
@@ -28,7 +29,7 @@ export default async function DataRoomsPage({ params }: DataRoomsPageProps) {
 
   const auth = await getAuthContext(tenantId);
   const canViewDataRooms = auth.hasPermissions([PermissionActions.DATA_ROOM.VIEW]);
-  
+
   if (!canViewDataRooms) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]', params: { tenantId } } });
   }

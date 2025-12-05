@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/server/auth-server';
 import { db } from '@/server/db-client';
 import type { User } from '@prisma/client';
-import { jwtVerify, createRemoteJWKSet } from 'jose';
+import { createRemoteJWKSet, jwtVerify } from 'jose';
 
 /**
  * Authenticates a request using a JWT token from the Authorization header.
@@ -10,7 +10,7 @@ import { jwtVerify, createRemoteJWKSet } from 'jose';
  */
 export async function authenticateWithJWT(request: Request): Promise<{ user: User; error?: never } | { user?: never; error: NextResponse }> {
   const authHeader = request.headers.get('authorization');
-  
+
   if (!authHeader) {
     return {
       error: NextResponse.json({ error: 'Missing Authorization header' }, { status: 401 }),
@@ -23,11 +23,9 @@ export async function authenticateWithJWT(request: Request): Promise<{ user: Use
   try {
     // Get the base URL from environment or use default
     const baseURL = process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_BETTER_AUTH_URL || 'http://localhost:3000';
-    
+
     // Create JWKS remote set
-    const JWKS = createRemoteJWKSet(
-      new URL(`${baseURL}/api/auth/jwks`)
-    );
+    const JWKS = createRemoteJWKSet(new URL(`${baseURL}/api/auth/jwks`));
 
     // Verify the JWT token
     const { payload } = await jwtVerify(token, JWKS, {
@@ -73,11 +71,9 @@ export async function authenticateWithJWT(request: Request): Promise<{ user: Use
  * Tries JWT first, then falls back to API Key.
  * Returns user and tenantId (for API keys) or user only (for JWT - tenantId must be provided separately)
  */
-export async function authenticateWithApiKeyOrJWT(
-  request: Request
-): Promise<{ user: User; tenantId?: string; error?: never } | { user?: never; tenantId?: never; error: NextResponse }> {
+export async function authenticateWithApiKeyOrJWT(request: Request): Promise<{ user: User; tenantId?: string; error?: never } | { user?: never; tenantId?: never; error: NextResponse }> {
   const authHeader = request.headers.get('authorization');
-  
+
   if (!authHeader) {
     return {
       error: NextResponse.json({ error: 'Missing Authorization header' }, { status: 401 }),
@@ -101,4 +97,3 @@ export async function authenticateWithApiKeyOrJWT(
   const { authenticateWithApiKey } = await import('./api-key-auth');
   return authenticateWithApiKey(request);
 }
-

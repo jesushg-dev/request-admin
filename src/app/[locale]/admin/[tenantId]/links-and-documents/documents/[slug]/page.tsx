@@ -1,6 +1,6 @@
-import { getPathname, Link, redirect } from '@/i18n/routing';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
+import { getPathname, Link, redirect } from '@/i18n/routing';
 import { getDb } from '@/server/db-client';
 import { format } from 'date-fns';
 import { Calendar, Edit, ExternalLink, File, LinkIcon, MoreHorizontal, Trash2, Upload } from 'lucide-react';
@@ -27,7 +27,7 @@ export default async function DocumentDetailPage({ params }: DocumentDetailPageP
 
   const auth = await getAuthContext(tenantId);
   const canViewDocuments = auth.hasPermissions([PermissionActions.DOCUMENT_MANAGEMENT.VIEW]);
-  
+
   if (!canViewDocuments) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/documents', params: { tenantId } } });
   }

@@ -14,4 +14,3 @@ export default async function WorkflowSelectorServer({ tenantId, selectedWorkflo
 
   return <WorkflowSelectorClient workflows={workflows} selectedWorkflow={selectedWorkflow} />;
 }
-

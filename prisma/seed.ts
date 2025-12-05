@@ -1,9 +1,7 @@
 import { randomUUID } from 'crypto';
-
 import { PrismaClient } from '@prisma/client';
 
 import { hashPassword } from '../src/lib/password.js';
-
 import { createActivacionArea } from './area-seed/activacion.area';
 import { createAprobadosCreditoMesaControlArea } from './area-seed/aprobados-credito-mesa-control.area';
 import { createAreaTecnicaArea } from './area-seed/area-tecnica.area';
@@ -28,7 +26,7 @@ import { createTrasladosDeEquiposArea } from './area-seed/traslados-equipos.area
 import { getITILAssignmentTypes } from './assignment-type';
 import { PrismaModules } from './module';
 import { getPriorities } from './priority';
-import { TEST_USERS, createSystemRoles, SUPERVISOR_FEATURES, COLABORADOR_FEATURES } from './role';
+import { COLABORADOR_FEATURES, createSystemRoles, SUPERVISOR_FEATURES, TEST_USERS } from './role';
 import { getITILStatuses, getITILTransitions } from './status';
 import { UNSTABLE_TENANT_ID } from './util';
 
@@ -2706,33 +2704,28 @@ export async function seedITILWorkflow() {
   return { workflow, statuses, transitions };
 }
 
-
 /**
  * Helper function to create area roles
- * 
+ *
  * This function creates Supervisor and Colaborador roles for each area and assigns users to them.
  * Users are distributed 50/50: first half as Supervisors, second half as Colaboradores.
- * 
+ *
  * User distribution order:
  * 1. Jesus Hernandez (System - Administrador)
  * 2. Danilo Acevedo (System - Analista)
  * 3-12. Test users in the order they were created (TEST_USERS array)
- * 
+ *
  * For detailed user information and QA testing, see: docs/TEST_USERS.md
- * 
+ *
  * @param prisma Prisma client instance
  * @param area Area object with id and name
  * @param testUserTenantIds Array of user tenant IDs from test users
  */
-async function createAreaRoles(
-  prisma: PrismaClient,
-  area: { id: string; name: string },
-  testUserTenantIds: string[]
-) {
+async function createAreaRoles(prisma: PrismaClient, area: { id: string; name: string }, testUserTenantIds: string[]) {
   // Distribute test users between Supervisor and Colaborador roles
   // Include system users (Jesus and Danilo) as well
   const allUserTenantIds = [USER_TENANT_JESUS_ID, USER_TENANT_DANILO_ID, ...testUserTenantIds];
-  
+
   // Split users: first half as Supervisors, second half as Colaboradores
   // Example: 12 users → 6 Supervisors (positions 0-5), 6 Colaboradores (positions 6-11)
   const midPoint = Math.ceil(allUserTenantIds.length / 2);
@@ -2780,13 +2773,7 @@ async function createAreaRoles(
 }
 
 // Main refactored function
-async function createAreas(
-  hierarchyId: string,
-  hierarchyLevelRequestTypeId: string,
-  hierarchyLevelCategoryId: string,
-  hierarchyLevelSubcategoryId: string,
-  testUserTenantIds: string[]
-) {
+async function createAreas(hierarchyId: string, hierarchyLevelRequestTypeId: string, hierarchyLevelCategoryId: string, hierarchyLevelSubcategoryId: string, testUserTenantIds: string[]) {
   const areaCreators = [
     createInternalCommissionsArea,
     createCommissionsArea,

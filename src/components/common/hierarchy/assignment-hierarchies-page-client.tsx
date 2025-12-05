@@ -3,9 +3,9 @@
 import React, { memo, useMemo } from 'react';
 import { useCountAssignmentHierarchy, useFindManyAssignmentHierarchy } from '@/services/api/hooks';
 import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
-import { Prisma } from '@zenstackhq/runtime/models';
 import { Checkbox } from '@radix-ui/react-checkbox';
 import { ColumnDef } from '@tanstack/react-table';
+import { Prisma } from '@zenstackhq/runtime/models';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { parseAsInteger, parseAsString, parseAsStringEnum, useQueryStates } from 'nuqs';
@@ -13,7 +13,6 @@ import { parseAsInteger, parseAsString, parseAsStringEnum, useQueryStates } from
 import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
-import { useTenantContext } from '@/components/hoc/tenant-provider';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { AssignmentHierarchyLevelTable, useAssignmentLevelTableColumns } from '@/components/common/hierarchy/assignment-hierarchy-level-table';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
@@ -22,6 +21,7 @@ import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-adv
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 
 const HierarchyDefaultArgs = Prisma.validator<Prisma.AssignmentHierarchyDefaultArgs>()({
   select: {
@@ -102,10 +102,14 @@ const AssignmentHierarchiesPageClient: React.FC<AssignmentHierarchiesPageClientP
             table={table}
             exportFilename="assignment_hierarchies"
             entityLabel={t('entityLabel')}
-            addLink={canCreate ? {
-              pathname: '/admin/[tenantId]/configurations/assignment-hierarchies/new',
-              params: { tenantId },
-            } : undefined}
+            addLink={
+              canCreate
+                ? {
+                    pathname: '/admin/[tenantId]/configurations/assignment-hierarchies/new',
+                    params: { tenantId },
+                  }
+                : undefined
+            }
           />
         </DataTableAdvancedToolbar>
       </DataTable>
@@ -175,10 +179,14 @@ function getTableConfiguration({ t, tenantId, canEdit, canDelete }: GetTableConf
         <ActionCell
           row={row}
           onDelete={canDelete ? () => console.log('Delete', row.original) : undefined}
-          updateLink={canEdit ? {
-            pathname: '/admin/[tenantId]/configurations/assignment-hierarchies/[slug]/edit',
-            params: { tenantId: row.original.tenantId, slug: row.original.id },
-          } : undefined}
+          updateLink={
+            canEdit
+              ? {
+                  pathname: '/admin/[tenantId]/configurations/assignment-hierarchies/[slug]/edit',
+                  params: { tenantId: row.original.tenantId, slug: row.original.id },
+                }
+              : undefined
+          }
         />
       ),
       size: 20,
@@ -196,4 +204,3 @@ function getTableConfiguration({ t, tenantId, canEdit, canDelete }: GetTableConf
 }
 
 export default memo(AssignmentHierarchiesPageClient);
-

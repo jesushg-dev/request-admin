@@ -49,7 +49,7 @@ const ADMINISTRADOR_FEATURES = [
   // Dashboard
   PermissionActions.DASHBOARD.VIEW,
   PermissionActions.DASHBOARD.EXPORT,
-  // Request Management 
+  // Request Management
   PermissionActions.REQUEST_MANAGEMENT.CREATE,
   PermissionActions.REQUEST_MANAGEMENT.SCOPED_CREATE,
   PermissionActions.REQUEST_MANAGEMENT.VIEW,
@@ -215,25 +215,29 @@ export interface SystemRoleData {
 export const SYSTEM_ROLES: SystemRoleData[] = [
   {
     name: 'Administrador',
-    description: 'Responsable de garantizar la seguridad y el acceso al sistema. Gestiona usuarios, configura el sistema y controla permisos y restricciones para proteger la información. Supervisa tareas como restablecimiento de contraseñas y asignación de roles.',
+    description:
+      'Responsable de garantizar la seguridad y el acceso al sistema. Gestiona usuarios, configura el sistema y controla permisos y restricciones para proteger la información. Supervisa tareas como restablecimiento de contraseñas y asignación de roles.',
     features: ADMINISTRADOR_FEATURES,
     userTenantId: [], // Will be assigned via USER_TENANT_JESUS_ID parameter
   },
   {
     name: 'Coordinador',
-    description: 'El Coordinador es el encargado de supervisar y gestionar las solicitudes de servicios de telecomunicaciones. Actúa como intermediario entre los usuarios y los analistas, asegurando que las solicitudes se asignen y resuelvan de manera oportuna.',
+    description:
+      'El Coordinador es el encargado de supervisar y gestionar las solicitudes de servicios de telecomunicaciones. Actúa como intermediario entre los usuarios y los analistas, asegurando que las solicitudes se asignen y resuelvan de manera oportuna.',
     features: COORDINADOR_FEATURES,
     userTenantId: [],
   },
   {
     name: 'Analista',
-    description: 'El Analista es el responsable de resolver las solicitudes asignadas por el Coordinador. Debe brindar soluciones efectivas y oportunas, siguiendo los procedimientos establecidos por la empresa.',
+    description:
+      'El Analista es el responsable de resolver las solicitudes asignadas por el Coordinador. Debe brindar soluciones efectivas y oportunas, siguiendo los procedimientos establecidos por la empresa.',
     features: ANALISTA_FEATURES,
     userTenantId: [], // Will be assigned via USER_TENANT_DANILO_ID parameter
   },
   {
     name: 'Distribuidor',
-    description: 'Usuario externo autorizado que representa comercialmente a Claro-Nicaragua. Su función principal es registrar solicitudes en nombre de los clientes para activaciones, suspensiones, renovaciones u otros servicios de telecomunicaciones.',
+    description:
+      'Usuario externo autorizado que representa comercialmente a Claro-Nicaragua. Su función principal es registrar solicitudes en nombre de los clientes para activaciones, suspensiones, renovaciones u otros servicios de telecomunicaciones.',
     features: DISTRIBUIDOR_FEATURES,
     userTenantId: [],
   },
@@ -246,12 +250,7 @@ export const SYSTEM_ROLES: SystemRoleData[] = [
  * @param jesusUserTenantId User tenant ID for Jesus (Administrador role)
  * @param daniloUserTenantId User tenant ID for Danilo (Analista role)
  */
-export async function createSystemRoles(
-  prisma: PrismaClient,
-  tenantId: string,
-  jesusUserTenantId: string,
-  daniloUserTenantId: string
-) {
+export async function createSystemRoles(prisma: PrismaClient, tenantId: string, jesusUserTenantId: string, daniloUserTenantId: string) {
   // Assign user tenant IDs to specific roles
   const systemRoles = SYSTEM_ROLES.map((role) => {
     if (role.name === 'Administrador') {

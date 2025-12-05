@@ -26,4 +26,3 @@ export function createAppearanceSchema(t?: TranslationFn) {
  * Type inference for AppearanceSchema
  */
 export type TAppearanceSchema = z.infer<ReturnType<typeof createAppearanceSchema>>;
-

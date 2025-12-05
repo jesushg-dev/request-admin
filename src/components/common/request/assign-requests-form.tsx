@@ -1,21 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { assignRequestsMassively, getAvailableRequestsForUser, getTenantUsers } from '@/actions/request-assignment';
+import { useAssignRequestsSchema, type TAssignRequestsSchema } from '@/services/schemas/request';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PlusCircle, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { Button } from '@/components/ui/button';
 import { Form, FormField } from '@/components/ui/form';
 import { Skeleton } from '@/components/ui/skeleton';
-import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
 import { Textarea } from '@/components/ui/textarea';
 import Select, { type OptionType } from '@/components/custom-ui/select';
-import { useAssignRequestsSchema, type TAssignRequestsSchema } from '@/services/schemas/request';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
+import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
 
 // ===================
 // Type Definitions
@@ -181,19 +181,17 @@ export default function AssignRequestsForm() {
                     render={({ field }) => (
                       <FormItem className="mb-2 w-full" label={index === 0 ? t('requests') : `${t('request')} ${index + 1}`}>
                         <div className="flex items-center gap-2 w-full">
-                           <Select
-                             value={field.value}
-                             onChange={field.onChange}
-                             options={availableOptions.filter(
-                               (opt) => !selectedValues.includes(opt.value) || opt.value === field.value?.value
-                             )}
-                             placeholder={t('requestPlaceholder')}
-                             isSearchable
-                             className="w-full"
-                             styles={{
-                               menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                             }}
-                           />
+                          <Select
+                            value={field.value}
+                            onChange={field.onChange}
+                            options={availableOptions.filter((opt) => !selectedValues.includes(opt.value) || opt.value === field.value?.value)}
+                            placeholder={t('requestPlaceholder')}
+                            isSearchable
+                            className="w-full"
+                            styles={{
+                              menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                            }}
+                          />
                           {fields.length > 1 && (
                             <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}>
                               <X className="h-4 w-4" />
@@ -218,9 +216,7 @@ export default function AssignRequestsForm() {
               </>
             )}
 
-            {selectedUserId?.value && availableRequests.length === 0 && !isLoadingRequests && (
-              <div className="text-center text-muted-foreground py-8">{t('noRequests')}</div>
-            )}
+            {selectedUserId?.value && availableRequests.length === 0 && !isLoadingRequests && <div className="text-center text-muted-foreground py-8">{t('noRequests')}</div>}
 
             {selectedUserId?.value && availableRequests.length > 0 && (
               <FormField

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { getPlanFeatureSchema, getPlanInfoSchema, usePlanFeatureSchema, usePlanInfoSchema, type TPlanFeatureSchema, type TPlanInfoSchema } from '@/services/schemas/plan';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { defineStepper } from '@stepperize/react';
 import { useTranslations } from 'next-intl';
@@ -11,7 +12,6 @@ import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { StepNavigationModern } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
-import { getPlanInfoSchema, usePlanInfoSchema, getPlanFeatureSchema, usePlanFeatureSchema, type TPlanInfoSchema, type TPlanFeatureSchema } from '@/services/schemas/plan';
 
 import { PlanFeaturesStep } from './plan-feature-step';
 import { PlanInfoStep } from './plan-step';

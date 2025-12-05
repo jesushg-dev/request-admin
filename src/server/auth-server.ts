@@ -1,5 +1,7 @@
 import { cache } from 'react';
 import { headers } from 'next/headers';
+import { passkey } from '@better-auth/passkey';
+import { sso } from '@better-auth/sso';
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { nextCookies } from 'better-auth/next-js';
@@ -22,8 +24,6 @@ import {
   twoFactor,
   username,
 } from 'better-auth/plugins';
-import { passkey } from '@better-auth/passkey';
-import { sso } from '@better-auth/sso';
 
 import { sendChangeEmailVerification, sendInvitationEmail, sendMagicLink, sendResetPassword, sendVerificationEmail, sendVerificationOTP } from '@/lib/mail';
 import { comparePassword, hashPassword } from '@/lib/password';

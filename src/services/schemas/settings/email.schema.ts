@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -28,4 +28,3 @@ export function createEmailChangeSchema(t: TranslationFn) {
  * Type inference for EmailChangeSchema
  */
 export type TEmailChangeSchema = z.infer<ReturnType<typeof createEmailChangeSchema>>;
-

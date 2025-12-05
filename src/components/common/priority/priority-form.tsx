@@ -3,6 +3,7 @@
 import { useTransition } from 'react';
 import { CreateRequestPriorityType, UpdateRequestPriorityType } from '@/actions/priority';
 import { useRouter } from '@/i18n/routing';
+import { usePrioritySchema, type TPrioritySchema } from '@/services/schemas/priority';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Tag } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -15,7 +16,6 @@ import { Form, FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { FormActions, FormCheckboxItem, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
-import { usePrioritySchema, type TPrioritySchema } from '@/services/schemas/priority';
 
 // Default values generator
 export const getDefaultValues = (): TPrioritySchema => ({

@@ -4,7 +4,7 @@
 
 import { getDb } from '@/server/db-client';
 
-import { POST } from './route';
+import { GET } from './route';
 
 // Mock the database
 const mockDb = {
@@ -38,7 +38,7 @@ describe('Tenants API', () => {
     });
 
     // Call the handler
-    const response = await POST(request);
+    const response = await GET(request as any);
     const data = await response.json();
 
     // Assertions
@@ -61,7 +61,7 @@ describe('Tenants API', () => {
     });
 
     // Call the handler
-    const response = await POST(request);
+    const response = await GET(request as any);
     const data = await response.json();
 
     // Assertions
@@ -77,7 +77,7 @@ describe('Tenants API', () => {
     });
 
     // Call the handler
-    const response = await POST(request);
+    const response = await GET(request as any);
     const data = await response.json();
 
     // Assertions

@@ -30,7 +30,7 @@ const ResetForm = () => {
     startTransition(async () => {
       const toastId = toast('register-toast');
 
-      await authClient.forgetPassword(
+      await authClient.requestPasswordReset(
         {
           email: values.email,
           redirectTo: '/auth/new-password',
@@ -42,7 +42,7 @@ const ResetForm = () => {
           onSuccess: () => {
             toast.success(t('success'), { id: toastId });
           },
-          onError: (ctx) => {
+          onError: (ctx: { error: { message: string } }) => {
             toast.error(`${t('error')}: ${ctx.error.message}`, { id: toastId });
           },
         }

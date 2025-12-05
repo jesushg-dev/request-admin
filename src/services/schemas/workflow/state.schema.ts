@@ -1,5 +1,6 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
+
 import { optionSchema } from '@/components/custom-ui/select';
 
 // Type helper for translation function
@@ -30,4 +31,3 @@ export function createStateSchema(t: TranslationFn) {
  * Type inference for StateSchema
  */
 export type TStateSchema = z.infer<ReturnType<typeof createStateSchema>>;
-

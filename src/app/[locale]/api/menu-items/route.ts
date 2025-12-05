@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { authenticateWithApiKeyOrJWT, validateTenantAccess } from '@/lib/api-key-auth';
 import { getDb } from '@/server/db-client';
+
+import { authenticateWithApiKeyOrJWT, validateTenantAccess } from '@/lib/api-key-auth';
 
 export async function GET(request: NextRequest) {
   // Authenticate with API key or JWT token
@@ -73,4 +74,3 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
-

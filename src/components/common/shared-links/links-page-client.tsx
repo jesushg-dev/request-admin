@@ -2,8 +2,8 @@
 
 import React, { useMemo } from 'react';
 import { useCountLink, useFindManyLink } from '@/services/api/hooks';
-import { Prisma } from '@zenstackhq/runtime/models';
 import { ColumnDef, Row } from '@tanstack/react-table';
+import { Prisma } from '@zenstackhq/runtime/models';
 import { Mail } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
@@ -12,13 +12,13 @@ import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { formatDate } from '@/lib/utils';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
-import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 
 const LinkDefaultArgs = Prisma.validator<Prisma.LinkDefaultArgs>()({
   include: {
@@ -99,13 +99,17 @@ export default function LinksPageClient({ canCreate, canEdit, canDelete }: Links
           title: t('table.empty'),
           description: t('description'),
         }}>
-        <DataTableToolbarActions 
-          table={table} 
+        <DataTableToolbarActions
+          table={table}
           entityLabel={t('entityLabel')}
-          addLink={canCreate ? {
-            pathname: '/admin/[tenantId]/links-and-documents/links/new',
-            params: { tenantId },
-          } : undefined}
+          addLink={
+            canCreate
+              ? {
+                  pathname: '/admin/[tenantId]/links-and-documents/links/new',
+                  params: { tenantId },
+                }
+              : undefined
+          }
         />
       </DataTable>
     </DataTableShell>
@@ -171,10 +175,14 @@ function getTableConfiguration({ t, tenantId, canEdit, canDelete }: TableConfigP
         <ActionCell
           row={row}
           onDelete={canDelete ? console.log : undefined}
-          updateLink={canEdit ? {
-            pathname: '/admin/[tenantId]/links-and-documents/links/[slug]/edit',
-            params: { tenantId, slug: row.original.id },
-          } : undefined}
+          updateLink={
+            canEdit
+              ? {
+                  pathname: '/admin/[tenantId]/links-and-documents/links/[slug]/edit',
+                  params: { tenantId, slug: row.original.id },
+                }
+              : undefined
+          }
         />
       ),
       size: 40,
@@ -192,10 +200,14 @@ function getTableConfiguration({ t, tenantId, canEdit, canDelete }: TableConfigP
           <ActionCell
             row={row}
             onDelete={canDelete ? console.log : undefined}
-            updateLink={canEdit ? {
-              pathname: '/admin/[tenantId]/links-and-documents/links/[slug]/edit',
-              params: { tenantId, slug: row.original.id },
-            } : undefined}
+            updateLink={
+              canEdit
+                ? {
+                    pathname: '/admin/[tenantId]/links-and-documents/links/[slug]/edit',
+                    params: { tenantId, slug: row.original.id },
+                  }
+                : undefined
+            }
           />
         </div>
       </CardHeader>
@@ -231,4 +243,3 @@ const StatBadge = ({ label, value }: { label: string; value: string | number }) 
     </Badge>
   </div>
 );
-

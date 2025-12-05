@@ -1,10 +1,10 @@
 import { FC } from 'react';
-import { type Locale } from 'next-intl';
-import { redirect } from '@/i18n/routing';
 import { getAuthContext } from '@/actions/authorization';
-import { PermissionActions } from '@/constants/permissions';
-import { getTranslations } from 'next-intl/server';
 import { getRequestHierarchiesAndLevelsByTenantId } from '@/actions/hierarchy';
+import { PermissionActions } from '@/constants/permissions';
+import { redirect } from '@/i18n/routing';
+import { type Locale } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
 import CreateNewRequestType from '@/components/common/request-type/create-request-type';
 import { PageDialogWrapper } from '@/components/shared/page-container';
@@ -18,7 +18,7 @@ const NewRequestTypePage: FC<NewRequestTypePageProps> = async ({ params }) => {
 
   const auth = await getAuthContext(tenantId);
   const canCreate = auth.hasPermissions([PermissionActions.REQUEST_TYPE.CREATE]);
-  
+
   if (!canCreate) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/configurations/request-types', params: { tenantId } } });
   }
@@ -38,4 +38,3 @@ const NewRequestTypePage: FC<NewRequestTypePageProps> = async ({ params }) => {
 };
 
 export default NewRequestTypePage;
-

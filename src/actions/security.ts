@@ -1,7 +1,7 @@
 'use server';
 
-import { getDb } from '@/server/db-client';
 import { currentSession } from '@/server/auth-server';
+import { getDb } from '@/server/db-client';
 
 class UserNotFoundErr extends Error {}
 
@@ -41,7 +41,7 @@ export async function getSecurityStats(tenantId: string): Promise<SecurityStats>
   // You may want to create a separate audit table for login attempts
   const yesterday = new Date();
   yesterday.setHours(yesterday.getHours() - 24);
-  
+
   // This is a placeholder - you'd typically have a failed login attempts table
   // For now, we'll use expired sessions as a proxy metric
   const failedLoginAttempts = await db.session.count({
@@ -67,7 +67,7 @@ export async function getSecurityStats(tenantId: string): Promise<SecurityStats>
   // Note: This would typically be tracked via Verification table with identifier = 'reset-password'
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-  
+
   const passwordResets = await db.verification.count({
     where: {
       identifier: 'reset-password',
@@ -84,4 +84,3 @@ export async function getSecurityStats(tenantId: string): Promise<SecurityStats>
     passwordResets,
   };
 }
-

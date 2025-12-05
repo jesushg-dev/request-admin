@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSelectFieldPropertiesSchema, type TSelectFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { MousePointerClickIcon, PlusIcon, XIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -17,7 +18,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { ElementsType, FormElement, FormElementInstance, SubmitFunction } from '@/components/builder-form/form-elements';
-import { useSelectFieldPropertiesSchema, type TSelectFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 
 const type: ElementsType = 'SelectField';
 
@@ -89,7 +89,7 @@ function FormComponent({ elementInstance, submitValue, isInvalid, defaultValue }
   }, [isInvalid]);
 
   const { required, placeHolder, options } = element.extraAttributes;
-  
+
   // Translate default values, otherwise use custom user values
   const label = element.extraAttributes.label === extraAttributes.label ? tDefaults('selectFieldLabel') : element.extraAttributes.label;
   const helperText = element.extraAttributes.helperText === extraAttributes.helperText ? tDefaults('selectFieldHelperText') : element.extraAttributes.helperText;
@@ -181,9 +181,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                   }}
                 />
               </FormControl>
-              <FormDescription>
-                {t('labelDescription')}
-              </FormDescription>
+              <FormDescription>{t('labelDescription')}</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -221,9 +219,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                   }}
                 />
               </FormControl>
-              <FormDescription>
-                {t('helperTextDescription')}
-              </FormDescription>
+              <FormDescription>{t('helperTextDescription')}</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -276,9 +272,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                 ))}
               </div>
 
-              <FormDescription>
-                {t('helperTextDescription')}
-              </FormDescription>
+              <FormDescription>{t('helperTextDescription')}</FormDescription>
               <FormMessage />
             </FormItem>
           )}

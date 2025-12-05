@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+
 import EmptyState from './empty-state';
 
 export type PermissionEmptyStateProps = {
@@ -14,12 +15,7 @@ export function PermissionEmptyState({ title, description, className }: Permissi
 
   return (
     <div className="flex flex-1 items-center justify-center">
-      <EmptyState 
-        title={title ?? t('noPermission')} 
-        description={description ?? t('noPermissionDescription')} 
-        className={className}
-      />
+      <EmptyState title={title ?? t('noPermission')} description={description ?? t('noPermissionDescription')} className={className} />
     </div>
   );
 }
-

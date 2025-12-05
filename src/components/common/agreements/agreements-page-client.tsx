@@ -2,8 +2,8 @@
 
 import React, { useMemo } from 'react';
 import { useCountAgreement, useFindManyAgreement } from '@/services/api/hooks';
-import { Prisma } from '@zenstackhq/runtime/models';
 import { ColumnDef, Row } from '@tanstack/react-table';
+import { Prisma } from '@zenstackhq/runtime/models';
 import { FileText, LinkIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
@@ -12,7 +12,6 @@ import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { formatDate } from '@/lib/utils';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
-import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
@@ -20,6 +19,7 @@ import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
 import { Hint } from '@/components/hint';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { TruncatedText } from '@/components/shared/table-util';
 
 const AgreementDefaultArgs = Prisma.validator<Prisma.AgreementDefaultArgs>()({
@@ -92,10 +92,14 @@ export default function AgreementsPageClient({ canCreate, canEdit, canDelete }: 
           table={table}
           entityLabel={t('entityLabel')}
           exportFilename="agreements"
-          addLink={canCreate ? {
-            pathname: '/admin/[tenantId]/links-and-documents/agreements/new',
-            params: { tenantId },
-          } : undefined}
+          addLink={
+            canCreate
+              ? {
+                  pathname: '/admin/[tenantId]/links-and-documents/agreements/new',
+                  params: { tenantId },
+                }
+              : undefined
+          }
         />
       </DataTable>
     </DataTableShell>
@@ -166,10 +170,14 @@ function getTableConfiguration({ t, tenantId, canEdit, canDelete }: TableConfigP
         <ActionCell
           row={row}
           onDelete={canDelete ? () => console.log('Delete', row.original.id) : undefined}
-          updateLink={canEdit ? {
-            pathname: '/admin/[tenantId]/links-and-documents/agreements/[slug]/edit',
-            params: { tenantId, slug: row.original.id },
-          } : undefined}
+          updateLink={
+            canEdit
+              ? {
+                  pathname: '/admin/[tenantId]/links-and-documents/agreements/[slug]/edit',
+                  params: { tenantId, slug: row.original.id },
+                }
+              : undefined
+          }
         />
       ),
       size: 20,
@@ -187,10 +195,14 @@ function getTableConfiguration({ t, tenantId, canEdit, canDelete }: TableConfigP
           <ActionCell
             row={row}
             onDelete={canDelete ? () => console.log('Delete', row.original.id) : undefined}
-            updateLink={canEdit ? {
-              pathname: '/admin/[tenantId]/links-and-documents/agreements/[slug]/edit',
-              params: { tenantId, slug: row.original.id },
-            } : undefined}
+            updateLink={
+              canEdit
+                ? {
+                    pathname: '/admin/[tenantId]/links-and-documents/agreements/[slug]/edit',
+                    params: { tenantId, slug: row.original.id },
+                  }
+                : undefined
+            }
           />
         </div>
       </CardHeader>
@@ -224,4 +236,3 @@ function getTableConfiguration({ t, tenantId, canEdit, canDelete }: TableConfigP
 
   return { columns, card };
 }
-

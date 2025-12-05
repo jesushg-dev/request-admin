@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, type FC } from 'react';
+import { type TRequestDetailSchema } from '@/services/schemas/request';
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
@@ -14,7 +15,6 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import Select, { OptionType } from '@/components/custom-ui/select';
 import { FormCheckboxItem, FormItem, FormSection } from '@/components/shared/form-root';
-import { type TRequestDetailSchema } from '@/services/schemas/request';
 
 // Base schema for defineStepper (without internationalization)
 // This is used only for the stepper definition

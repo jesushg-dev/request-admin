@@ -1,8 +1,8 @@
-import { type Metadata } from 'next';
 import { FC } from 'react';
-import { redirect } from '@/i18n/routing';
+import { type Metadata } from 'next';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
+import { redirect } from '@/i18n/routing';
 import { getDb } from '@/server/db-client';
 import type { Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
@@ -17,7 +17,7 @@ interface EditPageProps {
 export async function generateMetadata(props: EditPageProps): Promise<Metadata> {
   const { locale, tenantId, slug } = await props.params;
   const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
-  
+
   const db = await getDb();
   const document = await db.document.findUnique({
     where: { id: slug, tenantId },
@@ -36,7 +36,7 @@ const EditPage: FC<EditPageProps> = async ({ params }) => {
 
   const auth = await getAuthContext(tenantId);
   const canEdit = auth.hasPermissions([PermissionActions.DOCUMENT_MANAGEMENT.EDIT]);
-  
+
   if (!canEdit) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/documents/[slug]', params: { tenantId, slug } } });
   }

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { FC } from 'react';
+import { type TRolesSchema } from '@/services/schemas/role';
 import { CombineIcon, Plus, Trash } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
@@ -26,8 +27,6 @@ export const getDefaultRole = () => ({
   features: [],
   isActive: true,
 });
-
-import { type TRolesSchema } from '@/services/schemas/role';
 
 // Base schema for defineStepper (without internationalization)
 // This is used only for the stepper definition

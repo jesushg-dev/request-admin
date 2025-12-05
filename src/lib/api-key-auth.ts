@@ -12,7 +12,7 @@ export { authenticateWithJWT, authenticateWithApiKeyOrJWT } from './jwt-auth';
  */
 export async function authenticateWithApiKey(request: Request): Promise<{ user: User; tenantId: string; error?: never } | { user?: never; tenantId?: never; error: NextResponse }> {
   const authHeader = request.headers.get('authorization');
-  
+
   if (!authHeader) {
     return {
       error: NextResponse.json({ error: 'Missing Authorization header' }, { status: 401 }),
@@ -58,17 +58,36 @@ export async function authenticateWithApiKey(request: Request): Promise<{ user: 
       };
     }
 
-    // Get full API key record from database to access tenantId
+    // Get full API key record from database to access tenantId from metadata
     const fullApiKey = await db.apikey.findUnique({
       where: {
         id: apiKeyRecord.id,
       },
       select: {
-        tenantId: true,
+        metadata: true,
       },
     });
 
-    if (!fullApiKey || !fullApiKey.tenantId) {
+    if (!fullApiKey) {
+      return {
+        error: NextResponse.json({ error: 'API key not found' }, { status: 401 }),
+      };
+    }
+
+    // Extract tenantId from metadata (preferred)
+    let tenantId: string | null = null;
+
+    // Get tenantId from metadata (secure, immutable)
+    if (fullApiKey.metadata) {
+      try {
+        const metadata = typeof fullApiKey.metadata === 'string' ? JSON.parse(fullApiKey.metadata) : fullApiKey.metadata;
+        tenantId = metadata && typeof metadata === 'object' && 'tenantId' in metadata ? (metadata.tenantId as string | null) : null;
+      } catch {
+        // If metadata is invalid JSON, tenantId remains null
+      }
+    }
+
+    if (!tenantId) {
       return {
         error: NextResponse.json({ error: 'API key is not associated with a tenant' }, { status: 401 }),
       };
@@ -89,7 +108,7 @@ export async function authenticateWithApiKey(request: Request): Promise<{ user: 
 
     return {
       user,
-      tenantId: fullApiKey.tenantId,
+      tenantId,
     };
   } catch (error) {
     return {
@@ -115,4 +134,3 @@ export async function validateTenantAccess(userId: string, tenantId: string): Pr
 
   return !!userTenant;
 }
-

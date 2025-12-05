@@ -3,8 +3,8 @@
 import React, { useMemo, useTransition } from 'react';
 import { authClient, useSession } from '@/server/auth-client';
 import { useCountSession, useFindManySession } from '@/services/api/hooks';
-import { Prisma } from '@zenstackhq/runtime/models';
 import { ColumnDef } from '@tanstack/react-table';
+import { Prisma } from '@zenstackhq/runtime/models';
 import { Computer, Smartphone, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';

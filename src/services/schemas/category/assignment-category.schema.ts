@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -42,7 +42,7 @@ export function createAssignmentCategorySchema(t: TranslationFn): z.ZodType<any>
 export function useCategoriesSchema() {
   const t = useTranslations('admin.area.create.form.assignmentCategory.validation');
   const assignmentCategorySchema = createAssignmentCategorySchema((key: string) => t(key as any));
-  
+
   return z.object({
     categories: z.array(assignmentCategorySchema).superRefine((categories, ctx) => {
       const seen = new Set<string>();
@@ -66,7 +66,7 @@ export function useCategoriesSchema() {
  */
 export function createCategoriesSchema(t: TranslationFn) {
   const assignmentCategorySchema = createAssignmentCategorySchema(t);
-  
+
   return z.object({
     categories: z.array(assignmentCategorySchema).superRefine((categories, ctx) => {
       const seen = new Set<string>();
@@ -96,4 +96,3 @@ export type TCategoriesSchema = z.infer<ReturnType<typeof createCategoriesSchema
 export function getCategoriesSchema() {
   return createCategoriesSchema((key: string) => key);
 }
-

@@ -1,9 +1,8 @@
 import { type FC } from 'react';
-import { type Locale } from 'next-intl';
-import { getPathname } from '@/i18n/routing';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
-import { redirect } from '@/i18n/routing';
+import { getPathname, redirect } from '@/i18n/routing';
+import { type Locale } from 'next-intl';
 import { SearchParams } from 'nuqs/server';
 
 import { loadSearchParams } from '@/lib/document';
@@ -20,7 +19,7 @@ const NewPage: FC<NewPageProps> = async ({ params, searchParams }) => {
 
   const auth = await getAuthContext(tenantId);
   const canCreate = auth.hasPermissions([PermissionActions.DOCUMENT_MANAGEMENT.CREATE]);
-  
+
   if (!canCreate) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/documents', params: { tenantId } } });
   }

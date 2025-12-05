@@ -1,5 +1,6 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
+
 import { optionSchema } from '@/components/custom-ui/select';
 
 // Type helper for translation function
@@ -37,4 +38,3 @@ export type TAreaSchema = z.infer<ReturnType<typeof createAreaSchema>>;
 export function getAreaSchema() {
   return createAreaSchema((key: string) => key);
 }
-

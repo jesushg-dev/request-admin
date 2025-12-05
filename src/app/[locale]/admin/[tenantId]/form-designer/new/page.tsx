@@ -1,10 +1,10 @@
-import { type Metadata } from 'next';
 import { FC } from 'react';
-import { type Locale } from 'next-intl';
-import { getTranslations } from 'next-intl/server';
+import { type Metadata } from 'next';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
+import { type Locale } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
 import CreateNewForm from '@/components/builder-form/create-form';
 import { PageCardWrapper } from '@/components/shared/page-container';
@@ -28,7 +28,7 @@ const NewFormPage: FC<NewFormPageProps> = async ({ params }) => {
 
   const auth = await getAuthContext(tenantId);
   const canCreate = auth.hasPermissions([PermissionActions.FORM_DESIGNER.CREATE]);
-  
+
   if (!canCreate) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/form-designer', params: { tenantId } } });
   }

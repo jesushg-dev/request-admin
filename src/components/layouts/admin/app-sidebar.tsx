@@ -8,6 +8,7 @@ import {
   BuildingIcon,
   ChartColumnIncreasingIcon,
   ClipboardIcon,
+  FileBadgeIcon,
   FileKey2Icon,
   FileTextIcon,
   FolderOpen,
@@ -18,7 +19,6 @@ import {
   LandPlotIcon,
   LayersIcon,
   MessageCircleQuestionIcon,
-  FileBadgeIcon,
   RadarIcon,
   RadioTowerIcon,
   ScaleIcon,
@@ -31,9 +31,9 @@ import {
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
+import { PERMISSION, useAuthorization } from '@/hooks/use-authorization';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '@/components/ui/sidebar';
 import { useTenantContext } from '@/components/hoc/tenant-provider';
-import { useAuthorization, PERMISSION } from '@/hooks/use-authorization';
 
 //import { NavFormSubmissions } from './nav-form-submissions';
 import { MenuItem, NavMain } from './nav-main';
@@ -230,7 +230,14 @@ export function AppSidebar({ user, isOnPremise, ...props }: AppSidebarProps) {
           },
         ],
         disabled:
-          !canViewAreas || !canViewAssignmentHierarchy || !canViewRequestTypes || !canViewRequestHierarchy || !canViewRequirements || !canViewRequirementTypes || !canViewPriorities || !canViewWorkflows,
+          !canViewAreas ||
+          !canViewAssignmentHierarchy ||
+          !canViewRequestTypes ||
+          !canViewRequestHierarchy ||
+          !canViewRequirements ||
+          !canViewRequirementTypes ||
+          !canViewPriorities ||
+          !canViewWorkflows,
       },
     ];
 

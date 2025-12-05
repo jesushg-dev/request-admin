@@ -1,6 +1,6 @@
-import { getPathname, Link, redirect } from '@/i18n/routing';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
+import { getPathname, Link, redirect } from '@/i18n/routing';
 import { getDb } from '@/server/db-client';
 import { format } from 'date-fns';
 import { Calendar, Clock, FileText, MoreHorizontal, Palette, Pencil, Trash2, User, Users } from 'lucide-react';
@@ -22,7 +22,7 @@ export default async function DataroomDetailPage({ params }: DataroomDetailPageP
 
   const auth = await getAuthContext(tenantId);
   const canViewDataRooms = auth.hasPermissions([PermissionActions.DATA_ROOM.VIEW]);
-  
+
   if (!canViewDataRooms) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/data-rooms', params: { tenantId } } });
   }

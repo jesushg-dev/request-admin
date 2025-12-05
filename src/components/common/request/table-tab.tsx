@@ -1,25 +1,25 @@
 'use client';
 
-import React, { memo, useMemo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useMemo, useState } from 'react';
+import { getRequestsFilteredByAreaAccess } from '@/actions/request';
 import { useCountRequest, useFindManyRequest } from '@/services/api/hooks';
 import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
-import { Prisma } from '@zenstackhq/runtime/models';
 import { ColumnDef } from '@tanstack/react-table';
+import { Prisma } from '@zenstackhq/runtime/models';
 import { useTranslations } from 'next-intl';
 import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 
 import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
-import { useTenantContext } from '@/components/hoc/tenant-provider';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
-import { getRequestsFilteredByAreaAccess } from '@/actions/request';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
 import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-advanced-toolbar';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 
 const RequestDefaultArgs = Prisma.validator<Prisma.RequestDefaultArgs>()({
   select: {
@@ -120,13 +120,15 @@ const RequestMainPage: React.FC = () => {
     search,
     useCountHook: useCountRequest,
     useFindManyHook: useFindManyRequest,
-    defaultArgs: baseWhereClause ? {
-      ...RequestDefaultArgs,
-      where: baseWhereClause,
-    } : {
-      ...RequestDefaultArgs,
-      where: { id: { in: [] } }, // Temporary empty filter while loading
-    },
+    defaultArgs: baseWhereClause
+      ? {
+          ...RequestDefaultArgs,
+          where: baseWhereClause,
+        }
+      : {
+          ...RequestDefaultArgs,
+          where: { id: { in: [] } }, // Temporary empty filter while loading
+        },
   });
 
   const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t }), [t]);

@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -18,7 +18,10 @@ export const useDocumentMetadataSchema = () => {
 export function createDocumentMetadataSchema(t: TranslationFn) {
   return z.object({
     id: z.string(),
-    name: z.string().min(1, { message: t('nameRequired') }).max(200, { message: t('nameMaxLength') }),
+    name: z
+      .string()
+      .min(1, { message: t('nameRequired') })
+      .max(200, { message: t('nameMaxLength') }),
     description: z.string().nullish(),
     status: z.string().refine((val) => ['DRAFT', 'PUBLISHED', 'ARCHIVED'].includes(val), {
       message: t('statusInvalid'),
@@ -34,4 +37,3 @@ export function createDocumentMetadataSchema(t: TranslationFn) {
  * Type inference for DocumentMetadataSchema
  */
 export type TDocumentMetadataSchema = z.infer<ReturnType<typeof createDocumentMetadataSchema>>;
-

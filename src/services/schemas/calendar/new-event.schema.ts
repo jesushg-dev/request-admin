@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -40,4 +40,3 @@ export function createNewEventSchema(t: TranslationFn) {
  * Type inference for NewEventSchema
  */
 export type TNewEventSchema = z.infer<ReturnType<typeof createNewEventSchema>>;
-

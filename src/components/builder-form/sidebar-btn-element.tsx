@@ -9,7 +9,7 @@ import { ElementsType, FormElement } from './form-elements';
 function SidebarBtnElement({ formElement }: { formElement: FormElement }) {
   const t = useTranslations('component.form.builderFields.types');
   const { icon: Icon } = formElement.designerBtnElement;
-  
+
   // Map element type to translation key
   const getTranslationKey = (type: ElementsType): string => {
     const mapping: Record<ElementsType, string> = {
@@ -27,9 +27,9 @@ function SidebarBtnElement({ formElement }: { formElement: FormElement }) {
     };
     return mapping[type];
   };
-  
+
   const label = t(getTranslationKey(formElement.type) as any);
-  
+
   const draggable = useDraggable({
     id: `designer-btn-${formElement.type}`,
     data: {
@@ -54,7 +54,7 @@ function SidebarBtnElement({ formElement }: { formElement: FormElement }) {
 export function SidebarBtnElementDragOverlay({ formElement }: { formElement: FormElement }) {
   const t = useTranslations('component.form.builderFields.types');
   const { icon: Icon } = formElement.designerBtnElement;
-  
+
   // Map element type to translation key
   const getTranslationKey = (type: ElementsType): string => {
     const mapping: Record<ElementsType, string> = {
@@ -72,7 +72,7 @@ export function SidebarBtnElementDragOverlay({ formElement }: { formElement: For
     };
     return mapping[type];
   };
-  
+
   const label = t(getTranslationKey(formElement.type) as any);
 
   return (

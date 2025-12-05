@@ -1,9 +1,11 @@
 'use client';
 
-import { useCallback, useState, useMemo, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { updateCategoryActiveStatus } from '@/actions/request-type';
 import { useAtom, useAtomValue } from 'jotai';
-import { AlertCircle, ChevronDown, ChevronRight, CheckCircle2, Circle, Edit, File, FileSearch, Folder, FolderPlus, MoreHorizontal, CheckCheck, Trash } from 'lucide-react';
+import { AlertCircle, CheckCheck, CheckCircle2, ChevronDown, ChevronRight, Circle, Edit, File, FileSearch, Folder, FolderPlus, MoreHorizontal, Trash } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 import { RequestHierarchyWithLevelsType } from '@/types/zenstackhq/hierarchy';
 import { cn } from '@/lib/utils';
@@ -12,9 +14,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Hint } from '@/components/hint';
 
 import { RequestCategoryValues } from './category-form';
-import { categoriesAtom, updateCategoriesAtom, creatingCategoriesAtom, selectedCategoryIdAtom } from './store/category-store';
-import { updateCategoryActiveStatus } from '@/actions/request-type';
-import { toast } from 'sonner';
+import { categoriesAtom, creatingCategoriesAtom, selectedCategoryIdAtom, updateCategoriesAtom } from './store/category-store';
 
 export interface CategoryTreeViewProps {
   hierarchy: RequestHierarchyWithLevelsType;
@@ -45,8 +45,6 @@ interface CategoryTreeNodeProps {
   t: ReturnType<typeof useTranslations<'component.categoryTreeView'>>;
 }
 
-
-
 export const CategoryTreeView = ({ onAddCategory, onEditCategory, hierarchy, tenantId, hierarchyId }: CategoryTreeViewProps) => {
   const t = useTranslations('component.categoryTreeView');
   const categories = useAtomValue(categoriesAtom);
@@ -55,10 +53,10 @@ export const CategoryTreeView = ({ onAddCategory, onEditCategory, hierarchy, ten
   const [selected, setSelected] = useAtom(selectedCategoryIdAtom);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  
+
   // Check if there's any category being created
   const hasCreatingCategory = creatingCategories.size > 0;
-  
+
   // Auto-expand parent when creating a child
   useEffect(() => {
     creatingCategories.forEach((cat) => {
@@ -100,7 +98,6 @@ export const CategoryTreeView = ({ onAddCategory, onEditCategory, hierarchy, ten
     });
     return initialExpanded;
   });
-
 
   // Filter categories by search query
   const filteredRootCategories = useMemo(() => {
@@ -206,37 +203,35 @@ export const CategoryTreeView = ({ onAddCategory, onEditCategory, hierarchy, ten
     (category: RequestCategoryValues): boolean => {
       const allCategories = [...categories, ...Array.from(creatingCategories.values())];
       const catLevelIndex = hierarchy.levels.findIndex((l) => l.id === category.hierarchyLevelId);
-      
+
       if (catLevelIndex === -1) return false;
-      
+
       // If this is the last level, it's always complete (no children needed)
       if (catLevelIndex === hierarchy.levels.length - 1) {
         return true;
       }
-      
+
       // Recursive function to check if there's a complete chain from this category to the last level
       const checkChain = (cat: RequestCategoryValues, targetLevelIndex: number): boolean => {
         const categoryLevelIndex = hierarchy.levels.findIndex((l) => l.id === cat.hierarchyLevelId);
         if (categoryLevelIndex === -1) return false;
-        
+
         if (categoryLevelIndex >= targetLevelIndex) {
           return true;
         }
-        
+
         const nextLevelId = hierarchy.levels[categoryLevelIndex + 1]?.id;
         if (!nextLevelId) return false;
-        
-        const children = allCategories.filter(
-          (c) => c.parentCategoryId === cat.id && c.hierarchyLevelId === nextLevelId
-        );
-        
+
+        const children = allCategories.filter((c) => c.parentCategoryId === cat.id && c.hierarchyLevelId === nextLevelId);
+
         if (children.length === 0) {
           return false;
         }
-        
+
         return children.some((child) => checkChain(child, targetLevelIndex));
       };
-      
+
       return checkChain(category, hierarchy.levels.length - 1);
     },
     [categories, creatingCategories, hierarchy.levels]
@@ -250,13 +245,13 @@ export const CategoryTreeView = ({ onAddCategory, onEditCategory, hierarchy, ten
       if (!category) return;
 
       const categoriesToActivate: RequestCategoryValues[] = [];
-      
+
       // Recursive function to collect all categories to activate
       const collectCategories = (cat: RequestCategoryValues) => {
         if (!cat.isActive) {
           categoriesToActivate.push({ ...cat, isActive: true });
         }
-        
+
         // Collect all children
         if (cat.children) {
           cat.children.forEach((childId) => {
@@ -267,19 +262,19 @@ export const CategoryTreeView = ({ onAddCategory, onEditCategory, hierarchy, ten
           });
         }
       };
-      
+
       collectCategories(category);
-      
+
       // Update all categories at once in local state
       if (categoriesToActivate.length > 0) {
         const toastId = toast.loading(t('activatingCategories', { count: categoriesToActivate.length }));
-        
+
         try {
           // Save each category to database (only isActive field)
           for (const catToActivate of categoriesToActivate) {
             await updateCategoryActiveStatus(catToActivate.id, true, tenantId);
           }
-          
+
           // Update local state after successful save
           updateCategories((prev) => {
             const updated = [...prev];
@@ -291,12 +286,12 @@ export const CategoryTreeView = ({ onAddCategory, onEditCategory, hierarchy, ten
             });
             return updated;
           });
-          
+
           // Notify parent for each updated category
           categoriesToActivate.forEach((cat) => {
             onEditCategory(cat);
           });
-          
+
           toast.success(t('categoriesActivated', { count: categoriesToActivate.length }), { id: toastId });
         } catch (error) {
           toast.error(t('errorActivatingCategories'), { id: toastId });
@@ -316,7 +311,7 @@ export const CategoryTreeView = ({ onAddCategory, onEditCategory, hierarchy, ten
     if (!selectedCategory) return false;
     return !selectedCategory.isActive && hasCompleteChildrenChain(selectedCategory);
   }, [selectedCategory, hasCompleteChildrenChain]);
-  
+
   // Expand all when searching
   useEffect(() => {
     if (searchQuery.trim()) {
@@ -334,7 +329,7 @@ export const CategoryTreeView = ({ onAddCategory, onEditCategory, hierarchy, ten
       setExpanded(allIds);
     }
   }, [searchQuery, filteredRootCategories, categoryMap]);
-  
+
   // Keep root categories expanded when categories change
   useEffect(() => {
     setExpanded((prev) => {
@@ -351,13 +346,7 @@ export const CategoryTreeView = ({ onAddCategory, onEditCategory, hierarchy, ten
       <div className="flex items-center justify-between border-b bg-background/50 px-4 py-2">
         {isSearchOpen ? (
           <div className="flex w-full items-center gap-2 rounded-md border px-3 py-2 text-sm">
-            <input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-grow bg-transparent outline-none"
-              placeholder={t('searchPlaceholder')}
-              autoFocus
-            />
+            <input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="flex-grow bg-transparent outline-none" placeholder={t('searchPlaceholder')} autoFocus />
             <Button variant="ghost" size="icon" className="h-4 w-4" onClick={() => setIsSearchOpen(false)}>
               ×
             </Button>
@@ -368,12 +357,7 @@ export const CategoryTreeView = ({ onAddCategory, onEditCategory, hierarchy, ten
             <div className="flex items-center gap-2">
               {canActivateSelected && (
                 <Hint label={t('activateCategoryAndChildren')} side="bottom">
-                  <Button 
-                    type="button" 
-                    variant="ghost" 
-                    size="icon"
-                    onClick={() => selectedCategory && activateCategoryAndChildren(selectedCategory.id)}
-                  >
+                  <Button type="button" variant="ghost" size="icon" onClick={() => selectedCategory && activateCategoryAndChildren(selectedCategory.id)}>
                     <CheckCheck className="h-4 w-4" />
                   </Button>
                 </Hint>
@@ -390,19 +374,11 @@ export const CategoryTreeView = ({ onAddCategory, onEditCategory, hierarchy, ten
         {filteredRootCategories.length === 0 ? (
           <>
             <div className="flex items-center justify-center h-full">
-              <p className="text-muted-foreground text-sm">
-                {searchQuery ? 'No se encontraron resultados' : 'No hay categorías'}
-              </p>
+              <p className="text-muted-foreground text-sm">{searchQuery ? 'No se encontraron resultados' : 'No hay categorías'}</p>
             </div>
             {/* Add category button - only shown when there are no root categories (only one root allowed) */}
             {hierarchy.levels.length > 0 && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="border-2 border-dashed w-full"
-                onClick={() => onAddCategory(hierarchy.levels[0].id)}
-                disabled={hasCreatingCategory}>
+              <Button type="button" variant="outline" size="sm" className="border-2 border-dashed w-full" onClick={() => onAddCategory(hierarchy.levels[0].id)} disabled={hasCreatingCategory}>
                 <FolderPlus className="h-4 w-4 mr-2" />
                 {t('addCategoryButton', { categoryName: hierarchy.levels[0].name })}
               </Button>
@@ -465,79 +441,77 @@ const CategoryTreeNode = ({
   const isSelected = selected === category.id;
   const isRenaming = renamingId === category.id;
   const isCreating = creatingCategories.has(category.id);
-  
+
   // Get the actual level index based on hierarchyLevelId (not the tree position)
   const actualLevelIndex = hierarchy.levels.findIndex((l) => l.id === category.hierarchyLevelId);
   const levelName = hierarchy.levels[actualLevelIndex];
   const nextLevel = hierarchy.levels[actualLevelIndex + 1];
-  
+
   // Helper function to check if a category has incomplete children chain (missing levels down to last level)
   const hasIncompleteChildrenChain = (cat: RequestCategoryValues): boolean => {
     const allCategories = [...Array.from(categoryMap.values())];
     const catLevelIndex = hierarchy.levels.findIndex((l) => l.id === cat.hierarchyLevelId);
-    
+
     if (catLevelIndex === -1) return true; // Invalid level
-    
+
     // If this is the last level, it's always complete (no children needed)
     if (catLevelIndex === hierarchy.levels.length - 1) {
       return false;
     }
-    
+
     // Recursive function to check if there's a complete chain from this category to the last level
     const checkChain = (category: RequestCategoryValues, targetLevelIndex: number): boolean => {
       const categoryLevelIndex = hierarchy.levels.findIndex((l) => l.id === category.hierarchyLevelId);
       if (categoryLevelIndex === -1) return false;
-      
+
       // If we've reached or passed the target level, the chain is complete
       if (categoryLevelIndex >= targetLevelIndex) {
         return true;
       }
-      
+
       // Check if this category has at least one child at the next level
       const nextLevelId = hierarchy.levels[categoryLevelIndex + 1]?.id;
       if (!nextLevelId) return false;
-      
-      const children = allCategories.filter(
-        (c) => c.parentCategoryId === category.id && c.hierarchyLevelId === nextLevelId
-      );
-      
+
+      const children = allCategories.filter((c) => c.parentCategoryId === category.id && c.hierarchyLevelId === nextLevelId);
+
       if (children.length === 0) {
         // No children at the next level - chain is incomplete
         return false;
       }
-      
+
       // Check if at least one child has a complete chain to the target level
       return children.some((child) => checkChain(child, targetLevelIndex));
     };
-    
+
     // Check if there's a complete chain from this category to the last level
     return !checkChain(cat, hierarchy.levels.length - 1);
   };
-  
+
   // Helper function to check if hierarchy chain is complete up to a given category
   const isHierarchyComplete = (cat: RequestCategoryValues): boolean => {
     if (actualLevelIndex === 0) return true; // Root level is always complete
-    
+
     // Build ancestor chain
     const ancestorChain: RequestCategoryValues[] = [];
     let current: RequestCategoryValues | undefined = cat;
-    
+
     while (current?.parentCategoryId) {
       const parent = categoryMap.get(current.parentCategoryId);
       if (!parent) return false; // Parent not found - invalid
       ancestorChain.push(parent);
       current = parent;
     }
-    
+
     // Check that all levels from 0 to actualLevelIndex - 1 are present
     for (let i = 0; i < actualLevelIndex; i++) {
       const expectedLevelId = hierarchy.levels[i]?.id;
       if (!expectedLevelId) continue;
-      
+
       const hasLevel = ancestorChain.some((ancestor) => ancestor.hierarchyLevelId === expectedLevelId);
       if (!hasLevel) return false; // Missing level in chain
     }
-    
+
     // Check that parent is at immediately previous level
     if (cat.parentCategoryId) {
       const parent = categoryMap.get(cat.parentCategoryId);
@@ -546,13 +520,13 @@ const CategoryTreeNode = ({
         if (parentLevelIndex !== actualLevelIndex - 1) return false; // Gap in hierarchy
       }
     }
-    
+
     return true;
   };
-  
+
   // Only show "Add" button if hierarchy is complete and there's a next level
   const canAddNextLevel = isHierarchyComplete(category) && nextLevel !== undefined;
-  
+
   // Disable selection if there's a creating category and this is not it
   const isSelectionDisabled = hasCreatingCategory && !isCreating;
 
@@ -563,11 +537,7 @@ const CategoryTreeNode = ({
           <div
             className={cn(
               'flex w-full items-center justify-start space-x-2 rounded-md text-sm font-medium min-w-[100px] flex-shrink-0 transition-colors',
-              isSelected && isCreating
-                ? 'bg-muted text-muted-foreground'
-                : isSelected
-                ? 'bg-primary text-primary-foreground'
-                : 'hover:bg-accent hover:text-accent-foreground'
+              isSelected && isCreating ? 'bg-muted text-muted-foreground' : isSelected ? 'bg-primary text-primary-foreground' : 'hover:bg-accent hover:text-accent-foreground'
             )}>
             {hasChildren && (
               <Button
@@ -603,52 +573,25 @@ const CategoryTreeNode = ({
             ) : (
               <button
                 type="button"
-                className={cn(
-                  "flex-1 text-sm flex items-center space-x-2 px-3 py-2 bg-transparent",
-                  isSelectionDisabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"
-                )}
+                className={cn('flex-1 text-sm flex items-center space-x-2 px-3 py-2 bg-transparent', isSelectionDisabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer')}
                 onClick={() => !isSelectionDisabled && onSelect(category)}
                 disabled={isSelectionDisabled}>
                 {hasChildren ? <Folder className="h-4 w-4 text-inherit" /> : <File className="h-4 w-4 text-inherit" />}
-                <span className={cn(isCreating && 'italic text-muted-foreground')}>
-                  {isCreating ? (category.name || t('creating', { levelName: levelName?.name || '' })) : category.name}
-                </span>
-                {isCreating && (
-                  <span className="text-xs text-muted-foreground ml-1">
-                    ({t('creating', { levelName: levelName?.name || '' })})
-                  </span>
-                )}
+                <span className={cn(isCreating && 'italic text-muted-foreground')}>{isCreating ? category.name || t('creating', { levelName: levelName?.name || '' }) : category.name}</span>
+                {isCreating && <span className="text-xs text-muted-foreground ml-1">({t('creating', { levelName: levelName?.name || '' })})</span>}
                 {/* Active/Inactive indicator */}
                 {!isCreating && (
-                  <Hint 
-                    label={category.isActive ? t('active') : t('inactive')} 
-                    side="right"
-                  >
+                  <Hint label={category.isActive ? t('active') : t('inactive')} side="right">
                     {category.isActive ? (
-                      <CheckCircle2 className={cn(
-                        "h-3.5 w-3.5 flex-shrink-0",
-                        isSelected 
-                          ? "text-green-300 dark:text-green-400" 
-                          : "text-green-600 dark:text-green-500"
-                      )} />
+                      <CheckCircle2 className={cn('h-3.5 w-3.5 flex-shrink-0', isSelected ? 'text-green-300 dark:text-green-400' : 'text-green-600 dark:text-green-500')} />
                     ) : (
-                      <Circle className={cn(
-                        "h-3.5 w-3.5 flex-shrink-0",
-                        isSelected 
-                          ? "text-primary-foreground/60" 
-                          : "text-muted-foreground/70"
-                      )} />
+                      <Circle className={cn('h-3.5 w-3.5 flex-shrink-0', isSelected ? 'text-primary-foreground/60' : 'text-muted-foreground/70')} />
                     )}
                   </Hint>
                 )}
                 {hasIncompleteChildrenChain(category) && (
                   <Hint label={t('incompleteChildrenChainWarning', { levelName: levelName?.name || '' })} side="right">
-                    <AlertCircle className={cn(
-                      "h-4 w-4 flex-shrink-0",
-                      isSelected 
-                        ? "text-yellow-300 dark:text-yellow-400" 
-                        : "text-yellow-600 dark:text-yellow-400"
-                    )} />
+                    <AlertCircle className={cn('h-4 w-4 flex-shrink-0', isSelected ? 'text-yellow-300 dark:text-yellow-400' : 'text-yellow-600 dark:text-yellow-400')} />
                   </Hint>
                 )}
               </button>
@@ -711,13 +654,7 @@ const CategoryTreeNode = ({
       {/* Add category button - only shown if hierarchy is complete and there's a next level */}
       {canAddNextLevel && (isExpanded || !hasChildren) && (
         <div className={level > 0 ? 'pl-6 border-l-2 border-dashed' : 'pl-6'}>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="border-2 border-dashed w-full"
-            onClick={() => onAddCategory(nextLevel.id, category.id)}
-            disabled={hasCreatingCategory}>
+          <Button type="button" variant="outline" size="sm" className="border-2 border-dashed w-full" onClick={() => onAddCategory(nextLevel.id, category.id)} disabled={hasCreatingCategory}>
             <FolderPlus className="h-4 w-4 mr-2" />
             {t('addCategoryButton', { categoryName: nextLevel.name })}
           </Button>
@@ -726,9 +663,7 @@ const CategoryTreeNode = ({
       {/* Show warning if hierarchy is incomplete */}
       {!isHierarchyComplete(category) && actualLevelIndex > 0 && (
         <div className={level > 0 ? 'pl-4 border-l-2 border-dashed' : 'pl-6'}>
-          <div className="text-xs text-muted-foreground bg-muted/50 px-3 py-2 rounded-md border border-dashed">
-            {t('incompleteHierarchyWarning', { levelName: levelName?.name || '' })}
-          </div>
+          <div className="text-xs text-muted-foreground bg-muted/50 px-3 py-2 rounded-md border border-dashed">{t('incompleteHierarchyWarning', { levelName: levelName?.name || '' })}</div>
         </div>
       )}
     </div>

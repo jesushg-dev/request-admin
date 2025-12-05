@@ -1,7 +1,7 @@
 'use client';
 
 import { format } from 'date-fns';
-import { es, enUS, type Locale } from 'date-fns/locale';
+import { enUS, es, type Locale } from 'date-fns/locale';
 import { useLocale } from 'next-intl';
 
 import { cn } from '@/lib/utils';
@@ -23,11 +23,7 @@ export default function CalendarBodyMarginDayMargin({ className }: { className?:
       <div className="bg-background sticky left-0 z-10 flex w-12 flex-col">
         {hours.map((hour) => (
           <div key={hour} className="relative h-32 first:mt-0">
-            {hour !== 0 && (
-              <span className="text-muted-foreground absolute -top-2.5 left-2 text-xs">
-                {format(new Date().setHours(hour, 0, 0, 0), 'h a', { locale: dateFnsLocale })}
-              </span>
-            )}
+            {hour !== 0 && <span className="text-muted-foreground absolute -top-2.5 left-2 text-xs">{format(new Date().setHours(hour, 0, 0, 0), 'h a', { locale: dateFnsLocale })}</span>}
           </div>
         ))}
       </div>

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, useTransition, type FC } from 'react';
 import { CreateRole, UpdateRole } from '@/actions/role';
 import { useRouter } from '@/i18n/routing';
+import { getRolesSchema, getUserRoleAssignmentSchema, useRolesSchema, useUserRoleAssignmentSchema, type TRolesSchema, type TUserRoleAssignmentSchema } from '@/services/schemas/role';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { defineStepper } from '@stepperize/react';
 import { useTranslations } from 'next-intl';
@@ -17,7 +18,6 @@ import UserRoleAssignmentForm from '@/components/common/role/user-role-assignmen
 import { OptionType } from '@/components/custom-ui/select';
 import { StepNavigationModern } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
-import { getRolesSchema, useRolesSchema, getUserRoleAssignmentSchema, useUserRoleAssignmentSchema, type TRolesSchema, type TUserRoleAssignmentSchema } from '@/services/schemas/role';
 
 import RoleForm, { getDefaultRole } from './role-form';
 import RoleFormReview from './role-form-review';

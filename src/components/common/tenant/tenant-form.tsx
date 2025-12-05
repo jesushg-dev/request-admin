@@ -2,6 +2,7 @@
 
 import { FC, useEffect, useTransition } from 'react';
 import { authClient } from '@/server/auth-client';
+import { createTenantFormSchema, useTenantFormSchema, type TTenantFormSchema } from '@/services/schemas/tenant';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -15,7 +16,6 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { ColorPicker } from '@/components/custom-ui/color-picker';
-import { useTenantFormSchema, createTenantFormSchema, type TTenantFormSchema } from '@/services/schemas/tenant';
 
 export const getTenantFormDefaultValues = (): TenantFormValues => {
   return {
@@ -354,10 +354,10 @@ const SlugField = () => {
 
   useEffect(() => {
     const timer = setTimeout(async () => {
-      if (field.value?.length >= 2 && !error) {
+      if (typeof field.value === 'string' && field.value.length >= 2 && !error) {
         startTransition(async () => {
           await authClient.organization.checkSlug(
-            { slug: field.value },
+            { slug: field.value ?? '' },
             {
               onError: ({ error }) => {
                 setError('slug', {

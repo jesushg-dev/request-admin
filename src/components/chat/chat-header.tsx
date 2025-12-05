@@ -34,8 +34,8 @@ export const ChatHeader: FC<ChatHeaderProps> = ({ name }) => {
 
   const activeUsers = presenceData
     .sort((a, b) => {
-      const aTime = typeof a.updatedAt === 'number' ? a.updatedAt : a.updatedAt?.getTime() ?? 0;
-      const bTime = typeof b.updatedAt === 'number' ? b.updatedAt : b.updatedAt?.getTime() ?? 0;
+      const aTime = typeof a.updatedAt === 'number' ? a.updatedAt : (a.updatedAt?.getTime() ?? 0);
+      const bTime = typeof b.updatedAt === 'number' ? b.updatedAt : (b.updatedAt?.getTime() ?? 0);
       return bTime - aTime;
     })
     .map((user) => ({

@@ -73,10 +73,10 @@ async function getMemberFromBetterAuth(
     });
 
     let members = authResult.members || [];
-    
+
     // Filter by the criteria we have
     let foundMember: BetterAuthMember | undefined;
-    
+
     if (memberId) {
       foundMember = members.find((m) => m.id === memberId || m.userId === memberId) as BetterAuthMember | undefined;
     } else if (userId) {
@@ -97,7 +97,7 @@ async function getMemberFromBetterAuth(
       });
 
       const allMembers = allResult.members || [];
-      
+
       if (memberId) {
         foundMember = allMembers.find((m) => m.id === memberId || m.userId === memberId) as BetterAuthMember | undefined;
       } else if (userId) {
@@ -146,7 +146,7 @@ const sanitizeInvitationData = (data: UserTenantScopedFormValues): SafeInvitatio
 // Updates an existing user
 const updateExistingUser = async (tenantId: string, data: UserTenantScopedFormValues, existingUserId: string, memberId?: string) => {
   const db = await getDb();
-  
+
   // Get member from Better Auth using unified function
   const existingMember = await getMemberFromBetterAuth(tenantId, {
     memberId,
@@ -201,14 +201,12 @@ const updateExistingUser = async (tenantId: string, data: UserTenantScopedFormVa
 
   // Determine the role to use in Better Auth
   const betterAuthRole = data.user.isAdmin ? 'admin' : 'member';
-  
+
   // Update member role in Better Auth if it changed
   if (existingMember) {
-    const currentRoles = Array.isArray(existingMember.role) 
-      ? existingMember.role 
-      : existingMember.role.split(',').map((r) => r.trim());
+    const currentRoles = Array.isArray(existingMember.role) ? existingMember.role : existingMember.role.split(',').map((r) => r.trim());
     const needsRoleUpdate = !currentRoles.includes(betterAuthRole);
-    
+
     if (needsRoleUpdate) {
       try {
         await auth.api.updateMemberRole({
@@ -535,17 +533,19 @@ export const getUserFormValuesByUserTenantId = async (tenantId: string, memberId
       },
       isEditing: true,
     },
-    roles: userTenant?.userRoles.map((ur) => ({
-      id: ur.id,
-      roleId: { value: ur.role.id, label: ur.role.name },
-      isActive: ur.isActive,
-    })) ?? [],
-    areaRoles: userTenant?.userAreas.map((ua) => ({
-      id: ua.id,
-      areaId: { value: ua.area.id, label: ua.area.name },
-      roleId: { value: ua.role.id, label: ua.role.name },
-      isActive: ua.isActive,
-    })) ?? [],
+    roles:
+      userTenant?.userRoles.map((ur) => ({
+        id: ur.id,
+        roleId: { value: ur.role.id, label: ur.role.name },
+        isActive: ur.isActive,
+      })) ?? [],
+    areaRoles:
+      userTenant?.userAreas.map((ua) => ({
+        id: ua.id,
+        areaId: { value: ua.area.id, label: ua.area.name },
+        roleId: { value: ua.role.id, label: ua.role.name },
+        isActive: ua.isActive,
+      })) ?? [],
   };
 };
 

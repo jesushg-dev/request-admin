@@ -1,8 +1,10 @@
 import { atom } from 'jotai';
-import { RequestCategoryValues } from '../category-form';
+
 import { RequestLevelType } from '@/types/zenstackhq/hierarchy';
 import { OptionType } from '@/components/custom-ui/select';
-import { ResourceGroup, BlockedResource } from '../types';
+
+import { RequestCategoryValues } from '../category-form';
+import { BlockedResource, ResourceGroup } from '../types';
 
 // Base atom for all categories
 export const categoriesAtom = atom<RequestCategoryValues[]>([]);
@@ -32,84 +34,78 @@ const getDescendantIds = (categories: RequestCategoryValues[], parentId: string)
 };
 
 // Derived atom to get inherited groups (resources from parent categories)
-export const getInheritedGroupsAtom = atom(
-  (get) =>
-    (categoryId: string, resourceType: 'requirements' | 'forms', levels: RequestLevelType[]): ResourceGroup[] => {
-      const categories = get(categoriesAtom);
-      const category = findCategoryById(categories, categoryId);
-      if (!category) return [];
+export const getInheritedGroupsAtom = atom((get) => (categoryId: string, resourceType: 'requirements' | 'forms', levels: RequestLevelType[]): ResourceGroup[] => {
+  const categories = get(categoriesAtom);
+  const category = findCategoryById(categories, categoryId);
+  if (!category) return [];
 
-      const groups: ResourceGroup[] = [];
-      let currentCategory: RequestCategoryValues | undefined = category;
+  const groups: ResourceGroup[] = [];
+  let currentCategory: RequestCategoryValues | undefined = category;
 
-      // Traverse up the hierarchy
-      while (currentCategory?.parentCategoryId) {
-        const parent = findCategoryById(categories, currentCategory.parentCategoryId);
-        if (!parent) break;
+  // Traverse up the hierarchy
+  while (currentCategory?.parentCategoryId) {
+    const parent = findCategoryById(categories, currentCategory.parentCategoryId);
+    if (!parent) break;
 
-        const level = levels.find((l) => l.id === parent.hierarchyLevelId);
-        if (level) {
-          const resources = resourceType === 'requirements' ? parent.requirements : parent.forms;
-          if (resources && resources.length > 0) {
-            groups.push({
-              level,
-              resources,
-              levelName: level.name,
-              parentLabel: parent.name,
-              hierarchyLevelId: parent.hierarchyLevelId,
-            });
-          }
-        }
-
-        currentCategory = parent;
+    const level = levels.find((l) => l.id === parent.hierarchyLevelId);
+    if (level) {
+      const resources = resourceType === 'requirements' ? parent.requirements : parent.forms;
+      if (resources && resources.length > 0) {
+        groups.push({
+          level,
+          resources,
+          levelName: level.name,
+          parentLabel: parent.name,
+          hierarchyLevelId: parent.hierarchyLevelId,
+        });
       }
-
-      // Reverse to show from top to bottom
-      return groups.reverse();
     }
-);
+
+    currentCategory = parent;
+  }
+
+  // Reverse to show from top to bottom
+  return groups.reverse();
+});
 
 // Derived atom to get child groups (blocked resources from child categories)
-export const getChildGroupsAtom = atom(
-  (get) =>
-    (categoryId: string, resourceType: 'requirements' | 'forms', levels: RequestLevelType[]): BlockedResource[] => {
-      const categories = get(categoriesAtom);
-      const category = findCategoryById(categories, categoryId);
-      if (!category) return [];
+export const getChildGroupsAtom = atom((get) => (categoryId: string, resourceType: 'requirements' | 'forms', levels: RequestLevelType[]): BlockedResource[] => {
+  const categories = get(categoriesAtom);
+  const category = findCategoryById(categories, categoryId);
+  if (!category) return [];
 
-      // Group resources by resource value
-      const resourceMap = new Map<string, { resource: OptionType; categories: Array<{ level: RequestLevelType; parentLabel: string; groupId: string }> }>();
-      const childIds = category.children || [];
+  // Group resources by resource value
+  const resourceMap = new Map<string, { resource: OptionType; categories: Array<{ level: RequestLevelType; parentLabel: string; groupId: string }> }>();
+  const childIds = category.children || [];
 
-      childIds.forEach((childId) => {
-        const child = findCategoryById(categories, childId);
-        if (!child) return;
+  childIds.forEach((childId) => {
+    const child = findCategoryById(categories, childId);
+    if (!child) return;
 
-        const level = levels.find((l) => l.id === child.hierarchyLevelId);
-        if (level) {
-          const resources = resourceType === 'requirements' ? child.requirements : child.forms;
-          if (resources && resources.length > 0) {
-            resources.forEach((resource) => {
-              if (!resourceMap.has(String(resource.value))) {
-                resourceMap.set(String(resource.value), {
-                  resource,
-                  categories: [],
-                });
-              }
-              const entry = resourceMap.get(String(resource.value))!;
-              entry.categories.push({
-                level,
-                parentLabel: child.name,
-                groupId: child.hierarchyLevelId,
-              });
+    const level = levels.find((l) => l.id === child.hierarchyLevelId);
+    if (level) {
+      const resources = resourceType === 'requirements' ? child.requirements : child.forms;
+      if (resources && resources.length > 0) {
+        resources.forEach((resource) => {
+          if (!resourceMap.has(String(resource.value))) {
+            resourceMap.set(String(resource.value), {
+              resource,
+              categories: [],
             });
           }
-        }
-      });
-
-      return Array.from(resourceMap.values());
+          const entry = resourceMap.get(String(resource.value))!;
+          entry.categories.push({
+            level,
+            parentLabel: child.name,
+            groupId: child.hierarchyLevelId,
+          });
+        });
+      }
     }
-);
+  });
+
+  return Array.from(resourceMap.values());
+});
 
 // Action atom to update categories
 export const updateCategoriesAtom = atom(null, (get, set, updater: (prev: RequestCategoryValues[]) => RequestCategoryValues[]) => {
@@ -165,51 +161,47 @@ export const convertCreatingToRealAtom = atom(null, (get, set, categoryId: strin
 });
 
 // Action atom to promote a resource from child to current category
-export const promoteResourceAtom = atom(
-  null,
-  (get, set, categoryId: string, resourceType: 'requirements' | 'forms', resource: OptionType) => {
-    const categories = get(categoriesAtom);
-    const category = findCategoryById(categories, categoryId);
-    if (!category) return;
+export const promoteResourceAtom = atom(null, (get, set, categoryId: string, resourceType: 'requirements' | 'forms', resource: OptionType) => {
+  const categories = get(categoriesAtom);
+  const category = findCategoryById(categories, categoryId);
+  if (!category) return;
 
-    const updatedCategory = { ...category };
-    const currentResources = resourceType === 'requirements' ? updatedCategory.requirements : updatedCategory.forms;
-    const updatedResources = [...(currentResources || []), resource];
+  const updatedCategory = { ...category };
+  const currentResources = resourceType === 'requirements' ? updatedCategory.requirements : updatedCategory.forms;
+  const updatedResources = [...(currentResources || []), resource];
 
-    if (resourceType === 'requirements') {
-      updatedCategory.requirements = updatedResources;
-    } else {
-      updatedCategory.forms = updatedResources;
-    }
-
-    // Remove from all children
-    const removeFromChildren = (parentId: string) => {
-      const parent = findCategoryById(categories, parentId);
-      if (!parent?.children) return;
-
-      parent.children.forEach((childId) => {
-        const child = findCategoryById(categories, childId);
-        if (child) {
-          const childResources = resourceType === 'requirements' ? child.requirements : child.forms;
-          const filteredResources = (childResources || []).filter((r) => r.value !== resource.value);
-
-          if (resourceType === 'requirements') {
-            child.requirements = filteredResources;
-          } else {
-            child.forms = filteredResources;
-          }
-
-          // Recursively remove from grandchildren
-          removeFromChildren(childId);
-        }
-      });
-    };
-
-    removeFromChildren(categoryId);
-
-    // Update the category in the array
-    const updatedCategories = categories.map((c) => (c.id === categoryId ? updatedCategory : c));
-    set(categoriesAtom, updatedCategories);
+  if (resourceType === 'requirements') {
+    updatedCategory.requirements = updatedResources;
+  } else {
+    updatedCategory.forms = updatedResources;
   }
-);
 
+  // Remove from all children
+  const removeFromChildren = (parentId: string) => {
+    const parent = findCategoryById(categories, parentId);
+    if (!parent?.children) return;
+
+    parent.children.forEach((childId) => {
+      const child = findCategoryById(categories, childId);
+      if (child) {
+        const childResources = resourceType === 'requirements' ? child.requirements : child.forms;
+        const filteredResources = (childResources || []).filter((r) => r.value !== resource.value);
+
+        if (resourceType === 'requirements') {
+          child.requirements = filteredResources;
+        } else {
+          child.forms = filteredResources;
+        }
+
+        // Recursively remove from grandchildren
+        removeFromChildren(childId);
+      }
+    });
+  };
+
+  removeFromChildren(categoryId);
+
+  // Update the category in the array
+  const updatedCategories = categories.map((c) => (c.id === categoryId ? updatedCategory : c));
+  set(categoriesAtom, updatedCategories);
+});

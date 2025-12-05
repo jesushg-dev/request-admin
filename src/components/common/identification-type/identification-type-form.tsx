@@ -3,6 +3,7 @@
 import { useTransition, type FC } from 'react';
 import { useRouter } from '@/i18n/routing';
 import { useUpsertIdentificationType } from '@/services/api/hooks';
+import { useIdentificationTypeSchema, type TIdentificationTypeSchema } from '@/services/schemas/identification-type';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
@@ -14,7 +15,6 @@ import { Form, FormControl, FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { FormActions, FormContent, FormItem, FormRoot, FormSection, FormValidationStatus } from '@/components/shared/form-root';
-import { useIdentificationTypeSchema, type TIdentificationTypeSchema } from '@/services/schemas/identification-type';
 
 const getDefaultValues = (): TIdentificationTypeSchema => ({
   id: generateUuid(),

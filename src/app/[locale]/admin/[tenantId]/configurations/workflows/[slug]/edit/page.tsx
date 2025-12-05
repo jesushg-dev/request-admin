@@ -1,10 +1,10 @@
-import { type Metadata } from 'next';
 import { FC } from 'react';
-import { type Locale } from 'next-intl';
-import { redirect } from '@/i18n/routing';
+import { type Metadata } from 'next';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
+import { redirect } from '@/i18n/routing';
 import { getDb } from '@/server/db-client';
+import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
 import { RequestWorkflowDefaultArgs, RequestWorkflowType } from '@/types/zenstackhq/workflow';
@@ -18,7 +18,7 @@ interface UpdateWorkflowPageProps {
 export async function generateMetadata(props: UpdateWorkflowPageProps): Promise<Metadata> {
   const { locale, tenantId, slug } = await props.params;
   const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
-  
+
   const db = await getDb();
   const workflow = await db.requestWorkflow.findUnique({
     where: { id: slug, tenantId },
@@ -37,7 +37,7 @@ const UpdateWorkflowPage: FC<UpdateWorkflowPageProps> = async ({ params }) => {
 
   const auth = await getAuthContext(tenantId);
   const canEdit = auth.hasPermissions([PermissionActions.WORKFLOW.EDIT]);
-  
+
   if (!canEdit) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/configurations/workflows', params: { tenantId } } });
   }

@@ -39,7 +39,7 @@ export async function updateRequirementCompliance(requestId: string, tenantId: s
  */
 export async function areAllRequirementsFulfilled(requestId: string, tenantId: string): Promise<boolean> {
   const db = await getDb();
-  
+
   // Fetch non-archived compliance tracking records
   const complianceTrackings = await db.requirementComplianceTracking.findMany({
     where: {

@@ -65,14 +65,16 @@ jest.mock('./page', () => ({
 }));
 
 describe('Home Page', () => {
+  const mockParams = Promise.resolve({ locale: 'en' as const });
+
   it('renders the main components', async () => {
-    const { container } = render(<Home />);
+    const { container } = render(<Home params={mockParams} />);
     expect(container.querySelector('main')).toBeInTheDocument();
     expect(container.querySelector('section')).toBeInTheDocument();
   });
 
   it('renders the navigation elements', async () => {
-    render(<Home />);
+    render(<Home params={mockParams} />);
 
     await waitFor(() => {
       expect(screen.getByText('Test Brand')).toBeInTheDocument();
@@ -83,7 +85,7 @@ describe('Home Page', () => {
   });
 
   it('renders the background gradients', async () => {
-    const { container } = render(<Home />);
+    const { container } = render(<Home params={mockParams} />);
 
     await waitFor(() => {
       const gradientElements = container.querySelectorAll('.bg-gradient-to-b');
@@ -92,7 +94,7 @@ describe('Home Page', () => {
   });
 
   it('renders all mock components', async () => {
-    render(<Home />);
+    render(<Home params={mockParams} />);
 
     await waitFor(() => {
       expect(screen.getByTestId('mock-navbar')).toBeInTheDocument();

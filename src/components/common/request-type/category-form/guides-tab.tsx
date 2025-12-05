@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useGuideSchema, type TGuideSchema } from '@/services/schemas/request-type';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { BookOpen, Edit, FileText, Plus, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -17,7 +18,6 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
-import { useGuideSchema, type TGuideSchema } from '@/services/schemas/request-type';
 
 import { RequestCategoryValues } from '.';
 
@@ -242,7 +242,12 @@ function GuideModal({ open, onClose, onSave, initialData }: { open: boolean; onC
                   name="updatedAt"
                   render={({ field }) => (
                     <FormItem label={t('lastUpdated')} description={t('lastUpdatedDescription')}>
-                      <Input type="datetime-local" {...field} value={new Date(field.value).toISOString().slice(0, 16)} onChange={(e) => field.onChange(new Date(e.target.value).toISOString())} />
+                      <Input
+                        type="datetime-local"
+                        {...field}
+                        value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ''}
+                        onChange={(e) => field.onChange(new Date(e.target.value).toISOString())}
+                      />
                     </FormItem>
                   )}
                 />

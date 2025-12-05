@@ -1,11 +1,11 @@
 import { getDashboardMetrics } from '@/actions/dashboard';
-import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import { AlertTriangle, ArrowRight } from 'lucide-react';
+import { Locale } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Locale } from 'next-intl';
 
 interface QuickStatsCardsServerProps {
   tenantId: string;
@@ -27,7 +27,7 @@ export function QuickStatsFallback() {
 }
 
 export default async function QuickStatsCardsServer({ tenantId, workflowId, locale }: QuickStatsCardsServerProps) {
-  const t = await getTranslations({ locale: locale , namespace: 'admin.dashboard.quickStats' });
+  const t = await getTranslations({ locale: locale, namespace: 'admin.dashboard.quickStats' });
   const data = await getDashboardMetrics(tenantId, workflowId);
 
   return (
@@ -99,4 +99,3 @@ export default async function QuickStatsCardsServer({ tenantId, workflowId, loca
     </div>
   );
 }
-

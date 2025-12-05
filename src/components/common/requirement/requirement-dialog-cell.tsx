@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useFindManyRequirement } from '@/services/api/hooks';
-import { Prisma } from '@zenstackhq/runtime/models';
 import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { Prisma } from '@zenstackhq/runtime/models';
 import { useTranslations } from 'next-intl';
 
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';

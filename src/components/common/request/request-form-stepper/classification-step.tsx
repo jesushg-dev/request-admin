@@ -18,8 +18,8 @@ import Select from '@/components/custom-ui/select';
 import { FormItem } from '@/components/shared/form-root';
 
 import { AssignmentCategoriesSelect, assignmentCategorySelectSchema } from '../../category/assignment-categories-select';
-import { RequestCategoriesSelect, requestCategorySelectSchema } from '../../category/request-categories-select';
 import { CategoryLoadingProvider } from '../../category/category-loading-context';
+import { RequestCategoriesSelect, requestCategorySelectSchema } from '../../category/request-categories-select';
 
 export const combinedCategoriesSchema = z.object({
   areaId: z.object({ value: z.string(), label: z.string() }),
@@ -65,20 +65,18 @@ export const RequestCategoryFields: FC<CategoryFieldsProps> = ({ menuPortalTarge
   // Clean up fields that are beyond the current hierarchy levels
   useEffect(() => {
     if (isHierarchyLoading || !isInitialized) return;
-    
+
     // Use setTimeout to ensure components are unmounted
     const timeoutId = setTimeout(() => {
       const currentValues = getValues('requestCategory') ?? [];
       // Calculate max allowed index based on all levels in the hierarchy
-      const maxAllowedIndex = requestLevelTypes.length > 0 
-        ? Math.max(...requestLevelTypes.map(level => level.position - 1))
-        : 0;
-      
+      const maxAllowedIndex = requestLevelTypes.length > 0 ? Math.max(...requestLevelTypes.map((level) => level.position - 1)) : 0;
+
       // Instead of leaving null values, update the array to only include valid indices
       if (currentValues.length > maxAllowedIndex + 1) {
         const validValues = currentValues.slice(0, maxAllowedIndex + 1);
         setValue('requestCategory', validValues, { shouldDirty: false, shouldTouch: false, shouldValidate: false });
-        
+
         // Unregister fields beyond the valid range
         for (let index = maxAllowedIndex + 1; index < currentValues.length; index++) {
           const fieldPath = `requestCategory.${index}` as const;
@@ -86,7 +84,7 @@ export const RequestCategoryFields: FC<CategoryFieldsProps> = ({ menuPortalTarge
         }
       }
     }, 100); // Increased delay to ensure react-select cleanup
-    
+
     return () => clearTimeout(timeoutId);
   }, [requestLevelTypes, isHierarchyLoading, isInitialized, getValues, setValue, unregister]);
 
@@ -96,7 +94,7 @@ export const RequestCategoryFields: FC<CategoryFieldsProps> = ({ menuPortalTarge
       // Keep only the first element (index 0) and remove all others
       const firstValue = currentValues[0] || { label: '', value: '', position: 0 };
       setValue('requestCategory', [firstValue], { shouldDirty: false, shouldTouch: false, shouldValidate: false });
-      
+
       // Unregister all fields beyond index 0
       for (let index = 1; index < currentValues.length; index++) {
         const fieldPath = `requestCategory.${index}` as const;
@@ -236,20 +234,18 @@ export const AssignmentCategoryFields: FC<CategoryFieldsProps> = ({ menuPortalTa
   // Clean up fields that are beyond the current hierarchy levels
   useEffect(() => {
     if (isHierarchyLoading || !isInitialized) return;
-    
+
     // Use setTimeout to ensure components are unmounted
     const timeoutId = setTimeout(() => {
       const currentValues = getValues('assignmentCategory') ?? [];
       // Calculate max allowed index based on all levels in the hierarchy
-      const maxAllowedIndex = assignmentLevelTypes.length > 0 
-        ? Math.max(...assignmentLevelTypes.map(level => level.position - 1))
-        : 0;
-      
+      const maxAllowedIndex = assignmentLevelTypes.length > 0 ? Math.max(...assignmentLevelTypes.map((level) => level.position - 1)) : 0;
+
       // Instead of leaving null values, update the array to only include valid indices
       if (currentValues.length > maxAllowedIndex + 1) {
         const validValues = currentValues.slice(0, maxAllowedIndex + 1);
         setValue('assignmentCategory', validValues, { shouldDirty: false, shouldTouch: false, shouldValidate: false });
-        
+
         // Unregister fields beyond the valid range
         for (let index = maxAllowedIndex + 1; index < currentValues.length; index++) {
           const fieldPath = `assignmentCategory.${index}` as const;
@@ -257,7 +253,7 @@ export const AssignmentCategoryFields: FC<CategoryFieldsProps> = ({ menuPortalTa
         }
       }
     }, 100); // Increased delay to ensure react-select cleanup
-    
+
     return () => clearTimeout(timeoutId);
   }, [assignmentLevelTypes, isHierarchyLoading, isInitialized, getValues, setValue, unregister]);
 
@@ -267,7 +263,7 @@ export const AssignmentCategoryFields: FC<CategoryFieldsProps> = ({ menuPortalTa
       // Keep only the first element (index 0) and remove all others
       const firstValue = currentValues[0] || { label: '', value: '', position: 0 };
       setValue('assignmentCategory', [firstValue], { shouldDirty: false, shouldTouch: false, shouldValidate: false });
-      
+
       // Unregister all fields beyond index 0
       for (let index = 1; index < currentValues.length; index++) {
         const fieldPath = `assignmentCategory.${index}` as const;

@@ -3,11 +3,11 @@
 import { memo, useEffect, useState } from 'react';
 import { getRecentRequests } from '@/actions/dashboard';
 import { Link } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { useTranslations } from 'next-intl';
 
 interface Request {
   id: string;

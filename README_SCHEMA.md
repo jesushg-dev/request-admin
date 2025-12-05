@@ -31,11 +31,13 @@ The scripts in `package.json` automatically handle:
 ### `scripts/copy-schema.js`
 
 Main script that:
+
 1. Restores `.zmodel` files from git (original state with SQL Server)
 2. Copies the correct schema (`local` or `vercel`)
 3. Processes `.zmodel` files according to the provider
 
 **Manual usage:**
+
 ```bash
 node scripts/copy-schema.js local   # For SQL Server
 node scripts/copy-schema.js vercel  # For PostgreSQL
@@ -45,12 +47,13 @@ node scripts/copy-schema.js vercel  # For PostgreSQL
 
 Script that processes `.zmodel` files in the `zmodel/` directory:
 
-- **PostgreSQL**: 
+- **PostgreSQL**:
   - Removes `@db.UniqueIdentifier` (not compatible with PostgreSQL)
   - Replaces `@db.NVarChar(Max)` with `@db.Text` (PostgreSQL equivalent)
 - **SQL Server**: Keeps `@db.UniqueIdentifier` and `@db.NVarChar(Max)` (required for SQL Server)
 
 **Manual usage:**
+
 ```bash
 node scripts/process-schemas.js postgresql
 node scripts/process-schemas.js sqlserver
@@ -59,11 +62,13 @@ node scripts/process-schemas.js sqlserver
 ## Provider Differences
 
 ### SQL Server
+
 - Uses `@db.UniqueIdentifier` for UUID fields
 - Uses `@db.VarChar(n)` for strings with specific length
 - Uses `@db.NVarChar(Max)` for large text fields (JSON, etc.)
 
 ### PostgreSQL
+
 - Does not use `@db.UniqueIdentifier` (uses `String @default(uuid())` directly)
 - Uses `@db.VarChar(n)` in a compatible way
 - Uses `@db.Text` instead of `@db.NVarChar(Max)` for large text fields
@@ -79,12 +84,14 @@ node scripts/process-schemas.js sqlserver
 ## Recommended Workflow
 
 ### Local Development
+
 ```bash
 npm run dev          # Automatically configures for SQL Server
 npm run build:local  # Local build with SQL Server
 ```
 
 ### Production/Vercel
+
 ```bash
 npm run build        # Automatically configures for PostgreSQL
 ```
@@ -96,4 +103,3 @@ If you encounter errors related to `@db.UniqueIdentifier`:
 1. Verify that `.zmodel` files are committed in git
 2. Run manually: `node scripts/copy-schema.js [local|vercel]`
 3. Verify that the main schema is copied correctly
-

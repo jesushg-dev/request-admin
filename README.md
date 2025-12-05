@@ -114,6 +114,7 @@ As long as you have access to this source code, you are granted the following ri
 The only requirement is that you include the original copyright notice and the MIT License text when distributing the software or any modified versions.
 
 This license is:
+
 - **Legally valid** in the United States under U.S. copyright law
 - **Internationally recognized** and enforceable in most jurisdictions worldwide
 - **OSI approved** (Open Source Initiative) and **FSF approved** (Free Software Foundation)
@@ -129,4 +130,3 @@ See the [LICENSE](LICENSE) file for the full legal text.
 - [Gestion de niveles de servicio](https://blog.invgate.com/es/topic/gesti%C3%B3n-de-niveles-de-servicio)
 - [Prisma Markdown](https://github.com/samchon/prisma-markdown?tab=readme-ov-file)
 - [Magic](https://magicui.design/docs/components/file-tree)
-

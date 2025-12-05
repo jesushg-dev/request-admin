@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTextAreaFieldPropertiesSchema, type TTextAreaFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PilcrowIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -15,7 +16,6 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { ElementsType, FormElement, FormElementInstance, SubmitFunction } from '@/components/builder-form/form-elements';
-import { useTextAreaFieldPropertiesSchema, type TTextAreaFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 
 const type: ElementsType = 'TextAreaField';
 
@@ -60,11 +60,11 @@ function DesignerComponent({ elementInstance }: { elementInstance: FormElementIn
   const element = elementInstance as CustomInstance;
   const tDefaults = useTranslations('component.form.builderFields.defaults');
   const { required, placeHolder } = element.extraAttributes;
-  
+
   // Translate default values, otherwise use custom user values
   const label = element.extraAttributes.label === extraAttributes.label ? tDefaults('textareaFieldLabel') : element.extraAttributes.label;
   const helperText = element.extraAttributes.helperText === extraAttributes.helperText ? tDefaults('textareaFieldHelperText') : element.extraAttributes.helperText;
-  
+
   return (
     <div className="flex w-full flex-col gap-2">
       <Label>
@@ -89,11 +89,11 @@ function FormComponent({ elementInstance, submitValue, isInvalid, defaultValue }
   }, [isInvalid]);
 
   const { required, placeHolder, rows } = element.extraAttributes;
-  
+
   // Translate default values, otherwise use custom user values
   const label = element.extraAttributes.label === extraAttributes.label ? tDefaults('textareaFieldLabel') : element.extraAttributes.label;
   const helperText = element.extraAttributes.helperText === extraAttributes.helperText ? tDefaults('textareaFieldHelperText') : element.extraAttributes.helperText;
-  
+
   return (
     <div className="flex w-full flex-col gap-2">
       <Label className={cn(error && 'text-red-500')}>
@@ -176,9 +176,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                   }}
                 />
               </FormControl>
-              <FormDescription>
-                {t('labelDescription')}
-              </FormDescription>
+              <FormDescription>{t('labelDescription')}</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -216,9 +214,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                   }}
                 />
               </FormControl>
-              <FormDescription>
-                {t('helperTextDescription')}
-              </FormDescription>
+              <FormDescription>{t('helperTextDescription')}</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -228,10 +224,12 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
           name="rows"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('rows')} {form.watch('rows')}</FormLabel>
+              <FormLabel>
+                {t('rows')} {form.watch('rows')}
+              </FormLabel>
               <FormControl>
                 <Slider
-                  defaultValue={[field.value]}
+                  defaultValue={[field.value ?? 3]}
                   min={1}
                   max={10}
                   step={1}
@@ -251,9 +249,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
             <FormItem className="flex items-center justify-between rounded-lg border p-3 shadow-xs">
               <div className="space-y-0.5">
                 <FormLabel>{t('required')}</FormLabel>
-                <FormDescription>
-                  {t('requiredDescription')}
-                </FormDescription>
+                <FormDescription>{t('requiredDescription')}</FormDescription>
               </div>
               <FormControl>
                 <Switch checked={field.value} onCheckedChange={field.onChange} />

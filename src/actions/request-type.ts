@@ -1,18 +1,18 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { getDb } from '@/server/db-client';
 import { currentSession } from '@/server/auth-server';
+import { getDb } from '@/server/db-client';
+import { Prisma } from '@zenstackhq/runtime/models';
 
 import { ExecutionFlowDefaultArgs } from '@/types/zenstackhq/execution-flow';
+import { canActivateCategory } from '@/lib/category-validation';
+import { IncompleteCategoryChainError } from '@/lib/errors';
 import { transformExecutionFlowToZodSchema } from '@/lib/execution-flow';
 import { generateUuid } from '@/lib/id';
 import { buildRequestCategoryUpsertArgs } from '@/lib/request-type';
 import { RequestCategoryValues } from '@/components/common/request-type/category-form';
 import { RequestTypeFormValues } from '@/components/common/request-type/request-type-form';
-import { canActivateCategory } from '@/lib/category-validation';
-import { Prisma } from '@zenstackhq/runtime/models';
-import { IncompleteCategoryChainError } from '@/lib/errors';
 
 class UserNotFoundErr extends Error {}
 
@@ -247,11 +247,7 @@ function prepareCategoryUpsert(categories: RequestCategoryValues[]) {
  * Use this when you only need to change the active status without updating other fields.
  * Validates that the category has a complete chain of children before activating.
  */
-export async function updateCategoryActiveStatus(
-  categoryId: string,
-  isActive: boolean,
-  tenantId: string
-): Promise<void> {
+export async function updateCategoryActiveStatus(categoryId: string, isActive: boolean, tenantId: string): Promise<void> {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
@@ -288,11 +284,7 @@ export async function updateCategoryActiveStatus(
  * Validates that the category has a complete chain of children down to the last level
  * before allowing activation (isActive = true).
  */
-export async function upsertRequestCategory(
-  category: RequestCategoryValues,
-  tenantId: string,
-  hierarchyId: string
-): Promise<void> {
+export async function upsertRequestCategory(category: RequestCategoryValues, tenantId: string, hierarchyId: string): Promise<void> {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
@@ -344,7 +336,7 @@ export async function createInitialRequestCategory({
   tenantId: string;
 }): Promise<string> {
   const db = await getDb();
-  
+
   const categoryId = generateUuid();
   const slaId = generateUuid();
 

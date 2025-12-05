@@ -1,7 +1,7 @@
 'use client';
 
 import { eachDayOfInterval, endOfMonth, endOfWeek, format, isSameDay, isSameMonth, isWithinInterval, startOfMonth, startOfWeek } from 'date-fns';
-import { es, enUS, type Locale } from 'date-fns/locale';
+import { enUS, es, type Locale } from 'date-fns/locale';
 import { AnimatePresence, motion } from 'motion/react';
 import { useLocale, useTranslations } from 'next-intl';
 

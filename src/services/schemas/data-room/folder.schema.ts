@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -18,7 +18,10 @@ export const useFolderSchema = () => {
 export function createFolderSchema(t: TranslationFn) {
   return z.object({
     id: z.string().uuid(),
-    name: z.string().min(1, { message: t('nameRequired') }).max(200, { message: t('nameMaxLength') }),
+    name: z
+      .string()
+      .min(1, { message: t('nameRequired') })
+      .max(200, { message: t('nameMaxLength') }),
   });
 }
 
@@ -26,4 +29,3 @@ export function createFolderSchema(t: TranslationFn) {
  * Type inference for FolderSchema
  */
 export type TFolderSchema = z.infer<ReturnType<typeof createFolderSchema>>;
-

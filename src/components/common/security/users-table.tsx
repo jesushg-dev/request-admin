@@ -1,16 +1,16 @@
 'use client';
 
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
 import { useFindManyUserTenant } from '@/services/api/hooks';
 import { Prisma } from '@zenstackhq/runtime/models';
+import { useTranslations } from 'next-intl';
 
+import { getUserName } from '@/lib/user';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getUserName } from '@/lib/user';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 const UserTenantDefaultArgs = Prisma.validator<Prisma.UserTenantDefaultArgs>()({
   select: {
@@ -75,11 +75,21 @@ export function UsersTable({ tenantId }: UsersTableProps) {
         <TableBody>
           {Array.from({ length: 5 }).map((_, i) => (
             <TableRow key={i}>
-              <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-              <TableCell><Skeleton className="h-4 w-40" /></TableCell>
-              <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-              <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-              <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+              <TableCell>
+                <Skeleton className="h-4 w-32" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-4 w-40" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-4 w-24" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-4 w-16" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-4 w-20" />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -165,15 +175,11 @@ export function UsersTable({ tenantId }: UsersTableProps) {
                     )}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={status === 'Active' ? 'default' : 'secondary'}>
-                      {status}
-                    </Badge>
+                    <Badge variant={status === 'Active' ? 'default' : 'secondary'}>{status}</Badge>
                   </TableCell>
                   <TableCell>
                     <Button variant="link" asChild>
-                      <Link href={`/admin/${tenantId}/security/users/${userTenant.id}`}>
-                        {t('viewDetails')}
-                      </Link>
+                      <Link href={`/admin/${tenantId}/security/users/${userTenant.id}`}>{t('viewDetails')}</Link>
                     </Button>
                   </TableCell>
                 </TableRow>

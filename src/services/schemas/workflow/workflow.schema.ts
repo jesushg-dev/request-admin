@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -37,4 +37,3 @@ export type TWorkflowSchema = z.infer<ReturnType<typeof createWorkflowSchema>>;
 export function getWorkflowSchema() {
   return createWorkflowSchema((key: string) => key);
 }
-

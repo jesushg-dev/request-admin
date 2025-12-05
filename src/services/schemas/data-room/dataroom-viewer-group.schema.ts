@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -18,7 +18,10 @@ export const useDataroomViewerGroupSchema = () => {
 export function createDataroomViewerGroupSchema(t: TranslationFn) {
   return z.object({
     id: z.string().uuid(),
-    name: z.string().min(1, { message: t('nameRequired') }).max(200, { message: t('nameMaxLength') }),
+    name: z
+      .string()
+      .min(1, { message: t('nameRequired') })
+      .max(200, { message: t('nameMaxLength') }),
   });
 }
 
@@ -26,4 +29,3 @@ export function createDataroomViewerGroupSchema(t: TranslationFn) {
  * Type inference for DataroomViewerGroupSchema
  */
 export type TDataroomViewerGroupSchema = z.infer<ReturnType<typeof createDataroomViewerGroupSchema>>;
-

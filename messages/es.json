@@ -595,12 +595,7 @@
           "contentData": {
             "title": "Datos de Contenido",
             "content": "Almacenamos y procesamos contenido que usted crea o carga en el Servicio:",
-            "items": [
-              "Solicitudes y datos asociados",
-              "Configuraciones de flujos de trabajo",
-              "Documentos y archivos cargados",
-              "Comunicaciones y mensajes"
-            ]
+            "items": ["Solicitudes y datos asociados", "Configuraciones de flujos de trabajo", "Documentos y archivos cargados", "Comunicaciones y mensajes"]
           }
         },
         "howWeUse": {
@@ -4697,67 +4692,37 @@
         "firstSteps": {
           "title": "Primeros Pasos",
           "description": "Aprende lo básico para comenzar a usar el sistema",
-          "links": [
-            "Introducción al sistema",
-            "Crea tu primera solicitud",
-            "Navegación por el panel",
-            "Configura tu perfil"
-          ],
+          "links": ["Introducción al sistema", "Crea tu primera solicitud", "Navegación por el panel", "Configura tu perfil"],
           "viewAll": "Ver todas las guías básicas"
         },
         "requestManagement": {
           "title": "Gestión de Solicitudes",
           "description": "Aprende a gestionar solicitudes eficientemente",
-          "links": [
-            "Estados de las solicitudes",
-            "Asignación de solicitudes",
-            "Cambios de prioridad",
-            "Comentarios y seguimiento"
-          ],
+          "links": ["Estados de las solicitudes", "Asignación de solicitudes", "Cambios de prioridad", "Comentarios y seguimiento"],
           "viewAll": "Ver todas las guías de gestión"
         },
         "communication": {
           "title": "Comunicación",
           "description": "Aprende a comunicarte eficazmente en el sistema",
-          "links": [
-            "Sistema de mensajería",
-            "Notificaciones y alertas",
-            "Menciones y etiquetas",
-            "Compartir archivos"
-          ],
+          "links": ["Sistema de mensajería", "Notificaciones y alertas", "Menciones y etiquetas", "Compartir archivos"],
           "viewAll": "Ver todas las guías de comunicación"
         },
         "reports": {
           "title": "Reportes y Analítica",
           "description": "Aprende a usar las herramientas de análisis",
-          "links": [
-            "Generación de reportes",
-            "Análisis de métricas",
-            "Exportación de datos",
-            "Tableros personalizados"
-          ],
+          "links": ["Generación de reportes", "Análisis de métricas", "Exportación de datos", "Tableros personalizados"],
           "viewAll": "Ver todas las guías de reportes"
         },
         "administration": {
           "title": "Administración",
           "description": "Guías para administradores del sistema",
-          "links": [
-            "Gestión de usuarios",
-            "Configuración de flujos de trabajo",
-            "Personalización del sistema",
-            "Seguridad y permisos"
-          ],
+          "links": ["Gestión de usuarios", "Configuración de flujos de trabajo", "Personalización del sistema", "Seguridad y permisos"],
           "viewAll": "Ver todas las guías de administración"
         },
         "workflows": {
           "title": "Flujos de Trabajo",
           "description": "Aprende a configurar y usar flujos de trabajo",
-          "links": [
-            "Creación de flujos personalizados",
-            "Reglas de transición de estados",
-            "Automatización de procesos",
-            "Plantillas de flujos de trabajo"
-          ],
+          "links": ["Creación de flujos personalizados", "Reglas de transición de estados", "Automatización de procesos", "Plantillas de flujos de trabajo"],
           "viewAll": "Ver todas las guías de flujos de trabajo"
         }
       },

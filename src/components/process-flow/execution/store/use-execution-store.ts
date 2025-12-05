@@ -85,149 +85,134 @@ export const setParallelGroupsAtom = atom(null, (_, set, groups: ParallelGroups)
   set(stateAtom, { type: 'SET_STATE', payload: { parallelGroups: groups } });
 });
 
-export const initializeProcessFlowAtom = atom(
-  null,
-  (
-    get,
-    set,
-    [
-      flow,
-      locale,
-      executionLogs,
-    ]: [
-      ExecutionFlowValues | undefined,
-      Locale | undefined,
-      ExecutionLogType[] | undefined,
-    ]
-  ) => {
-    const state = get(stateAtom);
+export const initializeProcessFlowAtom = atom(null, (get, set, [flow, locale, executionLogs]: [ExecutionFlowValues | undefined, Locale | undefined, ExecutionLogType[] | undefined]) => {
+  const state = get(stateAtom);
 
-    if (!flow) {
-      set(stateAtom, { type: 'SET_STATE', payload: { error: ERROR_TYPES.NO_PROCESS_FLOW } });
-      return;
-    }
+  if (!flow) {
+    set(stateAtom, { type: 'SET_STATE', payload: { error: ERROR_TYPES.NO_PROCESS_FLOW } });
+    return;
+  }
 
-    try {
-      const flowNodes = flow.nodes.map((node) => ({
-        ...node,
-        data: { ...node.data, isExecuting: false, isCompleted: false },
-      })) as FlowNode[];
+  try {
+    const flowNodes = flow.nodes.map((node) => ({
+      ...node,
+      data: { ...node.data, isExecuting: false, isCompleted: false },
+    })) as FlowNode[];
 
-      const flowEdges = flow.edges.map((edge) => ({
-        ...edge,
-        markerEnd: { type: 'arrowclosed', width: 20, height: 20 },
-        label: edge.sourceHandle ? edgeLabels[locale || 'es'][edge.sourceHandle] : 'N/A',
-        labelStyle: { fill: '#888', fontWeight: 500 },
-        labelBgStyle: { fill: 'rgba(255, 255, 255, 0.8)' },
-      })) as FlowEdge[];
+    const flowEdges = flow.edges.map((edge) => ({
+      ...edge,
+      markerEnd: { type: 'arrowclosed', width: 20, height: 20 },
+      label: edge.sourceHandle ? edgeLabels[locale || 'es'][edge.sourceHandle] : 'N/A',
+      labelStyle: { fill: '#888', fontWeight: 500 },
+      labelBgStyle: { fill: 'rgba(255, 255, 255, 0.8)' },
+    })) as FlowEdge[];
 
-      const start = flowNodes.find((n) => n.type === 'start');
-      let completedNodeIds: string[] = [];
-      let currentNodeId: string | null = start?.id || null;
-      let executionHistory: ExecutionHistoryEntry[] = [];
+    const start = flowNodes.find((n) => n.type === 'start');
+    let completedNodeIds: string[] = [];
+    let currentNodeId: string | null = start?.id || null;
+    let executionHistory: ExecutionHistoryEntry[] = [];
 
-      // Restore state from execution logs if they exist
-      if (executionLogs && executionLogs.length > 0) {
-        // Process logs in chronological order
-        for (const log of executionLogs) {
-          let parsedDetails: Record<string, unknown> | string = '';
-          try {
-            // Details are double-stringified in createExecutionLog
-            const firstParse = typeof log.details === 'string' ? JSON.parse(log.details) : log.details;
-            parsedDetails = typeof firstParse === 'string' ? JSON.parse(firstParse) : firstParse;
-          } catch {
-            // If parsing fails, use empty object
-            parsedDetails = {};
-          }
+    // Restore state from execution logs if they exist
+    if (executionLogs && executionLogs.length > 0) {
+      // Process logs in chronological order
+      for (const log of executionLogs) {
+        let parsedDetails: Record<string, unknown> | string = '';
+        try {
+          // Details are double-stringified in createExecutionLog
+          const firstParse = typeof log.details === 'string' ? JSON.parse(log.details) : log.details;
+          parsedDetails = typeof firstParse === 'string' ? JSON.parse(firstParse) : firstParse;
+        } catch {
+          // If parsing fails, use empty object
+          parsedDetails = {};
+        }
 
-          // Add to execution history
-          executionHistory.push({
-            timestamp: typeof log.timestamp === 'string' ? new Date(log.timestamp) : log.timestamp,
-            nodeId: log.nodeId,
-            action: ExecutionHistoryActions.COMPLETE,
-            details: typeof parsedDetails === 'string' ? parsedDetails : JSON.stringify(parsedDetails),
-          });
+        // Add to execution history
+        executionHistory.push({
+          timestamp: typeof log.timestamp === 'string' ? new Date(log.timestamp) : log.timestamp,
+          nodeId: log.nodeId,
+          action: ExecutionHistoryActions.COMPLETE,
+          details: typeof parsedDetails === 'string' ? parsedDetails : JSON.stringify(parsedDetails),
+        });
 
-          // If the log has a successful outcome, mark the node as completed
-          if (log.outcome === 'success') {
-            // For decision nodes (approval, condition), the details contain the outcome/next node
-            if (log.eventType === 'approval' || log.eventType === 'condition') {
-              const outcome = typeof parsedDetails === 'object' && parsedDetails !== null ? (parsedDetails as Record<string, unknown>).outcome : null;
+        // If the log has a successful outcome, mark the node as completed
+        if (log.outcome === 'success') {
+          // For decision nodes (approval, condition), the details contain the outcome/next node
+          if (log.eventType === 'approval' || log.eventType === 'condition') {
+            const outcome = typeof parsedDetails === 'object' && parsedDetails !== null ? (parsedDetails as Record<string, unknown>).outcome : null;
 
-              if (outcome && typeof outcome === 'string' && !completedNodeIds.includes(log.nodeId)) {
-                completedNodeIds.push(log.nodeId);
-                // The outcome is the next node ID for decision nodes
-                currentNodeId = outcome;
-              } else if (!completedNodeIds.includes(log.nodeId)) {
-                // Mark as completed even if we can't parse the outcome
-                completedNodeIds.push(log.nodeId);
-              }
-            } else {
-              // For other node types, just mark as completed
-              if (!completedNodeIds.includes(log.nodeId)) {
-                completedNodeIds.push(log.nodeId);
-              }
+            if (outcome && typeof outcome === 'string' && !completedNodeIds.includes(log.nodeId)) {
+              completedNodeIds.push(log.nodeId);
+              // The outcome is the next node ID for decision nodes
+              currentNodeId = outcome;
+            } else if (!completedNodeIds.includes(log.nodeId)) {
+              // Mark as completed even if we can't parse the outcome
+              completedNodeIds.push(log.nodeId);
+            }
+          } else {
+            // For other node types, just mark as completed
+            if (!completedNodeIds.includes(log.nodeId)) {
+              completedNodeIds.push(log.nodeId);
+            }
 
-              // Determine next node based on edges
-              if (log.nodeId === currentNodeId) {
-                const nextNodeId = calculateNextNodeHelper(flowEdges, log.nodeId);
-                currentNodeId = nextNodeId;
-              }
+            // Determine next node based on edges
+            if (log.nodeId === currentNodeId) {
+              const nextNodeId = calculateNextNodeHelper(flowEdges, log.nodeId);
+              currentNodeId = nextNodeId;
             }
           }
         }
+      }
 
-        // If we have completed nodes but no current node, check if execution is complete
-        if (completedNodeIds.length > 0 && !currentNodeId) {
-          // Check if all nodes except start/end are completed
-          const nonStartEndNodes = flowNodes.filter((n) => n.type !== 'start' && n.type !== 'end');
-          if (nonStartEndNodes.every((n) => completedNodeIds.includes(n.id))) {
-            // All nodes are completed, execution is done
-            currentNodeId = null;
-          } else {
-            // Find the next available node from the last completed node
-            const lastCompletedNode = completedNodeIds[completedNodeIds.length - 1];
-            const nextNodeId = calculateNextNodeHelper(flowEdges, lastCompletedNode);
-            currentNodeId = nextNodeId;
-          }
+      // If we have completed nodes but no current node, check if execution is complete
+      if (completedNodeIds.length > 0 && !currentNodeId) {
+        // Check if all nodes except start/end are completed
+        const nonStartEndNodes = flowNodes.filter((n) => n.type !== 'start' && n.type !== 'end');
+        if (nonStartEndNodes.every((n) => completedNodeIds.includes(n.id))) {
+          // All nodes are completed, execution is done
+          currentNodeId = null;
+        } else {
+          // Find the next available node from the last completed node
+          const lastCompletedNode = completedNodeIds[completedNodeIds.length - 1];
+          const nextNodeId = calculateNextNodeHelper(flowEdges, lastCompletedNode);
+          currentNodeId = nextNodeId;
         }
       }
+    }
 
-      let newState: ExecutionState = {
-        ...state,
-        processFlow: flow as ProcessFlow,
-        nodes: flowNodes,
-        edges: flowEdges,
-        error: null,
-        progress: completedNodeIds.length > 0 ? Math.round((completedNodeIds.length / (flow.nodes.length - 1)) * 100) : 0,
-        completedNodeIds,
-        isComplete: currentNodeId === null && completedNodeIds.length > 0,
-        currentNodeId,
-        executionHistory,
+    let newState: ExecutionState = {
+      ...state,
+      processFlow: flow as ProcessFlow,
+      nodes: flowNodes,
+      edges: flowEdges,
+      error: null,
+      progress: completedNodeIds.length > 0 ? Math.round((completedNodeIds.length / (flow.nodes.length - 1)) * 100) : 0,
+      completedNodeIds,
+      isComplete: currentNodeId === null && completedNodeIds.length > 0,
+      currentNodeId,
+      executionHistory,
+    };
+
+    if (start) {
+      const initialNodeId = currentNodeId || start.id;
+      newState = {
+        ...newState,
+        currentNodeId: initialNodeId,
+        nodes: updateNodeStylesHelper(flowNodes, initialNodeId, completedNodeIds),
+        currentLevel: 1,
+        totalLevels: 1,
       };
 
-      if (start) {
-        const initialNodeId = currentNodeId || start.id;
-        newState = {
-          ...newState,
-          currentNodeId: initialNodeId,
-          nodes: updateNodeStylesHelper(flowNodes, initialNodeId, completedNodeIds),
-          currentLevel: 1,
-          totalLevels: 1,
-        };
+      const { levels, availableNodes } = calculateLevelsAndAvailableNodes(newState.nodes, newState.edges, initialNodeId, completedNodeIds);
 
-        const { levels, availableNodes } = calculateLevelsAndAvailableNodes(newState.nodes, newState.edges, initialNodeId, completedNodeIds);
-
-        newState.totalLevels = levels;
-        newState.availableNodes = availableNodes;
-      }
-
-      set(stateAtom, { type: 'SET_STATE', payload: newState });
-    } catch {
-      set(stateAtom, { type: 'SET_STATE', payload: { error: ERROR_TYPES.INVALID_PROCESS_FLOW } });
+      newState.totalLevels = levels;
+      newState.availableNodes = availableNodes;
     }
+
+    set(stateAtom, { type: 'SET_STATE', payload: newState });
+  } catch {
+    set(stateAtom, { type: 'SET_STATE', payload: { error: ERROR_TYPES.INVALID_PROCESS_FLOW } });
   }
-);
+});
 
 export const addExecutionHistoryAtom = atom(null, (get, set, [nodeId, action, details]: [string, ExecutionHistoryActions, string?]) => {
   const state = get(stateAtom);

@@ -1,9 +1,9 @@
-import { type Metadata } from 'next';
 import { FC } from 'react';
-import { type Locale } from 'next-intl';
+import { type Metadata } from 'next';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
+import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import { SearchParams } from 'nuqs/server';
 
@@ -32,7 +32,7 @@ const NewPage: FC<NewPageProps> = async ({ params, searchParams }) => {
   // Folders are part of data rooms, so we need DATA_ROOM.EDIT permission
   const auth = await getAuthContext(tenantId);
   const canEditDataRooms = auth.hasPermissions([PermissionActions.DATA_ROOM.EDIT]);
-  
+
   if (!canEditDataRooms) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/data-rooms', params: { tenantId } } });
   }

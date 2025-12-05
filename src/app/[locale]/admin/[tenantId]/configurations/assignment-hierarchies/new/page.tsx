@@ -1,11 +1,11 @@
-import { type Metadata } from 'next';
 import { FC } from 'react';
-import { type Locale } from 'next-intl';
+import { type Metadata } from 'next';
 import { getAuthContext } from '@/actions/authorization';
+import { upsertAssignmentHierarchy } from '@/actions/hierarchy';
 import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
+import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
-import { upsertAssignmentHierarchy } from '@/actions/hierarchy';
 
 import { HierarchyFormStepper } from '@/components/common/hierarchy/hierarchy-form-stepper';
 
@@ -28,7 +28,7 @@ const CreateAssignmentHierarchyPage: FC<CreateAssignmentHierarchyPageProps> = as
 
   const auth = await getAuthContext(tenantId);
   const canCreate = auth.hasPermissions([PermissionActions.ASSIGNMENT_HIERARCHY.CREATE]);
-  
+
   if (!canCreate) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/configurations/assignment-hierarchies', params: { tenantId } } });
   }

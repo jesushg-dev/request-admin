@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
 import { listMembers, type ListMembersParams, type ListMembersResult } from '@/actions/organization';
+import { useQuery } from '@tanstack/react-query';
 
 /**
  * Hook to fetch organization members using Better Auth
@@ -11,4 +11,3 @@ export function useListMembers(params: ListMembersParams) {
     staleTime: 30000, // 30 seconds
   });
 }
-

@@ -1,6 +1,6 @@
 import { type Metadata } from 'next';
-import { GetFormById } from '@/actions/form';
 import { getAuthContext } from '@/actions/authorization';
+import { GetFormById } from '@/actions/form';
 import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
 import { type Locale } from 'next-intl';
@@ -19,7 +19,7 @@ interface FormDetailPageProps {
 export async function generateMetadata(props: FormDetailPageProps): Promise<Metadata> {
   const { locale, tenantId, slug } = await props.params;
   const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
-  
+
   const form = await GetFormById(slug, tenantId);
   const formName = form?.name || t('pages.formDetail.title');
 
@@ -34,7 +34,7 @@ export default async function FormDetailPage({ params }: FormDetailPageProps) {
 
   const auth = await getAuthContext(tenantId);
   const canViewForms = auth.hasPermissions([PermissionActions.FORM_DESIGNER.VIEW]);
-  
+
   if (!canViewForms) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/form-designer', params: { tenantId } } });
   }

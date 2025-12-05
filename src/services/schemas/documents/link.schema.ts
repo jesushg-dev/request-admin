@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -19,7 +19,10 @@ export function createLinkSchema(t: TranslationFn) {
   return z
     .object({
       id: z.string(),
-      name: z.string().min(1, { message: t('nameRequired') }).max(200, { message: t('nameMaxLength') }),
+      name: z
+        .string()
+        .min(1, { message: t('nameRequired') })
+        .max(200, { message: t('nameMaxLength') }),
       expirationDate: z.date().optional(),
       enablePassword: z.boolean(),
       password: z.string().optional(),
@@ -74,4 +77,3 @@ export function createLinkSchema(t: TranslationFn) {
  * Type inference for LinkSchema
  */
 export type TLinkSchema = z.infer<ReturnType<typeof createLinkSchema>>;
-

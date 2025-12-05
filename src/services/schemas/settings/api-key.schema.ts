@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -21,11 +21,7 @@ export function createApiKeyFormSchema(t: TranslationFn) {
       name: z.string().min(1, { message: t('nameRequired') }),
       prefix: z.string().min(1, { message: t('prefixRequired') }),
       expiresIn: z.enum(['never', '7d', '30d', '90d', '1y']),
-      metadata: z
-        .record(z.string(), z.any())
-        .nullable()
-        .default({})
-        .optional(),
+      metadata: z.record(z.string(), z.any()).nullable().default({}).optional(),
       rateLimitEnabled: z.boolean().default(false),
       rateLimitMax: z.number().int().positive().optional(),
       rateLimitTimeWindow: z.number().int().positive().optional(),
@@ -66,4 +62,3 @@ export function createApiKeyFormSchema(t: TranslationFn) {
  * Type inference for ApiKeyFormSchema
  */
 export type TApiKeyFormSchema = z.infer<ReturnType<typeof createApiKeyFormSchema>>;
-

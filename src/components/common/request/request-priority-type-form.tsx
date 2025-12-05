@@ -1,3 +1,4 @@
+import { useRequestPriorityTypeSchema, type TRequestPriorityTypeSchema } from '@/services/schemas/request';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react';
 import { useFieldArray, useForm } from 'react-hook-form';
@@ -7,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useRequestPriorityTypeSchema, type TRequestPriorityTypeSchema } from '@/services/schemas/request';
 
 const MAX_PRIORITY_TYPES = 5;
 

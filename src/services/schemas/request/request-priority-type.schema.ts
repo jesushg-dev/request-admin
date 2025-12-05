@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -19,8 +19,14 @@ export const useRequestPriorityTypeSchema = () => {
  */
 export function createRequestPriorityTypeSchema(t: TranslationFn) {
   const requestPriorityTypeSchema = z.object({
-    name: z.string().min(1, { message: t('nameRequired') }).max(100, { message: t('nameMaxLength') }),
-    description: z.string().max(255, { message: t('descriptionMaxLength') }).optional(),
+    name: z
+      .string()
+      .min(1, { message: t('nameRequired') })
+      .max(100, { message: t('nameMaxLength') }),
+    description: z
+      .string()
+      .max(255, { message: t('descriptionMaxLength') })
+      .optional(),
     isActive: z.boolean().default(true),
     primaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: t('colorInvalid') }),
   });
@@ -34,4 +40,3 @@ export function createRequestPriorityTypeSchema(t: TranslationFn) {
  * Type inference for RequestPriorityTypeSchema
  */
 export type TRequestPriorityTypeSchema = z.infer<ReturnType<typeof createRequestPriorityTypeSchema>>;
-

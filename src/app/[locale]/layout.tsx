@@ -9,9 +9,10 @@ import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 import { Toaster } from '@/components/ui/sonner';
 import { ConfirmDialogProvider } from '@/components/custom-ui/confirm-dialog';
-import TanstackQueryProvider from '@/components/hoc/tanstack-query-provider';
 import { FontProvider } from '@/components/hoc/font-provider';
-import { geistSans, geistMono, lexend } from '../fonts';
+import TanstackQueryProvider from '@/components/hoc/tanstack-query-provider';
+
+import { geistMono, geistSans, lexend } from '../fonts';
 
 // Metadata configuration with localization support
 export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {

@@ -1,6 +1,7 @@
 # Guía para Probar la API con tu API Key
 
 ## Tu API Key
+
 ```
 appHpOYfbwxXEhpbjgZXvDNDfPGYApeFHnFLAENeFZqpEGuOOsytaBVGddBqhpyYUdz
 ```
@@ -8,6 +9,7 @@ appHpOYfbwxXEhpbjgZXvDNDfPGYApeFHnFLAENeFZqpEGuOOsytaBVGddBqhpyYUdz
 ## Endpoints Disponibles
 
 ### 1. Obtener Tenants Disponibles
+
 Primero, necesitas obtener el `tenantId` al que tienes acceso:
 
 ```bash
@@ -17,6 +19,7 @@ curl -X GET \
 ```
 
 **Respuesta esperada:**
+
 ```json
 {
   "data": [
@@ -31,6 +34,7 @@ curl -X GET \
 ```
 
 ### 2. Listar Formularios
+
 ```bash
 curl -X GET \
   -H "Authorization: Bearer appHpOYfbwxXEhpbjgZXvDNDfPGYApeFHnFLAENeFZqpEGuOOsytaBVGddBqhpyYUdz" \
@@ -38,6 +42,7 @@ curl -X GET \
 ```
 
 ### 3. Obtener un Formulario Específico
+
 ```bash
 curl -X GET \
   -H "Authorization: Bearer appHpOYfbwxXEhpbjgZXvDNDfPGYApeFHnFLAENeFZqpEGuOOsytaBVGddBqhpyYUdz" \
@@ -45,6 +50,7 @@ curl -X GET \
 ```
 
 ### 4. Obtener Submissions de un Formulario
+
 ```bash
 curl -X GET \
   -H "Authorization: Bearer appHpOYfbwxXEhpbjgZXvDNDfPGYApeFHnFLAENeFZqpEGuOOsytaBVGddBqhpyYUdz" \
@@ -52,6 +58,7 @@ curl -X GET \
 ```
 
 ### 5. Obtener una Submission Específica
+
 ```bash
 curl -X GET \
   -H "Authorization: Bearer appHpOYfbwxXEhpbjgZXvDNDfPGYApeFHnFLAENeFZqpEGuOOsytaBVGddBqhpyYUdz" \
@@ -59,6 +66,7 @@ curl -X GET \
 ```
 
 ### 6. Obtener Menu Items
+
 ```bash
 curl -X GET \
   -H "Authorization: Bearer appHpOYfbwxXEhpbjgZXvDNDfPGYApeFHnFLAENeFZqpEGuOOsytaBVGddBqhpyYUdz" \
@@ -68,6 +76,7 @@ curl -X GET \
 ## Usando los Scripts de Prueba
 
 ### En Linux/Mac (Bash)
+
 ```bash
 chmod +x test-api.sh
 ./test-api.sh
@@ -76,6 +85,7 @@ chmod +x test-api.sh
 ### En Windows (PowerShell)
 
 **Opción 1: Usar el script wrapper (recomendado)**
+
 ```powershell
 # Ejecutar con bypass de política automático
 .\test-api-run.ps1
@@ -88,6 +98,7 @@ chmod +x test-api.sh
 ```
 
 **Opción 2: Usar el archivo .bat (más fácil)**
+
 ```cmd
 test-api-run.bat
 test-api-run.bat "tenant-id-here"
@@ -95,12 +106,14 @@ test-api-run.bat "tenant-id-here" "your-api-key"
 ```
 
 **Opción 3: Ejecutar directamente con bypass**
+
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\test-api.ps1
 powershell -ExecutionPolicy Bypass -File .\test-api.ps1 -TenantId "tenant-id-here"
 ```
 
 **Opción 4: Cambiar la política de ejecución (requiere permisos de administrador)**
+
 ```powershell
 # Solo para el usuario actual (más seguro)
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
@@ -124,4 +137,3 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 - Si estás en producción, cambia `http://localhost:3000` por tu dominio
 - Todos los endpoints (excepto `/api/tenants`) requieren el parámetro `tenantId` en la query string
 - El header `Authorization` puede usar el formato `Bearer <key>` o simplemente `<key>`
-

@@ -28,4 +28,3 @@ export const normalizeNumber = (value?: number | null) => {
   if (typeof value !== 'number' || Number.isNaN(value)) return undefined;
   return value;
 };
-

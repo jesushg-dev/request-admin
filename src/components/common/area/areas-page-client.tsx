@@ -3,8 +3,8 @@
 import React, { memo, useMemo } from 'react';
 import { useCountArea, useFindManyArea } from '@/services/api/hooks';
 import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
-import { Prisma } from '@zenstackhq/runtime/models';
 import { ColumnDef } from '@tanstack/react-table';
+import { Prisma } from '@zenstackhq/runtime/models';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { parseAsInteger, parseAsString, parseAsStringEnum, useQueryStates } from 'nuqs';
@@ -13,7 +13,6 @@ import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { formatDate } from '@/lib/utils';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
-import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { Checkbox } from '@/components/ui/checkbox';
 import { AssignmentCategoryTable, useAssignmentCategoryTableConfiguration } from '@/components/common/category/assignment-category-table';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
@@ -23,6 +22,7 @@ import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-adv
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 
 const AreaDefaultArgs = Prisma.validator<Prisma.AreaDefaultArgs>()({
   select: {
@@ -118,10 +118,14 @@ const AreasPageClient: React.FC<AreasPageClientProps> = ({ canCreate, canEdit, c
             table={table}
             exportFilename="areas"
             entityLabel={t('entityLabel')}
-            addLink={canCreate ? {
-              pathname: '/admin/[tenantId]/configurations/areas/new',
-              params: { tenantId },
-            } : undefined}
+            addLink={
+              canCreate
+                ? {
+                    pathname: '/admin/[tenantId]/configurations/areas/new',
+                    params: { tenantId },
+                  }
+                : undefined
+            }
           />
         </DataTableAdvancedToolbar>
       </DataTable>
@@ -199,10 +203,14 @@ function getTableConfiguration({ t, tenantId, canEdit, canDelete }: GetTableConf
         <ActionCell
           row={row}
           onDelete={canDelete ? () => console.log('Delete', row.original) : undefined}
-          updateLink={canEdit ? {
-            pathname: '/admin/[tenantId]/configurations/areas/[slug]/edit',
-            params: { tenantId: row.original.tenantId, slug: row.original.id },
-          } : undefined}
+          updateLink={
+            canEdit
+              ? {
+                  pathname: '/admin/[tenantId]/configurations/areas/[slug]/edit',
+                  params: { tenantId: row.original.tenantId, slug: row.original.id },
+                }
+              : undefined
+          }
         />
       ),
       size: 20,
@@ -224,4 +232,3 @@ function getTableConfiguration({ t, tenantId, canEdit, canDelete }: GetTableConf
 }
 
 export default memo(AreasPageClient);
-

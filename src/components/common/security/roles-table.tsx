@@ -1,14 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
 import { useFindManyRole } from '@/services/api/hooks';
 import { Prisma } from '@zenstackhq/runtime/models';
+import { useTranslations } from 'next-intl';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 const RoleDefaultArgs = Prisma.validator<Prisma.RoleDefaultArgs>()({
   select: {
@@ -77,10 +77,18 @@ export function RolesTable({ tenantId }: RolesTableProps) {
         <TableBody>
           {Array.from({ length: 5 }).map((_, i) => (
             <TableRow key={i}>
-              <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-              <TableCell><Skeleton className="h-4 w-48" /></TableCell>
-              <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-              <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+              <TableCell>
+                <Skeleton className="h-4 w-32" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-4 w-48" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-4 w-16" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-4 w-20" />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -136,9 +144,7 @@ export function RolesTable({ tenantId }: RolesTableProps) {
                 <TableCell>{userCount}</TableCell>
                 <TableCell>
                   <Button variant="link" asChild>
-                    <Link href={`/admin/${tenantId}/security/roles/${role.id}`}>
-                      {t('viewDetails')}
-                    </Link>
+                    <Link href={`/admin/${tenantId}/security/roles/${role.id}`}>{t('viewDetails')}</Link>
                   </Button>
                 </TableCell>
               </TableRow>

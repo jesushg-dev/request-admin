@@ -1,6 +1,6 @@
 'use client';
 
-import { es, enUS, type Locale } from 'date-fns/locale';
+import { enUS, es, type Locale } from 'date-fns/locale';
 import { useLocale } from 'next-intl';
 
 import { Calendar } from '@/components/ui/calendar';

@@ -1,7 +1,7 @@
 import { env } from '@/env';
 import { PrismaClient } from '@prisma/client';
-import { enhance } from '@zenstackhq/runtime';
 import type { User } from '@prisma/client';
+import { enhance } from '@zenstackhq/runtime';
 
 const createPrismaClient = () =>
   new PrismaClient({
@@ -21,16 +21,16 @@ if (env.NODE_ENV !== 'production') globalForPrisma.prisma = prismaClient;
  * Creates an enhanced ZenStack client with user context.
  * This is the default way to access the database in server actions and API routes.
  * It automatically applies ZenStack access control policies based on the current user session.
- * 
+ *
  * @param user - Optional user object. If not provided, will fetch from current session.
  * @returns Enhanced Prisma client with ZenStack access control
- * 
+ *
  * @example
  * ```ts
  * // In server actions - automatically uses current session
  * const db = await getDb();
  * await db.requestCategory.findMany({ ... });
- * 
+ *
  * // With explicit user
  * const db = await getDb(user);
  * await db.requestCategory.findMany({ ... });
@@ -68,7 +68,7 @@ export async function getDb(user?: User | null) {
 /**
  * Synchronous version of getDb for cases where you already have the user.
  * Use this when you've already fetched the session.
- * 
+ *
  * @param user - The user object to enhance the client with
  * @returns Enhanced Prisma client with ZenStack access control
  */

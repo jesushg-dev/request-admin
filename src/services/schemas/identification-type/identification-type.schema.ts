@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -18,10 +18,22 @@ export const useIdentificationTypeSchema = () => {
 export function createIdentificationTypeSchema(t: TranslationFn) {
   return z.object({
     id: z.string().optional(),
-    name: z.string().min(1, { message: t('nameRequired') }).max(150, { message: t('nameMaxLength') }),
-    description: z.string().max(500, { message: t('descriptionMaxLength') }).optional(),
-    regex: z.string().max(500, { message: t('regexMaxLength') }).optional(),
-    testInput: z.string().max(500, { message: t('testInputMaxLength') }).optional(),
+    name: z
+      .string()
+      .min(1, { message: t('nameRequired') })
+      .max(150, { message: t('nameMaxLength') }),
+    description: z
+      .string()
+      .max(500, { message: t('descriptionMaxLength') })
+      .optional(),
+    regex: z
+      .string()
+      .max(500, { message: t('regexMaxLength') })
+      .optional(),
+    testInput: z
+      .string()
+      .max(500, { message: t('testInputMaxLength') })
+      .optional(),
   });
 }
 
@@ -29,4 +41,3 @@ export function createIdentificationTypeSchema(t: TranslationFn) {
  * Type inference for IdentificationTypeSchema
  */
 export type TIdentificationTypeSchema = z.infer<ReturnType<typeof createIdentificationTypeSchema>>;
-

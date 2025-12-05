@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getCurrentUserTenant } from '@/actions/user';
+import { env } from '@/env';
 import { redirect } from '@/i18n/routing';
 import { currentSession } from '@/server/auth-server';
 import { getDb } from '@/server/db-client';
@@ -10,7 +11,6 @@ import { LoginErrorCodeEnum } from '@/types/user';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { ClipboardProvider } from '@/components/hoc/clipboard-context';
 import { TenantProvider } from '@/components/hoc/tenant-provider';
-import { env } from '@/env';
 import { AppSidebar } from '@/components/layouts/admin/app-sidebar';
 import { DndSubmissionProvider } from '@/components/layouts/admin/dnd-submission-provider';
 import { Navbar } from '@/components/layouts/admin/nav-bar';

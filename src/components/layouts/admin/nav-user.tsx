@@ -5,11 +5,11 @@ import { Link } from '@/i18n/routing';
 import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
+import { useAuthorization } from '@/hooks/use-authorization';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
 import { useTenantContext } from '@/components/hoc/tenant-provider';
-import { useAuthorization } from '@/hooks/use-authorization';
 
 export function NavUser({
   user,

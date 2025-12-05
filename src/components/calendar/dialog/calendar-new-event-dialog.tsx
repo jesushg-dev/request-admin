@@ -1,9 +1,10 @@
 'use client';
 
+import { useNewEventSchema, type TNewEventSchema } from '@/services/schemas/calendar';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
-import { useForm } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
+import { useForm } from 'react-hook-form';
 
 import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
@@ -12,7 +13,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { ColorPicker } from '@/components/form/color-picker';
 import { DateTimePicker } from '@/components/form/date-time-picker';
-import { useNewEventSchema, type TNewEventSchema } from '@/services/schemas/calendar';
 
 import { useCalendarContext } from '../calendar-context';
 
@@ -74,7 +74,7 @@ export default function CalendarNewEventDialog() {
                 <FormItem>
                   <FormLabel className="font-bold">{t('start')}</FormLabel>
                   <FormControl>
-                    <DateTimePicker field={field} />
+                    <DateTimePicker field={{ value: field.value ?? '', onChange: field.onChange }} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -88,7 +88,7 @@ export default function CalendarNewEventDialog() {
                 <FormItem>
                   <FormLabel className="font-bold">{t('end')}</FormLabel>
                   <FormControl>
-                    <DateTimePicker field={field} />
+                    <DateTimePicker field={{ value: field.value ?? '', onChange: field.onChange }} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -102,7 +102,7 @@ export default function CalendarNewEventDialog() {
                 <FormItem>
                   <FormLabel className="font-bold">{t('color')}</FormLabel>
                   <FormControl>
-                    <ColorPicker field={field} />
+                    <ColorPicker field={{ value: field.value ?? '', onChange: field.onChange }} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

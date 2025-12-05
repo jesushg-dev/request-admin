@@ -26,7 +26,8 @@ const FontProviderContext = createContext<FontProviderState>(initialState);
 // Note: Local fonts (geist-sans, geist-mono, openDyslexic) are temporarily disabled
 // due to Turbopack bug. Using fallbacks until the issue is resolved.
 const fontFamilies: Record<Font, string> = {
-  inter: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+  inter:
+    'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
   manrope: '"Manrope", ui-sans-serif, system-ui, sans-serif',
   system: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
   mono: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
@@ -34,16 +35,11 @@ const fontFamilies: Record<Font, string> = {
   lexend: 'var(--font-lexend), ui-sans-serif, system-ui, sans-serif',
 };
 
-export function FontProvider({
-  children,
-  defaultFont = 'inter',
-  storageKey = 'appearance-font',
-  ...props
-}: FontProviderProps) {
+export function FontProvider({ children, defaultFont = 'inter', storageKey = 'appearance-font', ...props }: FontProviderProps) {
   const [font, setFontState] = useState<Font>(() => {
     if (typeof window === 'undefined') return defaultFont;
     const stored = localStorage.getItem(storageKey) as Font | null;
-    return (stored && Object.keys(fontFamilies).includes(stored)) ? stored : defaultFont;
+    return stored && Object.keys(fontFamilies).includes(stored) ? stored : defaultFont;
   });
 
   useEffect(() => {
@@ -74,4 +70,3 @@ export const useFont = () => {
   if (context === undefined) throw new Error('useFont must be used within a FontProvider');
   return context;
 };
-

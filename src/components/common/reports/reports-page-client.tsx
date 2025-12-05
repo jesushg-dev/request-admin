@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useTranslations } from 'next-intl';
 import {
   getAlerts,
   getAreaDistribution,
@@ -17,9 +16,11 @@ import {
 } from '@/actions/report';
 import { endOfDay, startOfDay, subDays } from 'date-fns';
 import { BarChart2, CheckCircle2, Clock, Download, FileJson, FileSpreadsheet, FileText, Filter, TrendingUp } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { toast } from 'sonner';
 
+import { useReportExport } from '@/hooks/use-report-export';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -35,7 +36,6 @@ import { ReportFilters } from '@/components/common/reports/report-filters';
 import { StatusTab } from '@/components/common/reports/status-tab';
 import type { Area, AreaDistribution, MonthlyTrend, OverviewData, Priority, ReportFilters as ReportFiltersType, SLACompliance, Status, StatusDistribution } from '@/components/common/reports/types';
 import EmptyState from '@/components/shared/empty-state';
-import { useReportExport } from '@/hooks/use-report-export';
 
 interface ReportsPageClientProps {
   tenantId: string;
@@ -237,9 +237,9 @@ export function ReportsPageClient({ tenantId, canExportReports }: ReportsPageCli
             </Select>
             <DropdownMenu>
               <DropdownMenuTrigger asChild disabled={!canExportReports}>
-                <Button 
-                  disabled={!canExportReports} 
-                  className={!canExportReports ? 'opacity-50 cursor-not-allowed' : ''} 
+                <Button
+                  disabled={!canExportReports}
+                  className={!canExportReports ? 'opacity-50 cursor-not-allowed' : ''}
                   title={!canExportReports ? (t('export.noPermission' as any) as string) : undefined}>
                   <Download className="mr-2 h-4 w-4" />
                   {t('export.title')}
@@ -334,11 +334,7 @@ export function ReportsPageClient({ tenantId, canExportReports }: ReportsPageCli
                   </CardContent>
                 </Card>
               ) : responseTimeData.length === 0 ? (
-                <EmptyState
-                  title={t('performance.empty.title')}
-                  description={t('performance.empty.description')}
-                  icons={[Clock, BarChart2, TrendingUp]}
-                />
+                <EmptyState title={t('performance.empty.title')} description={t('performance.empty.description')} icons={[Clock, BarChart2, TrendingUp]} />
               ) : (
                 <Card>
                   <CardHeader>
@@ -394,11 +390,7 @@ export function ReportsPageClient({ tenantId, canExportReports }: ReportsPageCli
                   </CardContent>
                 </Card>
               ) : workflowData.length === 0 ? (
-                <EmptyState
-                  title={t('workflows.empty.title')}
-                  description={t('workflows.empty.description')}
-                  icons={[FileText, BarChart2, TrendingUp]}
-                />
+                <EmptyState title={t('workflows.empty.title')} description={t('workflows.empty.description')} icons={[FileText, BarChart2, TrendingUp]} />
               ) : (
                 <Card>
                   <CardHeader>
@@ -467,11 +459,7 @@ export function ReportsPageClient({ tenantId, canExportReports }: ReportsPageCli
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-center py-12">
-                      <EmptyState
-                        title={t('alerts.empty.title')}
-                        description={t('alerts.empty.description')}
-                        icons={[CheckCircle2, Clock, TrendingUp]}
-                      />
+                      <EmptyState title={t('alerts.empty.title')} description={t('alerts.empty.description')} icons={[CheckCircle2, Clock, TrendingUp]} />
                     </div>
                   </CardContent>
                 </Card>
@@ -488,8 +476,7 @@ export function ReportsPageClient({ tenantId, canExportReports }: ReportsPageCli
                         const borderColor = alertGroup.type === 'critical' ? 'border-red-200' : alertGroup.type === 'warning' ? 'border-amber-200' : 'border-blue-200';
                         const bgColor = alertGroup.type === 'critical' ? 'bg-red-50' : alertGroup.type === 'warning' ? 'bg-amber-50' : 'bg-blue-50';
                         const title = alertGroup.type === 'critical' ? t('alerts.levels.critical') : alertGroup.type === 'warning' ? t('alerts.levels.warning') : t('alerts.levels.info');
-                        const description =
-                          alertGroup.type === 'critical' ? t('alerts.descriptions.critical') : t('alerts.descriptions.warning');
+                        const description = alertGroup.type === 'critical' ? t('alerts.descriptions.critical') : t('alerts.descriptions.warning');
 
                         return (
                           <div key={index} className={`rounded-md border ${borderColor} ${bgColor} p-4`}>
@@ -517,4 +504,3 @@ export function ReportsPageClient({ tenantId, canExportReports }: ReportsPageCli
     </ScrollArea>
   );
 }
-

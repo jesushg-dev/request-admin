@@ -1,29 +1,29 @@
 'use client';
 
 import React, { useMemo, useTransition } from 'react';
-import { Prisma } from '@zenstackhq/runtime/models';
+import { cancelInvitation } from '@/actions/organization';
+import { useCountInvitationTenant, useFindManyInvitationTenant } from '@/services/api/hooks/invitation-tenant';
+import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
 import { ColumnDef } from '@tanstack/react-table';
+import { Prisma } from '@zenstackhq/runtime/models';
+import { XIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 import { toast } from 'sonner';
-import { XIcon } from 'lucide-react';
 
-import { useCountInvitationTenant, useFindManyInvitationTenant } from '@/services/api/hooks/invitation-tenant';
-import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
 import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
-import { useFetchTableData } from '@/hooks/use-fetch-table-data';
 import { useDataTable } from '@/hooks/use-data-table';
-import { useTenantContext } from '@/components/hoc/tenant-provider';
-import { cancelInvitation } from '@/actions/organization';
-import { DataTable, DataTableShell } from '@/components/data-table/data-table';
-import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
-import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
-import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-advanced-toolbar';
-import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
-import { ActionCell } from '@/components/data-table/data-table-action-menu';
+import { useFetchTableData } from '@/hooks/use-fetch-table-data';
+import { Badge } from '@/components/ui/badge';
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
-import { Badge } from '@/components/ui/badge';
+import { DataTable, DataTableShell } from '@/components/data-table/data-table';
+import { ActionCell } from '@/components/data-table/data-table-action-menu';
+import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-advanced-toolbar';
+import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
+import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
+import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 
 // Default selection for InvitationTenant
 const InvitationTenantDefaultArgs = Prisma.validator<Prisma.InvitationTenantDefaultArgs>()({
@@ -59,11 +59,7 @@ const InvitationsPageClient: React.FC<InvitationsPageClientProps> = ({ canCreate
   const [isPending, startTransition] = useTransition();
   const [search] = useQueryStates(searchParamsParsers);
 
-  const { data, isLoading, isError, error, refetch, pageCount } = useFetchTableData<
-    InvitationWithRelations,
-    Prisma.InvitationTenantFindManyArgs,
-    Prisma.InvitationTenantCountArgs
-  >({
+  const { data, isLoading, isError, error, refetch, pageCount } = useFetchTableData<InvitationWithRelations, Prisma.InvitationTenantFindManyArgs, Prisma.InvitationTenantCountArgs>({
     search,
     useFindManyHook: useFindManyInvitationTenant,
     useCountHook: useCountInvitationTenant,
@@ -73,10 +69,7 @@ const InvitationsPageClient: React.FC<InvitationsPageClientProps> = ({ canCreate
     },
   });
 
-  const { columns, filterFields, advancedFilterFields } = useMemo(
-    () => getTableConfiguration({ t, isPending, refetch, startTransition }),
-    [t, isPending, refetch]
-  );
+  const { columns, filterFields, advancedFilterFields } = useMemo(() => getTableConfiguration({ t, isPending, refetch, startTransition }), [t, isPending, refetch]);
 
   const { table } = useDataTable({
     data: data ?? [],
@@ -106,10 +99,14 @@ const InvitationsPageClient: React.FC<InvitationsPageClientProps> = ({ canCreate
             table={table}
             exportFilename="invitations"
             entityLabel={t('entityLabel', { default: 'Invitations' })}
-            addLink={canCreateUser ? {
-              pathname: '/admin/[tenantId]/security/users/new',
-              params: { tenantId },
-            } : undefined}
+            addLink={
+              canCreateUser
+                ? {
+                    pathname: '/admin/[tenantId]/security/users/new',
+                    params: { tenantId },
+                  }
+                : undefined
+            }
           />
         </DataTableAdvancedToolbar>
       </DataTable>
@@ -205,5 +202,3 @@ function getTableConfiguration({ t, isPending, refetch, startTransition }: GetTa
 }
 
 export default InvitationsPageClient;
-
-

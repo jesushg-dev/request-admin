@@ -1,12 +1,12 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 /**
  * Auth Schemas with Next-Intl Internationalization
  * ==================================================
  *
  * This file contains Zod schemas for authentication forms that support
- * internationalization through next-intl. 
+ * internationalization through next-intl.
  *
  * For Client Components - Use the hooks (useLoginSchema, etc.):
  * ```tsx
@@ -40,12 +40,12 @@ type TranslationFn = (key: any) => string;
 /**
  * Hook for use in client components
  * Uses useTranslations internally, so you don't need to call it in your component
- * 
+ *
  * Example:
  * ```tsx
  * 'use client';
  * import { useLoginSchema, type TLoginSchema } from '@/services/schemas/auth.schema';
- * 
+ *
  * const loginSchema = useLoginSchema();
  * ```
  */

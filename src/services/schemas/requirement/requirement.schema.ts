@@ -1,5 +1,6 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
+
 import { optionSchema } from '@/components/custom-ui/select';
 
 // Type helper for translation function
@@ -19,8 +20,16 @@ export const useRequirementSchema = () => {
 export function createRequirementSchema(t: TranslationFn) {
   return z.object({
     id: z.string().uuid(),
-    name: z.string().min(1, { message: t('nameRequired') }).max(200, { message: t('nameMaxLength') }).default(''),
-    description: z.string().min(1, { message: t('descriptionRequired') }).max(500, { message: t('descriptionMaxLength') }).default(''),
+    name: z
+      .string()
+      .min(1, { message: t('nameRequired') })
+      .max(200, { message: t('nameMaxLength') })
+      .default(''),
+    description: z
+      .string()
+      .min(1, { message: t('descriptionRequired') })
+      .max(500, { message: t('descriptionMaxLength') })
+      .default(''),
     isRequiredOnlyOnce: z.boolean().default(false),
     isActive: z.boolean().default(true),
     requirementType: z.object({
@@ -34,4 +43,3 @@ export function createRequirementSchema(t: TranslationFn) {
  * Type inference for RequirementSchema
  */
 export type TRequirementSchema = z.infer<ReturnType<typeof createRequirementSchema>>;
-

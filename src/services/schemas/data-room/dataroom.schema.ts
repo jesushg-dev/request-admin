@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -19,8 +19,14 @@ export function createDataroomSchema(t: TranslationFn) {
   return z.object({
     id: z.string().uuid(),
     slug: z.string(),
-    name: z.string().min(1, { message: t('nameRequired') }).max(200, { message: t('nameMaxLength') }),
-    description: z.string().min(1, { message: t('descriptionRequired') }).max(500, { message: t('descriptionMaxLength') }),
+    name: z
+      .string()
+      .min(1, { message: t('nameRequired') })
+      .max(200, { message: t('nameMaxLength') }),
+    description: z
+      .string()
+      .min(1, { message: t('descriptionRequired') })
+      .max(500, { message: t('descriptionMaxLength') }),
   });
 }
 
@@ -28,4 +34,3 @@ export function createDataroomSchema(t: TranslationFn) {
  * Type inference for DataroomSchema
  */
 export type TDataroomSchema = z.infer<ReturnType<typeof createDataroomSchema>>;
-

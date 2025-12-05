@@ -1,8 +1,8 @@
 import { FC } from 'react';
-import { type Locale } from 'next-intl';
-import { redirect } from '@/i18n/routing';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
+import { redirect } from '@/i18n/routing';
+import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
 import RequirementTypeForm from '@/components/common/requirement-type/requirement-type-form';
@@ -17,7 +17,7 @@ const NewRequirementTypePage: FC<NewRequirementTypePageProps> = async ({ params 
 
   const auth = await getAuthContext(tenantId);
   const canCreate = auth.hasPermissions([PermissionActions.REQUIREMENT_TYPE.CREATE]);
-  
+
   if (!canCreate) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/configurations/requirement-types', params: { tenantId } } });
   }

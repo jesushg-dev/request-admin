@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import { getWorkflows } from '@/actions/dashboard';
 import { ChevronDown } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useTranslations } from 'next-intl';
 
 interface WorkflowSelectorProps {
   tenantId: string;

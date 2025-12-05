@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState, useTransition, type FC } from 'react';
 import { useRouter } from '@/i18n/routing';
 import { useUpsertRequestWorkflow } from '@/services/api/hooks';
+import { getWorkflowSchema, useWorkflowSchema, type TWorkflowSchema } from '@/services/schemas/workflow';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { defineStepper } from '@stepperize/react';
 import { ReactFlowProvider } from '@xyflow/react';
@@ -16,7 +17,6 @@ import { Form } from '@/components/ui/form';
 import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
 import { StepNavigationModern } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
-import { getWorkflowSchema, useWorkflowSchema, type TWorkflowSchema } from '@/services/schemas/workflow';
 
 import { RequestFlowDiagramEditor, type WorkflowData } from './flow-diagram-editor';
 import RequestWorkflowForm, { getWorkflowDefaultValue } from './request-workflow-form';

@@ -2,22 +2,21 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
+import { useAtomValue } from 'jotai';
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { useAtomValue } from 'jotai';
 
+import { RequestHierarchyWithLevelsType, RequestLevelType } from '@/types/zenstackhq/hierarchy';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { FormCheckboxItem, FormItem, FormSection } from '@/components/shared/form-root';
-import { RequestLevelType } from '@/types/zenstackhq/hierarchy';
 
 import { RequestCategoryValues } from '.';
-import { categoriesAtom, creatingCategoriesAtom } from '../store/category-store';
 import { ProblemDemonstration } from '../hierarchy-diagram';
-import { RequestHierarchyWithLevelsType } from '@/types/zenstackhq/hierarchy';
+import { categoriesAtom, creatingCategoriesAtom } from '../store/category-store';
 
 interface BasicInfoTabProps {
   levels: RequestLevelType[];
@@ -27,7 +26,7 @@ interface BasicInfoTabProps {
 export function BasicInfoTab({ levels, hierarchy }: BasicInfoTabProps) {
   const { control, setValue, getValues } = useFormContext<RequestCategoryValues>();
   const t = useTranslations('admin.requestType.create');
-  
+
   const categories = useAtomValue(categoriesAtom);
   const creatingCategories = useAtomValue(creatingCategoriesAtom);
   const [showModal, setShowModal] = useState(false);
@@ -36,7 +35,7 @@ export function BasicInfoTab({ levels, hierarchy }: BasicInfoTabProps) {
     levelName: string;
     nextLevelName: string;
   } | null>(null);
-  
+
   // Create a map for quick level lookup by ID
   const levelsMap = useMemo(() => {
     const map = new Map<string, { level: RequestLevelType; index: number }>();
@@ -51,38 +50,36 @@ export function BasicInfoTab({ levels, hierarchy }: BasicInfoTabProps) {
     (category: Partial<RequestCategoryValues> & { id: string; hierarchyLevelId: string }): boolean => {
       const allCategories = [...categories, ...Array.from(creatingCategories.values())];
       const currentLevelInfo = levelsMap.get(category.hierarchyLevelId);
-      
+
       if (!currentLevelInfo) return false;
-      
+
       // If this is the last level, it's always valid (no children needed)
       if (currentLevelInfo.index === levels.length - 1) {
         return true;
       }
-      
+
       // Recursive function to check if there's a complete chain from this category to the last level
       const checkChain = (cat: { id: string; hierarchyLevelId: string; parentCategoryId?: string | null }, targetLevelIndex: number): boolean => {
         const catLevelInfo = levelsMap.get(cat.hierarchyLevelId);
         if (!catLevelInfo) return false;
-        
+
         if (catLevelInfo.index >= targetLevelIndex) {
           return true;
         }
-        
+
         // Check if this category has at least one child at the next level
         const nextLevelId = levels[catLevelInfo.index + 1]?.id;
         if (!nextLevelId) return false;
-        
-        const children = allCategories.filter(
-          (c) => c.parentCategoryId === cat.id && c.hierarchyLevelId === nextLevelId
-        );
-        
+
+        const children = allCategories.filter((c) => c.parentCategoryId === cat.id && c.hierarchyLevelId === nextLevelId);
+
         if (children.length === 0) {
           return false;
         }
-        
+
         return children.some((child) => checkChain(child, targetLevelIndex));
       };
-      
+
       return checkChain(category, levels.length - 1);
     },
     [categories, creatingCategories, levelsMap, levels]
@@ -101,7 +98,7 @@ export function BasicInfoTab({ levels, hierarchy }: BasicInfoTabProps) {
             const currentLevelIndex = levels.findIndex((l) => l.id === currentCategory.hierarchyLevelId);
             const nextLevelIndex = currentLevelIndex + 1;
             const nextLevel = levels[nextLevelIndex];
-            
+
             // Set info for modal
             setIncompleteCategoryInfo({
               categoryName: currentCategory.name || t('hierarchyDiagram.defaultCategoryName'),
@@ -147,11 +144,11 @@ export function BasicInfoTab({ levels, hierarchy }: BasicInfoTabProps) {
           name="isActive"
           render={({ field }) => (
             <FormCheckboxItem label={t('basicTab.active')} description={t('basicTab.activeDescription')}>
-              <Switch 
-                checked={field.value} 
+              <Switch
+                checked={field.value}
                 onCheckedChange={(checked) => {
                   handleIsActiveChange(checked);
-                }} 
+                }}
               />
             </FormCheckboxItem>
           )}
@@ -167,29 +164,23 @@ export function BasicInfoTab({ levels, hierarchy }: BasicInfoTabProps) {
           )}
         />
       </div>
-      
+
       {/* Modal for incomplete category warning */}
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             {incompleteCategoryInfo && (
               <>
-                <DialogTitle className="text-xl">
-                  {t('category.errors.cannotActivateIncomplete', { categoryName: incompleteCategoryInfo.categoryName })}
-                </DialogTitle>
-                <DialogDescription className="pt-2 text-base">
-                  {t('hierarchyDiagram.cannotActivateDescription')}
-                </DialogDescription>
+                <DialogTitle className="text-xl">{t('category.errors.cannotActivateIncomplete', { categoryName: incompleteCategoryInfo.categoryName })}</DialogTitle>
+                <DialogDescription className="pt-2 text-base">{t('hierarchyDiagram.cannotActivateDescription')}</DialogDescription>
               </>
             )}
           </DialogHeader>
-          
+
           <div className="space-y-4 mt-4">
             {/* "¿En qué afecta?" title in red */}
-            <h3 className="text-xl font-bold text-destructive">
-              {t('hierarchyDiagram.problemDemoTitle')}
-            </h3>
-            
+            <h3 className="text-xl font-bold text-destructive">{t('hierarchyDiagram.problemDemoTitle')}</h3>
+
             {/* Interactive Problem Demonstration */}
             <ProblemDemonstration hierarchy={hierarchy} />
           </div>

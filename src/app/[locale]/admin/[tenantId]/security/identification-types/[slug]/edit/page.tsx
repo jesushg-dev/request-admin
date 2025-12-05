@@ -1,10 +1,10 @@
-import { type Metadata } from 'next';
 import { FC } from 'react';
-import { type Locale } from 'next-intl';
-import { redirect } from '@/i18n/routing';
+import { type Metadata } from 'next';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
+import { redirect } from '@/i18n/routing';
 import { getDb } from '@/server/db-client';
+import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
 import { IdentificationTypeForm } from '@/components/common/identification-type/identification-type-form';
@@ -17,7 +17,7 @@ interface EditIdentificationTypePageProps {
 export async function generateMetadata(props: EditIdentificationTypePageProps): Promise<Metadata> {
   const { locale, tenantId, slug } = await props.params;
   const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
-  
+
   const db = await getDb();
   const identificationType = await db.identificationType.findUnique({
     where: { id: slug, tenantId },
@@ -36,7 +36,7 @@ const EditIdentificationTypePage: FC<EditIdentificationTypePageProps> = async ({
 
   const auth = await getAuthContext(tenantId);
   const canEdit = auth.hasPermissions([PermissionActions.IDENTIFICATION_TYPE.EDIT]);
-  
+
   if (!canEdit) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/security/identification-types', params: { tenantId } } });
   }

@@ -1,8 +1,8 @@
-import { type Metadata } from 'next';
 import { FC } from 'react';
-import { redirect } from '@/i18n/routing';
+import { type Metadata } from 'next';
 import { getAuthContext } from '@/actions/authorization';
 import { PermissionActions } from '@/constants/permissions';
+import { redirect } from '@/i18n/routing';
 import { getDb } from '@/server/db-client';
 import { Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
@@ -20,7 +20,7 @@ interface EditPageProps {
 export async function generateMetadata(props: { params: Promise<{ locale: string; tenantId: string; slug: string }> }): Promise<Metadata> {
   const { locale, tenantId, slug } = await props.params;
   const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
-  
+
   const db = await getDb();
   const folder = await db.dataroomFolder.findUnique({
     where: { id: slug, tenantId },
@@ -40,7 +40,7 @@ const EditPage: FC<EditPageProps> = async ({ params, searchParams }) => {
   // Folders are part of data rooms, so we need DATA_ROOM.EDIT permission
   const auth = await getAuthContext(tenantId);
   const canEditDataRooms = auth.hasPermissions([PermissionActions.DATA_ROOM.EDIT]);
-  
+
   if (!canEditDataRooms) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/data-rooms', params: { tenantId } } });
   }

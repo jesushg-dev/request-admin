@@ -1,6 +1,7 @@
 'use client';
 
 import React, { FC, useMemo } from 'react';
+import { type TUserRoleAssignmentSchema } from '@/services/schemas/role';
 import { Plus, Trash } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Control, FieldErrors, useController, useFieldArray, useFormContext } from 'react-hook-form';
@@ -14,8 +15,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Select, { OptionType } from '@/components/custom-ui/select';
-
-import { type TUserRoleAssignmentSchema } from '@/services/schemas/role';
 
 // Base schema for defineStepper (without internationalization)
 // This is used only for the stepper definition

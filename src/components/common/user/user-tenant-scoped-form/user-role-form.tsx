@@ -2,6 +2,7 @@
 
 import { useMemo, type FC } from 'react';
 import { Link } from '@/i18n/routing';
+import { type TUserRoleSchema } from '@/services/schemas/user';
 import { Plus, Trash } from 'lucide-react';
 import { Control, FieldErrors, useController, useFieldArray, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
@@ -11,8 +12,6 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import Select, { OptionType } from '@/components/custom-ui/select';
-
-import { type TUserRoleSchema } from '@/services/schemas/user';
 
 // Base schema for defineStepper (without internationalization)
 // This is used only for the stepper definition

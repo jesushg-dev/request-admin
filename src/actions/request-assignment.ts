@@ -1,22 +1,21 @@
 'use server';
 
+import { getAuthContext } from '@/actions/authorization';
+import { PermissionActions } from '@/constants/permissions';
 import { currentSession } from '@/server/auth-server';
 import { getDb } from '@/server/db-client';
+import { type TAssignRequestSchema, type TReassignAreaSchema } from '@/services/schemas/request';
 import { Prisma } from '@zenstackhq/runtime/models';
 
 import { NotificationTypeEnum } from '@/types/notification';
 import { RequestMetadata } from '@/types/zenstackhq/request';
 import { AuthorizationError, ConcurrentModificationError, ValidationError } from '@/lib/error';
 import { normalizeValue } from '@/lib/utils';
-import { type TAssignRequestSchema } from '@/services/schemas/request';
-import { type TReassignAreaSchema } from '@/services/schemas/request';
+
+import { sendInAppNotification } from './notification';
 
 type AssignRequestFormValues = TAssignRequestSchema;
 type ReassignAreaFormValues = TReassignAreaSchema;
-
-import { sendInAppNotification } from './notification';
-import { getAuthContext } from '@/actions/authorization';
-import { PermissionActions } from '@/constants/permissions';
 
 type UUID = string;
 type FieldName = 'status' | 'priority';
@@ -126,18 +125,17 @@ export const updateCurrentStatus = async (tenantId: UUID, requestId: UUID, statu
 
   const db = await getDb();
   const userId = session.user.id;
-  
+
   // Fetch current active assignment for RBAC checks and baseline values
   const lastAssignment = await db.requestAssignment.findFirstOrThrow({
     where: { requestId, tenantId, isActive: true },
     include: { assignedUsers: true },
   });
-  
+
   // RBAC: require global or scoped permission to set status
   const auth = await getAuthContext(tenantId);
   const canSetStatus =
-    auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_STATUS]) ||
-    auth.hasAreaPermissions(lastAssignment.areaId, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_STATUS]);
+    auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_STATUS]) || auth.hasAreaPermissions(lastAssignment.areaId, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_STATUS]);
   if (!canSetStatus) throw new AuthorizationError('Forbidden: insufficient permissions to change status');
 
   // Check if the request is currently a draft
@@ -153,7 +151,7 @@ export const updateCurrentStatus = async (tenantId: UUID, requestId: UUID, statu
     // When in draft, ensure all requirements are fulfilled first
     const { areAllRequirementsFulfilled } = await import('./requirements');
     const allRequirementsFulfilled = await areAllRequirementsFulfilled(requestId, tenantId);
-    
+
     if (!allRequirementsFulfilled) {
       const error = new Error('DRAFT_REQUIREMENTS_NOT_FULFILLED');
       error.name = 'DraftRequirementsError';
@@ -227,8 +225,7 @@ export const updateCurrentPriority = async (tenantId: UUID, requestId: UUID, pri
   const lastAssignment = await db.requestAssignment.findFirstOrThrow({ where: { requestId, tenantId, isActive: true }, select: { areaId: true } });
   const auth = await getAuthContext(tenantId);
   const canSetPriority =
-    auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_PRIORITY]) ||
-    auth.hasAreaPermissions(lastAssignment.areaId, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_PRIORITY]);
+    auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_PRIORITY]) || auth.hasAreaPermissions(lastAssignment.areaId, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_SET_PRIORITY]);
   if (!canSetPriority) throw new AuthorizationError('Forbidden: insufficient permissions to change priority');
 
   if (metadata.type !== 'PRIORITY_CHANGE') {
@@ -259,8 +256,7 @@ export const updateCurrentAssignedUsers = async (tenantId: UUID, requestId: UUID
   const lastAssignmentHeader = await db.requestAssignment.findFirstOrThrow({ where: { requestId, tenantId, isActive: true }, select: { areaId: true } });
   const auth = await getAuthContext(tenantId);
   const canAssign =
-    auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.ASSIGN_USER]) ||
-    auth.hasAreaPermissions(lastAssignmentHeader.areaId, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_ASSIGN_USER]);
+    auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.ASSIGN_USER]) || auth.hasAreaPermissions(lastAssignmentHeader.areaId, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_ASSIGN_USER]);
   if (!canAssign) throw new AuthorizationError('Forbidden: insufficient permissions to assign users');
 
   const lastAssignment = await db.requestAssignment.findFirstOrThrow({
@@ -321,9 +317,7 @@ export const updateCurrentClassification = async (tenantId: UUID, requestId: UUI
   // RBAC: require scoped edit permission to reclassify (area/category)
   const lastAssignmentHeader = await db.requestAssignment.findFirstOrThrow({ where: { requestId, tenantId, isActive: true }, select: { areaId: true } });
   const auth = await getAuthContext(tenantId);
-  const canEdit =
-    auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.EDIT]) ||
-    auth.hasAreaPermissions(lastAssignmentHeader.areaId, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_EDIT]);
+  const canEdit = auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.EDIT]) || auth.hasAreaPermissions(lastAssignmentHeader.areaId, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_EDIT]);
   if (!canEdit) throw new AuthorizationError('Forbidden: insufficient permissions to reclassify request');
 
   const lastAssignment = await db.requestAssignment.findFirstOrThrow({
@@ -483,8 +477,7 @@ export const assignRequestsMassively = async (tenantId: UUID, userTenantId: UUID
 
       // RBAC per request: require global assign or scoped assign in this area
       const canAssign =
-        auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.ASSIGN_USER]) ||
-        auth.hasAreaPermissions(lastAssignment.areaId, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_ASSIGN_USER]);
+        auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.ASSIGN_USER]) || auth.hasAreaPermissions(lastAssignment.areaId, [PermissionActions.REQUEST_MANAGEMENT.SCOPED_ASSIGN_USER]);
       if (!canAssign) {
         results.push({ requestId, success: false, message: 'Sin permisos para asignar en el área' });
         continue;

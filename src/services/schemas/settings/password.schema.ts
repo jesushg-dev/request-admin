@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -39,4 +39,3 @@ export function createPasswordChangeSchema(t: TranslationFn) {
  * Type inference for PasswordChangeSchema
  */
 export type TPasswordChangeSchema = z.infer<ReturnType<typeof createPasswordChangeSchema>>;
-

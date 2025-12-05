@@ -1,14 +1,15 @@
-import { getSLADashboardData } from '@/actions/dashboard';
-import { getTranslations } from 'next-intl/server';
-import { Locale } from 'next-intl';
-import { dashboardSearchParamsCache } from '@/app/[locale]/admin/[tenantId]/dashboard-search-params';
-import type { SLAFilterValues } from './sla-filters';
 import type React from 'react';
+import { getSLADashboardData } from '@/actions/dashboard';
 import { AlertTriangle, ArrowDown, ArrowUp, Calendar, CheckCircle, Clock, TrendingUp, Users } from 'lucide-react';
+import { Locale } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { dashboardSearchParamsCache } from '@/app/[locale]/admin/[tenantId]/dashboard-search-params';
+
 import SLACharts from './sla-charts';
+import type { SLAFilterValues } from './sla-filters';
 
 // Types
 type SLADeptData = {
@@ -125,7 +126,13 @@ export default async function SLADashboardServer({ tenantId, locale }: SLADashbo
     <div className="space-y-6">
       {/* Main SLA metrics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <MetricCard title={t('cards.compliance.title')} value={`${data.compliance.toFixed(1)}%`} trend={data.trends.complianceTrend} icon={<CheckCircle className="h-4 w-4" />} iconColor="text-emerald-500" />
+        <MetricCard
+          title={t('cards.compliance.title')}
+          value={`${data.compliance.toFixed(1)}%`}
+          trend={data.trends.complianceTrend}
+          icon={<CheckCircle className="h-4 w-4" />}
+          iconColor="text-emerald-500"
+        />
         <MetricCard
           title={t('cards.avgResolutionTime.title')}
           value={`${data.avgResolutionTime.toFixed(1)} ${t('cards.avgResolutionTime.unit')}`}
@@ -139,8 +146,20 @@ export default async function SLADashboardServer({ tenantId, locale }: SLADashbo
 
       {/* Second row of metrics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <MetricCard title={t('cards.avgSlaHours.title')} value={`${data.avgSlaHours}${t('cards.avgSlaHours.unit')}`} description={t('cards.avgSlaHours.description')} icon={<Calendar className="h-4 w-4" />} iconColor="text-purple-500" />
-        <MetricCard title={t('cards.escalations.title')} value="0" trend={{ value: 0, isPositive: true, text: t('cards.escalations.trendText') }} icon={<TrendingUp className="h-4 w-4" />} iconColor="text-orange-500" />
+        <MetricCard
+          title={t('cards.avgSlaHours.title')}
+          value={`${data.avgSlaHours}${t('cards.avgSlaHours.unit')}`}
+          description={t('cards.avgSlaHours.description')}
+          icon={<Calendar className="h-4 w-4" />}
+          iconColor="text-purple-500"
+        />
+        <MetricCard
+          title={t('cards.escalations.title')}
+          value="0"
+          trend={{ value: 0, isPositive: true, text: t('cards.escalations.trendText') }}
+          icon={<TrendingUp className="h-4 w-4" />}
+          iconColor="text-orange-500"
+        />
         <MetricCard
           title={t('cards.bestWorkflow.title')}
           value={data.bestWorkflow.name}
@@ -247,4 +266,3 @@ export default async function SLADashboardServer({ tenantId, locale }: SLADashbo
     </div>
   );
 }
-

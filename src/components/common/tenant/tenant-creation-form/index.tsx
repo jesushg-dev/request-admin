@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useTransition } from 'react';
 import { authClient } from '@/server/auth-client';
+import { useTenantFormSchema } from '@/services/schemas/tenant';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { defineStepper } from '@stepperize/react';
 import { useTranslations } from 'next-intl';
@@ -13,9 +14,8 @@ import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { StepNavigationModern } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
-import { useTenantFormSchema } from '@/services/schemas/tenant';
 
-import { getTenantFormDefaultValues, TenantFormFields, getTenantFormSchema } from '../tenant-form';
+import { getTenantFormDefaultValues, getTenantFormSchema, TenantFormFields } from '../tenant-form';
 import { Plan, planSelectionSchema, PlanSelectionStep } from './plan-selection-step';
 import TenantReviewStep from './tenant-review-step';
 

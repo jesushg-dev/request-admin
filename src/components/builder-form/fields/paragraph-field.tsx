@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useParagraphFieldPropertiesSchema, type TParagraphFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SquarePilcrowIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -11,7 +12,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { ElementsType, FormElement, FormElementInstance } from '@/components/builder-form/form-elements';
-import { useParagraphFieldPropertiesSchema, type TParagraphFieldPropertiesSchema } from '@/services/schemas/builder-form/fields';
 
 const type: ElementsType = 'ParagraphField';
 

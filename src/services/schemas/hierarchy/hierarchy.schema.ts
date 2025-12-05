@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -18,8 +18,14 @@ export function useHierarchySchema() {
 export function createHierarchySchema(t: TranslationFn) {
   return z.object({
     id: z.string(),
-    name: z.string().min(1, { message: t('nameRequired') }).max(100, { message: t('nameMaxLength') }),
-    description: z.string().max(255, { message: t('descriptionMaxLength') }).optional(),
+    name: z
+      .string()
+      .min(1, { message: t('nameRequired') })
+      .max(100, { message: t('nameMaxLength') }),
+    description: z
+      .string()
+      .max(255, { message: t('descriptionMaxLength') })
+      .optional(),
     isActive: z.boolean().optional(),
   });
 }
@@ -37,4 +43,3 @@ export type THierarchySchema = z.infer<ReturnType<typeof createHierarchySchema>>
 export function getHierarchySchema() {
   return createHierarchySchema((key: string) => key);
 }
-

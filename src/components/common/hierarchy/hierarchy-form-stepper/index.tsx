@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useTransition, type FC } from 'react';
+import { getHierarchySchema, getLevelsSchema, useHierarchySchema, useLevelsSchema, type THierarchySchema, type TLevelsSchema } from '@/services/schemas/hierarchy';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { defineStepper } from '@stepperize/react';
 import { Locale, useTranslations } from 'next-intl';
@@ -11,7 +12,6 @@ import { z } from 'zod';
 import { Form } from '@/components/ui/form';
 import { StepNavigationModern } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
-import { useHierarchySchema, useLevelsSchema, getHierarchySchema, getLevelsSchema, type THierarchySchema, type TLevelsSchema } from '@/services/schemas/hierarchy';
 
 import { getDefaultHierarchyFormValues, HierarchyForm } from '../hierarchy-form';
 import { LevelsStep } from './levels-step';
@@ -37,11 +37,11 @@ const HierarchyFormStepper: FC<HierarchyFormStepperProps> = ({ tenantId, locale,
   const stepper = useStepper();
   const [isPending, startTransition] = useTransition();
   const t = useTranslations('admin.hierarchy');
-  
+
   // Get internationalized schemas
   const hierarchySchemaIntl = useHierarchySchema();
   const levelsSchemaIntl = useLevelsSchema();
-  
+
   // Create a map of step IDs to internationalized schemas
   const schemasMap = useMemo(
     () => ({
@@ -51,7 +51,7 @@ const HierarchyFormStepper: FC<HierarchyFormStepperProps> = ({ tenantId, locale,
     }),
     [hierarchySchemaIntl, levelsSchemaIntl]
   );
-  
+
   // Create a custom resolver that dynamically selects the correct internationalized schema
   // based on the current step. This allows us to use internationalized schemas even though
   // defineStepper requires static schemas.
@@ -69,7 +69,7 @@ const HierarchyFormStepper: FC<HierarchyFormStepperProps> = ({ tenantId, locale,
       ...getDefaultHierarchyFormValues(),
     },
   });
-  
+
   // Clear errors when step changes to ensure clean validation state
   useEffect(() => {
     form.clearErrors();

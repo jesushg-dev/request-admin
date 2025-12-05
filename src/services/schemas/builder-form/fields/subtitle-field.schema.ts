@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -17,7 +17,10 @@ export const useSubtitleFieldPropertiesSchema = () => {
  */
 export function createSubtitleFieldPropertiesSchema(t: TranslationFn) {
   return z.object({
-    title: z.string().min(2, { message: t('titleMinLength') }).max(50, { message: t('titleMaxLength') }),
+    title: z
+      .string()
+      .min(2, { message: t('titleMinLength') })
+      .max(50, { message: t('titleMaxLength') }),
   });
 }
 
@@ -25,4 +28,3 @@ export function createSubtitleFieldPropertiesSchema(t: TranslationFn) {
  * Type inference for SubtitleFieldPropertiesSchema
  */
 export type TSubtitleFieldPropertiesSchema = z.infer<ReturnType<typeof createSubtitleFieldPropertiesSchema>>;
-

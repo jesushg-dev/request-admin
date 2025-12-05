@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -18,9 +18,18 @@ export const useAgreementSchema = () => {
 export function createAgreementSchema(t: TranslationFn) {
   return z.object({
     id: z.string().uuid(),
-    name: z.string().min(1, { message: t('nameRequired') }).max(200, { message: t('nameMaxLength') }),
-    description: z.string().max(500, { message: t('descriptionMaxLength') }).nullish(),
-    content: z.string().min(1, { message: t('contentRequired') }).max(500, { message: t('contentMaxLength') }),
+    name: z
+      .string()
+      .min(1, { message: t('nameRequired') })
+      .max(200, { message: t('nameMaxLength') }),
+    description: z
+      .string()
+      .max(500, { message: t('descriptionMaxLength') })
+      .nullish(),
+    content: z
+      .string()
+      .min(1, { message: t('contentRequired') })
+      .max(500, { message: t('contentMaxLength') }),
     requireName: z.boolean(),
   });
 }
@@ -29,4 +38,3 @@ export function createAgreementSchema(t: TranslationFn) {
  * Type inference for AgreementSchema
  */
 export type TAgreementSchema = z.infer<ReturnType<typeof createAgreementSchema>>;
-

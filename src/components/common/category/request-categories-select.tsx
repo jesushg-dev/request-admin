@@ -6,9 +6,10 @@ import { z } from 'zod';
 
 import { RequestLevelType } from '@/types/zenstackhq/hierarchy';
 import { FormControl, FormField, FormMessage } from '@/components/ui/form';
-import { FormItem } from '@/components/shared/form-root';
-import Select from '@/components/custom-ui/select';
 import { CombinedCategoriesValues } from '@/components/common/request/request-form-stepper/classification-step';
+import Select from '@/components/custom-ui/select';
+import { FormItem } from '@/components/shared/form-root';
+
 import { useCategoryLoading } from './category-loading-context';
 
 export const requestCategorySelectSchema = z.object({
@@ -36,20 +37,21 @@ export const RequestCategoriesSelect: FC<RequestCategoriesSelectProps> = ({ leve
   const watchedFields = watch('requestCategory', []) || [];
   const [isPending, startTransition] = useTransition();
   const { reset: resetLoading } = useCategoryLoading();
-  
+
   // Reset loading state when levels change
   useEffect(() => {
     resetLoading();
   }, [levels, resetLoading]);
-  
+
   // Calculate which levels should be enabled
   // Enable all levels up to the last one that has a value, plus the next one
-  const lastSelectedPosition = levels.length > 0
-    ? levels.findLastIndex((level) => {
-        const arrayIndex = level.position - 1;
-        return !!watchedFields[arrayIndex]?.value;
-      })
-    : -1;
+  const lastSelectedPosition =
+    levels.length > 0
+      ? levels.findLastIndex((level) => {
+          const arrayIndex = level.position - 1;
+          return !!watchedFields[arrayIndex]?.value;
+        })
+      : -1;
   const activeLevelIndex = lastSelectedPosition === -1 ? 0 : lastSelectedPosition + 1;
 
   // Clear fields that are no longer represented by the available levels
@@ -78,7 +80,7 @@ export const RequestCategoriesSelect: FC<RequestCategoriesSelectProps> = ({ leve
         // Enable the level if it's within the active levels OR if it has a default value
         // Also check if previous level is ready
         const hasDefaultValue = !!watchedFields[currentPosition]?.value;
-        const isLevelEnabled = (levelIndex <= activeLevelIndex || hasDefaultValue);
+        const isLevelEnabled = levelIndex <= activeLevelIndex || hasDefaultValue;
         return (
           <FormField
             key={`${level.id}-${currentPosition}`}
@@ -86,10 +88,7 @@ export const RequestCategoriesSelect: FC<RequestCategoriesSelectProps> = ({ leve
             name={`requestCategory.${currentPosition}`}
             render={({ field }) => (
               <>
-                <FormItem 
-                  label={level.name}
-                  description={t('requestCategory.selectDescription', { level: level.name.toLowerCase() })}
-                >
+                <FormItem label={level.name} description={t('requestCategory.selectDescription', { level: level.name.toLowerCase() })}>
                   <SingleRequestCategorySelect
                     field={field}
                     position={currentPosition}
@@ -123,17 +122,17 @@ type SingleRequestCategorySelectProps = {
 const SingleRequestCategorySelect: React.FC<SingleRequestCategorySelectProps> = ({ field, parentCategoryId, enabled, position, menuPortalTarget, onClearNextLevels, isTransitioning }) => {
   const t = useTranslations('admin.request.form.classificationStep');
   const { setLevelLoading, isPreviousLevelReady } = useCategoryLoading();
-  
+
   const hasValue = !!field.value?.value;
   // Always wait for previous level to finish loading, even with default values
   // This ensures parentCategoryId is available and correct
   const previousReady = isPreviousLevelReady(position);
   const shouldFetchData = (enabled || hasValue) && previousReady;
-  
+
   const { data: categories = [], isLoading } = useFindManyRequestCategory(
     {
       select: { id: true, name: true, description: true },
-      where: { 
+      where: {
         parentCategoryId: parentCategoryId ?? null,
         isActive: true,
       },
@@ -159,7 +158,7 @@ const SingleRequestCategorySelect: React.FC<SingleRequestCategorySelectProps> = 
   // Validate default value exists in options once loaded
   useEffect(() => {
     if (!hasValue || isLoading || categories.length === 0) return;
-    const currentValue = field.value.value;
+    const currentValue = field.value?.value;
     const exists = categories.some((c) => c.id === currentValue);
     if (!exists) {
       field.onChange({ label: '', value: '', position });

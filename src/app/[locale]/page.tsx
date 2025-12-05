@@ -2,6 +2,7 @@ import { env } from '@/env';
 import { redirect } from '@/i18n/routing';
 import Link from '@/i18n/routing-client';
 import { ArrowRight } from 'lucide-react';
+import { Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
 import { Button } from '@/components/ui/button';
@@ -10,7 +11,6 @@ import Features from '@/components/home/Features';
 import Footer from '@/components/home/Footer';
 import Navbar from '@/components/home/Navbar';
 import MouseMoveEffect from '@/components/mouse-move-effect';
-import { Locale } from 'next-intl';
 
 const Home = async (props: { params: Promise<{ locale: Locale }> }) => {
   const params = await props.params;

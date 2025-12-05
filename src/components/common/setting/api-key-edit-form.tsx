@@ -2,6 +2,8 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { updateApiKeyAction } from '@/actions/api-key';
+import { useApiKeyFormSchema, type TApiKeyFormSchema } from '@/services/schemas/settings/api-key.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
@@ -12,8 +14,6 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { JsonInput } from '@/components/custom-ui/json-input';
-import { updateApiKeyAction } from '@/actions/api-key';
-import { useApiKeyFormSchema, type TApiKeyFormSchema } from '@/services/schemas/settings/api-key.schema';
 
 type ApiKeyEditFormValues = Partial<TApiKeyFormSchema> & {
   enabled?: boolean;
@@ -41,6 +41,10 @@ export function ApiKeyEditForm({ keyId, defaultValues, onSuccess }: ApiKeyEditFo
   const [pending, startTransition] = useTransition();
   const apiKeyFormSchema = useApiKeyFormSchema();
 
+  // Extract existing metadata and preserve tenantId
+  const existingMetadata = (typeof defaultValues.metadata === 'object' && defaultValues.metadata !== null ? defaultValues.metadata : {}) as Record<string, unknown>;
+  const existingTenantId = existingMetadata.tenantId as string | undefined;
+
   const form = useForm<ApiKeyEditFormValues>({
     mode: 'onChange',
     resolver: zodResolver(apiKeyFormSchema.partial()),
@@ -53,7 +57,7 @@ export function ApiKeyEditForm({ keyId, defaultValues, onSuccess }: ApiKeyEditFo
       remaining: defaultValues.remaining ?? undefined,
       refillAmount: defaultValues.refillAmount ?? undefined,
       refillInterval: defaultValues.refillInterval ?? undefined,
-      metadata: (typeof defaultValues.metadata === 'object' && defaultValues.metadata !== null ? defaultValues.metadata : {}) as Record<string, unknown>,
+      metadata: existingMetadata,
     },
   });
 
@@ -61,6 +65,12 @@ export function ApiKeyEditForm({ keyId, defaultValues, onSuccess }: ApiKeyEditFo
     startTransition(async () => {
       const toastId = toast.loading(t('updating'));
       try {
+        // Ensure tenantId is preserved in metadata (backend will also enforce this)
+        const metadataToSend = { ...(values.metadata || {}) };
+        if (existingTenantId) {
+          metadataToSend.tenantId = existingTenantId;
+        }
+
         await updateApiKeyAction({
           keyId,
           name: values.name,
@@ -71,7 +81,7 @@ export function ApiKeyEditForm({ keyId, defaultValues, onSuccess }: ApiKeyEditFo
           remaining: values.remaining,
           refillAmount: values.refillAmount,
           refillInterval: values.refillInterval,
-          metadata: values.metadata,
+          metadata: metadataToSend,
         });
 
         toast.success(t('updateSuccess'), { id: toastId });
@@ -221,16 +231,44 @@ export function ApiKeyEditForm({ keyId, defaultValues, onSuccess }: ApiKeyEditFo
             <FormField
               control={form.control}
               name="metadata"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('metadata.label')}</FormLabel>
-                  <FormControl>
-                    <JsonInput value={field.value ?? {}} onChange={(value) => field.onChange(value)} />
-                  </FormControl>
-                  <FormDescription>{t('metadata.description')}</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
+              render={({ field }) => {
+                // Remove tenantId from display to prevent modification
+                const displayValue = { ...(field.value ?? {}) };
+                const hasTenantId = 'tenantId' in displayValue;
+                if (hasTenantId) {
+                  delete displayValue.tenantId;
+                }
+
+                return (
+                  <FormItem>
+                    <FormLabel>{t('metadata.label')}</FormLabel>
+                    <FormControl>
+                      <JsonInput
+                        value={displayValue}
+                        onChange={(value) => {
+                          // Automatically preserve tenantId when updating
+                          // Ensure value is an object before spreading
+                          if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                            const newValue = { ...value } as Record<string, unknown>;
+                            if (existingTenantId) {
+                              newValue.tenantId = existingTenantId;
+                            }
+                            field.onChange(newValue);
+                          } else {
+                            const newValue: Record<string, unknown> = {};
+                            if (existingTenantId) {
+                              newValue.tenantId = existingTenantId;
+                            }
+                            field.onChange(newValue);
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <FormDescription>{hasTenantId ? `${t('metadata.description')} (Note: tenantId is protected and cannot be modified)` : t('metadata.description')}</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
             />
           </div>
         </div>
@@ -243,4 +281,3 @@ export function ApiKeyEditForm({ keyId, defaultValues, onSuccess }: ApiKeyEditFo
     </Form>
   );
 }
-

@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { createApiKeyAction } from '@/actions/api-key';
 import { Link } from '@/i18n/routing';
+import { useApiKeyFormSchema, type TApiKeyFormSchema } from '@/services/schemas/settings/api-key.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, Copy } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -14,8 +16,6 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { JsonInput } from '@/components/custom-ui/json-input';
-import { createApiKeyAction } from '@/actions/api-key';
-import { useApiKeyFormSchema, type TApiKeyFormSchema } from '@/services/schemas/settings/api-key.schema';
 
 export const getApiKeyDefaultValues = (): ApiKeyFormValues => ({
   name: '',
@@ -58,7 +58,18 @@ export function ApiKeyCreateForm({ defaultValues, tenantId }: ApiKeyCreateFormPr
     startTransition(async () => {
       const toastId = toast.loading(t('creating'));
       try {
-        const apiKey = await createApiKeyAction({ ...values, tenantId });
+        // Ensure tenantId is always in metadata and cannot be overridden by user input
+        const metadata = { ...(values.metadata || {}) };
+        // tenantId from prop takes precedence (security: user cannot override it)
+        if (tenantId) {
+          metadata.tenantId = tenantId;
+        }
+
+        const apiKey = await createApiKeyAction({
+          ...values,
+          tenantId,
+          metadata, // Use protected metadata
+        });
 
         if (!apiKey?.key) {
           throw new Error('API key missing from response');
@@ -190,12 +201,7 @@ export function ApiKeyCreateForm({ defaultValues, tenantId }: ApiKeyCreateFormPr
                           <FormItem>
                             <FormLabel>{t('rateLimit.maxRequests')}</FormLabel>
                             <FormControl>
-                              <Input
-                                type="number"
-                                placeholder="100"
-                                {...rateMaxField}
-                                onChange={(e) => rateMaxField.onChange(e.target.value ? Number(e.target.value) : undefined)}
-                              />
+                              <Input type="number" placeholder="100" {...rateMaxField} onChange={(e) => rateMaxField.onChange(e.target.value ? Number(e.target.value) : undefined)} />
                             </FormControl>
                             <FormDescription>{t('rateLimit.maxRequestsDesc')}</FormDescription>
                             <FormMessage />
@@ -210,12 +216,7 @@ export function ApiKeyCreateForm({ defaultValues, tenantId }: ApiKeyCreateFormPr
                           <FormItem>
                             <FormLabel>{t('rateLimit.timeWindow')}</FormLabel>
                             <FormControl>
-                              <Input
-                                type="number"
-                                placeholder="60000"
-                                {...rateWindowField}
-                                onChange={(e) => rateWindowField.onChange(e.target.value ? Number(e.target.value) : undefined)}
-                              />
+                              <Input type="number" placeholder="60000" {...rateWindowField} onChange={(e) => rateWindowField.onChange(e.target.value ? Number(e.target.value) : undefined)} />
                             </FormControl>
                             <FormDescription>{t('rateLimit.timeWindowDesc')}</FormDescription>
                             <FormMessage />
@@ -233,12 +234,7 @@ export function ApiKeyCreateForm({ defaultValues, tenantId }: ApiKeyCreateFormPr
                         <FormItem>
                           <FormLabel>{t('usageLimits.remaining')}</FormLabel>
                           <FormControl>
-                            <Input
-                              type="number"
-                              placeholder="1000"
-                              {...remainingField}
-                              onChange={(e) => remainingField.onChange(e.target.value ? Number(e.target.value) : undefined)}
-                            />
+                            <Input type="number" placeholder="1000" {...remainingField} onChange={(e) => remainingField.onChange(e.target.value ? Number(e.target.value) : undefined)} />
                           </FormControl>
                           <FormDescription>{t('usageLimits.remainingDesc')}</FormDescription>
                           <FormMessage />
@@ -253,12 +249,7 @@ export function ApiKeyCreateForm({ defaultValues, tenantId }: ApiKeyCreateFormPr
                         <FormItem>
                           <FormLabel>{t('usageLimits.refillAmount')}</FormLabel>
                           <FormControl>
-                            <Input
-                              type="number"
-                              placeholder="100"
-                              {...refillAmountField}
-                              onChange={(e) => refillAmountField.onChange(e.target.value ? Number(e.target.value) : undefined)}
-                            />
+                            <Input type="number" placeholder="100" {...refillAmountField} onChange={(e) => refillAmountField.onChange(e.target.value ? Number(e.target.value) : undefined)} />
                           </FormControl>
                           <FormDescription>{t('usageLimits.refillAmountDesc')}</FormDescription>
                           <FormMessage />
@@ -273,12 +264,7 @@ export function ApiKeyCreateForm({ defaultValues, tenantId }: ApiKeyCreateFormPr
                         <FormItem>
                           <FormLabel>{t('usageLimits.refillInterval')}</FormLabel>
                           <FormControl>
-                            <Input
-                              type="number"
-                              placeholder="3600000"
-                              {...refillIntervalField}
-                              onChange={(e) => refillIntervalField.onChange(e.target.value ? Number(e.target.value) : undefined)}
-                            />
+                            <Input type="number" placeholder="3600000" {...refillIntervalField} onChange={(e) => refillIntervalField.onChange(e.target.value ? Number(e.target.value) : undefined)} />
                           </FormControl>
                           <FormDescription>{t('usageLimits.refillIntervalDesc')}</FormDescription>
                           <FormMessage />
@@ -293,18 +279,40 @@ export function ApiKeyCreateForm({ defaultValues, tenantId }: ApiKeyCreateFormPr
             <FormField
               control={form.control}
               name="metadata"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('metadata.label')}</FormLabel>
-                  <FormControl>
-                    <JsonInput value={field.value ?? {}} onChange={(value) => field.onChange(value)} />
-                  </FormControl>
-                  <FormDescription>{t('metadata.description')}</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              render={({ field }) => {
+                // Remove tenantId from display - it will be added automatically on submit
+                const displayValue = { ...(field.value ?? {}) };
+                if ('tenantId' in displayValue) {
+                  delete displayValue.tenantId;
+                }
 
+                return (
+                  <FormItem>
+                    <FormLabel>{t('metadata.label')}</FormLabel>
+                    <FormControl>
+                      <JsonInput
+                        value={displayValue}
+                        onChange={(value) => {
+                          // Remove tenantId if user tries to add it (security)
+                          // Ensure value is an object before spreading
+                          if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                            const cleanValue = { ...value } as Record<string, unknown>;
+                            if ('tenantId' in cleanValue) {
+                              delete cleanValue.tenantId;
+                            }
+                            field.onChange(cleanValue);
+                          } else {
+                            field.onChange({});
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <FormDescription>{tenantId ? `${t('metadata.description')} (Note: tenantId will be automatically added and cannot be modified)` : t('metadata.description')}</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
           </div>
         </div>
         <div className="mt-4 flex justify-end">

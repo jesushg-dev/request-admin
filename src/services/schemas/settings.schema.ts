@@ -31,43 +31,19 @@
  */
 
 // Profile Schema
-export {
-  createProfileSchema,
-  useProfileSchema,
-  type TProfileSchema,
-} from './settings/profile.schema';
+export { createProfileSchema, useProfileSchema, type TProfileSchema } from './settings/profile.schema';
 
 // Password Change Schema
-export {
-  createPasswordChangeSchema,
-  usePasswordChangeSchema,
-  type TPasswordChangeSchema,
-} from './settings/password.schema';
+export { createPasswordChangeSchema, usePasswordChangeSchema, type TPasswordChangeSchema } from './settings/password.schema';
 
 // Email Change Schema
-export {
-  createEmailChangeSchema,
-  useEmailChangeSchema,
-  type TEmailChangeSchema,
-} from './settings/email.schema';
+export { createEmailChangeSchema, useEmailChangeSchema, type TEmailChangeSchema } from './settings/email.schema';
 
 // Subscription Schema
-export {
-  createSubscriptionSchema,
-  useSubscriptionSchema,
-  type TSubscriptionSchema,
-} from './settings/subscription.schema';
+export { createSubscriptionSchema, useSubscriptionSchema, type TSubscriptionSchema } from './settings/subscription.schema';
 
 // Notifications Schema
-export {
-  createNotificationsSchema,
-  useNotificationsSchema,
-  type TNotificationsSchema,
-} from './settings/notifications.schema';
+export { createNotificationsSchema, useNotificationsSchema, type TNotificationsSchema } from './settings/notifications.schema';
 
 // Appearance Schema
-export {
-  createAppearanceSchema,
-  useAppearanceSchema,
-  type TAppearanceSchema,
-} from './settings/appearance.schema';
+export { createAppearanceSchema, useAppearanceSchema, type TAppearanceSchema } from './settings/appearance.schema';

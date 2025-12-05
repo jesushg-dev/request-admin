@@ -1,11 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useFindFirstPerson, useUpsertPerson } from '@/services/api/hooks';
+import { useFindManyIdentificationType } from '@/services/api/hooks/identification-type';
 import { usePersonSchema, type TPersonSchema } from '@/services/schemas/settings/organization';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { InfoIcon } from 'lucide-react';
-import { useForm } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -16,10 +18,8 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { useTenantContext } from '@/components/hoc/tenant-provider';
-import { useFindFirstPerson, useUpsertPerson } from '@/services/api/hooks';
-import { useFindManyIdentificationType } from '@/services/api/hooks/identification-type';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 
 export default function PersonForm() {
   const t = useTranslations('admin.setting.organizationPerson');
@@ -143,9 +143,7 @@ export default function PersonForm() {
   }
 
   if (isLoadingPerson || isLoadingTypes) {
-    return (
-     <Skeleton className="h-full w-full" />
-    );
+    return <Skeleton className="h-full w-full" />;
   }
 
   const initials = `${personData?.firstName?.[0] || ''}${personData?.lastName?.[0] || ''}`.toUpperCase() || 'U';

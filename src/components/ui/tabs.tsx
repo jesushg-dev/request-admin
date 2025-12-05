@@ -2,9 +2,9 @@
 
 import * as React from 'react';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
+import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '@/lib/utils';
-import { cva, type VariantProps } from 'class-variance-authority';
 
 // Variants for TabsList
 const tabsListVariants = cva('flex items-center shrink-0', {
@@ -81,8 +81,7 @@ const tabsTriggerVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          'text-muted-foreground data-[state=active]:bg-background hover:text-foreground data-[state=active]:text-foreground data-[state=active]:shadow-xs data-[state=active]:shadow-black/5',
+        default: 'text-muted-foreground data-[state=active]:bg-background hover:text-foreground data-[state=active]:text-foreground data-[state=active]:shadow-xs data-[state=active]:shadow-black/5',
         button:
           'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg text-accent-foreground hover:text-foreground data-[state=active]:bg-accent data-[state=active]:text-foreground',
         line: 'border-b-2 text-muted-foreground border-transparent data-[state=active]:border-primary hover:text-primary data-[state=active]:text-primary data-[state=active]:border-primary data-[state=active]:text-primary',
@@ -116,19 +115,16 @@ const tabsTriggerVariants = cva(
 );
 
 // Variants for TabsContent
-const tabsContentVariants = cva(
-  'mt-2.5 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-  {
-    variants: {
-      variant: {
-        default: '',
-      },
+const tabsContentVariants = cva('mt-2.5 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2', {
+  variants: {
+    variant: {
+      default: '',
     },
-    defaultVariants: {
-      variant: 'default',
-    },
-  }
-);
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
 
 // Context
 type TabsContextType = {
@@ -146,52 +142,28 @@ function Tabs({ className, ...props }: React.ComponentProps<typeof TabsPrimitive
   return <TabsPrimitive.Root data-slot="tabs" className={cn('', className)} {...props} />;
 }
 
-const TabsList = React.forwardRef<
-  React.ComponentRef<typeof TabsPrimitive.List>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.List> & VariantProps<typeof tabsListVariants>
->(({ className, variant = 'default', shape = 'default', size = 'md', ...props }, ref) => {
-  return (
-    <TabsContext.Provider value={{ variant: variant || 'default', size: size || 'md' }}>
-      <TabsPrimitive.List
-        ref={ref}
-        data-slot="tabs-list"
-        className={cn(tabsListVariants({ variant, shape, size }), className)}
-        {...props}
-      />
-    </TabsContext.Provider>
-  );
-});
+const TabsList = React.forwardRef<React.ComponentRef<typeof TabsPrimitive.List>, React.ComponentPropsWithoutRef<typeof TabsPrimitive.List> & VariantProps<typeof tabsListVariants>>(
+  ({ className, variant = 'default', shape = 'default', size = 'md', ...props }, ref) => {
+    return (
+      <TabsContext.Provider value={{ variant: variant || 'default', size: size || 'md' }}>
+        <TabsPrimitive.List ref={ref} data-slot="tabs-list" className={cn(tabsListVariants({ variant, shape, size }), className)} {...props} />
+      </TabsContext.Provider>
+    );
+  }
+);
 TabsList.displayName = TabsPrimitive.List.displayName;
 
-const TabsTrigger = React.forwardRef<
-  React.ComponentRef<typeof TabsPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
->(({ className, ...props }, ref) => {
+const TabsTrigger = React.forwardRef<React.ComponentRef<typeof TabsPrimitive.Trigger>, React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>>(({ className, ...props }, ref) => {
   const { variant, size } = React.useContext(TabsContext);
-  return (
-    <TabsPrimitive.Trigger
-      ref={ref}
-      data-slot="tabs-trigger"
-      className={cn(tabsTriggerVariants({ variant, size }), className)}
-      {...props}
-    />
-  );
+  return <TabsPrimitive.Trigger ref={ref} data-slot="tabs-trigger" className={cn(tabsTriggerVariants({ variant, size }), className)} {...props} />;
 });
 TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
 
-const TabsContent = React.forwardRef<
-  React.ComponentRef<typeof TabsPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content> & VariantProps<typeof tabsContentVariants>
->(({ className, variant, ...props }, ref) => {
-  return (
-    <TabsPrimitive.Content
-      ref={ref}
-      data-slot="tabs-content"
-      className={cn(tabsContentVariants({ variant }), className)}
-      {...props}
-    />
-  );
-});
+const TabsContent = React.forwardRef<React.ComponentRef<typeof TabsPrimitive.Content>, React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content> & VariantProps<typeof tabsContentVariants>>(
+  ({ className, variant, ...props }, ref) => {
+    return <TabsPrimitive.Content ref={ref} data-slot="tabs-content" className={cn(tabsContentVariants({ variant }), className)} {...props} />;
+  }
+);
 TabsContent.displayName = TabsPrimitive.Content.displayName;
 
 export { Tabs, TabsContent, TabsList, TabsTrigger };

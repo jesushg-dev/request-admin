@@ -8,4 +8,3 @@ export { useParagraphFieldPropertiesSchema, createParagraphFieldPropertiesSchema
 export { useTitleFieldPropertiesSchema, createTitleFieldPropertiesSchema, type TTitleFieldPropertiesSchema } from './title-field.schema';
 export { useSubtitleFieldPropertiesSchema, createSubtitleFieldPropertiesSchema, type TSubtitleFieldPropertiesSchema } from './subtitle-field.schema';
 export { useSpacerFieldPropertiesSchema, createSpacerFieldPropertiesSchema, type TSpacerFieldPropertiesSchema } from './spacer-field.schema';
-

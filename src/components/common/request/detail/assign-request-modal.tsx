@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState, useTransition } from 'react';
 import { updateCurrentAssignedUsers } from '@/actions/request-assignment';
 import { useFindManyUserTenantArea } from '@/services/api/hooks';
+import { useAssignRequestSchema, type TAssignRequestSchema } from '@/services/schemas/request';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Layers, MessageSquare, SquarePen, Trash2, User } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -20,7 +21,6 @@ import { Textarea } from '@/components/ui/textarea';
 import Select, { optionSchema, type OptionType } from '@/components/custom-ui/select';
 import { Hint } from '@/components/hint';
 import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
-import { useAssignRequestSchema, type TAssignRequestSchema } from '@/services/schemas/request';
 
 export const getDefaultValues = (): TAssignRequestSchema => ({
   assignees: [{ user: { label: '', value: '' }, isCoordinator: false }],

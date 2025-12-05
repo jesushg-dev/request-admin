@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -29,4 +29,3 @@ export function createTransitionSchema(t: TranslationFn) {
  * Type inference for TransitionSchema
  */
 export type TTransitionSchema = z.infer<ReturnType<typeof createTransitionSchema>>;
-

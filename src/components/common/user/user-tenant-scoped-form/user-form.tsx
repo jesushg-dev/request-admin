@@ -1,6 +1,7 @@
 'use client';
 
 import { type FC } from 'react';
+import { type TUserSchema } from '@/services/schemas/user';
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
@@ -12,7 +13,6 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { PhoneInput } from '@/components/custom-ui/phone-input';
 import Select, { OptionType } from '@/components/custom-ui/select';
-import { type TUserSchema } from '@/services/schemas/user';
 
 // Base schema for defineStepper (without internationalization)
 // This is used only for the stepper definition

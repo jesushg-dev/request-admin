@@ -8,10 +8,10 @@ import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/components/ui/sidebar';
 import { AdvancedBreadcrumb } from '@/components/advanced-breadcrumb';
 import ClientOnly from '@/components/client-only';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 import LocaleSwitcherSelect from '@/components/locale-switcher-select';
 import { NotificationCenter } from '@/components/notification/notification-center';
 import NotificationProvider from '@/components/notification/notification-context';
-import { useTenantContext } from '@/components/hoc/tenant-provider';
 
 const Navbar = () => {
   const { setTheme, theme } = useTheme();

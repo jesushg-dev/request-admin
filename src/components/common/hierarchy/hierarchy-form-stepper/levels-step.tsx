@@ -1,3 +1,4 @@
+import { type TLevelsSchema } from '@/services/schemas/hierarchy';
 import { DragHandleDots2Icon, TrashIcon } from '@radix-ui/react-icons';
 import { AlertTriangleIcon, FileCogIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -14,7 +15,6 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sortable, SortableDragHandle, SortableItem } from '@/components/ui/sortable';
 import { Textarea } from '@/components/ui/textarea';
-import { type TLevelsSchema } from '@/services/schemas/hierarchy';
 
 export type LevelsFormValues = TLevelsSchema;
 

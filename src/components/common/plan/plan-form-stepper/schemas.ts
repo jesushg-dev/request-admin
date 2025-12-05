@@ -1,5 +1,5 @@
+import { type TPlanFeatureSchema, type TPlanInfoSchema } from '@/services/schemas/plan';
 import * as z from 'zod';
-import { type TPlanInfoSchema, type TPlanFeatureSchema } from '@/services/schemas/plan';
 
 // Base schemas for defineStepper (without internationalization)
 // These are used only for the stepper definition

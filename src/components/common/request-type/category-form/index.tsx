@@ -1,10 +1,11 @@
 // category-form/index.tsx
+import { useMemo } from 'react';
+import { useRequestCategorySchema, type TRequestCategorySchema } from '@/services/schemas/request-type';
+import { useAtom, useAtomValue } from 'jotai';
 import { useTranslations } from 'next-intl';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { useAtom, useAtomValue } from 'jotai';
-import { useMemo } from 'react';
 
-import { RequestLevelType, RequestHierarchyWithLevelsType } from '@/types/zenstackhq/hierarchy';
+import { RequestHierarchyWithLevelsType, RequestLevelType } from '@/types/zenstackhq/hierarchy';
 import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
@@ -13,7 +14,6 @@ import { MultiSelector } from '@/components/custom-ui/multi-selector';
 import { OptionType } from '@/components/custom-ui/select';
 import FlowBuilder from '@/components/process-flow/flow-builder/flow-builder';
 import { TabSection } from '@/components/shared/tab-section';
-import { useRequestCategorySchema, type TRequestCategorySchema } from '@/services/schemas/request-type';
 
 import { BlockedResourcesInfo } from '../blocked-resources-info';
 import { getChildGroupsAtom, getInheritedGroupsAtom, promoteResourceAtom } from '../store/category-store';
@@ -63,24 +63,12 @@ export function CategoryForm({ levels, formsOptions = [], requirementsOptions = 
   const getInheritedGroups = useAtomValue(getInheritedGroupsAtom);
   const getChildGroups = useAtomValue(getChildGroupsAtom);
   const [, promoteResource] = useAtom(promoteResourceAtom);
-  
+
   // Memoize the results to avoid unnecessary recalculations
-  const requirementInheritedGroups = useMemo(
-    () => getInheritedGroups(currentCategoryId, 'requirements', levels),
-    [getInheritedGroups, currentCategoryId, levels]
-  );
-  const requirementChildGroups = useMemo(
-    () => getChildGroups(currentCategoryId, 'requirements', levels),
-    [getChildGroups, currentCategoryId, levels]
-  );
-  const formInheritedGroups = useMemo(
-    () => getInheritedGroups(currentCategoryId, 'forms', levels),
-    [getInheritedGroups, currentCategoryId, levels]
-  );
-  const formChildGroups = useMemo(
-    () => getChildGroups(currentCategoryId, 'forms', levels),
-    [getChildGroups, currentCategoryId, levels]
-  );
+  const requirementInheritedGroups = useMemo(() => getInheritedGroups(currentCategoryId, 'requirements', levels), [getInheritedGroups, currentCategoryId, levels]);
+  const requirementChildGroups = useMemo(() => getChildGroups(currentCategoryId, 'requirements', levels), [getChildGroups, currentCategoryId, levels]);
+  const formInheritedGroups = useMemo(() => getInheritedGroups(currentCategoryId, 'forms', levels), [getInheritedGroups, currentCategoryId, levels]);
+  const formChildGroups = useMemo(() => getChildGroups(currentCategoryId, 'forms', levels), [getChildGroups, currentCategoryId, levels]);
 
   // Helper para filtrar seleccionables
   function getSelectableResources(allOptions: OptionType[], currentSelected: OptionType[], inheritedGroups: { resources: OptionType[] }[], childGroups: { resource: OptionType }[]): OptionType[] {
@@ -110,10 +98,7 @@ export function CategoryForm({ levels, formsOptions = [], requirementsOptions = 
 
   // Forms
   const formBlockedCount = formChildGroups.length;
-  const selectableForms = useMemo(
-    () => getSelectableResources(formsOptions, currentForms, formInheritedGroups, formChildGroups),
-    [formsOptions, currentForms, formInheritedGroups, formChildGroups]
-  );
+  const selectableForms = useMemo(() => getSelectableResources(formsOptions, currentForms, formInheritedGroups, formChildGroups), [formsOptions, currentForms, formInheritedGroups, formChildGroups]);
   const onPromoteForm = (resource: OptionType, groupInfo: ResourceGroup) => {
     promoteResource(currentCategoryId, 'forms', resource);
     if (!currentForms.some((r) => r.value === resource.value)) {

@@ -3,6 +3,17 @@
 import { useEffect, useMemo, useTransition, type FC } from 'react';
 import { upsertUser } from '@/actions/user';
 import { useRouter } from '@/i18n/routing';
+import {
+  getAreaRoleAssignmentSchema,
+  getUserRoleSchema,
+  getUserSchema,
+  useAreaRoleAssignmentSchema,
+  useUserRoleSchema,
+  useUserSchema,
+  type TAreaRoleAssignmentSchema,
+  type TUserRoleSchema,
+  type TUserSchema,
+} from '@/services/schemas/user';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { defineStepper } from '@stepperize/react';
 import { useTranslations } from 'next-intl';
@@ -16,7 +27,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { OptionType } from '@/components/custom-ui/select';
 import { StepNavigationModern } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
-import { getUserSchema, useUserSchema, getUserRoleSchema, useUserRoleSchema, getAreaRoleAssignmentSchema, useAreaRoleAssignmentSchema, type TUserSchema, type TUserRoleSchema, type TAreaRoleAssignmentSchema } from '@/services/schemas/user';
 
 import AreaRoleAssignmentForm, { getDefaultAreaRoleAssignment } from './area-role-assignment-form';
 import UserForm, { getDefaultUser } from './user-form';

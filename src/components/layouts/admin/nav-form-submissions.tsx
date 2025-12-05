@@ -7,9 +7,9 @@ import { ChevronDownIcon, ChevronUpIcon, GripVerticalIcon, LoaderCircle, Plus } 
 import { Tree, TreeDataProvider, TreeItem, TreeItemIndex, UncontrolledTreeEnvironment } from 'react-complex-tree';
 
 import { cn } from '@/lib/utils';
+import { PERMISSION, useAuthorization } from '@/hooks/use-authorization';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuShortcut, ContextMenuTrigger } from '@/components/ui/context-menu';
 import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuItem } from '@/components/ui/sidebar';
-import { useAuthorization, PERMISSION } from '@/hooks/use-authorization';
 
 import { ConvertedMenuItem, useDndSubmissionContext } from './dnd-submission-provider';
 

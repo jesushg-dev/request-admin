@@ -4,6 +4,9 @@ import React, { useEffect, useMemo, useState, useTransition, type FC } from 'rea
 import { upsertCategoriesFlat } from '@/actions/assignment-type';
 import { useRouter } from '@/i18n/routing';
 import { useUpsertArea } from '@/services/api/hooks';
+import { getAreaSchema, useAreaSchema, type TAreaSchema } from '@/services/schemas/area';
+import { getCategoriesSchema, useCategoriesSchema, type TCategoriesSchema } from '@/services/schemas/category';
+import { getRolesSchema, getUserRoleAssignmentSchema, useRolesSchema, useUserRoleAssignmentSchema, type TRolesSchema, type TUserRoleAssignmentSchema } from '@/services/schemas/role';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { defineStepper } from '@stepperize/react';
 import { useTranslations } from 'next-intl';
@@ -24,9 +27,6 @@ import { OptionType } from '@/components/custom-ui/select';
 import { PrismaErrorAlert } from '@/components/shared/prisma-error-alert';
 import { StepNavigationModern } from '@/components/stepper/step-navigation';
 import { StepperNavigationButtons } from '@/components/stepper/step-navigation-buttons';
-import { getAreaSchema, useAreaSchema, type TAreaSchema } from '@/services/schemas/area';
-import { getCategoriesSchema, useCategoriesSchema, type TCategoriesSchema } from '@/services/schemas/category';
-import { getRolesSchema, useRolesSchema, getUserRoleAssignmentSchema, useUserRoleAssignmentSchema, type TRolesSchema, type TUserRoleAssignmentSchema } from '@/services/schemas/role';
 
 import AssignmentCategoriesReview from '../category/assignment-categories-review';
 import RoleFormReview from '../role/role-form-review';

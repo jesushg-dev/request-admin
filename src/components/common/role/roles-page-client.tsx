@@ -3,8 +3,8 @@
 import React, { memo, useMemo } from 'react';
 import { useCountRole, useFindManyRole } from '@/services/api/hooks';
 import { DataTableAdvancedFilterField, DataTableFilterField } from '@/types';
-import { Prisma } from '@zenstackhq/runtime/models';
 import { ColumnDef } from '@tanstack/react-table';
+import { Prisma } from '@zenstackhq/runtime/models';
 import { useTranslations } from 'next-intl';
 import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 
@@ -12,7 +12,6 @@ import { getFiltersStateParser, getSortingStateParser } from '@/lib/parsers';
 import { formatDate } from '@/lib/utils';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useFetchTableData } from '@/hooks/use-fetch-table-data';
-import { useTenantContext } from '@/components/hoc/tenant-provider';
 import ErrorRetryFallback from '@/components/common/error-retry-fallback';
 import { DataTable, DataTableShell } from '@/components/data-table/data-table';
 import { ActionCell } from '@/components/data-table/data-table-action-menu';
@@ -20,6 +19,7 @@ import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-adv
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { DataTableFloatingBar } from '@/components/data-table/data-table-floating-bar';
 import { DataTableToolbarActions } from '@/components/data-table/data-table-toolbar-actions';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 
 const RoleDefaultArgs = Prisma.validator<Prisma.RoleDefaultArgs>()({
   select: {
@@ -112,10 +112,14 @@ const RolesPageClient: React.FC<RolesPageClientProps> = ({ canCreate, canEdit, c
             table={table}
             exportFilename="roles"
             entityLabel={t('entityLabel')}
-            addLink={canCreate ? {
-              pathname: '/admin/[tenantId]/security/roles/new',
-              params: { tenantId },
-            } : undefined}
+            addLink={
+              canCreate
+                ? {
+                    pathname: '/admin/[tenantId]/security/roles/new',
+                    params: { tenantId },
+                  }
+                : undefined
+            }
           />
         </DataTableAdvancedToolbar>
       </DataTable>
@@ -163,10 +167,14 @@ function getTableConfiguration({ t, tenantId, canEdit, canDelete }: GetTableConf
         <ActionCell
           row={row}
           onDelete={canDelete ? () => console.log('Delete', row.original) : undefined}
-          updateLink={canEdit ? {
-            pathname: '/admin/[tenantId]/security/roles/[slug]/edit',
-            params: { tenantId, slug: row.original.id },
-          } : undefined}
+          updateLink={
+            canEdit
+              ? {
+                  pathname: '/admin/[tenantId]/security/roles/[slug]/edit',
+                  params: { tenantId, slug: row.original.id },
+                }
+              : undefined
+          }
         />
       ),
       size: 20,
@@ -188,4 +196,3 @@ function getTableConfiguration({ t, tenantId, canEdit, canDelete }: GetTableConf
 }
 
 export default memo(RolesPageClient);
-

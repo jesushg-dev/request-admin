@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
+import { z } from 'zod';
 
 // Type helper for translation function
 type TranslationFn = (key: any) => string;
@@ -18,8 +18,14 @@ export function useLevelsSchema() {
 export function createLevelsSchema(t: TranslationFn) {
   const levelSchema = z.object({
     id: z.string(),
-    name: z.string().min(1, { message: t('levelNameRequired') }).max(100, { message: t('levelNameMaxLength') }),
-    description: z.string().max(255, { message: t('levelDescriptionMaxLength') }).optional(),
+    name: z
+      .string()
+      .min(1, { message: t('levelNameRequired') })
+      .max(100, { message: t('levelNameMaxLength') }),
+    description: z
+      .string()
+      .max(255, { message: t('levelDescriptionMaxLength') })
+      .optional(),
     isActive: z.boolean().default(true),
   });
 
@@ -41,4 +47,3 @@ export type TLevelsSchema = z.infer<ReturnType<typeof createLevelsSchema>>;
 export function getLevelsSchema() {
   return createLevelsSchema((key: string) => key);
 }
-

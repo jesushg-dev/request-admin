@@ -1,3 +1,5 @@
+import { passkeyClient } from '@better-auth/passkey/client';
+import { ssoClient } from '@better-auth/sso/client';
 import {
   adminClient,
   anonymousClient,
@@ -15,8 +17,6 @@ import {
   twoFactorClient,
   usernameClient,
 } from 'better-auth/client/plugins';
-import { passkeyClient } from '@better-auth/passkey/client';
-import { ssoClient } from '@better-auth/sso/client';
 import { createAuthClient } from 'better-auth/react';
 
 import { auth } from './auth-server';
