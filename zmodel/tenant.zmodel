@@ -59,6 +59,7 @@ model Tenant extends Auditable {
   // --- Requests and Statuses ---
   requests                       Request[]
   requestAssignments             RequestAssignment[]
+  requestDatarooms               RequestDataroom[]
   assignedUsers                  AssignedUser[]
   requestWorkflows            RequestWorkflow[]
   requestWorkflowStatuses      RequestWorkflowStatus[]

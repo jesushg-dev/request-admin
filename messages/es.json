@@ -1806,6 +1806,35 @@
           "created": "Creado",
           "updated": "Actualizado",
           "notAvailable": "N/A"
+        },
+        "filters": {
+          "type": {
+            "label": "Tipo",
+            "all": "Todos los tipos",
+            "folders": "Carpetas",
+            "documents": "Documentos"
+          },
+          "people": {
+            "label": "Personas",
+            "all": "Todos"
+          },
+          "modified": {
+            "label": "Modificado",
+            "anyTime": "Cualquier momento",
+            "today": "Hoy",
+            "yesterday": "Ayer",
+            "last7Days": "Últimos 7 días",
+            "last30Days": "Últimos 30 días"
+          },
+          "source": {
+            "label": "Fuente",
+            "all": "Todas las fuentes"
+          },
+          "name": "Nombre",
+          "viewMode": {
+            "list": "Vista de lista",
+            "grid": "Vista de cuadrícula"
+          }
         }
       },
       "create": {
@@ -2212,6 +2241,25 @@
         "filesRequired": "Se requiere al menos un archivo",
         "filesMaxCount": "Se permiten máximo 3 archivos",
         "fileSizeExceeded": "El archivo {fileName} excede el tamaño máximo de 4MB"
+      },
+      "files": {
+        "label": "Archivos",
+        "maxSize": "Tamaño máximo de archivo: 4MB"
+      },
+      "button": {
+        "uploading": "Subiendo...",
+        "uploadDocument": "Subir Documento"
+      },
+      "errors": {
+        "selectFile": "Por favor selecciona al menos un archivo para subir",
+        "uploadError": "Ocurrió un error al subir: {message}",
+        "uploadFailed": "Error al subir: No se subieron archivos",
+        "unknownError": "Ocurrió un error desconocido al subir el documento."
+      },
+      "toast": {
+        "uploading": "Subiendo archivos al servicio de almacenamiento",
+        "success": "Documento subido exitosamente",
+        "error": "Ocurrió un error al subir el documento: {message}"
       }
     },
     "client": {
@@ -4191,7 +4239,7 @@
     "folder": {
       "create": {
         "title": "Crear Carpeta",
-        "subtitle": "Organiza tus documentos y archivos.",
+        "subtitle": "Crea una nueva carpeta para organizar y estructurar tus documentos dentro de la sala de datos.",
         "name": "Nombre",
         "namePlaceholder": "Ingrese el nombre de la carpeta",
         "nameDescription": "El nombre de la carpeta.",
@@ -4207,6 +4255,10 @@
           "nameRequired": "El nombre es obligatorio",
           "nameMaxLength": "El nombre debe tener 200 caracteres o menos"
         }
+      },
+      "edit": {
+        "title": "Editar Carpeta",
+        "subtitle": "Actualiza los detalles de la carpeta y gestiona sus propiedades."
       }
     },
     "link": {
@@ -5144,6 +5196,62 @@
       "dragAndDrop": "Arrastra y suelta archivos aquí, o haz clic para seleccionarlos",
       "uploadInstructions": "Puedes subir {count, select, 1 {un archivo de hasta {maxSize}} other {{count} archivos (hasta {maxSize} cada uno)}}",
       "removeFile": "Eliminar archivo"
+    },
+    "imageLightbox": {
+      "actions": {
+        "view": "Ver",
+        "download": "Descargar",
+        "close": "Cerrar",
+        "previousImage": "Imagen anterior",
+        "nextImage": "Imagen siguiente",
+        "zoomOut": "Alejar",
+        "zoomIn": "Acercar",
+        "minimize": "Minimizar",
+        "fitToScreen": "Ajustar a pantalla",
+        "rotateImage": "Rotar imagen"
+      },
+      "loading": "Cargando...",
+      "errors": {
+        "failedToLoad": "Error al cargar la imagen",
+        "retry": "Reintentar"
+      }
+    },
+    "mediaLightbox": {
+      "actions": {
+        "view": "Ver",
+        "download": "Descargar",
+        "close": "Cerrar",
+        "previousMedia": "Medio anterior",
+        "nextMedia": "Medio siguiente"
+      }
+    },
+    "mediaPlayer": {
+      "controls": {
+        "play": "Reproducir",
+        "pause": "Pausar",
+        "back": "Atrás {seconds}s",
+        "forward": "Adelante {seconds}s",
+        "mute": "Silenciar",
+        "unmute": "Activar sonido",
+        "playbackSpeed": "Velocidad de reproducción",
+        "fullscreen": "Pantalla completa",
+        "exitFullscreen": "Salir de pantalla completa"
+      },
+      "errors": {
+        "playbackError": "Error de Reproducción",
+        "playbackInterrupted": "Reproducción Interrumpida",
+        "connectionProblem": "Problema de Conexión",
+        "mediaError": "Error de Medio",
+        "unsupportedFormat": "Formato No Soportado",
+        "unknownError": "Ocurrió un error desconocido",
+        "aborted": "La reproducción de medios fue cancelada",
+        "networkError": "Ocurrió un error de red al cargar el medio",
+        "decodeError": "Ocurrió un error al decodificar el medio",
+        "unsupported": "El formato de medio no es compatible"
+      },
+      "actions": {
+        "tryAgain": "Intentar de nuevo"
+      }
     },
     "flowExecution": {
       "build": {

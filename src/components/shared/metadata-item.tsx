@@ -13,11 +13,13 @@ export interface MetadataItemProps {
 
 export function MetadataItem({ icon, label, value }: MetadataItemProps) {
   return (
-    <div className="flex w-full items-center gap-3">
-      <div className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-lg min-w-[2rem] min-h-[2rem]">{icon}</div>
-      <div className="flex flex-col">
-        <p className="text-muted-foreground text-sm">{label}</p>
-        <div className="text-sm font-medium">{value}</div>
+    <div className="flex w-full items-center gap-3 p-2 rounded-lg hover:bg-accent/50 transition-colors group">
+      <div className="bg-primary/10 group-hover:bg-primary/20 flex h-10 w-10 items-center justify-center rounded-lg min-w-[2.5rem] min-h-[2.5rem] transition-colors">
+        <div className="text-primary">{icon}</div>
+      </div>
+      <div className="flex flex-col min-w-0 flex-1">
+        <p className="text-muted-foreground text-xs font-medium uppercase tracking-wide">{label}</p>
+        <div className="text-sm font-semibold text-foreground mt-0.5 truncate">{value}</div>
       </div>
     </div>
   );

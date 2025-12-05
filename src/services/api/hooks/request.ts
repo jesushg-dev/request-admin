@@ -381,7 +381,6 @@ export function useCheckRequest<TError = DefaultError>(
       isDraft?: boolean;
       closedBy?: string;
       closedComment?: string;
-      dataroomId?: string;
       satisfactionSurveyId?: string;
       channelId?: string;
       executionModelInstanceId?: string;

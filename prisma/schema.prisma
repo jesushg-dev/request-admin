@@ -55,6 +55,7 @@ model Tenant {
   executionNodeGuides            ExecutionNodeGuide[]
   requests                       Request[]
   requestAssignments             RequestAssignment[]
+  requestDatarooms               RequestDataroom[]
   assignedUsers                  AssignedUser[]
   requestWorkflows               RequestWorkflow[]
   requestWorkflowStatuses        RequestWorkflowStatus[]
@@ -465,8 +466,7 @@ model Request {
   complianceTrackings      RequirementComplianceTracking[]
   requestAssignments       RequestAssignment[]
   changeLog                RequestChangeLog[]
-  dataroomId               String?
-  dataroom                 Dataroom?
+  requestDatarooms         RequestDataroom[]
   satisfactionSurveyId     String?
   satisfactionSurvey       CustomerSatisfactionSurvey?     @relation("RequestSurvey")
   channelId                String?
@@ -716,6 +716,27 @@ model RequestChangeLog {
 
   @@index([requestId], name: "idx_change_log_request_id")
   @@index([updatedBy], name: "idx_change_log_changed_by")
+}
+
+/// Junction table for Request-Dataroom relationship (one-to-one enforced by unique constraints)
+model RequestDataroom {
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @updatedAt()
+  deletedAt  DateTime?
+  createdBy  String?   @db.VarChar(50)
+  updatedBy  String?   @db.VarChar(50)
+  tenantId   String
+  tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id         String    @id() @default(uuid())
+  requestId  String
+  request    Request   @relation(fields: [requestId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  dataroomId String
+  dataroom   Dataroom  @relation(fields: [dataroomId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([requestId])
+  @@unique([dataroomId])
+  @@index([requestId])
+  @@index([dataroomId])
 }
 
 model Document {
@@ -1033,27 +1054,26 @@ model DocumentConversation {
 }
 
 model Dataroom {
-  id           String                @id() @default(uuid())
-  name         String                @db.VarChar(100)
-  description  String?               @db.VarChar(255)
-  isActive     Boolean               @default(true)
-  createdAt    DateTime              @default(now())
-  updatedAt    DateTime?             @updatedAt()
-  deletedAt    DateTime?
-  createdBy    String?               @db.VarChar(50)
-  updatedBy    String?               @db.VarChar(50)
-  tenantId     String
-  tenant       Tenant                @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  pId          String                @unique()
-  documents    Document[]
-  folders      DataroomFolder[]
-  links        Link[]
-  views        DocumentView[]
-  viewers      Viewer[]
-  viewerGroups DataroomViewerGroup[]
-  brand        DataroomBrand?
-  requestId    String?               @unique()
-  request      Request?              @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id               String                @id() @default(uuid())
+  name             String                @db.VarChar(100)
+  description      String?               @db.VarChar(255)
+  isActive         Boolean               @default(true)
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime?             @updatedAt()
+  deletedAt        DateTime?
+  createdBy        String?               @db.VarChar(50)
+  updatedBy        String?               @db.VarChar(50)
+  tenantId         String
+  tenant           Tenant                @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  pId              String                @unique()
+  documents        Document[]
+  folders          DataroomFolder[]
+  links            Link[]
+  views            DocumentView[]
+  viewers          Viewer[]
+  viewerGroups     DataroomViewerGroup[]
+  brand            DataroomBrand?
+  requestDatarooms RequestDataroom[]
 
   @@index([tenantId])
 }

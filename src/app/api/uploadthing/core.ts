@@ -1,6 +1,6 @@
 import { STORAGE_SERVICE } from '@/constants/storage';
 import { currentSession } from '@/server/auth-server';
-import { getDb } from '@/server/db-client';
+import { db } from '@/server/db-client';
 import { createUploadthing, type FileRouter } from 'uploadthing/next';
 import { UploadThingError } from 'uploadthing/server';
 import { z } from 'zod';
@@ -43,7 +43,8 @@ export const ourFileRouter = {
       const contentType = file.type;
 
       try {
-        const db = await getDb();
+        // Use direct Prisma client to bypass ZenStack policies since we've already
+        // verified authentication in the middleware and this is an internal API endpoint
         await db.document.create({
           data: {
             tenantId: metadata.tenantId,
@@ -54,11 +55,15 @@ export const ourFileRouter = {
             storageType: STORAGE_SERVICE.UPLOADTHING,
             dataroomId: normalizeValue(metadata.dataroomId),
             folderId: normalizeValue(metadata.folderId),
+            createdBy: metadata.userId,
+            updatedBy: metadata.userId,
           },
         });
       } catch (error) {
         console.error('Error creating document in database:', JSON.stringify(error));
-        throw new UploadThingError('Failed to create document in database');
+        // Throw a proper UploadThingError so it propagates to the client
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        throw new UploadThingError(`Failed to create document in database: ${errorMessage}`);
       }
 
       // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback

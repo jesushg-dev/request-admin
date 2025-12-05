@@ -266,6 +266,13 @@ const metadata: ModelMeta = {
           isArray: true,
           backLink: 'tenant',
         },
+        requestDatarooms: {
+          name: 'requestDatarooms',
+          type: 'RequestDataroom',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
         assignedUsers: {
           name: 'assignedUsers',
           type: 'AssignedUser',
@@ -2320,16 +2327,11 @@ const metadata: ModelMeta = {
           isArray: true,
           backLink: 'request',
         },
-        dataroomId: {
-          name: 'dataroomId',
-          type: 'String',
-          isOptional: true,
-        },
-        dataroom: {
-          name: 'dataroom',
-          type: 'Dataroom',
+        requestDatarooms: {
+          name: 'requestDatarooms',
+          type: 'RequestDataroom',
           isDataModel: true,
-          isOptional: true,
+          isArray: true,
           backLink: 'request',
         },
         satisfactionSurveyId: {
@@ -3599,6 +3601,109 @@ const metadata: ModelMeta = {
         id: {
           name: 'id',
           fields: ['id'],
+        },
+      },
+    },
+    requestDataroom: {
+      name: 'RequestDataroom',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestDataroom$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$RequestDataroom$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'requestDatarooms',
+          isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+        },
+        requestId: {
+          name: 'requestId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'request',
+        },
+        request: {
+          name: 'request',
+          type: 'Request',
+          isDataModel: true,
+          backLink: 'requestDatarooms',
+          isRelationOwner: true,
+          onDeleteAction: 'Cascade',
+          onUpdateAction: 'NoAction',
+          foreignKeyMapping: { id: 'requestId' },
+        },
+        dataroomId: {
+          name: 'dataroomId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'dataroom',
+        },
+        dataroom: {
+          name: 'dataroom',
+          type: 'Dataroom',
+          isDataModel: true,
+          backLink: 'requestDatarooms',
+          isRelationOwner: true,
+          onDeleteAction: 'Cascade',
+          onUpdateAction: 'NoAction',
+          foreignKeyMapping: { id: 'dataroomId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        requestId: {
+          name: 'requestId',
+          fields: ['requestId'],
+        },
+        dataroomId: {
+          name: 'dataroomId',
+          fields: ['dataroomId'],
         },
       },
     },
@@ -5403,23 +5508,12 @@ const metadata: ModelMeta = {
           isOptional: true,
           backLink: 'dataroom',
         },
-        requestId: {
-          name: 'requestId',
-          type: 'String',
-          isOptional: true,
-          isForeignKey: true,
-          relationField: 'request',
-        },
-        request: {
-          name: 'request',
-          type: 'Request',
+        requestDatarooms: {
+          name: 'requestDatarooms',
+          type: 'RequestDataroom',
           isDataModel: true,
-          isOptional: true,
+          isArray: true,
           backLink: 'dataroom',
-          isRelationOwner: true,
-          onDeleteAction: 'NoAction',
-          onUpdateAction: 'NoAction',
-          foreignKeyMapping: { id: 'requestId' },
         },
       },
       uniqueConstraints: {
@@ -5430,10 +5524,6 @@ const metadata: ModelMeta = {
         pId: {
           name: 'pId',
           fields: ['pId'],
-        },
-        requestId: {
-          name: 'requestId',
-          fields: ['requestId'],
         },
       },
     },
@@ -11496,7 +11586,9 @@ const metadata: ModelMeta = {
   },
   deleteCascade: {
     user: ['UserTenant', 'InvitationTenant', 'Session', 'Account', 'TwoFactor', 'SsoProvider', 'Apikey', 'Passkey'],
+    request: ['RequestDataroom'],
     requestAssignment: ['AssignedUser'],
+    dataroom: ['RequestDataroom'],
     area: ['AssignmentCategory'],
     requestCategory: ['RequestCategoryForm'],
     assignmentHierarchy: ['AssignmentCategory'],
@@ -11617,6 +11709,14 @@ function $default$RequestChangeLog$createdBy(user: any): unknown {
 }
 
 function $default$RequestChangeLog$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestDataroom$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$RequestDataroom$updatedBy(user: any): unknown {
   return user?.id;
 }
 

@@ -56,11 +56,16 @@ const RequestDefaultArgs = Prisma.validator<Prisma.RequestDefaultArgs>()({
         createdAt: 'desc',
       },
     },
-    dataroom: {
+    requestDatarooms: {
+      take: 1,
       select: {
-        _count: {
+        dataroom: {
           select: {
-            documents: true,
+            _count: {
+              select: {
+                documents: true,
+              },
+            },
           },
         },
       },
@@ -217,9 +222,10 @@ function getTableConfiguration({ t }: GetTableConfigurationProps) {
       },
     },*/
     {
-      accessorKey: 'dataroom._count.documents',
+      accessorFn: (row) => row.requestDatarooms?.[0]?.dataroom?._count?.documents ?? 0,
+      id: 'dataroomDocuments',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.documents')} />,
-      cell: ({ cell }) => cell.getValue(),
+      cell: ({ cell }) => cell.getValue() ?? 0,
     },
     {
       accessorKey: '_count.requestAssignments',

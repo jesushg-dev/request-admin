@@ -821,37 +821,176 @@ async function main() {
     const requestId = generateUuid();
 
     try {
-      const request = await prisma.request.create({
-        data: {
-          id: requestId,
+      // Get requirements for the request category
+      const categoryRequirements = await prisma.requestCategoryRequirement.findMany({
+        where: {
+          categoryId: requestCategory.id,
           tenantId,
-          issueSubject: scenario.subject,
-          description: scenario.description,
-          isDraft: false,
-          createdBy: requester.user.email,
-          requestAssignments: {
-            create: {
-              tenantId,
-              areaId: area.id,
-              statusId: status.id,
-              typeId: type.id,
-              priorityId: priority.id,
-              requestCategoryId: requestCategory.id,
-              assignmentCategoryId: assignmentCategory.id,
-              createdBy: 'system-seed',
-              assignedUsers: {
-                create: {
+          isActive: true,
+        },
+        include: {
+          requirement: true,
+        },
+      });
+
+      // Create request with dataroom and compliance trackings using transaction
+      const request = await prisma.$transaction(async (tx) => {
+        // First create the request
+        const newRequest = await tx.request.create({
+          data: {
+            id: requestId,
+            tenantId,
+            issueSubject: scenario.subject,
+            description: scenario.description,
+            isDraft: false,
+            createdBy: requester.user.email,
+            // Create compliance trackings for each requirement
+            complianceTrackings: {
+              createMany: {
+                data: categoryRequirements.map((cr) => ({
                   tenantId,
-                  userTenantId: assignee.id,
-                  role: 'coordinator',
-                  createdBy: 'system-seed',
+                  requirementId: cr.requirementId,
+                  isFulfilled: false,
+                  isArchived: !cr.isActive,
+                  createdBy: requester.user.email,
+                })),
+              },
+            },
+            requestAssignments: {
+              create: {
+                tenantId,
+                areaId: area.id,
+                statusId: status.id,
+                typeId: type.id,
+                priorityId: priority.id,
+                requestCategoryId: requestCategory.id,
+                assignmentCategoryId: assignmentCategory.id,
+                createdBy: 'system-seed',
+                assignedUsers: {
+                  create: {
+                    tenantId,
+                    userTenantId: assignee.id,
+                    role: 'coordinator',
+                    createdBy: 'system-seed',
+                  },
                 },
               },
             },
           },
-        },
+        });
+
+        // Create the dataroom
+        const dataroom = await tx.dataroom.create({
+          data: {
+            tenantId,
+            pId: `request-${requestId}`,
+            name: `Request: ${scenario.subject}`,
+            description: scenario.description || `Dataroom para request ${requestId}`,
+            isActive: true,
+            createdBy: requester.user.email,
+          },
+        });
+
+        // Create Request-Dataroom relationship through junction table
+        await tx.requestDataroom.create({
+          data: {
+            tenantId,
+            requestId: requestId,
+            dataroomId: dataroom.id,
+            createdBy: requester.user.email,
+          },
+        });
+
+        // Create change logs for request creation and initial assignments
+        const changeLogs = [
+          // Log request creation
+          {
+            tenantId,
+            requestId: requestId,
+            fieldName: 'request_created',
+            oldValue: null,
+            newValue: null,
+            metadata: JSON.stringify({
+              type: 'REQUEST_CREATED',
+              description: 'Request created via seed',
+            }),
+            createdBy: requester.user.email,
+            updatedBy: requester.user.email,
+          },
+          // Log status assignment
+          {
+            tenantId,
+            requestId: requestId,
+            fieldName: 'status',
+            oldValue: null,
+            newValue: status.id,
+            metadata: JSON.stringify({
+              type: 'STATUS_CHANGE',
+              comment: 'Initial status assignment',
+            }),
+            createdBy: requester.user.email,
+            updatedBy: requester.user.email,
+          },
+          // Log priority assignment
+          {
+            tenantId,
+            requestId: requestId,
+            fieldName: 'priority',
+            oldValue: null,
+            newValue: priority.id,
+            metadata: JSON.stringify({
+              type: 'PRIORITY_CHANGE',
+              reason: 'Initial priority assignment',
+            }),
+            createdBy: requester.user.email,
+            updatedBy: requester.user.email,
+          },
+          // Log area/classification assignment
+          {
+            tenantId,
+            requestId: requestId,
+            fieldName: 'classification',
+            oldValue: null,
+            newValue: area.id,
+            metadata: JSON.stringify({
+              type: 'ASSIGNMENT_AREA_CHANGE',
+              reason: 'Initial area assignment',
+              notify: 'false',
+            }),
+            createdBy: requester.user.email,
+            updatedBy: requester.user.email,
+          },
+          // Log user assignment
+          {
+            tenantId,
+            requestId: requestId,
+            fieldName: 'assignedUsers',
+            oldValue: null,
+            newValue: JSON.stringify([assignee.id]),
+            metadata: JSON.stringify({
+              type: 'ASSIGNMENT_CHANGE',
+              users: [
+                {
+                  userId: assignee.id,
+                  isCoordinator: true,
+                },
+              ],
+            }),
+            createdBy: requester.user.email,
+            updatedBy: requester.user.email,
+          },
+        ];
+
+        await tx.requestChangeLog.createMany({
+          data: changeLogs,
+        });
+
+        return newRequest;
       });
+
       console.log(`✅ Created Request: ${request.issueSubject} (${request.id})`);
+      console.log(`   📁 Dataroom created with ${categoryRequirements.length} requirements`);
+      console.log(`   📝 Created ${5} change logs`);
       createdCount++;
     } catch (error: any) {
       console.error(`❌ Error creating request "${scenario.subject}":`, error.message);

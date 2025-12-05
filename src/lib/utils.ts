@@ -91,5 +91,18 @@ export const extractTenantId = (pathname: string, locales: readonly string[]) =>
   return null;
 };
 
+/**
+ * Converts text to slug format (lowercase, no spaces, only letters, numbers, and hyphens)
+ */
+export function toSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove accents
+    .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric characters with hyphens
+    .replace(/^-+|-+$/g, ''); // Remove leading and trailing hyphens
+}
+
 export const TIME_THRESHOLD = 5;
 export const BATCH_SIZE = 20;

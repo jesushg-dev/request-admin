@@ -7,6 +7,7 @@ import { PermissionActions } from '@/constants/permissions';
 import { getPathname, redirect } from '@/i18n/routing';
 import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
+import { Card } from '@/components/ui/card';
 
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -128,7 +129,9 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
 
             <TabsContent value="attachments" className="flex-1 flex flex-col overflow-hidden">
               {requestDetails.dataroom?.id ? (
-                <DataroomDocuments dataroomId={requestDetails.dataroom?.id} tenantId={tenantId} callbackUrl={callbackUrl} />
+                <Card className="flex-1 flex flex-col overflow-hidden">
+                  <DataroomDocuments dataroomId={requestDetails.dataroom?.id} tenantId={tenantId} callbackUrl={callbackUrl} />
+                </Card>
               ) : (
                 <div className="flex-1 flex items-center justify-center">
                   <EmptyState title={t('no_documents_found')} description={t('contact_support')} />

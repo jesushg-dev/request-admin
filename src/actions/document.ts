@@ -39,7 +39,7 @@ export async function cloneDocumentsAndFolders(documentIds: string[], folderIds:
           ...document,
           id: generateUuid(),
           dataroomId,
-          folderId: currentFolderId,
+          folderId: currentFolderId && currentFolderId.trim() !== '' ? currentFolderId : null,
         },
       });
     })
@@ -52,7 +52,7 @@ export async function cloneDocumentsAndFolders(documentIds: string[], folderIds:
           ...folder,
           id: generateUuid(),
           dataroomId,
-          parentId: currentFolderId,
+          parentId: currentFolderId && currentFolderId.trim() !== '' ? currentFolderId : null,
         },
       });
     })

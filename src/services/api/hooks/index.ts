@@ -35,6 +35,7 @@ export * from './request-workflow-transition';
 export * from './requirement-compliance-tracking';
 export * from './customer-satisfaction-survey';
 export * from './request-change-log';
+export * from './request-dataroom';
 export * from './document';
 export * from './document-version';
 export * from './document-page';

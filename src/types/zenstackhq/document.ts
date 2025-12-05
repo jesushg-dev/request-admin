@@ -39,6 +39,20 @@ export const DocumentDefaultArgs = Prisma.validator<Prisma.DocumentDefaultArgs>(
 
 export type DocumentWithRelations = Prisma.DocumentGetPayload<typeof DocumentDefaultArgs>;
 
+export const DocumentListArgs = Prisma.validator<Prisma.DocumentDefaultArgs>()({
+  select: {
+    id: true,
+    name: true,
+    file: true,
+    contentType: true,
+    type: true,
+    folderId: true,
+    createdAt: true,
+  },
+});
+
+export type DocumentListWithRelations = Prisma.DocumentGetPayload<typeof DocumentListArgs>;
+
 export const DataroomFolderDefaultArgs = Prisma.validator<Prisma.DataroomFolderDefaultArgs>()({
   select: {
     id: true,
@@ -59,7 +73,10 @@ export type DataroomFolderWithRelations = Prisma.DataroomFolderGetPayload<typeof
 
 export const DataroomViewerDetailDefaultArgs = Prisma.validator<Prisma.DataroomDefaultArgs>()({
   select: {
-    requestId: true,
+    requestDatarooms: {
+      select: { requestId: true },
+      take: 1,
+    },
     folders: {
       select: { id: true, name: true },
     },

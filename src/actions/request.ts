@@ -243,7 +243,7 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
         },
       });
 
-      // Create Request and associate with Dataroom
+      // Create Request
       const newRequest = await tx.request.create({
         data: {
           id: data.id,
@@ -263,11 +263,6 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
             create: {
               tenantId,
               name: `Request ${data.id}`,
-            },
-          },
-          dataroom: {
-            connect: {
-              id: newDataroom.id,
             },
           },
           executionModelInstance: flowId
@@ -347,6 +342,16 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
         });
       }
 
+      // Create Request-Dataroom relationship through junction table
+      await tx.requestDataroom.create({
+        data: {
+          tenantId,
+          requestId: newRequest.id,
+          dataroomId: newDataroom.id,
+          createdBy: userId,
+        },
+      });
+
       // Log the change in request creation
       await tx.requestChangeLog.create({
         data: {
@@ -360,8 +365,8 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
         },
       });
 
-      // Return the request with the dataroomId
-      return { ...newRequest, dataroomId: newDataroom.id };
+      // Return the request (dataroom is accessible via requestDatarooms relation)
+      return newRequest;
     },
     {
       // Increase timeout to 15 seconds
@@ -782,10 +787,11 @@ export const getRequestDetailsByRequest = async (tenantId: string, request: Requ
     select: { id: true, name: true, createdAt: true },
     where: { requestId: request.id },
   });
-  const dataroom = await db.dataroom.findFirst({
+  const requestDataroom = await db.requestDataroom.findUnique({
     where: { requestId: request.id },
-    select: { id: true, name: true, createdAt: true },
+    include: { dataroom: { select: { id: true, name: true, createdAt: true } } },
   });
+  const dataroom = requestDataroom?.dataroom;
 
   const guides = await db.guideDocument.findMany({
     select: { id: true, name: true, description: true, fileType: true, fileUrl: true, version: true, updatedAt: true },

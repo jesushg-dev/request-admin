@@ -45,7 +45,7 @@ const EditPage: FC<EditPageProps> = async ({ params, searchParams }) => {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/data-rooms', params: { tenantId } } });
   }
 
-  const t = await getTranslations('admin.folder.create');
+  const t = await getTranslations('admin.folder.edit');
   const { dataroomId } = await folderReferencesLoader(searchParams);
 
   const db = await getDb();
@@ -60,7 +60,7 @@ const EditPage: FC<EditPageProps> = async ({ params, searchParams }) => {
 
   return (
     <PageCardWrapper title={t('title')} description={t('subtitle')}>
-      <FolderForm locale={locale} tenantId={tenantId} folders={[]} currentFolderId={slug} dataroomId={dataroomId} />
+      <FolderForm locale={locale} tenantId={tenantId} folders={[]} currentFolderId={slug} dataroomId={dataroomId} initialValues={initialValues} />
     </PageCardWrapper>
   );
 };

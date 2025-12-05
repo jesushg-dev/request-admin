@@ -1806,6 +1806,35 @@
           "created": "Created",
           "updated": "Updated",
           "notAvailable": "N/A"
+        },
+        "filters": {
+          "type": {
+            "label": "Type",
+            "all": "All types",
+            "folders": "Folders",
+            "documents": "Documents"
+          },
+          "people": {
+            "label": "People",
+            "all": "All"
+          },
+          "modified": {
+            "label": "Modified",
+            "anyTime": "Any time",
+            "today": "Today",
+            "yesterday": "Yesterday",
+            "last7Days": "Last 7 days",
+            "last30Days": "Last 30 days"
+          },
+          "source": {
+            "label": "Source",
+            "all": "All sources"
+          },
+          "name": "Name",
+          "viewMode": {
+            "list": "List view",
+            "grid": "Grid view"
+          }
         }
       },
       "create": {
@@ -2212,6 +2241,25 @@
         "filesRequired": "At least one file is required",
         "filesMaxCount": "Maximum of 3 files allowed",
         "fileSizeExceeded": "File {fileName} exceeds the maximum size of 4MB"
+      },
+      "files": {
+        "label": "Files",
+        "maxSize": "Max file size: 4MB"
+      },
+      "button": {
+        "uploading": "Uploading...",
+        "uploadDocument": "Upload Document"
+      },
+      "errors": {
+        "selectFile": "Please select at least one file to upload",
+        "uploadError": "An error occurred while uploading: {message}",
+        "uploadFailed": "Upload failed: No files were uploaded",
+        "unknownError": "An unknown error occurred while uploading the document."
+      },
+      "toast": {
+        "uploading": "Uploading files to storage service",
+        "success": "Document uploaded successfully",
+        "error": "An error occurred while uploading the document: {message}"
       }
     },
     "client": {
@@ -4191,7 +4239,7 @@
     "folder": {
       "create": {
         "title": "Create Folder",
-        "subtitle": "Organize your documents and files.",
+        "subtitle": "Create a new folder to organize and structure your documents within the data room.",
         "name": "Name",
         "namePlaceholder": "Enter folder name",
         "nameDescription": "The name of the folder.",
@@ -4207,6 +4255,10 @@
           "nameRequired": "Name is required",
           "nameMaxLength": "Name must be 200 characters or less"
         }
+      },
+      "edit": {
+        "title": "Edit Folder",
+        "subtitle": "Update folder details and manage its properties."
       }
     },
     "link": {
@@ -5144,6 +5196,62 @@
       "dragAndDrop": "Drag and drop files here, or click to select them",
       "uploadInstructions": "You can upload {count, select, 1 {one file up to {maxSize}} other {{count} files (up to {maxSize} each)}}",
       "removeFile": "Remove File"
+    },
+    "imageLightbox": {
+      "actions": {
+        "view": "View",
+        "download": "Download",
+        "close": "Close",
+        "previousImage": "Previous image",
+        "nextImage": "Next image",
+        "zoomOut": "Zoom out",
+        "zoomIn": "Zoom in",
+        "minimize": "Minimize",
+        "fitToScreen": "Fit to screen",
+        "rotateImage": "Rotate image"
+      },
+      "loading": "Loading...",
+      "errors": {
+        "failedToLoad": "Failed to load image",
+        "retry": "Retry"
+      }
+    },
+    "mediaLightbox": {
+      "actions": {
+        "view": "View",
+        "download": "Download",
+        "close": "Close",
+        "previousMedia": "Previous media",
+        "nextMedia": "Next media"
+      }
+    },
+    "mediaPlayer": {
+      "controls": {
+        "play": "Play",
+        "pause": "Pause",
+        "back": "Back {seconds}s",
+        "forward": "Forward {seconds}s",
+        "mute": "Mute",
+        "unmute": "Unmute",
+        "playbackSpeed": "Playback speed",
+        "fullscreen": "Fullscreen",
+        "exitFullscreen": "Exit fullscreen"
+      },
+      "errors": {
+        "playbackError": "Playback Error",
+        "playbackInterrupted": "Playback Interrupted",
+        "connectionProblem": "Connection Problem",
+        "mediaError": "Media Error",
+        "unsupportedFormat": "Unsupported Format",
+        "unknownError": "An unknown error occurred",
+        "aborted": "Media playback was aborted",
+        "networkError": "A network error occurred while loading the media",
+        "decodeError": "An error occurred while decoding the media",
+        "unsupported": "The media format is not supported"
+      },
+      "actions": {
+        "tryAgain": "Try again"
+      }
     },
     "flowExecution": {
       "build": {

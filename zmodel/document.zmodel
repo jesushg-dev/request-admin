@@ -324,9 +324,7 @@ model Dataroom extends TenantScoped, Auditable, CatalogBase {
   viewerGroups DataroomViewerGroup[]
   brand        DataroomBrand?
   
-  // Request relationship (optional, merged from legacy model)
-  requestId  String?  @unique // Associated request ID
-  request    Request? @relation(fields: [requestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  requestDatarooms RequestDataroom[]
 
   @@index([tenantId])
 }
