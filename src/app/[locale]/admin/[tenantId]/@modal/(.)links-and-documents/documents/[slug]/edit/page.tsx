@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import { getAuthContext } from '@/actions/authorization';
+import { getDocumentMetadataFormData } from '@/actions/document';
 import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
-import { getDb } from '@/server/db-client';
 import type { Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
@@ -25,20 +25,7 @@ const EditPage: FC<EditPageProps> = async ({ params }) => {
 
   const t = await getTranslations('admin.document.metaform');
 
-  const db = await getDb();
-  const initialValues = await db.document.findFirst({
-    select: {
-      id: true,
-      name: true,
-      description: true,
-      status: true,
-      expirationDate: true,
-      assistantEnabled: true,
-      advancedExcelEnabled: true,
-      downloadOnly: true,
-    },
-    where: { id: slug, tenantId },
-  });
+  const initialValues = await getDocumentMetadataFormData(slug, tenantId);
 
   if (!initialValues) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/documents', params: { tenantId } } });

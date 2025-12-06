@@ -3,20 +3,22 @@ import { PermissionActions } from '@/constants/permissions';
 import { getPathname, Link, redirect } from '@/i18n/routing';
 import { getDb } from '@/server/db-client';
 import { format } from 'date-fns';
-import { Calendar, Edit, ExternalLink, File, LinkIcon, MoreHorizontal, Trash2, Upload } from 'lucide-react';
+import { Calendar, ExternalLink, File, LinkIcon } from 'lucide-react';
 import type { Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
 import { DocumentDefaultArgs } from '@/types/zenstackhq/document';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { DocumentActionsDropdown } from '@/components/common/documents/document-actions-dropdown';
 import { DocumentAnalytics } from '@/components/common/documents/document-analytics';
 import { DocumentMetadata } from '@/components/common/documents/document-metadata';
 import { DocumentSharedLinks } from '@/components/common/documents/document-shared-links';
 import { DocumentVersionHistory } from '@/components/common/documents/document-version-history';
 import DocumentViewer, { DocumentDownloadButton } from '@/components/common/documents/document-viewer';
+import { DocumentComments } from '@/components/common/documents/document-comments';
+import { DocumentReactionWidget } from '@/components/common/documents/document-reaction-widget';
 
 interface DocumentDetailPageProps {
   params: Promise<{ locale: Locale; tenantId: string; slug: string }>;
@@ -57,7 +59,7 @@ export default async function DocumentDetailPage({ params }: DocumentDetailPageP
             <div className="flex gap-1 text-sm text-muted-foreground">
               <div className="flex items-center">
                 <File className="mr-1 h-4 w-4" />
-                <span>{document.versions?.[0]?.fileSize ? `${(document.versions[0].fileSize / (1024 * 1024)).toFixed(2)} ${t('file_info.mb')}` : t('file_info.na')}</span>
+                <span>{document.versions?.[0]?.fileSize ? `${(document.versions[0].fileSize / (1024 * 1024)).toFixed(2)} ${t('fileInfo.mb')}` : t('fileInfo.na')}</span>
               </div>
               <span className="mx-2">•</span>
               <div className="flex items-center">
@@ -94,43 +96,7 @@ export default async function DocumentDetailPage({ params }: DocumentDetailPageP
                   <span className="sr-only">{t('actions.open_new_tab')}</span>
                 </a>
               </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>{t('dropdown.actions')}</DropdownMenuLabel>
-                  {canEdit && (
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href={{
-                          pathname: '/admin/[tenantId]/links-and-documents/documents/[slug]/edit',
-                          params: { tenantId, slug: document.id },
-                        }}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        {t('dropdown.edit_document')}
-                      </Link>
-                    </DropdownMenuItem>
-                  )}
-                  {canEdit && (
-                    <DropdownMenuItem>
-                      <Upload className="mr-2 h-4 w-4" />
-                      {t('dropdown.upload_new_version')}
-                    </DropdownMenuItem>
-                  )}
-                  {canDelete && (
-                    <>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem>
-                        <Trash2 className="mr-2 h-4 w-4 text-destructive" />
-                        <span className="text-destructive">{t('dropdown.delete_document')}</span>
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <DocumentActionsDropdown documentId={document.id} tenantId={tenantId} canEdit={canEdit} canDelete={canDelete} />
             </div>
           </div>
         </CardHeader>
@@ -143,6 +109,8 @@ export default async function DocumentDetailPage({ params }: DocumentDetailPageP
               <TabsTrigger value="versions">{t('tabs.versions')}</TabsTrigger>
               <TabsTrigger value="links">{t('tabs.links')}</TabsTrigger>
               <TabsTrigger value="analytics">{t('tabs.analytics')}</TabsTrigger>
+              <TabsTrigger value="comments">{t('tabs.comments')}</TabsTrigger>
+              <TabsTrigger value="reactions">{t('tabs.reactions')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="preview" className="flex-1 rounded-lg overflow-y-auto justify-center items-center border flex flex-col bg-white dark:bg-gray-900">
@@ -165,7 +133,6 @@ export default async function DocumentDetailPage({ params }: DocumentDetailPageP
               <DocumentAnalytics documentId={document.id} document={document} />
             </TabsContent>
 
-            {/* todo: implement comments and reactions after MVP
             <TabsContent value="comments">
               <DocumentComments documentId={document.id} />
             </TabsContent>
@@ -182,7 +149,6 @@ export default async function DocumentDetailPage({ params }: DocumentDetailPageP
                 </Card>
               </div>
             </TabsContent>
-             */}
           </Tabs>
         </CardContent>
       </Card>

@@ -595,7 +595,12 @@
           "contentData": {
             "title": "Content Data",
             "content": "We store and process content you create or upload to the Service:",
-            "items": ["Requests and associated data", "Workflow configurations", "Uploaded documents and files", "Communications and messages"]
+            "items": [
+              "Requests and associated data",
+              "Workflow configurations",
+              "Uploaded documents and files",
+              "Communications and messages"
+            ]
           }
         },
         "howWeUse": {
@@ -2043,19 +2048,23 @@
           "metadata": "Metadata",
           "versions": "Versions",
           "links": "Shared Links",
-          "analytics": "Analytics"
+          "analytics": "Analytics",
+          "comments": "Comments",
+          "reactions": "Reactions"
         },
         "dropdown": {
           "actions": "Actions",
           "edit_document": "Edit Document",
-          "upload_new_version": "Upload New Version",
-          "delete_document": "Delete Document"
+          "uploadNewVersion": "Upload New Version",
+          "deleteDocument": "Delete Document"
         },
+        "upload_version_description": "Upload a new version. File type must be {type}.",
+        "upload_version_description_with_name": "Upload a new version of {name}. File type must be {type}.",
         "actions": {
           "share": "Share",
           "open_new_tab": "Open in New Tab"
         },
-        "file_info": {
+        "fileInfo": {
           "mb": "MB",
           "na": "N/A"
         },
@@ -2114,7 +2123,7 @@
             "enabled": "Enabled",
             "disabled": "Disabled"
           },
-          "file_info": {
+          "fileInfo": {
             "mb": "MB"
           },
           "common": {
@@ -2135,12 +2144,13 @@
           "n_a": "N/A",
           "processed_status": "Processed",
           "datetime_format": "MMM d, yyyy 'at' h:mm a",
-          "file_info": {
+          "fileInfo": {
             "mb": "MB"
           },
           "actions": {
             "view": "View",
-            "download": "Download"
+            "download": "Download",
+            "uploadNewVersion": "Upload New Version"
           },
           "dropdown": {
             "actions": "Actions",
@@ -2150,7 +2160,8 @@
           "toast": {
             "restore_success": "Version restored successfully"
           },
-          "version_label": "Version"
+          "versionLabel": "Version",
+          "pagination": "Showing {start} - {end} of {total}"
         },
         "sharedLinks": {
           "empty_state": {
@@ -2240,7 +2251,8 @@
       "validation": {
         "filesRequired": "At least one file is required",
         "filesMaxCount": "Maximum of 3 files allowed",
-        "fileSizeExceeded": "File {fileName} exceeds the maximum size of 4MB"
+        "fileSizeExceeded": "File {fileName} exceeds the maximum size of 4MB",
+        "fileTypeMismatch": "File type must be {expected}. The uploaded file is {actual}."
       },
       "files": {
         "label": "Files",
@@ -4744,37 +4756,67 @@
         "firstSteps": {
           "title": "Getting Started",
           "description": "Learn the basics to start using the system",
-          "links": ["System Introduction", "Create your first request", "Dashboard navigation", "Configure your profile"],
+          "links": [
+            "System Introduction",
+            "Create your first request",
+            "Dashboard navigation",
+            "Configure your profile"
+          ],
           "viewAll": "View all basic guides"
         },
         "requestManagement": {
           "title": "Request Management",
           "description": "Learn to manage requests efficiently",
-          "links": ["Request statuses", "Request assignment", "Priority changes", "Comments and tracking"],
+          "links": [
+            "Request statuses",
+            "Request assignment",
+            "Priority changes",
+            "Comments and tracking"
+          ],
           "viewAll": "View all management guides"
         },
         "communication": {
           "title": "Communication",
           "description": "Learn to communicate effectively in the system",
-          "links": ["Messaging system", "Notifications and alerts", "Mentions and tags", "File sharing"],
+          "links": [
+            "Messaging system",
+            "Notifications and alerts",
+            "Mentions and tags",
+            "File sharing"
+          ],
           "viewAll": "View all communication guides"
         },
         "reports": {
           "title": "Reports and Analytics",
           "description": "Learn to use the analysis tools",
-          "links": ["Report generation", "Metrics analysis", "Data export", "Custom dashboards"],
+          "links": [
+            "Report generation",
+            "Metrics analysis",
+            "Data export",
+            "Custom dashboards"
+          ],
           "viewAll": "View all reports guides"
         },
         "administration": {
           "title": "Administration",
           "description": "Guides for system administrators",
-          "links": ["User management", "Workflow configuration", "System customization", "Security and permissions"],
+          "links": [
+            "User management",
+            "Workflow configuration",
+            "System customization",
+            "Security and permissions"
+          ],
           "viewAll": "View all administration guides"
         },
         "workflows": {
           "title": "Workflows",
           "description": "Learn to configure and use workflows",
-          "links": ["Creating custom workflows", "State transition rules", "Process automation", "Workflow templates"],
+          "links": [
+            "Creating custom workflows",
+            "State transition rules",
+            "Process automation",
+            "Workflow templates"
+          ],
           "viewAll": "View all workflow guides"
         }
       },

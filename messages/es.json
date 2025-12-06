@@ -595,7 +595,12 @@
           "contentData": {
             "title": "Datos de Contenido",
             "content": "Almacenamos y procesamos contenido que usted crea o carga en el Servicio:",
-            "items": ["Solicitudes y datos asociados", "Configuraciones de flujos de trabajo", "Documentos y archivos cargados", "Comunicaciones y mensajes"]
+            "items": [
+              "Solicitudes y datos asociados",
+              "Configuraciones de flujos de trabajo",
+              "Documentos y archivos cargados",
+              "Comunicaciones y mensajes"
+            ]
           }
         },
         "howWeUse": {
@@ -2043,19 +2048,23 @@
           "metadata": "Metadatos",
           "versions": "Versiones",
           "links": "Enlaces compartidos",
-          "analytics": "Analíticas"
+          "analytics": "Analíticas",
+          "comments": "Comentarios",
+          "reactions": "Reacciones"
         },
         "dropdown": {
           "actions": "Acciones",
           "edit_document": "Editar documento",
-          "upload_new_version": "Subir nueva versión",
-          "delete_document": "Eliminar documento"
+          "uploadNewVersion": "Subir nueva versión",
+          "deleteDocument": "Eliminar documento"
         },
+        "upload_version_description": "Sube una nueva versión. El tipo de archivo debe ser {type}.",
+        "upload_version_description_with_name": "Sube una nueva versión de {name}. El tipo de archivo debe ser {type}.",
         "actions": {
           "share": "Compartir",
           "open_new_tab": "Abrir en nueva pestaña"
         },
-        "file_info": {
+        "fileInfo": {
           "mb": "MB",
           "na": "N/D"
         },
@@ -2114,7 +2123,7 @@
             "enabled": "Habilitado",
             "disabled": "Deshabilitado"
           },
-          "file_info": {
+          "fileInfo": {
             "mb": "MB"
           },
           "common": {
@@ -2135,12 +2144,13 @@
           "n_a": "N/A",
           "processed_status": "Procesado",
           "datetime_format": "d 'de' MMM, yyyy 'a las' h:mm a",
-          "file_info": {
+          "fileInfo": {
             "mb": "MB"
           },
           "actions": {
             "view": "Ver",
-            "download": "Descargar"
+            "download": "Descargar",
+            "uploadNewVersion": "Subir Nueva Versión"
           },
           "dropdown": {
             "actions": "Acciones",
@@ -2150,7 +2160,8 @@
           "toast": {
             "restore_success": "Versión restaurada correctamente"
           },
-          "version_label": "Versión"
+          "versionLabel": "Versión",
+          "pagination": "Mostrando {start} - {end} de {total}"
         },
         "sharedLinks": {
           "empty_state": {
@@ -2240,7 +2251,8 @@
       "validation": {
         "filesRequired": "Se requiere al menos un archivo",
         "filesMaxCount": "Se permiten máximo 3 archivos",
-        "fileSizeExceeded": "El archivo {fileName} excede el tamaño máximo de 4MB"
+        "fileSizeExceeded": "El archivo {fileName} excede el tamaño máximo de 4MB",
+        "fileTypeMismatch": "El tipo de archivo debe ser {expected}. El archivo subido es {actual}."
       },
       "files": {
         "label": "Archivos",
@@ -4744,37 +4756,67 @@
         "firstSteps": {
           "title": "Primeros Pasos",
           "description": "Aprende lo básico para comenzar a usar el sistema",
-          "links": ["Introducción al sistema", "Crea tu primera solicitud", "Navegación por el panel", "Configura tu perfil"],
+          "links": [
+            "Introducción al sistema",
+            "Crea tu primera solicitud",
+            "Navegación por el panel",
+            "Configura tu perfil"
+          ],
           "viewAll": "Ver todas las guías básicas"
         },
         "requestManagement": {
           "title": "Gestión de Solicitudes",
           "description": "Aprende a gestionar solicitudes eficientemente",
-          "links": ["Estados de las solicitudes", "Asignación de solicitudes", "Cambios de prioridad", "Comentarios y seguimiento"],
+          "links": [
+            "Estados de las solicitudes",
+            "Asignación de solicitudes",
+            "Cambios de prioridad",
+            "Comentarios y seguimiento"
+          ],
           "viewAll": "Ver todas las guías de gestión"
         },
         "communication": {
           "title": "Comunicación",
           "description": "Aprende a comunicarte eficazmente en el sistema",
-          "links": ["Sistema de mensajería", "Notificaciones y alertas", "Menciones y etiquetas", "Compartir archivos"],
+          "links": [
+            "Sistema de mensajería",
+            "Notificaciones y alertas",
+            "Menciones y etiquetas",
+            "Compartir archivos"
+          ],
           "viewAll": "Ver todas las guías de comunicación"
         },
         "reports": {
           "title": "Reportes y Analítica",
           "description": "Aprende a usar las herramientas de análisis",
-          "links": ["Generación de reportes", "Análisis de métricas", "Exportación de datos", "Tableros personalizados"],
+          "links": [
+            "Generación de reportes",
+            "Análisis de métricas",
+            "Exportación de datos",
+            "Tableros personalizados"
+          ],
           "viewAll": "Ver todas las guías de reportes"
         },
         "administration": {
           "title": "Administración",
           "description": "Guías para administradores del sistema",
-          "links": ["Gestión de usuarios", "Configuración de flujos de trabajo", "Personalización del sistema", "Seguridad y permisos"],
+          "links": [
+            "Gestión de usuarios",
+            "Configuración de flujos de trabajo",
+            "Personalización del sistema",
+            "Seguridad y permisos"
+          ],
           "viewAll": "Ver todas las guías de administración"
         },
         "workflows": {
           "title": "Flujos de Trabajo",
           "description": "Aprende a configurar y usar flujos de trabajo",
-          "links": ["Creación de flujos personalizados", "Reglas de transición de estados", "Automatización de procesos", "Plantillas de flujos de trabajo"],
+          "links": [
+            "Creación de flujos personalizados",
+            "Reglas de transición de estados",
+            "Automatización de procesos",
+            "Plantillas de flujos de trabajo"
+          ],
           "viewAll": "Ver todas las guías de flujos de trabajo"
         }
       },

@@ -346,8 +346,6 @@ model DataroomFolder extends TenantScoped, Auditable {
   @@index([dataroomId, parentId, orderIndex])
 }
 
-
-
 model DataroomBrand extends TenantScoped, Auditable {
   id         String @id @default(uuid()) // Unique identifier for dataroom brand
   logo       String? // Reference to logo file location

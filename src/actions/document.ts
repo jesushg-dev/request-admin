@@ -6,6 +6,48 @@ import { getDb } from '@/server/db-client';
 import { UserNotFoundErr } from '@/lib/error';
 import { generateUuid } from '@/lib/id';
 
+export type DocumentMetadataFormData = {
+  id: string;
+  name: string | null;
+  description: string | null;
+  status: string | null;
+  expirationDate: Date | null;
+  assistantEnabled: boolean;
+  advancedExcelEnabled: boolean;
+  downloadOnly: boolean;
+};
+
+export async function getDocumentMetadataFormData(documentId: string, tenantId: string): Promise<DocumentMetadataFormData | null> {
+  const db = await getDb();
+  const document = await db.document.findFirst({
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      status: true,
+      expirationDate: true,
+      assistantEnabled: true,
+      advancedExcelEnabled: true,
+      downloadOnly: true,
+    },
+    where: { id: documentId, tenantId },
+  });
+
+  return document;
+}
+
+export async function getDocumentType(documentId: string, tenantId: string): Promise<string | null> {
+  const db = await getDb();
+  const document = await db.document.findFirst({
+    select: {
+      type: true,
+    },
+    where: { id: documentId, tenantId },
+  });
+
+  return document?.type ?? null;
+}
+
 export async function cloneDocumentsAndFolders(documentIds: string[], folderIds: string[], dataroomId: string, currentFolderId: string | null) {
   const user = await requireUser();
   if (!user) throw new UserNotFoundErr();

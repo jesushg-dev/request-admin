@@ -12,6 +12,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 
 import { useUploadThing } from '@/lib/uploadthing';
+import { getAcceptForFileType } from '@/lib/document-utils';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { ButtonLoading } from '@/components/shared/button-util';
 import { FileUploader } from '@/components/uploader/file-uploader';
@@ -25,16 +26,18 @@ interface DocumentUploadProps {
   folderId?: string | null;
   dataroomId?: string | null;
   callbackUrl: string | null;
+  documentId?: string | null;
+  expectedFileType?: string | null;
 }
 
-export function DocumentUpload({ id, locale, tenantId, folderId, callbackUrl, dataroomId }: DocumentUploadProps) {
+export function DocumentUpload({ id, locale, tenantId, folderId, callbackUrl, dataroomId, documentId, expectedFileType }: DocumentUploadProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslations('admin.upload');
   const [pending, startTransition] = useTransition();
   const [progresses, setProgresses] = useState<Record<string, number>>({});
 
-  const documentUploadSchema = useDocumentUploadSchema();
+  const documentUploadSchema = useDocumentUploadSchema(expectedFileType);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(documentUploadSchema),
@@ -104,6 +107,7 @@ export function DocumentUpload({ id, locale, tenantId, folderId, callbackUrl, da
             tenantId,
             folderId: folderId ?? undefined,
             dataroomId: dataroomId ?? undefined,
+            documentId: documentId ?? undefined,
           } as any
         );
 
@@ -114,14 +118,28 @@ export function DocumentUpload({ id, locale, tenantId, folderId, callbackUrl, da
         // Invalidate document queries to refresh the list
         // ZenStack query keys follow the pattern: ["zenstack", model, operation, args, options]
         queryClient.invalidateQueries({ queryKey: ['zenstack', 'Document', 'findMany'] });
+        queryClient.invalidateQueries({ queryKey: ['zenstack', 'DocumentVersion', 'findMany'] });
+        // Also invalidate specific document query if we're updating a version
+        if (documentId) {
+          queryClient.invalidateQueries({ queryKey: ['zenstack', 'Document', 'findUnique'] });
+        }
         // Also invalidate dataroom folder queries if we're in a dataroom context
         if (dataroomId) {
           queryClient.invalidateQueries({ queryKey: ['zenstack', 'DataroomFolder', 'findMany'] });
         }
 
-        const pathname = callbackUrl ? callbackUrl : getPathname({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/documents', params: { tenantId } } });
-        router.push(pathname);
-        toast.success(t('toast.success'), { id: toastId });
+        // If creating a new version, don't redirect, just show success and let user navigate
+        if (documentId) {
+          toast.success(t('toast.success'), { id: toastId });
+          // Optionally redirect to callbackUrl if provided
+          if (callbackUrl) {
+            router.push(callbackUrl);
+          }
+        } else {
+          const pathname = callbackUrl ? callbackUrl : getPathname({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/documents', params: { tenantId } } });
+          router.push(pathname);
+          toast.success(t('toast.success'), { id: toastId });
+        }
       } catch (error) {
         setProgresses({});
         
@@ -153,10 +171,12 @@ export function DocumentUpload({ id, locale, tenantId, folderId, callbackUrl, da
                       <FileUploader
                         value={field.value}
                         onValueChange={field.onChange}
-                        maxFileCount={id ? 1 : 3}
+                        maxFileCount={documentId ? 1 : 3}
                         maxSize={4 * 1024 * 1024}
                         progresses={progresses}
                         disabled={pending || isUploading}
+                        accept={getAcceptForFileType(expectedFileType)}
+                        multiple={!documentId}
                       />
                     </FormControl>
                     <FormDescription>{t('files.maxSize')}</FormDescription>

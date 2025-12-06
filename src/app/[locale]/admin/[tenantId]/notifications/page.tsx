@@ -1,6 +1,6 @@
 'use client';
 
-import { Bell, Check, ChevronLeft, ChevronRight, Filter, Search } from 'lucide-react';
+import { Bell, Check, Filter, Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { NotificationType } from '@/types/notification';
@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Pagination } from '@/components/ui/pagination';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -129,63 +129,20 @@ export default function NotificationsPage() {
                 </div>
               )}
             </TabsContent>
-            <Pagination currentPage={page} setCurrentPage={setPage} itemsPerPage={pageSize} setItemsPerPage={setPageSize} totalItems={total} t={t} />
+            <Pagination
+              currentPage={page}
+              setCurrentPage={setPage}
+              itemsPerPage={pageSize}
+              setItemsPerPage={setPageSize}
+              totalItems={total}
+              pageSizeOptions={[5, 10, 20]}
+              translationKey="pagination"
+              t={t}
+              className="mt-6"
+            />
           </Tabs>
         </CardContent>
       </Card>
-    </div>
-  );
-}
-
-interface PaginationProps {
-  currentPage: number;
-  setCurrentPage: (page: number) => void;
-  itemsPerPage: number;
-  setItemsPerPage: (count: number) => void;
-  totalItems: number;
-  t: ReturnType<typeof useTranslations>;
-}
-
-function Pagination({ currentPage, setCurrentPage, itemsPerPage, setItemsPerPage, totalItems, t }: PaginationProps) {
-  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
-
-  return (
-    <div className="mt-6 flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        <p className="text-sm text-muted-foreground">
-          {t('pagination', {
-            start: (currentPage - 1) * itemsPerPage + 1,
-            end: Math.min(currentPage * itemsPerPage, totalItems),
-            total: totalItems,
-            defaultValue: 'Showing {start} - {end} of {total}',
-          })}
-        </p>
-        <Select value={itemsPerPage.toString()} onValueChange={(value) => setItemsPerPage(Number(value))}>
-          <SelectTrigger className="w-[100px]">
-            <SelectValue placeholder="5 per page" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="5">5</SelectItem>
-            <SelectItem value="10">10</SelectItem>
-            <SelectItem value="20">20</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="flex items-center gap-1">
-        <Button variant="outline" size="icon" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
-        <div className="flex items-center gap-1">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <Button key={page} variant={currentPage === page ? 'default' : 'outline'} size="icon" className="h-8 w-8" onClick={() => setCurrentPage(page)}>
-              {page}
-            </Button>
-          ))}
-        </div>
-        <Button variant="outline" size="icon" onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-      </div>
     </div>
   );
 }

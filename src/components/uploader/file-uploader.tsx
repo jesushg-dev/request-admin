@@ -130,6 +130,40 @@ export function FileUploader(props: FileUploaderProps) {
         return;
       }
 
+      // If accept is specified, validate file types
+      if (accept && acceptedFiles.length > 0) {
+        const acceptedMimeTypes = Object.keys(accept).flatMap((mimeType) => {
+          if (mimeType.endsWith('/*')) {
+            // Handle wildcard MIME types like "image/*"
+            return [mimeType];
+          }
+          return [mimeType, ...(accept[mimeType] || [])];
+        });
+
+        const invalidFiles = acceptedFiles.filter((file) => {
+          // Check if file type matches any accepted MIME type
+          const matches = acceptedMimeTypes.some((acceptedType) => {
+            if (acceptedType.endsWith('/*')) {
+              const baseType = acceptedType.split('/')[0];
+              return file.type.startsWith(`${baseType}/`);
+            }
+            return file.type === acceptedType;
+          });
+          return !matches;
+        });
+
+        if (invalidFiles.length > 0) {
+          invalidFiles.forEach((file) => {
+            toast.error(t('fileRejected', { fileName: file.name }));
+          });
+          // Only add valid files
+          acceptedFiles = acceptedFiles.filter((file) => !invalidFiles.includes(file));
+          if (acceptedFiles.length === 0) {
+            return;
+          }
+        }
+      }
+
       const newFiles = acceptedFiles.map((file) =>
         Object.assign(file, {
           preview: URL.createObjectURL(file),

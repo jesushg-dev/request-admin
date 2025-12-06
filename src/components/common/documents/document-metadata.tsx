@@ -60,7 +60,7 @@ export function DocumentMetadata({ tenantId, document }: DocumentMetadataProps) 
             <div className="grid grid-cols-2 gap-1">
               <dt className="font-medium text-muted-foreground">{t('metadata.size')}:</dt>
               <dd>
-                {formatBytes(document.versions[0]?.fileSize ?? 0)} {t('file_info.mb')}
+                {formatBytes(document.versions[0]?.fileSize ?? 0)} {t('fileInfo.mb')}
               </dd>
             </div>
             <div className="grid grid-cols-2 gap-1">

@@ -359,6 +359,10 @@ const dataRoomsPathnames = {
     en: '/admin/[tenantId]/links-and-documents/documents/[slug]/edit',
     es: '/admin/[tenantId]/enlaces-y-documentos/documentos/[slug]/editar',
   },
+  '/admin/[tenantId]/links-and-documents/documents/[slug]/upload-version': {
+    en: '/admin/[tenantId]/links-and-documents/documents/[slug]/upload-version',
+    es: '/admin/[tenantId]/enlaces-y-documentos/documentos/[slug]/subir-version',
+  },
   // agreements
   '/admin/[tenantId]/links-and-documents/agreements': {
     en: '/admin/[tenantId]/links-and-documents/agreements',
