@@ -488,7 +488,18 @@ export function useSuspenseCountDataroomViewerGroupAccessControls<
 export function useCheckDataroomViewerGroupAccessControls<TError = DefaultError>(
   args: {
     operation: PolicyCrudKind;
-    where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; groupId?: string; itemId?: string; itemType?: string; canView?: boolean; canDownload?: boolean };
+    where?: {
+      createdBy?: string;
+      updatedBy?: string;
+      tenantId?: string;
+      id?: string;
+      groupId?: string;
+      itemId?: string;
+      itemType?: string;
+      canView?: boolean;
+      canDownload?: boolean;
+      canDownloadOriginal?: boolean;
+    };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {

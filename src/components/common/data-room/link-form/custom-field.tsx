@@ -39,7 +39,7 @@ interface CustomFieldRowProps {
 export const CustomFieldRow = ({ field, index, control, remove }: CustomFieldRowProps) => {
   const t = useTranslations('admin.link.form.customFields.row');
   return (
-    <div className="p-3 border rounded-md bg-muted/10 hover:bg-muted/20 transition-colors flex flex-col gap-2">
+    <div className="p-4 border rounded-lg bg-muted/10 hover:bg-muted/20 transition-all shadow-sm flex flex-col gap-3">
       <div className="flex items-center gap-2">
         <FormField control={control} name={`customFields.${index}.label`} render={({ field: labelField }) => <Input {...labelField} placeholder={t('labelPlaceholder')} className="flex-1" />} />
 
@@ -136,7 +136,7 @@ export function CustomField() {
 
   return (
     <AccordionSection title={t('title')} icon={<FileText className="h-4 w-4 text-primary" />} defaultOpen={true}>
-      <div className="space-y-4">
+      <div className="space-y-4 p-1">
         <p className="text-sm text-muted-foreground">{t('description')}</p>
 
         <div className="space-y-3">

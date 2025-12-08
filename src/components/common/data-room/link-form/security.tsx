@@ -5,8 +5,8 @@ import { useFindManyAgreement } from '@/services/api/hooks';
 import { FileText, ImageIcon, Key, Lock, Mail, Shield, Trash2, UserPlus, UserX } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { Label } from 'recharts';
 import { toast } from 'sonner';
+import { Label } from '@/components/ui/label';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -54,8 +54,9 @@ export function Security({ tenantId }: { tenantId: string }) {
 
   return (
     <AccordionSection title={t('title')} icon={<Shield className="h-5 w-5 text-primary" />} defaultOpen={false}>
-      <div className="space-y-4">
+      <div className="space-y-6 p-1">
         {/* Password Protection */}
+        <div className="space-y-3 border-b pb-4">
         <FormField
           control={form.control}
           name="enablePassword"
@@ -72,13 +73,15 @@ export function Security({ tenantId }: { tenantId: string }) {
           render={({ field }) => (
             <AnimatedVisibility isVisible={form.watch('enablePassword')} key="password" mode="wait">
               <FormItem label={t('password.label')} description={t('password.description')} className="ml-6">
-                <Input type="password" placeholder={t('password.placeholder')} {...field} />
+                  <Input type="password" placeholder={t('password.placeholder')} {...field} className="max-w-md" />
               </FormItem>
             </AnimatedVisibility>
           )}
         />
+        </div>
 
         {/* Email Protection */}
+        <div className="space-y-3 border-b pb-4">
         <FormField
           control={form.control}
           name="emailProtected"
@@ -89,7 +92,7 @@ export function Security({ tenantId }: { tenantId: string }) {
           )}
         />
 
-        <div className="ml-6 mt-2">
+          <div className="ml-6">
           <FormField
             control={form.control}
             name="emailAuthenticated"
@@ -101,6 +104,7 @@ export function Security({ tenantId }: { tenantId: string }) {
               </AnimatedVisibility>
             )}
           />
+          </div>
         </div>
 
         {/* Allowed Viewers */}
@@ -115,7 +119,7 @@ export function Security({ tenantId }: { tenantId: string }) {
         />
 
         <AnimatedVisibility isVisible={form.watch('allowSpecificViewers')} key="allowed" mode="wait">
-          <div className="ml-6 space-y-4 p-4 border rounded-lg mr-2">
+          <div className="ml-6 space-y-4 p-4 border rounded-lg bg-muted/30">
             <div className="flex flex-col gap-2">
               <Label>{t('allowSpecificViewers.addLabel')}</Label>
               <div className="flex gap-2">
@@ -175,7 +179,7 @@ export function Security({ tenantId }: { tenantId: string }) {
         />
 
         <AnimatedVisibility isVisible={form.watch('blockSpecificViewers')} key="blocked" mode="wait">
-          <div className="ml-6 space-y-4 p-4 border rounded-lg mr-2">
+          <div className="ml-6 space-y-4 p-4 border rounded-lg bg-muted/30">
             <div className="flex flex-col gap-2">
               <Label>{t('blockSpecificViewers.addLabel')}</Label>
               <div className="flex gap-2">
@@ -223,7 +227,8 @@ export function Security({ tenantId }: { tenantId: string }) {
           </div>
         </AnimatedVisibility>
 
-        {/* Screenshot Protection */}
+        {/* Additional Security Features */}
+        <div className="space-y-3 border-b pb-4">
         <FormField
           control={form.control}
           name="enableScreenshotProtection"
@@ -234,7 +239,6 @@ export function Security({ tenantId }: { tenantId: string }) {
           )}
         />
 
-        {/* Watermark */}
         <FormField
           control={form.control}
           name="enableWatermark"
@@ -244,8 +248,10 @@ export function Security({ tenantId }: { tenantId: string }) {
             </FormSwitchItem>
           )}
         />
+        </div>
 
         {/* Agreement Requirement */}
+        <div className="space-y-3">
         <FormField
           control={form.control}
           name="enableAgreement"
@@ -278,6 +284,7 @@ export function Security({ tenantId }: { tenantId: string }) {
             </AnimatedVisibility>
           )}
         />
+        </div>
       </div>
     </AccordionSection>
   );

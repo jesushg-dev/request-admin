@@ -5,7 +5,7 @@ export type LoginError = 'unauthenticated' | 'tenant';
  * These routes do not require authentication
  * @type {string[]}
  */
-export const publicRoutes: string[] = ['/', '/about/*', '*/api/auth/*', '/public/*'];
+export const publicRoutes: string[] = ['/', '/about/*', '*/api/auth/*', '/public/*', '/l/*'];
 
 /**
  * An array of routes that are used for authentication
@@ -34,5 +34,6 @@ export const isPublicPage = (pathname: string, locales: readonly string[]): bool
   const result2 = publicRoutesWithoutLocaleRegex.test(pathname);
   const result3 = pathname.includes('public');
   const result4 = pathname.includes('auth');
-  return result1 || result2 || result3 || result4;
+  const result5 = pathname.startsWith('/l/') || pathname.match(/^\/([a-z]{2}\/)?l\//) !== null;
+  return result1 || result2 || result3 || result4 || result5;
 };

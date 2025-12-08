@@ -375,6 +375,13 @@ export function useCheckLink<TError = DefaultError>(
       enableQuestion?: boolean;
       enableScreenshotProtection?: boolean;
       enableAgreement?: boolean;
+      enableUpload?: boolean;
+      isFileRequestOnly?: boolean;
+      uploadFolderId?: string;
+      enableIndexFile?: boolean;
+      enableConversation?: boolean;
+      showBanner?: boolean;
+      welcomeMessage?: string;
       agreementId?: string;
       domainId?: string;
       domainSlug?: string;
@@ -387,6 +394,7 @@ export function useCheckLink<TError = DefaultError>(
       groupId?: string;
       enableWatermark?: boolean;
       watermarkConfig?: string;
+      permissionGroupId?: string;
     };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions

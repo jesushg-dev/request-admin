@@ -14,142 +14,170 @@ generator client {
 }
 
 model Tenant {
-  createdAt                      DateTime                            @default(now())
-  updatedAt                      DateTime?                           @updatedAt()
-  deletedAt                      DateTime?
-  createdBy                      String?                             @db.VarChar(50)
-  updatedBy                      String?                             @db.VarChar(50)
-  id                             String                              @id()
-  name                           String
-  slug                           String?
-  logo                           String?
-  metadata                       String?
-  websiteUrl                     String?
-  title                          String?
-  description                    String?
-  primaryColor                   String?
-  secondaryColor                 String?
-  contactEmail                   String?
-  contactPhone                   String?
-  address                        String?
-  assignmentHierarchies          AssignmentHierarchy[]
-  assignmentHierarchyLevels      AssignmentHierarchyLevel[]
-  assignmentCategories           AssignmentCategory[]
-  assignmentCategoryForms        AssignmentCategoryForm[]
-  requestHierarchies             RequestHierarchy[]
-  requestHierarchyLevels         RequestHierarchyLevel[]
-  requestCategories              RequestCategory[]
-  requestCategoryForms           RequestCategoryForm[]
-  requirements                   Requirement[]
-  requirementTypes               RequirementType[]
-  categoryRequirements           RequestCategoryRequirement[]
-  slas                           SLA[]
-  sLAChangeLogs                  SLAChangeLog[]
-  guideDocuments                 GuideDocument[]
-  executionFlowDefinitions       ExecutionFlowDefinition[]
-  executionNodeDefinitions       ExecutionNodeDefinition[]
-  executionEdgeDefinitions       ExecutionEdgeDefinition[]
-  executionModelInstances        ExecutionModelInstance[]
-  executionModelLogs             ExecutionModelLog[]
-  executionModelHistory          ExecutionModelHistory[]
-  executionNodeGuides            ExecutionNodeGuide[]
-  requests                       Request[]
-  requestAssignments             RequestAssignment[]
-  requestDatarooms               RequestDataroom[]
-  assignedUsers                  AssignedUser[]
-  requestWorkflows               RequestWorkflow[]
-  requestWorkflowStatuses        RequestWorkflowStatus[]
-  requestWorkflowTransitions     RequestWorkflowTransition[]
-  requirementComplianceTrackings RequirementComplianceTracking[]
-  requestChangeLogs              RequestChangeLog[]
-  customerSatisfactionSurveys    CustomerSatisfactionSurvey[]
-  assignmentTypes                AssignmentType[]
-  requestPriorityTypes           RequestPriorityType[]
-  forms                          Form[]
-  formSubmissions                FormSubmission[]
-  formSubmissionKeys             FormSubmissionKey[]
-  menuItems                      MenuItem[]
-  areas                          Area[]
-  userAreas                      UserTenantArea[]
-  areaRoles                      AreaRole[]
-  areaRoleFeatures               AreaRoleFeature[]
-  persons                        Person[]
-  userRoles                      UserTenantRole[]
-  roles                          Role[]
-  roleFeatures                   RoleFeature[]
-  modules                        Module[]
-  features                       Feature[]
-  identificationTypes            IdentificationType[]
-  channels                       Channel[]
-  conversations                  Conversation[]
-  messages                       Message[]
-  reactions                      Reaction[]
-  notifications                  Notification[]
-  notificationRecipients         NotificationRecipient[]
-  userTenants                    UserTenant[]
-  invitations                    InvitationTenant[]
-  subscriptions                  Subscription[]
-  usageTracking                  UsageTracking[]
-  documents                      Document[]
-  documentPages                  DocumentPage[]
-  documentVersions               DocumentVersion[]
-  links                          Link[]
-  linkPresets                    LinkPreset[]
-  domains                        Domain[]
-  views                          DocumentView[]
-  viewers                        Viewer[]
-  documentReactions              DocumentReaction[]
-  invitation                     InvitationDocument[]
-  sentEmails                     SentEmail[]
-  documentConversations          DocumentConversation[]
-  dataroons                      Dataroom[]
-  dataroomFolders                DataroomFolder[]
-  dataroomBrands                 DataroomBrand[]
-  documentFeedbaks               DocumentFeedback[]
-  feedbackResponses              FeedbackResponse[]
-  agreements                     Agreement[]
-  agreementResponses             AgreementResponse[]
-  viewerGroup                    DataroomViewerGroup[]
-  viewerGroupMemberships         DataroomViewerGroupMembership[]
-  viewerGroupAccessControls      DataroomViewerGroupAccessControls[]
-  incomingWeebhooks              IncomingWebhook[]
-  restrictedTokens               RestrictedToken[]
-  webhooks                       Webhook[]
-  customFields                   CustomField[]
-  customFieldResponse            CustomFieldResponse[]
+  createdAt                        DateTime                            @default(now())
+  updatedAt                        DateTime?                           @updatedAt()
+  deletedAt                        DateTime?
+  createdBy                        String?                             @db.VarChar(50)
+  updatedBy                        String?                             @db.VarChar(50)
+  id                               String                              @id()
+  name                             String
+  slug                             String?
+  logo                             String?
+  metadata                         String?
+  websiteUrl                       String?
+  title                            String?
+  description                      String?
+  primaryColor                     String?
+  secondaryColor                   String?
+  contactEmail                     String?
+  contactPhone                     String?
+  address                          String?
+  assignmentHierarchies            AssignmentHierarchy[]
+  assignmentHierarchyLevels        AssignmentHierarchyLevel[]
+  assignmentCategories             AssignmentCategory[]
+  assignmentCategoryForms          AssignmentCategoryForm[]
+  requestHierarchies               RequestHierarchy[]
+  requestHierarchyLevels           RequestHierarchyLevel[]
+  requestCategories                RequestCategory[]
+  requestCategoryForms             RequestCategoryForm[]
+  requirements                     Requirement[]
+  requirementTypes                 RequirementType[]
+  categoryRequirements             RequestCategoryRequirement[]
+  slas                             SLA[]
+  sLAChangeLogs                    SLAChangeLog[]
+  guideDocuments                   GuideDocument[]
+  executionFlowDefinitions         ExecutionFlowDefinition[]
+  executionNodeDefinitions         ExecutionNodeDefinition[]
+  executionEdgeDefinitions         ExecutionEdgeDefinition[]
+  executionModelInstances          ExecutionModelInstance[]
+  executionModelLogs               ExecutionModelLog[]
+  executionModelHistory            ExecutionModelHistory[]
+  executionNodeGuides              ExecutionNodeGuide[]
+  requests                         Request[]
+  requestAssignments               RequestAssignment[]
+  requestDatarooms                 RequestDataroom[]
+  assignedUsers                    AssignedUser[]
+  requestWorkflows                 RequestWorkflow[]
+  requestWorkflowStatuses          RequestWorkflowStatus[]
+  requestWorkflowTransitions       RequestWorkflowTransition[]
+  requirementComplianceTrackings   RequirementComplianceTracking[]
+  requestChangeLogs                RequestChangeLog[]
+  customerSatisfactionSurveys      CustomerSatisfactionSurvey[]
+  assignmentTypes                  AssignmentType[]
+  requestPriorityTypes             RequestPriorityType[]
+  forms                            Form[]
+  formSubmissions                  FormSubmission[]
+  formSubmissionKeys               FormSubmissionKey[]
+  menuItems                        MenuItem[]
+  areas                            Area[]
+  userAreas                        UserTenantArea[]
+  areaRoles                        AreaRole[]
+  areaRoleFeatures                 AreaRoleFeature[]
+  persons                          Person[]
+  userRoles                        UserTenantRole[]
+  roles                            Role[]
+  roleFeatures                     RoleFeature[]
+  modules                          Module[]
+  features                         Feature[]
+  identificationTypes              IdentificationType[]
+  channels                         Channel[]
+  conversations                    Conversation[]
+  messages                         Message[]
+  reactions                        Reaction[]
+  notifications                    Notification[]
+  notificationRecipients           NotificationRecipient[]
+  userTenants                      UserTenant[]
+  invitations                      InvitationTenant[]
+  subscriptions                    Subscription[]
+  usageTracking                    UsageTracking[]
+  documents                        Document[]
+  documentPages                    DocumentPage[]
+  documentVersions                 DocumentVersion[]
+  links                            Link[]
+  linkPresets                      LinkPreset[]
+  domains                          Domain[]
+  views                            DocumentView[]
+  viewers                          Viewer[]
+  documentReactions                DocumentReaction[]
+  invitation                       InvitationDocument[]
+  sentEmails                       SentEmail[]
+  workflows                        Workflow[]
+  workflowSteps                    WorkflowStep[]
+  workflowExecutions               WorkflowExecution[]
+  workflowStepLogs                 WorkflowStepLog[]
+  documentConversations            DocumentConversation[]
+  documentConversationViews        DocumentConversationView[]
+  documentConversationParticipants DocumentConversationParticipant[]
+  documentMessages                 DocumentMessage[]
+  dataroomFaqItems                 DataroomFaqItem[]
+  documentAnnotations              DocumentAnnotation[]
+  annotationImages                 AnnotationImage[]
+  integrations                     Integration[]
+  installedIntegrations            InstalledIntegration[]
+  yearInReviews                    YearInReview[]
+  tags                             Tag[]
+  tagItems                         TagItem[]
+  permissionGroups                 PermissionGroup[]
+  permissionGroupAccessControls    PermissionGroupAccessControls[]
+  documentUploads                  DocumentUpload[]
+  viewerInvitations                ViewerInvitation[]
+  planLimits                       PlanLimits[]
+  dataroons                        Dataroom[]
+  dataroomFolders                  DataroomFolder[]
+  dataroomBrands                   DataroomBrand[]
+  documentFeedbaks                 DocumentFeedback[]
+  feedbackResponses                FeedbackResponse[]
+  agreements                       Agreement[]
+  agreementResponses               AgreementResponse[]
+  viewerGroup                      DataroomViewerGroup[]
+  viewerGroupMemberships           DataroomViewerGroupMembership[]
+  viewerGroupAccessControls        DataroomViewerGroupAccessControls[]
+  incomingWeebhooks                IncomingWebhook[]
+  restrictedTokens                 RestrictedToken[]
+  webhooks                         Webhook[]
+  customFields                     CustomField[]
+  customFieldResponse              CustomFieldResponse[]
 
   @@unique([slug])
 }
 
 model UserTenant {
-  createdAt                    DateTime                @default(now())
-  updatedAt                    DateTime?               @updatedAt()
-  deletedAt                    DateTime?
-  createdBy                    String?                 @db.VarChar(50)
-  updatedBy                    String?                 @db.VarChar(50)
-  tenantId                     String
-  tenant                       Tenant                  @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                           String                  @id() @default(uuid())
-  isActive                     Boolean                 @default(true)
-  isTermAccepted               Boolean                 @default(false)
-  joinedAt                     DateTime                @default(now())
-  isTwoFactorRequired          Boolean                 @default(false)
-  role                         String
-  userId                       String
-  user                         User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  personId                     String?
-  person                       Person?
-  userAreas                    UserTenantArea[]
-  userRoles                    UserTenantRole[]
-  assignedUsers                AssignedUser[]
-  reactions                    Reaction[]
-  messages                     Message[]
-  conversationsAsUserTenantOne Conversation[]          @relation("UserTenantOne")
-  conversationsAsUserTenantTwo Conversation[]          @relation("UserTenantTwo")
-  notifications                NotificationRecipient[]
-  documents                    Document[]
-  conversations                DocumentConversation[]
-  restrictedTokens             RestrictedToken[]
+  createdAt                        DateTime                          @default(now())
+  updatedAt                        DateTime?                         @updatedAt()
+  deletedAt                        DateTime?
+  createdBy                        String?                           @db.VarChar(50)
+  updatedBy                        String?                           @db.VarChar(50)
+  tenantId                         String
+  tenant                           Tenant                            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                               String                            @id() @default(uuid())
+  isActive                         Boolean                           @default(true)
+  isTermAccepted                   Boolean                           @default(false)
+  joinedAt                         DateTime                          @default(now())
+  isTwoFactorRequired              Boolean                           @default(false)
+  role                             String
+  userId                           String
+  user                             User                              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  personId                         String?
+  person                           Person?
+  userAreas                        UserTenantArea[]
+  userRoles                        UserTenantRole[]
+  assignedUsers                    AssignedUser[]
+  reactions                        Reaction[]
+  messages                         Message[]
+  conversationsAsUserTenantOne     Conversation[]                    @relation("UserTenantOne")
+  conversationsAsUserTenantTwo     Conversation[]                    @relation("UserTenantTwo")
+  notifications                    NotificationRecipient[]
+  documents                        Document[]
+  conversations                    DocumentConversation[]
+  documentConversationParticipants DocumentConversationParticipant[]
+  documentMessages                 DocumentMessage[]
+  dataroomFaqItems                 DataroomFaqItem[]
+  createdDocumentAnnotations       DocumentAnnotation[]
+  installedIntegrations            InstalledIntegration[]
+  createdTags                      Tag[]
+  tagItems                         TagItem[]
+  viewerInvitationsSent            ViewerInvitation[]
+  restrictedTokens                 RestrictedToken[]
 
   @@unique([userId, tenantId])
   @@index([userId])
@@ -761,6 +789,7 @@ model Document {
   assistantEnabled                Boolean                        @default(false)
   advancedExcelEnabled            Boolean                        @default(false)
   downloadOnly                    Boolean                        @default(false)
+  isExternalUpload                Boolean                        @default(false)
   ownerId                         String?
   owner                           UserTenant?                    @relation(fields: [ownerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   folderId                        String?
@@ -774,9 +803,14 @@ model Document {
   views                           DocumentView[]
   versions                        DocumentVersion[]
   conversations                   DocumentConversation[]
+  annotations                     DocumentAnnotation[]
+  tags                            TagItem[]
+  uploadedDocument                DocumentUpload[]
+  dataroomFaqItems                DataroomFaqItem[]
 
   @@index([ownerId])
   @@index([folderId])
+  @@index([tenantId, name])
 }
 
 model DocumentVersion {
@@ -832,57 +866,74 @@ model DocumentPage {
 }
 
 model Link {
-  createdAt                  DateTime             @default(now())
-  updatedAt                  DateTime?            @updatedAt()
+  createdAt                  DateTime               @default(now())
+  updatedAt                  DateTime?              @updatedAt()
   deletedAt                  DateTime?
-  createdBy                  String?              @db.VarChar(50)
-  updatedBy                  String?              @db.VarChar(50)
+  createdBy                  String?                @db.VarChar(50)
+  updatedBy                  String?                @db.VarChar(50)
   tenantId                   String
-  tenant                     Tenant               @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                         String               @id() @default(uuid())
+  tenant                     Tenant                 @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                         String                 @id() @default(uuid())
   documentId                 String?
-  document                   Document?            @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  document                   Document?              @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   dataroomId                 String?
-  dataroom                   Dataroom?            @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  linkType                   String               @default("DOCUMENT_LINK")
-  url                        String?              @unique()
+  dataroom                   Dataroom?              @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  linkType                   String                 @default("DOCUMENT_LINK")
+  url                        String?                @unique()
   name                       String?
   slug                       String?
   expiresAt                  DateTime?
   password                   String?
-  allowList                  String               @db.Text()
-  denyList                   String               @db.Text()
-  emailProtected             Boolean              @default(true)
-  emailAuthenticated         Boolean              @default(false)
-  allowDownload              Boolean?             @default(false)
-  isArchived                 Boolean              @default(false)
-  enableNotification         Boolean?             @default(true)
-  enableFeedback             Boolean?             @default(false)
-  enableQuestion             Boolean?             @default(false)
-  enableScreenshotProtection Boolean?             @default(false)
-  enableAgreement            Boolean?             @default(false)
+  allowList                  String                 @db.Text()
+  denyList                   String                 @db.Text()
+  emailProtected             Boolean                @default(true)
+  emailAuthenticated         Boolean                @default(false)
+  allowDownload              Boolean?               @default(false)
+  isArchived                 Boolean                @default(false)
+  enableNotification         Boolean?               @default(true)
+  enableFeedback             Boolean?               @default(false)
+  enableQuestion             Boolean?               @default(false)
+  enableScreenshotProtection Boolean?               @default(false)
+  enableAgreement            Boolean?               @default(false)
+  enableUpload               Boolean?               @default(false)
+  isFileRequestOnly          Boolean?               @default(false)
+  uploadFolderId             String?
+  enableIndexFile            Boolean?               @default(false)
+  enableConversation         Boolean?               @default(false)
+  showBanner                 Boolean?               @default(false)
+  welcomeMessage             String?
+  workflow                   Workflow?              @relation("EntryLinkWorkflow")
   views                      DocumentView[]
   feedback                   DocumentFeedback?
   agreementId                String?
-  agreement                  Agreement?           @relation(fields: [agreementId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  agreement                  Agreement?             @relation(fields: [agreementId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   domainId                   String?
-  domain                     Domain?              @relation(fields: [domainId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  domain                     Domain?                @relation(fields: [domainId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   domainSlug                 String?
   metaTitle                  String?
   metaDescription            String?
   metaImage                  String?
   metaFavicon                String?
-  enableCustomMetatag        Boolean?             @default(false)
-  audienceType               String               @default("GENERAL")
+  enableCustomMetatag        Boolean?               @default(false)
+  audienceType               String                 @default("GENERAL")
   groupId                    String?
-  group                      DataroomViewerGroup? @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  enableWatermark            Boolean?             @default(false)
-  watermarkConfig            String               @db.Text()
+  group                      DataroomViewerGroup?   @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  enableWatermark            Boolean?               @default(false)
+  watermarkConfig            String                 @db.Text()
+  conversations              DocumentConversation[]
+  dataroomFaqItems           DataroomFaqItem[]
   customField                CustomField[]
+  tags                       TagItem[]
+  uploadedDocuments          DocumentUpload[]
+  viewerInvitations          ViewerInvitation[]
+  permissionGroupId          String?
+  permissionGroup            PermissionGroup?       @relation(fields: [permissionGroupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   @@unique([domainSlug, slug])
   @@index([documentId])
   @@index([tenantId])
+  @@index([documentId, isArchived])
+  @@index([permissionGroupId])
 }
 
 model LinkPreset {
@@ -923,61 +974,75 @@ model Domain {
 }
 
 model DocumentView {
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime?            @updatedAt()
-  deletedAt           DateTime?
-  createdBy           String?              @db.VarChar(50)
-  updatedBy           String?              @db.VarChar(50)
-  tenantId            String
-  tenant              Tenant               @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                  String               @id() @default(uuid())
-  linkId              String
-  link                Link                 @relation(fields: [linkId], references: [id])
-  documentId          String?
-  document            Document?            @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  dataroomId          String?
-  dataroom            Dataroom?            @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  dataroomViewId      String?
-  viewerEmail         String?
-  viewerName          String?
-  verified            Boolean              @default(false)
-  viewedAt            DateTime             @default(now())
-  downloadedAt        DateTime?
-  reactions           DocumentReaction[]
-  viewType            String               @default("DOCUMENT_VIEW")
-  viewerId            String?
-  viewer              Viewer?              @relation(fields: [viewerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  groupId             String?
-  group               DataroomViewerGroup? @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  feedbackResponse    FeedbackResponse?
-  agreementResponse   AgreementResponse?
-  customFieldResponse CustomFieldResponse?
-  isArchived          Boolean              @default(false)
+  createdAt            DateTime                   @default(now())
+  updatedAt            DateTime?                  @updatedAt()
+  deletedAt            DateTime?
+  createdBy            String?                    @db.VarChar(50)
+  updatedBy            String?                    @db.VarChar(50)
+  tenantId             String
+  tenant               Tenant                     @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                   String                     @id() @default(uuid())
+  linkId               String
+  link                 Link                       @relation(fields: [linkId], references: [id])
+  documentId           String?
+  document             Document?                  @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  dataroomId           String?
+  dataroom             Dataroom?                  @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  dataroomViewId       String?
+  viewerEmail          String?
+  viewerName           String?
+  verified             Boolean                    @default(false)
+  viewedAt             DateTime                   @default(now())
+  downloadedAt         DateTime?
+  downloadType         String?
+  downloadMetadata     String?                    @db.Text()
+  reactions            DocumentReaction[]
+  viewType             String                     @default("DOCUMENT_VIEW")
+  viewerId             String?
+  viewer               Viewer?                    @relation(fields: [viewerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  groupId              String?
+  group                DataroomViewerGroup?       @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  feedbackResponse     FeedbackResponse?
+  agreementResponse    AgreementResponse?
+  customFieldResponse  CustomFieldResponse?
+  isArchived           Boolean                    @default(false)
+  uploadedDocuments    DocumentUpload[]
+  conversationViews    DocumentConversationView[]
+  messages             DocumentMessage[]
+  initialConversations DocumentConversation[]     @relation("initialView")
 
   @@index([linkId])
   @@index([documentId])
   @@index([dataroomId])
   @@index([dataroomViewId])
   @@index([tenantId])
+  @@index([viewerId, documentId])
+  @@index([viewedAt(sort: Desc)])
+  @@index([viewerEmail])
+  @@index([documentId, isArchived])
 }
 
 model Viewer {
-  createdAt               DateTime                        @default(now())
-  updatedAt               DateTime?                       @updatedAt()
-  deletedAt               DateTime?
-  createdBy               String?                         @db.VarChar(50)
-  updatedBy               String?                         @db.VarChar(50)
-  tenantId                String
-  tenant                  Tenant                          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                      String                          @id() @default(uuid())
-  email                   String
-  verified                Boolean                         @default(false)
-  invitedAt               DateTime?
-  notificationPreferences String                          @db.Text()
-  dataroomId              String?
-  dataroom                Dataroom?                       @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  views                   DocumentView[]
-  groups                  DataroomViewerGroupMembership[]
+  createdAt                 DateTime                          @default(now())
+  updatedAt                 DateTime?                         @updatedAt()
+  deletedAt                 DateTime?
+  createdBy                 String?                           @db.VarChar(50)
+  updatedBy                 String?                           @db.VarChar(50)
+  tenantId                  String
+  tenant                    Tenant                            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                        String                            @id() @default(uuid())
+  email                     String
+  verified                  Boolean                           @default(false)
+  invitedAt                 DateTime?
+  notificationPreferences   String                            @db.Text()
+  dataroomId                String?
+  dataroom                  Dataroom?                         @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  views                     DocumentView[]
+  groups                    DataroomViewerGroupMembership[]
+  uploadedDocuments         DocumentUpload[]
+  participatedConversations DocumentConversationParticipant[]
+  messages                  DocumentMessage[]
+  invitations               ViewerInvitation[]
 
   @@unique([tenantId, email])
   @@index([tenantId])
@@ -1033,47 +1098,38 @@ model SentEmail {
   @@index([tenantId])
 }
 
-model DocumentConversation {
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime?  @updatedAt()
-  deletedAt    DateTime?
-  createdBy    String?    @db.VarChar(50)
-  updatedBy    String?    @db.VarChar(50)
-  tenantId     String
-  tenant       Tenant     @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id           String     @id() @default(uuid())
-  threadId     String     @unique()
-  userTenantId String
-  userTenant   UserTenant @relation(fields: [userTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  documentId   String
-  document     Document   @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-
-  @@unique([userTenantId, documentId])
-  @@unique([threadId, documentId])
-  @@index([threadId])
-}
-
 model Dataroom {
-  id               String                @id() @default(uuid())
-  name             String                @db.VarChar(100)
-  description      String?               @db.VarChar(255)
-  isActive         Boolean               @default(true)
-  createdAt        DateTime              @default(now())
-  updatedAt        DateTime?             @updatedAt()
-  deletedAt        DateTime?
-  createdBy        String?               @db.VarChar(50)
-  updatedBy        String?               @db.VarChar(50)
-  tenantId         String
-  tenant           Tenant                @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  pId              String                @unique()
-  documents        Document[]
-  folders          DataroomFolder[]
-  links            Link[]
-  views            DocumentView[]
-  viewers          Viewer[]
-  viewerGroups     DataroomViewerGroup[]
-  brand            DataroomBrand?
-  requestDatarooms RequestDataroom[]
+  id                        String                 @id() @default(uuid())
+  name                      String                 @db.VarChar(100)
+  description               String?                @db.VarChar(255)
+  isActive                  Boolean                @default(true)
+  createdAt                 DateTime               @default(now())
+  updatedAt                 DateTime?              @updatedAt()
+  deletedAt                 DateTime?
+  createdBy                 String?                @db.VarChar(50)
+  updatedBy                 String?                @db.VarChar(50)
+  tenantId                  String
+  tenant                    Tenant                 @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  pId                       String                 @unique()
+  documents                 Document[]
+  folders                   DataroomFolder[]
+  links                     Link[]
+  views                     DocumentView[]
+  viewers                   Viewer[]
+  viewerGroups              DataroomViewerGroup[]
+  brand                     DataroomBrand?
+  conversations             DocumentConversation[]
+  faqItems                  DataroomFaqItem[]
+  tags                      TagItem[]
+  uploadedDocuments         DocumentUpload[]
+  permissionGroups          PermissionGroup[]
+  installedIntegrations     InstalledIntegration[]
+  annotations               DocumentAnnotation[]
+  conversationsEnabled      Boolean                @default(false)
+  enableChangeNotifications Boolean                @default(false)
+  allowBulkDownload         Boolean                @default(true)
+  showLastUpdated           Boolean                @default(true)
+  requestDatarooms          RequestDataroom[]
 
   @@index([tenantId])
 }
@@ -1196,23 +1252,25 @@ model AgreementResponse {
 }
 
 model DataroomViewerGroup {
-  createdAt      DateTime                            @default(now())
-  updatedAt      DateTime?                           @updatedAt()
-  deletedAt      DateTime?
-  createdBy      String?                             @db.VarChar(50)
-  updatedBy      String?                             @db.VarChar(50)
-  tenantId       String
-  tenant         Tenant                              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id             String                              @id() @default(uuid())
-  name           String
-  members        DataroomViewerGroupMembership[]
-  domains        String                              @db.Text()
-  links          Link[]
-  accessControls DataroomViewerGroupAccessControls[]
-  allowAll       Boolean                             @default(false)
-  dataroomId     String
-  dataroom       Dataroom                            @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  views          DocumentView[]
+  createdAt             DateTime                            @default(now())
+  updatedAt             DateTime?                           @updatedAt()
+  deletedAt             DateTime?
+  createdBy             String?                             @db.VarChar(50)
+  updatedBy             String?                             @db.VarChar(50)
+  tenantId              String
+  tenant                Tenant                              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                    String                              @id() @default(uuid())
+  name                  String
+  members               DataroomViewerGroupMembership[]
+  domains               String                              @db.Text()
+  links                 Link[]
+  accessControls        DataroomViewerGroupAccessControls[]
+  allowAll              Boolean                             @default(false)
+  documentConversations DocumentConversation[]
+  viewerInvitations     ViewerInvitation[]
+  dataroomId            String
+  dataroom              Dataroom                            @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  views                 DocumentView[]
 
   @@index([dataroomId])
   @@index([tenantId])
@@ -1238,20 +1296,21 @@ model DataroomViewerGroupMembership {
 }
 
 model DataroomViewerGroupAccessControls {
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime?           @updatedAt()
-  deletedAt   DateTime?
-  createdBy   String?             @db.VarChar(50)
-  updatedBy   String?             @db.VarChar(50)
-  tenantId    String
-  tenant      Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id          String              @id() @default(uuid())
-  groupId     String
-  group       DataroomViewerGroup @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  itemId      String
-  itemType    String
-  canView     Boolean             @default(true)
-  canDownload Boolean             @default(false)
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime?           @updatedAt()
+  deletedAt           DateTime?
+  createdBy           String?             @db.VarChar(50)
+  updatedBy           String?             @db.VarChar(50)
+  tenantId            String
+  tenant              Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                  String              @id() @default(uuid())
+  groupId             String
+  group               DataroomViewerGroup @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  itemId              String
+  itemType            String
+  canView             Boolean             @default(true)
+  canDownload         Boolean             @default(false)
+  canDownloadOriginal Boolean             @default(false)
 
   @@unique([groupId, itemId])
   @@index([groupId])
@@ -1355,6 +1414,548 @@ model CustomFieldResponse {
   view      DocumentView @relation(fields: [viewId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   @@index([viewId])
+}
+
+model Workflow {
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime?           @updatedAt()
+  deletedAt   DateTime?
+  createdBy   String?             @db.VarChar(50)
+  updatedBy   String?             @db.VarChar(50)
+  tenantId    String
+  tenant      Tenant              @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id          String              @id() @default(uuid())
+  name        String
+  description String?
+  entryLinkId String              @unique()
+  teamId      String?
+  isActive    Boolean             @default(true)
+  entryLink   Link                @relation("EntryLinkWorkflow", fields: [entryLinkId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  steps       WorkflowStep[]
+  executions  WorkflowExecution[]
+
+  @@index([entryLinkId])
+  @@index([tenantId])
+  @@index([isActive])
+}
+
+model WorkflowStep {
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime?         @updatedAt()
+  deletedAt     DateTime?
+  createdBy     String?           @db.VarChar(50)
+  updatedBy     String?           @db.VarChar(50)
+  tenantId      String
+  tenant        Tenant            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id            String            @id() @default(uuid())
+  workflowId    String
+  name          String
+  stepOrder     Int
+  stepType      String            @default("ROUTER")
+  conditions    String            @db.Text()
+  actions       String            @db.Text()
+  workflow      Workflow          @relation(fields: [workflowId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  executionLogs WorkflowStepLog[]
+
+  @@unique([workflowId, stepOrder])
+  @@index([workflowId])
+}
+
+model WorkflowExecution {
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime?         @updatedAt()
+  deletedAt    DateTime?
+  createdBy    String?           @db.VarChar(50)
+  updatedBy    String?           @db.VarChar(50)
+  tenantId     String
+  tenant       Tenant            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id           String            @id() @default(uuid())
+  workflowId   String
+  visitorEmail String?
+  visitorIp    String?
+  status       String            @default("PENDING")
+  startedAt    DateTime          @default(now())
+  completedAt  DateTime?
+  result       String?           @db.Text()
+  metadata     String?           @db.Text()
+  workflow     Workflow          @relation(fields: [workflowId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  stepLogs     WorkflowStepLog[]
+
+  @@index([workflowId, startedAt])
+  @@index([visitorEmail])
+  @@index([status])
+}
+
+model WorkflowStepLog {
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime?         @updatedAt()
+  deletedAt         DateTime?
+  createdBy         String?           @db.VarChar(50)
+  updatedBy         String?           @db.VarChar(50)
+  tenantId          String
+  tenant            Tenant            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                String            @id() @default(uuid())
+  executionId       String
+  workflowStepId    String
+  conditionsMatched Boolean
+  conditionResults  String?           @db.Text()
+  actionsExecuted   String?           @db.Text()
+  executedAt        DateTime          @default(now())
+  duration          Int?
+  error             String?
+  execution         WorkflowExecution @relation(fields: [executionId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  step              WorkflowStep      @relation(fields: [workflowStepId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  @@index([executionId])
+  @@index([workflowStepId])
+}
+
+model DocumentConversation {
+  createdAt             DateTime                          @default(now())
+  updatedAt             DateTime?                         @updatedAt()
+  deletedAt             DateTime?
+  createdBy             String?                           @db.VarChar(50)
+  updatedBy             String?                           @db.VarChar(50)
+  tenantId              String
+  tenant                Tenant                            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                    String                            @id() @default(uuid())
+  title                 String?
+  isEnabled             Boolean                           @default(true)
+  visibilityMode        String                            @default("PRIVATE")
+  userTenantId          String?
+  userTenant            UserTenant?                       @relation(fields: [userTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  dataroomId            String
+  dataroom              Dataroom                          @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  documentId            String?
+  document              Document?                         @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  documentVersionNumber Int?
+  documentPageNumber    Int?
+  linkId                String?
+  link                  Link?                             @relation(fields: [linkId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  viewerGroupId         String?
+  viewerGroup           DataroomViewerGroup?              @relation(fields: [viewerGroupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  initialViewId         String?
+  initialView           DocumentView?                     @relation(name: "initialView", fields: [initialViewId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  views                 DocumentConversationView[]
+  participants          DocumentConversationParticipant[]
+  messages              DocumentMessage[]
+  lastMessageAt         DateTime?
+  faqItems              DataroomFaqItem[]
+
+  @@index([dataroomId])
+  @@index([documentId])
+  @@index([linkId])
+  @@index([viewerGroupId])
+  @@index([initialViewId])
+  @@index([userTenantId])
+}
+
+model DocumentConversationParticipant {
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime?            @updatedAt()
+  deletedAt            DateTime?
+  createdBy            String?              @db.VarChar(50)
+  updatedBy            String?              @db.VarChar(50)
+  tenantId             String
+  tenant               Tenant               @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                   String               @id() @default(uuid())
+  conversationId       String
+  conversation         DocumentConversation @relation(fields: [conversationId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  role                 String               @default("PARTICIPANT")
+  viewerId             String?
+  viewer               Viewer?              @relation(fields: [viewerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  userTenantId         String?
+  userTenant           UserTenant?          @relation(fields: [userTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  receiveNotifications Boolean              @default(false)
+
+  @@unique([conversationId, viewerId])
+  @@unique([conversationId, userTenantId])
+  @@index([conversationId])
+  @@index([viewerId])
+  @@index([userTenantId])
+}
+
+model DocumentMessage {
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime?            @updatedAt()
+  deletedAt      DateTime?
+  createdBy      String?              @db.VarChar(50)
+  updatedBy      String?              @db.VarChar(50)
+  tenantId       String
+  tenant         Tenant               @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id             String               @id() @default(uuid())
+  content        String
+  conversationId String
+  conversation   DocumentConversation @relation(fields: [conversationId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  userTenantId   String?
+  userTenant     UserTenant?          @relation(fields: [userTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  viewerId       String?
+  viewer         Viewer?              @relation(fields: [viewerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  viewId         String?
+  view           DocumentView?        @relation(fields: [viewId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  isRead         Boolean              @default(false)
+  faqAsQuestion  DataroomFaqItem[]    @relation("FAQQuestionMessage")
+  faqAsAnswer    DataroomFaqItem[]    @relation("FAQAnswerMessage")
+
+  @@index([conversationId])
+  @@index([userTenantId])
+  @@index([viewerId])
+  @@index([viewId])
+}
+
+model DocumentConversationView {
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime?            @updatedAt()
+  deletedAt      DateTime?
+  createdBy      String?              @db.VarChar(50)
+  updatedBy      String?              @db.VarChar(50)
+  tenantId       String
+  tenant         Tenant               @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id             String               @id() @default(uuid())
+  conversationId String
+  conversation   DocumentConversation @relation(fields: [conversationId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  viewId         String
+  view           DocumentView         @relation(fields: [viewId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  @@unique([conversationId, viewId])
+  @@index([conversationId])
+  @@index([viewId])
+}
+
+model DataroomFaqItem {
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime?             @updatedAt()
+  deletedAt             DateTime?
+  createdBy             String?               @db.VarChar(50)
+  updatedBy             String?               @db.VarChar(50)
+  tenantId              String
+  tenant                Tenant                @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                    String                @id() @default(uuid())
+  title                 String?
+  editedQuestion        String
+  originalQuestion      String?
+  answer                String
+  description           String?
+  dataroomId            String
+  dataroom              Dataroom              @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  linkId                String?
+  link                  Link?                 @relation(fields: [linkId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  documentId            String?
+  document              Document?             @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  sourceConversationId  String?
+  sourceConversation    DocumentConversation? @relation(fields: [sourceConversationId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  questionMessageId     String?
+  questionMessage       DocumentMessage?      @relation(name: "FAQQuestionMessage", fields: [questionMessageId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  answerMessageId       String?
+  answerMessage         DocumentMessage?      @relation(name: "FAQAnswerMessage", fields: [answerMessageId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  userTenantId          String?
+  userTenant            UserTenant?           @relation(fields: [userTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  visibilityMode        String                @default("PUBLIC_DATAROOM")
+  status                String                @default("PUBLISHED")
+  isAnonymized          Boolean               @default(true)
+  viewCount             Int                   @default(0)
+  tags                  String                @db.Text()
+  documentPageNumber    Int?
+  documentVersionNumber Int?
+
+  @@index([dataroomId])
+  @@index([linkId])
+  @@index([documentId])
+  @@index([sourceConversationId])
+  @@index([userTenantId])
+  @@index([status])
+  @@index([visibilityMode])
+  @@index([createdAt])
+}
+
+model DocumentAnnotation {
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime?         @updatedAt()
+  deletedAt             DateTime?
+  createdBy             String?           @db.VarChar(50)
+  updatedBy             String?           @db.VarChar(50)
+  tenantId              String
+  tenant                Tenant            @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                    String            @id() @default(uuid())
+  title                 String
+  content               String            @db.Text()
+  pages                 String            @db.Text()
+  documentId            String
+  document              Document          @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  dataroomId            String?
+  dataroom              Dataroom?         @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  createdByUserTenantId String?
+  createdByUserTenant   UserTenant?       @relation(fields: [createdByUserTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  isVisible             Boolean           @default(true)
+  images                AnnotationImage[]
+
+  @@index([documentId])
+  @@index([createdByUserTenantId])
+}
+
+model AnnotationImage {
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime?          @updatedAt()
+  deletedAt    DateTime?
+  createdBy    String?            @db.VarChar(50)
+  updatedBy    String?            @db.VarChar(50)
+  tenantId     String
+  tenant       Tenant             @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id           String             @id() @default(uuid())
+  filename     String
+  url          String
+  size         Int?
+  mimeType     String?
+  annotationId String
+  annotation   DocumentAnnotation @relation(fields: [annotationId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  @@index([annotationId])
+}
+
+model Integration {
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime?              @updatedAt()
+  deletedAt             DateTime?
+  createdBy             String?                @db.VarChar(50)
+  updatedBy             String?                @db.VarChar(50)
+  tenantId              String
+  tenant                Tenant                 @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                    String                 @id() @default(uuid())
+  name                  String
+  slug                  String                 @unique()
+  description           String?
+  readme                String?
+  developer             String
+  website               String
+  logo                  String?
+  screenshots           String                 @db.Text()
+  verified              Boolean                @default(false)
+  installUrl            String?
+  category              String?
+  comingSoon            Boolean                @default(false)
+  installedIntegrations InstalledIntegration[]
+}
+
+model InstalledIntegration {
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime?   @updatedAt()
+  deletedAt     DateTime?
+  createdBy     String?     @db.VarChar(50)
+  updatedBy     String?     @db.VarChar(50)
+  tenantId      String
+  tenant        Tenant      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id            String      @id() @default(uuid())
+  credentials   String      @db.Text()
+  configuration String      @db.Text()
+  enabled       Boolean     @default(true)
+  integrationId String
+  integration   Integration @relation(fields: [integrationId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  userTenantId  String?
+  userTenant    UserTenant? @relation(fields: [userTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  dataroomId    String?
+  dataroom      Dataroom?   @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  @@unique([tenantId, integrationId])
+  @@index([integrationId])
+  @@index([userTenantId])
+  @@index([dataroomId])
+}
+
+model YearInReview {
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime? @updatedAt()
+  deletedAt     DateTime?
+  createdBy     String?   @db.VarChar(50)
+  updatedBy     String?   @db.VarChar(50)
+  tenantId      String
+  tenant        Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id            String    @id() @default(uuid())
+  year          Int
+  status        String    @default("pending")
+  attempts      Int       @default(0)
+  lastAttempted DateTime?
+  error         String?
+  stats         String    @db.Text()
+
+  @@index([year, tenantId])
+  @@index([status, attempts])
+}
+
+model Tag {
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime?   @updatedAt()
+  deletedAt             DateTime?
+  createdBy             String?     @db.VarChar(50)
+  updatedBy             String?     @db.VarChar(50)
+  tenantId              String
+  tenant                Tenant      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                    String      @id() @default(uuid())
+  name                  String
+  color                 String
+  description           String?
+  items                 TagItem[]
+  createdByUserTenantId String?
+  createdByUserTenant   UserTenant? @relation(fields: [createdByUserTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  @@unique([tenantId, name])
+  @@index([tenantId])
+}
+
+model TagItem {
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime?   @updatedAt()
+  deletedAt            DateTime?
+  createdBy            String?     @db.VarChar(50)
+  updatedBy            String?     @db.VarChar(50)
+  tenantId             String
+  tenant               Tenant      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                   String      @id() @default(uuid())
+  tagId                String
+  tag                  Tag         @relation(fields: [tagId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  itemType             String
+  linkId               String?
+  link                 Link?       @relation(fields: [linkId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  documentId           String?
+  document             Document?   @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  dataroomId           String?
+  dataroom             Dataroom?   @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  taggedByUserTenantId String?
+  taggedByUserTenant   UserTenant? @relation(fields: [taggedByUserTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  @@index([tagId, linkId])
+  @@index([tagId, documentId])
+  @@index([tagId, dataroomId])
+}
+
+model PermissionGroup {
+  createdAt      DateTime                        @default(now())
+  updatedAt      DateTime?                       @updatedAt()
+  deletedAt      DateTime?
+  createdBy      String?                         @db.VarChar(50)
+  updatedBy      String?                         @db.VarChar(50)
+  tenantId       String
+  tenant         Tenant                          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id             String                          @id() @default(uuid())
+  name           String
+  description    String?
+  links          Link[]
+  accessControls PermissionGroupAccessControls[]
+  dataroomId     String
+  dataroom       Dataroom                        @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  @@index([dataroomId])
+  @@index([tenantId])
+}
+
+model PermissionGroupAccessControls {
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime?       @updatedAt()
+  deletedAt           DateTime?
+  createdBy           String?         @db.VarChar(50)
+  updatedBy           String?         @db.VarChar(50)
+  tenantId            String
+  tenant              Tenant          @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                  String          @id() @default(uuid())
+  groupId             String
+  group               PermissionGroup @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  itemId              String
+  itemType            String
+  canView             Boolean         @default(true)
+  canDownload         Boolean         @default(false)
+  canDownloadOriginal Boolean         @default(false)
+
+  @@unique([groupId, itemId])
+  @@index([groupId])
+}
+
+model DocumentUpload {
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime?     @updatedAt()
+  deletedAt        DateTime?
+  createdBy        String?       @db.VarChar(50)
+  updatedBy        String?       @db.VarChar(50)
+  tenantId         String
+  tenant           Tenant        @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id               String        @id() @default(uuid())
+  documentId       String
+  document         Document      @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  viewerId         String?
+  viewer           Viewer?       @relation(fields: [viewerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  viewId           String?
+  view             DocumentView? @relation(fields: [viewId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  linkId           String
+  link             Link          @relation(fields: [linkId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  dataroomId       String?
+  dataroom         Dataroom?     @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  originalFilename String?
+  fileSize         Int?
+  numPages         Int?
+  mimeType         String?
+  uploadedAt       DateTime      @default(now())
+
+  @@index([documentId])
+  @@index([viewerId])
+  @@index([viewId])
+  @@index([linkId])
+  @@index([dataroomId])
+}
+
+model ViewerInvitation {
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime?            @updatedAt()
+  deletedAt             DateTime?
+  createdBy             String?              @db.VarChar(50)
+  updatedBy             String?              @db.VarChar(50)
+  tenantId              String
+  tenant                Tenant               @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                    String               @id() @default(uuid())
+  viewerId              String
+  viewer                Viewer               @relation(fields: [viewerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  linkId                String
+  link                  Link                 @relation(fields: [linkId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  groupId               String?
+  group                 DataroomViewerGroup? @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  invitedByUserTenantId String
+  invitedByUserTenant   UserTenant           @relation(fields: [invitedByUserTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  customMessage         String?
+  sentAt                DateTime             @default(now())
+  status                String               @default("SENT")
+
+  @@index([viewerId])
+  @@index([linkId])
+  @@index([groupId])
+}
+
+model PlanLimits {
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime? @updatedAt()
+  deletedAt                DateTime?
+  createdBy                String?   @db.VarChar(50)
+  updatedBy                String?   @db.VarChar(50)
+  tenantId                 String
+  tenant                   Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                       String    @id() @default(uuid())
+  datarooms                Int       @default(1)
+  users                    Int       @default(1)
+  domains                  Int       @default(1)
+  customDomainOnPro        Boolean   @default(false)
+  customDomainInDataroom   Boolean   @default(false)
+  enableExcelAdvancedMode  Boolean   @default(false)
+  replicateDataroomFolders Boolean   @default(true)
+  ignoredDomains           String    @db.Text()
+  globalBlockList          String    @db.Text()
+  plan                     String    @default("free")
+  stripeId                 String?   @unique()
+  subscriptionId           String?   @unique()
+  startsAt                 DateTime?
+  endsAt                   DateTime?
+  pausedAt                 DateTime?
+  pauseStartsAt            DateTime?
+  pauseEndsAt              DateTime?
+  cancelledAt              DateTime?
+  limits                   String    @db.Text()
+
+  @@index([tenantId])
 }
 
 /// Represents an organizational area within a tenant.

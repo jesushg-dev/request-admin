@@ -412,6 +412,8 @@ export function useCheckDocumentView<TError = DefaultError>(
       viewerEmail?: string;
       viewerName?: string;
       verified?: boolean;
+      downloadType?: string;
+      downloadMetadata?: string;
       viewType?: string;
       viewerId?: string;
       groupId?: string;

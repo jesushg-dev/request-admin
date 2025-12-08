@@ -389,6 +389,7 @@ export function useCheckDocument<TError = DefaultError>(
       assistantEnabled?: boolean;
       advancedExcelEnabled?: boolean;
       downloadOnly?: boolean;
+      isExternalUpload?: boolean;
       ownerId?: string;
       folderId?: string;
       dataroomId?: string;

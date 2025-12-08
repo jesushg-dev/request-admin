@@ -10,38 +10,39 @@ import "./request.zmodel"
 // Document and File Models
 // ----------------------
 model Document extends TenantScoped, Auditable {
-  id          String   @id @default(uuid()) // Unique identifier for the document
+  id            String   @id @default(uuid()) // Unique identifier for the document
 
   // Basic details
-  name         String   @db.VarChar(155) // Document name (max length 155)
-  description  String?  // Optional document description
+  name          String   @db.VarChar(155) // Document name (max length 155)
+  description   String?  // Optional document description
 
   // File storage references
-  file                 String // This should be a reference to where the file is stored (S3, Google Cloud Storage, etc.)
-  originalFile         String? // This should be a reference to the original file like pptx, xlsx, etc. (S3, Google Cloud Storage, etc.)
+  file          String   // Where the file is stored (S3, GCS, etc.)
+  originalFile  String?  // Original file (pptx, xlsx, etc.)
 
   // File type and content details
-  type         String  // File type (e.g., pdf, docx)
-  contentType  String  // MIME type of the document
+  type          String   // File type (e.g., pdf, docx)
+  contentType   String   // MIME type of the document
 
   // Storage details
   // Allowed values: "S3_PATH", "VERCEL_BLOB"
-  storageType  String   @default("UPLOADTHING")
-  numPages     Int?     // Number of pages in the document
+  storageType   String   @default("UPLOADTHING")
+  numPages      Int?     // Number of pages
   expirationDate DateTime? // Optional expiration date
-  status       String   @default("ACTIVE") // Document status (e.g., "ACTIVE", "INACTIVE", "ARCHIVED")
-  
+  status        String   @default("ACTIVE") // "ACTIVE", "INACTIVE", "ARCHIVED"
+
   // Feature toggles
-  assistantEnabled     Boolean @default(false) // Indicates if assistant is enabled
-  advancedExcelEnabled Boolean @default(false) // Indicates if advanced Excel features are enabled
-  downloadOnly         Boolean @default(false) // Indicates if the document is download-only
+  assistantEnabled     Boolean @default(false) // Assistant toggle
+  advancedExcelEnabled Boolean @default(false) // Advanced Excel toggle
+  downloadOnly         Boolean @default(false) // Download-only flag
+  isExternalUpload     Boolean @default(false) // Indicates external upload
 
   // Owner relationship
-  ownerId      String?
-  owner        UserTenant? @relation(fields: [ownerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  ownerId String?
+  owner   UserTenant? @relation(fields: [ownerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   // Folder relationship (optional)
-  folderId String? // Optional Folder ID (SQL Server GUID)
+  folderId String?
   folder   DataroomFolder? @relation(fields: [folderId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   // Dataroom relationship (optional)
@@ -50,47 +51,53 @@ model Document extends TenantScoped, Auditable {
   orderIndex Int?
 
   // Compliance tracking (optional)
-  requirementComplianceTrackingId String? // Associated compliance tracking ID
+  requirementComplianceTrackingId String?
   requirementComplianceTracking   RequirementComplianceTracking? @relation(fields: [requirementComplianceTrackingId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   // Other relationships
-  links         Link[]
-  views         DocumentView[]
-  versions      DocumentVersion[]
-  conversations DocumentConversation[]
-
+  links             Link[]
+  views             DocumentView[]
+  versions          DocumentVersion[]
+  conversations     DocumentConversation[]
+  annotations       DocumentAnnotation[]
+  tags              TagItem[]
+  uploadedDocument  DocumentUpload[]
+  dataroomFaqItems  DataroomFaqItem[]
 
   @@index([ownerId])
   @@index([folderId])
+  @@index([tenantId, name])
 }
 
+// ----------------------
+// Document Version/Page
+// ----------------------
 model DocumentVersion extends TenantScoped, Auditable {
   id            String   @id @default(uuid()) // Unique identifier for document version
-  versionNumber Int      @default(1)// Version number for control (e.g., 1, 2, 3)
-  
+  versionNumber Int      @default(1)          // Version number (e.g., 1,2,3)
+
   // Relationship to Document
-  documentId    String
-  document      Document @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  
+  documentId String
+  document   Document @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
   // File references for this version
-  file         String   // Reference to stored file location
-  originalFile String?  // Optional original file reference
-  type         String  // File type (e.g., pdf, docx)
-  contentType  String  // MIME type (e.g., application/pdf)
+  file         String   // Stored file location
+  originalFile String?  // Original file reference
+  type         String   // File type (pdf, docx)
+  contentType  String   // MIME type
   fileSize     Int?     // File size in bytes
-  
+
   // Allowed values: "S3_PATH", "VERCEL_BLOB"
   storageType  String   @default("VERCEL_BLOB")
   numPages     Int?     // Number of pages
-  
-  isPrimary    Boolean  @default(false) // Indicates if this is the primary version
-  isVertical   Boolean  @default(false) // Orientation flag (portrait vs landscape)
+  isPrimary    Boolean  @default(false) // Primary version flag
+  isVertical   Boolean  @default(false) // Orientation flag
   fileId       String?  // File ID from OpenAI File API
-  hasPages     Boolean  @default(false) // Indicates if pages have been generated
-  length       Int?     // Length of video in seconds (if applicable)
+  hasPages     Boolean  @default(false) // Indicates if pages generated
+  length       Int?     // Video length in seconds (if applicable)
 
   // Relationship to pages
-  pages        DocumentPage[]
+  pages DocumentPage[]
 
   @@unique([versionNumber, documentId])
   @@index([documentId])
@@ -100,14 +107,12 @@ model DocumentPage extends TenantScoped, Auditable {
   id         String   @id @default(uuid()) // Unique identifier for document page
   versionId  String
   version    DocumentVersion @relation(fields: [versionId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  pageNumber Int      // Page number (e.g., 1, 2, 3)
-  // Stored as JSON text in NVARCHAR(Max)
-  embeddedLinks String @db.Text
-  pageLinks  String   @db.Text    // JSON data for page links: [{ "href": "https://example.com", "coords": "0,0,100,100" }]
-  metadata   String   @db.Text    // JSON metadata: { originalWidth, originalHeight, scaledWidth, scaledHeight, scaleFactor }
-  file       String   // Reference to stored page file
-  // Allowed values: "S3_PATH", "VERCEL_BLOB"
-  storageType String  @default("VERCEL_BLOB")
+  pageNumber Int      // Page number (e.g., 1,2,3)
+  embeddedLinks String @db.Text // JSON for embedded links
+  pageLinks     String @db.Text // JSON for page links
+  metadata      String @db.Text // JSON metadata: widths/heights/scales
+  file          String   // Stored page file
+  storageType   String @default("VERCEL_BLOB")
 
   @@unique([pageNumber, versionId])
   @@index([versionId])
@@ -122,17 +127,15 @@ model Link extends TenantScoped, Auditable {
   document   Document? @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   dataroomId String? // Optional associated dataroom ID
   dataroom   Dataroom? @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  // Allowed values: "DOCUMENT_LINK", "DATAROOM_LINK"
+  // Allowed values: "DOCUMENT_LINK", "DATAROOM_LINK", "WORKFLOW_LINK"
   linkType   String   @default("DOCUMENT_LINK")
   url        String?  @unique // Unique URL for the link
   name       String?  // Link name
   slug       String?  // Slug for pretty URLs
   expiresAt  DateTime? // Optional expiration date
   password   String?  // Optional password for link protection
-  // Stored as JSON text (an array of strings) in NVARCHAR(Max)
-  allowList  String   @db.Text
-  // Stored as JSON text (an array of strings) in NVARCHAR(Max)
-  denyList   String   @db.Text
+  allowList  String   @db.Text // JSON text array
+  denyList   String   @db.Text // JSON text array
   emailProtected     Boolean @default(true)  // Enable email protection
   emailAuthenticated Boolean @default(false) // Enable email authentication
   allowDownload      Boolean? @default(false) // Option to allow document download
@@ -143,113 +146,141 @@ model Link extends TenantScoped, Auditable {
   enableScreenshotProtection Boolean? @default(false) // Toggle screenshot protection
   enableAgreement    Boolean? @default(false) // Toggle terms and conditions agreement
 
-  // Relationships
+  // Nuevos campos de funcionalidades avanzadas
+  enableUpload       Boolean? @default(false)
+  isFileRequestOnly  Boolean? @default(false)
+  uploadFolderId     String?
+  enableIndexFile    Boolean? @default(false)
+  enableConversation Boolean? @default(false)
+  showBanner         Boolean? @default(false)
+  welcomeMessage     String?
+
+  // Relación con Workflow (entry link)
+  workflow Workflow? @relation("EntryLinkWorkflow")
+
+  // Relaciones existentes
   views      DocumentView[]
   feedback   DocumentFeedback?
-  
-  // Agreement relation (optional)
-  agreementId String? // Associated agreement ID
+  agreementId String?
   agreement   Agreement? @relation(fields: [agreementId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   // Domain relationship
-  domainId   String? // Optional associated domain ID
+  domainId   String?
   domain     Domain? @relation(fields: [domainId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  domainSlug String?  // Stores the domain's slug even if the domain is deleted
+  domainSlug String?
 
   // Custom metatags
-  metaTitle           String? // Meta title for SEO
-  metaDescription     String? // Meta description for SEO
-  metaImage           String? // Meta image URL for social sharing
-  metaFavicon         String? // Meta favicon URL
-  enableCustomMetatag Boolean? @default(false) // Toggle custom metatag usage
+  metaTitle           String?
+  metaDescription     String?
+  metaImage           String?
+  metaFavicon         String?
+  enableCustomMetatag Boolean? @default(false)
 
   // Group linking
   // Allowed values: "GENERAL", "GROUP", "TEAM"
   audienceType String  @default("GENERAL")
-  groupId      String? // Optional group ID for audience segmentation
+  groupId      String?
   group        DataroomViewerGroup? @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   // Watermark configuration
-  enableWatermark    Boolean? @default(false) // Toggle watermark
-  watermarkConfig    String   @db.Text // JSON configuration for watermark (e.g., { "text": "Confidential", "isTiled": false, "color": "#000000", ... })
+  enableWatermark Boolean? @default(false)
+  watermarkConfig String   @db.Text // JSON configuration for watermark
+
+  conversations     DocumentConversation[]
+  dataroomFaqItems  DataroomFaqItem[]
+  customField       CustomField[]
+  tags              TagItem[]
+  uploadedDocuments DocumentUpload[]
+  viewerInvitations ViewerInvitation[]
+  permissionGroupId String?
+  permissionGroup   PermissionGroup? @relation(fields: [permissionGroupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   @@unique([domainSlug, slug])
   @@index([documentId])
   @@index([tenantId])
-
-  customField CustomField[]
+  @@index([documentId, isArchived])
+  @@index([permissionGroupId])
 }
 
 model LinkPreset extends TenantScoped, Auditable {
-  id   String @id @default(uuid()) // Unique identifier for link preset
+  id   String @id @default(uuid())
   name String
 
-  enableCustomMetaTag Boolean? @default(false) // Toggle for custom metatag usage
-  metaTitle           String? // Meta title
-  metaDescription     String? // Meta description
-  metaImage           String? // Meta image URL
-  metaFavicon         String? // Meta favicon URL
+  enableCustomMetaTag Boolean? @default(false)
+  metaTitle           String?
+  metaDescription     String?
+  metaImage           String?
+  metaFavicon         String?
 
   @@index([tenantId])
 }
 
 // ----------------------
-// Domain and DocumentView Models
+// Domain and DocumentView Models (Actualizado)
 // ----------------------
 model Domain extends TenantScoped, Auditable {
-  id           String @id @default(uuid()) // Unique identifier for domain
-  slug         String @unique
-  verified     Boolean @default(false) // Domain verification status
-  isDefault    Boolean @default(false) // Primary domain flag
-  lastChecked  DateTime @default(now()) // Timestamp of last check
+  id          String @id @default(uuid())
+  slug        String @unique
+  verified    Boolean @default(false)
+  isDefault   Boolean @default(false)
+  lastChecked DateTime @default(now())
 
-  links   Link[] // Links associated with this domain
+  links Link[]
 
   @@index([tenantId])
 }
 
 model DocumentView extends TenantScoped, Auditable {
-  id            String @id @default(uuid()) // Unique identifier for view
-  linkId        String
-  link          Link   @relation(fields: [linkId], references: [id])
-  documentId    String?
-  document      Document? @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  dataroomId    String?
-  dataroom      Dataroom? @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  dataroomViewId String? // Dataroom view ID
-  viewerEmail   String? // Email of the viewer
-  viewerName    String? // Name of the viewer
-  verified      Boolean @default(false) // Email verification status
-  viewedAt      DateTime @default(now()) // Timestamp when viewed
-  downloadedAt  DateTime? // Timestamp of document download
-  reactions     DocumentReaction[]
-  // Allowed values: "DOCUMENT_VIEW", "DATAROOM_VIEW"
-  viewType      String  @default("DOCUMENT_VIEW")
-  viewerId      String? // Foreign key to Viewer
-  viewer        Viewer?  @relation(fields: [viewerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  groupId       String? // Group ID from dataroom
-  group         DataroomViewerGroup? @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  feedbackResponse      FeedbackResponse?
-  agreementResponse     AgreementResponse?
-  customFieldResponse   CustomFieldResponse?
-  isArchived    Boolean @default(false) // Indicates if the view is archived
+  id             String @id @default(uuid())
+  linkId         String
+  link           Link   @relation(fields: [linkId], references: [id])
+  documentId     String?
+  document       Document? @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  dataroomId     String?
+  dataroom       Dataroom? @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  dataroomViewId String?
+  viewerEmail    String?
+  viewerName     String?
+  verified       Boolean @default(false)
+  viewedAt       DateTime @default(now())
+  downloadedAt   DateTime?
+  downloadType      String?
+  downloadMetadata  String? @db.Text
+  reactions      DocumentReaction[]
+  viewType       String  @default("DOCUMENT_VIEW")
+  viewerId       String?
+  viewer         Viewer?  @relation(fields: [viewerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  groupId        String?
+  group          DataroomViewerGroup? @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  feedbackResponse    FeedbackResponse?
+  agreementResponse   AgreementResponse?
+  customFieldResponse CustomFieldResponse?
+  isArchived    Boolean @default(false)
+
+  uploadedDocuments    DocumentUpload[]
+  conversationViews    DocumentConversationView[]
+  messages             DocumentMessage[]
+  initialConversations DocumentConversation[] @relation("initialView")
 
   @@index([linkId])
   @@index([documentId])
   @@index([dataroomId])
   @@index([dataroomViewId])
   @@index([tenantId])
+  @@index([viewerId, documentId])
+  @@index([viewedAt(sort: Desc)])
+  @@index([viewerEmail])
+  @@index([documentId, isArchived])
 }
 
 // ----------------------
-// Viewer and Reaction Models
+// Viewer and Reaction Models (Actualizado)
 // ----------------------
 model Viewer extends TenantScoped, Auditable {
-  id        String @id @default(uuid()) // Unique identifier for viewer
+  id        String @id @default(uuid())
   email     String
-  verified  Boolean @default(false) // Email verification status
-  invitedAt DateTime? // Invitation timestamp
-  // Stored as NVARCHAR(Max) containing JSON text.
+  verified  Boolean @default(false)
+  invitedAt DateTime?
   notificationPreferences String   @db.Text
 
   dataroomId String?
@@ -258,23 +289,28 @@ model Viewer extends TenantScoped, Auditable {
   views   DocumentView[]
   groups  DataroomViewerGroupMembership[]
 
+  uploadedDocuments         DocumentUpload[]
+  participatedConversations DocumentConversationParticipant[]
+  messages                  DocumentMessage[]
+  invitations               ViewerInvitation[]
+
   @@unique([tenantId, email])
   @@index([tenantId])
   @@index([dataroomId])
 }
 
 model DocumentReaction extends TenantScoped, Auditable {
-  id         String @id @default(uuid()) // Unique identifier for reaction
+  id         String @id @default(uuid())
   viewId     String
   view       DocumentView   @relation(fields: [viewId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  pageNumber Int    // Page number where reaction occurred
-  type       String // Reaction type (e.g., "like", "dislike", "love", etc.)
+  pageNumber Int
+  type       String
 
   @@index([viewId])
 }
 
 // ----------------------
-// Email and Conversation Models
+// Email Models
 // ----------------------
 model InvitationDocument extends TenantScoped, Auditable {
   email   String
@@ -284,38 +320,21 @@ model InvitationDocument extends TenantScoped, Auditable {
   @@unique([email, tenantId])
 }
 
-// Allowed values: 
-// "FIRST_DAY_DOMAIN_REMINDER_EMAIL", "FIRST_DOMAIN_INVALID_EMAIL", "SECOND_DOMAIN_INVALID_EMAIL", 
-// "FIRST_TRIAL_END_REMINDER_EMAIL", "FINAL_TRIAL_END_REMINDER_EMAIL"
 model SentEmail extends TenantScoped, Auditable {
-  id         String @id @default(uuid()) // Unique identifier for sent email
-  type       String  // Email type as string
-  recipient  String // Recipient email address
+  id         String @id @default(uuid())
+  type       String
+  recipient  String
   marketing  Boolean @default(false)
-  domainSlug String? // Domain that triggered the email
+  domainSlug String?
 
   @@index([tenantId])
 }
 
-model DocumentConversation extends TenantScoped, Auditable {
-  id         String @id @default(uuid()) // Unique identifier for conversation
-  threadId   String @unique // Thread ID from OpenAI Assistant API
-  userTenantId String
-  userTenant   UserTenant   @relation(fields: [userTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  documentId String
-  document   Document @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-
-  @@unique([userTenantId, documentId])
-  @@unique([threadId, documentId])
-  @@index([threadId])
-}
-
 // ----------------------
-// Folder and Dataroom Models
+// Folder and Dataroom Models (Actualizado)
 // ----------------------
-
 model Dataroom extends TenantScoped, Auditable, CatalogBase {
-  pId          String @unique // Public ID (e.g., dr_1234)
+  pId          String @unique
   documents    Document[]
   folders      DataroomFolder[]
   links        Link[]
@@ -323,16 +342,29 @@ model Dataroom extends TenantScoped, Auditable, CatalogBase {
   viewers      Viewer[]
   viewerGroups DataroomViewerGroup[]
   brand        DataroomBrand?
-  
+
+  conversations         DocumentConversation[]
+  faqItems             DataroomFaqItem[]
+  tags                 TagItem[]
+  uploadedDocuments    DocumentUpload[]
+  permissionGroups     PermissionGroup[]
+  installedIntegrations InstalledIntegration[]
+  annotations          DocumentAnnotation[]
+
+  conversationsEnabled Boolean @default(false)
+  enableChangeNotifications Boolean @default(false)
+  allowBulkDownload    Boolean @default(true)
+  showLastUpdated      Boolean @default(true)
+
   requestDatarooms RequestDataroom[]
 
   @@index([tenantId])
 }
 
 model DataroomFolder extends TenantScoped, Auditable {
-  id          String @id @default(uuid()) // Unique identifier for dataroom folder
+  id          String @id @default(uuid())
   name        String
-  path        String // Materialized path (e.g., "/folder/subfolder")
+  path        String
   parentId    String?
   documents   Document[]
   childFolders DataroomFolder[] @relation("SubFolders")
@@ -347,12 +379,12 @@ model DataroomFolder extends TenantScoped, Auditable {
 }
 
 model DataroomBrand extends TenantScoped, Auditable {
-  id         String @id @default(uuid()) // Unique identifier for dataroom brand
-  logo       String? // Reference to logo file location
-  banner     String? // Reference to banner file location
-  brandColor String? // Brand color
-  accentColor String? // Accent color
-  dataroomId String @unique 
+  id         String @id @default(uuid())
+  logo       String?
+  banner     String?
+  brandColor String?
+  accentColor String?
+  dataroomId String @unique
   dataroom   Dataroom @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   @@index([tenantId])
@@ -362,21 +394,21 @@ model DataroomBrand extends TenantScoped, Auditable {
 // Feedback and Agreement Models
 // ----------------------
 model DocumentFeedback extends TenantScoped, Auditable {
-  id      String @id @default(uuid()) // Unique identifier for feedback
-  linkId  String @unique 
+  id      String @id @default(uuid())
+  linkId  String @unique
   link    Link   @relation(fields: [linkId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  data    String   @db.Text   // JSON storing feedback question data
+  data    String   @db.Text
   responses FeedbackResponse[]
 
   @@index([linkId])
 }
 
 model FeedbackResponse extends TenantScoped, Auditable {
-  id         String @id @default(uuid()) // Unique identifier for feedback response
+  id         String @id @default(uuid())
   feedbackId String
   feedback   DocumentFeedback @relation(fields: [feedbackId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  data       String   @db.Text   // JSON storing feedback response data (e.g., answer)
-  viewId     String @unique 
+  data       String   @db.Text
+  viewId     String @unique
   view       DocumentView   @relation(fields: [viewId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   @@index([feedbackId])
@@ -384,8 +416,8 @@ model FeedbackResponse extends TenantScoped, Auditable {
 }
 
 model Agreement extends TenantScoped, Auditable, CatalogBase {
-  content     String  // Agreement content
-  requireName Boolean @default(true) // Whether the agreement requires a name
+  content     String
+  requireName Boolean @default(true)
 
   links      Link[]
   responses  AgreementResponse[]
@@ -394,10 +426,10 @@ model Agreement extends TenantScoped, Auditable, CatalogBase {
 }
 
 model AgreementResponse extends TenantScoped, Auditable {
-  id          String @id @default(uuid()) // Unique identifier for agreement response
+  id          String @id @default(uuid())
   agreementId String
   agreement   Agreement @relation(fields: [agreementId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  viewId      String @unique 
+  viewId      String @unique
   view        DocumentView @relation(fields: [viewId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   @@index([agreementId])
@@ -408,14 +440,15 @@ model AgreementResponse extends TenantScoped, Auditable {
 // Viewer Group and Access Control Models
 // ----------------------
 model DataroomViewerGroup extends TenantScoped, Auditable {
-  id         String @id @default(uuid()) // Unique identifier for viewer group
+  id         String @id @default(uuid())
   name       String
   members    DataroomViewerGroupMembership[]
-  // Stored as NVARCHAR(Max) containing JSON text (an array of strings)
   domains    String   @db.Text
   links      Link[]
   accessControls DataroomViewerGroupAccessControls[]
   allowAll   Boolean @default(false)
+  documentConversations DocumentConversation[]
+  viewerInvitations ViewerInvitation[]
 
   dataroomId String
   dataroom   Dataroom @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
@@ -426,7 +459,7 @@ model DataroomViewerGroup extends TenantScoped, Auditable {
 }
 
 model DataroomViewerGroupMembership extends TenantScoped, Auditable {
-  id       String @id @default(uuid()) // Unique identifier for membership
+  id       String @id @default(uuid())
   viewerId String
   viewer   Viewer @relation(fields: [viewerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   groupId  String
@@ -438,16 +471,15 @@ model DataroomViewerGroupMembership extends TenantScoped, Auditable {
 }
 
 model DataroomViewerGroupAccessControls extends TenantScoped, Auditable {
-  id      String @id @default(uuid()) // Unique identifier for access control
+  id      String @id @default(uuid())
   groupId String
   group   DataroomViewerGroup @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
-  // Access control for items (documents or dataroom items)
-  itemId   String // This can be a document ID or a dataroom item ID 
-  // Allowed values: "DATAROOM_DOCUMENT", "DATAROOM_FOLDER"
+  itemId   String
   itemType String
-  canView     Boolean @default(true)  // Permission to view
-  canDownload Boolean @default(false) // Permission to download
+  canView             Boolean @default(true)
+  canDownload         Boolean @default(false)
+  canDownloadOriginal Boolean @default(false)
 
   @@unique([groupId, itemId])
   @@index([groupId])
@@ -457,12 +489,12 @@ model DataroomViewerGroupAccessControls extends TenantScoped, Auditable {
 // Webhook and Token Models
 // ----------------------
 model IncomingWebhook extends TenantScoped, Auditable {
-  id         String @id @default(uuid()) // Unique identifier for webhook
+  id         String @id @default(uuid())
   externalId String @unique
   name       String
-  secret     String? // Webhook signing secret for verification
-  source     String? // Allowed source URL/domain
-  actions    String? // Comma-separated actions (e.g., "documents:write,documentVersions:write")
+  secret     String?
+  source     String?
+  actions    String?
   consecutiveFailures Int @default(0)
   lastFailedAt DateTime?
   disabledAt DateTime?
@@ -471,14 +503,14 @@ model IncomingWebhook extends TenantScoped, Auditable {
 }
 
 model RestrictedToken extends TenantScoped, Auditable {
-  id         String @id @default(uuid()) // Unique identifier for restricted token
+  id         String @id @default(uuid())
   name       String
   hashedKey  String @unique
   partialKey String
-  scopes     String? // Comma-separated scopes (e.g., "documents:write,links:write")
+  scopes     String?
   expires    DateTime?
   lastUsed   DateTime?
-  rateLimit  Int @default(60) // Rate limit per minute
+  rateLimit  Int @default(60)
 
   userTenantId String
   userTenant   UserTenant @relation(fields: [userTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
@@ -488,11 +520,11 @@ model RestrictedToken extends TenantScoped, Auditable {
 }
 
 model Webhook extends TenantScoped, Auditable {
-  id     String @id @default(uuid()) // Unique identifier for webhook
-  pId    String @unique // Public ID for the webhook
+  id     String @id @default(uuid())
+  pId    String @unique
   name   String
   url    String
-  secret String // Signing secret for the webhook
+  secret String
   triggers String   @db.Text
 
   @@index([tenantId])
@@ -501,13 +533,12 @@ model Webhook extends TenantScoped, Auditable {
 // ----------------------
 // Custom Field Models
 // ----------------------
-// Allowed values: "SHORT_TEXT", "LONG_TEXT", "NUMBER", "PHONE_NUMBER", "URL", "CHECKBOX", "SELECT", "MULTI_SELECT"
 model CustomField extends TenantScoped, Auditable {
-  id          String @id @default(uuid()) // Unique identifier for custom field
-  type        String  // Custom field type as string
+  id          String @id @default(uuid())
+  type        String
   identifier  String
   label       String
-  placeholder String? // Optional placeholder text
+  placeholder String?
   required    Boolean @default(false)
   disabled    Boolean @default(false)
   linkId      String
@@ -518,10 +549,483 @@ model CustomField extends TenantScoped, Auditable {
 }
 
 model CustomFieldResponse extends TenantScoped, Auditable {
-  id      String @id @default(uuid()) // Unique identifier for custom field response
-  data    String   @db.Text   // JSON storing custom field responses
-  viewId  String @unique 
+  id      String @id @default(uuid())
+  data    String   @db.Text
+  viewId  String @unique
   view    DocumentView @relation(fields: [viewId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   @@index([viewId])
+}
+
+// ----------------------
+// Workflow Models
+// ----------------------
+model Workflow extends TenantScoped, Auditable {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  entryLinkId String   @unique
+  teamId      String?
+  isActive    Boolean  @default(true)
+
+  entryLink  Link @relation("EntryLinkWorkflow", fields: [entryLinkId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  steps      WorkflowStep[]
+  executions WorkflowExecution[]
+
+  @@index([entryLinkId])
+  @@index([tenantId])
+  @@index([isActive])
+}
+
+model WorkflowStep extends TenantScoped, Auditable {
+  id         String   @id @default(uuid())
+  workflowId String
+  name       String
+  stepOrder  Int
+  stepType   String @default("ROUTER")
+  conditions String   @db.Text
+  actions    String   @db.Text
+
+  workflow      Workflow          @relation(fields: [workflowId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  executionLogs WorkflowStepLog[]
+
+  @@unique([workflowId, stepOrder])
+  @@index([workflowId])
+}
+
+model WorkflowExecution extends TenantScoped, Auditable {
+  id           String    @id @default(uuid())
+  workflowId   String
+  visitorEmail String?
+  visitorIp    String?
+  status       String    @default("PENDING")
+  startedAt    DateTime  @default(now())
+  completedAt  DateTime?
+  result       String?   @db.Text
+  metadata     String?   @db.Text
+
+  workflow Workflow          @relation(fields: [workflowId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  stepLogs WorkflowStepLog[]
+
+  @@index([workflowId, startedAt])
+  @@index([visitorEmail])
+  @@index([status])
+}
+
+model WorkflowStepLog extends TenantScoped, Auditable {
+  id                String    @id @default(uuid())
+  executionId       String
+  workflowStepId    String
+  conditionsMatched Boolean
+  conditionResults  String?   @db.Text
+  actionsExecuted   String?   @db.Text
+  executedAt        DateTime  @default(now())
+  duration          Int?
+  error             String?
+
+  execution WorkflowExecution @relation(fields: [executionId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  step      WorkflowStep      @relation(fields: [workflowStepId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  @@index([executionId])
+  @@index([workflowStepId])
+}
+
+// ----------------------
+// Conversation Models
+// ----------------------
+model DocumentConversation extends TenantScoped, Auditable {
+  id        String  @id @default(uuid())
+  title     String?
+  isEnabled Boolean @default(true)
+  visibilityMode String @default("PRIVATE")
+
+  userTenantId String?
+  userTenant   UserTenant? @relation(fields: [userTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  dataroomId String
+  dataroom   Dataroom @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  documentId String?
+  document   Document? @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  documentVersionNumber Int?
+  documentPageNumber    Int?
+
+  linkId String?
+  link   Link?   @relation(fields: [linkId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  viewerGroupId String?
+  viewerGroup   DataroomViewerGroup? @relation(fields: [viewerGroupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  initialViewId String?
+  initialView   DocumentView? @relation(name: "initialView", fields: [initialViewId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  views DocumentConversationView[]
+  participants DocumentConversationParticipant[]
+  messages      DocumentMessage[]
+  lastMessageAt DateTime?
+  faqItems DataroomFaqItem[]
+
+  @@index([dataroomId])
+  @@index([documentId])
+  @@index([linkId])
+  @@index([viewerGroupId])
+  @@index([initialViewId])
+  @@index([userTenantId])
+}
+
+model DocumentConversationParticipant extends TenantScoped, Auditable {
+  id             String       @id @default(uuid())
+  conversationId String
+  conversation   DocumentConversation @relation(fields: [conversationId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  role String @default("PARTICIPANT")
+
+  viewerId String?
+  viewer   Viewer? @relation(fields: [viewerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  userTenantId String?
+  userTenant   UserTenant? @relation(fields: [userTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  receiveNotifications Boolean @default(false)
+
+  @@unique([conversationId, viewerId])
+  @@unique([conversationId, userTenantId])
+  @@index([conversationId])
+  @@index([viewerId])
+  @@index([userTenantId])
+}
+
+model DocumentMessage extends TenantScoped, Auditable {
+  id      String @id @default(uuid())
+  content String
+
+  conversationId String
+  conversation   DocumentConversation @relation(fields: [conversationId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  userTenantId String?
+  userTenant   UserTenant? @relation(fields: [userTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  viewerId String?
+  viewer   Viewer? @relation(fields: [viewerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  viewId String?
+  view   DocumentView? @relation(fields: [viewId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  isRead Boolean @default(false)
+
+  faqAsQuestion DataroomFaqItem[] @relation("FAQQuestionMessage")
+  faqAsAnswer   DataroomFaqItem[] @relation("FAQAnswerMessage")
+
+  @@index([conversationId])
+  @@index([userTenantId])
+  @@index([viewerId])
+  @@index([viewId])
+}
+
+model DocumentConversationView extends TenantScoped, Auditable {
+  id             String       @id @default(uuid())
+  conversationId String
+  conversation   DocumentConversation @relation(fields: [conversationId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  viewId         String
+  view           DocumentView @relation(fields: [viewId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  @@unique([conversationId, viewId])
+  @@index([conversationId])
+  @@index([viewId])
+}
+
+// ----------------------
+// FAQ Models
+// ----------------------
+model DataroomFaqItem extends TenantScoped, Auditable {
+  id               String  @id @default(uuid())
+  title            String?
+  editedQuestion   String
+  originalQuestion String?
+  answer           String
+  description      String?
+
+  dataroomId String
+  dataroom   Dataroom @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  linkId String?
+  link   Link?   @relation(fields: [linkId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  documentId String?
+  document   Document? @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  sourceConversationId String?
+  sourceConversation   DocumentConversation? @relation(fields: [sourceConversationId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  questionMessageId String?
+  questionMessage   DocumentMessage? @relation(name: "FAQQuestionMessage", fields: [questionMessageId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  answerMessageId String?
+  answerMessage   DocumentMessage? @relation(name: "FAQAnswerMessage", fields: [answerMessageId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  userTenantId String?
+  userTenant   UserTenant? @relation(fields: [userTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  visibilityMode String @default("PUBLIC_DATAROOM")
+  status         String @default("PUBLISHED")
+  isAnonymized   Boolean @default(true)
+
+  viewCount Int @default(0)
+  tags String @db.Text
+  documentPageNumber    Int?
+  documentVersionNumber Int?
+
+  @@index([dataroomId])
+  @@index([linkId])
+  @@index([documentId])
+  @@index([sourceConversationId])
+  @@index([userTenantId])
+  @@index([status])
+  @@index([visibilityMode])
+  @@index([createdAt])
+}
+
+// ----------------------
+// Annotation Models
+// ----------------------
+model DocumentAnnotation extends TenantScoped, Auditable {
+  id           String   @id @default(uuid())
+  title        String
+  content      String   @db.Text
+  pages        String   @db.Text
+  documentId   String
+  document     Document @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  dataroomId   String?
+  dataroom     Dataroom? @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  createdByUserTenantId String?
+  createdByUserTenant   UserTenant? @relation(fields: [createdByUserTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  isVisible    Boolean  @default(true)
+  images       AnnotationImage[]
+
+  @@index([documentId])
+  @@index([createdByUserTenantId])
+}
+
+model AnnotationImage extends TenantScoped, Auditable {
+  id           String             @id @default(uuid())
+  filename     String
+  url          String
+  size         Int?
+  mimeType     String?
+  annotationId String
+  annotation   DocumentAnnotation @relation(fields: [annotationId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  @@index([annotationId])
+}
+
+// ----------------------
+// Integration Models
+// ----------------------
+model Integration extends TenantScoped, Auditable {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  description String?
+  readme      String?
+  developer   String
+  website     String
+  logo        String?
+  screenshots String   @db.Text
+  verified    Boolean  @default(false)
+  installUrl  String?
+  category    String?
+  comingSoon  Boolean  @default(false)
+
+  installedIntegrations InstalledIntegration[]
+}
+
+model InstalledIntegration extends TenantScoped, Auditable {
+  id            String  @id @default(uuid())
+  credentials   String  @db.Text
+  configuration String  @db.Text
+  enabled       Boolean @default(true)
+
+  integrationId String
+  integration   Integration @relation(fields: [integrationId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  userTenantId  String?
+  userTenant    UserTenant? @relation(fields: [userTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  dataroomId    String?
+  dataroom      Dataroom? @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  @@unique([tenantId, integrationId])
+  @@index([integrationId])
+  @@index([userTenantId])
+  @@index([dataroomId])
+}
+
+// ----------------------
+// Year In Review Models
+// ----------------------
+model YearInReview extends TenantScoped, Auditable {
+  id            String    @id @default(uuid())
+  year          Int
+  status        String    @default("pending")
+  attempts      Int       @default(0)
+  lastAttempted DateTime?
+  error         String?
+
+  stats String @db.Text
+
+  @@index([year, tenantId])
+  @@index([status, attempts])
+}
+
+// ----------------------
+// Tag Models
+// ----------------------
+model Tag extends TenantScoped, Auditable {
+  id          String  @id @default(uuid())
+  name        String
+  color       String
+  description String?
+
+  items TagItem[]
+
+  createdByUserTenantId String?
+  createdByUserTenant   UserTenant? @relation(fields: [createdByUserTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  @@unique([tenantId, name])
+  @@index([tenantId])
+}
+
+model TagItem extends TenantScoped, Auditable {
+  id       String  @id @default(uuid())
+  tagId    String
+  tag      Tag     @relation(fields: [tagId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  itemType String
+
+  linkId     String?
+  link       Link?     @relation(fields: [linkId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  documentId String?
+  document   Document? @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  dataroomId String?
+  dataroom   Dataroom? @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  taggedByUserTenantId  String?
+  taggedByUserTenant    UserTenant? @relation(fields: [taggedByUserTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  @@index([tagId, linkId])
+  @@index([tagId, documentId])
+  @@index([tagId, dataroomId])
+}
+
+// ----------------------
+// Permission Models
+// ----------------------
+model PermissionGroup extends TenantScoped, Auditable {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+
+  links          Link[]
+  accessControls PermissionGroupAccessControls[]
+
+  dataroomId String
+  dataroom   Dataroom @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  @@index([dataroomId])
+  @@index([tenantId])
+}
+
+model PermissionGroupAccessControls extends TenantScoped, Auditable {
+  id      String          @id @default(uuid())
+  groupId String
+  group   PermissionGroup @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  itemId   String
+  itemType String
+
+  canView             Boolean @default(true)
+  canDownload         Boolean @default(false)
+  canDownloadOriginal Boolean @default(false)
+
+  @@unique([groupId, itemId])
+  @@index([groupId])
+}
+
+// ----------------------
+// Upload Models
+// ----------------------
+model DocumentUpload extends TenantScoped, Auditable {
+  id         String   @id @default(uuid())
+  documentId String
+  document   Document @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  viewerId   String?
+  viewer     Viewer?  @relation(fields: [viewerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  viewId     String?
+  view       DocumentView? @relation(fields: [viewId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  linkId     String
+  link       Link     @relation(fields: [linkId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  dataroomId String?
+  dataroom   Dataroom? @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  originalFilename String?
+  fileSize         Int?
+  numPages         Int?
+  mimeType         String?
+  uploadedAt       DateTime @default(now())
+
+  @@index([documentId])
+  @@index([viewerId])
+  @@index([viewId])
+  @@index([linkId])
+  @@index([dataroomId])
+}
+
+// ----------------------
+// Viewer Invitation
+// ----------------------
+model ViewerInvitation extends TenantScoped, Auditable {
+  id            String @id @default(uuid())
+  viewerId      String
+  viewer        Viewer @relation(fields: [viewerId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  linkId        String
+  link          Link   @relation(fields: [linkId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  groupId       String?
+  group         DataroomViewerGroup? @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  invitedByUserTenantId String
+  invitedByUserTenant   UserTenant @relation(fields: [invitedByUserTenantId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  customMessage String?
+  sentAt        DateTime @default(now())
+  status        String @default("SENT")
+
+  @@index([viewerId])
+  @@index([linkId])
+  @@index([groupId])
+}
+
+// ----------------------
+// Plan Limits
+// ----------------------
+model PlanLimits extends TenantScoped, Auditable {
+  id        String @id @default(uuid())
+
+  datarooms     Int @default(1)
+  users         Int @default(1)
+  domains       Int @default(1)
+  customDomainOnPro     Boolean @default(false)
+  customDomainInDataroom Boolean @default(false)
+
+  enableExcelAdvancedMode   Boolean @default(false)
+  replicateDataroomFolders Boolean @default(true)
+
+  ignoredDomains  String @db.Text
+  globalBlockList String @db.Text
+
+  plan           String    @default("free")
+  stripeId       String?   @unique
+  subscriptionId String?   @unique
+  startsAt       DateTime?
+  endsAt         DateTime?
+  pausedAt       DateTime?
+  pauseStartsAt  DateTime?
+  pauseEndsAt    DateTime?
+  cancelledAt    DateTime?
+
+  limits String @db.Text
+
+  @@index([tenantId])
 }

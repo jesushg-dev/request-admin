@@ -23,7 +23,7 @@ export function createLinkSchema(t: TranslationFn) {
         .string()
         .min(1, { message: t('nameRequired') })
         .max(200, { message: t('nameMaxLength') }),
-      expirationDate: z.date().optional(),
+      expiresAt: z.date().optional(),
       enablePassword: z.boolean(),
       password: z.string().optional(),
       emailProtected: z.boolean(),

@@ -1,11 +1,13 @@
 'use client';
 
 import { useTransition } from 'react';
-import { useFindManyLink, useUpdateLink } from '@/services/api/hooks';
+import { useFindManyLink, useUpdateLink, useDeleteLink } from '@/services/api/hooks';
 import { format } from 'date-fns';
 import { Copy, Download, ExternalLink, FileText, Image, LinkIcon, Lock, Mail, MoreHorizontal, Settings, Shield, Trash2, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
+import { Link } from '@/i18n/routing';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -18,6 +20,7 @@ interface DocumentSharedLinksProps {
 }
 
 export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
+  const { tenantId } = useTenantContext();
   const { data: links = [], isLoading } = useFindManyLink({
     include: {
       agreement: {
@@ -33,23 +36,62 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
   });
 
   const { mutateAsync: update } = useUpdateLink();
+  const { mutateAsync: deleteLink } = useDeleteLink();
   const [pending, startTransition] = useTransition();
   const t = useTranslations('admin.document.view.sharedLinks');
 
   const handleArchiveLink = (id: string, archive: boolean) => {
     startTransition(async () => {
-      const promise = update({ data: { isArchived: archive }, where: { id } });
-      toast.promise(promise, {
-        loading: t('toast.progress'),
-        success: t('toast.success'),
-        error: (error) => t('toast.error', { error: error.message }),
-      });
+      try {
+        const promise = update({ data: { isArchived: archive }, where: { id, tenantId } });
+        toast.promise(promise, {
+          loading: t('toast.progress'),
+          success: t('toast.success'),
+          error: (error) => t('toast.error', { error: error.message }),
+        });
+      } catch (error) {
+        toast.error(t('toast.error', { error: error instanceof Error ? error.message : 'Unknown error' }));
+      }
     });
   };
 
-  const handleCopyLink = (url: string) => {
-    navigator.clipboard.writeText(url);
-    toast.success(t('toast.copy_success'));
+  const getPublicUrl = (slug: string | null) => {
+    if (!slug) return '';
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    return `${origin}/l/${slug}`;
+  };
+
+  const handleCopyLink = (slug: string | null) => {
+    if (!slug) {
+      toast.error('Link does not have a valid slug. Please update the link.');
+      return;
+    }
+    const url = getPublicUrl(slug);
+    if (url) {
+      navigator.clipboard.writeText(url);
+      toast.success(t('toast.copy_success'));
+    } else {
+      toast.error('Failed to generate URL');
+    }
+  };
+
+  const handleDeleteLink = (id: string) => {
+    if (!confirm('Are you sure you want to delete this link? This action cannot be undone.')) {
+      return;
+    }
+
+    startTransition(async () => {
+      try {
+        const promise = deleteLink({ where: { id, tenantId } });
+        toast.promise(promise, {
+          loading: 'Deleting link...',
+          success: 'Link deleted successfully',
+          error: (error) => `Failed to delete link: ${error.message}`,
+        });
+      } catch (error) {
+        toast.error(`Failed to delete link: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      }
+    });
   };
 
   if (isLoading) {
@@ -76,7 +118,11 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
       ) : (
         <div className="flex flex-col gap-4 overflow-y-auto">
           {links.map((link) => (
-            <div key={link.id} className={`flex flex-col md:flex-row md:items-center justify-between p-4 border rounded-lg ${link.isArchived ? 'opacity-70 bg-muted/20' : ''}`}>
+            <div
+              key={link.id}
+              className={`flex flex-col md:flex-row md:items-center justify-between p-4 border rounded-lg transition-all hover:shadow-md ${
+                link.isArchived ? 'opacity-70 bg-muted/20' : 'bg-card'
+              }`}>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <span className="font-medium">{link.name}</span>
@@ -88,11 +134,21 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
                     </Badge>
                   )}
                 </div>
-                <div className="flex items-center mt-1">
-                  <span className="text-sm text-muted-foreground truncate max-w-[300px]">{link.url}</span>
-                  <Button variant="ghost" size="icon" className="h-6 w-6 ml-1" onClick={() => handleCopyLink(link.url ?? '')}>
-                    <Copy className="h-3 w-3" />
-                  </Button>
+                <div className="flex items-center mt-1 gap-2">
+                  {link.slug ? (
+                    <>
+                      <span className="text-sm text-muted-foreground truncate max-w-[300px] font-mono">
+                        {getPublicUrl(link.slug)}
+                      </span>
+                      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleCopyLink(link.slug)}>
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                    </>
+                  ) : (
+                    <span className="text-sm text-muted-foreground italic">
+                      No public URL available. Please update the link to generate a slug.
+                    </span>
+                  )}
                 </div>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {link.password && (
@@ -187,15 +243,19 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
                 </div>
               </div>
               <div className="flex items-center gap-2 mt-3 md:mt-0">
+                {link.slug && (
+                  <Button variant="outline" size="sm" asChild>
+                    <a href={getPublicUrl(link.slug)} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="mr-2 h-3 w-3" />
+                      {t('actions.open')}
+                    </a>
+                  </Button>
+                )}
                 <Button variant="outline" size="sm" asChild>
-                  <a href={link.url ?? ''} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="mr-2 h-3 w-3" />
-                    {t('actions.open')}
-                  </a>
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Settings className="mr-2 h-3 w-3" />
-                  {t('actions.edit')}
+                  <Link href={{ pathname: '/admin/[tenantId]/links-and-documents/links/[slug]/edit', params: { tenantId, slug: link.id } }}>
+                    <Settings className="mr-2 h-3 w-3" />
+                    {t('actions.edit')}
+                  </Link>
                 </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -205,13 +265,17 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>{t('dropdown.actions')}</DropdownMenuLabel>
-                    <DropdownMenuItem onClick={() => handleCopyLink(link.url ?? '')}>
-                      <Copy className="mr-2 h-4 w-4" />
-                      {t('dropdown.copy')}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Settings className="mr-2 h-4 w-4" />
-                      {t('dropdown.settings')}
+                    {link.slug && (
+                      <DropdownMenuItem onClick={() => handleCopyLink(link.slug)}>
+                        <Copy className="mr-2 h-4 w-4" />
+                        {t('dropdown.copy')}
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem asChild>
+                      <Link href={{ pathname: '/admin/[tenantId]/links-and-documents/links/[slug]/edit', params: { tenantId, slug: link.id } }} className="flex items-center">
+                        <Settings className="mr-2 h-4 w-4" />
+                        {t('dropdown.settings')}
+                      </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem disabled={pending} onClick={() => handleArchiveLink(link.id, !link.isArchived)}>
@@ -219,7 +283,7 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
                       {pending ? t('dropdown.saving') : link.isArchived ? t('dropdown.unarchive') : t('dropdown.archive')}
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem className="text-destructive">
+                    <DropdownMenuItem className="text-destructive" onClick={() => handleDeleteLink(link.id)}>
                       <Trash2 className="mr-2 h-4 w-4" />
                       {t('dropdown.delete')}
                     </DropdownMenuItem>

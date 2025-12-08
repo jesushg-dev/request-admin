@@ -86,7 +86,7 @@ const EditPage: FC<EditPageProps> = async ({ params, searchParams }) => {
   const initialValues = {
     id: link.id,
     name: link.name || '',
-    expirationDate: link.expiresAt ? new Date(link.expiresAt) : undefined,
+    expiresAt: link.expiresAt ? new Date(link.expiresAt) : undefined,
     enablePassword: !!link.password,
     password: link.password || '',
     emailProtected: link.emailProtected,

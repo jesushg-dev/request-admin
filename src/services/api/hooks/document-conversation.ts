@@ -455,7 +455,26 @@ export function useSuspenseCountDocumentConversation<
 }
 
 export function useCheckDocumentConversation<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { createdBy?: string; updatedBy?: string; tenantId?: string; id?: string; threadId?: string; userTenantId?: string; documentId?: string } },
+  args: {
+    operation: PolicyCrudKind;
+    where?: {
+      createdBy?: string;
+      updatedBy?: string;
+      tenantId?: string;
+      id?: string;
+      title?: string;
+      isEnabled?: boolean;
+      visibilityMode?: string;
+      userTenantId?: string;
+      dataroomId?: string;
+      documentId?: string;
+      documentVersionNumber?: number;
+      documentPageNumber?: number;
+      linkId?: string;
+      viewerGroupId?: string;
+      initialViewId?: string;
+    };
+  },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();

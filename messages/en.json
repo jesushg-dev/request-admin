@@ -4896,6 +4896,58 @@
       }
     }
   },
+  "public": {
+    "link": {
+      "password": {
+        "title": "Password Required",
+        "description": "This link is protected by a password. Please enter the password to continue.",
+        "label": "Password",
+        "placeholder": "Enter password",
+        "required": "Password is required",
+        "invalid": "Invalid password. Please try again.",
+        "error": "An error occurred. Please try again.",
+        "submit": "Continue",
+        "submitting": "Verifying..."
+      },
+      "email": {
+        "title": "Email Required",
+        "description": "Please enter your email address to access this document.",
+        "label": "Email Address",
+        "placeholder": "your.email@example.com",
+        "required": "Email is required",
+        "notAllowed": "Your email or domain is not allowed to access this link",
+        "error": "An error occurred. Please try again.",
+        "submit": "Continue",
+        "submitting": "Validating...",
+        "verificationTitle": "Email Verification",
+        "verificationDescription": "We've sent a verification code to {email}. Please enter it below.",
+        "codeLabel": "Verification Code",
+        "codeSent": "Verification code sent to your email",
+        "codeInvalid": "Invalid verification code",
+        "verifyError": "Failed to verify code",
+        "sendError": "Failed to send verification email",
+        "verify": "Verify",
+        "verifying": "Verifying...",
+        "back": "Back"
+      },
+      "agreement": {
+        "title": "Agreement Required",
+        "description": "You must accept the agreement below to access this document.",
+        "contentLabel": "Agreement Content",
+        "nameLabel": "Your Name",
+        "namePlaceholder": "Enter your full name",
+        "acceptLabel": "I have read and agree to the terms and conditions",
+        "submit": "Accept and Continue"
+      },
+      "customFields": {
+        "title": "Additional Information",
+        "description": "Please provide the following information to access this document.",
+        "required": "{field} is required",
+        "selectPlaceholder": "Select an option",
+        "submit": "Continue"
+      }
+    }
+  },
   "component": {
     "categoryTable": {
       "columns": {

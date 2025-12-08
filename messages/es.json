@@ -4896,6 +4896,58 @@
       }
     }
   },
+  "public": {
+    "link": {
+      "password": {
+        "title": "Contraseña Requerida",
+        "description": "Este enlace está protegido con una contraseña. Por favor ingrese la contraseña para continuar.",
+        "label": "Contraseña",
+        "placeholder": "Ingrese la contraseña",
+        "required": "La contraseña es requerida",
+        "invalid": "Contraseña inválida. Por favor intente nuevamente.",
+        "error": "Ocurrió un error. Por favor intente nuevamente.",
+        "submit": "Continuar",
+        "submitting": "Verificando..."
+      },
+      "email": {
+        "title": "Correo Electrónico Requerido",
+        "description": "Por favor ingrese su dirección de correo electrónico para acceder a este documento.",
+        "label": "Dirección de Correo",
+        "placeholder": "tu.correo@ejemplo.com",
+        "required": "El correo electrónico es requerido",
+        "notAllowed": "Su correo o dominio no está permitido para acceder a este enlace",
+        "error": "Ocurrió un error. Por favor intente nuevamente.",
+        "submit": "Continuar",
+        "submitting": "Validando...",
+        "verificationTitle": "Verificación de Correo",
+        "verificationDescription": "Hemos enviado un código de verificación a {email}. Por favor ingréselo a continuación.",
+        "codeLabel": "Código de Verificación",
+        "codeSent": "Código de verificación enviado a su correo",
+        "codeInvalid": "Código de verificación inválido",
+        "verifyError": "Error al verificar el código",
+        "sendError": "Error al enviar el correo de verificación",
+        "verify": "Verificar",
+        "verifying": "Verificando...",
+        "back": "Volver"
+      },
+      "agreement": {
+        "title": "Acuerdo Requerido",
+        "description": "Debe aceptar el acuerdo a continuación para acceder a este documento.",
+        "contentLabel": "Contenido del Acuerdo",
+        "nameLabel": "Su Nombre",
+        "namePlaceholder": "Ingrese su nombre completo",
+        "acceptLabel": "He leído y acepto los términos y condiciones",
+        "submit": "Aceptar y Continuar"
+      },
+      "customFields": {
+        "title": "Información Adicional",
+        "description": "Por favor proporcione la siguiente información para acceder a este documento.",
+        "required": "{field} es requerido",
+        "selectPlaceholder": "Seleccione una opción",
+        "submit": "Continuar"
+      }
+    }
+  },
   "component": {
     "categoryTable": {
       "columns": {

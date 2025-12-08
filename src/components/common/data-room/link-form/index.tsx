@@ -1,8 +1,8 @@
 'use client';
 
 import { useTransition, type FC } from 'react';
-import { useUpsertLink } from '@/services/api/hooks';
 import { useLinkSchema, type TLinkSchema } from '@/services/schemas/documents';
+import { upsertLinkAction } from '@/actions/link';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -30,7 +30,7 @@ const getDefaultLinkValues = (): LinkFormValues => {
   return {
     id: generateUuid(),
     name: '',
-    expirationDate: undefined,
+    expiresAt: undefined,
     enablePassword: false,
     password: '',
     emailProtected: false,
@@ -73,7 +73,6 @@ export const LinkForm: FC<LinkFormProps> = ({ tenantId, initialValues, linkType,
   });
 
   const [isPending, startTransition] = useTransition();
-  const { mutateAsync: upsertLink, error /*, data*/ } = useUpsertLink();
 
   /*const handleCopyLink = (url: string) => {
     navigator.clipboard
@@ -87,23 +86,21 @@ export const LinkForm: FC<LinkFormProps> = ({ tenantId, initialValues, linkType,
   };*/
 
   const onSubmit = (data: LinkFormValues) => {
-    startTransition(() => {
-      // todo: watermarkConfig is not being used in the current implementation
-      const denyList = data.denyViewers.map((viewer) => (viewer.type === 'EMAIL' ? viewer.value : `@${viewer.value}`)).join(',');
-      const allowList = data.allowedViewers.map((viewer) => (viewer.type === 'EMAIL' ? viewer.value : `@${viewer.value}`)).join(',');
-      const extraData = { tenantId, documentId, dataroomId, linkType, allowList, denyList, watermarkConfig: '' };
-
-      const promise = upsertLink({
-        create: { ...data, ...extraData },
-        update: { ...data, ...extraData },
-        where: { id: data.id, tenantId },
+    startTransition(async () => {
+      const promise = upsertLinkAction({
+        data,
+        tenantId,
+        documentId,
+        dataroomId,
+        linkType,
       });
 
       toast.promise(promise, {
         loading: t('saving.loading'),
-        success: (data) => {
-          if (data?.url) {
-            return t('saving.success', { url: data.url });
+        success: (result) => {
+          if (result?.url || result?.slug) {
+            const url = result.url || (result.slug ? `/l/${result.slug}` : '');
+            return t('saving.success', { url });
           }
           return t('saving.successNoUrl');
         },
@@ -149,24 +146,24 @@ export const LinkForm: FC<LinkFormProps> = ({ tenantId, initialValues, linkType,
   return (
     <Form {...form}>
       <FormRoot onSubmit={form.handleSubmit(onSubmit)}>
-        <FormContent error={error}>
+        <FormContent>
           <FormSection>
             {/* Basic Information AccordionSection */}
             <AccordionSection title={t('basicInfo.title')} icon={<LinkIcon className="h-4 w-4 text-primary" />} defaultOpen={true}>
-              <div className="grid gap-4">
+              <div className="grid gap-4 p-1">
                 <FormField
                   control={form.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem label={t('basicInfo.name.label')} description={t('basicInfo.name.description')}>
-                      <Input placeholder={t('basicInfo.name.placeholder')} autoComplete="off" {...field} />
+                      <Input placeholder={t('basicInfo.name.placeholder')} autoComplete="off" {...field} className="max-w-md" />
                     </FormItem>
                   )}
                 />
 
                 <FormField
                   control={form.control}
-                  name="expirationDate"
+                  name="expiresAt"
                   render={({ field }) => (
                     <FormItem label={t('basicInfo.expirationDate.label')} description={t('basicInfo.expirationDate.description')} className="flex flex-col">
                       <Popover>
@@ -191,7 +188,7 @@ export const LinkForm: FC<LinkFormProps> = ({ tenantId, initialValues, linkType,
 
             {/* Features AccordionSection */}
             <AccordionSection title={t('features.additional')} icon={<FileText className="h-4 w-4 text-primary" />} defaultOpen={false}>
-              <div className="grid gap-4">
+              <div className="grid gap-4 p-1">
                 <FormField
                   control={form.control}
                   name="allowDownload"

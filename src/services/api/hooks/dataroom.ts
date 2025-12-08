@@ -370,7 +370,23 @@ export function useSuspenseCountDataroom<
 }
 
 export function useCheckDataroom<TError = DefaultError>(
-  args: { operation: PolicyCrudKind; where?: { id?: string; name?: string; description?: string; isActive?: boolean; createdBy?: string; updatedBy?: string; tenantId?: string; pId?: string } },
+  args: {
+    operation: PolicyCrudKind;
+    where?: {
+      id?: string;
+      name?: string;
+      description?: string;
+      isActive?: boolean;
+      createdBy?: string;
+      updatedBy?: string;
+      tenantId?: string;
+      pId?: string;
+      conversationsEnabled?: boolean;
+      enableChangeNotifications?: boolean;
+      allowBulkDownload?: boolean;
+      showLastUpdated?: boolean;
+    };
+  },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions
 ) {
   const { endpoint, fetch } = getHooksContext();
