@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { Frown, Heart, Lightbulb, MessageSquare, Smile, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
@@ -8,10 +8,10 @@ import { useTranslations } from 'next-intl';
 import { addReaction, getDocumentReactions } from '@/actions/document-reaction';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 export type ReactionType = 'like' | 'dislike' | 'love' | 'smile' | 'frown' | 'idea' | 'comment';
 
@@ -25,21 +25,20 @@ interface DocumentReaction {
   viewerEmail?: string | null;
 }
 
-interface DocumentReactionWidgetProps {
+interface PublicDocumentReactionsProps {
+  viewId: string;
   documentId: string;
-  pageNumber?: number;
-  viewOnly?: boolean;
   tenantId: string;
-  viewId?: string;
+  pageNumber?: number;
 }
 
-export function DocumentReactionWidget({ documentId, pageNumber = 1, viewOnly = false, tenantId, viewId }: DocumentReactionWidgetProps) {
-  const t = useTranslations('admin.document.view.reactions');
+export function PublicDocumentReactions({ viewId, documentId, tenantId, pageNumber = 1 }: PublicDocumentReactionsProps) {
+  const t = useTranslations('public.link.reactions');
   const [reactions, setReactions] = useState<DocumentReaction[]>([]);
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [comment, setComment] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   // Count reactions by type
   const reactionCounts = reactions.reduce(
@@ -77,67 +76,60 @@ export function DocumentReactionWidget({ documentId, pageNumber = 1, viewOnly = 
     }
   };
 
-  const handleReaction = async (type: ReactionType) => {
-    if (viewOnly || !viewId) {
-      toast.error(t('loginRequired'));
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const result = await addReaction(documentId, viewId, pageNumber, type, tenantId);
-      
-      if (result.success) {
-        toast.success(t('reactionAdded'), {
-          description: t('reactionAddedDescription', { type: t(`types.${type}`) }),
-        });
-        await fetchReactions();
-      } else {
-        toast.error(t('failedToAdd'), {
-          description: result.error,
-        });
+  const handleReaction = (type: ReactionType) => {
+    startTransition(async () => {
+      try {
+        const result = await addReaction(documentId, viewId, pageNumber, type, tenantId);
+        
+        if (result.success) {
+          toast.success(t('reactionAdded'), {
+            description: t('reactionAddedDescription', { type: t(`types.${type}`) }),
+          });
+          await fetchReactions();
+        } else {
+          toast.error(t('failedToAdd'), {
+            description: result.error,
+          });
+        }
+      } catch (error) {
+        console.error('Error adding reaction:', error);
+        toast.error(t('failedToAdd'));
       }
-    } catch (error) {
-      console.error('Error adding reaction:', error);
-      toast.error(t('failedToAdd'));
-    } finally {
-      setIsSubmitting(false);
-    }
+    });
   };
 
-  const handleAddComment = async () => {
+  const handleAddComment = () => {
     if (!comment.trim()) {
       toast.error(t('emptyComment'));
       return;
     }
 
-    if (viewOnly || !viewId) {
-      toast.error(t('loginRequired'));
+    if (comment.length < 5) {
+      toast.error(t('commentTooShort'));
       return;
     }
 
-    setIsSubmitting(true);
-    try {
-      const result = await addReaction(documentId, viewId, pageNumber, 'comment', tenantId, comment.trim());
-      
-      if (result.success) {
-        toast.success(t('commentAdded'), {
-          description: t('commentAddedDescription'),
-        });
-        setComment('');
-        setShowCommentInput(false);
-        await fetchReactions();
-      } else {
-        toast.error(t('failedToAdd'), {
-          description: result.error,
-        });
+    startTransition(async () => {
+      try {
+        const result = await addReaction(documentId, viewId, pageNumber, 'comment', tenantId, comment.trim());
+        
+        if (result.success) {
+          toast.success(t('commentAdded'), {
+            description: t('commentAddedDescription'),
+          });
+          setComment('');
+          setShowCommentInput(false);
+          await fetchReactions();
+        } else {
+          toast.error(t('failedToAdd'), {
+            description: result.error,
+          });
+        }
+      } catch (error) {
+        console.error('Error adding comment:', error);
+        toast.error(t('failedToAdd'));
       }
-    } catch (error) {
-      console.error('Error adding comment:', error);
-      toast.error(t('failedToAdd'));
-    } finally {
-      setIsSubmitting(false);
-    }
+    });
   };
 
   const reactionButtons = [
@@ -151,23 +143,31 @@ export function DocumentReactionWidget({ documentId, pageNumber = 1, viewOnly = 
 
   if (isLoading) {
     return (
-      <div className="flex flex-col h-full items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-2"></div>
-        <p className="text-sm text-muted-foreground">{t('loading')}</p>
+      <div className="flex flex-col h-full">
+        <div className="p-4 border-b">
+          <div className="flex items-center gap-2">
+            <Smile className="h-5 w-5 text-primary" />
+            <h3 className="font-semibold">{t('title')}</h3>
+          </div>
+        </div>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="flex flex-col h-full">
-      {/* Reaction Buttons */}
+      {/* Header */}
       <div className="p-4 border-b flex-shrink-0">
-        <h3 className="font-semibold mb-3 flex items-center gap-2">
-          <MessageSquare className="h-5 w-5 text-primary" />
-          {t('title')}
-        </h3>
+        <div className="flex items-center gap-2 mb-3">
+          <Smile className="h-5 w-5 text-primary" />
+          <h3 className="font-semibold">{t('title')}</h3>
+        </div>
         <p className="text-sm text-muted-foreground mb-4">{t('description')}</p>
         
+        {/* Reaction Buttons */}
         <TooltipProvider>
           <div className="flex flex-wrap gap-2">
             {reactionButtons.map(({ type, icon: Icon }) => (
@@ -178,7 +178,7 @@ export function DocumentReactionWidget({ documentId, pageNumber = 1, viewOnly = 
                     size="sm" 
                     className="flex items-center gap-1" 
                     onClick={() => handleReaction(type)} 
-                    disabled={viewOnly || isSubmitting}>
+                    disabled={isPending}>
                     <Icon className="h-4 w-4" />
                     <span>{reactionCounts[type] || 0}</span>
                   </Button>
@@ -192,11 +192,10 @@ export function DocumentReactionWidget({ documentId, pageNumber = 1, viewOnly = 
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button 
-                  variant="outline" 
+                  variant={showCommentInput ? 'default' : 'outline'}
                   size="sm" 
                   className="flex items-center gap-1" 
-                  onClick={() => setShowCommentInput(!showCommentInput)} 
-                  disabled={viewOnly}>
+                  onClick={() => setShowCommentInput(!showCommentInput)}>
                   <MessageSquare className="h-4 w-4" />
                   <span>{comments.length}</span>
                 </Button>
@@ -208,31 +207,39 @@ export function DocumentReactionWidget({ documentId, pageNumber = 1, viewOnly = 
           </div>
         </TooltipProvider>
 
+        {/* Comment Input */}
         {showCommentInput && (
           <div className="space-y-2 mt-4 p-4 border rounded-lg bg-muted/50">
-            <Label htmlFor="comment">{t('addComment')}</Label>
             <Textarea 
-              id="comment" 
               value={comment} 
               onChange={(e) => setComment(e.target.value)} 
               placeholder={t('commentPlaceholder')} 
-              rows={3}
-              className="resize-none" 
+              className="min-h-[80px] resize-none"
+              disabled={isPending}
+              maxLength={500}
             />
-            <div className="flex justify-end gap-2">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => setShowCommentInput(false)} 
-                disabled={isSubmitting}>
-                {t('cancel')}
-              </Button>
-              <Button 
-                size="sm" 
-                onClick={handleAddComment} 
-                disabled={!comment.trim() || isSubmitting}>
-                {isSubmitting ? t('submitting') : t('submit')}
-              </Button>
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">
+                {comment.length}/500 {t('characters')}
+              </span>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => {
+                    setShowCommentInput(false);
+                    setComment('');
+                  }} 
+                  disabled={isPending}>
+                  {t('cancel')}
+                </Button>
+                <Button 
+                  size="sm" 
+                  onClick={handleAddComment} 
+                  disabled={!comment.trim() || isPending || comment.length < 5}>
+                  {isPending ? t('submitting') : t('submit')}
+                </Button>
+              </div>
             </div>
           </div>
         )}
@@ -243,22 +250,31 @@ export function DocumentReactionWidget({ documentId, pageNumber = 1, viewOnly = 
         {comments.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center p-8">
             <MessageSquare className="h-12 w-12 text-muted-foreground mb-2" />
-            <p className="text-sm text-muted-foreground">{t('noReactions')}</p>
+            <p className="text-sm text-muted-foreground">{t('noComments')}</p>
           </div>
         ) : (
           <ScrollArea className="h-full p-4">
             <div className="space-y-3">
-              <h3 className="text-sm font-medium mb-3">{t('commentsSection')}</h3>
+              <h4 className="text-sm font-medium mb-3">{t('commentsSection')}</h4>
               {comments.map((commentItem) => (
                 <Card key={commentItem.id} className="p-3">
-                  <div className="space-y-2">
-                    <p className="text-sm whitespace-pre-wrap break-words">{commentItem.comment}</p>
-                    <div className="flex items-center justify-between">
-                      <p className="text-xs text-muted-foreground">
-                        {commentItem.viewerEmail || t('anonymous')}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(commentItem.createdAt).toLocaleDateString()}
+                  <div className="flex gap-3">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="text-xs">
+                        {commentItem.viewerEmail?.substring(0, 2).toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium">
+                          {commentItem.viewerEmail || t('anonymous')}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(commentItem.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <p className="text-sm whitespace-pre-wrap break-words text-muted-foreground">
+                        {commentItem.comment}
                       </p>
                     </div>
                   </div>
@@ -271,3 +287,4 @@ export function DocumentReactionWidget({ documentId, pageNumber = 1, viewOnly = 
     </div>
   );
 }
+

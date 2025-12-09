@@ -129,25 +129,24 @@ export default async function DocumentDetailPage({ params }: DocumentDetailPageP
               <DocumentSharedLinks documentId={document.id} />
             </TabsContent>
 
-            <TabsContent value="analytics">
-              <DocumentAnalytics documentId={document.id} document={document} />
+            <TabsContent value="analytics" className="flex-1 overflow-y-auto">
+              <DocumentAnalytics documentId={document.id} document={document} tenantId={tenantId} />
             </TabsContent>
 
-            <TabsContent value="comments">
-              <DocumentComments documentId={document.id} />
+            <TabsContent value="comments" className="flex-1 overflow-y-auto">
+              <DocumentComments 
+                documentId={document.id} 
+                tenantId={tenantId}
+                userTenantId={auth.userTenantId || ''}
+              />
             </TabsContent>
-            <TabsContent value="reactions">
-              <div className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Document Reactions</CardTitle>
-                    <CardDescription>Track user reactions to this document</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <DocumentReactionWidget documentId={document.id} />
-                  </CardContent>
-                </Card>
-              </div>
+            
+            <TabsContent value="reactions" className="flex-1 overflow-y-auto">
+              <DocumentReactionWidget 
+                documentId={document.id} 
+                tenantId={tenantId} 
+                viewOnly={true} 
+              />
             </TabsContent>
           </Tabs>
         </CardContent>

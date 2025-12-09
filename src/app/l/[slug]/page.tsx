@@ -1,5 +1,6 @@
-import { notFound } from 'next/navigation';
-import { validateLinkAccess } from '@/actions/link-access';
+import { notFound, redirect } from 'next/navigation';
+import { createLinkAccessSession, validateLinkAccess } from '@/actions/link-access';
+
 import { LinkAccessGuard } from '@/components/public/link-access-guard';
 
 interface PublicLinkPageProps {
@@ -16,14 +17,19 @@ export default async function PublicLinkPage({ params }: PublicLinkPageProps) {
   const validation = await validateLinkAccess(slug);
 
   if (!validation.success || !validation.link) {
-    console.error('Link validation failed:', { slug, validation });
     notFound();
   }
 
+  // If no validations are required, redirect to Route Handler to create session
+  // Route Handlers can modify cookies, so this is the correct approach
+  if (validation.initialStep === 'complete') {
+    redirect(`/api/link-access/${slug}`);
+  }
+
+  // Render validation forms if validations are required
   return (
     <div className="min-h-screen bg-background">
-      <LinkAccessGuard slug={slug} link={validation.link} document={validation.document} />
+      <LinkAccessGuard slug={slug} initialStep={validation.initialStep || 'password'} link={validation.link} />
     </div>
   );
 }
-

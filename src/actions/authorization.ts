@@ -10,6 +10,7 @@ class AuthorizationError extends Error {}
 
 type AuthResult = {
   isAdmin: boolean;
+  userTenantId: string | null;
   hasPermissions: (required: PermissionAction | PermissionAction[], options?: { requireAll?: boolean }) => boolean;
   hasAreaPermissions: (areaId: string, required: PermissionAction | PermissionAction[], options?: { requireAll?: boolean }) => boolean;
 };
@@ -24,6 +25,8 @@ export const getAuthContext = async (tenantId: string): Promise<AuthResult> => {
 
   const isAdmin = user.isGlobalAdmin || ['owner', 'admin'].includes(user.role || '');
 
+  let userTenantId: string | null = null;
+
   const loadPermissions = async () => {
     if (permissionsCache) return;
 
@@ -37,6 +40,8 @@ export const getAuthContext = async (tenantId: string): Promise<AuthResult> => {
       permissionsCache = new Set();
       return;
     }
+
+    userTenantId = userTenant.id;
 
     // Global permissions are loaded from user roles and areas
     const rolePerms = userTenant.userRoles.flatMap((ur) => ur.role.roleFeature.map((rf) => rf.feature.key));
@@ -55,6 +60,7 @@ export const getAuthContext = async (tenantId: string): Promise<AuthResult> => {
 
   return {
     isAdmin,
+    userTenantId,
 
     hasPermissions: (required, options = {}) => {
       if (isAdmin) return true;

@@ -63,11 +63,39 @@ export function createLinkSchema(t: TranslationFn) {
       ),
     })
     .superRefine((data, ctx) => {
+      // Password validation
       if (data.enablePassword && !data.password) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           message: t('passwordRequiredWhenEnabled'),
           path: ['password'],
+        });
+      }
+
+      // Agreement validation
+      if (data.enableAgreement && !data.agreementId) {
+        ctx.addIssue({
+          code: 'custom',
+          message: t('agreementRequiredWhenEnabled'),
+          path: ['agreementId'],
+        });
+      }
+
+      // Allow specific viewers validation
+      if (data.allowSpecificViewers && data.allowedViewers.length === 0) {
+        ctx.addIssue({
+          code: 'custom',
+          message: t('allowedViewersRequiredWhenEnabled'),
+          path: ['allowedViewers'],
+        });
+      }
+
+      // Block specific viewers validation
+      if (data.blockSpecificViewers && data.denyViewers.length === 0) {
+        ctx.addIssue({
+          code: 'custom',
+          message: t('denyViewersRequiredWhenEnabled'),
+          path: ['denyViewers'],
         });
       }
     });

@@ -5,15 +5,7 @@ import { Edit, MoreHorizontal, Trash2, Upload } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 interface DocumentActionsDropdownProps {
   documentId: string;
@@ -73,4 +65,3 @@ export function DocumentActionsDropdown({ documentId, tenantId, canEdit, canDele
     </DropdownMenu>
   );
 }
-

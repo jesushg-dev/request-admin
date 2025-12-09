@@ -2,36 +2,28 @@
 
 import * as React from 'react';
 import * as SliderPrimitive from '@radix-ui/react-slider';
-import { Button } from '@/components/ui/button';
-import { useTranslations } from 'next-intl';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import {
-  PlayIcon,
-  PauseIcon,
-  RewindIcon,
+  AlertTriangleIcon,
+  CheckIcon,
   FastForwardIcon,
+  Loader2Icon,
+  Maximize2Icon,
+  Minimize2Icon,
+  PauseIcon,
+  PlayIcon,
+  RefreshCcwIcon,
+  RewindIcon,
+  SettingsIcon,
   Volume1Icon,
   Volume2Icon,
   VolumeXIcon,
-  Maximize2Icon,
-  Minimize2Icon,
-  SettingsIcon,
-  CheckIcon,
-  Loader2Icon,
-  AlertTriangleIcon,
-  RefreshCcwIcon,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 const SEEK_STEP_SHORT = 5;
@@ -87,12 +79,7 @@ function MediaPlayerRoot({ children, className, ...props }: MediaPlayerRootProps
 
   return (
     <MediaPlayerContext.Provider value={contextValue}>
-      <div
-        className={cn(
-          'relative isolate flex flex-col overflow-hidden rounded-lg bg-background outline-none',
-          className
-        )}
-        {...props}>
+      <div className={cn('relative isolate flex flex-col overflow-hidden rounded-lg bg-background outline-none', className)} {...props}>
         {children}
       </div>
     </MediaPlayerContext.Provider>
@@ -115,13 +102,7 @@ function MediaPlayerVideo({ ref, className, ...props }: MediaPlayerVideoProps) {
     [context.mediaRef, ref]
   );
 
-  return (
-    <video
-      ref={composedRef}
-      className={cn('relative w-full object-contain', className)}
-      {...props}
-    />
-  );
+  return <video ref={composedRef} className={cn('relative w-full object-contain', className)} {...props} />;
 }
 
 interface MediaPlayerAudioProps extends React.ComponentProps<'audio'> {}
@@ -140,13 +121,7 @@ function MediaPlayerAudio({ ref, className, ...props }: MediaPlayerAudioProps) {
     [context.mediaRef, ref]
   );
 
-  return (
-    <audio
-      ref={composedRef}
-      className={cn('hidden', className)}
-      {...props}
-    />
-  );
+  return <audio ref={composedRef} className={cn('hidden', className)} {...props} />;
 }
 
 interface MediaPlayerControlsProps extends React.ComponentProps<'div'> {
@@ -155,12 +130,7 @@ interface MediaPlayerControlsProps extends React.ComponentProps<'div'> {
 
 function MediaPlayerControls({ children, className, ...props }: MediaPlayerControlsProps) {
   return (
-    <div
-      className={cn(
-        'absolute right-0 bottom-0 left-0 z-50 flex items-center gap-2 px-4 py-3 bg-gradient-to-t from-black/80 to-transparent',
-        className
-      )}
-      {...props}>
+    <div className={cn('absolute right-0 bottom-0 left-0 z-50 flex items-center gap-2 px-4 py-3 bg-gradient-to-t from-black/80 to-transparent', className)} {...props}>
       {children}
     </div>
   );
@@ -169,15 +139,7 @@ function MediaPlayerControls({ children, className, ...props }: MediaPlayerContr
 interface MediaPlayerControlsOverlayProps extends React.ComponentProps<'div'> {}
 
 function MediaPlayerControlsOverlay({ className, ...props }: MediaPlayerControlsOverlayProps) {
-  return (
-    <div
-      className={cn(
-        '-z-10 pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 to-transparent',
-        className
-      )}
-      {...props}
-    />
-  );
+  return <div className={cn('-z-10 pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 to-transparent', className)} {...props} />;
 }
 
 interface MediaPlayerLoadingProps extends React.ComponentProps<'div'> {}
@@ -211,12 +173,7 @@ function MediaPlayerLoading({ className, children, ...props }: MediaPlayerLoadin
   if (!isLoading) return null;
 
   return (
-    <div
-      className={cn(
-        'pointer-events-none absolute inset-0 z-50 flex items-center justify-center',
-        className
-      )}
-      {...props}>
+    <div className={cn('pointer-events-none absolute inset-0 z-50 flex items-center justify-center', className)} {...props}>
       {children ?? <Loader2Icon className="size-20 animate-spin stroke-[.0938rem] text-primary" />}
     </div>
   );
@@ -258,13 +215,7 @@ function MediaPlayerPlay({ className, ...props }: MediaPlayerPlayProps) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className={cn('size-8 text-white hover:bg-white/20', className)}
-          onClick={handleClick}
-          {...props}>
+        <Button type="button" variant="ghost" size="icon" className={cn('size-8 text-white hover:bg-white/20', className)} onClick={handleClick} {...props}>
           {isPaused ? <PlayIcon className="fill-current" /> : <PauseIcon className="fill-current" />}
         </Button>
       </TooltipTrigger>
@@ -290,13 +241,7 @@ function MediaPlayerSeekBackward({ seconds = SEEK_STEP_SHORT, className, ...prop
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className={cn('size-8 text-white hover:bg-white/20', className)}
-          onClick={handleClick}
-          {...props}>
+        <Button type="button" variant="ghost" size="icon" className={cn('size-8 text-white hover:bg-white/20', className)} onClick={handleClick} {...props}>
           <RewindIcon />
         </Button>
       </TooltipTrigger>
@@ -322,13 +267,7 @@ function MediaPlayerSeekForward({ seconds = SEEK_STEP_LONG, className, ...props 
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className={cn('size-8 text-white hover:bg-white/20', className)}
-          onClick={handleClick}
-          {...props}>
+        <Button type="button" variant="ghost" size="icon" className={cn('size-8 text-white hover:bg-white/20', className)} onClick={handleClick} {...props}>
           <FastForwardIcon />
         </Button>
       </TooltipTrigger>
@@ -441,27 +380,11 @@ function MediaPlayerVolume({ expandable = false, className, ...props }: MediaPla
   const effectiveVolume = muted ? 0 : volume;
 
   return (
-    <div
-      className={cn(
-        'group flex items-center',
-        expandable ? 'gap-0 group-focus-within:gap-2 group-hover:gap-1.5' : 'gap-1.5',
-        className
-      )}>
+    <div className={cn('group flex items-center', expandable ? 'gap-0 group-focus-within:gap-2 group-hover:gap-1.5' : 'gap-1.5', className)}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="size-8 text-white hover:bg-white/20"
-            onClick={handleMute}>
-            {muted ? (
-              <VolumeXIcon />
-            ) : volume > 0.5 ? (
-              <Volume2Icon />
-            ) : (
-              <Volume1Icon />
-            )}
+          <Button type="button" variant="ghost" size="icon" className="size-8 text-white hover:bg-white/20" onClick={handleMute}>
+            {muted ? <VolumeXIcon /> : volume > 0.5 ? <Volume2Icon /> : <Volume1Icon />}
           </Button>
         </TooltipTrigger>
         <TooltipContent>{muted ? t('controls.unmute') : t('controls.mute')}</TooltipContent>
@@ -469,9 +392,7 @@ function MediaPlayerVolume({ expandable = false, className, ...props }: MediaPla
       <SliderPrimitive.Root
         className={cn(
           'relative flex touch-none select-none items-center',
-          expandable
-            ? 'w-0 opacity-0 transition-[width,opacity] duration-200 ease-in-out group-focus-within:w-16 group-focus-within:opacity-100 group-hover:w-16 group-hover:opacity-100'
-            : 'w-16',
+          expandable ? 'w-0 opacity-0 transition-[width,opacity] duration-200 ease-in-out group-focus-within:w-16 group-focus-within:opacity-100 group-hover:w-16 group-hover:opacity-100' : 'w-16',
           className
         )}
         value={[effectiveVolume]}
@@ -575,12 +496,7 @@ function MediaPlayerPlaybackSpeed({ speeds = SPEEDS, ...props }: MediaPlayerPlay
       <Tooltip>
         <TooltipTrigger asChild>
           <DropdownMenuTrigger asChild>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="h-8 w-16 text-white hover:bg-white/20"
-              {...props}>
+            <Button type="button" variant="ghost" size="icon" className="h-8 w-16 text-white hover:bg-white/20" {...props}>
               {playbackRate}x
             </Button>
           </DropdownMenuTrigger>
@@ -633,13 +549,7 @@ function MediaPlayerFullscreen({ className, ...props }: MediaPlayerFullscreenPro
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className={cn('size-8 text-white hover:bg-white/20', className)}
-          onClick={handleClick}
-          {...props}>
+        <Button type="button" variant="ghost" size="icon" className={cn('size-8 text-white hover:bg-white/20', className)} onClick={handleClick} {...props}>
           {isFullscreen ? <Minimize2Icon /> : <Maximize2Icon />}
         </Button>
       </TooltipTrigger>

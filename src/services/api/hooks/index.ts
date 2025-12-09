@@ -57,6 +57,8 @@ export * from './agreement-response';
 export * from './dataroom-viewer-group';
 export * from './dataroom-viewer-group-membership';
 export * from './dataroom-viewer-group-access-controls';
+export * from './link-access-session';
+export * from './link-email-verification-code';
 export * from './incoming-webhook';
 export * from './restricted-token';
 export * from './webhook';

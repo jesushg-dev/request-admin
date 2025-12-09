@@ -44,11 +44,11 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
     startTransition(async () => {
       try {
         const promise = update({ data: { isArchived: archive }, where: { id, tenantId } });
-        toast.promise(promise, {
-          loading: t('toast.progress'),
-          success: t('toast.success'),
-          error: (error) => t('toast.error', { error: error.message }),
-        });
+      toast.promise(promise, {
+        loading: t('toast.progress'),
+        success: t('toast.success'),
+        error: (error) => t('toast.error', { error: error.message }),
+      });
       } catch (error) {
         toast.error(t('toast.error', { error: error instanceof Error ? error.message : 'Unknown error' }));
       }
@@ -68,8 +68,8 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
     }
     const url = getPublicUrl(slug);
     if (url) {
-      navigator.clipboard.writeText(url);
-      toast.success(t('toast.copy_success'));
+    navigator.clipboard.writeText(url);
+    toast.success(t('toast.copy_success'));
     } else {
       toast.error('Failed to generate URL');
     }
@@ -141,8 +141,8 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
                         {getPublicUrl(link.slug)}
                       </span>
                       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleCopyLink(link.slug)}>
-                        <Copy className="h-3 w-3" />
-                      </Button>
+                    <Copy className="h-3 w-3" />
+                  </Button>
                     </>
                   ) : (
                     <span className="text-sm text-muted-foreground italic">
@@ -244,17 +244,17 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
               </div>
               <div className="flex items-center gap-2 mt-3 md:mt-0">
                 {link.slug && (
-                  <Button variant="outline" size="sm" asChild>
+                <Button variant="outline" size="sm" asChild>
                     <a href={getPublicUrl(link.slug)} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="mr-2 h-3 w-3" />
-                      {t('actions.open')}
-                    </a>
-                  </Button>
+                    <ExternalLink className="mr-2 h-3 w-3" />
+                    {t('actions.open')}
+                  </a>
+                </Button>
                 )}
                 <Button variant="outline" size="sm" asChild>
                   <Link href={{ pathname: '/admin/[tenantId]/links-and-documents/links/[slug]/edit', params: { tenantId, slug: link.id } }}>
-                    <Settings className="mr-2 h-3 w-3" />
-                    {t('actions.edit')}
+                  <Settings className="mr-2 h-3 w-3" />
+                  {t('actions.edit')}
                   </Link>
                 </Button>
                 <DropdownMenu>
@@ -267,14 +267,14 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
                     <DropdownMenuLabel>{t('dropdown.actions')}</DropdownMenuLabel>
                     {link.slug && (
                       <DropdownMenuItem onClick={() => handleCopyLink(link.slug)}>
-                        <Copy className="mr-2 h-4 w-4" />
-                        {t('dropdown.copy')}
-                      </DropdownMenuItem>
+                      <Copy className="mr-2 h-4 w-4" />
+                      {t('dropdown.copy')}
+                    </DropdownMenuItem>
                     )}
                     <DropdownMenuItem asChild>
                       <Link href={{ pathname: '/admin/[tenantId]/links-and-documents/links/[slug]/edit', params: { tenantId, slug: link.id } }} className="flex items-center">
-                        <Settings className="mr-2 h-4 w-4" />
-                        {t('dropdown.settings')}
+                      <Settings className="mr-2 h-4 w-4" />
+                      {t('dropdown.settings')}
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />

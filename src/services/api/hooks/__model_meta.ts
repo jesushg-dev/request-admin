@@ -546,6 +546,20 @@ const metadata: ModelMeta = {
           isArray: true,
           backLink: 'tenant',
         },
+        linkAccessSessions: {
+          name: 'linkAccessSessions',
+          type: 'LinkAccessSession',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
+        linkEmailVerificationCodes: {
+          name: 'linkEmailVerificationCodes',
+          type: 'LinkEmailVerificationCode',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'tenant',
+        },
         domains: {
           name: 'domains',
           type: 'Domain',
@@ -4826,6 +4840,13 @@ const metadata: ModelMeta = {
           onUpdateAction: 'NoAction',
           foreignKeyMapping: { id: 'permissionGroupId' },
         },
+        emailVerificationCodes: {
+          name: 'emailVerificationCodes',
+          type: 'LinkEmailVerificationCode',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'link',
+        },
       },
       uniqueConstraints: {
         id: {
@@ -5506,6 +5527,11 @@ const metadata: ModelMeta = {
         type: {
           name: 'type',
           type: 'String',
+        },
+        comment: {
+          name: 'comment',
+          type: 'String',
+          isOptional: true,
         },
       },
       uniqueConstraints: {
@@ -6843,6 +6869,194 @@ const metadata: ModelMeta = {
         groupId_itemId: {
           name: 'groupId_itemId',
           fields: ['groupId', 'itemId'],
+        },
+      },
+    },
+    linkAccessSession: {
+      name: 'LinkAccessSession',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$LinkAccessSession$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$LinkAccessSession$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'linkAccessSessions',
+          isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+        },
+        token: {
+          name: 'token',
+          type: 'String',
+        },
+        viewId: {
+          name: 'viewId',
+          type: 'String',
+        },
+        linkId: {
+          name: 'linkId',
+          type: 'String',
+        },
+        expiresAt: {
+          name: 'expiresAt',
+          type: 'DateTime',
+        },
+        ipAddress: {
+          name: 'ipAddress',
+          type: 'String',
+          isOptional: true,
+        },
+        userAgent: {
+          name: 'userAgent',
+          type: 'String',
+          isOptional: true,
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        token: {
+          name: 'token',
+          fields: ['token'],
+        },
+      },
+    },
+    linkEmailVerificationCode: {
+      name: 'LinkEmailVerificationCode',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$LinkEmailVerificationCode$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$LinkEmailVerificationCode$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'linkEmailVerificationCodes',
+          isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+        },
+        email: {
+          name: 'email',
+          type: 'String',
+        },
+        code: {
+          name: 'code',
+          type: 'String',
+        },
+        linkId: {
+          name: 'linkId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'link',
+        },
+        link: {
+          name: 'link',
+          type: 'Link',
+          isDataModel: true,
+          backLink: 'emailVerificationCodes',
+          isRelationOwner: true,
+          onDeleteAction: 'Cascade',
+          foreignKeyMapping: { id: 'linkId' },
+        },
+        expiresAt: {
+          name: 'expiresAt',
+          type: 'DateTime',
+        },
+        verified: {
+          name: 'verified',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ name: 'value', value: false }] }],
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
         },
       },
     },
@@ -14828,6 +15042,7 @@ const metadata: ModelMeta = {
     user: ['UserTenant', 'InvitationTenant', 'Session', 'Account', 'TwoFactor', 'SsoProvider', 'Apikey', 'Passkey'],
     request: ['RequestDataroom'],
     requestAssignment: ['AssignedUser'],
+    link: ['LinkEmailVerificationCode'],
     dataroom: ['RequestDataroom'],
     area: ['AssignmentCategory'],
     requestCategory: ['RequestCategoryForm'],
@@ -15125,6 +15340,22 @@ function $default$DataroomViewerGroupAccessControls$createdBy(user: any): unknow
 }
 
 function $default$DataroomViewerGroupAccessControls$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$LinkAccessSession$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$LinkAccessSession$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$LinkEmailVerificationCode$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$LinkEmailVerificationCode$updatedBy(user: any): unknown {
   return user?.id;
 }
 

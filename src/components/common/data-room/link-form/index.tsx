@@ -1,12 +1,13 @@
 'use client';
 
-import { useTransition, type FC } from 'react';
+import { useState, useTransition, type FC } from 'react';
+import { useRouter } from 'next/navigation';
 import { useLinkSchema, type TLinkSchema } from '@/services/schemas/documents';
 import { upsertLinkAction } from '@/actions/link';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Bell, Calendar, Download, FileText, LinkIcon, MessageSquare } from 'lucide-react';
+import { ArrowLeft, Bell, Calendar, Copy, Download, FileText, LinkIcon, MessageSquare } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -14,6 +15,7 @@ import { toast } from 'sonner';
 import { generateUuid } from '@/lib/id';
 import { Button } from '@/components/ui/button';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -60,8 +62,8 @@ interface LinkFormProps {
   initialValues?: LinkFormValues;
 }
 
-export const LinkForm: FC<LinkFormProps> = ({ tenantId, initialValues, linkType, documentId, dataroomId }) => {
-  //const router = useRouter();
+export const LinkForm: FC<LinkFormProps> = ({ tenantId, initialValues, linkType, documentId, dataroomId, callbackUrl }) => {
+  const router = useRouter();
   const t = useTranslations('admin.link.form');
 
   const linkSchema = useLinkSchema();
@@ -73,8 +75,9 @@ export const LinkForm: FC<LinkFormProps> = ({ tenantId, initialValues, linkType,
   });
 
   const [isPending, startTransition] = useTransition();
+  const [savedLink, setSavedLink] = useState<{ id?: string; url?: string; slug?: string } | null>(null);
 
-  /*const handleCopyLink = (url: string) => {
+  const handleCopyLink = (url: string) => {
     navigator.clipboard
       .writeText(url)
       .then(() => toast.success(t('copy.success')))
@@ -83,7 +86,7 @@ export const LinkForm: FC<LinkFormProps> = ({ tenantId, initialValues, linkType,
 
   const handleGoBack = () => {
     router.push(callbackUrl);
-  };*/
+  };
 
   const onSubmit = (data: LinkFormValues) => {
     startTransition(async () => {
@@ -100,6 +103,11 @@ export const LinkForm: FC<LinkFormProps> = ({ tenantId, initialValues, linkType,
         success: (result) => {
           if (result?.url || result?.slug) {
             const url = result.url || (result.slug ? `/l/${result.slug}` : '');
+            setSavedLink({
+              id: result.id,
+              url: result.url ?? undefined,
+              slug: result.slug ?? undefined,
+            });
             return t('saving.success', { url });
           }
           return t('saving.successNoUrl');
@@ -114,19 +122,20 @@ export const LinkForm: FC<LinkFormProps> = ({ tenantId, initialValues, linkType,
     });
   };
 
-  /*if (data?.url) {
+  if (savedLink?.url || savedLink?.slug) {
+    const url = savedLink.url || (savedLink.slug ? `/l/${savedLink.slug}` : '');
     return (
       <Card className="w-full max-w-md mx-auto">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Link className="h-5 w-5 text-primary" />
+            <LinkIcon className="h-5 w-5 text-primary" />
             {t('saved.title')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground mb-4">{t('saved.message')}</p>
           <div className="flex items-center gap-2 p-3 bg-muted rounded-md overflow-hidden">
-            <p className="text-sm truncate flex-1">{data?.url}</p>
+            <p className="text-sm truncate flex-1">{url}</p>
           </div>
         </CardContent>
         <CardFooter className="flex flex-col sm:flex-row gap-3 pt-2">
@@ -134,14 +143,14 @@ export const LinkForm: FC<LinkFormProps> = ({ tenantId, initialValues, linkType,
             <ArrowLeft className="mr-2 h-4 w-4" />
             {t('buttons.back')}
           </Button>
-          <Button className="w-full sm:w-auto" onClick={() => handleCopyLink(data?.url ?? '')}>
+          <Button className="w-full sm:w-auto" onClick={() => handleCopyLink(url)}>
             <Copy className="mr-2 h-4 w-4" />
             {t('buttons.copy')}
           </Button>
         </CardFooter>
       </Card>
     );
-  }*/
+  }
 
   return (
     <Form {...form}>

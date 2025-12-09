@@ -33,11 +33,12 @@ const UploadVersionPage: FC<UploadVersionPageProps> = async ({ params }) => {
   const callbackUrl = getPathname({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/documents/[slug]', params: { tenantId, slug } } });
 
   return (
-    <PageCardWrapper title={t('dropdown.uploadNewVersion')} description={t('upload_version_description', { type: documentType.toUpperCase(), defaultValue: `Upload a new version. File type must be ${documentType.toUpperCase()}.` })}>
+    <PageCardWrapper
+      title={t('dropdown.uploadNewVersion')}
+      description={t('upload_version_description', { type: documentType.toUpperCase(), defaultValue: `Upload a new version. File type must be ${documentType.toUpperCase()}.` })}>
       <DocumentUpload locale={locale} tenantId={tenantId} documentId={slug} callbackUrl={callbackUrl} expectedFileType={documentType} />
     </PageCardWrapper>
   );
 };
 
 export default UploadVersionPage;
-

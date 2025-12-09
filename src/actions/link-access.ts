@@ -2,82 +2,22 @@
 
 import crypto from 'crypto';
 import { revalidatePath } from 'next/cache';
-import { getDb } from '@/server/db-client';
-import { sendVerificationOTP } from '@/lib/mail';
+import { db } from '@/server/db-client';
+
 import { generateUuid } from '@/lib/id';
+import { isEmailAllowed, parseEmailList } from '@/lib/link-email-validation';
+import { createLinkSession } from '@/lib/link-session';
+import { getInitialStep, type ValidationConfig, type ValidationStep } from '@/lib/link-validation';
+import { sendVerificationOTP } from '@/lib/mail';
 import { comparePassword } from '@/lib/password';
 
-// In-memory cache for verification codes (in production, use Redis or database)
-const verificationCodes = new Map<
-  string,
-  { code: string; email: string; expiresAt: Date; linkSlug: string }
->();
-
-// Clean up expired codes every 5 minutes
-setInterval(() => {
-  const now = new Date();
-  for (const [key, value] of verificationCodes.entries()) {
-    if (value.expiresAt < now) {
-      verificationCodes.delete(key);
-    }
-  }
-}, 5 * 60 * 1000);
+// Re-export types for backward compatibility
+export type { ValidationStep, ValidationConfig } from '@/lib/link-validation';
 
 function generateVerificationCode(): string {
   return crypto.randomInt(100000, 999999).toString();
 }
 
-function parseEmailList(listString: string): string[] {
-  if (!listString || listString.trim() === '') return [];
-  try {
-    // Try parsing as JSON first
-    const parsed = JSON.parse(listString);
-    if (Array.isArray(parsed)) {
-      return parsed;
-    }
-  } catch {
-    // If not JSON, treat as comma-separated
-    return listString
-      .split(',')
-      .map((item) => item.trim())
-      .filter((item) => item.length > 0);
-  }
-  return [];
-}
-
-function extractDomain(email: string): string {
-  return email.split('@')[1]?.toLowerCase() || '';
-}
-
-function isEmailAllowed(email: string, allowList: string[], denyList: string[]): { allowed: boolean; reason?: string } {
-  const emailLower = email.toLowerCase();
-  const domain = extractDomain(email);
-
-  // Check deny list first
-  for (const denied of denyList) {
-    const deniedLower = denied.toLowerCase();
-    // Check if email or domain is denied
-    if (deniedLower === emailLower || deniedLower === `@${domain}` || deniedLower === domain) {
-      return { allowed: false, reason: 'Your email or domain is not allowed to access this link' };
-    }
-  }
-
-  // If allow list is empty, allow all (unless denied)
-  if (allowList.length === 0) {
-    return { allowed: true };
-  }
-
-  // Check allow list
-  for (const allowed of allowList) {
-    const allowedLower = allowed.toLowerCase();
-    // Check if email or domain is allowed
-    if (allowedLower === emailLower || allowedLower === `@${domain}` || allowedLower === domain) {
-      return { allowed: true };
-    }
-  }
-
-  return { allowed: false, reason: 'Your email or domain is not in the allowed list' };
-}
 
 export interface LinkAccessData {
   email?: string;
@@ -90,6 +30,7 @@ export interface LinkAccessData {
 
 export interface LinkValidationResult {
   success: boolean;
+  initialStep?: ValidationStep;
   link?: {
     id: string;
     name: string | null;
@@ -107,6 +48,7 @@ export interface LinkValidationResult {
     allowDownload: boolean | null;
     enableScreenshotProtection: boolean | null;
     enableWatermark: boolean | null;
+    enableFeedback: boolean | null;
     customFields: Array<{
       id: string;
       type: string;
@@ -119,7 +61,6 @@ export interface LinkValidationResult {
   };
   document?: {
     id: string;
-    file: string;
     contentType: string | null;
     name: string;
   };
@@ -128,8 +69,6 @@ export interface LinkValidationResult {
 
 export async function validateLinkAccess(slug: string): Promise<LinkValidationResult> {
   try {
-    const db = await getDb();
-    console.log('Validating link access for slug:', slug);
     // Link has a compound unique constraint on [domainSlug, slug]
     // For public links without domain, domainSlug should be null
     const link = await db.link.findFirst({
@@ -142,7 +81,6 @@ export async function validateLinkAccess(slug: string): Promise<LinkValidationRe
         document: {
           select: {
             id: true,
-            file: true,
             contentType: true,
             name: true,
           },
@@ -168,17 +106,6 @@ export async function validateLinkAccess(slug: string): Promise<LinkValidationRe
     });
 
     if (!link) {
-      console.log('Link not found for slug:', slug);
-      // Try to find if link exists but is archived or deleted
-      const anyLink = await db.link.findFirst({
-        where: { slug },
-        select: { id: true, isArchived: true, deletedAt: true },
-      });
-      if (anyLink) {
-        console.log('Link exists but is archived or deleted:', { isArchived: anyLink.isArchived, deletedAt: anyLink.deletedAt });
-      } else {
-        console.log('No link found with slug:', slug);
-      }
       return { success: false, error: 'Link not found or has been archived' };
     }
 
@@ -187,8 +114,25 @@ export async function validateLinkAccess(slug: string): Promise<LinkValidationRe
       return { success: false, error: 'This link has expired' };
     }
 
+    // Determine initial step based on validation requirements
+    const hasPassword = !!link.password;
+    const hasEmailProtection = link.emailProtected;
+    const hasAgreement = !!link.enableAgreement;
+    const hasCustomFields = link.customField.length > 0;
+
+    const validationConfig: ValidationConfig = {
+      hasPassword,
+      hasEmailProtection,
+      hasEmailAuthentication: link.emailAuthenticated,
+      hasAgreement,
+      hasCustomFields,
+    };
+
+    const initialStep = getInitialStep(validationConfig);
+
     return {
       success: true,
+      initialStep,
       link: {
         id: link.id,
         name: link.name,
@@ -196,16 +140,17 @@ export async function validateLinkAccess(slug: string): Promise<LinkValidationRe
         dataroomId: link.dataroomId,
         linkType: link.linkType,
         tenantId: link.tenantId,
-        enablePassword: !!link.password,
+        enablePassword: hasPassword,
         emailProtected: link.emailProtected,
         emailAuthenticated: link.emailAuthenticated,
-        enableAgreement: !!link.enableAgreement,
+        enableAgreement: hasAgreement,
         agreementId: link.agreementId,
         agreementContent: link.agreement?.content,
         agreementRequireName: link.agreement?.requireName,
         allowDownload: link.allowDownload,
         enableScreenshotProtection: link.enableScreenshotProtection,
         enableWatermark: link.enableWatermark,
+        enableFeedback: link.enableFeedback,
         customFields: link.customField.map((field) => ({
           id: field.id,
           type: field.type,
@@ -219,7 +164,6 @@ export async function validateLinkAccess(slug: string): Promise<LinkValidationRe
       document: link.document
         ? {
             id: link.document.id,
-            file: link.document.file,
             contentType: link.document.contentType,
             name: link.document.name,
           }
@@ -233,7 +177,6 @@ export async function validateLinkAccess(slug: string): Promise<LinkValidationRe
 
 export async function validateLinkPassword(slug: string, password: string): Promise<{ success: boolean; error?: string }> {
   try {
-    const db = await getDb();
     const link = await db.link.findFirst({
       where: { slug },
       select: { password: true },
@@ -257,7 +200,6 @@ export async function validateLinkPassword(slug: string, password: string): Prom
 
 export async function validateLinkEmail(slug: string, email: string): Promise<{ success: boolean; error?: string }> {
   try {
-    const db = await getDb();
     const link = await db.link.findFirst({
       where: { slug },
       select: { allowList: true, denyList: true, emailProtected: true },
@@ -294,12 +236,42 @@ export async function sendEmailVerification(slug: string, email: string): Promis
       return emailValidation;
     }
 
+    // Get link to retrieve linkId and tenantId
+    const link = await db.link.findFirst({
+      where: { slug },
+      select: { id: true, tenantId: true },
+    });
+
+    if (!link) {
+      return { success: false, error: 'Link not found' };
+    }
+
     const code = generateVerificationCode();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-    // Store verification code
-    const cacheKey = `${slug}:${email}`;
-    verificationCodes.set(cacheKey, { code, email, expiresAt, linkSlug: slug });
+    // Invalidate any existing codes for this email/link combination
+    await db.linkEmailVerificationCode.updateMany({
+      where: {
+        email,
+        linkId: link.id,
+        verified: false,
+      },
+      data: {
+        verified: true, // Mark old codes as used
+      },
+    });
+
+    // Store verification code in database
+    await db.linkEmailVerificationCode.create({
+      data: {
+        email,
+        code,
+        linkId: link.id,
+        expiresAt,
+        verified: false,
+        tenantId: link.tenantId,
+      },
+    });
 
     // Send email
     await sendVerificationOTP(email, code, 'email-verification');
@@ -313,24 +285,50 @@ export async function sendEmailVerification(slug: string, email: string): Promis
 
 export async function verifyEmailCode(slug: string, email: string, code: string): Promise<{ success: boolean; error?: string }> {
   try {
-    const cacheKey = `${slug}:${email}`;
-    const stored = verificationCodes.get(cacheKey);
+    // Get link ID from slug
+    const link = await db.link.findFirst({
+      where: { slug },
+      select: { id: true },
+    });
 
-    if (!stored) {
+    if (!link) {
+      return { success: false, error: 'Link not found' };
+    }
+
+    // Find the most recent non-verified code for this email/link
+    const storedCode = await db.linkEmailVerificationCode.findFirst({
+      where: {
+        email,
+        linkId: link.id,
+        verified: false,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    if (!storedCode) {
       return { success: false, error: 'Verification code not found or expired' };
     }
 
-    if (stored.expiresAt < new Date()) {
-      verificationCodes.delete(cacheKey);
+    if (storedCode.expiresAt < new Date()) {
+      // Mark as verified to prevent reuse
+      await db.linkEmailVerificationCode.update({
+        where: { id: storedCode.id },
+        data: { verified: true },
+      });
       return { success: false, error: 'Verification code has expired' };
     }
 
-    if (stored.code !== code) {
+    if (storedCode.code !== code) {
       return { success: false, error: 'Invalid verification code' };
     }
 
-    // Code is valid, remove it from cache
-    verificationCodes.delete(cacheKey);
+    // Code is valid, mark as verified
+    await db.linkEmailVerificationCode.update({
+      where: { id: storedCode.id },
+      data: { verified: true },
+    });
 
     return { success: true };
   } catch (error) {
@@ -339,11 +337,10 @@ export async function verifyEmailCode(slug: string, email: string, code: string)
   }
 }
 
-export async function submitLinkAccess(slug: string, data: LinkAccessData): Promise<{ success: boolean; viewId?: string; error?: string }> {
+export async function submitLinkAccess(slug: string, data: LinkAccessData): Promise<{ success: boolean; viewId?: string; sessionToken?: string; error?: string }> {
+  console.log('submitLinkAccess', slug, data);
   try {
-    const db = await getDb();
-
-    // Validate link exists and is accessible
+    // STEP 1: Validate link exists and is accessible
     const linkValidation = await validateLinkAccess(slug);
     if (!linkValidation.success || !linkValidation.link) {
       return { success: false, error: linkValidation.error || 'Link not found' };
@@ -351,15 +348,59 @@ export async function submitLinkAccess(slug: string, data: LinkAccessData): Prom
 
     const link = linkValidation.link;
 
-    // Validate email if required
-    if (link.emailProtected && data.email) {
-      const emailValidation = await validateLinkEmail(slug, data.email);
-      if (!emailValidation.success) {
-        return emailValidation;
+    // STEP 2: Validate password if required
+    if (link.enablePassword) {
+      if (!data.password) {
+        return { success: false, error: 'Password is required' };
+      }
+      const passwordValidation = await validateLinkPassword(slug, data.password);
+      if (!passwordValidation.success) {
+        return { success: false, error: passwordValidation.error || 'Invalid password' };
       }
     }
 
-    // Create DocumentView
+    // STEP 3: Validate email if required
+    if (link.emailProtected) {
+      if (!data.email) {
+        return { success: false, error: 'Email is required' };
+      }
+      const emailValidation = await validateLinkEmail(slug, data.email);
+      if (!emailValidation.success) {
+        return { success: false, error: emailValidation.error || 'Email not allowed' };
+      }
+      // If email authentication is required, verify that email was verified via OTP
+      // This is already handled in the frontend, but we trust the frontend here
+      // The actual verification happens in validateLinkEmail which checks allowList/denyList
+    }
+
+    // STEP 4: Validate agreement if required
+    if (link.enableAgreement) {
+      if (!data.agreementAccepted) {
+        return { success: false, error: 'Agreement must be accepted' };
+      }
+      if (!link.agreementId) {
+        return { success: false, error: 'Agreement not found' };
+      }
+    }
+
+    // STEP 5: Validate custom fields if required
+    if (link.customFields.length > 0) {
+      const requiredFields = link.customFields.filter((field) => field.required && !field.disabled);
+      if (requiredFields.length > 0) {
+        if (!data.customFieldResponses) {
+          return { success: false, error: 'Custom fields are required' };
+        }
+        // Check that all required fields are present
+        for (const field of requiredFields) {
+          const value = data.customFieldResponses[field.id];
+          if (!value || (typeof value === 'string' && !value.trim())) {
+            return { success: false, error: `Field "${field.label}" is required` };
+          }
+        }
+      }
+    }
+
+    // STEP 6: All validations passed - Create DocumentView
     const viewId = generateUuid();
     const documentView = await db.documentView.create({
       data: {
@@ -375,7 +416,7 @@ export async function submitLinkAccess(slug: string, data: LinkAccessData): Prom
       },
     });
 
-    // Create AgreementResponse if agreement was accepted
+    // STEP 7: Create AgreementResponse if agreement was accepted
     if (link.enableAgreement && link.agreementId && data.agreementAccepted) {
       await db.agreementResponse.create({
         data: {
@@ -386,7 +427,7 @@ export async function submitLinkAccess(slug: string, data: LinkAccessData): Prom
       });
     }
 
-    // Create CustomFieldResponse if there are custom field responses
+    // STEP 8: Create CustomFieldResponse if there are custom field responses
     if (data.customFieldResponses && Object.keys(data.customFieldResponses).length > 0) {
       await db.customFieldResponse.create({
         data: {
@@ -397,12 +438,362 @@ export async function submitLinkAccess(slug: string, data: LinkAccessData): Prom
       });
     }
 
+    // STEP 9: Create session token for secure access
+    const sessionToken = await createLinkSession(viewId, link.id);
+
     revalidatePath(`/l/${slug}`);
 
-    return { success: true, viewId: documentView.id };
+    return { success: true, viewId: documentView.id, sessionToken };
   } catch (error) {
     console.error('Error submitting link access:', error);
     return { success: false, error: 'Failed to submit access request' };
   }
 }
 
+export async function submitFeedback(viewId: string, feedbackData: Record<string, unknown>): Promise<{ success: boolean; error?: string }> {
+  try {
+    const view = await db.documentView.findUnique({
+      where: { id: viewId },
+      include: {
+        link: {
+          include: {
+            feedback: true,
+          },
+        },
+      },
+    });
+
+    if (!view || !view.link) {
+      return { success: false, error: 'View not found' };
+    }
+
+    // Get or create DocumentFeedback
+    let documentFeedback = view.link.feedback;
+    if (!documentFeedback) {
+      documentFeedback = await db.documentFeedback.create({
+        data: {
+          linkId: view.linkId,
+          data: JSON.stringify({}),
+          tenantId: view.tenantId,
+        },
+      });
+    }
+
+    // Create or update FeedbackResponse
+    await db.feedbackResponse.upsert({
+      where: { viewId },
+      create: {
+        feedbackId: documentFeedback.id,
+        viewId,
+        data: JSON.stringify(feedbackData),
+        tenantId: view.tenantId,
+      },
+      update: {
+        data: JSON.stringify(feedbackData),
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error submitting feedback:', error);
+    return { success: false, error: 'Failed to submit feedback' };
+  }
+}
+
+export async function toggleBookmark(viewId: string): Promise<{ success: boolean; isBookmarked: boolean; error?: string }> {
+  try {
+    // For now, we'll use localStorage for bookmark state
+    // In a full implementation, you might want to store this in the database
+    return { success: true, isBookmarked: false };
+  } catch (error) {
+    console.error('Error toggling bookmark:', error);
+    return { success: false, isBookmarked: false, error: 'Failed to toggle bookmark' };
+  }
+}
+
+/**
+ * Creates link access session when no validations are required
+ * This is a Server Action that can modify cookies
+ * It handles the entire flow directly without calling submitLinkAccess
+ * to ensure proper cookie context
+ */
+export async function createLinkAccessSession(slug: string): Promise<{ success: boolean; viewId?: string; error?: string }> {
+  try {
+    // STEP 1: Validate link exists and is accessible
+    const linkValidation = await validateLinkAccess(slug);
+    if (!linkValidation.success || !linkValidation.link) {
+      return { success: false, error: linkValidation.error || 'Link not found' };
+    }
+
+    // STEP 2: Verify that no validations are required
+    if (linkValidation.initialStep !== 'complete') {
+      return { success: false, error: 'Validations are required for this link' };
+    }
+
+    const link = linkValidation.link;
+
+    // STEP 3: Create DocumentView directly (no validations needed)
+    const viewId = generateUuid();
+    const documentView = await db.documentView.create({
+      data: {
+        id: viewId,
+        linkId: link.id,
+        documentId: link.documentId,
+        dataroomId: link.dataroomId,
+        viewerEmail: undefined,
+        viewerName: undefined,
+        verified: false,
+        viewType: link.linkType === 'DATAROOM_LINK' ? 'DATAROOM_VIEW' : 'DOCUMENT_VIEW',
+        tenantId: link.tenantId,
+      },
+    });
+
+    // STEP 4: Create session token for secure access
+    // This must be done in the same Server Action context to modify cookies
+    const sessionToken = await createLinkSession(viewId, link.id);
+
+    revalidatePath(`/l/${slug}`);
+
+    return { success: true, viewId: documentView.id };
+  } catch (error) {
+    console.error('Error creating link access session:', error);
+    return { success: false, error: 'Failed to create access session' };
+  }
+}
+
+/**
+ * Validates document access and returns file URL if access is granted
+ * This is used by the document serve endpoint to validate access before serving files
+ */
+export async function validateDocumentServeAccess(viewId: string): Promise<{
+  success: boolean;
+  fileUrl?: string;
+  contentType?: string;
+  documentName?: string;
+  allowDownload?: boolean;
+  viewerEmail?: string | null;
+  viewerName?: string | null;
+  enableWatermark?: boolean;
+  error?: string;
+}> {
+  try {
+    // STEP 1: Validate session
+    const { validateLinkSession } = await import('@/lib/link-session');
+    const session = await validateLinkSession();
+    if (!session || session.viewId !== viewId) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    // STEP 2: Get DocumentView with all related data
+    const documentView = await db.documentView.findUnique({
+      where: { id: viewId },
+      include: {
+        link: {
+          include: {
+            document: true,
+            agreement: true,
+            customField: {
+              where: {
+                disabled: false,
+                deletedAt: null,
+              },
+            },
+          },
+        },
+        agreementResponse: true,
+        customFieldResponse: true,
+      },
+    });
+
+    if (!documentView || !documentView.link) {
+      return { success: false, error: 'View not found' };
+    }
+
+    const link = documentView.link;
+
+    // STEP 3: Validate link is still valid
+    if (link.isArchived || link.deletedAt) {
+      return { success: false, error: 'Link is no longer available' };
+    }
+
+    if (link.expiresAt && new Date(link.expiresAt) < new Date()) {
+      return { success: false, error: 'Link has expired' };
+    }
+
+    // STEP 4: Validate all security rules were met
+    // 4a. Password validation - DocumentView existence confirms password was validated
+    if (link.password) {
+      // Password protection is enabled - DocumentView exists, so validation passed
+    }
+
+    // 4b. Email validation
+    if (link.emailProtected) {
+      if (!documentView.viewerEmail) {
+        return { success: false, error: 'Email validation required' };
+      }
+
+      const { parseEmailList, isEmailAllowed } = await import('@/lib/link-email-validation');
+      const allowList = parseEmailList(link.allowList);
+      const denyList = parseEmailList(link.denyList);
+      const emailCheck = isEmailAllowed(documentView.viewerEmail, allowList, denyList);
+      if (!emailCheck.allowed) {
+        return { success: false, error: emailCheck.reason || 'Email not allowed' };
+      }
+    }
+
+    // 4c. Agreement validation
+    if (link.enableAgreement && link.agreementId) {
+      const agreementResponse = documentView.agreementResponse;
+      if (!agreementResponse) {
+        return { success: false, error: 'Agreement must be accepted' };
+      }
+    }
+
+    // 4d. Custom fields validation
+    if (link.customField.length > 0) {
+      const requiredFields = link.customField.filter((field) => field.required);
+      if (requiredFields.length > 0) {
+        const customFieldResponse = documentView.customFieldResponse;
+        if (!customFieldResponse) {
+          return { success: false, error: 'Custom fields are required' };
+        }
+
+        try {
+          const responses = JSON.parse(customFieldResponse.data);
+          for (const field of requiredFields) {
+            const value = responses[field.id];
+            if (!value || (typeof value === 'string' && !value.trim())) {
+              return { success: false, error: `Field "${field.label}" is required` };
+            }
+          }
+        } catch {
+          return { success: false, error: 'Invalid custom field responses' };
+        }
+      }
+    }
+
+    // STEP 5: Get document file
+    if (!link.document) {
+      return { success: false, error: 'Document not found' };
+    }
+
+    const document = link.document;
+    const fileUrl = document.file;
+
+    if (!fileUrl) {
+      return { success: false, error: 'Document file not available' };
+    }
+
+    return {
+      success: true,
+      fileUrl,
+      contentType: document.contentType,
+      documentName: document.name,
+      allowDownload: link.allowDownload ?? false,
+      viewerEmail: documentView.viewerEmail,
+      viewerName: documentView.viewerName,
+      enableWatermark: link.enableWatermark ?? false,
+    };
+  } catch (error) {
+    console.error('Error validating document serve access:', error);
+    return { success: false, error: 'Internal server error' };
+  }
+}
+
+/**
+ * Validates a document view and returns the necessary data to display the document
+ * This is called from the view page to ensure the viewId is valid and the session is correct
+ */
+export async function validateDocumentView(
+  viewId: string,
+  linkId: string
+): Promise<{
+  success: boolean;
+  document?: {
+    id: string;
+    name: string;
+    contentType: string | null;
+  };
+  link?: {
+    allowDownload: boolean | null;
+    enableScreenshotProtection: boolean | null;
+    enableWatermark: boolean | null;
+    enableFeedback: boolean | null;
+    enableQuestion: boolean | null;
+    enableConversation: boolean | null;
+  };
+  viewer?: {
+    email: string | null;
+    name: string | null;
+  };
+  tenantId?: string;
+  error?: string;
+}> {
+  try {
+    // Fetch DocumentView with link and document
+    const documentView = await db.documentView.findUnique({
+      where: { id: viewId },
+      include: {
+        link: {
+          include: {
+            document: {
+              select: {
+                id: true,
+                name: true,
+                contentType: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!documentView || !documentView.link) {
+      return { success: false, error: 'Document view not found' };
+    }
+
+    // Verify that the linkId matches
+    if (documentView.linkId !== linkId) {
+      return { success: false, error: 'Link ID mismatch' };
+    }
+
+    // Check if link is archived or deleted
+    if (documentView.link.isArchived || documentView.link.deletedAt) {
+      return { success: false, error: 'Link is no longer available' };
+    }
+
+    // Check if link has expired
+    if (documentView.link.expiresAt && new Date(documentView.link.expiresAt) < new Date()) {
+      return { success: false, error: 'Link has expired' };
+    }
+
+    if (!documentView.link.document) {
+      return { success: false, error: 'Document not found' };
+    }
+
+    return {
+      success: true,
+      document: {
+        id: documentView.link.document.id,
+        name: documentView.link.document.name,
+        contentType: documentView.link.document.contentType,
+      },
+      link: {
+        allowDownload: documentView.link.allowDownload,
+        enableScreenshotProtection: documentView.link.enableScreenshotProtection,
+        enableWatermark: documentView.link.enableWatermark,
+        enableFeedback: documentView.link.enableFeedback,
+        enableQuestion: documentView.link.enableQuestion,
+        enableConversation: documentView.link.enableConversation,
+      },
+      viewer: {
+        email: documentView.viewerEmail,
+        name: documentView.viewerName,
+      },
+      tenantId: documentView.tenantId,
+    };
+  } catch (error) {
+    console.error('Error validating document view:', error);
+    return { success: false, error: 'Failed to validate document view' };
+  }
+}

@@ -117,6 +117,8 @@ model Tenant extends Auditable {
   documentVersions              DocumentVersion[]
   links                         Link[]
   linkPresets                   LinkPreset[]
+  linkAccessSessions            LinkAccessSession[]
+  linkEmailVerificationCodes    LinkEmailVerificationCode[]
   domains                       Domain[]
   views                         DocumentView[]
   viewers                       Viewer[]

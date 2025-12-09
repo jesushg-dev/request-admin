@@ -17,4 +17,3 @@ declare namespace JSX {
     'media-fullscreen-button': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
   }
 }
-

@@ -95,6 +95,8 @@ model Tenant {
   documentVersions                 DocumentVersion[]
   links                            Link[]
   linkPresets                      LinkPreset[]
+  linkAccessSessions               LinkAccessSession[]
+  linkEmailVerificationCodes       LinkEmailVerificationCode[]
   domains                          Domain[]
   views                            DocumentView[]
   viewers                          Viewer[]
@@ -866,60 +868,60 @@ model DocumentPage {
 }
 
 model Link {
-  createdAt                  DateTime               @default(now())
-  updatedAt                  DateTime?              @updatedAt()
+  createdAt                  DateTime                    @default(now())
+  updatedAt                  DateTime?                   @updatedAt()
   deletedAt                  DateTime?
-  createdBy                  String?                @db.VarChar(50)
-  updatedBy                  String?                @db.VarChar(50)
+  createdBy                  String?                     @db.VarChar(50)
+  updatedBy                  String?                     @db.VarChar(50)
   tenantId                   String
-  tenant                     Tenant                 @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id                         String                 @id() @default(uuid())
+  tenant                     Tenant                      @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                         String                      @id() @default(uuid())
   documentId                 String?
-  document                   Document?              @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  document                   Document?                   @relation(fields: [documentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   dataroomId                 String?
-  dataroom                   Dataroom?              @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  linkType                   String                 @default("DOCUMENT_LINK")
-  url                        String?                @unique()
+  dataroom                   Dataroom?                   @relation(fields: [dataroomId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  linkType                   String                      @default("DOCUMENT_LINK")
+  url                        String?                     @unique()
   name                       String?
   slug                       String?
   expiresAt                  DateTime?
   password                   String?
-  allowList                  String                 @db.Text()
-  denyList                   String                 @db.Text()
-  emailProtected             Boolean                @default(true)
-  emailAuthenticated         Boolean                @default(false)
-  allowDownload              Boolean?               @default(false)
-  isArchived                 Boolean                @default(false)
-  enableNotification         Boolean?               @default(true)
-  enableFeedback             Boolean?               @default(false)
-  enableQuestion             Boolean?               @default(false)
-  enableScreenshotProtection Boolean?               @default(false)
-  enableAgreement            Boolean?               @default(false)
-  enableUpload               Boolean?               @default(false)
-  isFileRequestOnly          Boolean?               @default(false)
+  allowList                  String                      @db.Text()
+  denyList                   String                      @db.Text()
+  emailProtected             Boolean                     @default(true)
+  emailAuthenticated         Boolean                     @default(false)
+  allowDownload              Boolean?                    @default(false)
+  isArchived                 Boolean                     @default(false)
+  enableNotification         Boolean?                    @default(true)
+  enableFeedback             Boolean?                    @default(false)
+  enableQuestion             Boolean?                    @default(false)
+  enableScreenshotProtection Boolean?                    @default(false)
+  enableAgreement            Boolean?                    @default(false)
+  enableUpload               Boolean?                    @default(false)
+  isFileRequestOnly          Boolean?                    @default(false)
   uploadFolderId             String?
-  enableIndexFile            Boolean?               @default(false)
-  enableConversation         Boolean?               @default(false)
-  showBanner                 Boolean?               @default(false)
+  enableIndexFile            Boolean?                    @default(false)
+  enableConversation         Boolean?                    @default(false)
+  showBanner                 Boolean?                    @default(false)
   welcomeMessage             String?
-  workflow                   Workflow?              @relation("EntryLinkWorkflow")
+  workflow                   Workflow?                   @relation("EntryLinkWorkflow")
   views                      DocumentView[]
   feedback                   DocumentFeedback?
   agreementId                String?
-  agreement                  Agreement?             @relation(fields: [agreementId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  agreement                  Agreement?                  @relation(fields: [agreementId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   domainId                   String?
-  domain                     Domain?                @relation(fields: [domainId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  domain                     Domain?                     @relation(fields: [domainId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   domainSlug                 String?
   metaTitle                  String?
   metaDescription            String?
   metaImage                  String?
   metaFavicon                String?
-  enableCustomMetatag        Boolean?               @default(false)
-  audienceType               String                 @default("GENERAL")
+  enableCustomMetatag        Boolean?                    @default(false)
+  audienceType               String                      @default("GENERAL")
   groupId                    String?
-  group                      DataroomViewerGroup?   @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  enableWatermark            Boolean?               @default(false)
-  watermarkConfig            String                 @db.Text()
+  group                      DataroomViewerGroup?        @relation(fields: [groupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  enableWatermark            Boolean?                    @default(false)
+  watermarkConfig            String                      @db.Text()
   conversations              DocumentConversation[]
   dataroomFaqItems           DataroomFaqItem[]
   customField                CustomField[]
@@ -927,7 +929,8 @@ model Link {
   uploadedDocuments          DocumentUpload[]
   viewerInvitations          ViewerInvitation[]
   permissionGroupId          String?
-  permissionGroup            PermissionGroup?       @relation(fields: [permissionGroupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  permissionGroup            PermissionGroup?            @relation(fields: [permissionGroupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  emailVerificationCodes     LinkEmailVerificationCode[]
 
   @@unique([domainSlug, slug])
   @@index([documentId])
@@ -1062,8 +1065,10 @@ model DocumentReaction {
   view       DocumentView @relation(fields: [viewId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   pageNumber Int
   type       String
+  comment    String?      @db.Text()
 
   @@index([viewId])
+  @@index([tenantId, type])
 }
 
 model InvitationDocument {
@@ -1314,6 +1319,52 @@ model DataroomViewerGroupAccessControls {
 
   @@unique([groupId, itemId])
   @@index([groupId])
+}
+
+model LinkAccessSession {
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt()
+  deletedAt DateTime?
+  createdBy String?   @db.VarChar(50)
+  updatedBy String?   @db.VarChar(50)
+  tenantId  String
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id        String    @id() @default(uuid())
+  token     String    @unique()
+  viewId    String
+  linkId    String
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+
+  @@index([token])
+  @@index([viewId])
+  @@index([linkId])
+  @@index([expiresAt])
+  @@index([tenantId])
+}
+
+model LinkEmailVerificationCode {
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt()
+  deletedAt DateTime?
+  createdBy String?   @db.VarChar(50)
+  updatedBy String?   @db.VarChar(50)
+  tenantId  String
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id        String    @id() @default(uuid())
+  email     String
+  code      String
+  linkId    String
+  link      Link      @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  verified  Boolean   @default(false)
+
+  @@index([email, linkId])
+  @@index([code])
+  @@index([expiresAt])
+  @@index([linkId])
+  @@index([tenantId])
 }
 
 model IncomingWebhook {

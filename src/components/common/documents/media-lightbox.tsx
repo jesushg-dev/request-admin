@@ -2,12 +2,13 @@
 
 import type React from 'react';
 import { useCallback } from 'react';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { X, ChevronLeft, ChevronRight, Download, ExternalLink } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import * as MediaPlayer from '@/components/ui/media-player';
+import { ChevronLeft, ChevronRight, Download, ExternalLink, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import * as MediaPlayer from '@/components/ui/media-player';
 
 interface MediaLightboxProps {
   open: boolean;
@@ -61,40 +62,19 @@ export function MediaLightbox({ open, onOpenChange, mediaUrl, contentType, title
         <div className="relative flex flex-col h-full w-full overflow-hidden">
           {/* Top Bar - Google Drive Style */}
           <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-4 py-3 bg-gradient-to-b from-black/90 via-black/80 to-transparent">
-            <div className="flex items-center gap-3 flex-1 min-w-0">
-              {title && (
-                <DialogTitle className="text-sm sm:text-base font-medium text-white truncate">
-                  {title}
-                </DialogTitle>
-              )}
-            </div>
+            <div className="flex items-center gap-3 flex-1 min-w-0">{title && <DialogTitle className="text-sm sm:text-base font-medium text-white truncate">{title}</DialogTitle>}</div>
             <div className="flex items-center gap-2 flex-shrink-0">
               {viewUrl && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  asChild
-                  className="h-8 w-8 text-white hover:bg-white/20 hover:text-white rounded-full"
-                  aria-label={t('actions.view')}>
+                <Button variant="ghost" size="icon" asChild className="h-8 w-8 text-white hover:bg-white/20 hover:text-white rounded-full" aria-label={t('actions.view')}>
                   <a href={viewUrl} target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="h-4 w-4" />
                   </a>
                 </Button>
               )}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleDownload}
-                className="h-8 w-8 text-white hover:bg-white/20 hover:text-white rounded-full"
-                aria-label={t('actions.download')}>
+              <Button variant="ghost" size="icon" onClick={handleDownload} className="h-8 w-8 text-white hover:bg-white/20 hover:text-white rounded-full" aria-label={t('actions.download')}>
                 <Download className="h-4 w-4" />
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onOpenChange(false)}
-                className="h-8 w-8 text-white hover:bg-white/20 hover:text-white rounded-full"
-                aria-label={t('actions.close')}>
+              <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="h-8 w-8 text-white hover:bg-white/20 hover:text-white rounded-full" aria-label={t('actions.close')}>
                 <X className="h-4 w-4" />
               </Button>
             </div>
@@ -137,12 +117,7 @@ export function MediaLightbox({ open, onOpenChange, mediaUrl, contentType, title
           {/* Media Player Container */}
           <div className="flex-1 overflow-hidden flex justify-center items-center p-4 sm:p-8 pt-16 sm:pt-20 pb-8">
             {isMedia ? (
-              <MediaPlayer.Root 
-                className={cn(
-                  "max-w-full w-full",
-                  isAudio ? "min-h-[200px] max-h-[300px]" : "max-h-[80vh] h-auto"
-                )} 
-                style={{ maxWidth: '90vw' }}>
+              <MediaPlayer.Root className={cn('max-w-full w-full', isAudio ? 'min-h-[200px] max-h-[300px]' : 'max-h-[80vh] h-auto')} style={{ maxWidth: '90vw' }}>
                 {isVideo ? (
                   <MediaPlayer.Video>
                     <source src={mediaUrl} type={contentType} />
@@ -175,4 +150,3 @@ export function MediaLightbox({ open, onOpenChange, mediaUrl, contentType, title
     </Dialog>
   );
 }
-

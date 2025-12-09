@@ -194,6 +194,7 @@ model Link extends TenantScoped, Auditable {
   viewerInvitations ViewerInvitation[]
   permissionGroupId String?
   permissionGroup   PermissionGroup? @relation(fields: [permissionGroupId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  emailVerificationCodes LinkEmailVerificationCode[]
 
   @@unique([domainSlug, slug])
   @@index([documentId])
@@ -305,8 +306,10 @@ model DocumentReaction extends TenantScoped, Auditable {
   view       DocumentView   @relation(fields: [viewId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   pageNumber Int
   type       String
+  comment    String? @db.Text
 
   @@index([viewId])
+  @@index([tenantId, type])
 }
 
 // ----------------------
@@ -483,6 +486,44 @@ model DataroomViewerGroupAccessControls extends TenantScoped, Auditable {
 
   @@unique([groupId, itemId])
   @@index([groupId])
+}
+
+// ----------------------
+// Link Access Session Model
+// ----------------------
+model LinkAccessSession extends TenantScoped, Auditable {
+  id         String   @id @default(uuid())
+  token      String   @unique
+  viewId     String
+  linkId     String
+  expiresAt  DateTime
+  ipAddress  String?
+  userAgent  String?
+
+  @@index([token])
+  @@index([viewId])
+  @@index([linkId])
+  @@index([expiresAt])
+  @@index([tenantId])
+}
+
+// ----------------------
+// Link Email Verification Code Model
+// ----------------------
+model LinkEmailVerificationCode extends TenantScoped, Auditable {
+  id         String   @id @default(uuid())
+  email      String
+  code       String
+  linkId     String
+  link       Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  expiresAt  DateTime
+  verified   Boolean  @default(false)
+
+  @@index([email, linkId])
+  @@index([code])
+  @@index([expiresAt])
+  @@index([linkId])
+  @@index([tenantId])
 }
 
 // ----------------------

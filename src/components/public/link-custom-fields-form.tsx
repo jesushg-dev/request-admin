@@ -1,14 +1,12 @@
 'use client';
 
-import { useState } from 'react';
 import { FileText } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useFormContext } from 'react-hook-form';
+
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 
 interface CustomField {
@@ -23,50 +21,23 @@ interface CustomField {
 
 interface LinkCustomFieldsFormProps {
   fields: CustomField[];
-  onSuccess: (responses: Record<string, unknown>) => void;
 }
 
-export function LinkCustomFieldsForm({ fields, onSuccess }: LinkCustomFieldsFormProps) {
+export function LinkCustomFieldsForm({ fields }: LinkCustomFieldsFormProps) {
   const t = useTranslations('public.link');
-  const [responses, setResponses] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const { watch, setValue } = useFormContext();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Validate required fields
-    const newErrors: Record<string, string> = {};
-    fields.forEach((field) => {
-      if (field.required) {
-        const value = responses[field.id];
-        if (!value || (typeof value === 'string' && !value.trim())) {
-          newErrors[field.id] = t('customFields.required', { field: field.label });
-        }
-      }
-    });
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    onSuccess(responses);
-  };
+  const customFieldResponses = watch('customFieldResponses') || {};
 
   const updateResponse = (fieldId: string, value: unknown) => {
-    setResponses((prev) => ({ ...prev, [fieldId]: value }));
-    if (errors[fieldId]) {
-      setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[fieldId];
-        return newErrors;
-      });
-    }
+    setValue('customFieldResponses', {
+      ...customFieldResponses,
+      [fieldId]: value,
+    });
   };
 
   const renderField = (field: CustomField) => {
-    const value = responses[field.id];
-    const error = errors[field.id];
+    const value = customFieldResponses[field.id];
 
     switch (field.type) {
       case 'SHORT_TEXT':
@@ -76,14 +47,7 @@ export function LinkCustomFieldsForm({ fields, onSuccess }: LinkCustomFieldsForm
               {field.label}
               {field.required && <span className="text-destructive"> *</span>}
             </Label>
-            <Input
-              id={field.id}
-              value={(value as string) || ''}
-              onChange={(e) => updateResponse(field.id, e.target.value)}
-              placeholder={field.placeholder || ''}
-              required={field.required}
-            />
-            {error && <p className="text-sm text-destructive">{error}</p>}
+            <Input id={field.id} value={(value as string) || ''} onChange={(e) => updateResponse(field.id, e.target.value)} placeholder={field.placeholder || ''} required={field.required} />
           </div>
         );
 
@@ -94,14 +58,7 @@ export function LinkCustomFieldsForm({ fields, onSuccess }: LinkCustomFieldsForm
               {field.label}
               {field.required && <span className="text-destructive"> *</span>}
             </Label>
-            <Textarea
-              id={field.id}
-              value={(value as string) || ''}
-              onChange={(e) => updateResponse(field.id, e.target.value)}
-              placeholder={field.placeholder || ''}
-              required={field.required}
-            />
-            {error && <p className="text-sm text-destructive">{error}</p>}
+            <Textarea id={field.id} value={(value as string) || ''} onChange={(e) => updateResponse(field.id, e.target.value)} placeholder={field.placeholder || ''} required={field.required} />
           </div>
         );
 
@@ -120,7 +77,6 @@ export function LinkCustomFieldsForm({ fields, onSuccess }: LinkCustomFieldsForm
               placeholder={field.placeholder || ''}
               required={field.required}
             />
-            {error && <p className="text-sm text-destructive">{error}</p>}
           </div>
         );
 
@@ -139,7 +95,6 @@ export function LinkCustomFieldsForm({ fields, onSuccess }: LinkCustomFieldsForm
               placeholder={field.placeholder || ''}
               required={field.required}
             />
-            {error && <p className="text-sm text-destructive">{error}</p>}
           </div>
         );
 
@@ -158,24 +113,17 @@ export function LinkCustomFieldsForm({ fields, onSuccess }: LinkCustomFieldsForm
               placeholder={field.placeholder || ''}
               required={field.required}
             />
-            {error && <p className="text-sm text-destructive">{error}</p>}
           </div>
         );
 
       case 'CHECKBOX':
         return (
           <div key={field.id} className="flex items-center space-x-2">
-            <Checkbox
-              id={field.id}
-              checked={(value as boolean) || false}
-              onCheckedChange={(checked) => updateResponse(field.id, checked === true)}
-              required={field.required}
-            />
+            <Checkbox id={field.id} checked={(value as boolean) || false} onCheckedChange={(checked) => updateResponse(field.id, checked === true)} required={field.required} />
             <Label htmlFor={field.id} className="cursor-pointer">
               {field.label}
               {field.required && <span className="text-destructive"> *</span>}
             </Label>
-            {error && <p className="text-sm text-destructive">{error}</p>}
           </div>
         );
 
@@ -196,7 +144,6 @@ export function LinkCustomFieldsForm({ fields, onSuccess }: LinkCustomFieldsForm
               placeholder={field.placeholder || t('customFields.selectPlaceholder')}
               required={field.required}
             />
-            {error && <p className="text-sm text-destructive">{error}</p>}
           </div>
         );
 
@@ -210,23 +157,17 @@ export function LinkCustomFieldsForm({ fields, onSuccess }: LinkCustomFieldsForm
   }
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
-      <CardHeader>
-        <div className="flex items-center gap-2">
+    <div className="w-full">
+      <div className="mb-6">
+        <div className="flex items-center gap-2 mb-2">
           <FileText className="h-5 w-5 text-primary" />
-          <CardTitle>{t('customFields.title')}</CardTitle>
+          <h2 className="text-xl font-semibold">{t('customFields.title')}</h2>
         </div>
-        <CardDescription>{t('customFields.description')}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {fields.map(renderField)}
-          <Button type="submit" className="w-full">
-            {t('customFields.submit')}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+        <p className="text-sm text-muted-foreground">{t('customFields.description')}</p>
+      </div>
+      <div className="space-y-4">
+        {fields.map(renderField)}
+      </div>
+    </div>
   );
 }
-

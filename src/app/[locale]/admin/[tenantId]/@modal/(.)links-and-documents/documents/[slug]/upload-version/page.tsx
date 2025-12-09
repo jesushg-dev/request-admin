@@ -48,4 +48,3 @@ const UploadVersionPage: FC<UploadVersionPageProps> = async ({ params }) => {
 };
 
 export default UploadVersionPage;
-

@@ -76,9 +76,7 @@ export function Pagination({
   return (
     <div className={`flex items-center justify-between ${className}`}>
       <div className="flex items-center gap-2">
-        {t && (
-          <p className="text-sm text-muted-foreground">{getPaginationText()}</p>
-        )}
+        {t && <p className="text-sm text-muted-foreground">{getPaginationText()}</p>}
         {showPageSizeSelector && (
           <Select
             value={itemsPerPage.toString()}
@@ -105,12 +103,7 @@ export function Pagination({
         </Button>
         <div className="flex items-center gap-1">
           {visiblePages.map((page) => (
-            <Button
-              key={page}
-              variant={currentPage === page ? 'default' : 'outline'}
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => setCurrentPage(page)}>
+            <Button key={page} variant={currentPage === page ? 'default' : 'outline'} size="icon" className="h-8 w-8" onClick={() => setCurrentPage(page)}>
               {page}
             </Button>
           ))}
@@ -122,4 +115,3 @@ export function Pagination({
     </div>
   );
 }
-

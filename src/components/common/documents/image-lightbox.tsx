@@ -1,12 +1,13 @@
 'use client';
 
 import type React from 'react';
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { X, ZoomIn, ZoomOut, RotateCw, ChevronLeft, ChevronRight, Download, Maximize2, Minimize2, ExternalLink } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ChevronLeft, ChevronRight, Download, ExternalLink, Maximize2, Minimize2, RotateCw, X, ZoomIn, ZoomOut } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 
 interface ImageLightboxProps {
   open: boolean;
@@ -103,21 +104,27 @@ export function ImageLightbox({ open, onOpenChange, imageUrl, title, images, cur
     }
   }, [isFitted]);
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (zoom > 1) {
-      setIsDragging(true);
-      setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y });
-    }
-  }, [zoom, position]);
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      if (zoom > 1) {
+        setIsDragging(true);
+        setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y });
+      }
+    },
+    [zoom, position]
+  );
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (isDragging && zoom > 1) {
-      setPosition({
-        x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y,
-      });
-    }
-  }, [isDragging, zoom, dragStart]);
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (isDragging && zoom > 1) {
+        setPosition({
+          x: e.clientX - dragStart.x,
+          y: e.clientY - dragStart.y,
+        });
+      }
+    },
+    [isDragging, zoom, dragStart]
+  );
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
@@ -160,40 +167,19 @@ export function ImageLightbox({ open, onOpenChange, imageUrl, title, images, cur
         <div className="relative flex flex-col h-full w-full overflow-hidden">
           {/* Top Bar - Google Drive Style */}
           <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-4 py-3 bg-gradient-to-b from-black/90 via-black/80 to-transparent">
-            <div className="flex items-center gap-3 flex-1 min-w-0">
-              {title && (
-                <DialogTitle className="text-sm sm:text-base font-medium text-white truncate">
-                  {title}
-                </DialogTitle>
-              )}
-            </div>
+            <div className="flex items-center gap-3 flex-1 min-w-0">{title && <DialogTitle className="text-sm sm:text-base font-medium text-white truncate">{title}</DialogTitle>}</div>
             <div className="flex items-center gap-2 flex-shrink-0">
               {viewUrl && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  asChild
-                  className="h-8 w-8 text-white hover:bg-white/20 hover:text-white rounded-full"
-                  aria-label={t('actions.view')}>
+                <Button variant="ghost" size="icon" asChild className="h-8 w-8 text-white hover:bg-white/20 hover:text-white rounded-full" aria-label={t('actions.view')}>
                   <a href={viewUrl} target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="h-4 w-4" />
                   </a>
                 </Button>
               )}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleDownload}
-                className="h-8 w-8 text-white hover:bg-white/20 hover:text-white rounded-full"
-                aria-label={t('actions.download')}>
+              <Button variant="ghost" size="icon" onClick={handleDownload} className="h-8 w-8 text-white hover:bg-white/20 hover:text-white rounded-full" aria-label={t('actions.download')}>
                 <Download className="h-4 w-4" />
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onOpenChange(false)}
-                className="h-8 w-8 text-white hover:bg-white/20 hover:text-white rounded-full"
-                aria-label={t('actions.close')}>
+              <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="h-8 w-8 text-white hover:bg-white/20 hover:text-white rounded-full" aria-label={t('actions.close')}>
                 <X className="h-4 w-4" />
               </Button>
             </div>
@@ -244,9 +230,7 @@ export function ImageLightbox({ open, onOpenChange, imageUrl, title, images, cur
               aria-label={t('actions.zoomOut')}>
               <ZoomOut className="h-4 w-4" />
             </Button>
-            <span className="text-white text-sm font-medium min-w-[3rem] text-center">
-              {Math.round(zoom * 100)}%
-            </span>
+            <span className="text-white text-sm font-medium min-w-[3rem] text-center">{Math.round(zoom * 100)}%</span>
             <Button
               variant="ghost"
               size="icon"
@@ -265,12 +249,7 @@ export function ImageLightbox({ open, onOpenChange, imageUrl, title, images, cur
               aria-label={isFitted ? t('actions.minimize') : t('actions.fitToScreen')}>
               {isFitted ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleRotate}
-              className="h-8 w-8 text-white hover:bg-white/20 rounded-full"
-              aria-label={t('actions.rotateImage')}>
+            <Button variant="ghost" size="icon" onClick={handleRotate} className="h-8 w-8 text-white hover:bg-white/20 rounded-full" aria-label={t('actions.rotateImage')}>
               <RotateCw className="h-4 w-4" />
             </Button>
           </div>
@@ -318,11 +297,7 @@ export function ImageLightbox({ open, onOpenChange, imageUrl, title, images, cur
                   alt={title || 'Image preview'}
                   onLoad={handleImageLoad}
                   onError={handleImageError}
-                  className={cn(
-                    'object-contain',
-                    'transition-opacity duration-300',
-                    imageLoaded ? 'opacity-100' : 'opacity-0'
-                  )}
+                  className={cn('object-contain', 'transition-opacity duration-300', imageLoaded ? 'opacity-100' : 'opacity-0')}
                   style={{
                     maxWidth: '100%',
                     maxHeight: '100%',
@@ -343,4 +318,3 @@ export function ImageLightbox({ open, onOpenChange, imageUrl, title, images, cur
     </Dialog>
   );
 }
-
