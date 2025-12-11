@@ -2067,7 +2067,8 @@
             "activity": "Activity",
             "viewers": "Viewers",
             "engagement": "Engagement",
-            "geography": "Geography"
+            "geography": "Geography",
+            "feedback": "Feedback"
           },
           "activity": {
             "viewsDownloadsOverTime": "Views & Downloads Over Time",
@@ -2106,6 +2107,20 @@
             "geographicDescription": "Where your document is being viewed from",
             "viewDetailedMap": "View Detailed Map",
             "notAvailable": "Geographic tracking not enabled"
+          },
+          "feedback": {
+            "totalResponses": "Total Responses",
+            "positiveResponses": "Positive Responses",
+            "negativeResponses": "Negative Responses",
+            "responsesBreakdown": "Responses Breakdown",
+            "responsesDescription": "Distribution of feedback responses",
+            "yes": "Yes",
+            "no": "No",
+            "recentResponses": "Recent Responses",
+            "recentDescription": "Latest feedback from viewers",
+            "anonymous": "Anonymous",
+            "noResponses": "No Feedback Yet",
+            "noResponsesDescription": "Feedback responses will appear here once viewers start providing feedback."
           },
           "export": {
             "title": "Export Analytics",
@@ -4553,6 +4568,30 @@
             "tooltip": "Allow users to ask questions about the document"
           }
         },
+        "feedbackQuestion": {
+          "title": "Feedback Question Configuration",
+          "description": "Customize the feedback question that will be shown to viewers",
+          "type": {
+            "label": "Question Type",
+            "description": "Choose how users will provide feedback",
+            "yesNo": "Yes/No",
+            "text": "Text Response",
+            "rating": "Star Rating (1-5)"
+          },
+          "question": {
+            "label": "Question",
+            "placeholder": "e.g., Was this document helpful?",
+            "description": "Enter the question you want to ask viewers"
+          },
+          "preview": {
+            "label": "Preview",
+            "placeholder": "Your question will appear here",
+            "yes": "Yes",
+            "no": "No",
+            "textPlaceholder": "Type answer here...",
+            "description": "This is how the question will appear to viewers"
+          }
+        },
         "titleCreate": "Create a new link",
         "subtitleCreate": "You can share documents with your clients by creating links.",
         "titleEdit": "Edit link",
@@ -4560,6 +4599,7 @@
         "create": "Create",
         "validation": {
           "nameRequired": "Name is required",
+          "feedbackQuestionRequiredWhenEnabled": "Feedback question is required when feedback is enabled",
           "nameMaxLength": "Name must be 200 characters or less",
           "viewerValueRequired": "Viewer value cannot be empty",
           "customFieldLabelRequired": "Custom field label is required",
@@ -5184,6 +5224,7 @@
         "commentsSection": "Comments",
         "reactionAdded": "Reaction added",
         "reactionAddedDescription": "Your {type} reaction has been recorded",
+        "reactionRemoved": "Reaction removed",
         "commentAdded": "Comment added",
         "commentAddedDescription": "Your comment has been recorded",
         "failedToAdd": "Failed to add",
@@ -5191,7 +5232,26 @@
         "emptyComment": "Please enter a comment",
         "commentTooShort": "Comment must be at least 5 characters",
         "anonymous": "Anonymous",
-        "characters": "characters"
+        "characters": "characters",
+        "tapToRemove": "Tap to remove"
+      },
+      "feedback": {
+        "title": "Feedback",
+        "selectAnswer": "Please select an answer",
+        "selectRating": "Please select a rating",
+        "textTooShort": "Response must be at least 5 characters",
+        "yes": "Yes",
+        "no": "No",
+        "additionalComments": "Additional Comments",
+        "optional": "Optional",
+        "commentsPlaceholder": "Tell us more...",
+        "textAnswerPlaceholder": "Type your answer here...",
+        "submitFeedback": "Submit Feedback",
+        "submitting": "Submitting...",
+        "thankYou": "Thank you for your feedback!",
+        "thankYouMessage": "Your feedback has been recorded.",
+        "submitted": "Feedback Submitted",
+        "submitError": "Failed to submit feedback. Please try again."
       }
     }
   },

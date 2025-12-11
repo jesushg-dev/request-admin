@@ -50,6 +50,12 @@ const EditPage: FC<EditPageProps> = async ({ params, searchParams }) => {
       enableQuestion: true,
       allowList: true,
       denyList: true,
+      feedback: {
+        select: {
+          id: true,
+          data: true,
+        },
+      },
       customField: {
         select: {
           id: true,
@@ -70,6 +76,22 @@ const EditPage: FC<EditPageProps> = async ({ params, searchParams }) => {
   // Parse allowList and denyList from JSON strings
   const allowList = link.allowList ? (JSON.parse(link.allowList) as Array<{ value: string; type: 'EMAIL' | 'DOMAIN' }>) : [];
   const denyList = link.denyList ? (JSON.parse(link.denyList) as Array<{ value: string; type: 'EMAIL' | 'DOMAIN' }>) : [];
+
+  // Parse feedback question data
+  let feedbackQuestion: { type: 'YES_NO' | 'TEXT' | 'RATING'; question: string } | undefined;
+  if (link.feedback) {
+    try {
+      const feedbackData = JSON.parse(link.feedback.data);
+      if (feedbackData.enabled && feedbackData.question) {
+        feedbackQuestion = {
+          type: feedbackData.type || 'YES_NO',
+          question: feedbackData.question,
+        };
+      }
+    } catch (e) {
+      console.error('Failed to parse feedback data:', e);
+    }
+  }
 
   // Map custom fields
   const customFields = link.customField.map((field) => ({
@@ -98,6 +120,7 @@ const EditPage: FC<EditPageProps> = async ({ params, searchParams }) => {
     allowDownload: link.allowDownload ?? false,
     enableNotification: link.enableNotification ?? false,
     enableFeedback: link.enableFeedback ?? false,
+    feedbackQuestion: feedbackQuestion || { type: 'YES_NO' as const, question: '' },
     enableQuestion: link.enableQuestion ?? false,
     allowSpecificViewers: allowList.length > 0,
     allowedViewers: allowList,

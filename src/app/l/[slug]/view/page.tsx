@@ -1,5 +1,6 @@
 import { notFound, redirect } from 'next/navigation';
 import { validateDocumentView } from '@/actions/link-access';
+import { getFeedbackQuestion, type FeedbackQuestionData } from '@/actions/document-feedback';
 
 import { validateLinkSession } from '@/lib/link-session';
 import { PublicDocumentViewer } from '@/components/public/public-document-viewer';
@@ -47,7 +48,16 @@ export default async function DocumentViewPage({ params, searchParams }: Documen
     redirect(`/l/${slug}`);
   }
 
-  // STEP 3: Render document viewer
+  // STEP 3: Get feedback question if enabled
+  let feedbackData: FeedbackQuestionData | undefined;
+  if (viewData.link.enableFeedback) {
+    const feedbackResult = await getFeedbackQuestion(session.linkId, viewData.tenantId!);
+    if (feedbackResult.success && feedbackResult.feedback) {
+      feedbackData = feedbackResult.feedback;
+    }
+  }
+
+  // STEP 4: Render document viewer
   return (
     <div className="min-h-screen bg-background">
       <PublicDocumentViewer
@@ -65,6 +75,7 @@ export default async function DocumentViewPage({ params, searchParams }: Documen
         enableConversation={viewData.link.enableConversation ?? false}
         viewerEmail={viewData.viewer?.email}
         viewerName={viewData.viewer?.name}
+        feedbackData={feedbackData}
       />
     </div>
   );

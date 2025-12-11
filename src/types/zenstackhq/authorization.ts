@@ -2,6 +2,7 @@ import { Prisma } from '@zenstackhq/runtime/models';
 
 export const UserTenantDefaultArgs = Prisma.validator<Prisma.UserTenantDefaultArgs>()({
   select: {
+    id: true,
     role: true,
     isActive: true,
     isTermAccepted: true,

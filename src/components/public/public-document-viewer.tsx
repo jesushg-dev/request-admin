@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { Search, ZoomIn, ZoomOut, Bookmark, MessageSquare, Download, Maximize2, Minimize2, HelpCircle, MessagesSquare, Smile } from 'lucide-react';
-import { submitFeedback, toggleBookmark } from '@/actions/link-access';
+import { toggleBookmark } from '@/actions/link-access';
 import { toast } from 'sonner';
 import { useFullscreen } from '@/hooks/use-full-screen';
 import { cn } from '@/lib/utils';
@@ -18,6 +18,8 @@ import { Badge } from '@/components/ui/badge';
 import { PublicDocumentQuestions } from './public-document-questions';
 import { PublicDocumentConversations } from './public-document-conversations';
 import { PublicDocumentReactions } from './public-document-reactions';
+import { PublicFeedbackQuestion } from './public-feedback-question';
+import type { FeedbackQuestionData } from '@/actions/document-feedback';
 
 interface PublicDocumentViewerProps {
   viewId: string;
@@ -34,6 +36,7 @@ interface PublicDocumentViewerProps {
   enableConversation: boolean;
   viewerEmail?: string | null;
   viewerName?: string | null;
+  feedbackData?: FeedbackQuestionData;
 }
 
 export function PublicDocumentViewer({
@@ -51,6 +54,7 @@ export function PublicDocumentViewer({
   enableConversation,
   viewerEmail,
   viewerName,
+  feedbackData,
 }: PublicDocumentViewerProps) {
   const t = useTranslations('public.link.viewer');
   
@@ -62,17 +66,13 @@ export function PublicDocumentViewer({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [feedbackOpen, setFeedbackOpen] = useState(false);
-  const [feedbackText, setFeedbackText] = useState('');
   const [questionsOpen, setQuestionsOpen] = useState(false);
   const [conversationsOpen, setConversationsOpen] = useState(false);
   const [reactionsOpen, setReactionsOpen] = useState(false);
-  const [isPendingFeedback, startFeedbackTransition] = useTransition();
   const [isPendingBookmark, startBookmarkTransition] = useTransition();
   const [loadError, setLoadError] = useState<string | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const { isFullscreen, toggleFullscreen } = useFullscreen<HTMLDivElement>();
+  const { ref: containerRef, isFullscreen, toggleFullscreen } = useFullscreen<HTMLDivElement>();
 
   const MIN_ZOOM = 0.5;
   const MAX_ZOOM = 3;
@@ -134,33 +134,6 @@ export function PublicDocumentViewer({
       }
     });
   }, [viewId, isPendingBookmark, t]);
-
-  const handleSubmitFeedback = useCallback(() => {
-    if (!feedbackText.trim()) {
-      toast.error(t('feedbackDialog.emptyError'));
-      return;
-    }
-
-    if (!viewId || isPendingFeedback) {
-      toast.error(t('feedbackDialog.waitError'));
-      return;
-    }
-
-    startFeedbackTransition(async () => {
-      try {
-        const result = await submitFeedback(viewId, { text: feedbackText, timestamp: new Date().toISOString() });
-        if (result.success) {
-          toast.success(t('feedbackDialog.success'));
-          setFeedbackText('');
-          setFeedbackOpen(false);
-        } else {
-          toast.error(result.error || t('feedbackDialog.error'));
-        }
-      } catch (error) {
-        toast.error(t('feedbackDialog.error'));
-      }
-    });
-  }, [viewId, feedbackText, isPendingFeedback, t]);
 
   // Handle zoom with mouse wheel
   useEffect(() => {
@@ -358,13 +331,6 @@ export function PublicDocumentViewer({
               <Bookmark className={cn('h-4 w-4', isBookmarked && 'fill-current')} />
             </Button>
 
-            {/* Feedback */}
-            {enableFeedback && (
-              <Button variant="ghost" size="sm" className="h-8 px-3 hover:bg-muted" onClick={() => setFeedbackOpen(true)}>
-                <MessageSquare className="h-4 w-4 mr-2" />
-                {t('feedback')}
-              </Button>
-            )}
 
             {/* Questions */}
             {enableQuestion && (
@@ -513,6 +479,7 @@ export function PublicDocumentViewer({
           ) : (
             <div className="text-center text-muted-foreground p-8">{t('documentNotAvailable')}</div>
           )}
+          
           {!allowDownload && (
             <div className="mt-6 text-center text-sm text-muted-foreground bg-muted/30 rounded-md py-3 px-4">
               {t('downloadDisabled')}
@@ -521,32 +488,15 @@ export function PublicDocumentViewer({
         </div>
       </main>
 
-      {/* Feedback Dialog */}
-      <Dialog open={feedbackOpen} onOpenChange={setFeedbackOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t('feedbackDialog.title')}</DialogTitle>
-            <DialogDescription>{t('feedbackDialog.description')}</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <Textarea
-              placeholder={t('feedbackDialog.placeholder')}
-              value={feedbackText}
-              onChange={(e) => setFeedbackText(e.target.value)}
-              rows={6}
-              className="resize-none"
-            />
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setFeedbackOpen(false)} disabled={isPendingFeedback}>
-                {t('feedbackDialog.cancel')}
-              </Button>
-              <Button onClick={handleSubmitFeedback} disabled={isPendingFeedback || !feedbackText.trim()}>
-                {isPendingFeedback ? t('feedbackDialog.submitting') : t('feedbackDialog.submit')}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Feedback Question Modal - Fixed Bottom Right */}
+      {feedbackData && feedbackData.enabled && (
+        <PublicFeedbackQuestion 
+          viewId={viewId} 
+          feedbackData={feedbackData}
+          linkId={linkId}
+          tenantId={tenantId}
+        />
+      )}
 
       {/* Questions Sheet */}
       {enableQuestion && (

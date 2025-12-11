@@ -9,6 +9,7 @@ import { nanoid } from 'nanoid';
 import { generateUuid } from '@/lib/id';
 import { hashPassword } from '@/lib/password';
 import { toSlug } from '@/lib/utils';
+import { upsertFeedbackQuestion } from './document-feedback';
 
 export interface UpsertLinkParams {
   data: TLinkSchema;
@@ -27,7 +28,7 @@ export async function upsertLinkAction({ data, tenantId, documentId, dataroomId,
     const allowList = data.allowedViewers.map((viewer) => (viewer.type === 'EMAIL' ? viewer.value : `@${viewer.value}`)).join(',');
 
     // Remove form-only fields that don't exist in the model
-    const { enablePassword, allowSpecificViewers, blockSpecificViewers, allowedViewers, denyViewers, customFields, ...linkData } = data;
+    const { enablePassword, allowSpecificViewers, blockSpecificViewers, allowedViewers, denyViewers, customFields, feedbackQuestion, ...linkData } = data;
 
     // Check if link exists to determine if it's create or update
     const existingLink = await db.link.findUnique({
@@ -162,6 +163,27 @@ export async function upsertLinkAction({ data, tenantId, documentId, dataroomId,
         slug: true,
       },
     });
+
+    // Handle feedback question if enableFeedback is true
+    if (data.enableFeedback && feedbackQuestion && feedbackQuestion.question && feedbackQuestion.question.trim().length >= 3) {
+      await upsertFeedbackQuestion(result.id, tenantId, {
+        type: feedbackQuestion.type,
+        question: feedbackQuestion.question,
+        enabled: true,
+      });
+    } else if (!data.enableFeedback) {
+      // If feedback is disabled, mark as disabled
+      try {
+        await db.documentFeedback.update({
+          where: { linkId: result.id, tenantId },
+          data: {
+            data: JSON.stringify({ enabled: false, type: 'YES_NO', question: '' }),
+          },
+        });
+      } catch (e) {
+        // Feedback doesn't exist yet, that's fine
+      }
+    }
 
     // Revalidate relevant paths
     revalidatePath(`/admin/${tenantId}/links-and-documents/links`);

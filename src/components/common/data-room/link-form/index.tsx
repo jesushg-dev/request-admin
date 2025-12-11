@@ -25,6 +25,7 @@ import { FormActions, FormContent, FormItem, FormRoot, FormSection, FormSwitchIt
 import { AccordionSection } from '../../../shared/accordion-section';
 import { CustomField } from './custom-field';
 import { Security } from './security';
+import { FeedbackQuestion } from './feedback-question';
 
 export type LinkFormValues = TLinkSchema;
 
@@ -44,6 +45,10 @@ const getDefaultLinkValues = (): LinkFormValues => {
     allowDownload: false,
     enableNotification: false,
     enableFeedback: false,
+    feedbackQuestion: {
+      type: 'YES_NO',
+      question: '',
+    },
     enableQuestion: false,
     allowSpecificViewers: false,
     allowedViewers: [],
@@ -227,6 +232,9 @@ export const LinkForm: FC<LinkFormProps> = ({ tenantId, initialValues, linkType,
                     </FormSwitchItem>
                   )}
                 />
+                
+                {/* Feedback Question Configuration */}
+                <FeedbackQuestion />
 
                 <FormField
                   control={form.control}

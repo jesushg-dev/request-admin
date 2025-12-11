@@ -5,7 +5,7 @@ import { Frown, Heart, Lightbulb, MessageSquare, Smile, ThumbsDown, ThumbsUp } f
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 
-import { addReaction, getDocumentReactions } from '@/actions/document-reaction';
+import { addReaction, getDocumentReactions, deleteReaction } from '@/actions/document-reaction';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
@@ -39,8 +39,9 @@ export function PublicDocumentReactions({ viewId, documentId, tenantId, pageNumb
   const [comment, setComment] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isPending, startTransition] = useTransition();
+  const [myReactionType, setMyReactionType] = useState<ReactionType | null>(null);
 
-  // Count reactions by type
+  // Count reactions by type (from all users)
   const reactionCounts = reactions.reduce(
     (counts, reaction) => {
       if (reaction.type !== 'comment') {
@@ -51,12 +52,24 @@ export function PublicDocumentReactions({ viewId, documentId, tenantId, pageNumb
     {} as Record<string, number>
   );
 
-  // Get comments
+  // Get all comments (public)
   const comments = reactions.filter((reaction) => reaction.type === 'comment');
+  
+  // Find my reaction (if any)
+  const myReaction = reactions.find((r) => r.viewId === viewId && r.type !== 'comment');
 
   useEffect(() => {
     fetchReactions();
   }, [documentId, pageNumber, tenantId]);
+
+  useEffect(() => {
+    // Update myReactionType when reactions change
+    if (myReaction) {
+      setMyReactionType(myReaction.type);
+    } else {
+      setMyReactionType(null);
+    }
+  }, [myReaction]);
 
   const fetchReactions = async () => {
     setIsLoading(true);
@@ -79,6 +92,27 @@ export function PublicDocumentReactions({ viewId, documentId, tenantId, pageNumb
   const handleReaction = (type: ReactionType) => {
     startTransition(async () => {
       try {
+        // If clicking the same reaction, remove it (toggle off)
+        if (myReactionType === type && myReaction) {
+          const result = await deleteReaction(myReaction.id, tenantId);
+          
+          if (result.success) {
+            toast.success(t('reactionRemoved'));
+            await fetchReactions();
+          } else {
+            toast.error(t('failedToAdd'), {
+              description: result.error,
+            });
+          }
+          return;
+        }
+
+        // If there's already a different reaction, remove it first
+        if (myReaction && myReactionType !== type) {
+          await deleteReaction(myReaction.id, tenantId);
+        }
+
+        // Add the new reaction
         const result = await addReaction(documentId, viewId, pageNumber, type, tenantId);
         
         if (result.success) {
@@ -92,7 +126,7 @@ export function PublicDocumentReactions({ viewId, documentId, tenantId, pageNumb
           });
         }
       } catch (error) {
-        console.error('Error adding reaction:', error);
+        console.error('Error handling reaction:', error);
         toast.error(t('failedToAdd'));
       }
     });
@@ -170,24 +204,27 @@ export function PublicDocumentReactions({ viewId, documentId, tenantId, pageNumb
         {/* Reaction Buttons */}
         <TooltipProvider>
           <div className="flex flex-wrap gap-2">
-            {reactionButtons.map(({ type, icon: Icon }) => (
-              <Tooltip key={type}>
-                <TooltipTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="flex items-center gap-1" 
-                    onClick={() => handleReaction(type)} 
-                    disabled={isPending}>
-                    <Icon className="h-4 w-4" />
-                    <span>{reactionCounts[type] || 0}</span>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{t(`types.${type}`)}</p>
-                </TooltipContent>
-              </Tooltip>
-            ))}
+            {reactionButtons.map(({ type, icon: Icon }) => {
+              const isSelected = myReactionType === type;
+              return (
+                <Tooltip key={type}>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant={isSelected ? 'default' : 'outline'} 
+                      size="sm" 
+                      className="flex items-center gap-1" 
+                      onClick={() => handleReaction(type)} 
+                      disabled={isPending}>
+                      <Icon className="h-4 w-4" />
+                      <span>{reactionCounts[type] || 0}</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{isSelected ? t('tapToRemove') : t(`types.${type}`)}</p>
+                  </TooltipContent>
+                </Tooltip>
+              );
+            })}
 
             <Tooltip>
               <TooltipTrigger asChild>

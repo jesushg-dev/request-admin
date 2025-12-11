@@ -35,6 +35,10 @@ export function createLinkSchema(t: TranslationFn) {
       allowDownload: z.boolean(),
       enableNotification: z.boolean(),
       enableFeedback: z.boolean(),
+      feedbackQuestion: z.object({
+        type: z.enum(['YES_NO', 'TEXT', 'RATING']),
+        question: z.string(),
+      }).optional(),
       enableQuestion: z.boolean(),
       allowSpecificViewers: z.boolean(),
       allowedViewers: z.array(
@@ -96,6 +100,15 @@ export function createLinkSchema(t: TranslationFn) {
           code: 'custom',
           message: t('denyViewersRequiredWhenEnabled'),
           path: ['denyViewers'],
+        });
+      }
+
+      // Feedback question validation
+      if (data.enableFeedback && (!data.feedbackQuestion || !data.feedbackQuestion.question || data.feedbackQuestion.question.trim().length < 3)) {
+        ctx.addIssue({
+          code: 'custom',
+          message: t('feedbackQuestionRequiredWhenEnabled'),
+          path: ['feedbackQuestion'],
         });
       }
     });

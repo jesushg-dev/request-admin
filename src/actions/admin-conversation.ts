@@ -105,7 +105,7 @@ export async function getDocumentConversations(
  */
 export async function replyToConversation(
   conversationId: string,
-  userTenantId: string,
+  userTenantId: string | null,
   content: string,
   tenantId: string
 ): Promise<{ success: boolean; messageId?: string; error?: string }> {
@@ -128,15 +128,25 @@ export async function replyToConversation(
       return { success: false, error: 'Conversation not found' };
     }
 
+    // Validate userTenantId exists if provided
+    if (userTenantId) {
+      const userTenant = await db.userTenant.findUnique({
+        where: { id: userTenantId },
+      });
+      if (!userTenant) {
+        return { success: false, error: 'Invalid user' };
+      }
+    }
+
     // Create the message
     const messageId = generateUuid();
     await db.documentMessage.create({
       data: {
         id: messageId,
         content: sanitizedContent,
-        conversationId: conversation.id,
-        userTenantId: userTenantId,
-        tenantId: tenantId,
+        conversation: { connect: { id: conversation.id } },
+        userTenant: userTenantId ? { connect: { id: userTenantId } } : undefined,
+        tenant: { connect: { id: tenantId } },
         isRead: true, // Admin messages are always read
       },
     });

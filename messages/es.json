@@ -2067,7 +2067,8 @@
             "activity": "Actividad",
             "viewers": "Espectadores",
             "engagement": "Participación",
-            "geography": "Geografía"
+            "geography": "Geografía",
+            "feedback": "Retroalimentación"
           },
           "activity": {
             "viewsDownloadsOverTime": "Vistas y Descargas en el Tiempo",
@@ -2106,6 +2107,20 @@
             "geographicDescription": "Desde dónde se está viendo tu documento",
             "viewDetailedMap": "Ver Mapa Detallado",
             "notAvailable": "Seguimiento geográfico no habilitado"
+          },
+          "feedback": {
+            "totalResponses": "Respuestas Totales",
+            "positiveResponses": "Respuestas Positivas",
+            "negativeResponses": "Respuestas Negativas",
+            "responsesBreakdown": "Desglose de Respuestas",
+            "responsesDescription": "Distribución de respuestas de retroalimentación",
+            "yes": "Sí",
+            "no": "No",
+            "recentResponses": "Respuestas Recientes",
+            "recentDescription": "Últimas retroalimentaciones de espectadores",
+            "anonymous": "Anónimo",
+            "noResponses": "No Hay Retroalimentación Aún",
+            "noResponsesDescription": "Las respuestas de retroalimentación aparecerán aquí una vez que los espectadores comiencen a proporcionar retroalimentación."
           },
           "export": {
             "title": "Exportar Analíticas",
@@ -4553,6 +4568,30 @@
             "tooltip": "Permitir a los usuarios hacer preguntas sobre el documento"
           }
         },
+        "feedbackQuestion": {
+          "title": "Configuración de Pregunta de Retroalimentación",
+          "description": "Personaliza la pregunta de retroalimentación que se mostrará a los espectadores",
+          "type": {
+            "label": "Tipo de Pregunta",
+            "description": "Elige cómo los usuarios proporcionarán retroalimentación",
+            "yesNo": "Sí/No",
+            "text": "Respuesta de Texto",
+            "rating": "Calificación con Estrellas (1-5)"
+          },
+          "question": {
+            "label": "Pregunta",
+            "placeholder": "ej., ¿Fue útil este documento?",
+            "description": "Ingresa la pregunta que deseas hacer a los espectadores"
+          },
+          "preview": {
+            "label": "Vista Previa",
+            "placeholder": "Tu pregunta aparecerá aquí",
+            "yes": "Sí",
+            "no": "No",
+            "textPlaceholder": "Escribe tu respuesta aquí...",
+            "description": "Así es como aparecerá la pregunta a los espectadores"
+          }
+        },
         "titleCreate": "Crea un nuevo enlace",
         "subtitleCreate": "Puede compartir documentos con sus clientes creando enlaces.",
         "titleEdit": "Editar un enlace",
@@ -4560,6 +4599,7 @@
         "saveChanges": "Guardar cambios",
         "validation": {
           "nameRequired": "El nombre es obligatorio",
+          "feedbackQuestionRequiredWhenEnabled": "La pregunta de retroalimentación es obligatoria cuando el feedback está habilitado",
           "nameMaxLength": "El nombre debe tener 200 caracteres o menos",
           "viewerValueRequired": "El valor del visualizador no puede estar vacío",
           "customFieldLabelRequired": "La etiqueta del campo personalizado es obligatoria",
@@ -5184,6 +5224,7 @@
         "commentsSection": "Comentarios",
         "reactionAdded": "Reacción agregada",
         "reactionAddedDescription": "Tu reacción de {type} ha sido registrada",
+        "reactionRemoved": "Reacción eliminada",
         "commentAdded": "Comentario agregado",
         "commentAddedDescription": "Tu comentario ha sido registrado",
         "failedToAdd": "Error al agregar",
@@ -5191,7 +5232,26 @@
         "emptyComment": "Por favor ingresa un comentario",
         "commentTooShort": "El comentario debe tener al menos 5 caracteres",
         "anonymous": "Anónimo",
-        "characters": "caracteres"
+        "characters": "caracteres",
+        "tapToRemove": "Toca para eliminar"
+      },
+      "feedback": {
+        "title": "Retroalimentación",
+        "selectAnswer": "Por favor selecciona una respuesta",
+        "selectRating": "Por favor selecciona una calificación",
+        "textTooShort": "La respuesta debe tener al menos 5 caracteres",
+        "yes": "Sí",
+        "no": "No",
+        "additionalComments": "Comentarios Adicionales",
+        "optional": "Opcional",
+        "commentsPlaceholder": "Cuéntanos más...",
+        "textAnswerPlaceholder": "Escribe tu respuesta aquí...",
+        "submitFeedback": "Enviar Retroalimentación",
+        "submitting": "Enviando...",
+        "thankYou": "¡Gracias por tu retroalimentación!",
+        "thankYouMessage": "Tu retroalimentación ha sido registrada.",
+        "submitted": "Retroalimentación Enviada",
+        "submitError": "Error al enviar la retroalimentación. Por favor intenta de nuevo."
       }
     }
   },

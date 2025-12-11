@@ -18,7 +18,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 interface DocumentCommentsProps {
   documentId: string;
   tenantId: string;
-  userTenantId: string;
+  userTenantId: string | null;
 }
 
 interface Conversation {

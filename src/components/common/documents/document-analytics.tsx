@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 
 import { getDocumentAnalytics, getDocumentViewers } from '@/actions/document-analytics';
+import { getFeedbackResponses } from '@/actions/document-feedback';
 import { DocumentWithRelations } from '@/types/zenstackhq/document';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -67,14 +68,38 @@ export function DocumentAnalytics({ documentId, document, tenantId }: DocumentAn
     lastViewedAt: Date;
   }>>([]);
   const [timeRange, setTimeRange] = useState('30days');
+  const [feedbackResponses, setFeedbackResponses] = useState<{
+    responses: Array<{
+      id: string;
+      answer: string;
+      text?: string;
+      viewerEmail: string | null;
+      viewerName: string | null;
+      submittedAt: Date;
+    }>;
+    summary: {
+      totalResponses: number;
+      yesCount: number;
+      noCount: number;
+      yesPercentage: number;
+      noPercentage: number;
+    };
+  } | null>(null);
 
   useEffect(() => {
     const fetchAnalytics = async () => {
       setIsLoading(true);
       try {
-        const [analyticsResult, viewersResult] = await Promise.all([
+        // Fetch feedback responses for the first link (if any)
+        const firstLink = document.links?.[0];
+        const feedbackPromise = firstLink
+          ? getFeedbackResponses(firstLink.id, tenantId)
+          : Promise.resolve({ success: true, responses: [], summary: { totalResponses: 0, yesCount: 0, noCount: 0, yesPercentage: 0, noPercentage: 0 } });
+        
+        const [analyticsResult, viewersResult, feedbackResult] = await Promise.all([
           getDocumentAnalytics(documentId, tenantId, timeRange),
           getDocumentViewers(documentId, tenantId, 10),
+          feedbackPromise,
         ]);
         
         if (analyticsResult.success && analyticsResult.data) {
@@ -85,6 +110,13 @@ export function DocumentAnalytics({ documentId, document, tenantId }: DocumentAn
 
         if (viewersResult.success && viewersResult.viewers) {
           setTopViewers(viewersResult.viewers);
+        }
+        
+        if (feedbackResult.success && feedbackResult.responses && feedbackResult.summary) {
+          setFeedbackResponses({
+            responses: feedbackResult.responses,
+            summary: feedbackResult.summary,
+          });
         }
       } catch (error) {
         console.error('Error fetching analytics:', error);
@@ -467,6 +499,7 @@ export function DocumentAnalytics({ documentId, document, tenantId }: DocumentAn
           <TabsTrigger value="viewers">{t('tabs.viewers')}</TabsTrigger>
           <TabsTrigger value="engagement">{t('tabs.engagement')}</TabsTrigger>
           <TabsTrigger value="geography">{t('tabs.geography')}</TabsTrigger>
+          <TabsTrigger value="feedback">{t('tabs.feedback')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="activity" className="space-y-4">
@@ -717,6 +750,123 @@ export function DocumentAnalytics({ documentId, document, tenantId }: DocumentAn
               {t('geography.viewDetailedMap')}
             </Button>
           </div>
+        </TabsContent>
+
+        <TabsContent value="feedback" className="space-y-4">
+          {feedbackResponses && feedbackResponses.summary.totalResponses > 0 ? (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">{t('feedback.totalResponses')}</CardTitle>
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{feedbackResponses.summary.totalResponses}</div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">{t('feedback.positiveResponses')}</CardTitle>
+                    <Badge variant="default" className="bg-green-500">
+                      {feedbackResponses.summary.yesPercentage.toFixed(1)}%
+                    </Badge>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{feedbackResponses.summary.yesCount}</div>
+                    <Progress value={feedbackResponses.summary.yesPercentage} className="mt-2" />
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">{t('feedback.negativeResponses')}</CardTitle>
+                    <Badge variant="destructive">
+                      {feedbackResponses.summary.noPercentage.toFixed(1)}%
+                    </Badge>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{feedbackResponses.summary.noCount}</div>
+                    <Progress value={feedbackResponses.summary.noPercentage} className="mt-2" />
+                  </CardContent>
+                </Card>
+              </div>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('feedback.responsesBreakdown')}</CardTitle>
+                  <CardDescription>{t('feedback.responsesDescription')}</CardDescription>
+                </CardHeader>
+                <CardContent className="h-80">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={[
+                          { name: t('feedback.yes'), value: feedbackResponses.summary.yesCount },
+                          { name: t('feedback.no'), value: feedbackResponses.summary.noCount },
+                        ]}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, percent }) => `${name}: ${((Number(percent) || 0) * 100).toFixed(0)}%`}
+                        outerRadius={100}
+                        fill="#8884d8"
+                        dataKey="value">
+                        <Cell fill="#10b981" />
+                        <Cell fill="#ef4444" />
+                      </Pie>
+                      <Tooltip />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('feedback.recentResponses')}</CardTitle>
+                  <CardDescription>{t('feedback.recentDescription')}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {feedbackResponses.responses.slice(0, 10).map((response) => (
+                      <div key={response.id} className="flex items-start gap-4 p-4 border rounded-lg">
+                        <div className="flex-shrink-0">
+                          <Badge variant={response.answer === 'YES' ? 'default' : 'destructive'}>
+                            {response.answer === 'YES' ? t('feedback.yes') : t('feedback.no')}
+                          </Badge>
+                        </div>
+                        <div className="flex-1 space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">
+                              {response.viewerName || response.viewerEmail || t('feedback.anonymous')}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(response.submittedAt).toLocaleDateString()}
+                            </span>
+                          </div>
+                          {response.text && (
+                            <p className="text-sm text-muted-foreground">{response.text}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </>
+          ) : (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center p-8">
+                <Users className="h-12 w-12 text-muted-foreground mb-4" />
+                <h3 className="text-lg font-semibold mb-2">{t('feedback.noResponses')}</h3>
+                <p className="text-sm text-muted-foreground text-center">
+                  {t('feedback.noResponsesDescription')}
+                </p>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
       </Tabs>
 

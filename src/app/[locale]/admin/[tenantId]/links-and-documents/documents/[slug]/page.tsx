@@ -137,7 +137,7 @@ export default async function DocumentDetailPage({ params }: DocumentDetailPageP
               <DocumentComments 
                 documentId={document.id} 
                 tenantId={tenantId}
-                userTenantId={auth.userTenantId || ''}
+                userTenantId={auth.userTenantId || null}
               />
             </TabsContent>
             
