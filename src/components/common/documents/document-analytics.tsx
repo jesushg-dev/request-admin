@@ -29,9 +29,11 @@ const downloadFile = (content: string, filename: string, type: string) => {
   URL.revokeObjectURL(url);
 };
 
+type DocumentWithOptionalLinks = DocumentWithRelations & { links?: { id: string }[] };
+
 interface DocumentAnalyticsProps {
   documentId: string;
-  document: DocumentWithRelations;
+  document: DocumentWithOptionalLinks;
   tenantId: string;
 }
 

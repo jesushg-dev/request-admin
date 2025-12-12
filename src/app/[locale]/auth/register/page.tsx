@@ -50,7 +50,7 @@ const RegisterForm = () => {
           onSuccess: () => {
             toast.success(t('success'), { id: toastId });
           },
-          onError: (ctx) => {
+          onError: (ctx: { error: Error }) => {
             toast.error(`${t('error')}: ${ctx.error.message}`, { id: toastId });
           },
         }

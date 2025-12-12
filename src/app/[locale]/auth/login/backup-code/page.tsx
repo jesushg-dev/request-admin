@@ -31,7 +31,7 @@ const LoginForm = () => {
           onSuccess: () => {
             toast.success(t('success'), { id: toastId });
           },
-          onError: (ctx) => {
+          onError: (ctx: { error: Error }) => {
             toast.error(t('error', { error: ctx.error.message }), { id: toastId });
           },
         }

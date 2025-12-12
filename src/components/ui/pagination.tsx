@@ -1,7 +1,7 @@
 'use client';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import type { useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -13,8 +13,6 @@ export interface PaginationProps {
   setItemsPerPage: (count: number) => void;
   totalItems: number;
   pageSizeOptions?: number[];
-  translationKey?: string;
-  t?: ReturnType<typeof useTranslations>;
   showPageSizeSelector?: boolean;
   maxVisiblePages?: number;
   className?: string;
@@ -27,12 +25,11 @@ export function Pagination({
   setItemsPerPage,
   totalItems,
   pageSizeOptions = [5, 10, 20, 50],
-  translationKey,
-  t,
   showPageSizeSelector = true,
   maxVisiblePages = 5,
   className = '',
 }: PaginationProps) {
+  const t = useTranslations('common.pagination');
   const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
 
   // Calculate which page numbers to show
@@ -60,23 +57,16 @@ export function Pagination({
   const start = (currentPage - 1) * itemsPerPage + 1;
   const end = Math.min(currentPage * itemsPerPage, totalItems);
 
-  // Get pagination text
-  const getPaginationText = () => {
-    if (t && translationKey) {
-      return t(translationKey, {
-        start,
-        end,
-        total: totalItems,
-        defaultValue: 'Showing {start} - {end} of {total}',
-      });
-    }
-    return `Showing ${start} - ${end} of ${totalItems}`;
-  };
-
   return (
     <div className={`flex items-center justify-between ${className}`}>
       <div className="flex items-center gap-2">
-        {t && <p className="text-sm text-muted-foreground">{getPaginationText()}</p>}
+        <p className="text-sm text-muted-foreground">
+          {t('text', {
+            start,
+            end,
+            total: totalItems,
+          })}
+        </p>
         {showPageSizeSelector && (
           <Select
             value={itemsPerPage.toString()}

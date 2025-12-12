@@ -306,6 +306,11 @@ const handleCreate = async (tenantId: string, data: RequestFormStepperType, user
               },
             },
           },
+          requestDatarooms: {
+            select: {
+              dataroomId: true,
+            },
+          },
         },
       });
 
@@ -506,6 +511,11 @@ const handleUpdate = async (existingRequest: RequestType, tenantId: string, data
                   },
                 },
               },
+            },
+          },
+          requestDatarooms: {
+            select: {
+              dataroomId: true,
             },
           },
         },

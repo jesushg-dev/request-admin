@@ -89,7 +89,7 @@ export default function UserTenantForm() {
       await authClient.organization.leave(
         { organizationId },
         {
-          onError({ error }) {
+          onError({ error }: { error: Error }) {
             toast.error(t('toast.leaveError', { error: error.message }), { id: toastId });
           },
           onSuccess() {

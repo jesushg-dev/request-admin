@@ -75,7 +75,7 @@ const TenantForm: FC<TenantFormProps> = ({ defaultValues }) => {
             onRequest: () => {
               toast.loading(t('toast.updating'), { id: toastId });
             },
-            onError: ({ error }) => {
+            onError: ({ error }: { error: Error }) => {
               toast.error(
                 t('toast.error', {
                   action: t('toast.updating'),
@@ -96,7 +96,7 @@ const TenantForm: FC<TenantFormProps> = ({ defaultValues }) => {
             onRequest: () => {
               toast.loading(t('toast.creating'), { id: toastId });
             },
-            onError: ({ error }) => {
+            onError: ({ error }: { error: Error }) => {
               toast.error(
                 t('toast.error', {
                   action: t('toast.creating'),
@@ -359,14 +359,14 @@ const SlugField = () => {
           await authClient.organization.checkSlug(
             { slug: field.value ?? '' },
             {
-              onError: ({ error }) => {
+              onError: ({ error }: { error: Error }) => {
                 setError('slug', {
                   type: 'manual',
                   message: error.message || t('form.validation.slug.taken'),
                 });
               },
-              onSuccess: (response) => {
-                if (!response.data.status) {
+              onSuccess: (context: any) => {
+                if (!context?.data?.status) {
                   setError('slug', {
                     type: 'manual',
                     message: t('form.validation.slug.taken'),

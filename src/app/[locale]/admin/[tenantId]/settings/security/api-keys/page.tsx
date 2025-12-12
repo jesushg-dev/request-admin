@@ -232,7 +232,7 @@ const ActionTableCell: React.FC<{ row: { original: ApiKey }; tenantId: string; o
             toast.success(t('statusSuccess', { status: enabled ? t('status.active') : t('status.inactive') }), { id: toastId });
             onChange?.();
           },
-          onError: ({ error }) => {
+        onError: ({ error }: { error: Error }) => {
             toast.error(t('statusError', { error: error.message ?? 'N/A' }), { id: toastId });
           },
         }
@@ -258,7 +258,7 @@ const ActionTableCell: React.FC<{ row: { original: ApiKey }; tenantId: string; o
             toast.success(t('deleteSuccess'), { id: toastId });
             onChange?.();
           },
-          onError: ({ error }) => {
+        onError: ({ error }: { error: Error }) => {
             toast.error(t('deleteError', { error: error.message ?? 'N/A' }), { id: toastId });
           },
         }

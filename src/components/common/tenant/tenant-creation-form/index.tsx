@@ -92,7 +92,7 @@ export function TenantCreationForm({ plans }: TenantCreationFormProps) {
           onSuccess: () => {
             toast.success(t('messages.success'), { id: toastId });
           },
-          onError: ({ error }) => {
+          onError: ({ error }: { error: Error }) => {
             toast.error(t('messages.error', { error: error.message }), { id: toastId });
           },
         }

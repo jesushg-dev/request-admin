@@ -50,9 +50,16 @@ const EditPage: FC<EditPageProps> = async ({ params }) => {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/links-and-documents/documents', params: { tenantId } } });
   }
 
+  const sanitizedInitialValues = {
+    ...initialValues,
+    name: initialValues.name ?? '',
+    description: initialValues.description ?? '',
+    status: initialValues.status ?? 'DRAFT',
+  };
+
   return (
     <PageCardWrapper title={t('title')} description={t('description')}>
-      <DocumentMetadataForm tenantId={tenantId} initialValues={initialValues} />
+      <DocumentMetadataForm tenantId={tenantId} initialValues={sanitizedInitialValues} />
     </PageCardWrapper>
   );
 };

@@ -17,6 +17,8 @@ import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { AlertBanner } from '@/components/custom-ui/alert-banner';
 
+type ErrorContext = { error: Error };
+
 export default function TwoFactorAuthPage() {
   const message = useMessage();
   const { data } = useSession();
@@ -61,7 +63,7 @@ export default function TwoFactorAuthPage() {
             setIsActivating(true);
             toast.success(t('toast.enabled'), { id: toastId });
           },
-          onError(context) {
+          onError(context: ErrorContext) {
             toast.error(t('toast.error', { message: context.error.message }), { id: toastId });
           },
         }
@@ -97,7 +99,7 @@ export default function TwoFactorAuthPage() {
             setBackupCodes([]);
             setIsActivating(false);
           },
-          onError(context) {
+          onError(context: ErrorContext) {
             toast.error(t('toast.error', { message: context.error.message }), { id: toastId });
           },
         }
@@ -114,7 +116,7 @@ export default function TwoFactorAuthPage() {
           setQrcode('');
           toast.success(t('toast.codeSent'), { id: toastId });
         },
-        onError(context) {
+        onError(context: ErrorContext) {
           toast.error(t('toast.error', { message: context.error.message }), { id: toastId });
         },
       }
@@ -158,7 +160,7 @@ export default function TwoFactorAuthPage() {
           onRequest: () => {
             toast.loading(t('toast.verifying'), { id: toastId });
           },
-          onError(context) {
+          onError(context: ErrorContext) {
             toast.error(t('toast.error', { message: context.error.message }), { id: toastId });
           },
         }
@@ -184,7 +186,7 @@ export default function TwoFactorAuthPage() {
           onRequest: () => {
             toast.loading(t('toast.verifying'), { id: toastId });
           },
-          onError: (context) => {
+          onError: (context: ErrorContext) => {
             toast.error(t('toast.error', { message: context.error.message }), { id: toastId });
           },
         }
@@ -209,7 +211,7 @@ export default function TwoFactorAuthPage() {
           onSuccess: () => {
             toast.success(t('toast.qrGenerated'), { id: toastId });
           },
-          onError(context) {
+        onError(context: ErrorContext) {
             toast.error(t('toast.error', { message: context.error.message }), { id: toastId });
           },
         }
@@ -238,7 +240,7 @@ export default function TwoFactorAuthPage() {
           onSuccess: () => {
             toast.success(t('toast.backupGenerated'), { id: toastId });
           },
-          onError(context) {
+        onError(context: ErrorContext) {
             toast.error(t('toast.error', { message: context.error.message }), { id: toastId });
           },
         }

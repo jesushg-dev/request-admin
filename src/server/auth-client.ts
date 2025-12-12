@@ -1,4 +1,3 @@
-import { passkeyClient } from '@better-auth/passkey/client';
 import { ssoClient } from '@better-auth/sso/client';
 import {
   adminClient,
@@ -30,7 +29,6 @@ export const authClient = createAuthClient({
     phoneNumberClient(),
     magicLinkClient(),
     emailOTPClient(),
-    passkeyClient(),
     genericOAuthClient(),
     oneTapClient({ clientId: 'MY_CLIENT_ID' }),
     apiKeyClient(),

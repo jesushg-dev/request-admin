@@ -136,8 +136,6 @@ export default function NotificationsPage() {
               setItemsPerPage={setPageSize}
               totalItems={total}
               pageSizeOptions={[5, 10, 20]}
-              translationKey="pagination"
-              t={t}
               className="mt-6"
             />
           </Tabs>

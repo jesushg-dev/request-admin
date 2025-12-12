@@ -128,10 +128,14 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, pr
         const response = await upsertRequest(tenantId, data);
         if (data.additionalDocuments) {
           if (data.additionalDocuments.length > 0) {
+            const dataroomId = response.requestDatarooms?.[0]?.dataroomId;
+            if (!dataroomId) {
+              throw new Error('Dataroom ID not found');
+            }
             toast.loading(t('uploadingFiles'), { id: toastId });
             await uploadFiles('imageUploader', {
               files: data.additionalDocuments,
-              input: { tenantId, dataroomId: response.dataroomId },
+              input: { tenantId, dataroomId },
               /*onUploadProgress: ({ file, progress }) => {
               //setProgresses((prev) => ({ ...prev, [file.name]: progress }));
             },*/

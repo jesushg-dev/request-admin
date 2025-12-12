@@ -168,8 +168,6 @@ export function DocumentVersionHistory({ documentId, documentName }: DocumentVer
               setItemsPerPage={setItemsPerPage}
               totalItems={totalCount}
               pageSizeOptions={[5, 10, 20, 50]}
-              translationKey="pagination"
-              t={t}
               className="mt-4 border-t pt-4"
             />
           )}

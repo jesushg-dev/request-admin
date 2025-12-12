@@ -1,6 +1,5 @@
 import { cache } from 'react';
 import { headers } from 'next/headers';
-import { passkey } from '@better-auth/passkey';
 import { sso } from '@better-auth/sso';
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
@@ -150,7 +149,6 @@ export const auth = betterAuth({
     genericOAuth({
       config: [],
     }),
-    passkey(),
     emailOTP({
       async sendVerificationOTP({ email, otp, type }) {
         sendVerificationOTP(email, otp, type);

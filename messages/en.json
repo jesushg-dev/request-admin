@@ -95,6 +95,11 @@
     },
     "filterDatePlaceholder": "Pick a date"
   },
+  "common": {
+    "pagination": {
+      "text": "Showing {start} - {end} of {total}"
+    }
+  },
   "metadata": {
     "brandName": "Request Engine",
     "pages": {

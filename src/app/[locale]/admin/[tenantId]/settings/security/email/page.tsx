@@ -41,7 +41,7 @@ export default function SecurityForm() {
             emailForm.reset({ newEmail: '' });
             toast.success(t('success'), { id: toastId });
           },
-          onError(context) {
+          onError(context: { error: Error }) {
             toast.error(t('error', { error: context.error.message }), { id: toastId });
           },
           onRequest() {

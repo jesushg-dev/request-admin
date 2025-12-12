@@ -43,7 +43,7 @@ export default function SecurityForm() {
             passwordForm.reset(passwordDefaultValues);
             toast.success(t('success'), { id: toastId });
           },
-          onError(context) {
+          onError(context: { error: Error }) {
             toast.error(t('error', { error: context.error.message }), { id: toastId });
           },
           onRequest() {

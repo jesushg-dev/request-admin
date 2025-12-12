@@ -60,7 +60,7 @@ const AcceptInvitationPage = () => {
               params: { tenantId: 'global' },
             });
           },
-          onError: (ctx) => {
+          onError: (ctx: { error: Error }) => {
             toast.error(`${t('cancelError')}: ${ctx.error.message}`, { id: toastId });
           },
         }

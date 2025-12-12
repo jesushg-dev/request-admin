@@ -33,7 +33,14 @@ const EditPage: FC<EditPageProps> = async ({ params }) => {
 
   return (
     <PageDialogWrapper title={t('title')} description={t('subtitle')}>
-      <DocumentMetadataForm tenantId={tenantId} initialValues={initialValues} />
+      <DocumentMetadataForm
+        tenantId={tenantId}
+        initialValues={{
+          ...initialValues,
+          name: initialValues.name ?? '',
+          status: initialValues.status ?? '',
+        }}
+      />
     </PageDialogWrapper>
   );
 };

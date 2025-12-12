@@ -69,7 +69,7 @@ export default function UserProfileForm() {
           onSuccess: () => {
             toast.success(t('toast.profileUpdated'), { id: toastId });
           },
-          onError(context) {
+          onError(context: { error: Error }) {
             toast.error(t('errors.updateProfile', { message: context.error.message }), { id: toastId });
           },
           onRequest() {
@@ -93,7 +93,7 @@ export default function UserProfileForm() {
           onSuccess: () => {
             toast.success(t('toast.emailCodeSent'), { id: toastId });
           },
-          onError: (context) => {
+          onError: (context: { error: Error }) => {
             toast.error(t('errors.sendEmailCode', { message: context.error.message }), { id: toastId });
           },
         }
@@ -116,7 +116,7 @@ export default function UserProfileForm() {
             setEmailVerified(true);
             toast.success(t('toast.emailVerified'), { id: toastId });
           },
-          onError: (context) => {
+          onError: (context: { error: Error }) => {
             toast.error(t('errors.verifyEmail', { message: context.error.message }), { id: toastId });
           },
         }
@@ -137,7 +137,7 @@ export default function UserProfileForm() {
           onSuccess: () => {
             toast.success(t('toast.smsCodeSent'), { id: toastId });
           },
-          onError: (context) => {
+          onError: (context: { error: Error }) => {
             toast.error(t('errors.sendSmsCode', { message: context.error.message }), { id: toastId });
           },
         }
@@ -160,7 +160,7 @@ export default function UserProfileForm() {
             setPhoneVerified(true);
             toast.success(t('toast.phoneVerified'), { id: toastId });
           },
-          onError: (context) => {
+          onError: (context: { error: Error }) => {
             toast.error(t('errors.verifyPhone', { message: context.error.message }), { id: toastId });
           },
         }

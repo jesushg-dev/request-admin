@@ -45,7 +45,7 @@ describe('ResetForm', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(authClient.forgetPassword).toHaveBeenCalledWith(
+    expect(authClient.resetPassword).toHaveBeenCalledWith(
         {
           email: 'test@example.com',
           redirectTo: '/auth/new-password',
