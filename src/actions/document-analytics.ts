@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from '@/server/db-client';
-import { startOfDay, subDays, format } from 'date-fns';
+import { format, startOfDay, subDays } from 'date-fns';
 
 interface TimeRangeConfig {
   days: number;
@@ -12,7 +12,7 @@ const timeRanges: Record<string, TimeRangeConfig> = {
   '7days': { days: 7, label: 'Last 7 days' },
   '30days': { days: 30, label: 'Last 30 days' },
   '90days': { days: 90, label: 'Last 90 days' },
-  'year': { days: 365, label: 'Last year' },
+  year: { days: 365, label: 'Last year' },
 };
 
 /**
@@ -75,9 +75,7 @@ export async function getDocumentAnalytics(
     });
 
     // Calculate views trend
-    const viewsTrendNum = prevTotalViews > 0 
-      ? ((totalViews - prevTotalViews) / prevTotalViews * 100).toFixed(0)
-      : totalViews > 0 ? '+100' : '0';
+    const viewsTrendNum = prevTotalViews > 0 ? (((totalViews - prevTotalViews) / prevTotalViews) * 100).toFixed(0) : totalViews > 0 ? '+100' : '0';
     const viewsTrend = Number(viewsTrendNum);
 
     // Get total downloads
@@ -102,9 +100,7 @@ export async function getDocumentAnalytics(
       },
     });
 
-    const downloadsTrendNum = prevTotalDownloads > 0
-      ? ((totalDownloads - prevTotalDownloads) / prevTotalDownloads * 100).toFixed(0)
-      : totalDownloads > 0 ? '+100' : '0';
+    const downloadsTrendNum = prevTotalDownloads > 0 ? (((totalDownloads - prevTotalDownloads) / prevTotalDownloads) * 100).toFixed(0) : totalDownloads > 0 ? '+100' : '0';
     const downloadsTrend = Number(downloadsTrendNum);
 
     // Get unique viewers (by email)
@@ -135,9 +131,7 @@ export async function getDocumentAnalytics(
       _count: true,
     });
 
-    const viewersTrendNum = prevUniqueViewers.length > 0
-      ? ((totalUniqueViewers - prevUniqueViewers.length) / prevUniqueViewers.length * 100).toFixed(0)
-      : totalUniqueViewers > 0 ? '+100' : '0';
+    const viewersTrendNum = prevUniqueViewers.length > 0 ? (((totalUniqueViewers - prevUniqueViewers.length) / prevUniqueViewers.length) * 100).toFixed(0) : totalUniqueViewers > 0 ? '+100' : '0';
     const viewersTrend = Number(viewersTrendNum);
 
     // Get views by day
@@ -154,7 +148,7 @@ export async function getDocumentAnalytics(
 
     // Group by day and calculate downloads
     const dayMap = new Map<string, { views: number; downloads: number }>();
-    
+
     // Initialize all days in range
     for (let i = 0; i < Math.min(config.days, 7); i++) {
       const day = format(subDays(new Date(), i), 'EEE');
@@ -198,24 +192,24 @@ export async function getDocumentAnalytics(
     const byDeviceData = [
       { name: 'Desktop', value: Math.floor(totalViews * 0.65) },
       { name: 'Mobile', value: Math.floor(totalViews * 0.25) },
-      { name: 'Tablet', value: Math.floor(totalViews * 0.10) },
+      { name: 'Tablet', value: Math.floor(totalViews * 0.1) },
     ];
 
     // Location data - placeholder since we don't track this yet
     const byLocationData = [
       { name: 'United States', value: Math.floor(totalViews * 0.45) },
-      { name: 'United Kingdom', value: Math.floor(totalViews * 0.20) },
+      { name: 'United Kingdom', value: Math.floor(totalViews * 0.2) },
       { name: 'Germany', value: Math.floor(totalViews * 0.15) },
-      { name: 'France', value: Math.floor(totalViews * 0.10) },
-      { name: 'Other', value: Math.floor(totalViews * 0.10) },
+      { name: 'France', value: Math.floor(totalViews * 0.1) },
+      { name: 'Other', value: Math.floor(totalViews * 0.1) },
     ];
 
     // Viewer roles - placeholder since we don't track this yet
     const byRoleData = [
       { name: 'Investors', value: Math.floor(totalUniqueViewers * 0.35) },
       { name: 'Board Members', value: Math.floor(totalUniqueViewers * 0.25) },
-      { name: 'Legal Team', value: Math.floor(totalUniqueViewers * 0.20) },
-      { name: 'Other', value: Math.floor(totalUniqueViewers * 0.20) },
+      { name: 'Legal Team', value: Math.floor(totalUniqueViewers * 0.2) },
+      { name: 'Other', value: Math.floor(totalUniqueViewers * 0.2) },
     ];
 
     // Time spent - placeholder since we don't track this yet
@@ -338,4 +332,3 @@ export async function getDocumentViewers(
     };
   }
 }
-

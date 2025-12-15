@@ -129,15 +129,7 @@ export default function NotificationsPage() {
                 </div>
               )}
             </TabsContent>
-            <Pagination
-              currentPage={page}
-              setCurrentPage={setPage}
-              itemsPerPage={pageSize}
-              setItemsPerPage={setPageSize}
-              totalItems={total}
-              pageSizeOptions={[5, 10, 20]}
-              className="mt-6"
-            />
+            <Pagination currentPage={page} setCurrentPage={setPage} itemsPerPage={pageSize} setItemsPerPage={setPageSize} totalItems={total} pageSizeOptions={[5, 10, 20]} className="mt-6" />
           </Tabs>
         </CardContent>
       </Card>

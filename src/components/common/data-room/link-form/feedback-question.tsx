@@ -1,15 +1,15 @@
 'use client';
 
-import { MessageSquare, Star, FileText } from 'lucide-react';
+import { FileText, MessageSquare, Star } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { FormField, FormItem, FormMessage } from '@/components/ui/form';
 
 import type { LinkFormValues } from './index';
 
@@ -38,10 +38,7 @@ export function FeedbackQuestion() {
           render={({ field }) => (
             <FormItem>
               <Label>{t('type.label')}</Label>
-              <Select 
-                value={field.value || 'YES_NO'} 
-                onValueChange={field.onChange}
-              >
+              <Select value={field.value || 'YES_NO'} onValueChange={field.onChange}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -78,18 +75,10 @@ export function FeedbackQuestion() {
           render={({ field }) => (
             <FormItem>
               <Label>{t('question.label')}</Label>
-              <Textarea 
-                placeholder={t('question.placeholder')} 
-                {...field}
-                value={field.value || ''}
-                rows={3}
-                maxLength={500}
-              />
+              <Textarea placeholder={t('question.placeholder')} {...field} value={field.value || ''} rows={3} maxLength={500} />
               <div className="flex items-center justify-between">
                 <p className="text-xs text-muted-foreground">{t('question.description')}</p>
-                <p className="text-xs text-muted-foreground">
-                  {field.value?.length || 0}/500
-                </p>
+                <p className="text-xs text-muted-foreground">{field.value?.length || 0}/500</p>
               </div>
               <FormMessage />
             </FormItem>
@@ -101,27 +90,14 @@ export function FeedbackQuestion() {
           <Label className="mb-2 block">{t('preview.label')}</Label>
           <Card className="bg-muted/50">
             <CardContent className="pt-6">
-              <p className="text-sm font-medium mb-3">
-                {form.watch('feedbackQuestion.question') || t('preview.placeholder')}
-              </p>
+              <p className="text-sm font-medium mb-3">{form.watch('feedbackQuestion.question') || t('preview.placeholder')}</p>
               {form.watch('feedbackQuestion.type') === 'YES_NO' && (
                 <div className="flex gap-2">
-                  <div className="flex-1 p-2 border rounded-md text-center text-sm bg-background">
-                    {t('preview.yes')}
-                  </div>
-                  <div className="flex-1 p-2 border rounded-md text-center text-sm bg-background">
-                    {t('preview.no')}
-                  </div>
+                  <div className="flex-1 p-2 border rounded-md text-center text-sm bg-background">{t('preview.yes')}</div>
+                  <div className="flex-1 p-2 border rounded-md text-center text-sm bg-background">{t('preview.no')}</div>
                 </div>
               )}
-              {form.watch('feedbackQuestion.type') === 'TEXT' && (
-                <Textarea 
-                  placeholder={t('preview.textPlaceholder')} 
-                  disabled 
-                  className="bg-background"
-                  rows={3}
-                />
-              )}
+              {form.watch('feedbackQuestion.type') === 'TEXT' && <Textarea placeholder={t('preview.textPlaceholder')} disabled className="bg-background" rows={3} />}
               {form.watch('feedbackQuestion.type') === 'RATING' && (
                 <div className="flex gap-1 justify-center">
                   {[1, 2, 3, 4, 5].map((star) => (
@@ -137,4 +113,3 @@ export function FeedbackQuestion() {
     </Card>
   );
 }
-

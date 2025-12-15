@@ -1,25 +1,27 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef, useTransition } from 'react';
+import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { Card } from '@/components/ui/card';
-import { Search, ZoomIn, ZoomOut, Bookmark, MessageSquare, Download, Maximize2, Minimize2, HelpCircle, MessagesSquare, Smile } from 'lucide-react';
+import type { FeedbackQuestionData } from '@/actions/document-feedback';
 import { toggleBookmark } from '@/actions/link-access';
+import { Bookmark, Download, HelpCircle, Maximize2, MessageSquare, MessagesSquare, Minimize2, Search, Smile, ZoomIn, ZoomOut } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
-import { useFullscreen } from '@/hooks/use-full-screen';
+
 import { cn } from '@/lib/utils';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { useFullscreen } from '@/hooks/use-full-screen';
 import { Badge } from '@/components/ui/badge';
-import { PublicDocumentQuestions } from './public-document-questions';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Textarea } from '@/components/ui/textarea';
+
 import { PublicDocumentConversations } from './public-document-conversations';
+import { PublicDocumentQuestions } from './public-document-questions';
 import { PublicDocumentReactions } from './public-document-reactions';
 import { PublicFeedbackQuestion } from './public-feedback-question';
-import type { FeedbackQuestionData } from '@/actions/document-feedback';
 
 interface PublicDocumentViewerProps {
   viewId: string;
@@ -57,7 +59,7 @@ export function PublicDocumentViewer({
   feedbackData,
 }: PublicDocumentViewerProps) {
   const t = useTranslations('public.link.viewer');
-  
+
   // Generate secure document URL
   const documentUrl = `/api/documents/${viewId}/serve`;
   const downloadUrl = `/api/documents/${viewId}/serve?download=true`;
@@ -97,21 +99,27 @@ export function PublicDocumentViewer({
     setPosition({ x: 0, y: 0 });
   }, []);
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (zoom > 1) {
-      setIsDragging(true);
-      setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y });
-    }
-  }, [zoom, position]);
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      if (zoom > 1) {
+        setIsDragging(true);
+        setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y });
+      }
+    },
+    [zoom, position]
+  );
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (isDragging && zoom > 1) {
-      setPosition({
-        x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y,
-      });
-    }
-  }, [isDragging, zoom, dragStart]);
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (isDragging && zoom > 1) {
+        setPosition({
+          x: e.clientX - dragStart.x,
+          y: e.clientY - dragStart.y,
+        });
+      }
+    },
+    [isDragging, zoom, dragStart]
+  );
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
@@ -119,7 +127,7 @@ export function PublicDocumentViewer({
 
   const handleBookmark = useCallback(() => {
     if (!viewId || isPendingBookmark) return;
-    
+
     startBookmarkTransition(async () => {
       try {
         const result = await toggleBookmark(viewId);
@@ -169,12 +177,7 @@ export function PublicDocumentViewer({
       // Disable common screenshot shortcuts
       const handleKeyDown = (e: KeyboardEvent) => {
         // Disable Print Screen, F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
-        if (
-          e.key === 'PrintScreen' ||
-          e.key === 'F12' ||
-          (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
-          (e.ctrlKey && e.key === 'u')
-        ) {
+        if (e.key === 'PrintScreen' || e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) || (e.ctrlKey && e.key === 'u')) {
           e.preventDefault();
           return false;
         }
@@ -207,12 +210,12 @@ export function PublicDocumentViewer({
       watermark.style.zIndex = '9999';
       watermark.style.overflow = 'hidden';
       watermark.style.opacity = '0.15';
-      
+
       // Create repeating pattern of email text
       const watermarkText = viewerName ? `${viewerEmail} • ${viewerName}` : viewerEmail;
       const rows = Math.ceil(window.innerHeight / 80) + 1;
       const cols = Math.ceil(window.innerWidth / 300) + 1;
-      
+
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
           const textElement = document.createElement('div');
@@ -255,9 +258,7 @@ export function PublicDocumentViewer({
           {/* Left side - Logo */}
           <div className="flex items-center gap-6">
             <Link href="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
-              <span className="text-lg font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                {t('brandName')}
-              </span>
+              <span className="text-lg font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">{t('brandName')}</span>
             </Link>
           </div>
 
@@ -265,12 +266,7 @@ export function PublicDocumentViewer({
           <div className="flex-1 max-w-lg mx-8">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder={t('searchPlaceholder')}
-                className="pl-9 h-9 w-full bg-muted/50"
-                disabled
-              />
+              <Input type="search" placeholder={t('searchPlaceholder')} className="pl-9 h-9 w-full bg-muted/50" disabled />
             </div>
           </div>
 
@@ -278,36 +274,19 @@ export function PublicDocumentViewer({
           <div className="flex items-center gap-3">
             {/* Zoom Controls */}
             <div className="flex items-center gap-0.5 border rounded-md bg-muted/30">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 hover:bg-muted"
-                onClick={handleZoomOut}
-                disabled={zoom <= MIN_ZOOM}>
+              <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-muted" onClick={handleZoomOut} disabled={zoom <= MIN_ZOOM}>
                 <ZoomOut className="h-3.5 w-3.5" />
               </Button>
-              <button
-                onClick={handleResetZoom}
-                className="text-xs font-medium px-2 min-w-[3.5rem] text-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+              <button onClick={handleResetZoom} className="text-xs font-medium px-2 min-w-[3.5rem] text-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
                 {Math.round(zoom * 100)}%
               </button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 hover:bg-muted"
-                onClick={handleZoomIn}
-                disabled={zoom >= MAX_ZOOM}>
+              <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-muted" onClick={handleZoomIn} disabled={zoom >= MAX_ZOOM}>
                 <ZoomIn className="h-3.5 w-3.5" />
               </Button>
             </div>
 
             {/* Fullscreen */}
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-8 w-8 hover:bg-muted" 
-              onClick={toggleFullscreen}
-              aria-label={isFullscreen ? t('exitFullscreen') : t('fullscreen')}>
+            <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-muted" onClick={toggleFullscreen} aria-label={isFullscreen ? t('exitFullscreen') : t('fullscreen')}>
               {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
             </Button>
 
@@ -322,15 +301,9 @@ export function PublicDocumentViewer({
             )}
 
             {/* Bookmark */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className={cn('h-8 w-8 hover:bg-muted', isBookmarked && 'text-primary')}
-              onClick={handleBookmark}
-              aria-label={t('bookmark')}>
+            <Button variant="ghost" size="icon" className={cn('h-8 w-8 hover:bg-muted', isBookmarked && 'text-primary')} onClick={handleBookmark} aria-label={t('bookmark')}>
               <Bookmark className={cn('h-4 w-4', isBookmarked && 'fill-current')} />
             </Button>
-
 
             {/* Questions */}
             {enableQuestion && (
@@ -368,7 +341,7 @@ export function PublicDocumentViewer({
               <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
             </div>
           )}
-          
+
           {/* Error Message */}
           {loadError && (
             <Card className="rounded-lg p-6 flex flex-col items-center gap-4 w-full max-w-4xl mx-auto">
@@ -378,15 +351,11 @@ export function PublicDocumentViewer({
               </div>
             </Card>
           )}
-          
+
           {viewId && !loadError ? (
             <div
               ref={containerRef}
-              className={cn(
-                enableScreenshotProtection ? 'select-none' : '',
-                'w-full py-8',
-                'cursor-default relative'
-              )}
+              className={cn(enableScreenshotProtection ? 'select-none' : '', 'w-full py-8', 'cursor-default relative')}
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
@@ -419,9 +388,9 @@ export function PublicDocumentViewer({
                   </Card>
                 ) : contentType === 'application/pdf' ? (
                   <Card className="rounded-lg overflow-hidden w-full max-w-4xl">
-                    <embed 
-                      src={documentUrl} 
-                      type="application/pdf" 
+                    <embed
+                      src={documentUrl}
+                      type="application/pdf"
                       className="w-full h-[80vh]"
                       onError={() => {
                         setLoadError(t('forbidden'));
@@ -430,8 +399,8 @@ export function PublicDocumentViewer({
                   </Card>
                 ) : contentType?.startsWith('video/') ? (
                   <Card className="rounded-lg overflow-hidden p-2 w-full max-w-4xl">
-                    <video 
-                      controls 
+                    <video
+                      controls
                       className="w-full rounded-lg max-h-[80vh]"
                       onError={() => {
                         setLoadError(t('forbidden'));
@@ -441,8 +410,8 @@ export function PublicDocumentViewer({
                   </Card>
                 ) : contentType?.startsWith('audio/') ? (
                   <Card className="rounded-lg p-4 w-full max-w-4xl">
-                    <audio 
-                      controls 
+                    <audio
+                      controls
                       className="w-full"
                       onError={() => {
                         setLoadError(t('forbidden'));
@@ -452,9 +421,9 @@ export function PublicDocumentViewer({
                   </Card>
                 ) : contentType?.startsWith('text/') ? (
                   <Card className="rounded-lg overflow-hidden w-full max-w-4xl">
-                    <iframe 
-                      src={documentUrl} 
-                      className="w-full h-[80vh]" 
+                    <iframe
+                      src={documentUrl}
+                      className="w-full h-[80vh]"
                       title={title}
                       onError={() => {
                         setLoadError(t('forbidden'));
@@ -479,24 +448,13 @@ export function PublicDocumentViewer({
           ) : (
             <div className="text-center text-muted-foreground p-8">{t('documentNotAvailable')}</div>
           )}
-          
-          {!allowDownload && (
-            <div className="mt-6 text-center text-sm text-muted-foreground bg-muted/30 rounded-md py-3 px-4">
-              {t('downloadDisabled')}
-            </div>
-          )}
+
+          {!allowDownload && <div className="mt-6 text-center text-sm text-muted-foreground bg-muted/30 rounded-md py-3 px-4">{t('downloadDisabled')}</div>}
         </div>
       </main>
 
       {/* Feedback Question Modal - Fixed Bottom Right */}
-      {feedbackData && feedbackData.enabled && (
-        <PublicFeedbackQuestion 
-          viewId={viewId} 
-          feedbackData={feedbackData}
-          linkId={linkId}
-          tenantId={tenantId}
-        />
-      )}
+      {feedbackData && feedbackData.enabled && <PublicFeedbackQuestion viewId={viewId} feedbackData={feedbackData} linkId={linkId} tenantId={tenantId} />}
 
       {/* Questions Sheet */}
       {enableQuestion && (
@@ -527,4 +485,3 @@ export function PublicDocumentViewer({
     </div>
   );
 }
-

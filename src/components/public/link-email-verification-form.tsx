@@ -22,7 +22,7 @@ export function LinkEmailVerificationForm({ slug, email }: LinkEmailVerification
   const [isResending, setIsResending] = useState(false);
   const [canResend, setCanResend] = useState(true);
   const [countdown, setCountdown] = useState(0);
-  
+
   const verificationCode = watch('verificationCode') || '';
 
   const handleCodeChange = (value: string) => {
@@ -37,11 +37,11 @@ export function LinkEmailVerificationForm({ slug, email }: LinkEmailVerification
       const result = await sendEmailVerification(slug, email);
       if (result.success) {
         toast.success(t('email.codeSent'));
-        
+
         // Start 60 second countdown
         setCanResend(false);
         setCountdown(60);
-        
+
         const interval = setInterval(() => {
           setCountdown((prev) => {
             if (prev <= 1) {
@@ -87,25 +87,13 @@ export function LinkEmailVerificationForm({ slug, email }: LinkEmailVerification
             </InputOTP>
           </div>
         </div>
-        
+
         <div className="flex justify-center">
-          <Button
-            type="button"
-            variant="link"
-            onClick={handleResendCode}
-            disabled={!canResend || isResending}
-            className="text-sm"
-          >
-            {isResending 
-              ? t('email.resending') 
-              : countdown > 0 
-                ? t('email.resendIn', { seconds: countdown })
-                : t('email.resendCode')
-            }
+          <Button type="button" variant="link" onClick={handleResendCode} disabled={!canResend || isResending} className="text-sm">
+            {isResending ? t('email.resending') : countdown > 0 ? t('email.resendIn', { seconds: countdown }) : t('email.resendCode')}
           </Button>
         </div>
       </div>
     </div>
   );
 }
-

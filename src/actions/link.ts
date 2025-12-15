@@ -9,6 +9,7 @@ import { nanoid } from 'nanoid';
 import { generateUuid } from '@/lib/id';
 import { hashPassword } from '@/lib/password';
 import { toSlug } from '@/lib/utils';
+
 import { upsertFeedbackQuestion } from './document-feedback';
 
 export interface UpsertLinkParams {
@@ -69,7 +70,12 @@ export async function upsertLinkAction({ data, tenantId, documentId, dataroomId,
     // We explicitly add them here
     // For Prisma, we need to use relations (connect) instead of IDs directly
     // Exclude documentId/dataroomId from linkData if present (use relations instead)
-    const { documentId: _docIdFromLinkData, dataroomId: _dataroomIdFromLinkData, agreementId, ...cleanLinkData } = linkData as typeof linkData & { documentId?: unknown; dataroomId?: unknown; agreementId?: unknown };
+    const {
+      documentId: _docIdFromLinkData,
+      dataroomId: _dataroomIdFromLinkData,
+      agreementId,
+      ...cleanLinkData
+    } = linkData as typeof linkData & { documentId?: unknown; dataroomId?: unknown; agreementId?: unknown };
 
     const baseLinkPayload: Omit<Prisma.LinkCreateInput, 'customField'> = {
       ...cleanLinkData,

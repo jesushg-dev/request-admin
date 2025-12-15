@@ -1,18 +1,18 @@
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
+import { createPublicQuestion, getPublicConversations } from '@/actions/link-conversation';
 import { format, formatDistanceToNow } from 'date-fns';
-import { MessageCircle, Send, CheckCircle, Clock } from 'lucide-react';
+import { CheckCircle, Clock, MessageCircle, Send } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
-import { createPublicQuestion, getPublicConversations } from '@/actions/link-conversation';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Textarea } from '@/components/ui/textarea';
 
 interface PublicDocumentQuestionsProps {
   viewId: string;
@@ -173,9 +173,7 @@ export function PublicDocumentQuestions({ viewId, linkId, viewerEmail }: PublicD
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-start gap-2 flex-1">
                         <Avatar className="h-8 w-8 mt-1">
-                          <AvatarFallback className="text-xs">
-                            {question.messages[0]?.viewerEmail?.substring(0, 2).toUpperCase() || 'U'}
-                          </AvatarFallback>
+                          <AvatarFallback className="text-xs">{question.messages[0]?.viewerEmail?.substring(0, 2).toUpperCase() || 'U'}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
@@ -186,9 +184,7 @@ export function PublicDocumentQuestions({ viewId, linkId, viewerEmail }: PublicD
                               </Badge>
                             )}
                           </div>
-                          <p className="text-xs text-muted-foreground">
-                            {question.lastMessageAt ? formatDistanceToNow(new Date(question.lastMessageAt), { addSuffix: true }) : ''}
-                          </p>
+                          <p className="text-xs text-muted-foreground">{question.lastMessageAt ? formatDistanceToNow(new Date(question.lastMessageAt), { addSuffix: true }) : ''}</p>
                         </div>
                       </div>
                       <Badge variant={answered ? 'default' : 'secondary'} className="shrink-0">
@@ -236,14 +232,7 @@ export function PublicDocumentQuestions({ viewId, linkId, viewerEmail }: PublicD
       {/* New Question Input */}
       <div className="p-4 border-t bg-background">
         <div className="space-y-2">
-          <Textarea
-            value={newQuestion}
-            onChange={(e) => setNewQuestion(e.target.value)}
-            placeholder={t('placeholder')}
-            className="min-h-[80px] resize-none"
-            disabled={isPending}
-            maxLength={1000}
-          />
+          <Textarea value={newQuestion} onChange={(e) => setNewQuestion(e.target.value)} placeholder={t('placeholder')} className="min-h-[80px] resize-none" disabled={isPending} maxLength={1000} />
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground">
               {newQuestion.length}/1000 {t('characters')}
@@ -258,4 +247,3 @@ export function PublicDocumentQuestions({ viewId, linkId, viewerEmail }: PublicD
     </div>
   );
 }
-

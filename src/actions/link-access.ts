@@ -18,7 +18,6 @@ function generateVerificationCode(): string {
   return crypto.randomInt(100000, 999999).toString();
 }
 
-
 export interface LinkAccessData {
   email?: string;
   name?: string;

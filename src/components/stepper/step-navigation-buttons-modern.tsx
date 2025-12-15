@@ -60,7 +60,6 @@ export const StepperNavigationButtonsModern: FC<StepperNavigationButtonsModernPr
         </div>
       </div>
     );
-  },
+  }
 );
 StepperNavigationButtonsModern.displayName = 'StepperNavigationButtonsModern';
-

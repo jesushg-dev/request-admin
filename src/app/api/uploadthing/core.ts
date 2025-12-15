@@ -65,9 +65,7 @@ export const ourFileRouter = {
             }
 
             // Calculate next version number
-            const nextVersionNumber = existingDocument.versions && existingDocument.versions.length > 0 
-              ? existingDocument.versions[0].versionNumber + 1 
-              : 1;
+            const nextVersionNumber = existingDocument.versions && existingDocument.versions.length > 0 ? existingDocument.versions[0].versionNumber + 1 : 1;
 
             // Mark all previous versions as not primary
             await tx.documentVersion.updateMany({

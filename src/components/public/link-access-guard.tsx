@@ -65,26 +65,26 @@ interface AccessData {
 
 // Define stepper with validation steps
 const { useStepper } = defineStepper(
-  { 
-    id: 'validation', 
-    label: 'validation', 
+  {
+    id: 'validation',
+    label: 'validation',
     schema: z.object({
       password: z.string().optional(),
       email: z.string().optional(),
       verificationCode: z.string().optional(),
       agreementAccepted: z.boolean().optional(),
       name: z.string().optional(),
-      customFieldResponses: z.record(z.string(), z.unknown()).optional()
-    }) 
+      customFieldResponses: z.record(z.string(), z.unknown()).optional(),
+    }),
   },
-  { 
-    id: 'complete', 
-    label: 'complete', 
-    schema: z.object({}) 
+  {
+    id: 'complete',
+    label: 'complete',
+    schema: z.object({}),
   }
 );
 
-export function LinkAccessGuard({ slug,  link }: LinkAccessGuardProps) {
+export function LinkAccessGuard({ slug, link }: LinkAccessGuardProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const hasSubmitted = useRef(false);
@@ -137,10 +137,9 @@ export function LinkAccessGuard({ slug,  link }: LinkAccessGuardProps) {
     },
   });
 
-
   const onSubmit = async (values: AccessData) => {
     console.log('values', values);
-    
+
     // Validate current step
     if (currentValidationStep === 'password') {
       if (!values.password) {
@@ -189,14 +188,14 @@ export function LinkAccessGuard({ slug,  link }: LinkAccessGuardProps) {
         toast.error('Please enter the 6-digit verification code');
         return;
       }
-      
+
       // Verify code with server
       const verifyResult = await verifyEmailCode(slug, emailForVerification, values.verificationCode);
       if (!verifyResult.success) {
         toast.error(verifyResult.error || 'Invalid verification code');
         return;
       }
-      
+
       toast.success('Email verified successfully');
     }
 

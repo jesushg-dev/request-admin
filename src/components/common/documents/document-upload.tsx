@@ -5,14 +5,14 @@ import { useRouter } from 'next/navigation';
 import { getPathname } from '@/i18n/routing';
 import { useDocumentUploadSchema, type TDocumentUploadSchema } from '@/services/schemas/documents';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
 import type { Locale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { useQueryClient } from '@tanstack/react-query';
-import { useTranslations } from 'next-intl';
 
-import { useUploadThing } from '@/lib/uploadthing';
 import { getAcceptForFileType } from '@/lib/document-utils';
+import { useUploadThing } from '@/lib/uploadthing';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { ButtonLoading } from '@/components/shared/button-util';
 import { FileUploader } from '@/components/uploader/file-uploader';
@@ -89,7 +89,7 @@ export function DocumentUpload({ id, locale, tenantId, folderId, callbackUrl, da
 
     startTransition(async () => {
       const toastId = toast.loading(t('toast.uploading'));
-      
+
       try {
         // Initialize progress for all files
         const initialProgresses: Record<string, number> = {};
@@ -101,15 +101,12 @@ export function DocumentUpload({ id, locale, tenantId, folderId, callbackUrl, da
         // Upload files with proper input structure
         // tenantId is required by the schema, so we always need to send it
         // Progress updates are handled by onUploadProgress callback
-        const uploadedFiles = await startUpload(
-          newData.files,
-          {
-            tenantId,
-            folderId: folderId ?? undefined,
-            dataroomId: dataroomId ?? undefined,
-            documentId: documentId ?? undefined,
-          } as any
-        );
+        const uploadedFiles = await startUpload(newData.files, {
+          tenantId,
+          folderId: folderId ?? undefined,
+          dataroomId: dataroomId ?? undefined,
+          documentId: documentId ?? undefined,
+        } as any);
 
         if (!uploadedFiles || uploadedFiles.length === 0) {
           throw new Error(t('errors.uploadFailed'));
@@ -142,10 +139,10 @@ export function DocumentUpload({ id, locale, tenantId, folderId, callbackUrl, da
         }
       } catch (error) {
         setProgresses({});
-        
+
         // Log error for debugging
         console.error('Upload error:', error);
-        
+
         if (error instanceof Error) {
           toast.error(t('toast.error', { message: error.message }), { id: toastId });
         } else {

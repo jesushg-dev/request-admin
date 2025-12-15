@@ -1,10 +1,11 @@
 'use server';
 
 import { db } from '@/server/db-client';
+
 import { generateUuid } from '@/lib/id';
 
 const VALID_REACTION_TYPES = ['like', 'dislike', 'love', 'smile', 'frown', 'idea', 'comment'] as const;
-type ReactionType = typeof VALID_REACTION_TYPES[number];
+type ReactionType = (typeof VALID_REACTION_TYPES)[number];
 
 function sanitizeContent(content: string): string {
   // Basic XSS prevention - strip HTML tags
@@ -248,4 +249,3 @@ export async function getReactionCounts(
     };
   }
 }
-

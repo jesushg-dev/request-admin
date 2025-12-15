@@ -13,12 +13,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DocumentActionsDropdown } from '@/components/common/documents/document-actions-dropdown';
 import { DocumentAnalytics } from '@/components/common/documents/document-analytics';
+import { DocumentComments } from '@/components/common/documents/document-comments';
 import { DocumentMetadata } from '@/components/common/documents/document-metadata';
+import { DocumentReactionWidget } from '@/components/common/documents/document-reaction-widget';
 import { DocumentSharedLinks } from '@/components/common/documents/document-shared-links';
 import { DocumentVersionHistory } from '@/components/common/documents/document-version-history';
 import DocumentViewer, { DocumentDownloadButton } from '@/components/common/documents/document-viewer';
-import { DocumentComments } from '@/components/common/documents/document-comments';
-import { DocumentReactionWidget } from '@/components/common/documents/document-reaction-widget';
 
 interface DocumentDetailPageProps {
   params: Promise<{ locale: Locale; tenantId: string; slug: string }>;
@@ -134,19 +134,11 @@ export default async function DocumentDetailPage({ params }: DocumentDetailPageP
             </TabsContent>
 
             <TabsContent value="comments" className="flex-1 overflow-y-auto">
-              <DocumentComments 
-                documentId={document.id} 
-                tenantId={tenantId}
-                userTenantId={auth.userTenantId || null}
-              />
+              <DocumentComments documentId={document.id} tenantId={tenantId} userTenantId={auth.userTenantId || null} />
             </TabsContent>
-            
+
             <TabsContent value="reactions" className="flex-1 overflow-y-auto">
-              <DocumentReactionWidget 
-                documentId={document.id} 
-                tenantId={tenantId} 
-                viewOnly={true} 
-              />
+              <DocumentReactionWidget documentId={document.id} tenantId={tenantId} viewOnly={true} />
             </TabsContent>
           </Tabs>
         </CardContent>

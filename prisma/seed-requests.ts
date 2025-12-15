@@ -644,11 +644,22 @@ async function main() {
       return null;
     }
 
-    // Validate it's a leaf node (no subcategories and at last level)
+    // Validate it's a leaf node (no subcategories).
+    // Some environments (cloud tenants) may have different hierarchy level counts,
+    // so consider a category a leaf when it has no subcategories even if its
+    // hierarchy position doesn't match the local seed's total levels.
     const totalLevels = category.hierarchyLevel.hierarchy.levels.length;
-    const isLeaf = category.subcategories.length === 0 && category.hierarchyLevel.position === totalLevels;
+    const hasNoSubcategories = category.subcategories.length === 0;
 
-    return isLeaf ? category : null;
+    if (!hasNoSubcategories) return null;
+
+    if (category.hierarchyLevel.position !== totalLevels) {
+      console.warn(
+        `⚠️ Request Category "${category.name}" found but is at level ${category.hierarchyLevel.position}/${totalLevels} (expected last level). Proceeding because it has no subcategories.`
+      );
+    }
+
+    return category;
   };
 
   // Helper to find leaf assignment category (must be at last level and have no subcategories)
@@ -679,9 +690,15 @@ async function main() {
     });
 
     if (assignmentCategory) {
-      // Validate it's at the last level
+      // Validate it's a leaf (no subcategories). If the hierarchy level differs
+      // from expected last level, log a warning but accept it if it has no subcategories.
       const totalLevels = assignmentCategory.hierarchyLevel.hierarchy.levels.length;
-      if (assignmentCategory.hierarchyLevel.position === totalLevels && assignmentCategory.subcategories.length === 0) {
+      if (assignmentCategory.subcategories.length === 0) {
+        if (assignmentCategory.hierarchyLevel.position !== totalLevels) {
+          console.warn(
+            `⚠️ Assignment Category "${assignmentCategory.name}" found but is at level ${assignmentCategory.hierarchyLevel.position}/${totalLevels} (expected last level). Proceeding because it has no subcategories.`
+          );
+        }
         return assignmentCategory;
       }
     }
@@ -746,7 +763,12 @@ async function main() {
       for (const cat of categories) {
         if (cat.name === targetName) {
           const totalLevels = cat.hierarchyLevel.hierarchy.levels.length;
-          if (cat.hierarchyLevel.position === totalLevels && cat.subcategories.length === 0) {
+          if (cat.subcategories.length === 0) {
+            if (cat.hierarchyLevel.position !== totalLevels) {
+              console.warn(
+                `⚠️ Assignment Category "${cat.name}" found but is at level ${cat.hierarchyLevel.position}/${totalLevels} (expected last level). Proceeding because it has no subcategories.`
+              );
+            }
             return cat;
           }
         }
@@ -785,12 +807,16 @@ async function main() {
 
     // Validate request category is a leaf (no subcategories and at last level)
     const requestTotalLevels = requestCategory.hierarchyLevel.hierarchy.levels.length;
-    if (requestCategory.subcategories.length > 0 || requestCategory.hierarchyLevel.position !== requestTotalLevels) {
-      console.warn(
-        `⚠️ Skipping scenario "${scenario.subject}": Request Category "${scenario.category}" is not a leaf node (has ${requestCategory.subcategories.length} subcategories, level ${requestCategory.hierarchyLevel.position}/${requestTotalLevels}).`
-      );
+    if (requestCategory.subcategories.length > 0) {
+      console.warn(`⚠️ Skipping scenario "${scenario.subject}": Request Category "${scenario.category}" is not a leaf node (has ${requestCategory.subcategories.length} subcategories).`);
       skippedCount++;
       continue;
+    }
+
+    if (requestCategory.hierarchyLevel.position !== requestTotalLevels) {
+      console.warn(
+        `⚠️ Request Category "${scenario.category}" is at level ${requestCategory.hierarchyLevel.position}/${requestTotalLevels} (expected last level). Continuing because it has no subcategories.`
+      );
     }
 
     // Find leaf assignment category (must be at last level and have no subcategories)
@@ -804,12 +830,18 @@ async function main() {
 
     // Validate assignment category is a leaf (no subcategories and at last level)
     const assignmentTotalLevels = assignmentCategory.hierarchyLevel.hierarchy.levels.length;
-    if (assignmentCategory.subcategories.length > 0 || assignmentCategory.hierarchyLevel.position !== assignmentTotalLevels) {
+    if (assignmentCategory.subcategories.length > 0) {
       console.warn(
-        `⚠️ Skipping scenario "${scenario.subject}": Assignment Category "${scenario.assignmentCategory}" is not a leaf node (has ${assignmentCategory.subcategories.length} subcategories, level ${assignmentCategory.hierarchyLevel.position}/${assignmentTotalLevels}).`
+        `⚠️ Skipping scenario "${scenario.subject}": Assignment Category "${scenario.assignmentCategory}" is not a leaf node (has ${assignmentCategory.subcategories.length} subcategories).`
       );
       skippedCount++;
       continue;
+    }
+
+    if (assignmentCategory.hierarchyLevel.position !== assignmentTotalLevels) {
+      console.warn(
+        `⚠️ Assignment Category "${scenario.assignmentCategory}" is at level ${assignmentCategory.hierarchyLevel.position}/${assignmentTotalLevels} (expected last level). Continuing because it has no subcategories.`
+      );
     }
 
     const requester = getRandom(users);

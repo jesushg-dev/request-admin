@@ -33,8 +33,6 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 import { DataroomFolderDefaultArgs, DataroomFolderWithRelations, DocumentListArgs, DocumentListWithRelations, DocumentWithRelations } from '@/types/zenstackhq/document';
-import { ImageLightbox } from '@/components/common/documents/image-lightbox';
-import { MediaLightbox } from '@/components/common/documents/media-lightbox';
 import { getFileIcon } from '@/lib/document-utils';
 import useMessage from '@/lib/message';
 import { cn } from '@/lib/utils';
@@ -43,6 +41,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, ContextMenuTrigger } from '@/components/ui/context-menu';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { ImageLightbox } from '@/components/common/documents/image-lightbox';
+import { MediaLightbox } from '@/components/common/documents/media-lightbox';
 import { useClipboard } from '@/components/hoc/clipboard-context';
 import EmptyState from '@/components/shared/empty-state';
 import { SearchDialog } from '@/components/shared/search-dialog';
@@ -313,7 +313,11 @@ export function DataroomDocuments({ dataroomId, tenantId, callbackUrl, currentFo
         onOpenChange={(open) => !open && setSelectedImage(null)}
         imageUrl={selectedImage?.url || ''}
         title={selectedImage?.title}
-        viewUrl={selectedImage?.documentId ? `/admin/${tenantId}/links-and-documents/documents/${selectedImage.documentId}?documentId=${selectedImage.documentId}&dataroomId=${dataroomId}&callbackUrl=${encodeURIComponent(callbackUrl)}` : undefined}
+        viewUrl={
+          selectedImage?.documentId
+            ? `/admin/${tenantId}/links-and-documents/documents/${selectedImage.documentId}?documentId=${selectedImage.documentId}&dataroomId=${dataroomId}&callbackUrl=${encodeURIComponent(callbackUrl)}`
+            : undefined
+        }
       />
       <MediaLightbox
         open={selectedMedia !== null && (isVideo(selectedMedia.contentType) || isAudio(selectedMedia.contentType))}
@@ -321,7 +325,11 @@ export function DataroomDocuments({ dataroomId, tenantId, callbackUrl, currentFo
         mediaUrl={selectedMedia?.url || ''}
         contentType={selectedMedia?.contentType || ''}
         title={selectedMedia?.title}
-        viewUrl={selectedMedia?.documentId ? `/admin/${tenantId}/links-and-documents/documents/${selectedMedia.documentId}?documentId=${selectedMedia.documentId}&dataroomId=${dataroomId}&callbackUrl=${encodeURIComponent(callbackUrl)}` : undefined}
+        viewUrl={
+          selectedMedia?.documentId
+            ? `/admin/${tenantId}/links-and-documents/documents/${selectedMedia.documentId}?documentId=${selectedMedia.documentId}&dataroomId=${dataroomId}&callbackUrl=${encodeURIComponent(callbackUrl)}`
+            : undefined
+        }
         mediaList={mediaList}
         currentIndex={currentMediaIndex}
         onNavigate={(index) => {
@@ -337,444 +345,451 @@ export function DataroomDocuments({ dataroomId, tenantId, callbackUrl, currentFo
       />
       <ContextMenu>
         <ContextMenuTrigger className="flex-1 flex flex-col overflow-hidden">
-        <Card className="flex-1 flex flex-col overflow-hidden border-0 shadow-none bg-transparent">
-          {/* Top Bar - Google Drive Style */}
-          <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            {/* Breadcrumbs */}
-            <div className="flex items-center justify-between px-4 py-2.5 border-b bg-background/50">
-              <div className="flex items-center gap-2 min-w-0 flex-1">
-                <Button variant="ghost" size="sm" className="h-8 px-2.5 text-sm font-medium hover:bg-accent transition-colors" onClick={() => navigateToFolder(null)}>
-                  <Home className="h-4 w-4 mr-1.5" />
-                  {t('breadcrumbs.root')}
-                </Button>
-                {breadcrumbs.slice(1).map((breadcrumb, index) => (
-                  <div key={index} className="flex items-center gap-1">
-                    <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 px-2.5 text-sm font-medium hover:bg-accent max-w-[200px] truncate transition-colors"
-                      onClick={() => navigateToFolder(breadcrumb.id)}>
-                      {breadcrumb.name}
-                    </Button>
-                  </div>
-                ))}
+          <Card className="flex-1 flex flex-col overflow-hidden border-0 shadow-none bg-transparent">
+            {/* Top Bar - Google Drive Style */}
+            <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+              {/* Breadcrumbs */}
+              <div className="flex items-center justify-between px-4 py-2.5 border-b bg-background/50">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                  <Button variant="ghost" size="sm" className="h-8 px-2.5 text-sm font-medium hover:bg-accent transition-colors" onClick={() => navigateToFolder(null)}>
+                    <Home className="h-4 w-4 mr-1.5" />
+                    {t('breadcrumbs.root')}
+                  </Button>
+                  {breadcrumbs.slice(1).map((breadcrumb, index) => (
+                    <div key={index} className="flex items-center gap-1">
+                      <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2.5 text-sm font-medium hover:bg-accent max-w-[200px] truncate transition-colors"
+                        onClick={() => navigateToFolder(breadcrumb.id)}>
+                        {breadcrumb.name}
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <SearchDialog />
+                  <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-accent transition-colors" asChild title={t('actions.newFolder')}>
+                    <Link
+                      href={{
+                        pathname: '/admin/[tenantId]/links-and-documents/folders/new',
+                        params: { tenantId },
+                        query: { currentFolderId, dataroomId, callbackUrl },
+                      }}>
+                      <FolderPlus className="h-4 w-4" />
+                      <span className="sr-only">{t('actions.newFolder')}</span>
+                    </Link>
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-accent transition-colors" asChild title={t('actions.uploadDocuments')}>
+                    <Link
+                      href={{
+                        params: { tenantId },
+                        pathname: '/admin/[tenantId]/links-and-documents/documents/upload',
+                        query: { folderId: currentFolderId, dataroomId, callbackUrl },
+                      }}>
+                      <Plus className="h-4 w-4" />
+                      <span className="sr-only">{t('actions.uploadDocuments')}</span>
+                    </Link>
+                  </Button>
+                </div>
               </div>
-              <div className="flex items-center gap-1.5">
-                <SearchDialog />
-                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-accent transition-colors" asChild title={t('actions.newFolder')}>
-                  <Link
-                    href={{
-                      pathname: '/admin/[tenantId]/links-and-documents/folders/new',
-                      params: { tenantId },
-                      query: { currentFolderId, dataroomId, callbackUrl },
-                    }}>
-                    <FolderPlus className="h-4 w-4" />
-                    <span className="sr-only">{t('actions.newFolder')}</span>
-                  </Link>
-                </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-accent transition-colors" asChild title={t('actions.uploadDocuments')}>
-                  <Link
-                    href={{
-                      params: { tenantId },
-                      pathname: '/admin/[tenantId]/links-and-documents/documents/upload',
-                      query: { folderId: currentFolderId, dataroomId, callbackUrl },
-                    }}>
-                    <Plus className="h-4 w-4" />
-                    <span className="sr-only">{t('actions.uploadDocuments')}</span>
-                  </Link>
-                </Button>
+
+              {/* Filters and Sort Bar - Google Drive Style */}
+              <div className="flex items-center justify-between px-4 py-2 bg-background/30">
+                <div className="flex items-center gap-4">
+                  {/* Current location dropdown */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 px-2.5 text-sm font-normal hover:bg-accent transition-colors">
+                        {breadcrumbs[breadcrumbs.length - 1].name}
+                        <ChevronDown className="h-3 w-3 ml-1.5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem onClick={() => navigateToFolder(null)}>{t('breadcrumbs.root')}</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+
+                  {/* Filter buttons */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 px-2.5 text-sm font-normal hover:bg-accent transition-colors">
+                        {t('filters.type.label')}
+                        <ChevronDown className="h-3 w-3 ml-1.5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem onClick={() => handleSort('type')}>{t('filters.type.all')}</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleSort('type')}>{t('filters.type.folders')}</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleSort('type')}>{t('filters.type.documents')}</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 px-2.5 text-sm font-normal hover:bg-accent transition-colors">
+                        {t('filters.people.label')}
+                        <ChevronDown className="h-3 w-3 ml-1.5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem>{t('filters.people.all')}</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 px-2.5 text-sm font-normal hover:bg-accent transition-colors">
+                        {t('filters.modified.label')}
+                        <ChevronDown className="h-3 w-3 ml-1.5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem onClick={() => handleSort('modified')}>{t('filters.modified.anyTime')}</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleSort('modified')}>{t('filters.modified.today')}</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleSort('modified')}>{t('filters.modified.yesterday')}</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleSort('modified')}>{t('filters.modified.last7Days')}</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleSort('modified')}>{t('filters.modified.last30Days')}</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 px-2.5 text-sm font-normal hover:bg-accent transition-colors">
+                        {t('filters.source.label')}
+                        <ChevronDown className="h-3 w-3 ml-1.5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem>{t('filters.source.all')}</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+
+                  {/* Sort by Name */}
+                  <Button variant="ghost" size="sm" className="h-8 px-2.5 text-sm font-normal hover:bg-accent transition-colors" onClick={() => handleSort('name')}>
+                    {t('filters.name')}
+                    {sortBy === 'name' && <ArrowUpDown className={cn('h-3 w-3 ml-1.5 transition-transform', sortOrder === 'desc' && 'rotate-180')} />}
+                  </Button>
+                </div>
+
+                {/* View Toggle */}
+                <div className="flex items-center gap-1 border-l pl-4">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn('h-8 w-8 transition-colors', viewMode === 'list' && 'bg-accent')}
+                    onClick={() => setViewMode('list')}
+                    title={t('filters.viewMode.list')}>
+                    <List className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn('h-8 w-8 transition-colors', viewMode === 'grid' && 'bg-accent')}
+                    onClick={() => setViewMode('grid')}
+                    title={t('filters.viewMode.grid')}>
+                    <Grid3x3 className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </div>
 
-            {/* Filters and Sort Bar - Google Drive Style */}
-            <div className="flex items-center justify-between px-4 py-2 bg-background/30">
-              <div className="flex items-center gap-4">
-                {/* Current location dropdown */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="h-8 px-2.5 text-sm font-normal hover:bg-accent transition-colors">
-                      {breadcrumbs[breadcrumbs.length - 1].name}
-                      <ChevronDown className="h-3 w-3 ml-1.5" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => navigateToFolder(null)}>{t('breadcrumbs.root')}</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                {/* Filter buttons */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="h-8 px-2.5 text-sm font-normal hover:bg-accent transition-colors">
-                      {t('filters.type.label')}
-                      <ChevronDown className="h-3 w-3 ml-1.5" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => handleSort('type')}>{t('filters.type.all')}</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleSort('type')}>{t('filters.type.folders')}</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleSort('type')}>{t('filters.type.documents')}</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="h-8 px-2.5 text-sm font-normal hover:bg-accent transition-colors">
-                      {t('filters.people.label')}
-                      <ChevronDown className="h-3 w-3 ml-1.5" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem>{t('filters.people.all')}</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="h-8 px-2.5 text-sm font-normal hover:bg-accent transition-colors">
-                      {t('filters.modified.label')}
-                      <ChevronDown className="h-3 w-3 ml-1.5" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => handleSort('modified')}>{t('filters.modified.anyTime')}</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleSort('modified')}>{t('filters.modified.today')}</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleSort('modified')}>{t('filters.modified.yesterday')}</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleSort('modified')}>{t('filters.modified.last7Days')}</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleSort('modified')}>{t('filters.modified.last30Days')}</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="h-8 px-2.5 text-sm font-normal hover:bg-accent transition-colors">
-                      {t('filters.source.label')}
-                      <ChevronDown className="h-3 w-3 ml-1.5" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem>{t('filters.source.all')}</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                {/* Sort by Name */}
-                <Button variant="ghost" size="sm" className="h-8 px-2.5 text-sm font-normal hover:bg-accent transition-colors" onClick={() => handleSort('name')}>
-                  {t('filters.name')}
-                  {sortBy === 'name' && <ArrowUpDown className={cn('h-3 w-3 ml-1.5 transition-transform', sortOrder === 'desc' && 'rotate-180')} />}
-                </Button>
-              </div>
-
-              {/* View Toggle */}
-              <div className="flex items-center gap-1 border-l pl-4">
-                <Button variant="ghost" size="icon" className={cn('h-8 w-8 transition-colors', viewMode === 'list' && 'bg-accent')} onClick={() => setViewMode('list')} title={t('filters.viewMode.list')}>
-                  <List className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="icon" className={cn('h-8 w-8 transition-colors', viewMode === 'grid' && 'bg-accent')} onClick={() => setViewMode('grid')} title={t('filters.viewMode.grid')}>
-                  <Grid3x3 className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          {/* Content */}
-          <CardContent className="overflow-hidden flex-1 flex flex-col p-0">
-            <ScrollArea className="h-full">
-              <div className="p-4 sm:p-6">
-                {allItems.length === 0 ? (
-                  <EmptyState
-                    icons={[FileText, LinkIcon, FolderClosed]}
-                    title={t('emptyState.title')}
-                    description={t('emptyState.description')}
-                    actions={[
-                      {
-                        icon: FolderPlus,
-                        label: t('actions.newFolder'),
-                        href: {
-                          pathname: '/admin/[tenantId]/links-and-documents/folders/new',
-                          params: { tenantId },
-                          query: { currentFolderId, dataroomId, callbackUrl },
+            {/* Content */}
+            <CardContent className="overflow-hidden flex-1 flex flex-col p-0">
+              <ScrollArea className="h-full">
+                <div className="p-4 sm:p-6">
+                  {allItems.length === 0 ? (
+                    <EmptyState
+                      icons={[FileText, LinkIcon, FolderClosed]}
+                      title={t('emptyState.title')}
+                      description={t('emptyState.description')}
+                      actions={[
+                        {
+                          icon: FolderPlus,
+                          label: t('actions.newFolder'),
+                          href: {
+                            pathname: '/admin/[tenantId]/links-and-documents/folders/new',
+                            params: { tenantId },
+                            query: { currentFolderId, dataroomId, callbackUrl },
+                          },
                         },
-                      },
-                      {
-                        icon: Plus,
-                        label: t('actions.uploadDocuments'),
-                        href: {
-                          params: { tenantId },
-                          pathname: '/admin/[tenantId]/links-and-documents/documents/upload',
-                          query: { folderId: currentFolderId, dataroomId, callbackUrl },
+                        {
+                          icon: Plus,
+                          label: t('actions.uploadDocuments'),
+                          href: {
+                            params: { tenantId },
+                            pathname: '/admin/[tenantId]/links-and-documents/documents/upload',
+                            query: { folderId: currentFolderId, dataroomId, callbackUrl },
+                          },
                         },
-                      },
-                    ]}
-                  />
-                ) : viewMode === 'grid' ? (
-                  // Grid View - Google Drive Style
-                  <div className="grid grid-cols-[repeat(auto-fill,160px)] gap-3 sm:gap-4 max-w-full justify-start">
-                    {allItems.map((item) =>
-                      item.type === 'folder' ? (
-                        <FolderGridItem
-                          key={item.id}
-                          item={item}
-                          onNavigate={navigateToFolder}
-                          onCut={handleCutFolder}
-                          onDelete={handleDeleteFolder}
-                          pending={pending}
-                          tenantId={tenantId}
-                          dataroomId={dataroomId}
-                          translations={{
-                            moreOptions: t('actions.moreOptions'),
-                            rename: t('actions.rename'),
-                            cut: t('actions.cut'),
-                            delete: t('actions.delete'),
-                            deleting: t('actions.deleting'),
-                          }}
-                        />
-                      ) : (
-                        <DocumentGridItem
-                          key={item.id}
-                          item={item}
-                          onCut={handleCutDocument}
-                          onCopy={handleCopyDocument}
-                          onDelete={handleDeleteDocument}
-                          onImageClick={handleDocumentClick}
-                          pending={pending}
-                          tenantId={tenantId}
-                          dataroomId={dataroomId}
-                          callbackUrl={callbackUrl}
-                          translations={{
-                            moreOptions: t('actions.moreOptions'),
-                            view: t('actions.view'),
-                            cut: t('actions.cut'),
-                            copy: t('actions.copy'),
-                            delete: t('actions.delete'),
-                            deleting: t('actions.deleting'),
-                          }}
-                        />
-                      )
-                    )}
-                  </div>
-                ) : (
-                  // List View - Google Drive Style
-                  <div className="border rounded-lg divide-y divide-border bg-card overflow-hidden">
-                    {allItems.map((item) => (
-                      <ContextMenu key={item.id}>
-                        <ContextMenuTrigger className="w-full">
-                          <div
-                            className={cn(
-                              'group flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-2.5 sm:py-3',
-                              'hover:bg-accent/50 transition-colors',
-                              'focus-within:bg-accent/50',
-                              (item.type === 'folder' || item.type === 'document') && 'cursor-pointer',
-                              'min-w-0 overflow-hidden'
-                            )}
-                            onClick={() => {
-                              if (item.type === 'folder') {
-                                navigateToFolder(item.id);
-                              } else if (item.type === 'document') {
-                                const doc = item.data as DocumentListWithRelations;
-                                handleDocumentClick(doc);
-                              }
-                            }}>
-                            <div className="flex-shrink-0">
-                              <div className="h-10 w-10 flex items-center justify-center flex-shrink-0">
-                                {item.type === 'folder' ? (
-                                  <FolderOpen className="h-8 w-8 text-[#4285F4]" />
-                                ) : (() => {
-                                  if (item.type === 'document') {
-                                    const doc = item.data as DocumentListWithRelations;
-                                    const isImageFile = isImage(doc.contentType);
-                                    const isVideoFile = isVideo(doc.contentType);
-                                    const isAudioFile = isAudio(doc.contentType);
-                                    if (isImageFile) {
-                                      return (
-                                        <div className="h-10 w-10 rounded overflow-hidden border border-border bg-muted flex-shrink-0">
-                                          {/*eslint-disable-next-line @next/next/no-img-element*/}
-                                          <img
-                                            src={doc.file || '/placeholder.svg'}
-                                            alt={doc.name}
-                                            className="h-full w-full object-cover"
-                                            loading="lazy"
-                                          />
-                                        </div>
-                                      );
-                                    }
-                                    if (isVideoFile) {
-                                      return (
-                                        <div className="h-10 w-10 rounded overflow-hidden border border-border bg-muted flex-shrink-0 relative">
-                                          {/*eslint-disable-next-line @next/next/no-img-element*/}
-                                          <video
-                                            src={doc.file}
-                                            className="h-full w-full object-cover"
-                                            preload="metadata"
-                                            muted
-                                            onLoadedMetadata={(e) => {
-                                              const video = e.currentTarget;
-                                              if (video.videoWidth > 0 && video.videoHeight > 0) {
-                                                video.currentTime = 1;
-                                              }
-                                            }}>
-                                            <source src={doc.file} type={doc.contentType || ''} />
-                                          </video>
-                                          <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                                            <PlayIcon className="h-3 w-3 text-white drop-shadow-lg" />
-                                          </div>
-                                        </div>
-                                      );
-                                    }
-                                    if (isAudioFile) {
-                                      return (
-                                        <div className="h-10 w-10 rounded overflow-hidden border border-border bg-muted flex-shrink-0 relative flex items-center justify-center">
-                                          <PlayIcon className="h-5 w-5 text-white drop-shadow-lg" />
-                                        </div>
-                                      );
-                                    }
-                                    return getFileIcon(doc.type);
-                                  }
-                                  return null;
-                                })()}
-                              </div>
-                            </div>
-                            <div className="flex-1 min-w-0 overflow-hidden">
-                              <p className="font-medium text-sm truncate group-hover:text-primary transition-colors" title={item.name}>
-                                {item.name}
-                              </p>
-                              <div className="flex items-center gap-2 mt-0.5">
-                                <span className="text-xs text-muted-foreground truncate">{format(item.modifiedAt, 'MMM d, yyyy')}</span>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-                              {item.type === 'document' && (
-                                <>
-                                  <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
-                                    <Link
-                                      href={{
-                                        pathname: '/admin/[tenantId]/links-and-documents/documents/[slug]',
-                                        query: { documentId: item.id, dataroomId, callbackUrl },
-                                        params: { tenantId, slug: item.id },
-                                      }}>
-                                      <Eye className="h-4 w-4" />
-                                      <span className="sr-only">{t('actions.view')}</span>
-                                    </Link>
-                                  </Button>
-                                  <DocumentDownloadButton fileUrl={(item.data as DocumentListWithRelations).file} title={`${item.name}.${item.fileType}`} />
-                                </>
+                      ]}
+                    />
+                  ) : viewMode === 'grid' ? (
+                    // Grid View - Google Drive Style
+                    <div className="grid grid-cols-[repeat(auto-fill,160px)] gap-3 sm:gap-4 max-w-full justify-start">
+                      {allItems.map((item) =>
+                        item.type === 'folder' ? (
+                          <FolderGridItem
+                            key={item.id}
+                            item={item}
+                            onNavigate={navigateToFolder}
+                            onCut={handleCutFolder}
+                            onDelete={handleDeleteFolder}
+                            pending={pending}
+                            tenantId={tenantId}
+                            dataroomId={dataroomId}
+                            translations={{
+                              moreOptions: t('actions.moreOptions'),
+                              rename: t('actions.rename'),
+                              cut: t('actions.cut'),
+                              delete: t('actions.delete'),
+                              deleting: t('actions.deleting'),
+                            }}
+                          />
+                        ) : (
+                          <DocumentGridItem
+                            key={item.id}
+                            item={item}
+                            onCut={handleCutDocument}
+                            onCopy={handleCopyDocument}
+                            onDelete={handleDeleteDocument}
+                            onImageClick={handleDocumentClick}
+                            pending={pending}
+                            tenantId={tenantId}
+                            dataroomId={dataroomId}
+                            callbackUrl={callbackUrl}
+                            translations={{
+                              moreOptions: t('actions.moreOptions'),
+                              view: t('actions.view'),
+                              cut: t('actions.cut'),
+                              copy: t('actions.copy'),
+                              delete: t('actions.delete'),
+                              deleting: t('actions.deleting'),
+                            }}
+                          />
+                        )
+                      )}
+                    </div>
+                  ) : (
+                    // List View - Google Drive Style
+                    <div className="border rounded-lg divide-y divide-border bg-card overflow-hidden">
+                      {allItems.map((item) => (
+                        <ContextMenu key={item.id}>
+                          <ContextMenuTrigger className="w-full">
+                            <div
+                              className={cn(
+                                'group flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-2.5 sm:py-3',
+                                'hover:bg-accent/50 transition-colors',
+                                'focus-within:bg-accent/50',
+                                (item.type === 'folder' || item.type === 'document') && 'cursor-pointer',
+                                'min-w-0 overflow-hidden'
                               )}
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                                    <MoreHorizontal className="h-4 w-4" />
-                                    <span className="sr-only">{t('actions.moreOptions')}</span>
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                              onClick={() => {
+                                if (item.type === 'folder') {
+                                  navigateToFolder(item.id);
+                                } else if (item.type === 'document') {
+                                  const doc = item.data as DocumentListWithRelations;
+                                  handleDocumentClick(doc);
+                                }
+                              }}>
+                              <div className="flex-shrink-0">
+                                <div className="h-10 w-10 flex items-center justify-center flex-shrink-0">
                                   {item.type === 'folder' ? (
-                                    <>
-                                      <DropdownMenuItem asChild>
-                                        <Link
-                                          href={{
-                                            pathname: '/admin/[tenantId]/links-and-documents/folders/[slug]/edit',
-                                            params: { tenantId, slug: item.id },
-                                            query: { dataroomId },
-                                          }}
-                                          onClick={(e) => e.stopPropagation()}>
-                                          <Pencil className="mr-2 h-4 w-4" />
-                                          {t('actions.rename')}
-                                        </Link>
-                                      </DropdownMenuItem>
-                                      <DropdownMenuItem
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleCutFolder(item.data as DataroomFolderWithRelations);
-                                        }}>
-                                        <Scissors className="mr-2 h-4 w-4" />
-                                        {t('actions.cut')}
-                                      </DropdownMenuItem>
-                                      <DropdownMenuItem
-                                        disabled={pending}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleDeleteFolder(item.id);
-                                        }}
-                                        className="text-destructive focus:text-destructive">
-                                        <Trash2 className="mr-2 h-4 w-4" />
-                                        {pending ? t('actions.deleting') : t('actions.delete')}
-                                      </DropdownMenuItem>
-                                    </>
+                                    <FolderOpen className="h-8 w-8 text-[#4285F4]" />
                                   ) : (
-                                    <>
-                                      <DropdownMenuItem
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleCutDocument(item.data as DocumentListWithRelations);
-                                        }}>
-                                        <Scissors className="mr-2 h-4 w-4" />
-                                        {t('actions.cut')}
-                                      </DropdownMenuItem>
-                                      <DropdownMenuItem
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleCopyDocument(item.data as DocumentListWithRelations);
-                                        }}>
-                                        <Copy className="mr-2 h-4 w-4" />
-                                        {t('actions.copy')}
-                                      </DropdownMenuItem>
-                                      <DropdownMenuItem
-                                        disabled={pending}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleDeleteDocument(item.id);
-                                        }}
-                                        className="text-destructive focus:text-destructive">
-                                        <Trash2 className="mr-2 h-4 w-4" />
-                                        {pending ? t('actions.deleting') : t('actions.delete')}
-                                      </DropdownMenuItem>
-                                    </>
+                                    (() => {
+                                      if (item.type === 'document') {
+                                        const doc = item.data as DocumentListWithRelations;
+                                        const isImageFile = isImage(doc.contentType);
+                                        const isVideoFile = isVideo(doc.contentType);
+                                        const isAudioFile = isAudio(doc.contentType);
+                                        if (isImageFile) {
+                                          return (
+                                            <div className="h-10 w-10 rounded overflow-hidden border border-border bg-muted flex-shrink-0">
+                                              {/*eslint-disable-next-line @next/next/no-img-element*/}
+                                              <img src={doc.file || '/placeholder.svg'} alt={doc.name} className="h-full w-full object-cover" loading="lazy" />
+                                            </div>
+                                          );
+                                        }
+                                        if (isVideoFile) {
+                                          return (
+                                            <div className="h-10 w-10 rounded overflow-hidden border border-border bg-muted flex-shrink-0 relative">
+                                              {/*eslint-disable-next-line @next/next/no-img-element*/}
+                                              <video
+                                                src={doc.file}
+                                                className="h-full w-full object-cover"
+                                                preload="metadata"
+                                                muted
+                                                onLoadedMetadata={(e) => {
+                                                  const video = e.currentTarget;
+                                                  if (video.videoWidth > 0 && video.videoHeight > 0) {
+                                                    video.currentTime = 1;
+                                                  }
+                                                }}>
+                                                <source src={doc.file} type={doc.contentType || ''} />
+                                              </video>
+                                              <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                                                <PlayIcon className="h-3 w-3 text-white drop-shadow-lg" />
+                                              </div>
+                                            </div>
+                                          );
+                                        }
+                                        if (isAudioFile) {
+                                          return (
+                                            <div className="h-10 w-10 rounded overflow-hidden border border-border bg-muted flex-shrink-0 relative flex items-center justify-center">
+                                              <PlayIcon className="h-5 w-5 text-white drop-shadow-lg" />
+                                            </div>
+                                          );
+                                        }
+                                        return getFileIcon(doc.type);
+                                      }
+                                      return null;
+                                    })()
                                   )}
-                                </DropdownMenuContent>
-                              </DropdownMenu>
+                                </div>
+                              </div>
+                              <div className="flex-1 min-w-0 overflow-hidden">
+                                <p className="font-medium text-sm truncate group-hover:text-primary transition-colors" title={item.name}>
+                                  {item.name}
+                                </p>
+                                <div className="flex items-center gap-2 mt-0.5">
+                                  <span className="text-xs text-muted-foreground truncate">{format(item.modifiedAt, 'MMM d, yyyy')}</span>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                                {item.type === 'document' && (
+                                  <>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+                                      <Link
+                                        href={{
+                                          pathname: '/admin/[tenantId]/links-and-documents/documents/[slug]',
+                                          query: { documentId: item.id, dataroomId, callbackUrl },
+                                          params: { tenantId, slug: item.id },
+                                        }}>
+                                        <Eye className="h-4 w-4" />
+                                        <span className="sr-only">{t('actions.view')}</span>
+                                      </Link>
+                                    </Button>
+                                    <DocumentDownloadButton fileUrl={(item.data as DocumentListWithRelations).file} title={`${item.name}.${item.fileType}`} />
+                                  </>
+                                )}
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                                      <MoreHorizontal className="h-4 w-4" />
+                                      <span className="sr-only">{t('actions.moreOptions')}</span>
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                                    {item.type === 'folder' ? (
+                                      <>
+                                        <DropdownMenuItem asChild>
+                                          <Link
+                                            href={{
+                                              pathname: '/admin/[tenantId]/links-and-documents/folders/[slug]/edit',
+                                              params: { tenantId, slug: item.id },
+                                              query: { dataroomId },
+                                            }}
+                                            onClick={(e) => e.stopPropagation()}>
+                                            <Pencil className="mr-2 h-4 w-4" />
+                                            {t('actions.rename')}
+                                          </Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleCutFolder(item.data as DataroomFolderWithRelations);
+                                          }}>
+                                          <Scissors className="mr-2 h-4 w-4" />
+                                          {t('actions.cut')}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                          disabled={pending}
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDeleteFolder(item.id);
+                                          }}
+                                          className="text-destructive focus:text-destructive">
+                                          <Trash2 className="mr-2 h-4 w-4" />
+                                          {pending ? t('actions.deleting') : t('actions.delete')}
+                                        </DropdownMenuItem>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <DropdownMenuItem
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleCutDocument(item.data as DocumentListWithRelations);
+                                          }}>
+                                          <Scissors className="mr-2 h-4 w-4" />
+                                          {t('actions.cut')}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleCopyDocument(item.data as DocumentListWithRelations);
+                                          }}>
+                                          <Copy className="mr-2 h-4 w-4" />
+                                          {t('actions.copy')}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                          disabled={pending}
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDeleteDocument(item.id);
+                                          }}
+                                          className="text-destructive focus:text-destructive">
+                                          <Trash2 className="mr-2 h-4 w-4" />
+                                          {pending ? t('actions.deleting') : t('actions.delete')}
+                                        </DropdownMenuItem>
+                                      </>
+                                    )}
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </div>
                             </div>
-                          </div>
-                        </ContextMenuTrigger>
-                      </ContextMenu>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </ScrollArea>
-          </CardContent>
-        </Card>
-      </ContextMenuTrigger>
+                          </ContextMenuTrigger>
+                        </ContextMenu>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </ScrollArea>
+            </CardContent>
+          </Card>
+        </ContextMenuTrigger>
 
-      <ContextMenuContent>
-        <ContextMenuItem onClick={() => handlePaste(dataroomId, currentFolderId)}>
-          <Clipboard className="mr-2 h-4 w-4" />
-          {t('actions.paste')}
-        </ContextMenuItem>
-        <ContextMenuSeparator />
-        <ContextMenuItem asChild>
-          <Link
-            href={{
-              pathname: '/admin/[tenantId]/links-and-documents/folders/new',
-              params: { tenantId },
-              query: { currentFolderId, dataroomId, callbackUrl },
-            }}>
-            <FolderPlus className="mr-2 h-4 w-4" />
-            {t('actions.newFolder')}
-          </Link>
-        </ContextMenuItem>
-        <ContextMenuItem asChild>
-          <Link
-            href={{
-              pathname: '/admin/[tenantId]/links-and-documents/documents/upload',
-              params: { tenantId },
-              query: { folderId: currentFolderId, dataroomId, callbackUrl },
-            }}>
-            <Plus className="mr-2 h-4 w-4" />
-            {t('actions.uploadDocuments')}
-          </Link>
-        </ContextMenuItem>
-      </ContextMenuContent>
-    </ContextMenu>
+        <ContextMenuContent>
+          <ContextMenuItem onClick={() => handlePaste(dataroomId, currentFolderId)}>
+            <Clipboard className="mr-2 h-4 w-4" />
+            {t('actions.paste')}
+          </ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuItem asChild>
+            <Link
+              href={{
+                pathname: '/admin/[tenantId]/links-and-documents/folders/new',
+                params: { tenantId },
+                query: { currentFolderId, dataroomId, callbackUrl },
+              }}>
+              <FolderPlus className="mr-2 h-4 w-4" />
+              {t('actions.newFolder')}
+            </Link>
+          </ContextMenuItem>
+          <ContextMenuItem asChild>
+            <Link
+              href={{
+                pathname: '/admin/[tenantId]/links-and-documents/documents/upload',
+                params: { tenantId },
+                query: { folderId: currentFolderId, dataroomId, callbackUrl },
+              }}>
+              <Plus className="mr-2 h-4 w-4" />
+              {t('actions.uploadDocuments')}
+            </Link>
+          </ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
     </>
   );
 }
@@ -916,12 +931,7 @@ const DocumentGridItem = memo(
               {isImageFile ? (
                 <div className="h-[80px] w-[80px] rounded overflow-hidden border border-border bg-muted flex-shrink-0">
                   {/*eslint-disable-next-line @next/next/no-img-element*/}
-                  <img
-                    src={doc.file || '/placeholder.svg'}
-                    alt={item.name}
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                  />
+                  <img src={doc.file || '/placeholder.svg'} alt={item.name} className="h-full w-full object-cover" loading="lazy" />
                 </div>
               ) : isVideoFile ? (
                 <div className="h-[80px] w-[80px] rounded overflow-hidden border border-border bg-muted flex-shrink-0 relative">
@@ -950,71 +960,69 @@ const DocumentGridItem = memo(
                 </div>
               ) : (
                 <div className="h-[80px] w-[80px] flex items-center justify-center flex-shrink-0">
-                  <div className="flex items-center justify-center w-full h-full">
-                    {getFileIcon(doc.type)}
-                  </div>
+                  <div className="flex items-center justify-center w-full h-full">{getFileIcon(doc.type)}</div>
                 </div>
               )}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={cn('absolute top-0 right-0 h-6 w-6 opacity-0 group-hover:opacity-100', 'transition-opacity bg-background/90 backdrop-blur-sm shadow-sm hover:bg-accent')}>
-                  <MoreHorizontal className="h-3.5 w-3.5" />
-                  <span className="sr-only">{translations.moreOptions}</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-                <DropdownMenuItem asChild>
-                  <Link
-                    href={{
-                      pathname: '/admin/[tenantId]/links-and-documents/documents/[slug]',
-                      query: { documentId: item.id, dataroomId, callbackUrl },
-                      params: { tenantId, slug: item.id },
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn('absolute top-0 right-0 h-6 w-6 opacity-0 group-hover:opacity-100', 'transition-opacity bg-background/90 backdrop-blur-sm shadow-sm hover:bg-accent')}>
+                    <MoreHorizontal className="h-3.5 w-3.5" />
+                    <span className="sr-only">{translations.moreOptions}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href={{
+                        pathname: '/admin/[tenantId]/links-and-documents/documents/[slug]',
+                        query: { documentId: item.id, dataroomId, callbackUrl },
+                        params: { tenantId, slug: item.id },
+                      }}
+                      onClick={(e) => e.stopPropagation()}>
+                      <Eye className="mr-2 h-4 w-4" />
+                      {translations.view}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onCut(item.data);
+                    }}>
+                    <Scissors className="mr-2 h-4 w-4" />
+                    {translations.cut}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onCopy(item.data);
+                    }}>
+                    <Copy className="mr-2 h-4 w-4" />
+                    {translations.copy}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    disabled={pending}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDelete(item.id);
                     }}
-                    onClick={(e) => e.stopPropagation()}>
-                    <Eye className="mr-2 h-4 w-4" />
-                    {translations.view}
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onCut(item.data);
-                  }}>
-                  <Scissors className="mr-2 h-4 w-4" />
-                  {translations.cut}
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onCopy(item.data);
-                  }}>
-                  <Copy className="mr-2 h-4 w-4" />
-                  {translations.copy}
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  disabled={pending}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete(item.id);
-                  }}
-                  className="text-destructive focus:text-destructive">
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  {pending ? translations.deleting : translations.delete}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                    className="text-destructive focus:text-destructive">
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    {pending ? translations.deleting : translations.delete}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <div className="w-full text-center min-h-[1.5rem] max-w-full px-1">
+              <p className="text-xs font-medium truncate w-full leading-tight" title={item.name}>
+                {item.name}
+              </p>
+            </div>
           </div>
-          <div className="w-full text-center min-h-[1.5rem] max-w-full px-1">
-            <p className="text-xs font-medium truncate w-full leading-tight" title={item.name}>
-              {item.name}
-            </p>
-          </div>
-        </div>
-      </ContextMenuTrigger>
-    </ContextMenu>
+        </ContextMenuTrigger>
+      </ContextMenu>
     );
   }
 );

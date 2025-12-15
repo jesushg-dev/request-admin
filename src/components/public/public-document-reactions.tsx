@@ -1,17 +1,17 @@
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
+import { addReaction, deleteReaction, getDocumentReactions } from '@/actions/document-reaction';
 import { Frown, Heart, Lightbulb, MessageSquare, Smile, ThumbsDown, ThumbsUp } from 'lucide-react';
-import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
-import { addReaction, getDocumentReactions, deleteReaction } from '@/actions/document-reaction';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 export type ReactionType = 'like' | 'dislike' | 'love' | 'smile' | 'frown' | 'idea' | 'comment';
 
@@ -54,7 +54,7 @@ export function PublicDocumentReactions({ viewId, documentId, tenantId, pageNumb
 
   // Get all comments (public)
   const comments = reactions.filter((reaction) => reaction.type === 'comment');
-  
+
   // Find my reaction (if any)
   const myReaction = reactions.find((r) => r.viewId === viewId && r.type !== 'comment');
 
@@ -75,7 +75,7 @@ export function PublicDocumentReactions({ viewId, documentId, tenantId, pageNumb
     setIsLoading(true);
     try {
       const result = await getDocumentReactions(documentId, pageNumber, tenantId);
-      
+
       if (result.success && result.reactions) {
         setReactions(result.reactions as DocumentReaction[]);
       } else {
@@ -95,7 +95,7 @@ export function PublicDocumentReactions({ viewId, documentId, tenantId, pageNumb
         // If clicking the same reaction, remove it (toggle off)
         if (myReactionType === type && myReaction) {
           const result = await deleteReaction(myReaction.id, tenantId);
-          
+
           if (result.success) {
             toast.success(t('reactionRemoved'));
             await fetchReactions();
@@ -114,7 +114,7 @@ export function PublicDocumentReactions({ viewId, documentId, tenantId, pageNumb
 
         // Add the new reaction
         const result = await addReaction(documentId, viewId, pageNumber, type, tenantId);
-        
+
         if (result.success) {
           toast.success(t('reactionAdded'), {
             description: t('reactionAddedDescription', { type: t(`types.${type}`) }),
@@ -146,7 +146,7 @@ export function PublicDocumentReactions({ viewId, documentId, tenantId, pageNumb
     startTransition(async () => {
       try {
         const result = await addReaction(documentId, viewId, pageNumber, 'comment', tenantId, comment.trim());
-        
+
         if (result.success) {
           toast.success(t('commentAdded'), {
             description: t('commentAddedDescription'),
@@ -200,7 +200,7 @@ export function PublicDocumentReactions({ viewId, documentId, tenantId, pageNumb
           <h3 className="font-semibold">{t('title')}</h3>
         </div>
         <p className="text-sm text-muted-foreground mb-4">{t('description')}</p>
-        
+
         {/* Reaction Buttons */}
         <TooltipProvider>
           <div className="flex flex-wrap gap-2">
@@ -209,12 +209,7 @@ export function PublicDocumentReactions({ viewId, documentId, tenantId, pageNumb
               return (
                 <Tooltip key={type}>
                   <TooltipTrigger asChild>
-                    <Button 
-                      variant={isSelected ? 'default' : 'outline'} 
-                      size="sm" 
-                      className="flex items-center gap-1" 
-                      onClick={() => handleReaction(type)} 
-                      disabled={isPending}>
+                    <Button variant={isSelected ? 'default' : 'outline'} size="sm" className="flex items-center gap-1" onClick={() => handleReaction(type)} disabled={isPending}>
                       <Icon className="h-4 w-4" />
                       <span>{reactionCounts[type] || 0}</span>
                     </Button>
@@ -228,11 +223,7 @@ export function PublicDocumentReactions({ viewId, documentId, tenantId, pageNumb
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button 
-                  variant={showCommentInput ? 'default' : 'outline'}
-                  size="sm" 
-                  className="flex items-center gap-1" 
-                  onClick={() => setShowCommentInput(!showCommentInput)}>
+                <Button variant={showCommentInput ? 'default' : 'outline'} size="sm" className="flex items-center gap-1" onClick={() => setShowCommentInput(!showCommentInput)}>
                   <MessageSquare className="h-4 w-4" />
                   <span>{comments.length}</span>
                 </Button>
@@ -247,33 +238,23 @@ export function PublicDocumentReactions({ viewId, documentId, tenantId, pageNumb
         {/* Comment Input */}
         {showCommentInput && (
           <div className="space-y-2 mt-4 p-4 border rounded-lg bg-muted/50">
-            <Textarea 
-              value={comment} 
-              onChange={(e) => setComment(e.target.value)} 
-              placeholder={t('commentPlaceholder')} 
-              className="min-h-[80px] resize-none"
-              disabled={isPending}
-              maxLength={500}
-            />
+            <Textarea value={comment} onChange={(e) => setComment(e.target.value)} placeholder={t('commentPlaceholder')} className="min-h-[80px] resize-none" disabled={isPending} maxLength={500} />
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted-foreground">
                 {comment.length}/500 {t('characters')}
               </span>
               <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => {
                     setShowCommentInput(false);
                     setComment('');
-                  }} 
+                  }}
                   disabled={isPending}>
                   {t('cancel')}
                 </Button>
-                <Button 
-                  size="sm" 
-                  onClick={handleAddComment} 
-                  disabled={!comment.trim() || isPending || comment.length < 5}>
+                <Button size="sm" onClick={handleAddComment} disabled={!comment.trim() || isPending || comment.length < 5}>
                   {isPending ? t('submitting') : t('submit')}
                 </Button>
               </div>
@@ -297,22 +278,14 @@ export function PublicDocumentReactions({ viewId, documentId, tenantId, pageNumb
                 <Card key={commentItem.id} className="p-3">
                   <div className="flex gap-3">
                     <Avatar className="h-8 w-8">
-                      <AvatarFallback className="text-xs">
-                        {commentItem.viewerEmail?.substring(0, 2).toUpperCase() || 'U'}
-                      </AvatarFallback>
+                      <AvatarFallback className="text-xs">{commentItem.viewerEmail?.substring(0, 2).toUpperCase() || 'U'}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm font-medium">
-                          {commentItem.viewerEmail || t('anonymous')}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {new Date(commentItem.createdAt).toLocaleDateString()}
-                        </span>
+                        <span className="text-sm font-medium">{commentItem.viewerEmail || t('anonymous')}</span>
+                        <span className="text-xs text-muted-foreground">{new Date(commentItem.createdAt).toLocaleDateString()}</span>
                       </div>
-                      <p className="text-sm whitespace-pre-wrap break-words text-muted-foreground">
-                        {commentItem.comment}
-                      </p>
+                      <p className="text-sm whitespace-pre-wrap break-words text-muted-foreground">{commentItem.comment}</p>
                     </div>
                   </div>
                 </Card>
@@ -324,4 +297,3 @@ export function PublicDocumentReactions({ viewId, documentId, tenantId, pageNumb
     </div>
   );
 }
-

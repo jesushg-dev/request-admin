@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Calendar, Clock, Download, Eye, FileText, Globe, Map, Users } from 'lucide-react';
-import { Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { toast } from 'sonner';
-import { useTranslations } from 'next-intl';
-
 import { getDocumentAnalytics, getDocumentViewers } from '@/actions/document-analytics';
 import { getFeedbackResponses } from '@/actions/document-feedback';
+import { Calendar, Clock, Download, Eye, FileText, Globe, Map, Users } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { toast } from 'sonner';
+
 import { DocumentWithRelations } from '@/types/zenstackhq/document';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -63,12 +63,14 @@ export function DocumentAnalytics({ documentId, document, tenantId }: DocumentAn
       bySection: { name: string; value: number }[];
     };
   } | null>(null);
-  const [topViewers, setTopViewers] = useState<Array<{
-    email: string;
-    name: string | null;
-    viewCount: number;
-    lastViewedAt: Date;
-  }>>([]);
+  const [topViewers, setTopViewers] = useState<
+    Array<{
+      email: string;
+      name: string | null;
+      viewCount: number;
+      lastViewedAt: Date;
+    }>
+  >([]);
   const [timeRange, setTimeRange] = useState('30days');
   const [feedbackResponses, setFeedbackResponses] = useState<{
     responses: Array<{
@@ -97,13 +99,13 @@ export function DocumentAnalytics({ documentId, document, tenantId }: DocumentAn
         const feedbackPromise = firstLink
           ? getFeedbackResponses(firstLink.id, tenantId)
           : Promise.resolve({ success: true, responses: [], summary: { totalResponses: 0, yesCount: 0, noCount: 0, yesPercentage: 0, noPercentage: 0 } });
-        
+
         const [analyticsResult, viewersResult, feedbackResult] = await Promise.all([
           getDocumentAnalytics(documentId, tenantId, timeRange),
           getDocumentViewers(documentId, tenantId, 10),
           feedbackPromise,
         ]);
-        
+
         if (analyticsResult.success && analyticsResult.data) {
           setAnalyticsData(analyticsResult.data);
         } else {
@@ -113,7 +115,7 @@ export function DocumentAnalytics({ documentId, document, tenantId }: DocumentAn
         if (viewersResult.success && viewersResult.viewers) {
           setTopViewers(viewersResult.viewers);
         }
-        
+
         if (feedbackResult.success && feedbackResult.responses && feedbackResult.summary) {
           setFeedbackResponses({
             responses: feedbackResult.responses,
@@ -184,11 +186,7 @@ export function DocumentAnalytics({ documentId, document, tenantId }: DocumentAn
         // Top Viewers
         ['Top Viewers'],
         ['Email', 'Name', 'View Count'],
-        ...topViewers.map((viewer) => [
-          viewer.email,
-          viewer.name || 'N/A',
-          viewer.viewCount.toString(),
-        ]),
+        ...topViewers.map((viewer) => [viewer.email, viewer.name || 'N/A', viewer.viewCount.toString()]),
       ]
         .map((row) => row.map((cell) => `"${cell}"`).join(','))
         .join('\n');
@@ -330,13 +328,17 @@ export function DocumentAnalytics({ documentId, document, tenantId }: DocumentAn
       </tr>
     </thead>
     <tbody>
-      ${analyticsData.views.byDay.map((day) => `
+      ${analyticsData.views.byDay
+        .map(
+          (day) => `
         <tr>
           <td>${day.day}</td>
           <td>${day.views}</td>
           <td>${day.downloads}</td>
         </tr>
-      `).join('')}
+      `
+        )
+        .join('')}
     </tbody>
   </table>
 
@@ -349,12 +351,16 @@ export function DocumentAnalytics({ documentId, document, tenantId }: DocumentAn
       </tr>
     </thead>
     <tbody>
-      ${analyticsData.views.byDevice.map((device) => `
+      ${analyticsData.views.byDevice
+        .map(
+          (device) => `
         <tr>
           <td>${device.name}</td>
           <td>${device.value}</td>
         </tr>
-      `).join('')}
+      `
+        )
+        .join('')}
     </tbody>
   </table>
 
@@ -367,12 +373,16 @@ export function DocumentAnalytics({ documentId, document, tenantId }: DocumentAn
       </tr>
     </thead>
     <tbody>
-      ${analyticsData.views.byLocation.map((location) => `
+      ${analyticsData.views.byLocation
+        .map(
+          (location) => `
         <tr>
           <td>${location.name}</td>
           <td>${location.value}</td>
         </tr>
-      `).join('')}
+      `
+        )
+        .join('')}
     </tbody>
   </table>
 
@@ -386,13 +396,17 @@ export function DocumentAnalytics({ documentId, document, tenantId }: DocumentAn
       </tr>
     </thead>
     <tbody>
-      ${topViewers.map((viewer) => `
+      ${topViewers
+        .map(
+          (viewer) => `
         <tr>
           <td>${viewer.email}</td>
           <td>${viewer.name || 'N/A'}</td>
           <td>${viewer.viewCount}</td>
         </tr>
-      `).join('')}
+      `
+        )
+        .join('')}
     </tbody>
   </table>
 
@@ -453,86 +467,141 @@ export function DocumentAnalytics({ documentId, document, tenantId }: DocumentAn
       </div>
 
       <div className="flex-1 overflow-y-auto pr-2 space-y-6">
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center">
-              <Eye className="h-4 w-4 mr-2 text-blue-500" />
-              {t('totalViews')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{analyticsData.views.total}</div>
-            <p className="text-xs text-muted-foreground">{analyticsData.views.trend}</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center">
-              <Download className="h-4 w-4 mr-2 text-green-500" />
-              {t('totalDownloads')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{analyticsData.downloads.total}</div>
-            <p className="text-xs text-muted-foreground">{analyticsData.downloads.trend}</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center">
-              <Users className="h-4 w-4 mr-2 text-purple-500" />
-              {t('uniqueViewers')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{analyticsData.viewers.total}</div>
-            <p className="text-xs text-muted-foreground">{analyticsData.viewers.trend}</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Tabs defaultValue="activity" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="activity">{t('tabs.activity')}</TabsTrigger>
-          <TabsTrigger value="viewers">{t('tabs.viewers')}</TabsTrigger>
-          <TabsTrigger value="engagement">{t('tabs.engagement')}</TabsTrigger>
-          <TabsTrigger value="geography">{t('tabs.geography')}</TabsTrigger>
-          <TabsTrigger value="feedback">{t('tabs.feedback')}</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="activity" className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card>
-            <CardHeader>
-              <CardTitle>{t('activity.viewsDownloadsOverTime')}</CardTitle>
-              <CardDescription>{t('activity.activityDescription')}</CardDescription>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium flex items-center">
+                <Eye className="h-4 w-4 mr-2 text-blue-500" />
+                {t('totalViews')}
+              </CardTitle>
             </CardHeader>
-            <CardContent className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={analyticsData.views.byDay} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="day" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="views" fill="#0088FE" name={t('totalViews')} />
-                  <Bar dataKey="downloads" fill="#00C49F" name={t('totalDownloads')} />
-                </BarChart>
-              </ResponsiveContainer>
+            <CardContent>
+              <div className="text-2xl font-bold">{analyticsData.views.total}</div>
+              <p className="text-xs text-muted-foreground">{analyticsData.views.trend}</p>
             </CardContent>
           </Card>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium flex items-center">
+                <Download className="h-4 w-4 mr-2 text-green-500" />
+                {t('totalDownloads')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{analyticsData.downloads.total}</div>
+              <p className="text-xs text-muted-foreground">{analyticsData.downloads.trend}</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium flex items-center">
+                <Users className="h-4 w-4 mr-2 text-purple-500" />
+                {t('uniqueViewers')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{analyticsData.viewers.total}</div>
+              <p className="text-xs text-muted-foreground">{analyticsData.viewers.trend}</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Tabs defaultValue="activity" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="activity">{t('tabs.activity')}</TabsTrigger>
+            <TabsTrigger value="viewers">{t('tabs.viewers')}</TabsTrigger>
+            <TabsTrigger value="engagement">{t('tabs.engagement')}</TabsTrigger>
+            <TabsTrigger value="geography">{t('tabs.geography')}</TabsTrigger>
+            <TabsTrigger value="feedback">{t('tabs.feedback')}</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="activity" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>{t('activity.deviceBreakdown')}</CardTitle>
-                <CardDescription>{t('activity.deviceDescription')}</CardDescription>
+                <CardTitle>{t('activity.viewsDownloadsOverTime')}</CardTitle>
+                <CardDescription>{t('activity.activityDescription')}</CardDescription>
               </CardHeader>
-              <CardContent className="h-64">
-                {analyticsData.views.total === 0 ? (
+              <CardContent className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={analyticsData.views.byDay} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="day" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="views" fill="#0088FE" name={t('totalViews')} />
+                    <Bar dataKey="downloads" fill="#00C49F" name={t('totalDownloads')} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('activity.deviceBreakdown')}</CardTitle>
+                  <CardDescription>{t('activity.deviceDescription')}</CardDescription>
+                </CardHeader>
+                <CardContent className="h-64">
+                  {analyticsData.views.total === 0 ? (
+                    <div className="flex items-center justify-center h-full">
+                      <p className="text-sm text-muted-foreground">{t('activity.notAvailable')}</p>
+                    </div>
+                  ) : (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={analyticsData.views.byDevice}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ name, percent }) => `${name}: ${((Number(percent) || 0) * 100).toFixed(0)}%`}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value">
+                          {analyticsData.views.byDevice.map(
+                            (
+                              entry: {
+                                name: string;
+                                value: number;
+                              },
+                              index: number
+                            ) => (
+                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            )
+                          )}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('activity.timeSpentBySection')}</CardTitle>
+                  <CardDescription>{t('activity.timeSpentDescription')}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-center py-8">
+                    <p className="text-sm text-muted-foreground">{t('activity.notAvailable')}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="viewers" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('viewers.viewerGroups')}</CardTitle>
+                <CardDescription>{t('viewers.viewerGroupsDescription')}</CardDescription>
+              </CardHeader>
+              <CardContent className="h-80">
+                {analyticsData.viewers.total === 0 ? (
                   <div className="flex items-center justify-center h-full">
                     <p className="text-sm text-muted-foreground">{t('activity.notAvailable')}</p>
                   </div>
@@ -540,15 +609,15 @@ export function DocumentAnalytics({ documentId, document, tenantId }: DocumentAn
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
-                        data={analyticsData.views.byDevice}
+                        data={analyticsData.viewers.byRole}
                         cx="50%"
                         cy="50%"
-                        labelLine={false}
-                        label={({ name, percent }) => `${name}: ${((Number(percent) || 0) * 100).toFixed(0)}%`}
-                        outerRadius={80}
+                        labelLine={true}
+                        label={({ name, percent }) => `${name}: ${(Number(percent ?? 0) * 100).toFixed(0)}%`}
+                        outerRadius={100}
                         fill="#8884d8"
                         dataKey="value">
-                        {analyticsData.views.byDevice.map(
+                        {analyticsData.viewers.byRole.map(
                           (
                             entry: {
                               name: string;
@@ -561,6 +630,7 @@ export function DocumentAnalytics({ documentId, document, tenantId }: DocumentAn
                         )}
                       </Pie>
                       <Tooltip />
+                      <Legend />
                     </PieChart>
                   </ResponsiveContainer>
                 )}
@@ -569,308 +639,224 @@ export function DocumentAnalytics({ documentId, document, tenantId }: DocumentAn
 
             <Card>
               <CardHeader>
-                <CardTitle>{t('activity.timeSpentBySection')}</CardTitle>
-                <CardDescription>{t('activity.timeSpentDescription')}</CardDescription>
+                <CardTitle>{t('viewers.topViewers')}</CardTitle>
+                <CardDescription>{t('viewers.topViewersDescription')}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {topViewers.length === 0 ? (
+                  <div className="flex items-center justify-center py-8">
+                    <p className="text-sm text-muted-foreground">{t('viewers.noViewers')}</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {topViewers.map((viewer, index) => {
+                      const initials = getInitials(viewer.name, viewer.email);
+                      const colors = ['bg-blue-100 text-blue-600', 'bg-green-100 text-green-600', 'bg-purple-100 text-purple-600', 'bg-orange-100 text-orange-600', 'bg-pink-100 text-pink-600'];
+                      return (
+                        <div key={viewer.email} className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${colors[index % colors.length]}`}>{initials}</div>
+                            <div>
+                              <div className="font-medium">{viewer.name || viewer.email}</div>
+                              {viewer.name && <div className="text-sm text-muted-foreground">{viewer.email}</div>}
+                            </div>
+                          </div>
+                          <Badge>
+                            {viewer.viewCount} {t('viewers.views')}
+                          </Badge>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="engagement" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('engagement.averageTimeSpent')}</CardTitle>
+                <CardDescription>{t('engagement.timeSpentDescription')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-center py-8">
-                  <p className="text-sm text-muted-foreground">{t('activity.notAvailable')}</p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="viewers" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('viewers.viewerGroups')}</CardTitle>
-              <CardDescription>{t('viewers.viewerGroupsDescription')}</CardDescription>
-            </CardHeader>
-            <CardContent className="h-80">
-              {analyticsData.viewers.total === 0 ? (
-                <div className="flex items-center justify-center h-full">
-                  <p className="text-sm text-muted-foreground">{t('activity.notAvailable')}</p>
-                </div>
-              ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={analyticsData.viewers.byRole}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={true}
-                      label={({ name, percent }) => `${name}: ${(Number(percent ?? 0) * 100).toFixed(0)}%`}
-                      outerRadius={100}
-                      fill="#8884d8"
-                      dataKey="value">
-                      {analyticsData.viewers.byRole.map(
-                        (
-                          entry: {
-                            name: string;
-                            value: number;
-                          },
-                          index: number
-                        ) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        )
-                      )}
-                    </Pie>
-                    <Tooltip />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('viewers.topViewers')}</CardTitle>
-              <CardDescription>{t('viewers.topViewersDescription')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {topViewers.length === 0 ? (
-                <div className="flex items-center justify-center py-8">
-                  <p className="text-sm text-muted-foreground">{t('viewers.noViewers')}</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {topViewers.map((viewer, index) => {
-                    const initials = getInitials(viewer.name, viewer.email);
-                    const colors = [
-                      'bg-blue-100 text-blue-600',
-                      'bg-green-100 text-green-600',
-                      'bg-purple-100 text-purple-600',
-                      'bg-orange-100 text-orange-600',
-                      'bg-pink-100 text-pink-600',
-                    ];
-                    return (
-                      <div key={viewer.email} className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
-                              colors[index % colors.length]
-                            }`}>
-                            {initials}
-                          </div>
-                          <div>
-                            <div className="font-medium">{viewer.name || viewer.email}</div>
-                            {viewer.name && <div className="text-sm text-muted-foreground">{viewer.email}</div>}
-                          </div>
-                        </div>
-                        <Badge>
-                          {viewer.viewCount} {t('viewers.views')}
-                        </Badge>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="engagement" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('engagement.averageTimeSpent')}</CardTitle>
-              <CardDescription>{t('engagement.timeSpentDescription')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-center py-8">
-                <div className="text-center">
-                  <Clock className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <div className="text-4xl font-bold">{analyticsData.timeSpent.average}</div>
-                  <p className="text-sm text-muted-foreground mt-2">{t('engagement.notTracked')}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('engagement.engagementMetrics')}</CardTitle>
-              <CardDescription>{t('engagement.engagementDescription')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-center py-8">
-                <p className="text-sm text-muted-foreground">{t('engagement.notTracked')}</p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="geography" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('geography.geographicDistribution')}</CardTitle>
-              <CardDescription>{t('geography.geographicDescription')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex justify-center items-center py-8">
-                <Globe className="h-48 w-48 text-muted-foreground" />
-              </div>
-              {analyticsData.views.total > 0 && analyticsData.views.byLocation.length > 0 ? (
-                <div className="space-y-4 mt-4">
-                  {analyticsData.views.byLocation.map(
-                    (
-                      location: {
-                        name: string;
-                        value: number;
-                      },
-                      index: number
-                    ) => (
-                      <div key={index} className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <div
-                            className="w-3 h-3 rounded-full mr-2"
-                            style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
-                          <span>{location.name}</span>
-                        </div>
-                        <div className="flex items-center">
-                          <span className="font-medium mr-2">{location.value}</span>
-                          <span className="text-xs text-muted-foreground">
-                            ({((location.value / analyticsData.views.total) * 100).toFixed(1)}%)
-                          </span>
-                        </div>
-                      </div>
-                    )
-                  )}
-                </div>
-              ) : (
-                <div className="text-center mt-4">
-                  <p className="text-sm text-muted-foreground">{t('geography.notAvailable')}</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          <div className="flex justify-center">
-            <Button variant="outline" disabled>
-              <Map className="mr-2 h-4 w-4" />
-              {t('geography.viewDetailedMap')}
-            </Button>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="feedback" className="space-y-4">
-          {feedbackResponses && feedbackResponses.summary.totalResponses > 0 ? (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">{t('feedback.totalResponses')}</CardTitle>
-                    <Users className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{feedbackResponses.summary.totalResponses}</div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">{t('feedback.positiveResponses')}</CardTitle>
-                    <Badge variant="default" className="bg-green-500">
-                      {feedbackResponses.summary.yesPercentage.toFixed(1)}%
-                    </Badge>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{feedbackResponses.summary.yesCount}</div>
-                    <Progress value={feedbackResponses.summary.yesPercentage} className="mt-2" />
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">{t('feedback.negativeResponses')}</CardTitle>
-                    <Badge variant="destructive">
-                      {feedbackResponses.summary.noPercentage.toFixed(1)}%
-                    </Badge>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{feedbackResponses.summary.noCount}</div>
-                    <Progress value={feedbackResponses.summary.noPercentage} className="mt-2" />
-                  </CardContent>
-                </Card>
-              </div>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('feedback.responsesBreakdown')}</CardTitle>
-                  <CardDescription>{t('feedback.responsesDescription')}</CardDescription>
-                </CardHeader>
-                <CardContent className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={[
-                          { name: t('feedback.yes'), value: feedbackResponses.summary.yesCount },
-                          { name: t('feedback.no'), value: feedbackResponses.summary.noCount },
-                        ]}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, percent }) => `${name}: ${((Number(percent) || 0) * 100).toFixed(0)}%`}
-                        outerRadius={100}
-                        fill="#8884d8"
-                        dataKey="value">
-                        <Cell fill="#10b981" />
-                        <Cell fill="#ef4444" />
-                      </Pie>
-                      <Tooltip />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('feedback.recentResponses')}</CardTitle>
-                  <CardDescription>{t('feedback.recentDescription')}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {feedbackResponses.responses.slice(0, 10).map((response) => (
-                      <div key={response.id} className="flex items-start gap-4 p-4 border rounded-lg">
-                        <div className="flex-shrink-0">
-                          <Badge variant={response.answer === 'YES' ? 'default' : 'destructive'}>
-                            {response.answer === 'YES' ? t('feedback.yes') : t('feedback.no')}
-                          </Badge>
-                        </div>
-                        <div className="flex-1 space-y-1">
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium">
-                              {response.viewerName || response.viewerEmail || t('feedback.anonymous')}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              {new Date(response.submittedAt).toLocaleDateString()}
-                            </span>
-                          </div>
-                          {response.text && (
-                            <p className="text-sm text-muted-foreground">{response.text}</p>
-                          )}
-                        </div>
-                      </div>
-                    ))}
+                  <div className="text-center">
+                    <Clock className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <div className="text-4xl font-bold">{analyticsData.timeSpent.average}</div>
+                    <p className="text-sm text-muted-foreground mt-2">{t('engagement.notTracked')}</p>
                   </div>
-                </CardContent>
-              </Card>
-            </>
-          ) : (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center p-8">
-                <Users className="h-12 w-12 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">{t('feedback.noResponses')}</h3>
-                <p className="text-sm text-muted-foreground text-center">
-                  {t('feedback.noResponsesDescription')}
-                </p>
+                </div>
               </CardContent>
             </Card>
-          )}
-        </TabsContent>
-      </Tabs>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('engagement.engagementMetrics')}</CardTitle>
+                <CardDescription>{t('engagement.engagementDescription')}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-center py-8">
+                  <p className="text-sm text-muted-foreground">{t('engagement.notTracked')}</p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="geography" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('geography.geographicDistribution')}</CardTitle>
+                <CardDescription>{t('geography.geographicDescription')}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex justify-center items-center py-8">
+                  <Globe className="h-48 w-48 text-muted-foreground" />
+                </div>
+                {analyticsData.views.total > 0 && analyticsData.views.byLocation.length > 0 ? (
+                  <div className="space-y-4 mt-4">
+                    {analyticsData.views.byLocation.map(
+                      (
+                        location: {
+                          name: string;
+                          value: number;
+                        },
+                        index: number
+                      ) => (
+                        <div key={index} className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
+                            <span>{location.name}</span>
+                          </div>
+                          <div className="flex items-center">
+                            <span className="font-medium mr-2">{location.value}</span>
+                            <span className="text-xs text-muted-foreground">({((location.value / analyticsData.views.total) * 100).toFixed(1)}%)</span>
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-center mt-4">
+                    <p className="text-sm text-muted-foreground">{t('geography.notAvailable')}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <div className="flex justify-center">
+              <Button variant="outline" disabled>
+                <Map className="mr-2 h-4 w-4" />
+                {t('geography.viewDetailedMap')}
+              </Button>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="feedback" className="space-y-4">
+            {feedbackResponses && feedbackResponses.summary.totalResponses > 0 ? (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">{t('feedback.totalResponses')}</CardTitle>
+                      <Users className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{feedbackResponses.summary.totalResponses}</div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">{t('feedback.positiveResponses')}</CardTitle>
+                      <Badge variant="default" className="bg-green-500">
+                        {feedbackResponses.summary.yesPercentage.toFixed(1)}%
+                      </Badge>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{feedbackResponses.summary.yesCount}</div>
+                      <Progress value={feedbackResponses.summary.yesPercentage} className="mt-2" />
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">{t('feedback.negativeResponses')}</CardTitle>
+                      <Badge variant="destructive">{feedbackResponses.summary.noPercentage.toFixed(1)}%</Badge>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{feedbackResponses.summary.noCount}</div>
+                      <Progress value={feedbackResponses.summary.noPercentage} className="mt-2" />
+                    </CardContent>
+                  </Card>
+                </div>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>{t('feedback.responsesBreakdown')}</CardTitle>
+                    <CardDescription>{t('feedback.responsesDescription')}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={[
+                            { name: t('feedback.yes'), value: feedbackResponses.summary.yesCount },
+                            { name: t('feedback.no'), value: feedbackResponses.summary.noCount },
+                          ]}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ name, percent }) => `${name}: ${((Number(percent) || 0) * 100).toFixed(0)}%`}
+                          outerRadius={100}
+                          fill="#8884d8"
+                          dataKey="value">
+                          <Cell fill="#10b981" />
+                          <Cell fill="#ef4444" />
+                        </Pie>
+                        <Tooltip />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>{t('feedback.recentResponses')}</CardTitle>
+                    <CardDescription>{t('feedback.recentDescription')}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {feedbackResponses.responses.slice(0, 10).map((response) => (
+                        <div key={response.id} className="flex items-start gap-4 p-4 border rounded-lg">
+                          <div className="flex-shrink-0">
+                            <Badge variant={response.answer === 'YES' ? 'default' : 'destructive'}>{response.answer === 'YES' ? t('feedback.yes') : t('feedback.no')}</Badge>
+                          </div>
+                          <div className="flex-1 space-y-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">{response.viewerName || response.viewerEmail || t('feedback.anonymous')}</span>
+                              <span className="text-xs text-muted-foreground">{new Date(response.submittedAt).toLocaleDateString()}</span>
+                            </div>
+                            {response.text && <p className="text-sm text-muted-foreground">{response.text}</p>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
+            ) : (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center p-8">
+                  <Users className="h-12 w-12 text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">{t('feedback.noResponses')}</h3>
+                  <p className="text-sm text-muted-foreground text-center">{t('feedback.noResponsesDescription')}</p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+        </Tabs>
 
         {/* Export section - always visible below tabs */}
         <div className="pt-6 mt-6 border-t">

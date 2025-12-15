@@ -27,12 +27,7 @@ export function LinkEmailForm() {
           name="email"
           render={({ field }) => (
             <FormItem label={t('email.label')}>
-              <Input
-                {...field}
-                type="email"
-                placeholder={t('email.placeholder')}
-                autoFocus
-              />
+              <Input {...field} type="email" placeholder={t('email.placeholder')} autoFocus />
             </FormItem>
           )}
         />

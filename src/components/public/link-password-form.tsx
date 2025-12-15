@@ -8,7 +8,6 @@ import { FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { FormItem } from '@/components/shared/form-root';
 
-
 export function LinkPasswordForm() {
   const t = useTranslations('public.link');
   const { control } = useFormContext();
@@ -28,12 +27,7 @@ export function LinkPasswordForm() {
           name="password"
           render={({ field }) => (
             <FormItem label={t('password.label')}>
-              <Input
-                {...field}
-                type="password"
-                placeholder={t('password.placeholder')}
-                autoFocus
-              />
+              <Input {...field} type="password" placeholder={t('password.placeholder')} autoFocus />
             </FormItem>
           )}
         />

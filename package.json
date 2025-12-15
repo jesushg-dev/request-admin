@@ -80,7 +80,6 @@
   },
   "dependencies": {
     "@ably/chat": "^1.1.1",
-    "@better-auth/passkey": "1.4.6",
     "@better-auth/sso": "1.4.6",
     "@better-fetch/fetch": "^1.1.21",
     "@date-fns/utc": "^2.1.1",

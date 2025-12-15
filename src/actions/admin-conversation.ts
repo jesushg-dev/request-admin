@@ -1,7 +1,9 @@
 'use server';
 
 import { db } from '@/server/db-client';
+
 import { generateUuid } from '@/lib/id';
+
 import { notifyViewerOfResponse } from './link-conversation';
 
 /**
@@ -103,12 +105,7 @@ export async function getDocumentConversations(
 /**
  * Reply to a conversation as admin
  */
-export async function replyToConversation(
-  conversationId: string,
-  userTenantId: string | null,
-  content: string,
-  tenantId: string
-): Promise<{ success: boolean; messageId?: string; error?: string }> {
+export async function replyToConversation(conversationId: string, userTenantId: string | null, content: string, tenantId: string): Promise<{ success: boolean; messageId?: string; error?: string }> {
   try {
     // Validate input
     const sanitizedContent = content.replace(/<[^>]*>/g, '').trim();
@@ -203,4 +200,3 @@ export async function getDocumentLinks(
     return { success: false, error: 'Failed to get links' };
   }
 }
-

@@ -6,12 +6,12 @@ import { FileText, ImageIcon, Key, Lock, Mail, Shield, Trash2, UserPlus, UserX }
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { toast } from 'sonner';
-import { Label } from '@/components/ui/label';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { FormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { AnimatedVisibility, FormItem, FormSwitchItem } from '@/components/shared/form-root';
@@ -57,53 +57,53 @@ export function Security({ tenantId }: { tenantId: string }) {
       <div className="space-y-6 p-1">
         {/* Password Protection */}
         <div className="space-y-3 border-b pb-4">
-        <FormField
-          control={form.control}
-          name="enablePassword"
-          render={({ field }) => (
-            <FormSwitchItem label={t('passwordProtection.label')} icon={<Lock className="h-4 w-4" />} tooltip={t('passwordProtection.tooltip')}>
-              <Switch checked={field.value} onCheckedChange={field.onChange} />
-            </FormSwitchItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="enablePassword"
+            render={({ field }) => (
+              <FormSwitchItem label={t('passwordProtection.label')} icon={<Lock className="h-4 w-4" />} tooltip={t('passwordProtection.tooltip')}>
+                <Switch checked={field.value} onCheckedChange={field.onChange} />
+              </FormSwitchItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <AnimatedVisibility isVisible={form.watch('enablePassword')} key="password" mode="wait">
-              <FormItem label={t('password.label')} description={t('password.description')} className="ml-6">
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <AnimatedVisibility isVisible={form.watch('enablePassword')} key="password" mode="wait">
+                <FormItem label={t('password.label')} description={t('password.description')} className="ml-6">
                   <Input type="password" placeholder={t('password.placeholder')} {...field} className="max-w-md" />
-              </FormItem>
-            </AnimatedVisibility>
-          )}
-        />
+                </FormItem>
+              </AnimatedVisibility>
+            )}
+          />
         </div>
 
         {/* Email Protection */}
         <div className="space-y-3 border-b pb-4">
-        <FormField
-          control={form.control}
-          name="emailProtected"
-          render={({ field }) => (
-            <FormSwitchItem label={t('emailProtection.label')} icon={<Mail className="h-4 w-4" />} tooltip={t('emailProtection.tooltip')}>
-              <Switch checked={field.value} onCheckedChange={field.onChange} />
-            </FormSwitchItem>
-          )}
-        />
-
-          <div className="ml-6">
           <FormField
             control={form.control}
-            name="emailAuthenticated"
+            name="emailProtected"
             render={({ field }) => (
-              <AnimatedVisibility isVisible={form.watch('emailProtected')} key="email" mode="wait">
-                <FormSwitchItem label={t('emailVerification.label')} icon={<Key className="h-4 w-4" />} tooltip={t('emailVerification.tooltip')}>
-                  <Switch checked={field.value} onCheckedChange={field.onChange} />
-                </FormSwitchItem>
-              </AnimatedVisibility>
+              <FormSwitchItem label={t('emailProtection.label')} icon={<Mail className="h-4 w-4" />} tooltip={t('emailProtection.tooltip')}>
+                <Switch checked={field.value} onCheckedChange={field.onChange} />
+              </FormSwitchItem>
             )}
           />
+
+          <div className="ml-6">
+            <FormField
+              control={form.control}
+              name="emailAuthenticated"
+              render={({ field }) => (
+                <AnimatedVisibility isVisible={form.watch('emailProtected')} key="email" mode="wait">
+                  <FormSwitchItem label={t('emailVerification.label')} icon={<Key className="h-4 w-4" />} tooltip={t('emailVerification.tooltip')}>
+                    <Switch checked={field.value} onCheckedChange={field.onChange} />
+                  </FormSwitchItem>
+                </AnimatedVisibility>
+              )}
+            />
           </div>
         </div>
 
@@ -229,61 +229,61 @@ export function Security({ tenantId }: { tenantId: string }) {
 
         {/* Additional Security Features */}
         <div className="space-y-3 border-b pb-4">
-        <FormField
-          control={form.control}
-          name="enableScreenshotProtection"
-          render={({ field }) => (
-            <FormSwitchItem label={t('screenshotProtection.label')} icon={<Shield className="h-4 w-4" />} tooltip={t('screenshotProtection.tooltip')}>
-              <Switch checked={field.value} onCheckedChange={field.onChange} />
-            </FormSwitchItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="enableScreenshotProtection"
+            render={({ field }) => (
+              <FormSwitchItem label={t('screenshotProtection.label')} icon={<Shield className="h-4 w-4" />} tooltip={t('screenshotProtection.tooltip')}>
+                <Switch checked={field.value} onCheckedChange={field.onChange} />
+              </FormSwitchItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="enableWatermark"
-          render={({ field }) => (
-            <FormSwitchItem label={t('watermark.label')} icon={<ImageIcon className="h-4 w-4" />} tooltip={t('watermark.tooltip')}>
-              <Switch checked={field.value} onCheckedChange={field.onChange} />
-            </FormSwitchItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="enableWatermark"
+            render={({ field }) => (
+              <FormSwitchItem label={t('watermark.label')} icon={<ImageIcon className="h-4 w-4" />} tooltip={t('watermark.tooltip')}>
+                <Switch checked={field.value} onCheckedChange={field.onChange} />
+              </FormSwitchItem>
+            )}
+          />
         </div>
 
         {/* Agreement Requirement */}
         <div className="space-y-3">
-        <FormField
-          control={form.control}
-          name="enableAgreement"
-          render={({ field }) => (
-            <FormSwitchItem label={t('agreementRequirement.label')} icon={<FileText className="h-4 w-4" />} tooltip={t('agreementRequirement.tooltip')}>
-              <Switch checked={field.value} onCheckedChange={field.onChange} />
-            </FormSwitchItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="enableAgreement"
+            render={({ field }) => (
+              <FormSwitchItem label={t('agreementRequirement.label')} icon={<FileText className="h-4 w-4" />} tooltip={t('agreementRequirement.tooltip')}>
+                <Switch checked={field.value} onCheckedChange={field.onChange} />
+              </FormSwitchItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="agreementId"
-          render={({ field }) => (
-            <AnimatedVisibility isVisible={form.watch('enableAgreement')} key="agreement" mode="wait">
-              <FormItem label={t('agreement.label')} description={t('agreement.description')} className="ml-6 mt-2">
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('agreement.placeholder')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {agreements.map((agreement) => (
-                      <SelectItem key={agreement.id} value={agreement.id}>
-                        {agreement.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormItem>
-            </AnimatedVisibility>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="agreementId"
+            render={({ field }) => (
+              <AnimatedVisibility isVisible={form.watch('enableAgreement')} key="agreement" mode="wait">
+                <FormItem label={t('agreement.label')} description={t('agreement.description')} className="ml-6 mt-2">
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('agreement.placeholder')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {agreements.map((agreement) => (
+                        <SelectItem key={agreement.id} value={agreement.id}>
+                          {agreement.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              </AnimatedVisibility>
+            )}
+          />
         </div>
       </div>
     </AccordionSection>

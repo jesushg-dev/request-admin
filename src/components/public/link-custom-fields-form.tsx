@@ -165,9 +165,7 @@ export function LinkCustomFieldsForm({ fields }: LinkCustomFieldsFormProps) {
         </div>
         <p className="text-sm text-muted-foreground">{t('customFields.description')}</p>
       </div>
-      <div className="space-y-4">
-        {fields.map(renderField)}
-      </div>
+      <div className="space-y-4">{fields.map(renderField)}</div>
     </div>
   );
 }

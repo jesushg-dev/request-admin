@@ -1,17 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Frown, Heart, Lightbulb, MessageSquare, Smile, ThumbsDown, ThumbsUp } from 'lucide-react';
-import { toast } from 'sonner';
-import { useTranslations } from 'next-intl';
-
 import { addReaction, getDocumentReactions } from '@/actions/document-reaction';
+import { Frown, Heart, Lightbulb, MessageSquare, Smile, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
+
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 export type ReactionType = 'like' | 'dislike' | 'love' | 'smile' | 'frown' | 'idea' | 'comment';
 
@@ -63,7 +63,7 @@ export function DocumentReactionWidget({ documentId, pageNumber = 1, viewOnly = 
     setIsLoading(true);
     try {
       const result = await getDocumentReactions(documentId, pageNumber, tenantId);
-      
+
       if (result.success && result.reactions) {
         setReactions(result.reactions as DocumentReaction[]);
       } else {
@@ -86,7 +86,7 @@ export function DocumentReactionWidget({ documentId, pageNumber = 1, viewOnly = 
     setIsSubmitting(true);
     try {
       const result = await addReaction(documentId, viewId, pageNumber, type, tenantId);
-      
+
       if (result.success) {
         toast.success(t('reactionAdded'), {
           description: t('reactionAddedDescription', { type: t(`types.${type}`) }),
@@ -119,7 +119,7 @@ export function DocumentReactionWidget({ documentId, pageNumber = 1, viewOnly = 
     setIsSubmitting(true);
     try {
       const result = await addReaction(documentId, viewId, pageNumber, 'comment', tenantId, comment.trim());
-      
+
       if (result.success) {
         toast.success(t('commentAdded'), {
           description: t('commentAddedDescription'),
@@ -167,18 +167,13 @@ export function DocumentReactionWidget({ documentId, pageNumber = 1, viewOnly = 
           {t('title')}
         </h3>
         <p className="text-sm text-muted-foreground mb-4">{t('description')}</p>
-        
+
         <TooltipProvider>
           <div className="flex flex-wrap gap-2">
             {reactionButtons.map(({ type, icon: Icon }) => (
               <Tooltip key={type}>
                 <TooltipTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="flex items-center gap-1" 
-                    onClick={() => handleReaction(type)} 
-                    disabled={viewOnly || isSubmitting}>
+                  <Button variant="outline" size="sm" className="flex items-center gap-1" onClick={() => handleReaction(type)} disabled={viewOnly || isSubmitting}>
                     <Icon className="h-4 w-4" />
                     <span>{reactionCounts[type] || 0}</span>
                   </Button>
@@ -191,12 +186,7 @@ export function DocumentReactionWidget({ documentId, pageNumber = 1, viewOnly = 
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="flex items-center gap-1" 
-                  onClick={() => setShowCommentInput(!showCommentInput)} 
-                  disabled={viewOnly}>
+                <Button variant="outline" size="sm" className="flex items-center gap-1" onClick={() => setShowCommentInput(!showCommentInput)} disabled={viewOnly}>
                   <MessageSquare className="h-4 w-4" />
                   <span>{comments.length}</span>
                 </Button>
@@ -211,26 +201,12 @@ export function DocumentReactionWidget({ documentId, pageNumber = 1, viewOnly = 
         {showCommentInput && (
           <div className="space-y-2 mt-4 p-4 border rounded-lg bg-muted/50">
             <Label htmlFor="comment">{t('addComment')}</Label>
-            <Textarea 
-              id="comment" 
-              value={comment} 
-              onChange={(e) => setComment(e.target.value)} 
-              placeholder={t('commentPlaceholder')} 
-              rows={3}
-              className="resize-none" 
-            />
+            <Textarea id="comment" value={comment} onChange={(e) => setComment(e.target.value)} placeholder={t('commentPlaceholder')} rows={3} className="resize-none" />
             <div className="flex justify-end gap-2">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => setShowCommentInput(false)} 
-                disabled={isSubmitting}>
+              <Button variant="outline" size="sm" onClick={() => setShowCommentInput(false)} disabled={isSubmitting}>
                 {t('cancel')}
               </Button>
-              <Button 
-                size="sm" 
-                onClick={handleAddComment} 
-                disabled={!comment.trim() || isSubmitting}>
+              <Button size="sm" onClick={handleAddComment} disabled={!comment.trim() || isSubmitting}>
                 {isSubmitting ? t('submitting') : t('submit')}
               </Button>
             </div>
@@ -254,12 +230,8 @@ export function DocumentReactionWidget({ documentId, pageNumber = 1, viewOnly = 
                   <div className="space-y-2">
                     <p className="text-sm whitespace-pre-wrap break-words">{commentItem.comment}</p>
                     <div className="flex items-center justify-between">
-                      <p className="text-xs text-muted-foreground">
-                        {commentItem.viewerEmail || t('anonymous')}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(commentItem.createdAt).toLocaleDateString()}
-                      </p>
+                      <p className="text-xs text-muted-foreground">{commentItem.viewerEmail || t('anonymous')}</p>
+                      <p className="text-xs text-muted-foreground">{new Date(commentItem.createdAt).toLocaleDateString()}</p>
                     </div>
                   </div>
                 </Card>

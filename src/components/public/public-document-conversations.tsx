@@ -1,22 +1,22 @@
 'use client';
 
-import { useEffect, useState, useTransition, useRef } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { addMessageToConversation, createPublicConversation, getPublicConversations, markConversationAsRead } from '@/actions/link-conversation';
 import { formatDistanceToNow } from 'date-fns';
-import { MessageSquare, Send, Plus, ArrowLeft, Users, Lock } from 'lucide-react';
+import { ArrowLeft, Lock, MessageSquare, Plus, Send, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
-import { useSearchParams } from 'next/navigation';
 
-import { createPublicConversation, addMessageToConversation, getPublicConversations, markConversationAsRead } from '@/actions/link-conversation';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { Textarea } from '@/components/ui/textarea';
 
 interface PublicDocumentConversationsProps {
   viewId: string;
@@ -45,7 +45,7 @@ export function PublicDocumentConversations({ viewId, linkId, viewerEmail }: Pub
   const t = useTranslations('public.link.conversations');
   const searchParams = useSearchParams();
   const highlightId = searchParams?.get('highlight');
-  
+
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [newMessage, setNewMessage] = useState('');
@@ -171,9 +171,7 @@ export function PublicDocumentConversations({ viewId, linkId, viewerEmail }: Pub
     if (conversation.unreadCount > 0) {
       await markConversationAsRead(conversation.id, viewId);
       // Update local state
-      setConversations((prev) =>
-        prev.map((c) => (c.id === conversation.id ? { ...c, unreadCount: 0, messages: c.messages.map((m) => ({ ...m, isRead: true })) } : c))
-      );
+      setConversations((prev) => prev.map((c) => (c.id === conversation.id ? { ...c, unreadCount: 0, messages: c.messages.map((m) => ({ ...m, isRead: true })) } : c)));
     }
   };
 
@@ -255,7 +253,11 @@ export function PublicDocumentConversations({ viewId, linkId, viewerEmail }: Pub
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2 mb-1">
                           <h4 className="font-medium text-sm truncate">{conversation.title || t('untitled')}</h4>
-                          {conversation.unreadCount > 0 && <Badge variant="destructive" className="text-xs">{conversation.unreadCount}</Badge>}
+                          {conversation.unreadCount > 0 && (
+                            <Badge variant="destructive" className="text-xs">
+                              {conversation.unreadCount}
+                            </Badge>
+                          )}
                         </div>
                         <p className="text-xs text-muted-foreground truncate">{lastMessage?.content || ''}</p>
                         <div className="flex items-center gap-2 mt-1">
@@ -270,10 +272,10 @@ export function PublicDocumentConversations({ viewId, linkId, viewerEmail }: Pub
                               {t('private')}
                             </Badge>
                           )}
+                          <span className="text-xs text-muted-foreground">{conversation.lastMessageAt ? formatDistanceToNow(new Date(conversation.lastMessageAt), { addSuffix: true }) : ''}</span>
                           <span className="text-xs text-muted-foreground">
-                            {conversation.lastMessageAt ? formatDistanceToNow(new Date(conversation.lastMessageAt), { addSuffix: true }) : ''}
+                            {conversation.messageCount} {t('messages')}
                           </span>
-                          <span className="text-xs text-muted-foreground">{conversation.messageCount} {t('messages')}</span>
                         </div>
                       </div>
                     </div>
@@ -341,7 +343,9 @@ export function PublicDocumentConversations({ viewId, linkId, viewerEmail }: Pub
                   {t('private')}
                 </Badge>
               )}
-              <span className="text-xs text-muted-foreground">{selectedConversation.messageCount} {t('messages')}</span>
+              <span className="text-xs text-muted-foreground">
+                {selectedConversation.messageCount} {t('messages')}
+              </span>
             </div>
           </div>
         </div>
@@ -417,4 +421,3 @@ export function PublicDocumentConversations({ viewId, linkId, viewerEmail }: Pub
     </div>
   );
 }
-

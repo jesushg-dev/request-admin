@@ -211,7 +211,7 @@ export default function TwoFactorAuthPage() {
           onSuccess: () => {
             toast.success(t('toast.qrGenerated'), { id: toastId });
           },
-        onError(context: ErrorContext) {
+          onError(context: ErrorContext) {
             toast.error(t('toast.error', { message: context.error.message }), { id: toastId });
           },
         }
@@ -240,7 +240,7 @@ export default function TwoFactorAuthPage() {
           onSuccess: () => {
             toast.success(t('toast.backupGenerated'), { id: toastId });
           },
-        onError(context: ErrorContext) {
+          onError(context: ErrorContext) {
             toast.error(t('toast.error', { message: context.error.message }), { id: toastId });
           },
         }

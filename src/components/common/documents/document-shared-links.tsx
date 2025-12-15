@@ -1,18 +1,18 @@
 'use client';
 
 import { useTransition } from 'react';
-import { useFindManyLink, useUpdateLink, useDeleteLink } from '@/services/api/hooks';
+import { Link } from '@/i18n/routing';
+import { useDeleteLink, useFindManyLink, useUpdateLink } from '@/services/api/hooks';
 import { format } from 'date-fns';
 import { Copy, Download, ExternalLink, FileText, Image, LinkIcon, Lock, Mail, MoreHorizontal, Settings, Shield, Trash2, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
-import { Link } from '@/i18n/routing';
-import { useTenantContext } from '@/components/hoc/tenant-provider';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { EmptyCard } from '@/components/uploader/empty-card';
 
 interface DocumentSharedLinksProps {
@@ -44,11 +44,11 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
     startTransition(async () => {
       try {
         const promise = update({ data: { isArchived: archive }, where: { id, tenantId } });
-      toast.promise(promise, {
-        loading: t('toast.progress'),
-        success: t('toast.success'),
-        error: (error) => t('toast.error', { error: error.message }),
-      });
+        toast.promise(promise, {
+          loading: t('toast.progress'),
+          success: t('toast.success'),
+          error: (error) => t('toast.error', { error: error.message }),
+        });
       } catch (error) {
         toast.error(t('toast.error', { error: error instanceof Error ? error.message : 'Unknown error' }));
       }
@@ -68,8 +68,8 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
     }
     const url = getPublicUrl(slug);
     if (url) {
-    navigator.clipboard.writeText(url);
-    toast.success(t('toast.copy_success'));
+      navigator.clipboard.writeText(url);
+      toast.success(t('toast.copy_success'));
     } else {
       toast.error('Failed to generate URL');
     }
@@ -120,9 +120,7 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
           {links.map((link) => (
             <div
               key={link.id}
-              className={`flex flex-col md:flex-row md:items-center justify-between p-4 border rounded-lg transition-all hover:shadow-md ${
-                link.isArchived ? 'opacity-70 bg-muted/20' : 'bg-card'
-              }`}>
+              className={`flex flex-col md:flex-row md:items-center justify-between p-4 border rounded-lg transition-all hover:shadow-md ${link.isArchived ? 'opacity-70 bg-muted/20' : 'bg-card'}`}>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <span className="font-medium">{link.name}</span>
@@ -137,17 +135,13 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
                 <div className="flex items-center mt-1 gap-2">
                   {link.slug ? (
                     <>
-                      <span className="text-sm text-muted-foreground truncate max-w-[300px] font-mono">
-                        {getPublicUrl(link.slug)}
-                      </span>
+                      <span className="text-sm text-muted-foreground truncate max-w-[300px] font-mono">{getPublicUrl(link.slug)}</span>
                       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleCopyLink(link.slug)}>
-                    <Copy className="h-3 w-3" />
-                  </Button>
+                        <Copy className="h-3 w-3" />
+                      </Button>
                     </>
                   ) : (
-                    <span className="text-sm text-muted-foreground italic">
-                      No public URL available. Please update the link to generate a slug.
-                    </span>
+                    <span className="text-sm text-muted-foreground italic">No public URL available. Please update the link to generate a slug.</span>
                   )}
                 </div>
                 <div className="flex flex-wrap gap-2 mt-2">
@@ -244,17 +238,17 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
               </div>
               <div className="flex items-center gap-2 mt-3 md:mt-0">
                 {link.slug && (
-                <Button variant="outline" size="sm" asChild>
+                  <Button variant="outline" size="sm" asChild>
                     <a href={getPublicUrl(link.slug)} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="mr-2 h-3 w-3" />
-                    {t('actions.open')}
-                  </a>
-                </Button>
+                      <ExternalLink className="mr-2 h-3 w-3" />
+                      {t('actions.open')}
+                    </a>
+                  </Button>
                 )}
                 <Button variant="outline" size="sm" asChild>
                   <Link href={{ pathname: '/admin/[tenantId]/links-and-documents/links/[slug]/edit', params: { tenantId, slug: link.id } }}>
-                  <Settings className="mr-2 h-3 w-3" />
-                  {t('actions.edit')}
+                    <Settings className="mr-2 h-3 w-3" />
+                    {t('actions.edit')}
                   </Link>
                 </Button>
                 <DropdownMenu>
@@ -267,14 +261,14 @@ export function DocumentSharedLinks({ documentId }: DocumentSharedLinksProps) {
                     <DropdownMenuLabel>{t('dropdown.actions')}</DropdownMenuLabel>
                     {link.slug && (
                       <DropdownMenuItem onClick={() => handleCopyLink(link.slug)}>
-                      <Copy className="mr-2 h-4 w-4" />
-                      {t('dropdown.copy')}
-                    </DropdownMenuItem>
+                        <Copy className="mr-2 h-4 w-4" />
+                        {t('dropdown.copy')}
+                      </DropdownMenuItem>
                     )}
                     <DropdownMenuItem asChild>
                       <Link href={{ pathname: '/admin/[tenantId]/links-and-documents/links/[slug]/edit', params: { tenantId, slug: link.id } }} className="flex items-center">
-                      <Settings className="mr-2 h-4 w-4" />
-                      {t('dropdown.settings')}
+                        <Settings className="mr-2 h-4 w-4" />
+                        {t('dropdown.settings')}
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />

@@ -1,19 +1,19 @@
 'use client';
 
-import { useEffect, useState, useTransition, useRef } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
+import { getDocumentConversations, getDocumentLinks, replyToConversation } from '@/actions/admin-conversation';
 import { formatDistanceToNow } from 'date-fns';
-import { Send, Filter, ExternalLink, AlertCircle, MessageSquare, ArrowLeft } from 'lucide-react';
-import { toast } from 'sonner';
+import { AlertCircle, ArrowLeft, ExternalLink, Filter, MessageSquare, Send } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
-import { getDocumentConversations, replyToConversation, getDocumentLinks } from '@/actions/admin-conversation';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface DocumentCommentsProps {
   documentId: string;
@@ -213,7 +213,7 @@ export function DocumentComments({ documentId, tenantId, userTenantId }: Documen
           <div className="space-y-4">
             {selectedConversation.messages.map((message, index) => {
               const showAvatar = index === 0 || selectedConversation.messages[index - 1].isOwnerMessage !== message.isOwnerMessage;
-              
+
               return (
                 <div key={message.id} className="flex gap-3">
                   {showAvatar ? (
@@ -228,12 +228,8 @@ export function DocumentComments({ documentId, tenantId, userTenantId }: Documen
                   <div className="flex-1 min-w-0">
                     {showAvatar && (
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-sm font-medium">
-                          {message.isOwnerMessage ? t('you') : message.viewerEmail || t('anonymous')}
-                        </span>
-                        {message.viewerName && !message.isOwnerMessage && (
-                          <span className="text-xs text-muted-foreground">({message.viewerName})</span>
-                        )}
+                        <span className="text-sm font-medium">{message.isOwnerMessage ? t('you') : message.viewerEmail || t('anonymous')}</span>
+                        {message.viewerName && !message.isOwnerMessage && <span className="text-xs text-muted-foreground">({message.viewerName})</span>}
                         {message.isOwnerMessage && (
                           <Badge variant="secondary" className="text-xs">
                             {t('admin')}
@@ -256,14 +252,7 @@ export function DocumentComments({ documentId, tenantId, userTenantId }: Documen
         {/* Reply Input */}
         <div className="p-4 border-t bg-background flex-shrink-0">
           <div className="space-y-2">
-            <Textarea
-              value={newReply}
-              onChange={(e) => setNewReply(e.target.value)}
-              placeholder={t('replyPlaceholder')}
-              className="min-h-[80px] resize-none"
-              disabled={isPending}
-              maxLength={1000}
-            />
+            <Textarea value={newReply} onChange={(e) => setNewReply(e.target.value)} placeholder={t('replyPlaceholder')} className="min-h-[80px] resize-none" disabled={isPending} maxLength={1000} />
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted-foreground">
                 {newReply.length}/1000 {t('characters')}
@@ -363,13 +352,9 @@ export function DocumentComments({ documentId, tenantId, userTenantId }: Documen
                         </div>
                         <p className="text-xs text-muted-foreground truncate mb-2">{lastMessage?.content || ''}</p>
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-xs text-muted-foreground">
-                            {lastMessage?.viewerEmail || t('anonymous')}
-                          </span>
+                          <span className="text-xs text-muted-foreground">{lastMessage?.viewerEmail || t('anonymous')}</span>
                           <span className="text-xs text-muted-foreground">•</span>
-                          <span className="text-xs text-muted-foreground">
-                            {conversation.lastMessageAt ? formatDistanceToNow(new Date(conversation.lastMessageAt), { addSuffix: true }) : 'N/A'}
-                          </span>
+                          <span className="text-xs text-muted-foreground">{conversation.lastMessageAt ? formatDistanceToNow(new Date(conversation.lastMessageAt), { addSuffix: true }) : 'N/A'}</span>
                           <span className="text-xs text-muted-foreground">•</span>
                           <span className="text-xs text-muted-foreground">
                             {conversation.messageCount} {t('messages')}

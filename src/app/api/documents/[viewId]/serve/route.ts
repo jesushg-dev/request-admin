@@ -93,7 +93,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       // Security headers
       headers.set('X-Content-Type-Options', 'nosniff');
       headers.set('X-Frame-Options', 'DENY');
-      
+
       // Add viewer info for watermarking (if enabled)
       if (validation.enableWatermark && validation.viewerEmail) {
         headers.set('X-Viewer-Email', validation.viewerEmail);

@@ -1,6 +1,7 @@
 'use server';
 
 import { db } from '@/server/db-client';
+
 import { generateUuid } from '@/lib/id';
 
 export interface FeedbackQuestionData {
@@ -17,10 +18,7 @@ export interface FeedbackResponseData {
 /**
  * Get feedback question for a link
  */
-export async function getFeedbackQuestion(
-  linkId: string,
-  tenantId: string
-): Promise<{ success: boolean; feedback?: FeedbackQuestionData; error?: string }> {
+export async function getFeedbackQuestion(linkId: string, tenantId: string): Promise<{ success: boolean; feedback?: FeedbackQuestionData; error?: string }> {
   try {
     const feedback = await db.documentFeedback.findUnique({
       where: { linkId, tenantId },
@@ -41,11 +39,7 @@ export async function getFeedbackQuestion(
 /**
  * Create or update feedback question for a link
  */
-export async function upsertFeedbackQuestion(
-  linkId: string,
-  tenantId: string,
-  feedbackData: FeedbackQuestionData
-): Promise<{ success: boolean; feedbackId?: string; error?: string }> {
+export async function upsertFeedbackQuestion(linkId: string, tenantId: string, feedbackData: FeedbackQuestionData): Promise<{ success: boolean; feedbackId?: string; error?: string }> {
   try {
     // Validate input
     if (!feedbackData.question || feedbackData.question.trim().length < 3) {
@@ -88,10 +82,7 @@ export async function upsertFeedbackQuestion(
 /**
  * Submit feedback response (public)
  */
-export async function submitFeedbackResponse(
-  viewId: string,
-  responseData: FeedbackResponseData
-): Promise<{ success: boolean; responseId?: string; error?: string }> {
+export async function submitFeedbackResponse(viewId: string, responseData: FeedbackResponseData): Promise<{ success: boolean; responseId?: string; error?: string }> {
   try {
     // Get view and link
     const view = await db.documentView.findUnique({
@@ -152,8 +143,8 @@ export async function submitFeedbackResponse(
 export async function getFeedbackResponses(
   linkId: string,
   tenantId: string
-): Promise<{ 
-  success: boolean; 
+): Promise<{
+  success: boolean;
   responses?: Array<{
     id: string;
     answer: string;
@@ -161,7 +152,7 @@ export async function getFeedbackResponses(
     viewerEmail: string | null;
     viewerName: string | null;
     submittedAt: Date;
-  }>; 
+  }>;
   summary?: {
     totalResponses: number;
     yesCount: number;
@@ -192,13 +183,17 @@ export async function getFeedbackResponses(
     });
 
     if (!feedback) {
-      return { success: true, responses: [], summary: {
-        totalResponses: 0,
-        yesCount: 0,
-        noCount: 0,
-        yesPercentage: 0,
-        noPercentage: 0,
-      }};
+      return {
+        success: true,
+        responses: [],
+        summary: {
+          totalResponses: 0,
+          yesCount: 0,
+          noCount: 0,
+          yesPercentage: 0,
+          noPercentage: 0,
+        },
+      };
     }
 
     // Parse responses
@@ -239,9 +234,7 @@ export async function getFeedbackResponses(
 /**
  * Check if user has already submitted feedback
  */
-export async function checkFeedbackSubmitted(
-  viewId: string
-): Promise<{ success: boolean; submitted: boolean; error?: string }> {
+export async function checkFeedbackSubmitted(viewId: string): Promise<{ success: boolean; submitted: boolean; error?: string }> {
   try {
     const response = await db.feedbackResponse.findUnique({
       where: { viewId },
@@ -253,4 +246,3 @@ export async function checkFeedbackSubmitted(
     return { success: false, submitted: false, error: 'Failed to check feedback status' };
   }
 }
-

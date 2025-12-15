@@ -1,6 +1,6 @@
 import { notFound, redirect } from 'next/navigation';
-import { validateDocumentView } from '@/actions/link-access';
 import { getFeedbackQuestion, type FeedbackQuestionData } from '@/actions/document-feedback';
+import { validateDocumentView } from '@/actions/link-access';
 
 import { validateLinkSession } from '@/lib/link-session';
 import { PublicDocumentViewer } from '@/components/public/public-document-viewer';

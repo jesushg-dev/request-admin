@@ -7,8 +7,8 @@ import { PermissionActions } from '@/constants/permissions';
 import { getPathname, redirect } from '@/i18n/routing';
 import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
-import { Card } from '@/components/ui/card';
 
+import { Card } from '@/components/ui/card';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DataroomDocuments } from '@/components/common/data-room/dataroom-documents';

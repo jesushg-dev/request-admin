@@ -35,10 +35,12 @@ export function createLinkSchema(t: TranslationFn) {
       allowDownload: z.boolean(),
       enableNotification: z.boolean(),
       enableFeedback: z.boolean(),
-      feedbackQuestion: z.object({
-        type: z.enum(['YES_NO', 'TEXT', 'RATING']),
-        question: z.string(),
-      }).optional(),
+      feedbackQuestion: z
+        .object({
+          type: z.enum(['YES_NO', 'TEXT', 'RATING']),
+          question: z.string(),
+        })
+        .optional(),
       enableQuestion: z.boolean(),
       allowSpecificViewers: z.boolean(),
       allowedViewers: z.array(

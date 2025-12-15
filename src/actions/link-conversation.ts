@@ -1,6 +1,7 @@
 'use server';
 
 import { db } from '@/server/db-client';
+
 import { generateUuid } from '@/lib/id';
 
 // Rate limiting map (in production, use Redis)
@@ -33,10 +34,7 @@ function sanitizeContent(content: string): string {
 /**
  * Create a simple question (for enableQuestion)
  */
-export async function createPublicQuestion(
-  viewId: string,
-  content: string
-): Promise<{ success: boolean; conversationId?: string; error?: string }> {
+export async function createPublicQuestion(viewId: string, content: string): Promise<{ success: boolean; conversationId?: string; error?: string }> {
   try {
     // Validate input
     const sanitizedContent = sanitizeContent(content);
@@ -139,7 +137,7 @@ export async function createPublicConversation(
     // Validate input
     const sanitizedTitle = sanitizeContent(title);
     const sanitizedContent = sanitizeContent(content);
-    
+
     if (sanitizedTitle.length < 3) {
       return { success: false, error: 'Title must be at least 3 characters long' };
     }
@@ -233,11 +231,7 @@ export async function createPublicConversation(
 /**
  * Add a message to an existing conversation
  */
-export async function addMessageToConversation(
-  conversationId: string,
-  viewId: string,
-  content: string
-): Promise<{ success: boolean; messageId?: string; error?: string }> {
+export async function addMessageToConversation(conversationId: string, viewId: string, content: string): Promise<{ success: boolean; messageId?: string; error?: string }> {
   try {
     // Validate input
     const sanitizedContent = sanitizeContent(content);
@@ -390,10 +384,7 @@ export async function getPublicConversations(
 /**
  * Mark conversation messages as read for a viewer
  */
-export async function markConversationAsRead(
-  conversationId: string,
-  viewId: string
-): Promise<{ success: boolean; error?: string }> {
+export async function markConversationAsRead(conversationId: string, viewId: string): Promise<{ success: boolean; error?: string }> {
   try {
     // Update all unread messages in this conversation for this viewer
     await db.documentMessage.updateMany({
@@ -418,10 +409,7 @@ export async function markConversationAsRead(
  * Send notification email when admin responds to a conversation
  * This should be called from the admin side when replying
  */
-export async function notifyViewerOfResponse(
-  conversationId: string,
-  messageContent: string
-): Promise<{ success: boolean; error?: string }> {
+export async function notifyViewerOfResponse(conversationId: string, messageContent: string): Promise<{ success: boolean; error?: string }> {
   try {
     // Get conversation with initial view to get viewer email
     const conversation = await db.documentConversation.findUnique({
@@ -479,4 +467,3 @@ export async function notifyViewerOfResponse(
     return { success: false, error: 'Failed to send notification' };
   }
 }
-
