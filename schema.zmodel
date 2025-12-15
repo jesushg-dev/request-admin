@@ -7,11 +7,10 @@ plugin hooks {
   output = "./src/services/api/hooks"
 }
 
-// Configuration for production on Vercel with PostgreSQL
+// Configuration for local development with SQL Server
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
 }
 
 generator client {

@@ -11,7 +11,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { uploadFiles } from '@/lib/uploadthing';
+import { uploadDocumentsInternal } from '@/lib/internal-upload-client';
 import { Form } from '@/components/ui/form';
 import { OptionType } from '@/components/custom-ui/select';
 import { ChildSteps } from '@/components/stepper/child-steps';
@@ -126,21 +126,17 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, pr
       try {
         const data = form.getValues() as RequestFormStepperType;
         const response = await upsertRequest(tenantId, data);
-        if (data.additionalDocuments) {
-          if (data.additionalDocuments.length > 0) {
-            const dataroomId = response.requestDatarooms?.[0]?.dataroomId;
-            if (!dataroomId) {
-              throw new Error('Dataroom ID not found');
-            }
-            toast.loading(t('uploadingFiles'), { id: toastId });
-            await uploadFiles('imageUploader', {
-              files: data.additionalDocuments,
-              input: { tenantId, dataroomId },
-              /*onUploadProgress: ({ file, progress }) => {
-              //setProgresses((prev) => ({ ...prev, [file.name]: progress }));
-            },*/
-            });
+        if (data.additionalDocuments && data.additionalDocuments.length > 0) {
+          const dataroomId = response.requestDatarooms?.[0]?.dataroomId;
+          if (!dataroomId) {
+            throw new Error('Dataroom ID not found');
           }
+          toast.loading(t('uploadingFiles'), { id: toastId });
+          await uploadDocumentsInternal({
+            tenantId,
+            dataroomId,
+            files: data.additionalDocuments,
+          });
         }
 
         router.push({ pathname: '/admin/[tenantId]/requests/[slug]', params: { tenantId, slug: response.id } });

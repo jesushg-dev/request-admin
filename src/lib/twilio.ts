@@ -1,26 +1,35 @@
 import twilio from 'twilio';
 
-if (!process.env.TWILIO_ACCOUNT_SID) {
-  throw new Error('TWILIO_ACCOUNT_SID is required');
-}
+import { env } from '@/env';
 
-if (!process.env.TWILIO_AUTH_TOKEN) {
-  throw new Error('TWILIO_AUTH_TOKEN is required');
-}
+let client: ReturnType<typeof twilio> | null = null;
 
-if (!process.env.TWILIO_PHONE_NUMBER) {
-  throw new Error('TWILIO_PHONE_NUMBER is required');
-}
+function getTwilioClient() {
+  if (!env.ENABLE_EXTERNAL_SMS) {
+    return null;
+  }
 
-if (!process.env.TWILIO_WHATSAPP_NUMBER) {
-  throw new Error('TWILIO_WHATSAPP_NUMBER is required');
-}
+  if (!client) {
+    if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN || !process.env.TWILIO_PHONE_NUMBER) {
+      console.warn('Twilio environment variables are missing; SMS/WhatsApp sending is disabled.');
+      return null;
+    }
 
-const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+    client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+  }
+
+  return client;
+}
 
 export async function sendSMS(to: string, message: string) {
+  const smsClient = getTwilioClient();
+  if (!smsClient) {
+    console.warn('sendSMS called but SMS sending is disabled by configuration.', { to });
+    return;
+  }
+
   try {
-    const result = await client.messages.create({
+    const result = await smsClient.messages.create({
       body: message,
       to,
       from: process.env.TWILIO_PHONE_NUMBER,
@@ -33,8 +42,14 @@ export async function sendSMS(to: string, message: string) {
 }
 
 export async function sendWhatsApp(to: string, message: string) {
+  const smsClient = getTwilioClient();
+  if (!smsClient) {
+    console.warn('sendWhatsApp called but WhatsApp sending is disabled by configuration.', { to });
+    return;
+  }
+
   try {
-    const result = await client.messages.create({
+    const result = await smsClient.messages.create({
       body: message,
       to: `whatsapp:${to}`,
       from: `whatsapp:${process.env.TWILIO_PHONE_NUMBER}`,
@@ -45,3 +60,4 @@ export async function sendWhatsApp(to: string, message: string) {
     throw new Error('Failed to send WhatsApp message');
   }
 }
+

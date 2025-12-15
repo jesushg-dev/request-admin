@@ -12,7 +12,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { getAcceptForFileType } from '@/lib/document-utils';
-import { useUploadThing } from '@/lib/uploadthing';
+import { uploadDocumentsInternal } from '@/lib/internal-upload-client';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { ButtonLoading } from '@/components/shared/button-util';
 import { FileUploader } from '@/components/uploader/file-uploader';
@@ -46,41 +46,6 @@ export function DocumentUpload({ id, locale, tenantId, folderId, callbackUrl, da
     },
   });
 
-  const { startUpload, isUploading } = useUploadThing('imageUploader', {
-    onClientUploadComplete: (res) => {
-      // Set all files to 100% on completion
-      const completedProgresses: Record<string, number> = {};
-      const files = form.getValues('files') || [];
-      files.forEach((file) => {
-        completedProgresses[file.name] = 100;
-      });
-      setProgresses(completedProgresses);
-      // Clear after a brief delay to show completion
-      setTimeout(() => setProgresses({}), 500);
-    },
-    onUploadError: (error) => {
-      toast.error(t('errors.uploadError', { message: error.message }));
-      setProgresses({});
-    },
-    onUploadProgress: (progress) => {
-      // progress is a number from 0 to 100 representing the average progress of all files
-      const files = form.getValues('files') || [];
-      const newProgresses: Record<string, number> = {};
-      files.forEach((file) => {
-        newProgresses[file.name] = progress;
-      });
-      setProgresses(newProgresses);
-    },
-    onUploadBegin: (fileName) => {
-      // Initialize progress for the file that just started uploading
-      // fileName is a string (the name of the file)
-      setProgresses((prev) => ({
-        ...prev,
-        [fileName]: 0,
-      }));
-    },
-  });
-
   const onSubmit = async (newData: FormValues) => {
     if (!newData.files || newData.files.length === 0) {
       toast.error(t('errors.selectFile'));
@@ -91,26 +56,14 @@ export function DocumentUpload({ id, locale, tenantId, folderId, callbackUrl, da
       const toastId = toast.loading(t('toast.uploading'));
 
       try {
-        // Initialize progress for all files
-        const initialProgresses: Record<string, number> = {};
-        newData.files.forEach((file) => {
-          initialProgresses[file.name] = 0;
-        });
-        setProgresses(initialProgresses);
-
-        // Upload files with proper input structure
-        // tenantId is required by the schema, so we always need to send it
-        // Progress updates are handled by onUploadProgress callback
-        const uploadedFiles = await startUpload(newData.files, {
+        // Upload files internally to local storage
+        await uploadDocumentsInternal({
           tenantId,
           folderId: folderId ?? undefined,
           dataroomId: dataroomId ?? undefined,
           documentId: documentId ?? undefined,
-        } as any);
-
-        if (!uploadedFiles || uploadedFiles.length === 0) {
-          throw new Error(t('errors.uploadFailed'));
-        }
+          files: newData.files,
+        });
 
         // Invalidate document queries to refresh the list
         // ZenStack query keys follow the pattern: ["zenstack", model, operation, args, options]
@@ -171,7 +124,7 @@ export function DocumentUpload({ id, locale, tenantId, folderId, callbackUrl, da
                         maxFileCount={documentId ? 1 : 3}
                         maxSize={4 * 1024 * 1024}
                         progresses={progresses}
-                        disabled={pending || isUploading}
+                        disabled={pending}
                         accept={getAcceptForFileType(expectedFileType)}
                         multiple={!documentId}
                       />
@@ -208,8 +161,8 @@ export function DocumentUpload({ id, locale, tenantId, folderId, callbackUrl, da
           </div>
         </div>
         <div className="mt-4 flex justify-end">
-          <ButtonLoading type="submit" isLoading={pending || isUploading}>
-            {pending || isUploading ? t('button.uploading') : t('button.uploadDocument')}
+          <ButtonLoading type="submit" isLoading={pending}>
+            {pending ? t('button.uploading') : t('button.uploadDocument')}
           </ButtonLoading>
         </div>
       </form>

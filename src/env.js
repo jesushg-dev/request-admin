@@ -8,14 +8,19 @@ export const env = createEnv({
    */
   server: {
     APP_NAME: z.string(),
-    AUTH_SECRET: process.env.NODE_ENV === 'production' ? z.string() : z.string().optional(),
     BETTER_AUTH_URL: z.string(),
     BETTER_AUTH_SECRET: z.string(),
-    RESEND_API_KEY: z.string(),
-    UPLOADTHING_TOKEN: z.string(),
-    RESEND_EMAIL_DOMAIN: z.string(),
+    // External email / upload services are optional and typically disabled on-premise.
+    RESEND_API_KEY: z.string().optional(),
+    UPLOADTHING_TOKEN: z.string().optional(),
+    RESEND_EMAIL_DOMAIN: z.string().optional(),
+    // Feature flags to control use of any external SaaS. Default is on-premise (no SaaS).
+    ON_PREMISE: z.boolean().default(true),
+    ENABLE_EXTERNAL_EMAIL: z.boolean().default(false),
+    ENABLE_EXTERNAL_SMS: z.boolean().default(false),
+    ENABLE_EXTERNAL_UPLOAD: z.boolean().default(false),
+    ENABLE_EXTERNAL_REALTIME: z.boolean().default(false),
     DATABASE_URL: z.string(),
-    ON_PREMISE: z.boolean().default(false),
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   },
 
@@ -34,14 +39,17 @@ export const env = createEnv({
    */
   runtimeEnv: {
     APP_NAME: process.env.APP_NAME,
-    AUTH_SECRET: process.env.AUTH_SECRET,
     BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
     BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     RESEND_EMAIL_DOMAIN: process.env.RESEND_EMAIL_DOMAIN,
     UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
-    DATABASE_URL: process.env.DATABASE_URL,
     ON_PREMISE: process.env.ON_PREMISE === 'true',
+    ENABLE_EXTERNAL_EMAIL: process.env.ENABLE_EXTERNAL_EMAIL === 'true',
+    ENABLE_EXTERNAL_SMS: process.env.ENABLE_EXTERNAL_SMS === 'true',
+    ENABLE_EXTERNAL_UPLOAD: process.env.ENABLE_EXTERNAL_UPLOAD === 'true',
+    ENABLE_EXTERNAL_REALTIME: process.env.ENABLE_EXTERNAL_REALTIME === 'true',
+    DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
   },
   /**
