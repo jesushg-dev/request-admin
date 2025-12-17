@@ -105,6 +105,11 @@ const metadata: ModelMeta = {
           type: 'String',
           isOptional: true,
         },
+        uploadStorageType: {
+          name: 'uploadStorageType',
+          type: 'String',
+          isOptional: true,
+        },
         assignmentHierarchies: {
           name: 'assignmentHierarchies',
           type: 'AssignmentHierarchy',

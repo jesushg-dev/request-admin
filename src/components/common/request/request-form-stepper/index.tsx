@@ -11,7 +11,9 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
+import { uploadDocumentsInternal } from '@/lib/internal-upload-client';
 import { uploadFiles } from '@/lib/uploadthing';
+import { useFeatureFlag } from '@/hooks/use-feature-flag';
 import { Form } from '@/components/ui/form';
 import { OptionType } from '@/components/custom-ui/select';
 import { ChildSteps } from '@/components/stepper/child-steps';
@@ -55,6 +57,7 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, pr
   const [isPending, startTransition] = useTransition();
   const [isDraftRemovable, setIsDraftRemovable] = useState(false);
   const [categoryIds, setCategoryIds] = useState<CategoryIds>({ requestCategory: [], assignmentCategory: [] });
+  const { isEnabled: useInternalUpload } = useFeatureFlag('internal_upload', tenantId);
 
   // Get internationalized schema for request details
   const requestDetailSchemaIntl = useRequestDetailSchema();
@@ -126,13 +129,20 @@ const RequestFormStepper: FC<CombinedFormProps> = ({ defaultValues, tenantId, pr
       try {
         const data = form.getValues() as RequestFormStepperType;
         const response = await upsertRequest(tenantId, data);
-        if (data.additionalDocuments) {
-          if (data.additionalDocuments.length > 0) {
-            const dataroomId = response.requestDatarooms?.[0]?.dataroomId;
-            if (!dataroomId) {
-              throw new Error('Dataroom ID not found');
-            }
-            toast.loading(t('uploadingFiles'), { id: toastId });
+        if (data.additionalDocuments && data.additionalDocuments.length > 0) {
+          const dataroomId = response.requestDatarooms?.[0]?.dataroomId;
+          if (!dataroomId) {
+            throw new Error('Dataroom ID not found');
+          }
+          toast.loading(t('uploadingFiles'), { id: toastId });
+
+          if (useInternalUpload) {
+            await uploadDocumentsInternal({
+              tenantId,
+              dataroomId,
+              files: data.additionalDocuments,
+            });
+          } else {
             await uploadFiles('imageUploader', {
               files: data.additionalDocuments,
               input: { tenantId, dataroomId },

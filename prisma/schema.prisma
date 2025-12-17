@@ -4,9 +4,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -33,6 +32,7 @@ model Tenant {
   contactEmail                     String?
   contactPhone                     String?
   address                          String?
+  uploadStorageType                String?                             @db.VarChar(50)
   assignmentHierarchies            AssignmentHierarchy[]
   assignmentHierarchyLevels        AssignmentHierarchyLevel[]
   assignmentCategories             AssignmentCategory[]

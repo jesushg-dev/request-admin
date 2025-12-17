@@ -384,6 +384,7 @@ export function useCheckTenant<TError = DefaultError>(
       contactEmail?: string;
       contactPhone?: string;
       address?: string;
+      uploadStorageType?: string;
     };
   },
   options?: Omit<UseQueryOptions<boolean, TError, boolean>, 'queryKey'> & ExtraQueryOptions

@@ -972,6 +972,25 @@
         "updateSuccess": "Organization updated successfully",
         "createSuccess": "Organization created successfully",
         "error": "Error {action} organization: {error}"
+      },
+      "uploadConfig": {
+        "title": "Storage Configuration",
+        "description": "Select the storage method for uploaded files",
+        "storageType": {
+          "label": "Storage Method",
+          "description": "Choose how uploaded files will be stored in your organization",
+          "placeholder": "Select a method"
+        },
+        "options": {
+          "uploadthing": "UploadThing",
+          "internal": "Internal Storage"
+        },
+        "note": "Changes to storage configuration will affect how files are saved. UploadThing is the default method.",
+        "loading": "Loading...",
+        "toast": {
+          "updated": "Storage configuration updated successfully",
+          "error": "Error updating storage configuration"
+        }
       }
     },
     "form": {

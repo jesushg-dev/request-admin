@@ -972,6 +972,25 @@
         "updateSuccess": "Organización actualizada exitosamente",
         "createSuccess": "Organización creada exitosamente",
         "error": "Error {action} organización: {error}"
+      },
+      "uploadConfig": {
+        "title": "Configuración de Almacenamiento",
+        "description": "Selecciona el método de almacenamiento para los archivos subidos",
+        "storageType": {
+          "label": "Método de Almacenamiento",
+          "description": "Elige cómo se almacenarán los archivos subidos en tu organización",
+          "placeholder": "Selecciona un método"
+        },
+        "options": {
+          "uploadthing": "UploadThing",
+          "internal": "Almacenamiento Interno"
+        },
+        "note": "Los cambios en la configuración de almacenamiento afectarán cómo se guardan los archivos. UploadThing es el método por defecto.",
+        "loading": "Cargando...",
+        "toast": {
+          "updated": "Configuración de almacenamiento actualizada exitosamente",
+          "error": "Error al actualizar la configuración de almacenamiento"
+        }
       }
     },
     "form": {

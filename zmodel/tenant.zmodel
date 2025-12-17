@@ -25,6 +25,7 @@ model Tenant extends Auditable {
   contactEmail                   String?  // Tenant's contact email
   contactPhone                   String?  // Tenant's contact phone number
   address                        String?  // Address for the tenant
+  uploadStorageType              String?  @db.VarChar(50) // "uploadthing" | "internal" - Method for file storage
 
   // --- Hierarchy Management ---
   assignmentHierarchies          AssignmentHierarchy[]
@@ -88,9 +89,8 @@ model Tenant extends Auditable {
   roles                          Role[]
   roleFeatures                   RoleFeature[]
 
-  // --- Modules and Features ---
-  modules                        Module[]
-  features                       Feature[]
+  // --- Module Control (Global modules enabled/disabled per tenant) ---
+  tenantModules                  TenantModule[]
 
   // --- Identification ---
   identificationTypes            IdentificationType[]

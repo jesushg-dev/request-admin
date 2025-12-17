@@ -124,6 +124,13 @@ export const auth = betterAuth({
             organizationId: 'tenantId',
           },
         },
+        teamMember: {
+          modelName: 'UserTenantArea',
+          fields: {
+            teamId: 'areaId',
+            userId: 'userTenantId',
+          },
+        },
         session: {
           fields: {
             activeOrganizationId: 'activeTenantId',

@@ -9,6 +9,7 @@ type TenantSummary = {
   name: string;
   logo: string | null;
   description: string | null;
+  uploadStorageType: string | null;
 };
 
 type TenantContextType = {

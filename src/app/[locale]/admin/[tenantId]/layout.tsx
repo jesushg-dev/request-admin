@@ -56,7 +56,7 @@ export default async function RootLayout({
 
   const db = await getDb();
   const tenants = await db.tenant.findMany({
-    select: { id: true, name: true, description: true, logo: true },
+    select: { id: true, name: true, description: true, logo: true, uploadStorageType: true },
     where: { userTenants: { some: { userId: { equals: session.user.id } } } },
   });
 

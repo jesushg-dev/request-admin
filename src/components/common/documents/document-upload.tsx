@@ -12,7 +12,9 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { getAcceptForFileType } from '@/lib/document-utils';
+import { uploadDocumentsInternal } from '@/lib/internal-upload-client';
 import { useUploadThing } from '@/lib/uploadthing';
+import { useFeatureFlag } from '@/hooks/use-feature-flag';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { ButtonLoading } from '@/components/shared/button-util';
 import { FileUploader } from '@/components/uploader/file-uploader';
@@ -36,6 +38,7 @@ export function DocumentUpload({ id, locale, tenantId, folderId, callbackUrl, da
   const t = useTranslations('admin.upload');
   const [pending, startTransition] = useTransition();
   const [progresses, setProgresses] = useState<Record<string, number>>({});
+  const { isEnabled: useInternalUpload } = useFeatureFlag('internal_upload', tenantId);
 
   const documentUploadSchema = useDocumentUploadSchema(expectedFileType);
 
@@ -91,25 +94,51 @@ export function DocumentUpload({ id, locale, tenantId, folderId, callbackUrl, da
       const toastId = toast.loading(t('toast.uploading'));
 
       try {
-        // Initialize progress for all files
-        const initialProgresses: Record<string, number> = {};
-        newData.files.forEach((file) => {
-          initialProgresses[file.name] = 0;
-        });
-        setProgresses(initialProgresses);
+        if (useInternalUpload) {
+          // Initialize progress for all files
+          const initialProgresses: Record<string, number> = {};
+          newData.files.forEach((file) => {
+            initialProgresses[file.name] = 0;
+          });
+          setProgresses(initialProgresses);
 
-        // Upload files with proper input structure
-        // tenantId is required by the schema, so we always need to send it
-        // Progress updates are handled by onUploadProgress callback
-        const uploadedFiles = await startUpload(newData.files, {
-          tenantId,
-          folderId: folderId ?? undefined,
-          dataroomId: dataroomId ?? undefined,
-          documentId: documentId ?? undefined,
-        } as any);
+          // Upload files internally to local storage
+          await uploadDocumentsInternal({
+            tenantId,
+            folderId: folderId ?? undefined,
+            dataroomId: dataroomId ?? undefined,
+            documentId: documentId ?? undefined,
+            files: newData.files,
+          });
 
-        if (!uploadedFiles || uploadedFiles.length === 0) {
-          throw new Error(t('errors.uploadFailed'));
+          // Set all files to 100% on completion
+          const completedProgresses: Record<string, number> = {};
+          newData.files.forEach((file) => {
+            completedProgresses[file.name] = 100;
+          });
+          setProgresses(completedProgresses);
+          setTimeout(() => setProgresses({}), 500);
+        } else {
+          // Initialize progress for all files
+          const initialProgresses: Record<string, number> = {};
+          newData.files.forEach((file) => {
+            initialProgresses[file.name] = 0;
+          });
+          setProgresses(initialProgresses);
+
+          // Upload files with proper input structure
+          // tenantId is required by the schema, so we always need to send it
+          // Progress updates are handled by onUploadProgress callback
+          const uploadedFiles = await startUpload(newData.files, {
+            tenantId,
+            folderId: folderId ?? undefined,
+            dataroomId: dataroomId ?? undefined,
+            documentId: documentId ?? undefined,
+          } as any);
+
+          if (!uploadedFiles || uploadedFiles.length === 0) {
+            throw new Error(t('errors.uploadFailed'));
+          }
         }
 
         // Invalidate document queries to refresh the list
@@ -171,7 +200,7 @@ export function DocumentUpload({ id, locale, tenantId, folderId, callbackUrl, da
                         maxFileCount={documentId ? 1 : 3}
                         maxSize={4 * 1024 * 1024}
                         progresses={progresses}
-                        disabled={pending || isUploading}
+                        disabled={pending || (!useInternalUpload && isUploading)}
                         accept={getAcceptForFileType(expectedFileType)}
                         multiple={!documentId}
                       />
@@ -208,8 +237,8 @@ export function DocumentUpload({ id, locale, tenantId, folderId, callbackUrl, da
           </div>
         </div>
         <div className="mt-4 flex justify-end">
-          <ButtonLoading type="submit" isLoading={pending || isUploading}>
-            {pending || isUploading ? t('button.uploading') : t('button.uploadDocument')}
+          <ButtonLoading type="submit" isLoading={pending || (!useInternalUpload && isUploading)}>
+            {pending || (!useInternalUpload && isUploading) ? t('button.uploading') : t('button.uploadDocument')}
           </ButtonLoading>
         </div>
       </form>

@@ -31,19 +31,26 @@ model Role extends TenantScoped, Auditable, CatalogBase {
 /// Module also known as a feature or section of the application that can be enabled or disabled
 /// in other terms, it also works as feature flags for the application to enable or disable features
 /// based on if the module is enabled or disabled for the tenant or user
-model Module extends TenantScoped, Auditable, CatalogBase {
+/// 
+/// NOTE: Module is now GLOBAL (not tenant-scoped). Use TenantModule to enable/disable modules per tenant.
+model Module extends Auditable, CatalogBase {
   // Relationships
   feature Feature[] // Features associated with this module
+  tenantModules TenantModule[] // Links to tenants that have this module enabled/disabled
 
   // Index for efficient lookups by module name
   @@index([name], name: "idx_module_name")
-  @@unique([name, tenantId])
+  @@unique([name]) // No longer needs tenantId since it's global
 }
 
 /// Represents features in the system. 
 /// A single table handles both global features and area-specific features using the `scope` field.
 /// Features are linked to modules for better organization and can be assigned to global roles or area roles.
-model Feature extends TenantScoped, Auditable, CatalogBase {
+/// 
+/// NOTE: Feature is now GLOBAL (not tenant-scoped). Availability is controlled via:
+/// - PlanFeature: Defines which features are available in a plan (with limits)
+/// - TenantModule: Allows tenants to disable entire modules
+model Feature extends Auditable, CatalogBase {
   key             String            @unique  @db.VarChar(100) // Unique key for the feature (for system use)
 
   // Scope of the feature: "global" for system-wide features or "area" for area-specific features
@@ -63,7 +70,7 @@ model Feature extends TenantScoped, Auditable, CatalogBase {
   planFeatures    PlanFeature[]
 
   @@validate(scope in ["global", "area"])
-  @@unique([key, tenantId])
+  @@unique([key]) // No longer needs tenantId since it's global
 }
 
 model RoleFeature extends TenantScoped, Auditable {
@@ -73,7 +80,25 @@ model RoleFeature extends TenantScoped, Auditable {
 
   // Relationships
   roleId    String // Reference to the linked Role
-  featureId String // Reference to the linked Feature
+  featureId String // Reference to the linked Feature (now global)
   role      Role    @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   feature   Feature @relation(fields: [featureId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// Links tenants to modules, allowing tenants to enable/disable modules independently of their plan.
+/// This provides flexibility for tenants to disable modules they don't need, even if their plan includes them.
+/// 
+/// If no TenantModule record exists for a tenant-module pair, the module is considered ENABLED by default.
+model TenantModule extends TenantScoped, Auditable {
+  // Primary identifier
+  id        String  @id @default(uuid())
+  isEnabled Boolean @default(true) // Whether the module is enabled for this tenant
+
+  // Relationships
+  moduleId  String
+  module    Module  @relation(fields: [moduleId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([tenantId, moduleId])
+  @@index([tenantId])
+  @@index([moduleId])
 }

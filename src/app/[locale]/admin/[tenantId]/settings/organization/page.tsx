@@ -4,6 +4,7 @@ import { getTenantInformation } from '@/actions/tenant';
 import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
+import { FeatureFlagsManager } from '@/components/common/organization/feature-flags-manager';
 import TenantForm from '@/components/common/tenant/tenant-form';
 
 interface EditPageProps {
@@ -25,12 +26,15 @@ const EditPage: FC<EditPageProps> = async ({ params }) => {
   const organization = await getTenantInformation(tenantId);
 
   return (
-    <TenantForm
-      defaultValues={{
-        values: organization,
-        organizationId: tenantId,
-      }}
-    />
+    <div className="space-y-6">
+      <TenantForm
+        defaultValues={{
+          values: organization,
+          organizationId: tenantId,
+        }}
+      />
+      <FeatureFlagsManager tenantId={tenantId} />
+    </div>
   );
 };
 
