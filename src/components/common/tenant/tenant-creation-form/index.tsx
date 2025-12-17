@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useMemo, useTransition } from 'react';
-import { authClient } from '@/server/auth-client';
+import { createTenantWithInitialization } from '@/actions/tenant';
 import { useTenantFormSchema } from '@/services/schemas/tenant';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { defineStepper } from '@stepperize/react';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -34,6 +35,7 @@ interface TenantCreationFormProps {
 export function TenantCreationForm({ plans }: TenantCreationFormProps) {
   const stepper = useStepper();
   const [pending, startTransition] = useTransition();
+  const router = useRouter();
   const t = useTranslations('tenants.form');
 
   // Get internationalized schema for tenant form
@@ -82,21 +84,22 @@ export function TenantCreationForm({ plans }: TenantCreationFormProps) {
     startTransition(async () => {
       const data = form.getValues() as TenantCreationValues;
       const toastId = toast.loading(t('messages.saving'));
-      await authClient.organization.create(
-        {
+      
+      try {
+        const tenant = await createTenantWithInitialization({
           name: data.name,
           slug: data.slug,
           logo: data.logo,
-        },
-        {
-          onSuccess: () => {
-            toast.success(t('messages.success'), { id: toastId });
-          },
-          onError: ({ error }: { error: Error }) => {
-            toast.error(t('messages.error', { error: error.message }), { id: toastId });
-          },
-        }
-      );
+        });
+        
+        toast.success(t('messages.success'), { id: toastId });
+        
+        // Optionally redirect to the new tenant
+        // router.push(`/admin/${tenant.slug}/...`);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        toast.error(t('messages.error', { error: errorMessage }), { id: toastId });
+      }
     });
   };
 

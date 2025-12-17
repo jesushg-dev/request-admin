@@ -70,7 +70,7 @@ model Feature extends Auditable, CatalogBase {
   planFeatures    PlanFeature[]
 
   @@validate(scope in ["global", "area"])
-  @@unique([key]) // No longer needs tenantId since it's global
+  // Note: key already has @unique constraint, no need for @@unique([key])
 }
 
 model RoleFeature extends TenantScoped, Auditable {
