@@ -1,4 +1,4 @@
-import { type TPlanFeatureSchema, type TPlanInfoSchema } from '@/services/schemas/plan';
+import { type TPlanBrandingSchema, type TPlanFeatureSchema, type TPlanInfoSchema, type TPlanSelectionSchema } from '@/services/schemas/plan';
 import * as z from 'zod';
 
 // Base schemas for defineStepper (without internationalization)
@@ -9,6 +9,15 @@ export const planInfoSchema = z.object({
   price: z.number().min(0),
   durationInDays: z.number().optional(),
 }) as z.ZodType<TPlanInfoSchema>;
+
+export const planBrandingSchema = z.object({
+  primaryColor: z.string().optional(),
+  secondaryColor: z.string().optional(),
+}) as z.ZodType<TPlanBrandingSchema>;
+
+export const planSelectionSchema = z.object({
+  planId: z.string().optional(),
+}) as z.ZodType<TPlanSelectionSchema>;
 
 export const planFeatureSchema = z.object({
   features: z.array(

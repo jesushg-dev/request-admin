@@ -2,6 +2,7 @@
 
 import { useTransition } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useRouter } from '@/i18n/routing';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 import { authClient } from '@/server/auth-client';
 import { useRegisterSchema, type TRegisterSchema } from '@/services/schemas/auth.schema';
@@ -17,6 +18,7 @@ import { CardWrapper } from '@/components/auth/card-wrapper';
 
 const RegisterForm = () => {
   const t = useTranslations('auth.registerForm');
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl');
@@ -49,6 +51,7 @@ const RegisterForm = () => {
           },
           onSuccess: () => {
             toast.success(t('success'), { id: toastId });
+            router.push('/auth/login');
           },
           onError: (ctx: { error: Error }) => {
             toast.error(`${t('error')}: ${ctx.error.message}`, { id: toastId });

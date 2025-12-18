@@ -1,11 +1,10 @@
 'use server';
 
+import { headers } from 'next/headers';
 import { locales, redirect } from '@/i18n/routing';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
-import { currentSession, auth } from '@/server/auth-server';
-import { getDb } from '@/server/db-client';
-import { PrismaModules } from '@/../prisma/module';
-import { createSystemRoles, SYSTEM_ROLES } from '@/../prisma/role';
+import { auth, currentSession } from '@/server/auth-server';
+import { db} from '@/server/db-client';
 
 import { extractTenantId } from '@/lib/utils';
 import { TenantFormValues } from '@/components/common/tenant/tenant-form';
@@ -30,7 +29,6 @@ export const getTenantInformation = async (tenantId: string): Promise<TenantForm
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 
-  const db = await getDb();
   const response = await db.tenant.findFirst({
     where: {
       id: tenantId,
@@ -70,142 +68,66 @@ export const getTenantInformation = async (tenantId: string): Promise<TenantForm
 };
 
 /**
- * Initializes global modules and features if they don't exist
- * Then enables all modules for the new tenant by default
- */
-async function initializeGlobalModulesAndFeatures(db: Awaited<ReturnType<typeof getDb>>) {
-  // Check if modules already exist (they should be global now)
-  const existingModules = await db.module.findMany();
-  
-  if (existingModules.length === 0) {
-    // Create global modules and features if they don't exist
-    for (const [, applicationModule] of Object.entries(PrismaModules)) {
-      await db.module.create({
-        data: {
-          name: applicationModule.name.es,
-          description: applicationModule.description.es,
-          createdBy: 'system',
-          feature: {
-            create: Object.entries(applicationModule.features).map(([, feature]) => ({
-              name: feature.name.es,
-              key: feature.action,
-              description: feature.description.es,
-              scope: feature.scope,
-              createdBy: 'system',
-            })),
-          },
-        },
-      });
-    }
-  }
-}
-
-/**
- * Enables all global modules for a tenant by default
- * Tenants can later disable modules they don't need via TenantModule
- */
-async function enableDefaultModulesForTenant(
-  db: Awaited<ReturnType<typeof getDb>>,
-  tenantId: string,
-  userId: string
-) {
-  // Get all active global modules
-  const allModules = await db.module.findMany({
-    where: { isActive: true, deletedAt: null },
-  });
-
-  // Enable all modules by default for the new tenant
-  await db.tenantModule.createMany({
-    data: allModules.map((module) => ({
-      tenantId,
-      moduleId: module.id,
-      isEnabled: true,
-      createdBy: userId,
-    })),
-    skipDuplicates: true,
-  });
-}
-
-/**
  * Creates a new tenant with all necessary initialization:
- * - Creates the tenant via Better Auth
- * - Initializes global modules and features if they don't exist
- * - Enables all modules for the new tenant by default (via TenantModule)
- * - Creates system roles (Administrador, Coordinador, Analista, Distribuidor)
- * 
- * @param data Tenant creation data (name, slug, logo)
+ * - Creates the tenant via Better Auth with all additional fields
+ * - Module initialization is handled in the afterCreateOrganization hook
+ *
+ * @param data Tenant creation data including all form fields
  * @returns The created tenant
  */
-export async function createTenantWithInitialization(data: { name: string; slug: string; logo?: string }) {
+export async function createTenantWithInitialization(data: {
+  name: string;
+  slug: string;
+  logo?: string;
+  websiteUrl?: string;
+  title?: string;
+  description?: string;
+  primaryColor?: string;
+  secondaryColor?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  address?: string;
+  planId?: string;
+}) {
   const session = await currentSession();
   if (!session?.user) {
     throw new Error('Unauthorized: You must be logged in to create a tenant');
   }
 
-  const db = await getDb();
-
-  // 1. Create tenant via Better Auth
+  // Create organization via Better Auth
+  // The afterCreateOrganization hook will handle module initialization
+  // All additional fields are automatically handled by Better Auth schema
   const organization = await auth.api.createOrganization({
     body: {
       name: data.name,
       slug: data.slug,
       logo: data.logo,
+      websiteUrl: data.websiteUrl,
+      title: data.title,
+      description: data.description,
+      primaryColor: data.primaryColor,
+      secondaryColor: data.secondaryColor,
+      contactEmail: data.contactEmail,
+      contactPhone: data.contactPhone,
+      address: data.address,
+      planId: data.planId,
     },
-    headers: new Headers(),
+    headers: await headers(),
   });
 
-  if (!organization?.data?.id) {
+  // Better Auth returns the organization directly, not wrapped in a data property
+  if (!organization?.id) {
     throw new Error('Failed to create tenant');
   }
 
-  const tenantId = organization.data.id;
+  // Note: Module initialization is handled in the afterCreateOrganization hook
+  // Roles and areas should be created by the user according to their needs
+  // We don't create them automatically to avoid unnecessary data
 
-  try {
-    // 2. Initialize global modules and features if they don't exist
-    await initializeGlobalModulesAndFeatures(db);
-
-    // 3. Enable all modules for the new tenant by default
-    await enableDefaultModulesForTenant(db, tenantId, session.user.id);
-
-    // 4. Create system roles (without assigning users)
-    // We'll create roles without user assignments initially
-    // Users can be assigned roles later when they join the tenant
-    for (const roleData of SYSTEM_ROLES) {
-      // Find features by key (now global, no tenantId needed)
-      const features = await db.feature.findMany({
-        where: {
-          key: { in: roleData.features },
-        },
-      });
-
-      const role = await db.role.create({
-        data: {
-          name: roleData.name,
-          description: roleData.description,
-          tenantId,
-          createdBy: session.user.id,
-          roleFeature: {
-            create: features.map((feature) => ({
-              tenant: { connect: { id: tenantId } },
-              feature: { connect: { id: feature.id } },
-              createdBy: session.user.id,
-            })),
-          },
-        },
-      });
-    }
-
-    return {
-      id: tenantId,
-      name: organization.data.name,
-      slug: organization.data.slug,
-      logo: organization.data.logo,
-    };
-  } catch (error) {
-    // If initialization fails, we should rollback the tenant creation
-    // For now, we'll just throw the error
-    // TODO: Implement proper transaction/rollback
-    console.error('Error initializing tenant data:', error);
-    throw new Error(`Failed to initialize tenant: ${error instanceof Error ? error.message : 'Unknown error'}`);
-  }
+  return {
+    id: organization.id,
+    name: organization.name,
+    slug: organization.slug,
+    logo: organization.logo ?? undefined,
+  };
 }

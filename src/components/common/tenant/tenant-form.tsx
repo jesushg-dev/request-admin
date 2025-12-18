@@ -15,7 +15,17 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
-import { ColorPicker } from '@/components/custom-ui/color-picker';
+import {
+  ColorPicker,
+  ColorPickerTrigger,
+  ColorPickerContent,
+  ColorPickerArea,
+  ColorPickerHueSlider,
+  ColorPickerAlphaSlider,
+  ColorPickerFormatSelect,
+  ColorPickerInput,
+  ColorPickerSwatch,
+} from '@/components/ui/color-picker';
 
 export const getTenantFormDefaultValues = (): TenantFormValues => {
   return {
@@ -239,7 +249,33 @@ export const TenantFormFields = () => {
             <FormItem>
               <FormLabel>{t('branding.primaryColor')}</FormLabel>
               <FormControl>
-                <ColorPicker value={field.value || ''} onChange={field.onChange} />
+                <ColorPicker
+                  value={field.value || '#000000'}
+                  onValueChange={field.onChange}
+                  name={field.name}
+                >
+                  <div className="flex items-center gap-2">
+                    <ColorPickerTrigger asChild>
+                      <Button variant="outline" className="w-full justify-start">
+                        <ColorPickerSwatch />
+                        <span className="ml-2 font-mono text-sm">
+                          {field.value || '#000000'}
+                        </span>
+                      </Button>
+                    </ColorPickerTrigger>
+                  </div>
+                  <ColorPickerContent>
+                    <ColorPickerArea />
+                    <div className="space-y-2">
+                      <ColorPickerHueSlider />
+                      <ColorPickerAlphaSlider />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <ColorPickerFormatSelect />
+                      <ColorPickerInput withoutAlpha />
+                    </div>
+                  </ColorPickerContent>
+                </ColorPicker>
               </FormControl>
               <FormDescription>{t('branding.colorDescriptions.primary')}</FormDescription>
               <FormMessage />
@@ -254,7 +290,33 @@ export const TenantFormFields = () => {
             <FormItem>
               <FormLabel>{t('branding.secondaryColor')}</FormLabel>
               <FormControl>
-                <ColorPicker value={field.value || ''} onChange={field.onChange} />
+                <ColorPicker
+                  value={field.value || '#000000'}
+                  onValueChange={field.onChange}
+                  name={field.name}
+                >
+                  <div className="flex items-center gap-2">
+                    <ColorPickerTrigger asChild>
+                      <Button variant="outline" className="w-full justify-start">
+                        <ColorPickerSwatch />
+                        <span className="ml-2 font-mono text-sm">
+                          {field.value || '#000000'}
+                        </span>
+                      </Button>
+                    </ColorPickerTrigger>
+                  </div>
+                  <ColorPickerContent>
+                    <ColorPickerArea />
+                    <div className="space-y-2">
+                      <ColorPickerHueSlider />
+                      <ColorPickerAlphaSlider />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <ColorPickerFormatSelect />
+                      <ColorPickerInput withoutAlpha />
+                    </div>
+                  </ColorPickerContent>
+                </ColorPicker>
               </FormControl>
               <FormDescription>{t('branding.colorDescriptions.secondary')}</FormDescription>
               <FormMessage />

@@ -8,10 +8,7 @@ import { getDb } from '@/server/db-client';
  * @param moduleId The module ID
  * @returns true if the module is enabled (or no record exists = enabled by default), false otherwise
  */
-export async function isModuleEnabledForTenant(
-  tenantId: string,
-  moduleId: string
-): Promise<boolean> {
+export async function isModuleEnabledForTenant(tenantId: string, moduleId: string): Promise<boolean> {
   const db = await getDb();
 
   const tenantModule = await db.tenantModule.findUnique({
@@ -39,10 +36,7 @@ export async function isModuleEnabledForTenant(
  * @param moduleId The module ID
  * @returns true if the module is available, false otherwise
  */
-export async function isModuleAvailableForTenant(
-  tenantId: string,
-  moduleId: string
-): Promise<boolean> {
+export async function isModuleAvailableForTenant(tenantId: string, moduleId: string): Promise<boolean> {
   const db = await getDb();
 
   // 1. Check if the tenant has the module enabled
@@ -79,9 +73,7 @@ export async function isModuleAvailableForTenant(
   }
 
   // Check if any feature from this module is in the plan
-  const hasModuleFeatures = subscription.plan.features.some(
-    (pf) => pf.feature.moduleId === moduleId
-  );
+  const hasModuleFeatures = subscription.plan.features.some((pf) => pf.feature.moduleId === moduleId);
 
   return hasModuleFeatures;
 }
@@ -125,9 +117,7 @@ export async function getAvailableModulesForTenant(tenantId: string) {
   }
 
   // Get all modules that have features in the plan
-  const moduleIdsInPlan = new Set(
-    subscription.plan.features.map((pf) => pf.feature.moduleId)
-  );
+  const moduleIdsInPlan = new Set(subscription.plan.features.map((pf) => pf.feature.moduleId));
 
   // Get all modules
   const allModules = await db.module.findMany({
@@ -211,9 +201,7 @@ export async function getAvailableFeaturesForTenant(tenantId: string) {
     },
   });
 
-  const tenantModuleMap = new Map(
-    tenantModules.map((tm) => [tm.moduleId, tm.isEnabled])
-  );
+  const tenantModuleMap = new Map(tenantModules.map((tm) => [tm.moduleId, tm.isEnabled]));
 
   // Filter features where:
   // 1. The feature's module is enabled for the tenant (or no record = enabled by default)
@@ -225,4 +213,3 @@ export async function getAvailableFeaturesForTenant(tenantId: string) {
 
   return availableFeatures;
 }
-

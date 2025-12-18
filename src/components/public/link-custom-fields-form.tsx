@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { PhoneInput } from '@/components/custom-ui/phone-input';
 
 interface CustomField {
   id: string;
@@ -87,13 +88,12 @@ export function LinkCustomFieldsForm({ fields }: LinkCustomFieldsFormProps) {
               {field.label}
               {field.required && <span className="text-destructive"> *</span>}
             </Label>
-            <Input
+            <PhoneInput
               id={field.id}
-              type="tel"
               value={(value as string) || ''}
-              onChange={(e) => updateResponse(field.id, e.target.value)}
+              onChange={(phoneValue) => updateResponse(field.id, phoneValue || '')}
               placeholder={field.placeholder || ''}
-              required={field.required}
+              defaultCountry="US"
             />
           </div>
         );

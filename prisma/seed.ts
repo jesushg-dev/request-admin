@@ -149,7 +149,11 @@ async function main() {
     },
   });
 
+  // Create global modules and features (if they don't exist)
   await createModuleAndFeature();
+
+  // Enable all modules for this tenant
+  await enableModulesForTenant(UNSTABLE_TENANT_ID);
 
   //////////////////////////
   // Create Identification Types
@@ -2628,24 +2632,107 @@ async function main() {
   });
 }
 
+/**
+ * Creates global modules and features if they don't exist
+ * Now modules and features are global (not tenant-scoped)
+ */
 async function createModuleAndFeature() {
   for (const [, applicationModule] of Object.entries(PrismaModules)) {
-    await prisma.module.create({
-      data: {
+    // Check if module already exists (by name, now unique globally)
+    const existingModule = await prisma.module.findUnique({
+      where: {
         name: applicationModule.name.es,
-        description: applicationModule.description.es,
-        tenantId: UNSTABLE_TENANT_ID,
-        feature: {
-          create: Object.entries(applicationModule.features).map(([, feature]) => ({
+      },
+      include: {
+        feature: true,
+      },
+    });
+
+    // Create module if it doesn't exist
+    if (!existingModule) {
+      const newModule = await prisma.module.create({
+        data: {
+          name: applicationModule.name.es,
+          description: applicationModule.description.es,
+          createdBy: 'system',
+          feature: {
+            create: Object.entries(applicationModule.features).map(([, feature]) => ({
+              name: feature.name.es,
+              key: feature.action,
+              description: feature.description.es,
+              scope: feature.scope,
+              createdBy: 'system',
+            })),
+          },
+        },
+        include: {
+          feature: true,
+        },
+      });
+      console.log(`✅ Created module: ${newModule.name}`);
+    } else {
+      // Module exists, check if all features exist
+      const existingFeatureKeys = new Set(existingModule.feature.map((f) => f.key));
+      const featuresToCreate = Object.entries(applicationModule.features).filter(
+        ([, feature]) => !existingFeatureKeys.has(feature.action)
+      );
+
+      if (featuresToCreate.length > 0) {
+        await prisma.feature.createMany({
+          data: featuresToCreate.map(([, feature]) => ({
             name: feature.name.es,
             key: feature.action,
             description: feature.description.es,
             scope: feature.scope,
-            tenantId: UNSTABLE_TENANT_ID,
+            moduleId: existingModule.id,
+            createdBy: 'system',
           })),
-        },
-      },
+        });
+        console.log(`✅ Added ${featuresToCreate.length} features to module: ${existingModule.name}`);
+      } else {
+        console.log(`⏭️  Module already exists with all features: ${existingModule.name}`);
+      }
+    }
+  }
+}
+
+/**
+ * Enables all global modules for a tenant by default
+ * Creates TenantModule records to enable modules for the tenant
+ */
+async function enableModulesForTenant(tenantId: string) {
+  // Get all active global modules
+  const allModules = await prisma.module.findMany({
+    where: {
+      isActive: true,
+      deletedAt: null,
+    },
+  });
+
+  // Get existing TenantModule records for this tenant
+  const existingTenantModules = await prisma.tenantModule.findMany({
+    where: {
+      tenantId,
+    },
+  });
+
+  const existingModuleIds = new Set(existingTenantModules.map((tm) => tm.moduleId));
+
+  // Create TenantModule records only for modules that don't have a record yet
+  const modulesToEnable = allModules.filter((module) => !existingModuleIds.has(module.id));
+
+  if (modulesToEnable.length > 0) {
+    await prisma.tenantModule.createMany({
+      data: modulesToEnable.map((module) => ({
+        tenantId,
+        moduleId: module.id,
+        isEnabled: true,
+        createdBy: 'system',
+      })),
     });
+    console.log(`✅ Enabled ${modulesToEnable.length} modules for tenant: ${tenantId}`);
+  } else {
+    console.log(`⏭️  All modules already enabled for tenant: ${tenantId}`);
   }
 }
 

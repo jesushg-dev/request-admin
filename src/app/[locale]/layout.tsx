@@ -2,7 +2,7 @@ import { type Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { NextIntlClientProvider, type Locale } from 'next-intl';
-import { getTranslations } from 'next-intl/server';
+import { getMessages, getTranslations } from 'next-intl/server';
 import { ThemeProvider } from 'next-themes';
 import NextTopLoader from 'nextjs-toploader';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
@@ -60,12 +60,14 @@ export default async function RootLayout({ children, params }: Props) {
     notFound();
   }
 
+  const messages = await getMessages({ locale: validLocale });
+
   return (
     <html lang={locale} suppressHydrationWarning>
       <body id="body" className={`${geistSans.variable} ${geistMono.variable} ${lexend.variable} flex min-h-screen flex-col antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <FontProvider>
-            <NextIntlClientProvider locale={locale as Locale}>
+            <NextIntlClientProvider locale={validLocale} messages={messages}>
               <NextTopLoader />
               <TanstackQueryProvider>
                 <NuqsAdapter>

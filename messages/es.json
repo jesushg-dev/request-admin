@@ -1000,10 +1000,15 @@
         "popular": "Popular",
         "days": "días",
         "selectPlan": "Selecciona un plan",
-        "required": "La selección de un plan es obligatoria"
+        "required": "La selección de un plan es obligatoria",
+        "noPlans": "No hay planes disponibles. Crea un nuevo plan para continuar.",
+        "createNewPlan": "Crear Nuevo Plan",
+        "planHelp": "Selecciona un plan para asociar con este tenant",
+        "free": "Gratis"
       },
       "steps": {
-        "tenant": "Organización",
+        "organization": "Organización",
+        "branding": "Marca",
         "plan": "Plan",
         "finish": "Revisión"
       },
@@ -1011,6 +1016,71 @@
         "saving": "Creando organización...",
         "success": "Organización creada exitosamente",
         "error": "No se pudo crear la organización: {error}"
+      },
+      "organizationStep": {
+        "header": {
+          "title": "Información de la Organización",
+          "description": "Ingresa la información básica sobre tu organización."
+        },
+        "basicInfo": {
+          "title": "Información Básica",
+          "description": "Proporciona los detalles esenciales de tu organización.",
+          "name": "Nombre de la Organización",
+          "namePlaceholder": "Ingresa el nombre de la organización",
+          "slug": "Slug",
+          "slugPlaceholder": "Ingresa un slug único",
+          "slugDescription": "Un identificador único para tu organización (ej., mi-org)",
+          "slugTaken": "Este slug ya está en uso",
+          "logo": "URL del Logo",
+          "logoPlaceholder": "https://ejemplo.com/logo.png",
+          "logoDescription": "URL de la imagen del logo de tu organización",
+          "websiteUrl": "URL del Sitio Web",
+          "websiteUrlPlaceholder": "https://ejemplo.com"
+        },
+        "contentInfo": {
+          "title": "Información de Contenido",
+          "description": "Agrega contenido descriptivo para tu organización.",
+          "titleLabel": "Título",
+          "titlePlaceholder": "Ingresa un título para tu organización",
+          "titleDescription": "Un título corto que represente tu organización",
+          "descriptionLabel": "Descripción",
+          "descriptionPlaceholder": "Ingresa una descripción para tu organización",
+          "descriptionDescription": "Una descripción detallada de tu organización"
+        },
+        "contactInfo": {
+          "title": "Información de Contacto",
+          "description": "Proporciona los datos de contacto de tu organización.",
+          "email": "Correo Electrónico",
+          "emailPlaceholder": "contacto@ejemplo.com",
+          "phone": "Teléfono",
+          "phonePlaceholder": "+1 (555) 123-4567",
+          "address": "Dirección",
+          "addressPlaceholder": "Ingresa la dirección completa"
+        }
+      },
+      "brandingStep": {
+        "header": {
+          "title": "Marca y Colores",
+          "description": "Personaliza la identidad visual de tu organización con colores."
+        },
+        "colors": {
+          "title": "Selección de Colores",
+          "description": "Elige los colores primario y secundario para la marca de tu organización.",
+          "primaryColor": "Color Primario",
+          "primaryColorDescription": "Color principal de marca usado en encabezados y elementos principales",
+          "secondaryColor": "Color Secundario",
+          "secondaryColorDescription": "Color de acento usado para botones y destacados"
+        },
+        "preview": {
+          "title": "Vista Previa en Vivo",
+          "description": "Ve cómo se verán tus colores en una interfaz real.",
+          "companyName": "Tu Empresa",
+          "heroTitle": "Bienvenido a Tu Plataforma",
+          "heroDescription": "Crea experiencias increíbles con nuestras herramientas y características poderosas.",
+          "ctaButton": "Comenzar",
+          "primaryColor": "Color Primario",
+          "secondaryColor": "Color Secundario"
+        }
       },
       "tenantReviewStep": {
         "title": "Revisa la Información de tu Organización",
@@ -1055,10 +1125,32 @@
     }
   },
   "plans": {
+    "main": {
+      "entityLabel": "Planes",
+      "columns": {
+        "name": "Nombre",
+        "description": "Descripción",
+        "price": "Precio",
+        "duration": "Duración",
+        "features": "Características",
+        "subscriptions": "Suscripciones"
+      },
+      "filters": {
+        "name": "Nombre",
+        "namePlaceholder": "Buscar por nombre",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Buscar por descripción",
+        "price": "Precio"
+      },
+      "days": "días",
+      "unlimited": "Ilimitado"
+    },
     "form": {
       "steps": {
         "planInfo": "Información del Plan",
         "planFeatures": "Características del Plan",
+        "branding": "Marca",
+        "planSelection": "Selección de Plan",
         "summary": "Resumen"
       },
       "featuresStep": {
@@ -1081,6 +1173,50 @@
         "validation": {
           "featureRequired": "La selección de característica es obligatoria",
           "resetIntervalRequired": "El intervalo de reinicio es obligatorio"
+        },
+        "loading": "Cargando características...",
+        "noFeatures": "No hay características disponibles",
+        "featureSelected": "característica seleccionada",
+        "featuresSelected": "características seleccionadas",
+        "enabled": "Habilitado",
+        "configureLimits": "Configura límites e intervalos de reinicio",
+        "feature": "característica",
+        "features": "características",
+        "dailyLimitPlaceholder": "ej., 100",
+        "totalLimitPlaceholder": "ej., 1000",
+        "dailyLimitDescription": "Número máximo de usos por día",
+        "totalLimitDescription": "Número máximo total de usos",
+        "selectResetInterval": "Selecciona intervalo de reinicio",
+        "resetIntervalDescription": "Con qué frecuencia se reinician los límites"
+      },
+      "brandingStep": {
+        "header": {
+          "title": "Marca",
+          "description": "Personaliza los colores y apariencia de tu plan."
+        },
+        "primaryColor": "Color Primario",
+        "primaryColorHelp": "Color principal para la marca de tu plan",
+        "secondaryColor": "Color Secundario",
+        "secondaryColorHelp": "Color de acento para la marca de tu plan",
+        "preview": "Vista Previa",
+        "validation": {
+          "primaryColorInvalid": "El color primario debe ser un color hexadecimal válido (ej., #000000)",
+          "secondaryColorInvalid": "El color secundario debe ser un color hexadecimal válido (ej., #000000)"
+        }
+      },
+      "planSelectionStep": {
+        "header": {
+          "title": "Seleccionar Plan",
+          "description": "Elige un plan existente o crea uno nuevo."
+        },
+        "loading": "Cargando planes...",
+        "noPlans": "No hay planes disponibles",
+        "createNewPlan": "Crear Nuevo Plan",
+        "planHelp": "Selecciona un plan para asociar con esta configuración",
+        "days": "días",
+        "unlimited": "Ilimitado",
+        "validation": {
+          "planRequired": "Por favor selecciona un plan"
         }
       },
       "planStep": {
@@ -1106,7 +1242,18 @@
       "summaryStep": {
         "header": {
           "title": "Resumen del Plan",
-          "description": "Revisa los detalles del plan antes de guardar."
+          "description": "Revisa los detalles del plan antes de guardar.",
+          "basicInfo": "Información Básica",
+          "branding": "Marca",
+          "selectedPlan": "Plan Seleccionado",
+          "features": "Características",
+          "primaryColor": "Color Primario",
+          "secondaryColor": "Color Secundario",
+          "preview": "Vista Previa",
+          "planName": "Nombre del Plan",
+          "planDescription": "Descripción",
+          "planPrice": "Precio",
+          "planDuration": "Duración"
         },
         "name": "Nombre",
         "description": "Descripción",
@@ -1118,7 +1265,14 @@
         "unknownFeature": "Característica Desconocida",
         "dailyLimit": "Límite Diario",
         "totalLimit": "Límite Total",
-        "reset": "Reiniciar"
+        "reset": "Reiniciar",
+        "loading": "Cargando características...",
+        "noFeatures": "No hay características seleccionadas"
+      },
+      "messages": {
+        "saving": "Creando plan...",
+        "success": "Plan creado exitosamente",
+        "error": "Error al crear el plan: {error}"
       }
     }
   },
@@ -3626,6 +3780,28 @@
           "cancelError": "Error al cancelar invitación: {error}",
           "cannotCancel": "No se puede cancelar invitación con estado {status}"
         }
+      }
+    },
+    "plans": {
+      "main": {
+        "entityLabel": "Planes",
+        "columns": {
+          "name": "Nombre",
+          "description": "Descripción",
+          "price": "Precio",
+          "duration": "Duración",
+          "features": "Características",
+          "subscriptions": "Suscripciones"
+        },
+        "filters": {
+          "name": "Nombre",
+          "namePlaceholder": "Buscar por nombre",
+          "description": "Descripción",
+          "descriptionPlaceholder": "Buscar por descripción",
+          "price": "Precio"
+        },
+        "days": "días",
+        "unlimited": "Ilimitado"
       }
     },
     "form": {

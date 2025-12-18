@@ -1000,10 +1000,15 @@
         "popular": "Popular",
         "days": "days",
         "selectPlan": "Select a plan",
-        "required": "Plan selection is required"
+        "required": "Plan selection is required",
+        "noPlans": "No plans available. Create a new plan to continue.",
+        "createNewPlan": "Create New Plan",
+        "planHelp": "Select a plan to associate with this tenant",
+        "free": "Free"
       },
       "steps": {
-        "tenant": "Organization",
+        "organization": "Organization",
+        "branding": "Branding",
         "plan": "Plan",
         "finish": "Review"
       },
@@ -1011,6 +1016,71 @@
         "saving": "Creating organization...",
         "success": "Organization created successfully",
         "error": "Failed to create organization: {error}"
+      },
+      "organizationStep": {
+        "header": {
+          "title": "Organization Information",
+          "description": "Enter the basic information about your organization."
+        },
+        "basicInfo": {
+          "title": "Basic Information",
+          "description": "Provide the essential details about your organization.",
+          "name": "Organization Name",
+          "namePlaceholder": "Enter organization name",
+          "slug": "Slug",
+          "slugPlaceholder": "Enter unique slug",
+          "slugDescription": "A unique identifier for your organization (e.g., my-org)",
+          "slugTaken": "This slug is already taken",
+          "logo": "Logo URL",
+          "logoPlaceholder": "https://example.com/logo.png",
+          "logoDescription": "URL to your organization's logo image",
+          "websiteUrl": "Website URL",
+          "websiteUrlPlaceholder": "https://example.com"
+        },
+        "contentInfo": {
+          "title": "Content Information",
+          "description": "Add descriptive content for your organization.",
+          "titleLabel": "Title",
+          "titlePlaceholder": "Enter a title for your organization",
+          "titleDescription": "A short title that represents your organization",
+          "descriptionLabel": "Description",
+          "descriptionPlaceholder": "Enter a description for your organization",
+          "descriptionDescription": "A detailed description of your organization"
+        },
+        "contactInfo": {
+          "title": "Contact Information",
+          "description": "Provide contact details for your organization.",
+          "email": "Email",
+          "emailPlaceholder": "contact@example.com",
+          "phone": "Phone",
+          "phonePlaceholder": "+1 (555) 123-4567",
+          "address": "Address",
+          "addressPlaceholder": "Enter full address"
+        }
+      },
+      "brandingStep": {
+        "header": {
+          "title": "Branding & Colors",
+          "description": "Customize your organization's visual identity with colors."
+        },
+        "colors": {
+          "title": "Color Selection",
+          "description": "Choose primary and secondary colors for your organization's branding.",
+          "primaryColor": "Primary Color",
+          "primaryColorDescription": "Main brand color used in headers and primary elements",
+          "secondaryColor": "Secondary Color",
+          "secondaryColorDescription": "Accent color used for buttons and highlights"
+        },
+        "preview": {
+          "title": "Live Preview",
+          "description": "See how your colors will look in a real interface.",
+          "companyName": "Your Company",
+          "heroTitle": "Welcome to Your Platform",
+          "heroDescription": "Build amazing experiences with our powerful tools and features.",
+          "ctaButton": "Get Started",
+          "primaryColor": "Primary Color",
+          "secondaryColor": "Secondary Color"
+        }
       },
       "tenantReviewStep": {
         "title": "Review Your Tenant Information",
@@ -1055,10 +1125,34 @@
     }
   },
   "plans": {
+    "plans": {
+      "main": {
+        "entityLabel": "Plans",
+        "columns": {
+          "name": "Name",
+          "description": "Description",
+          "price": "Price",
+          "duration": "Duration",
+          "features": "Features",
+          "subscriptions": "Subscriptions"
+        },
+        "filters": {
+          "name": "Name",
+          "namePlaceholder": "Search by name",
+          "description": "Description",
+          "descriptionPlaceholder": "Search by description",
+          "price": "Price"
+        },
+        "days": "days",
+        "unlimited": "Unlimited"
+      }
+    },
     "form": {
       "steps": {
         "planInfo": "Plan Information",
         "planFeatures": "Plan Features",
+        "branding": "Branding",
+        "planSelection": "Plan Selection",
         "summary": "Summary"
       },
       "featuresStep": {
@@ -1081,6 +1175,50 @@
         "validation": {
           "featureRequired": "Feature selection is required",
           "resetIntervalRequired": "Reset interval is required"
+        },
+        "loading": "Loading features...",
+        "noFeatures": "No features available",
+        "featureSelected": "feature selected",
+        "featuresSelected": "features selected",
+        "enabled": "Enabled",
+        "configureLimits": "Configure limits and reset intervals",
+        "feature": "feature",
+        "features": "features",
+        "dailyLimitPlaceholder": "e.g., 100",
+        "totalLimitPlaceholder": "e.g., 1000",
+        "dailyLimitDescription": "Maximum number of uses per day",
+        "totalLimitDescription": "Maximum total number of uses",
+        "selectResetInterval": "Select reset interval",
+        "resetIntervalDescription": "How often the limits reset"
+      },
+      "brandingStep": {
+        "header": {
+          "title": "Branding",
+          "description": "Customize your plan's colors and appearance."
+        },
+        "primaryColor": "Primary Color",
+        "primaryColorHelp": "Main color for your plan's branding",
+        "secondaryColor": "Secondary Color",
+        "secondaryColorHelp": "Accent color for your plan's branding",
+        "preview": "Preview",
+        "validation": {
+          "primaryColorInvalid": "Primary color must be a valid hex color (e.g., #000000)",
+          "secondaryColorInvalid": "Secondary color must be a valid hex color (e.g., #000000)"
+        }
+      },
+      "planSelectionStep": {
+        "header": {
+          "title": "Select Plan",
+          "description": "Choose an existing plan or create a new one."
+        },
+        "loading": "Loading plans...",
+        "noPlans": "No plans available",
+        "createNewPlan": "Create New Plan",
+        "planHelp": "Select a plan to associate with this configuration",
+        "days": "days",
+        "unlimited": "Unlimited",
+        "validation": {
+          "planRequired": "Please select a plan"
         }
       },
       "planStep": {
@@ -1106,7 +1244,18 @@
       "summaryStep": {
         "header": {
           "title": "Plan Summary",
-          "description": "Review the plan details before saving."
+          "description": "Review the plan details before saving.",
+          "basicInfo": "Basic Information",
+          "branding": "Branding",
+          "selectedPlan": "Selected Plan",
+          "features": "Features",
+          "primaryColor": "Primary Color",
+          "secondaryColor": "Secondary Color",
+          "preview": "Preview",
+          "planName": "Plan Name",
+          "planDescription": "Description",
+          "planPrice": "Price",
+          "planDuration": "Duration"
         },
         "name": "Name",
         "description": "Description",
@@ -1118,7 +1267,14 @@
         "unknownFeature": "Unknown Feature",
         "dailyLimit": "Daily Limit",
         "totalLimit": "Total Limit",
-        "reset": "Reset"
+        "reset": "Reset",
+        "loading": "Loading features...",
+        "noFeatures": "No features selected"
+      },
+      "messages": {
+        "saving": "Creating plan...",
+        "success": "Plan created successfully",
+        "error": "Failed to create plan: {error}"
       }
     }
   },
@@ -3626,6 +3782,28 @@
           "cancelError": "Failed to cancel invitation: {error}",
           "cannotCancel": "Cannot cancel invitation with status {status}"
         }
+      }
+    },
+    "plans": {
+      "main": {
+        "entityLabel": "Plans",
+        "columns": {
+          "name": "Name",
+          "description": "Description",
+          "price": "Price",
+          "duration": "Duration",
+          "features": "Features",
+          "subscriptions": "Subscriptions"
+        },
+        "filters": {
+          "name": "Name",
+          "namePlaceholder": "Search by name",
+          "description": "Description",
+          "descriptionPlaceholder": "Search by description",
+          "price": "Price"
+        },
+        "days": "days",
+        "unlimited": "Unlimited"
       }
     },
     "form": {

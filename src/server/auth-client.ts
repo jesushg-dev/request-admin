@@ -6,6 +6,7 @@ import {
   emailOTPClient,
   genericOAuthClient,
   inferAdditionalFields,
+  inferOrgAdditionalFields,
   jwtClient,
   magicLinkClient,
   multiSessionClient,
@@ -38,16 +39,7 @@ export const authClient = createAuthClient({
       teams: {
         enabled: true,
       },
-      schema: {
-        member: {
-          additionalFields: {
-            isActive: {
-              type: 'boolean',
-              defaultValue: true,
-            },
-          },
-        },
-      },
+      schema: inferOrgAdditionalFields<typeof auth>(),
     }),
     oidcClient(),
     ssoClient(),

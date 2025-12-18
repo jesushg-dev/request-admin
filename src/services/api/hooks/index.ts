@@ -119,6 +119,7 @@ export * from './role';
 export * from './module';
 export * from './feature';
 export * from './role-feature';
+export * from './tenant-module';
 export * from './notification';
 export * from './notification-recipient';
 export * from './channel';

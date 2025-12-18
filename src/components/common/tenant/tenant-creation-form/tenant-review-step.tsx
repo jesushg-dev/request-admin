@@ -1,5 +1,6 @@
 'use client';
 
+import type React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { Building, FileText, ImageIcon, LinkIcon, Mail, MapPin, Package, Palette, Phone, Tag, ViewIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -7,6 +8,7 @@ import { useWatch } from 'react-hook-form';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { ColorSwatch } from '@/components/ui/color-swatch';
 
 import { TenantCreationValues } from '.';
 import { Plan } from './plan-selection-step';
@@ -31,252 +33,184 @@ const TenantReviewStep = ({ plans }: TenantReviewStepProps) => {
   }, [data.logo]);
 
   return (
-    <Card className="flex-1 flex flex-col overflow-hidden">
-      <CardHeader>
-        <CardTitle>{t('title')}</CardTitle>
-        <CardDescription>{t('description')}</CardDescription>
-      </CardHeader>
-      <CardContent className="flex-1 flex-col flex overflow-hidden gap-4">
-        {/* Basic Information */}
-        <div>
-          <h3 className="text-lg font-medium mb-3">{t('basicInfo.title')}</h3>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="flex items-start gap-2">
-              <Building className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">{t('basicInfo.orgName')}</p>
-                <p className="font-medium">{data.name}</p>
-              </div>
-            </div>
+    <div className="flex flex-1 flex-col gap-4 overflow-hidden">
+      <div className="flex flex-col gap-1">
+        <h2 className="text-lg font-semibold">{t('title')}</h2>
+        <p className="text-sm text-muted-foreground">{t('description')}</p>
+      </div>
 
-            <div className="flex items-start gap-2">
-              <Tag className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">{t('basicInfo.slug')}</p>
-                <p className="font-medium">{data.slug}</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-2 md:col-span-2">
-              <ImageIcon className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <div className="w-full">
-                <p className="text-sm font-medium text-muted-foreground">{t('basicInfo.logo')}</p>
-                <div className="mt-1 flex items-start gap-3">
-                  {data.logo ? (
-                    <div className="relative border rounded-md overflow-hidden h-16 w-16 bg-muted/30 flex items-center justify-center">
-                      {!logoPreviewError ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={data.logo ?? '/placeholder.svg'} alt={`${data.name} logo`} className="object-contain p-1" onError={() => setLogoPreviewError(true)} />
-                      ) : (
-                        <ImageIcon className="h-6 w-6 text-muted-foreground" />
-                      )}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        {/* Left column: Basic + Contact */}
+        <div className="flex flex-col gap-4 lg:col-span-1">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">{t('basicInfo.title')}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+              <InfoRow icon={<Building className="h-4 w-4 text-muted-foreground" />} label={t('basicInfo.orgName')} value={data.name || '—'} />
+              <InfoRow icon={<Tag className="h-4 w-4 text-muted-foreground" />} label={t('basicInfo.slug')} value={data.slug || '—'} />
+              <InfoRow
+                icon={<ImageIcon className="h-4 w-4 text-muted-foreground" />}
+                label={t('basicInfo.logo')}
+                value={
+                  data.logo ? (
+                    <div className="flex items-center gap-2">
+                      <div className="h-10 w-10 overflow-hidden rounded-md border bg-muted/30">
+                        {!logoPreviewError ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={data.logo ?? '/placeholder.svg'} alt={`${data.name} logo`} className="object-contain h-full w-full p-1" onError={() => setLogoPreviewError(true)} />
+                        ) : (
+                          <ImageIcon className="h-4 w-4 m-3 text-muted-foreground" />
+                        )}
+                      </div>
+                      <span className="break-all text-xs text-muted-foreground">{data.logo}</span>
                     </div>
                   ) : (
-                    <div className="border rounded-md overflow-hidden h-16 w-16 bg-muted/30 flex items-center justify-center">
-                      <ImageIcon className="h-6 w-6 text-muted-foreground" />
-                    </div>
-                  )}
-                  <div className="flex-1">
-                    <p className="font-medium break-all text-sm">{data.logo ?? '—'}</p>
-                    {logoPreviewError && data.logo && <p className="text-xs text-destructive mt-1">{t('basicInfo.unableToLoadLogo')}</p>}
-                  </div>
-                </div>
-              </div>
-            </div>
+                    '—'
+                  )
+                }
+              />
+              <InfoRow icon={<LinkIcon className="h-4 w-4 text-muted-foreground" />} label={t('basicInfo.websiteUrl')} value={data.websiteUrl || '—'} />
+            </CardContent>
+          </Card>
 
-            <div className="flex items-start gap-2 md:col-span-2">
-              <LinkIcon className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">{t('basicInfo.websiteUrl')}</p>
-                <p className="font-medium break-all">{data.websiteUrl ?? '—'}</p>
-              </div>
-            </div>
-          </div>
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">{t('contactInfo.title')}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+              <InfoRow icon={<Mail className="h-4 w-4 text-muted-foreground" />} label={t('contactInfo.email')} value={data.contactEmail || '—'} />
+              <InfoRow icon={<Phone className="h-4 w-4 text-muted-foreground" />} label={t('contactInfo.phone')} value={data.contactPhone || '—'} />
+              <InfoRow icon={<MapPin className="h-4 w-4 text-muted-foreground" />} label={t('contactInfo.address')} value={data.address || '—'} />
+            </CardContent>
+          </Card>
         </div>
 
-        <Separator />
+        {/* Middle column: Content */}
+        <Card className="lg:col-span-1">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <FileText className="h-4 w-4 text-muted-foreground" />
+              {t('contentInfo.contentInfoTitle')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm">
+            <InfoRow label={t('contentInfo.title')} value={data.title || '—'} />
+            <div className="space-y-1">
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">{t('contentInfo.description')}</p>
+              <p className="text-sm leading-relaxed">{data.description || '—'}</p>
+            </div>
+          </CardContent>
+        </Card>
 
-        {/* Content Information */}
-        <div>
-          <h3 className="text-lg font-medium mb-3">{t('contentInfo.contentInfoTitle')}</h3>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="flex items-start gap-2 md:col-span-2">
-              <FileText className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">{t('contentInfo.title')}</p>
-                <p className="font-medium">{data.title ?? '—'}</p>
+        {/* Right column: Branding + Plan */}
+        <div className="flex flex-col gap-4 lg:col-span-1">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Palette className="h-4 w-4 text-muted-foreground" />
+                {t('branding.title')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center gap-3 text-sm">
+                <ColorSwatch color={data.primaryColor} size="sm" />
+                <span className="font-mono text-xs">{data.primaryColor || '—'}</span>
+                <Separator orientation="vertical" className="h-5" />
+                <ColorSwatch color={data.secondaryColor} size="sm" />
+                <span className="font-mono text-xs">{data.secondaryColor || '—'}</span>
               </div>
-            </div>
-
-            <div className="flex items-start gap-2 md:col-span-2">
-              <FileText className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">{t('contentInfo.description')}</p>
-                <p className="font-medium">{data.description ?? '—'}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <Separator />
-
-        {/* Branding */}
-        <div className="flex flex-col gap-4">
-          <h3 className="text-lg font-medium mb-3">{t('branding.title')}</h3>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="flex items-start gap-2">
-              <Palette className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">{t('branding.primaryColor')}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: data.primaryColor }} />
-                  <span className="font-medium">{data.primaryColor}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-2">
-              <Palette className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">{t('branding.secondaryColor')}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: data.secondaryColor }} />
-                  <span className="font-medium">{data.secondaryColor}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col gap-2 w-full">
-            <div className="flex items-center gap-2">
-              <ViewIcon className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <p className="text-sm font-medium text-muted-foreground">{t('branding.preview')}</p>
-            </div>
-            <div>
-              <div className="border rounded-lg overflow-hidden shadow-lg">
-                {/* Browser chrome */}
-                <div className="bg-gray-100 border-b p-2 flex items-center gap-2">
+              <div className="border rounded-lg overflow-hidden shadow-sm bg-background">
+                <div className="bg-muted/60 border-b p-2 flex items-center gap-2">
                   <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-gray-300"></div>
-                    <div className="w-3 h-3 rounded-full bg-gray-300"></div>
-                    <div className="w-3 h-3 rounded-full bg-gray-300"></div>
+                    <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/30" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/30" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/30" />
                   </div>
                   <div className="flex-1 mx-2">
-                    <div className="bg-white rounded-full text-xs py-1 px-3 text-gray-500 text-center overflow-hidden whitespace-nowrap overflow-ellipsis">
+                    <div className="bg-background rounded-full text-[10px] py-1 px-2 text-muted-foreground text-center truncate">
                       {data.websiteUrl ?? `${data.slug}.example.com`}
                     </div>
                   </div>
-                  <div className="text-xs bg-black text-white px-1.5 py-0.5 rounded">1:1</div>
+                  <div className="text-[10px] bg-foreground text-background px-1.5 py-0.5 rounded">1:1</div>
                 </div>
-
-                {/* Website header */}
-                <div className="p-2 flex items-center justify-between" style={{ backgroundColor: data.primaryColor ?? '#0243ac' }}>
-                  <div className="flex items-center gap-2">
-                    {!logoPreviewError && data.logo ? (
-                      <div className="relative h-8 w-8 bg-white rounded overflow-hidden">
-                        <img src={data.logo ?? '/placeholder.svg'} alt={`${data.name} logo`} className="object-contain p-1" onError={() => setLogoPreviewError(true)} />
+                <div className="p-3" style={{ backgroundColor: data.primaryColor || '#0243ac' }}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-white">
+                      <div className="h-8 w-8 bg-white/15 rounded flex items-center justify-center">
+                        <span className="text-xs font-bold">{(data.name ?? ' ').slice(0, 2).toUpperCase()}</span>
                       </div>
-                    ) : (
-                      <div className="h-8 w-8 bg-white rounded flex items-center justify-center">
-                        <span className="text-xs font-bold" style={{ color: data.primaryColor ?? '#0243ac' }}>
-                          {(data.name ?? '').substring(0, 2).toUpperCase()}
-                        </span>
-                      </div>
-                    )}
-                    <span className="font-bold text-white">{data.name}</span>
-                  </div>
-                  <div className="flex gap-4">
-                    <div className="w-4 h-4 bg-white/20 rounded"></div>
-                    <div className="w-4 h-4 bg-white/20 rounded"></div>
-                    <div className="w-4 h-4 bg-white/20 rounded"></div>
+                      <span className="font-semibold text-sm">{data.name || '—'}</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <div className="w-3 h-3 bg-white/25 rounded" />
+                      <div className="w-3 h-3 bg-white/25 rounded" />
+                      <div className="w-3 h-3 bg-white/25 rounded" />
+                    </div>
                   </div>
                 </div>
-
-                {/* Website content */}
-                <div className="min-h-[300px] p-8 flex flex-col items-center justify-center text-center">
-                  <h1 className="text-3xl font-bold mb-2">{data.title ?? data.name}</h1>
-                  <p className="text-gray-600 mb-6 max-w-md">{data.description ?? 'Open Source Document Sharing Infrastructure'}</p>
-
-                  <div className="px-4 py-2 rounded-md text-white font-medium" style={{ backgroundColor: data.secondaryColor ?? '#297dd6' }}>
+                <div className="p-4 bg-background">
+                  <p className="text-lg font-semibold mb-1">{data.title || data.name || t('branding.preview')}</p>
+                  <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
+                    {data.description || '—'}
+                  </p>
+                  <div
+                    className="inline-flex items-center rounded-md px-3 py-2 text-xs font-semibold text-white shadow-sm"
+                    style={{ backgroundColor: data.secondaryColor || '#297dd6' }}
+                  >
                     {t('branding.getStarted')}
                   </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-                  <div className="mt-12 grid grid-cols-4 gap-8">
-                    <div className="h-8 bg-gray-100 rounded"></div>
-                    <div className="h-8 bg-gray-100 rounded"></div>
-                    <div className="h-8 bg-gray-100 rounded"></div>
-                    <div className="h-8 bg-gray-100 rounded"></div>
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Package className="h-4 w-4 text-muted-foreground" />
+                {t('subscription.title')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm">
+              {selectedPlan ? (
+                <>
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">{selectedPlan.name}</span>
+                    {selectedPlan.popular && <span className="px-2 py-0.5 rounded bg-primary/10 text-primary text-[11px] font-semibold">{t('subscription.popular')}</span>}
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <Separator />
-
-        {/* Contact Information */}
-        <div>
-          <h3 className="text-lg font-medium mb-3">{t('contactInfo.title')}</h3>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="flex items-start gap-2">
-              <Mail className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">{t('contactInfo.email')}</p>
-                <p className="font-medium">{data.contactEmail ?? '—'}</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-2">
-              <Phone className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">{t('contactInfo.phone')}</p>
-                <p className="font-medium">{data.contactPhone ?? '—'}</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-2 md:col-span-2">
-              <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">{t('contactInfo.address')}</p>
-                <p className="font-medium">{data.address ?? '—'}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <Separator />
-
-        {/* Subscription Plan */}
-        <div>
-          <h3 className="text-lg font-medium mb-3">{t('subscription.title')}</h3>
-          {selectedPlan ? (
-            <div className="flex items-start gap-2">
-              <Package className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <div>
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium text-muted-foreground">{selectedPlan.name}</p>
-                  {selectedPlan.popular && <span className="ml-2 px-2 py-0.5 rounded bg-primary/10 text-primary text-xs font-semibold">{t('subscription.popular')}</span>}
-                </div>
-                <p className="text-sm text-muted-foreground">{selectedPlan.description}</p>
-                <div className="mt-1 space-y-1">
-                  <p className="text-sm">
-                    <span className="font-medium">{t('subscription.price')}:</span> {selectedPlan.price === 0 ? t('subscription.free') : `$${selectedPlan.price}`}
-                  </p>
+                  <p className="text-muted-foreground text-sm">{selectedPlan.description}</p>
+                  <div className="text-sm">
+                    <span className="font-medium">{t('subscription.price')}:</span>{' '}
+                    {selectedPlan.price === 0 ? t('subscription.free') : `$${selectedPlan.price}`}
+                  </div>
                   {selectedPlan.durationInDays && (
-                    <p className="text-sm">
+                    <div className="text-sm">
                       <span className="font-medium">{t('subscription.duration')}:</span> {selectedPlan.durationInDays} {t('subscription.days')}
-                    </p>
+                    </div>
                   )}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">{t('subscription.noPlan')}</p>
-          )}
+                </>
+              ) : (
+                <p className="text-muted-foreground text-sm">{t('subscription.noPlan')}</p>
+              )}
+            </CardContent>
+          </Card>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 
 export default TenantReviewStep;
+
+function InfoRow({ icon, label, value }: { icon?: React.ReactNode; label: string; value: React.ReactNode }) {
+  return (
+    <div className="flex items-start gap-2">
+      {icon && <span className="mt-0.5">{icon}</span>}
+      <div className="space-y-0.5">
+        <p className="text-xs uppercase tracking-wide text-muted-foreground">{label}</p>
+        <div className="text-sm font-medium leading-tight">{value}</div>
+      </div>
+    </div>
+  );
+}

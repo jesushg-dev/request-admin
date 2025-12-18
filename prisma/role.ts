@@ -272,7 +272,7 @@ export async function createSystemRoles(prisma: PrismaClient, tenantId: string, 
         roleFeature: {
           create: roleData.features.map((featureKey) => ({
             tenant: { connect: { id: tenantId } },
-            // Feature is now global, connect by key (which is unique)
+            // Feature is now global, connect by key (which is unique globally)
             feature: { connect: { key: featureKey } },
             createdBy: 'system',
           })),

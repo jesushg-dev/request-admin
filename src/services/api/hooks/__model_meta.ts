@@ -425,16 +425,9 @@ const metadata: ModelMeta = {
           isArray: true,
           backLink: 'tenant',
         },
-        modules: {
-          name: 'modules',
-          type: 'Module',
-          isDataModel: true,
-          isArray: true,
-          backLink: 'tenant',
-        },
-        features: {
-          name: 'features',
-          type: 'Feature',
+        tenantModules: {
+          name: 'tenantModules',
+          type: 'TenantModule',
           isDataModel: true,
           isArray: true,
           backLink: 'tenant',
@@ -14016,25 +14009,16 @@ const metadata: ModelMeta = {
           attributes: [{ name: '@default', args: [{ name: 'value' }] }],
           defaultValueProvider: $default$Module$updatedBy,
         },
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'modules',
-          isRelationOwner: true,
-          onDeleteAction: 'NoAction',
-          onUpdateAction: 'NoAction',
-          foreignKeyMapping: { id: 'tenantId' },
-        },
         feature: {
           name: 'feature',
           type: 'Feature',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'module',
+        },
+        tenantModules: {
+          name: 'tenantModules',
+          type: 'TenantModule',
           isDataModel: true,
           isArray: true,
           backLink: 'module',
@@ -14045,9 +14029,9 @@ const metadata: ModelMeta = {
           name: 'id',
           fields: ['id'],
         },
-        name_tenantId: {
-          name: 'name_tenantId',
-          fields: ['name', 'tenantId'],
+        name: {
+          name: 'name',
+          fields: ['name'],
         },
       },
     },
@@ -14104,22 +14088,6 @@ const metadata: ModelMeta = {
           attributes: [{ name: '@default', args: [{ name: 'value' }] }],
           defaultValueProvider: $default$Feature$updatedBy,
         },
-        tenantId: {
-          name: 'tenantId',
-          type: 'String',
-          isForeignKey: true,
-          relationField: 'tenant',
-        },
-        tenant: {
-          name: 'tenant',
-          type: 'Tenant',
-          isDataModel: true,
-          backLink: 'features',
-          isRelationOwner: true,
-          onDeleteAction: 'NoAction',
-          onUpdateAction: 'NoAction',
-          foreignKeyMapping: { id: 'tenantId' },
-        },
         key: {
           name: 'key',
           type: 'String',
@@ -14175,10 +14143,6 @@ const metadata: ModelMeta = {
         key: {
           name: 'key',
           fields: ['key'],
-        },
-        key_tenantId: {
-          name: 'key_tenantId',
-          fields: ['key', 'tenantId'],
         },
       },
     },
@@ -14279,6 +14243,94 @@ const metadata: ModelMeta = {
         id: {
           name: 'id',
           fields: ['id'],
+        },
+      },
+    },
+    tenantModule: {
+      name: 'TenantModule',
+      fields: {
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          isOptional: true,
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+        deletedAt: {
+          name: 'deletedAt',
+          type: 'DateTime',
+          isOptional: true,
+        },
+        createdBy: {
+          name: 'createdBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$TenantModule$createdBy,
+        },
+        updatedBy: {
+          name: 'updatedBy',
+          type: 'String',
+          isOptional: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+          defaultValueProvider: $default$TenantModule$updatedBy,
+        },
+        tenantId: {
+          name: 'tenantId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'tenant',
+        },
+        tenant: {
+          name: 'tenant',
+          type: 'Tenant',
+          isDataModel: true,
+          backLink: 'tenantModules',
+          isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
+          foreignKeyMapping: { id: 'tenantId' },
+        },
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+        },
+        isEnabled: {
+          name: 'isEnabled',
+          type: 'Boolean',
+          attributes: [{ name: '@default', args: [{ name: 'value', value: true }] }],
+        },
+        moduleId: {
+          name: 'moduleId',
+          type: 'String',
+          isForeignKey: true,
+          relationField: 'module',
+        },
+        module: {
+          name: 'module',
+          type: 'Module',
+          isDataModel: true,
+          backLink: 'tenantModules',
+          isRelationOwner: true,
+          onDeleteAction: 'Cascade',
+          onUpdateAction: 'NoAction',
+          foreignKeyMapping: { id: 'moduleId' },
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+        tenantId_moduleId: {
+          name: 'tenantId_moduleId',
+          fields: ['tenantId', 'moduleId'],
         },
       },
     },
@@ -15056,6 +15108,7 @@ const metadata: ModelMeta = {
     assignmentCategory: ['AssignmentCategoryForm'],
     form: ['RequestCategoryForm', 'AssignmentCategoryForm'],
     formSubmission: ['FormSubmissionKey'],
+    module: ['TenantModule'],
   },
   authModel: 'User',
 };
@@ -15825,6 +15878,14 @@ function $default$RoleFeature$createdBy(user: any): unknown {
 }
 
 function $default$RoleFeature$updatedBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$TenantModule$createdBy(user: any): unknown {
+  return user?.id;
+}
+
+function $default$TenantModule$updatedBy(user: any): unknown {
   return user?.id;
 }
 
