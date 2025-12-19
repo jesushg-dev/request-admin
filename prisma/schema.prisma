@@ -88,6 +88,7 @@ model Tenant {
   notificationRecipients           NotificationRecipient[]
   userTenants                      UserTenant[]
   invitations                      InvitationTenant[]
+  activeSessions                   Session[]
   subscriptions                    Subscription[]
   usageTracking                    UsageTracking[]
   documents                        Document[]
@@ -313,6 +314,7 @@ model Session {
   userId         String
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   activeTenantId String?
+  activeTenant   Tenant?  @relation(fields: [activeTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   impersonatedBy String?
 
   @@unique([token])

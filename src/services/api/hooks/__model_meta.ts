@@ -495,6 +495,13 @@ const metadata: ModelMeta = {
           isArray: true,
           backLink: 'tenant',
         },
+        activeSessions: {
+          name: 'activeSessions',
+          type: 'Session',
+          isDataModel: true,
+          isArray: true,
+          backLink: 'activeTenant',
+        },
         subscriptions: {
           name: 'subscriptions',
           type: 'Subscription',
@@ -1760,6 +1767,19 @@ const metadata: ModelMeta = {
           name: 'activeTenantId',
           type: 'String',
           isOptional: true,
+          isForeignKey: true,
+          relationField: 'activeTenant',
+        },
+        activeTenant: {
+          name: 'activeTenant',
+          type: 'Tenant',
+          isDataModel: true,
+          isOptional: true,
+          backLink: 'activeSessions',
+          isRelationOwner: true,
+          onDeleteAction: 'NoAction',
+          onUpdateAction: 'NoAction',
+          foreignKeyMapping: { id: 'activeTenantId' },
         },
         impersonatedBy: {
           name: 'impersonatedBy',

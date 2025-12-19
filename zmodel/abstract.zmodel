@@ -4,17 +4,40 @@ abstract model TenantScoped {
   tenantId String
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Relation to Tenant entity
 
-  // Allow read access for authenticated users in the tenant if their userTenant is active and current
-  @@allow('read', tenant.userTenants?[user.id == auth().id && isActive == true])
+  // Allow read access for authenticated users in the tenant if:
+  // 1. Their userTenant is active and current
+  // 2. The tenantId matches the activeTenantId in their session
+  //    (tenant.activeSessions contains a session for this user, meaning activeTenantId == tenantId)
+  // Note: This requires that activeTenantId is set in the session before accessing tenant resources.
+  // The proxy.ts and layout.tsx ensure activeTenantId is set before any queries are executed.
+  @@allow('read', 
+    tenant.userTenants?[user.id == auth().id && isActive == true] &&
+    tenant.activeSessions?[user.id == auth().id]
+  )
   
-  // Allow create access for authenticated users in the tenant if their userTenant is active and current
-  @@allow('create', tenant.userTenants?[user.id == auth().id && isActive == true]) 
+  // Allow create access for authenticated users in the tenant if:
+  // 1. Their userTenant is active and current
+  // 2. The tenantId matches the activeTenantId in their session
+  @@allow('create', 
+    tenant.userTenants?[user.id == auth().id && isActive == true] &&
+    tenant.activeSessions?[user.id == auth().id]
+  ) 
   
-  // Allow update access for authenticated users in the tenant if their userTenant is active and current
-  @@allow('update', tenant.userTenants?[user.id == auth().id && isActive == true]) 
+  // Allow update access for authenticated users in the tenant if:
+  // 1. Their userTenant is active and current
+  // 2. The tenantId matches the activeTenantId in their session
+  @@allow('update', 
+    tenant.userTenants?[user.id == auth().id && isActive == true] &&
+    tenant.activeSessions?[user.id == auth().id]
+  ) 
   
-  // Allow delete access for authenticated users in the tenant if their userTenant is active and current
-  @@allow('delete', tenant.userTenants?[user.id == auth().id && isActive == true])
+  // Allow delete access for authenticated users in the tenant if:
+  // 1. Their userTenant is active and current
+  // 2. The tenantId matches the activeTenantId in their session
+  @@allow('delete', 
+    tenant.userTenants?[user.id == auth().id && isActive == true] &&
+    tenant.activeSessions?[user.id == auth().id]
+  )
 }
 
 // Abstract model for auditable entities

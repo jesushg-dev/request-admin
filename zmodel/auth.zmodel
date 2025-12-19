@@ -55,6 +55,7 @@ model Session {
   userId               String
   user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   activeTenantId       String?
+  activeTenant         Tenant?  @relation(fields: [activeTenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   impersonatedBy       String?
 
   @@unique([token])

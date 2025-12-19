@@ -106,6 +106,7 @@ model Tenant extends Auditable {
   // --- User and Tenant Relationships ---
   userTenants                    UserTenant[]
   invitations                    InvitationTenant[]
+  activeSessions                 Session[] // Sessions where this tenant is the active tenant
 
   // --- Subscriptions and Usage ---
   subscriptions                  Subscription[]
