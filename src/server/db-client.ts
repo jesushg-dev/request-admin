@@ -2,6 +2,7 @@ import { env } from '@/env';
 import { PrismaClient } from '@prisma/client';
 import type { User } from '@prisma/client';
 import { enhance } from '@zenstackhq/runtime';
+import { getActiveTenantId } from './auth-server';
 
 const createPrismaClient = () =>
   new PrismaClient({

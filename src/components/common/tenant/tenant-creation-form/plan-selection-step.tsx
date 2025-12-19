@@ -133,7 +133,7 @@ export function PlanSelectionStep({ plans, isGlobalAdmin = false }: PlanSelectio
                 <FormMessage />
                 {isGlobalAdmin && (
                   <div className="pt-2">
-                    <Button type="button" variant="outline" onClick={handleCreateNewPlan} className="w-full">
+                    <Button type="button" variant="outline" onClick={handleCreateNewPlan} className="w-full hover:cursor-pointer">
                       {t('createNewPlan')}
                       <ExternalLink className="ml-2 h-4 w-4" />
                     </Button>

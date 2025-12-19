@@ -1,12 +1,9 @@
 import { type NextRequest } from 'next/server';
+import { getSessionCookie } from 'better-auth/cookies';
 import createIntlMiddleware from 'next-intl/middleware';
 
 import { locales, routing } from './i18n/routing';
-import { getTenantsForUser, validateTenantId } from './lib/tenant';
-import { extractTenantId } from './lib/utils';
 import { authRoutes, DEFAULT_LOGIN_REDIRECT, isPublicPage } from './routes';
-import { auth } from './server/auth-server';
-import { LoginErrorCodeEnum } from './types/user';
 
 const intlMiddleware = createIntlMiddleware(routing);
 
@@ -33,30 +30,36 @@ export const config = {
   ],
 };
 
+/**
+ * Proxy function for Next.js 16+
+ * 
+ * SECURITY WARNING: This proxy only does optimistic cookie-based checks for redirects.
+ * It does NOT validate the session or perform database queries.
+ * 
+ * Real authentication/authorization must be handled in each page/route using:
+ * - auth.api.getSession() in server components
+ * - Proper session validation before accessing protected resources
+ * 
+ * This follows Better Auth's recommended approach to avoid blocking requests
+ * with expensive database calls in middleware/proxy.
+ */
 export default async function proxy(req: NextRequest) {
   if (req.nextUrl.pathname.startsWith('/api/uploadthing')) {
     return;
   }
 
+  // Public pages don't need authentication checks
   if (isPublicPage(req.nextUrl.pathname, locales)) {
     return intlMiddleware(req);
   }
 
-  // Use auth.api.getSession directly instead of HTTP call to avoid duplicate queries
-  // Convert NextRequest headers to Headers that Better Auth can use
-  // Note: NextRequest headers are immutable, so we need to create a new Headers object
-  // by iterating and using Object.fromEntries approach
-  const headerEntries: [string, string][] = [];
-  req.headers.forEach((value, key) => {
-    headerEntries.push([key, value]);
-  });
-  const headers = new Headers(headerEntries);
+  // OPTIMISTIC CHECK: Only check for session cookie existence
+  // This is NOT secure - real validation happens in pages/layouts
+  // We use this only for optimistic redirects to improve UX
+  const sessionCookie = getSessionCookie(req);
 
-  const session = await auth.api.getSession({
-    headers,
-  });
-
-  if (!session) {
+  if (!sessionCookie) {
+    // No session cookie - redirect to login
     let callbackUrl = req.nextUrl.pathname + (req.nextUrl.search || '');
     // Validate callbackUrl
     if (!isSafeCallbackUrl(callbackUrl)) {
@@ -66,43 +69,20 @@ export default async function proxy(req: NextRequest) {
 
     // Check if the path is for invitation acceptance
     const isAcceptInvitation = /\/admin\/global\/tenants\/accept-invitation/.test(req.nextUrl.pathname);
-
-    const errorType = isAcceptInvitation ? LoginErrorCodeEnum.INVITATION_REQUIRED_AUTH : LoginErrorCodeEnum.UNAUTHENTICATED;
+    const errorType = isAcceptInvitation ? 'INVITATION_REQUIRED_AUTH' : 'UNAUTHENTICATED';
 
     return Response.redirect(new URL(`/auth/login?callbackUrl=${encodedCallbackUrl}&error=${errorType}`, req.nextUrl));
   }
 
   // Redirect to default login redirect if the user is trying to access an auth route while logged in
+  // This is also optimistic - real validation happens in auth pages
   if (new RegExp(`^${authRoutes.replace('*', '.*')}$`).test(req.nextUrl.pathname)) {
     return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, req.nextUrl));
   }
 
-  // If the user is accessing the main tenants page ("/admin" or locale variant)
-  // and is NOT in the process of accepting a tenant invitation,
-  // redirect them based on their tenant access:
-  // - If the user has no tenants, redirect to the tenant creation page.
-  // - If the user has exactly one tenant, redirect directly to that tenant's admin page.
-  const isAcceptInvitation = /\/admin\/global\/tenants\/accept-invitation/.test(req.nextUrl.pathname);
-  if ((new RegExp(`^/(${locales.join('|')})?/admin(/)?$`).test(req.nextUrl.pathname) || /^\/admin\/?$/.test(req.nextUrl.pathname)) && !isAcceptInvitation) {
-    const tenants = await getTenantsForUser(session.user.id);
-    if (tenants.length === 0) {
-      return Response.redirect(new URL('/admin/global/tenants/new', req.nextUrl));
-    }
-
-    if (tenants.length === 1) {
-      return Response.redirect(new URL(`/admin/${tenants[0].id}`, req.nextUrl));
-    }
-  }
-
-  // Redirect to login if the user is trying to access a tenant page without being a member of that tenant
-  const tenantId = extractTenantId(req.nextUrl.pathname, locales);
-  if (tenantId) {
-    const isValid = await validateTenantId(tenantId, session.user.id);
-    if (!isValid) {
-      const encodedCallbackUrl = encodeURIComponent(req.nextUrl.pathname);
-      return Response.redirect(new URL(`/auth/login?callbackUrl=${encodedCallbackUrl}&error=${LoginErrorCodeEnum.TENANT_NOT_AUTHORIZED}`, req.nextUrl));
-    }
-  }
+  // All other authentication/authorization logic (tenant validation, activeOrganization, etc.)
+  // is handled in the respective layouts and pages where we can properly validate sessions
+  // and perform database queries safely.
 
   return intlMiddleware(req);
 }

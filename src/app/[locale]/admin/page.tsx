@@ -1,7 +1,8 @@
 import { type Metadata } from 'next';
+import { headers } from 'next/headers';
 import { Link, redirect } from '@/i18n/routing';
-import { currentSession } from '@/server/auth-server';
-import { getDb } from '@/server/db-client';
+import { auth, currentSession, getActiveTenantId } from '@/server/auth-server';
+import { db } from '@/server/db-client';
 import { type Locale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import { ArrowRight, Building2, ExternalLink, Sparkles } from 'lucide-react';
@@ -29,20 +30,63 @@ interface ITenantPageProps {
   params: Promise<{ locale: string }>;
 }
 
+/**
+ * Admin tenants selection page
+ * 
+ * Handles authentication and automatic redirection:
+ * - Validates session (real authentication check)
+ * - Redirects to tenant creation if user has no tenants
+ * - Redirects to single tenant if user has exactly one tenant
+ * - Shows tenant selection if user has multiple tenants
+ */
 export default async function TenantsPage(props: ITenantPageProps) {
   const params = await props.params;
   const { locale } = params;
 
   const t = await getTranslations({ locale: locale as Locale, namespace: 'tenants.tenants' });
 
+  // REAL AUTHENTICATION CHECK: Validate session properly
   const session = await currentSession();
-  if (!session) return redirect({ href: '/', locale: 'en' });
+  if (!session) {
+    return redirect({ href: '/auth/login', locale: 'en' });
+  }
 
-  const db = await getDb();
+  // Use direct Prisma client (not ZenStack) because we need to query all tenants
+  // before activeTenantId is set. ZenStack policies require activeTenantId to be set.
   const tenants = await db.tenant.findMany({
     where: { userTenants: { some: { userId: session.user.id, isActive: true } } },
     select: { id: true, name: true, logo: true, description: true, websiteUrl: true },
   });
+
+  // Auto-redirect logic: If user has no tenants, redirect to creation page
+  if (tenants.length === 0) {
+    return redirect({ href: '/admin/global/tenants/new', locale: locale as Locale });
+  }
+
+  // Auto-redirect logic: If user has exactly one tenant, redirect to that tenant
+  if (tenants.length === 1) {
+    const singleTenantId = tenants[0].id;
+    const currentActiveTenantId = await getActiveTenantId();
+    
+    // Set activeOrganization if not already set
+    if (currentActiveTenantId !== singleTenantId) {
+      try {
+        await auth.api.setActiveOrganization({
+          body: {
+            organizationId: singleTenantId,
+          },
+          headers: await headers(),
+        });
+      } catch (error) {
+        console.error('Error setting active organization:', error);
+      }
+    }
+    
+    return redirect({ 
+      href: { pathname: '/admin/[tenantId]', params: { tenantId: singleTenantId } }, 
+      locale: locale as Locale 
+    });
+  }
 
   return (
     <div className="mx-auto flex max-w-4xl flex-1 flex-col gap-6 overflow-hidden px-4 py-6 sm:px-6 lg:py-12">

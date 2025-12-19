@@ -156,7 +156,7 @@
     "media-chrome": "^4.17.2",
     "motion": "^12.23.26",
     "nanoid": "^5.1.6",
-    "next": "^16.0.10",
+    "next": "16.0.10",
     "next-intl": "^4.6.1",
     "next-themes": "^0.4.6",
     "nextjs-toploader": "^3.9.17",
@@ -173,7 +173,7 @@
     "react-hook-form": "^7.68.0",
     "react-intersection-observer": "^10.0.0",
     "react-phone-number-input": "^3.4.14",
-    "react-resizable-panels": "^4.0.7",
+    "react-resizable-panels": "^4.0.8",
     "react-select": "^5.10.2",
     "react-timer-hook": "^4.0.5",
     "recharts": "^3.6.0",
@@ -203,7 +203,7 @@
     "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
     "@jest/globals": "^30.2.0",
     "@lingual/i18n-check": "^0.8.16",
-    "@next/eslint-plugin-next": "^16.0.10",
+    "@next/eslint-plugin-next": "^16.1.0",
     "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4.1.18",
     "@tanstack/eslint-plugin-query": "^5.91.2",
@@ -227,7 +227,7 @@
     "cross-env": "^10.1.0",
     "cypress": "^15.8.1",
     "eslint": "^9.39.2",
-    "eslint-config-next": "^16.0.10",
+    "eslint-config-next": "^16.1.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jest": "^29.5.0",
     "eslint-plugin-react-hooks": "^7.0.1",
@@ -251,5 +251,5 @@
   "ct3aMetadata": {
     "initVersion": "7.38.1"
   },
-  "packageManager": "pnpm@10.26.0"
+  "packageManager": "pnpm@10.26.1"
 }
