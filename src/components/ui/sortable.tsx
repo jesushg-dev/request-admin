@@ -251,6 +251,8 @@ SortableItem.displayName = 'SortableItem';
 
 interface SortableDragHandleProps extends ButtonProps {
   withHandle?: boolean;
+  children?: React.ReactNode;
+  className?: string;
 }
 
 const SortableDragHandle = React.forwardRef<HTMLButtonElement, SortableDragHandleProps>(({ className, ...props }, ref) => {

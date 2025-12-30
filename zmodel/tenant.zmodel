@@ -20,8 +20,9 @@ model Tenant extends Auditable {
   websiteUrl                     String?  // URL for the tenant's website
   title                          String?  // Title or tagline for the tenant
   description                    String?  // Brief description of the tenant
-  primaryColor                   String?  // Primary color for branding
-  secondaryColor                 String?  // Secondary color for branding
+  primaryColor                   String?  // Primary color for branding (deprecated, use themeColors)
+  secondaryColor                 String?  // Secondary color for branding (deprecated, use themeColors)
+  themeColors                    String?  @db.Text // JSON string containing all theme colors for light and dark modes
   contactEmail                   String?  // Tenant's contact email
   contactPhone                   String?  // Tenant's contact phone number
   address                        String?  // Address for the tenant

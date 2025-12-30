@@ -6,6 +6,7 @@ import { getTranslations } from 'next-intl/server';
 
 import { FeatureFlagsManager } from '@/components/common/organization/feature-flags-manager';
 import TenantForm from '@/components/common/tenant/tenant-form';
+import { ThemeColorsForm } from '@/components/common/tenant/theme-colors-form';
 
 interface EditPageProps {
   params: Promise<{ locale: Locale; tenantId: string }>;
@@ -33,6 +34,7 @@ const EditPage: FC<EditPageProps> = async ({ params }) => {
           organizationId: tenantId,
         }}
       />
+      <ThemeColorsForm initialThemeColors={organization.themeColors} />
       <FeatureFlagsManager tenantId={tenantId} />
     </div>
   );

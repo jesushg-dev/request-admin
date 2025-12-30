@@ -991,6 +991,25 @@
           "updated": "Configuración de almacenamiento actualizada exitosamente",
           "error": "Error al actualizar la configuración de almacenamiento"
         }
+      },
+      "themeColors": {
+        "title": "Colores del Tema",
+        "description": "Personaliza todos los colores del tema para modo claro y oscuro",
+        "lightMode": "Modo Claro",
+        "darkMode": "Modo Oscuro",
+        "save": "Guardar Colores",
+        "saving": "Guardando colores del tema...",
+        "updating": "Actualizando colores del tema...",
+        "success": "Colores del tema actualizados exitosamente",
+        "error": "Error al actualizar los colores del tema: {error}",
+        "totalColors": "colores",
+        "resetToDefaults": "Restablecer Valores por Defecto",
+        "resetAll": "Restablecer Todo",
+        "resetSuccess": "Colores de {mode} restablecidos a valores por defecto",
+        "customizedInfo": "{count} de {total} colores personalizados",
+        "colors": "colores",
+        "customized": "personalizados",
+        "summary": "Claro: {light} personalizados • Oscuro: {dark} personalizados"
       }
     },
     "form": {

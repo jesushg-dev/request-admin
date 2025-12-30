@@ -1,9 +1,11 @@
 import { type FC } from 'react';
 
-import { Button, ButtonProps } from '../ui/button';
+import { Button, type ButtonProps } from '../ui/button';
 
 interface ButtonLoadingProps extends ButtonProps {
   isLoading: boolean;
+  children?: React.ReactNode;
+  disabled?: boolean;
 }
 
 export const ButtonLoading: FC<ButtonLoadingProps> = ({ children, disabled, isLoading, ...props }) => {

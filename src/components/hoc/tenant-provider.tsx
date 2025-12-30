@@ -10,6 +10,9 @@ type TenantSummary = {
   logo: string | null;
   description: string | null;
   uploadStorageType: string | null;
+  primaryColor?: string | null;
+  secondaryColor?: string | null;
+  themeColors?: string | null; // JSON string containing all theme colors
 };
 
 type TenantContextType = {

@@ -991,6 +991,25 @@
           "updated": "Storage configuration updated successfully",
           "error": "Error updating storage configuration"
         }
+      },
+      "themeColors": {
+        "title": "Theme Colors",
+        "description": "Customize all theme colors for light and dark modes",
+        "lightMode": "Light Mode",
+        "darkMode": "Dark Mode",
+        "save": "Save Colors",
+        "saving": "Saving theme colors...",
+        "updating": "Updating theme colors...",
+        "success": "Theme colors updated successfully",
+        "error": "Error updating theme colors: {error}",
+        "totalColors": "colors",
+        "resetToDefaults": "Reset to Defaults",
+        "resetAll": "Reset All",
+        "resetSuccess": "Reset {mode} colors to defaults",
+        "customizedInfo": "{count} of {total} colors customized",
+        "colors": "colors",
+        "customized": "customized",
+        "summary": "Light: {light} customized • Dark: {dark} customized"
       }
     },
     "form": {

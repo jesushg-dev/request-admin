@@ -28,7 +28,7 @@ export function FeatureFlagsManager({ tenantId }: FeatureFlagsManagerProps) {
 
   const updateTenant = useUpdateTenant();
 
-  const selectedValue: UploadStorageType = (currentTenant?.uploadStorageType as UploadStorageType) || 'uploadthing';
+  const storageType: UploadStorageType = (currentTenant?.uploadStorageType as UploadStorageType) || 'uploadthing';
   const [isUpdating, setIsUpdating] = useState(false);
 
   const handleChange = async (value: string) => {
@@ -62,6 +62,8 @@ export function FeatureFlagsManager({ tenantId }: FeatureFlagsManagerProps) {
     { label: t('options.internal'), value: 'internal' },
   ];
 
+  const selectedValue = options.find((opt) => opt.value === storageType) || options[0];
+
   return (
     <Card>
       <CardHeader>
@@ -80,7 +82,7 @@ export function FeatureFlagsManager({ tenantId }: FeatureFlagsManagerProps) {
               <span className="text-sm text-muted-foreground">{t('loading')}</span>
             </div>
           ) : (
-            <Select value={selectedValue} onValueChange={handleChange} options={options} disabled={isUpdating} placeholder={t('storageType.placeholder')} />
+            <Select value={selectedValue} onChange={(option) => handleChange(option?.value as string)} options={options} isDisabled={isUpdating} placeholder={t('storageType.placeholder')} />
           )}
         </div>
         <Separator />

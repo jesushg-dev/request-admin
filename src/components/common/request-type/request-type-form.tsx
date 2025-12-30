@@ -10,7 +10,7 @@ import { useAtom, useAtomValue } from 'jotai';
 import { BookCopyIcon, BookIcon, ChevronLeft, ChevronRight, ContainerIcon, FileCogIcon, FileStackIcon, PackageOpenIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
-import { ImperativePanelHandle } from 'react-resizable-panels';
+import type { PanelImperativeHandle } from 'react-resizable-panels';
 import { toast } from 'sonner';
 
 import { RequestHierarchyWithLevelsType, RequestLevelType } from '@/types/zenstackhq/hierarchy';
@@ -52,7 +52,7 @@ interface RequestTypeFormProps {
 const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements, forms, requestHierarchy, tenantId }) => {
   const t = useTranslations('admin.requestType.create');
 
-  const ref = useRef<ImperativePanelHandle>(null);
+  const ref = useRef<PanelImperativeHandle>(null);
   const [isPending, startTransition] = useTransition();
   const { mutateAsync: upsert, error, reset: resetError } = useUpsertRequestCategory();
   const requestCategorySchema = useRequestCategorySchema();

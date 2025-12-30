@@ -12,6 +12,7 @@ import { LoginErrorCodeEnum } from '@/types/user';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { ClipboardProvider } from '@/components/hoc/clipboard-context';
 import { TenantProvider } from '@/components/hoc/tenant-provider';
+import { TenantThemeProvider } from '@/components/hoc/tenant-theme-provider';
 import { AppSidebar } from '@/components/layouts/admin/app-sidebar';
 import { DndSubmissionProvider } from '@/components/layouts/admin/dnd-submission-provider';
 import { Navbar } from '@/components/layouts/admin/nav-bar';
@@ -101,7 +102,16 @@ export default async function RootLayout({
 
   const db = await getDb();
   const tenants = await db.tenant.findMany({
-    select: { id: true, name: true, description: true, logo: true, uploadStorageType: true },
+    select: { 
+      id: true, 
+      name: true, 
+      description: true, 
+      logo: true, 
+      uploadStorageType: true,
+      primaryColor: true,
+      secondaryColor: true,
+      themeColors: true,
+    },
     where: { userTenants: { some: { userId: { equals: session.user.id } } } },
   });
 
@@ -111,20 +121,22 @@ export default async function RootLayout({
 
   return (
     <TenantProvider tenantId={tenantId} userTenant={userTenant} tenants={tenants}>
-      <SidebarProvider>
-        <DndSubmissionProvider tenantId={tenantId} data={menuItems}>
-          <AppSidebar user={session.user} isOnPremise={env.ON_PREMISE} />
-          <main className="flex h-screen w-full flex-1 flex-col overflow-hidden">
-            <ClipboardProvider>
-              <Navbar />
-              <div className="flex flex-1 overflow-hidden">
-                {children}
-                {modal}
-              </div>
-            </ClipboardProvider>
-          </main>
-        </DndSubmissionProvider>
-      </SidebarProvider>
+      <TenantThemeProvider>
+        <SidebarProvider>
+          <DndSubmissionProvider tenantId={tenantId} data={menuItems}>
+            <AppSidebar user={session.user} isOnPremise={env.ON_PREMISE} />
+            <main className="flex h-screen w-full flex-1 flex-col overflow-hidden">
+              <ClipboardProvider>
+                <Navbar />
+                <div className="flex flex-1 overflow-hidden">
+                  {children}
+                  {modal}
+                </div>
+              </ClipboardProvider>
+            </main>
+          </DndSubmissionProvider>
+        </SidebarProvider>
+      </TenantThemeProvider>
     </TenantProvider>
   );
 }

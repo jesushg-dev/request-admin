@@ -15,10 +15,10 @@ import { Separator } from '@/components/ui/separator';
 import EmptyState from '@/components/shared/empty-state';
 import { ExternalWebsiteLink } from '@/components/common/tenant/external-website-link';
 
-export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
   const params = await props.params;
   const { locale } = params;
-  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
+  const t = await getTranslations({ locale , namespace: 'metadata' });
 
   return {
     title: `${t('pages.tenants.title')} - ${t('brandName')}`,
@@ -27,7 +27,7 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
 }
 
 interface ITenantPageProps {
-  params: Promise<{ locale: string }>;
+  params: Promise<{ locale: Locale }>;
 }
 
 /**
@@ -43,7 +43,7 @@ export default async function TenantsPage(props: ITenantPageProps) {
   const params = await props.params;
   const { locale } = params;
 
-  const t = await getTranslations({ locale: locale as Locale, namespace: 'tenants.tenants' });
+  const t = await getTranslations({ locale , namespace: 'tenants.tenants' });
 
   // REAL AUTHENTICATION CHECK: Validate session properly
   const session = await currentSession();
@@ -60,7 +60,7 @@ export default async function TenantsPage(props: ITenantPageProps) {
 
   // Auto-redirect logic: If user has no tenants, redirect to creation page
   if (tenants.length === 0) {
-    return redirect({ href: '/admin/global/tenants/new', locale: locale as Locale });
+    return redirect({ href: '/admin/global/tenants/new', locale  });
   }
 
   // Auto-redirect logic: If user has exactly one tenant, redirect to that tenant
@@ -84,7 +84,7 @@ export default async function TenantsPage(props: ITenantPageProps) {
     
     return redirect({ 
       href: { pathname: '/admin/[tenantId]', params: { tenantId: singleTenantId } }, 
-      locale: locale as Locale 
+      locale  
     });
   }
 
