@@ -1,4 +1,5 @@
 import './zmodel/tenant.zmodel'
+import './zmodel/theme.zmodel'
 
 plugin hooks {
   provider = '@zenstackhq/tanstack-query'

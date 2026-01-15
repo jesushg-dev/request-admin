@@ -9,6 +9,7 @@ import './area.zmodel'
 import './category.zmodel'
 import './permission.zmodel'
 import './execution.zmodel'
+import './theme.zmodel'
 
 model Tenant extends Auditable {
   id                             String       @id
