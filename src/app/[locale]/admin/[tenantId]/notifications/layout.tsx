@@ -19,6 +19,7 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
 export default async function NotificationsLayout({ children, params }: { children: React.ReactNode; params: Promise<{ tenantId: string }> }) {
   const { tenantId } = await params;
   const userTenant = await getCurrentUserTenant(tenantId);
+  if (!userTenant) return null;
 
   return (
     <NotificationProvider tenantId={tenantId} userTenantId={userTenant.userTenantId}>

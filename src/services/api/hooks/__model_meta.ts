@@ -90,6 +90,11 @@ const metadata: ModelMeta = {
           type: 'String',
           isOptional: true,
         },
+        themeColors: {
+          name: 'themeColors',
+          type: 'String',
+          isOptional: true,
+        },
         contactEmail: {
           name: 'contactEmail',
           type: 'String',

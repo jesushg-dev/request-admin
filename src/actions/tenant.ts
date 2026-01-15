@@ -4,12 +4,12 @@ import { headers } from 'next/headers';
 import { locales, redirect } from '@/i18n/routing';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 import { auth, currentSession } from '@/server/auth-server';
-import { db} from '@/server/db-client';
+import { db } from '@/server/db-client';
 
 import { extractTenantId } from '@/lib/utils';
 import { TenantFormValues } from '@/components/common/tenant/tenant-form';
 
-class UserNotFoundErr extends Error {}
+class UserNotFoundErr extends Error { }
 
 export const getTenantIdFromUrl = async (url: string, redirectOnMissing: boolean = true): Promise<string> => {
   const tenantId = extractTenantId(url, locales);
@@ -66,7 +66,7 @@ export const getTenantInformation = async (tenantId: string): Promise<TenantForm
     contactEmail: response.contactEmail ?? undefined,
     contactPhone: response.contactPhone ?? undefined,
     address: response.address ?? undefined,
-  };
+  } as TenantFormValues & { themeColors?: string | null };
 };
 
 /**
@@ -136,3 +136,21 @@ export async function createTenantWithInitialization(data: {
     logo: organization.logo ?? undefined,
   };
 }
+
+export const setActiveTenant = async (tenantId: string) => {
+  const session = await currentSession();
+  if (!session) throw new UserNotFoundErr('User not found');
+
+  try {
+    await auth.api.setActiveOrganization({
+      body: {
+        organizationId: tenantId,
+      },
+      headers: await headers(),
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('Error setting active organization:', error);
+    return { success: false, error: 'Failed to set active organization' };
+  }
+};

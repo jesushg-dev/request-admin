@@ -11,6 +11,7 @@ interface UserIdPageProps {
 const UserIdPage = async ({ params }: UserIdPageProps) => {
   const { tenantId, memberId: userId } = await params;
   const currentUser = await getCurrentUserTenant(tenantId);
+  if (!currentUser) return null;
   const conversation = await findOrCreateConversation({ tenantId, userId });
 
   if (!conversation.id) {

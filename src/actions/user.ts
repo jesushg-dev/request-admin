@@ -8,7 +8,7 @@ import { UserTenant } from '@/types/user';
 import { convertUserTenantTypeToUserTenant, getUserName } from '@/lib/user';
 import { UserTenantScopedFormValues } from '@/components/common/user/user-tenant-scoped-form';
 
-class UserNotFoundErr extends Error {}
+class UserNotFoundErr extends Error { }
 
 // Type definition for Better Auth member
 type BetterAuthMember = {
@@ -162,9 +162,9 @@ const updateExistingUser = async (tenantId: string, data: UserTenantScopedFormVa
   // Find the current Person record if it exists (using userTenantId for better reliability)
   const currentPerson = currentUserTenant?.id
     ? await db.person.findUnique({
-        where: { userTenantId: currentUserTenant.id },
-        select: { id: true },
-      })
+      where: { userTenantId: currentUserTenant.id },
+      select: { id: true },
+    })
     : null;
 
   // Uniqueness check for phone
@@ -252,22 +252,22 @@ const updateExistingUser = async (tenantId: string, data: UserTenantScopedFormVa
             },
             userRoles: data.roles
               ? {
-                  create: data.roles.map((role) => ({
-                    tenantId,
-                    roleId: role.roleId.value,
-                    isActive: role.isActive,
-                  })),
-                }
+                create: data.roles.map((role) => ({
+                  tenantId,
+                  roleId: role.roleId.value,
+                  isActive: role.isActive,
+                })),
+              }
               : undefined,
             userAreas: data.areaRoles
               ? {
-                  create: data.areaRoles.map((area) => ({
-                    tenantId,
-                    areaId: area.areaId.value,
-                    roleId: area.roleId.value,
-                    isActive: area.isActive,
-                  })),
-                }
+                create: data.areaRoles.map((area) => ({
+                  tenantId,
+                  areaId: area.areaId.value,
+                  roleId: area.roleId.value,
+                  isActive: area.isActive,
+                })),
+              }
               : undefined,
             role: betterAuthRole,
           },
@@ -389,22 +389,22 @@ export const processInvitationAcceptance = async (invitationId: string) => {
       },
       userRoles: metadata.roles
         ? {
-            create: metadata.roles.map((role) => ({
-              tenantId: invitationRecord.tenantId,
-              roleId: role.roleId,
-              isActive: role.isActive,
-            })),
-          }
+          create: metadata.roles.map((role) => ({
+            tenantId: invitationRecord.tenantId,
+            roleId: role.roleId,
+            isActive: role.isActive,
+          })),
+        }
         : undefined,
       userAreas: metadata.areaRoles
         ? {
-            create: metadata.areaRoles.map((area) => ({
-              tenantId: invitationRecord.tenantId,
-              areaId: area.areaId,
-              roleId: area.roleId,
-              isActive: area.isActive,
-            })),
-          }
+          create: metadata.areaRoles.map((area) => ({
+            tenantId: invitationRecord.tenantId,
+            areaId: area.areaId,
+            roleId: area.roleId,
+            isActive: area.isActive,
+          })),
+        }
         : undefined,
     },
   });
@@ -607,12 +607,12 @@ export const getRolesAsOptions = async (tenantId: string) => {
 };
 
 // Get the current user's tenant
-export const getCurrentUserTenant = async (tenantId: string): Promise<UserTenant> => {
+export const getCurrentUserTenant = async (tenantId: string): Promise<UserTenant | null> => {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr();
 
   const db = await getDb();
-  const result = await db.userTenant.findUniqueOrThrow({
+  const result = await db.userTenant.findUnique({
     where: { userId_tenantId: { userId: session.user.id, tenantId } },
     select: {
       id: true,
@@ -620,6 +620,8 @@ export const getCurrentUserTenant = async (tenantId: string): Promise<UserTenant
       person: { select: { id: true, image: true, firstName: true, lastName: true } },
     },
   });
+
+  if (!result) return null;
 
   return convertUserTenantTypeToUserTenant(result);
 };

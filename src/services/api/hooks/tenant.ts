@@ -381,6 +381,7 @@ export function useCheckTenant<TError = DefaultError>(
       description?: string;
       primaryColor?: string;
       secondaryColor?: string;
+      themeColors?: string;
       contactEmail?: string;
       contactPhone?: string;
       address?: string;

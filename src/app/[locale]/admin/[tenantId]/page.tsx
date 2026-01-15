@@ -44,6 +44,10 @@ export default async function DashboardPage({ params, searchParams }: DashboardP
   const canViewRequests = auth.hasPermissions([PermissionActions.REQUEST_MANAGEMENT.VIEW]);
   const t = await getTranslations({ locale, namespace: 'admin.dashboard.page' });
   const userTenant = await getCurrentUserTenant(tenantId);
+
+  if (!userTenant) {
+    return <DashboardPermissionDenied />;
+  }
   const db = await getDb();
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { name: true } });
 

@@ -18,7 +18,7 @@ import { ExternalWebsiteLink } from '@/components/common/tenant/external-website
 export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
   const params = await props.params;
   const { locale } = params;
-  const t = await getTranslations({ locale , namespace: 'metadata' });
+  const t = await getTranslations({ locale, namespace: 'metadata' });
 
   return {
     title: `${t('pages.tenants.title')} - ${t('brandName')}`,
@@ -39,11 +39,13 @@ interface ITenantPageProps {
  * - Redirects to single tenant if user has exactly one tenant
  * - Shows tenant selection if user has multiple tenants
  */
+import { TenantCard } from '@/components/common/tenant/tenant-card';
+
 export default async function TenantsPage(props: ITenantPageProps) {
   const params = await props.params;
   const { locale } = params;
 
-  const t = await getTranslations({ locale , namespace: 'tenants.tenants' });
+  const t = await getTranslations({ locale, namespace: 'tenants.tenants' });
 
   // REAL AUTHENTICATION CHECK: Validate session properly
   const session = await currentSession();
@@ -60,14 +62,14 @@ export default async function TenantsPage(props: ITenantPageProps) {
 
   // Auto-redirect logic: If user has no tenants, redirect to creation page
   if (tenants.length === 0) {
-    return redirect({ href: '/admin/global/tenants/new', locale  });
+    return redirect({ href: '/admin/global/tenants/new', locale });
   }
 
   // Auto-redirect logic: If user has exactly one tenant, redirect to that tenant
   if (tenants.length === 1) {
     const singleTenantId = tenants[0].id;
     const currentActiveTenantId = await getActiveTenantId();
-    
+
     // Set activeOrganization if not already set
     if (currentActiveTenantId !== singleTenantId) {
       try {
@@ -81,10 +83,10 @@ export default async function TenantsPage(props: ITenantPageProps) {
         console.error('Error setting active organization:', error);
       }
     }
-    
-    return redirect({ 
-      href: { pathname: '/admin/[tenantId]', params: { tenantId: singleTenantId } }, 
-      locale  
+
+    return redirect({
+      href: { pathname: '/admin/[tenantId]', params: { tenantId: singleTenantId } },
+      locale
     });
   }
 
@@ -129,54 +131,7 @@ export default async function TenantsPage(props: ITenantPageProps) {
             <ScrollArea className="flex flex-1">
               <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
                 {tenants.map((tenant) => (
-                  <Card
-                    key={tenant.id}
-                    className="group relative overflow-hidden border-2 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5"
-                  >
-                    <CardContent className="p-0">
-                      <Link
-                        className="relative flex w-full flex-col gap-4 p-6 text-left transition-colors hover:bg-muted/30"
-                        href={{ pathname: '/admin/[tenantId]', params: { tenantId: tenant.id } }}
-                      >
-                        {/* Header with Avatar and Arrow */}
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex items-center gap-4">
-                            <div className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border-2 border-dashed border-muted-foreground/20 bg-muted/30 ring-2 ring-background transition-all duration-300 group-hover:border-primary/30 group-hover:bg-muted/50">
-                              <Avatar className="h-12 w-12 ring-2 ring-background">
-                                <AvatarImage src={tenant.logo ?? ''} alt={tenant.name} className="object-contain" />
-                                <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
-                                  <Building2 className="h-6 w-6" />
-                                </AvatarFallback>
-                              </Avatar>
-                            </div>
-                            <div className="flex flex-1 flex-col gap-1 min-w-0">
-                              <h3 className="text-lg font-semibold text-foreground transition-colors group-hover:text-primary">
-                                {tenant.name}
-                              </h3>
-                              {tenant.websiteUrl && (
-                                <ExternalWebsiteLink
-                                  href={tenant.websiteUrl}
-                                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors w-fit"
-                                >
-                                  <ExternalLink className="h-3 w-3" />
-                                  Visit website
-                                </ExternalWebsiteLink>
-                              )}
-                            </div>
-                          </div>
-                          <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground transition-all duration-300 group-hover:translate-x-1 group-hover:text-primary" />
-                        </div>
-
-                        {/* Description */}
-                        {tenant.description && (
-                          <p className="line-clamp-2 text-sm text-muted-foreground leading-relaxed">{tenant.description}</p>
-                        )}
-
-                        {/* Hover gradient effect */}
-                        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/0 via-primary/0 to-primary/0 opacity-0 transition-opacity duration-300 group-hover:opacity-5" />
-                      </Link>
-                    </CardContent>
-                  </Card>
+                  <TenantCard key={tenant.id} tenant={tenant} />
                 ))}
               </div>
             </ScrollArea>

@@ -52,6 +52,7 @@ export function TenantThemeProvider({ children }: { children: React.ReactNode })
 
     // Apply all colors to CSS variables
     const applyColors = (colorMap: typeof colors) => {
+      if (!colorMap) return;
       Object.entries(colorMap).forEach(([key, value]) => {
         if (value) {
           root.style.setProperty(`--${key}`, value);

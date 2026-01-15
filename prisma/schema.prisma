@@ -29,6 +29,7 @@ model Tenant {
   description                      String?
   primaryColor                     String?
   secondaryColor                   String?
+  themeColors                      String?                             @db.Text()
   contactEmail                     String?
   contactPhone                     String?
   address                          String?

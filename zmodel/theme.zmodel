@@ -1,0 +1,28 @@
+
+import "./auth.zmodel"
+
+model Theme {
+    id        String   @id @default(cuid())
+    userId    String
+    // user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    name      String
+    styles    String   @default("{}") // Storing JSON as string for simplicity compatibility
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([userId])
+}
+
+model AiUsage {
+    id               String   @id @default(cuid())
+    userId           String
+    // user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    modelId          String
+    promptTokens     Int      @default(0)
+    completionTokens Int      @default(0)
+    daysSinceEpoch   Int      @default(0)
+    createdAt        DateTime @default(now())
+
+    @@index([userId])
+    @@index([daysSinceEpoch])
+}

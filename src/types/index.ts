@@ -107,3 +107,22 @@ export interface QueryBuilderOpts<TWhere, TOrderBy> {
   distinct?: boolean; // Whether to apply distinct results
   nullish?: boolean; // Custom logic, if needed
 }
+
+export type ColorFormat = "hex" | "rgb" | "hsl" | "oklch";
+
+export type ValidTailwindShade = "50" | "100" | "200" | "300" | "400" | "500" | "600" | "700" | "800" | "900" | "950";
+
+export interface ColorPickerProps {
+  value?: string;
+  onChange?: (value: string) => void;
+  label?: string;
+  name?: string;
+  className?: string;
+}
+
+export interface ControlSectionProps {
+  title: string;
+  children: React.ReactNode;
+  expanded?: boolean;
+  className?: string;
+}
