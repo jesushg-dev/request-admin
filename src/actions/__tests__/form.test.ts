@@ -1,6 +1,6 @@
 // __tests__/formActions.test.ts
 import { CreateForm, GetFormById, GetFormContentById, GetFormContentByUrl, GetForms, getFormsAsOptions, GetFormStats, PublishForm, SubmitForm, UpdateFormContent } from '@/actions/form';
-import { currentSession } from '@/server/auth-server';
+import { currentSession, requireUser } from '@/server/auth-server';
 import { getDb } from '@/server/db-client';
 import { formSchemaType } from '@/services/schemas/form';
 
@@ -9,6 +9,7 @@ import { UserNotFoundErr } from '@/lib/error';
 // Mock external dependencies
 jest.mock('@/server/auth-server', () => ({
   currentSession: jest.fn(),
+  requireUser: jest.fn(),
 }));
 
 jest.mock('better-auth', () => ({
@@ -35,6 +36,19 @@ const mockDb = {
   },
   formKey: {
     createMany: jest.fn(),
+  },
+  userTenant: {
+    findUnique: jest.fn().mockResolvedValue({
+      id: 'user-tenant-1',
+      userRoles: [
+        {
+          role: {
+            roleFeature: [{ feature: { key: 'form_create' } }, { feature: { key: 'form_edit' } }, { feature: { key: 'form_publish' } }],
+          },
+        },
+      ],
+      userAreas: [],
+    }),
   },
 };
 
@@ -90,6 +104,10 @@ describe('GetFormStats', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (currentSession as jest.Mock).mockResolvedValue(mockSession);
+    (requireUser as jest.Mock).mockImplementation(async () => {
+      const s = await (currentSession as any)();
+      return s?.user ?? s;
+    });
   });
 
   test('should calculate correct form stats', async () => {
@@ -128,6 +146,10 @@ describe('CreateForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (currentSession as jest.Mock).mockResolvedValue(mockSession);
+    (requireUser as jest.Mock).mockImplementation(async () => {
+      const s = await (currentSession as any)();
+      return s?.user ?? s;
+    });
   });
 
   test('should create form with valid data', async () => {
@@ -158,6 +180,10 @@ describe('GetFormById', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (currentSession as jest.Mock).mockResolvedValue(mockSession);
+    (requireUser as jest.Mock).mockImplementation(async () => {
+      const s = await (currentSession as any)();
+      return s?.user ?? s;
+    });
   });
 
   test('should retrieve form by ID', async () => {
@@ -190,6 +216,10 @@ describe('SubmitForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (currentSession as jest.Mock).mockResolvedValue(mockSession);
+    (requireUser as jest.Mock).mockImplementation(async () => {
+      const s = await (currentSession as any)();
+      return s?.user ?? s;
+    });
   });
 
   test('should handle valid form submission', async () => {
@@ -310,7 +340,7 @@ describe('UpdateFormContent', () => {
 
     expect(result).toEqual(mockUpdatedForm);
     expect(mockDb.form.update).toHaveBeenCalledWith({
-      where: { id: 'form-123' },
+      where: { id: 'form-123', tenantId: 'tenant-123' },
       data: { content: jsonContent },
     });
   });

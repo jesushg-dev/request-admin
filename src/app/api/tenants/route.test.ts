@@ -4,7 +4,13 @@
 
 import { getDb } from '@/server/db-client';
 
-import { GET } from './route';
+// Mock authentication helper before importing the route so the module picks
+// up the mocked implementation during evaluation.
+jest.mock('@/lib/api-key-auth', () => ({
+  authenticateWithApiKeyOrJWT: jest.fn().mockResolvedValue({ user: { id: 'user123' } }),
+}));
+
+const { GET } = require('./route');
 
 // Mock the database
 const mockDb = {
@@ -15,12 +21,21 @@ const mockDb = {
 
 jest.mock('@/server/db-client', () => ({
   getDb: jest.fn(),
+  db: {
+    tenant: {
+      findMany: jest.fn(),
+      findUnique: jest.fn(),
+    },
+  },
 }));
 
 describe('Tenants API', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (getDb as jest.Mock).mockResolvedValue(mockDb);
+    // Ensure the module `db` points to our mockDb tenant implementation
+    const dbModule: any = jest.requireMock('@/server/db-client');
+    dbModule.db = mockDb;
   });
 
   it('returns tenants for a valid user ID', async () => {
@@ -43,10 +58,11 @@ describe('Tenants API', () => {
 
     // Assertions
     expect(response.status).toBe(200);
-    expect(data).toEqual({ tenants: mockTenants });
+    expect(data).toEqual({ data: mockTenants });
     expect(mockDb.tenant.findMany).toHaveBeenCalledWith({
-      select: { id: true },
-      where: { userTenants: { some: { userId: mockUserId } } },
+      where: { userTenants: { some: { userId: mockUserId, isActive: true } } },
+      select: { id: true, name: true, description: true, logo: true },
+      orderBy: { name: 'asc' },
     });
   });
 

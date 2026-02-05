@@ -1,22 +1,24 @@
+import { env } from '@/env';
 import twilio from 'twilio';
 
-if (!process.env.TWILIO_ACCOUNT_SID) {
-  throw new Error('TWILIO_ACCOUNT_SID is required');
-}
+let client: ReturnType<typeof twilio> | null = null;
 
-if (!process.env.TWILIO_AUTH_TOKEN) {
-  throw new Error('TWILIO_AUTH_TOKEN is required');
-}
+function getTwilioClient() {
+  if (!env.ENABLE_EXTERNAL_SMS) {
+    return null;
+  }
 
-if (!process.env.TWILIO_PHONE_NUMBER) {
-  throw new Error('TWILIO_PHONE_NUMBER is required');
-}
+  if (!client) {
+    if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN || !process.env.TWILIO_PHONE_NUMBER) {
+      console.warn('Twilio environment variables are missing; SMS/WhatsApp sending is disabled.');
+      return null;
+    }
 
-if (!process.env.TWILIO_WHATSAPP_NUMBER) {
-  throw new Error('TWILIO_WHATSAPP_NUMBER is required');
-}
+    client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+  }
 
-const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+  return client;
+}
 
 export async function sendSMS(to: string, message: string) {
   try {

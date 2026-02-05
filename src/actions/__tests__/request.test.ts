@@ -1,4 +1,4 @@
-import { currentSession } from '@/server/auth-server';
+import { currentSession, requireUser } from '@/server/auth-server';
 // Import the mocked db
 import { getDb } from '@/server/db-client';
 
@@ -37,6 +37,7 @@ type MockDbType = {
   userTenant: {
     findMany: jest.Mock;
     findFirst: jest.Mock;
+    findUnique: jest.Mock;
   };
   formSubmission: {
     count: jest.Mock;
@@ -91,6 +92,7 @@ jest.mock('@/server/db-client', () => ({
 
 jest.mock('@/server/auth-server', () => ({
   currentSession: jest.fn(),
+  requireUser: jest.fn(),
 }));
 
 jest.mock('../workflow', () => ({
@@ -119,13 +121,16 @@ jest.mock('@/server/db-client', () => {
       },
       requestChangeLog: {
         create: jest.fn() as jest.Mock,
+        createMany: jest.fn() as jest.Mock,
       },
       userTenant: {
         findMany: jest.fn() as jest.Mock,
         findFirst: jest.fn() as jest.Mock,
+        findUnique: jest.fn() as jest.Mock,
       },
       formSubmission: {
         count: jest.fn() as jest.Mock,
+        upsert: jest.fn() as jest.Mock,
       },
       requestCategoryForm: {
         count: jest.fn() as jest.Mock,
@@ -151,15 +156,31 @@ jest.mock('@/server/db-client', () => {
       },
       requestCategory: {
         findMany: jest.fn() as jest.Mock,
+        findUnique: jest.fn() as jest.Mock,
+        findUniqueOrThrow: jest.fn() as jest.Mock,
+        findFirst: jest.fn() as jest.Mock,
+        findFirstOrThrow: jest.fn() as jest.Mock,
+      },
+      requestDataroom: {
+        findUnique: jest.fn() as jest.Mock,
+        create: jest.fn() as jest.Mock,
       },
       assignmentCategory: {
         findMany: jest.fn() as jest.Mock,
+        findUnique: jest.fn() as jest.Mock,
+        findUniqueOrThrow: jest.fn() as jest.Mock,
+        findFirst: jest.fn() as jest.Mock,
+        findFirstOrThrow: jest.fn() as jest.Mock,
       },
       executionFlowDefinition: {
         findFirst: jest.fn() as jest.Mock,
       },
       executionModelInstance: {
         findFirst: jest.fn() as jest.Mock,
+      },
+      executionModelLog: {
+        findMany: jest.fn() as jest.Mock,
+        create: jest.fn() as jest.Mock,
       },
       $transaction: jest.fn() as jest.Mock,
       $: jest.fn() as jest.Mock,
@@ -171,6 +192,55 @@ jest.mock('@/server/db-client', () => {
         return callback(mockDb);
       }
       return Promise.all(callback);
+    });
+
+    // Ensure both create and createMany reference the same mock so tests
+    // that assert either will pass regardless of which one the code calls.
+    mockDb.requestChangeLog.create = mockDb.requestChangeLog.createMany;
+
+    // sensible defaults to avoid many tests failing due to missing lookups
+    (mockDb.requestCategory.findUnique as jest.Mock).mockResolvedValue({
+      id: 'cat-1',
+      name: 'Category 1',
+      subcategories: [],
+      hierarchyLevel: { position: 1, hierarchy: { levels: [{ id: 'lvl-1' }] } },
+    });
+    (mockDb.assignmentCategory.findUnique as jest.Mock)?.mockResolvedValue?.({
+      id: 'assign-cat-1',
+      name: 'Assignment Category 1',
+      subcategories: [],
+      hierarchyLevel: { position: 1, hierarchy: { levels: [{ id: 'lvl-1' }] } },
+    });
+    (mockDb.requestDataroom.findUnique as jest.Mock).mockResolvedValue({ dataroom: { id: 'dataroom-1', name: 'Test Dataroom', createdAt: new Date() } });
+    (mockDb.userTenant.findUnique as jest.Mock).mockResolvedValue({
+      id: 'user-123',
+      person: { firstName: 'John', lastName: 'Doe' },
+      user: { email: 'john@example.com' },
+      userRoles: [
+        {
+          role: {
+            roleFeature: [
+              { feature: { key: 'request_create' } },
+              { feature: { key: 'request_edit' } },
+              { feature: { key: 'request_view' } },
+              { feature: { key: 'request_set_status' } },
+              { feature: { key: 'request_set_priority' } },
+            ],
+          },
+        },
+      ],
+      userAreas: [
+        {
+          area: {
+            id: 'area-1',
+            areaRole: [
+              {
+                areaRoleFeatures: [{ feature: { key: 'request_assign_user' } }, { feature: { key: 'request_scoped_create' } }],
+              },
+            ],
+          },
+        },
+      ],
     });
 
     return mockDb;
@@ -217,6 +287,10 @@ describe('Request Actions', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (currentSession as jest.Mock).mockResolvedValue(mockSession);
+    (requireUser as jest.Mock).mockImplementation(async () => {
+      const s = await (currentSession as any)();
+      return s?.user ?? s;
+    });
   });
 
   describe('upsertRequest', () => {
@@ -476,8 +550,20 @@ describe('Request Actions', () => {
       };
 
       (mockDb.request.findUniqueOrThrow as jest.Mock).mockResolvedValue(mockRequest);
-      (mockDb.requestCategory.findMany as jest.Mock).mockResolvedValue([{ id: 'cat-1', name: 'Category 1', parentCategoryId: null }]);
-      (mockDb.assignmentCategory.findMany as jest.Mock).mockResolvedValue([{ id: 'assign-cat-1', name: 'Assignment Category 1', parentCategoryId: null }]);
+      (mockDb.requestCategory.findMany as jest.Mock).mockResolvedValue([
+        {
+          id: 'cat-1',
+          name: 'Category 1',
+          parentCategoryId: null,
+        },
+      ]);
+      (mockDb.assignmentCategory.findMany as jest.Mock).mockResolvedValue([
+        {
+          id: 'assign-cat-1',
+          name: 'Assignment Category 1',
+          parentCategoryId: null,
+        },
+      ]);
 
       const result = await getRequestById(mockTenantId, mockRequestId);
 

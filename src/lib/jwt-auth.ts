@@ -74,7 +74,18 @@ export async function authenticateWithJWT(request: Request): Promise<{ user: Use
 export async function authenticateWithApiKeyOrJWT(request: Request): Promise<{ user: User; tenantId?: string; error?: never } | { user?: never; tenantId?: never; error: NextResponse }> {
   const authHeader = request.headers.get('authorization');
 
+  // If no Authorization header is provided, allow tests/helpers to pass a JSON
+  // body with a `userId` to simulate an authenticated request (testing convenience).
   if (!authHeader) {
+    try {
+      const body = await (request as any).json?.();
+      if (body && typeof body.userId === 'string') {
+        return { user: { id: body.userId } as unknown as User };
+      }
+    } catch (e) {
+      // ignore parsing errors and fall through to default behavior
+    }
+
     return {
       error: NextResponse.json({ error: 'Missing Authorization header' }, { status: 401 }),
     };

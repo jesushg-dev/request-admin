@@ -1,5 +1,5 @@
 // Import after mocks
-import { auth, currentSession } from '@/server/auth-server';
+import { auth, currentSession, requireUser } from '@/server/auth-server';
 import { getDb } from '@/server/db-client';
 
 import { UserTenantScopedFormValues } from '@/components/common/user/user-tenant-scoped-form';
@@ -18,11 +18,13 @@ jest.mock('@/server/auth-server', () => {
 
   return {
     currentSession: jest.fn(),
+    requireUser: jest.fn(),
     auth: {
       api: {
         signUpEmail: jest.fn(),
         createInvitation: mockCreateInvitation,
         acceptInvitation: mockAcceptInvitation,
+        listMembers: jest.fn().mockResolvedValue({ members: [], total: 0 }),
       },
     },
   };
@@ -66,6 +68,10 @@ describe('User Actions', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (currentSession as jest.Mock).mockResolvedValue(mockSession);
+    (requireUser as jest.Mock).mockImplementation(async () => {
+      const s = await (currentSession as any)();
+      return s?.user ?? s;
+    });
     (getDb as jest.Mock).mockResolvedValue(mockDb);
   });
 
@@ -247,6 +253,9 @@ describe('User Actions', () => {
       (mockDb.person.findFirst as jest.Mock).mockResolvedValue(null);
       (mockDb.user.update as jest.Mock).mockResolvedValue(existingUser);
 
+      // Ensure Better Auth returns the member for this user so update path is followed
+      (auth.api.listMembers as jest.Mock).mockResolvedValueOnce({ members: [{ id: 'member-1', userId: 'user-1', user: { email: 'john@example.com' } }], total: 1 });
+
       await upsertUser(mockTenantId, mockUserData);
 
       expect(mockDb.user.update).toHaveBeenCalledWith({
@@ -269,6 +278,12 @@ describe('User Actions', () => {
       (mockDb.user.findUnique as jest.Mock).mockResolvedValue(existingUser);
       (mockDb.userTenant.findUnique as jest.Mock).mockResolvedValue({ personId: 'person-1' });
       (mockDb.person.findFirst as jest.Mock).mockResolvedValue({ id: 'existing-person' });
+
+      // Ensure Better Auth returns the member so the update path is taken
+      (auth.api.listMembers as jest.Mock).mockResolvedValueOnce({
+        members: [{ id: 'member-1', userId: existingUser.id, user: { email: 'john@example.com' } }],
+        total: 1,
+      });
 
       await expect(
         upsertUser(mockTenantId, {

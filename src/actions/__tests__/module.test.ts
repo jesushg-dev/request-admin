@@ -6,6 +6,7 @@ import { getModuleByTenantIdAndScope } from '../module';
 // Mock the dependencies
 jest.mock('@/server/auth-server', () => ({
   currentSession: jest.fn(),
+  requireUser: jest.fn(),
 }));
 
 const mockDb = {

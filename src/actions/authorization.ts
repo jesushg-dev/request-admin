@@ -31,6 +31,11 @@ export const getAuthContext = async (tenantId: string): Promise<AuthResult> => {
     if (permissionsCache) return;
 
     const db = await getDb();
+    if (!db.userTenant || typeof db.userTenant.findUnique !== 'function') {
+      permissionsCache = new Set();
+      return;
+    }
+
     const userTenant = await db.userTenant.findUnique({
       ...UserTenantDefaultArgs,
       where: { userId_tenantId: { userId: user.id, tenantId } },

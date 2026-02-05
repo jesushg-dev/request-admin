@@ -88,6 +88,32 @@ env: {
 }
 ```
 
+### Desarrollo local de temas del Runner
+
+Si quieres desarrollar o probar temas localmente para el Test Runner, puedes usar la carpeta `cypress/themes` del proyecto:
+
+1. Crea `cypress/themes` y coloca `light.css`, `dark.css` o `colorblind.css` allí (ya hay un `light.css` de ejemplo).
+2. Activa el modo local exportando la variable de entorno antes de lanzar Cypress:
+
+```bash
+# Linux / macOS
+export CYPRESS_RUNNER_THEMES_LOCAL=true
+
+# Windows PowerShell
+$env:CYPRESS_RUNNER_THEMES_LOCAL='true'
+```
+
+3. Abre Cypress (o ejecútalo) y pasa `env.theme` al valor que quieras probar:
+
+```bash
+pnpm run cypress:open -- --env theme=light
+pnpm run cypress:run:headed -- --env theme=light
+```
+
+La configuración hace que el paquete `cypress-runner-themes` lea los archivos CSS desde `cypress/themes` en lugar de su carpeta interna, permitiendo edición rápida sin publicar el paquete.
+
+```
+
 ### Configuración de Viewport
 
 - Ancho: 1920px
@@ -97,15 +123,17 @@ env: {
 ## Estructura de Archivos
 
 ```
+
 cypress/
 ├── e2e/
-│   └── request/
-│       ├── create-priority.cy.ts
-│       └── create-workflow.cy.ts
+│ └── request/
+│ ├── create-priority.cy.ts
+│ └── create-workflow.cy.ts
 ├── support/
-│   └── commands.ts
+│ └── commands.ts
 ├── cypress.config.ts
 └── README.md
+
 ```
 
 ## Data Test IDs
@@ -141,3 +169,4 @@ Para debugging, puedes:
 - Usar `cy.pause()` en puntos específicos
 - Agregar `cy.wait(1000)` para pausas temporales
 - Usar `cy.screenshot()` para capturar el estado en puntos críticos
+```

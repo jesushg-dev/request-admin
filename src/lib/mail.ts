@@ -1,9 +1,19 @@
+import { env } from '@/env';
 import { Resend } from 'resend';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 const domain = process.env.NEXT_PUBLIC_APP_URL || 'http://127.0.0.1:3000';
 const emailDomain = process.env.RESEND_EMAIL_DOMAIN || 'resend.dev';
+
+const resend = env.ENABLE_EXTERNAL_EMAIL && env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
+
+async function safeSendEmail(args: Parameters<Resend['emails']['send']>[0]) {
+  if (!env.ENABLE_EXTERNAL_EMAIL || !resend) {
+    console.warn('Email sending is disabled (ENABLE_EXTERNAL_EMAIL=false); skipping send.', { to: args.to, subject: args.subject });
+    return;
+  }
+
+  await resend.emails.send(args);
+}
 
 export const sendTwoFactorTokenEmail = async (email: string, token: string) => {
   await resend.emails.send({

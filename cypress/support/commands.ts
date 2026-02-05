@@ -123,8 +123,38 @@ Cypress.Commands.add('connectNodes', (sourceSelector, targetSelector) => {
 Cypress.Commands.add('addWorkflowNode', (name, type, color = 'Gray') => {
   cy.log(`Adding workflow node: ${name} of type: ${type} and color: ${color}`);
 
-  // Click add node button
-  cy.get('[data-testid="add-node-button"]').click();
+  // If the add-state form is already open, skip clicking the add button
+  cy.get('input[placeholder="Enter state name"]', { timeout: 2000 }).then(($in) => {
+    if ($in.length) {
+      cy.log('Add state form already open, skipping add button click');
+    } else {
+      // Try multiple ways to open the add-state form: test id, visible '+' button, or controls
+      cy.get('body').then(($body) => {
+        if ($body.find('[data-testid="add-node-button"]').length) {
+          cy.get('[data-testid="add-node-button"]').click({ force: true });
+        } else if ($body.find('button[aria-label*="add"]').length) {
+          cy.get('button[aria-label*="add"]').first().click({ force: true });
+        } else if ($body.find('button').filter((i, el) => el.innerText && el.innerText.trim() === '+').length) {
+          cy.get('button')
+            .filter((i, el) => el.innerText && el.innerText.trim() === '+')
+            .first()
+            .click({ force: true });
+        } else if ($body.find('.react-flow__controls button').length) {
+          cy.get('.react-flow__controls button').first().click({ force: true });
+        } else {
+          // Last resort: try clicking any small circle plus-looking control
+          cy.get('button').then(($btns) => {
+            const plus = Array.from($btns).find((b) => b.innerText && b.innerText.trim() === '+');
+            if (plus) {
+              cy.wrap(plus).click({ force: true });
+            } else {
+              throw new Error('Could not find add-node control to open the add state form');
+            }
+          });
+        }
+      });
+    }
+  });
 
   // Wait for the form to appear
   cy.get('input[placeholder="Enter state name"]').should('be.visible').clear().type(name);

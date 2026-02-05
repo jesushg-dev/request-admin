@@ -1,4 +1,4 @@
-import { currentSession } from '@/server/auth-server';
+import { currentSession, requireUser } from '@/server/auth-server';
 import { getDb } from '@/server/db-client';
 
 import { CreateRequestPriorityType, getRequestPriorityTypeAsFormById, getRequestPriorityTypesAsOptions, UpdateRequestPriorityType } from '../priority';
@@ -6,6 +6,7 @@ import { CreateRequestPriorityType, getRequestPriorityTypeAsFormById, getRequest
 // Mock the dependencies
 jest.mock('@/server/auth-server', () => ({
   currentSession: jest.fn(),
+  requireUser: jest.fn(),
 }));
 
 const mockDb = {
@@ -30,6 +31,10 @@ describe('Priority Actions', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (currentSession as jest.Mock).mockResolvedValue(mockSession);
+    (requireUser as jest.Mock).mockImplementation(async () => {
+      const s = await (currentSession as any)();
+      return s?.user ?? s;
+    });
     (getDb as jest.Mock).mockResolvedValue(mockDb);
   });
 

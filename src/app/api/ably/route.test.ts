@@ -11,6 +11,7 @@ import { POST } from './route';
 // Mock external dependencies
 jest.mock('@/server/auth-server', () => ({
   currentSession: jest.fn(),
+  requireUser: jest.fn(),
 }));
 
 const mockDb = {

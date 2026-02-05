@@ -1,6 +1,6 @@
 // Import after mocks
 import { redirect } from '@/i18n/routing';
-import { currentSession } from '@/server/auth-server';
+import { currentSession, requireUser } from '@/server/auth-server';
 import { getDb } from '@/server/db-client';
 
 import { getTenantIdFromUrl, getTenantInformation } from '../tenant';
@@ -8,6 +8,7 @@ import { getTenantIdFromUrl, getTenantInformation } from '../tenant';
 // Mock external dependencies
 jest.mock('@/server/auth-server', () => ({
   currentSession: jest.fn(),
+  requireUser: jest.fn(),
 }));
 
 const mockDb = {
@@ -51,6 +52,10 @@ describe('Tenant Actions', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (currentSession as jest.Mock).mockResolvedValue(mockSession);
+    (requireUser as jest.Mock).mockImplementation(async () => {
+      const s = await (currentSession as any)();
+      return s?.user ?? s;
+    });
   });
 
   describe('getTenantIdFromUrl', () => {

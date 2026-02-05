@@ -1,9 +1,18 @@
-import { currentSession } from '@/server/auth-server';
+import { currentSession, requireUser } from '@/server/auth-server';
 import { getDb } from '@/server/db-client';
 
 import { AuthorizationError, ValidationError } from '@/lib/error';
 
-import { updateCurrentAssignedUsers, updateCurrentClassification, updateCurrentPriority, updateCurrentStatus } from '../request-assignment';
+// Mock authorization helpers before importing the module under test so the
+// module picks up the mocked `getAuthContext` during evaluation.
+jest.mock('@/actions/authorization', () => ({
+  getAuthContext: jest.fn().mockResolvedValue({
+    hasPermissions: jest.fn().mockReturnValue(true),
+    hasAreaPermissions: jest.fn().mockReturnValue(true),
+  }),
+}));
+
+const { updateCurrentAssignedUsers, updateCurrentClassification, updateCurrentPriority, updateCurrentStatus } = require('../request-assignment');
 
 // Mock the database
 const mockDb: any = {
@@ -13,8 +22,18 @@ const mockDb: any = {
     updateMany: jest.fn(),
     create: jest.fn(),
   },
+  request: {
+    findUnique: jest.fn(),
+    findUniqueOrThrow: jest.fn(),
+    findFirst: jest.fn(),
+  },
   requestChangeLog: {
     create: jest.fn(),
+  },
+  userTenant: {
+    findUnique: jest.fn(),
+    findFirst: jest.fn(),
+    findMany: jest.fn(),
   },
 };
 
@@ -25,6 +44,7 @@ jest.mock('@/server/db-client', () => ({
 // Mock auth
 jest.mock('@/server/auth-server', () => ({
   currentSession: jest.fn(),
+  requireUser: jest.fn(),
 }));
 
 // Mock notification
@@ -47,12 +67,21 @@ describe('Request Assignment Actions', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (currentSession as jest.Mock).mockResolvedValue(mockSession);
+    (requireUser as jest.Mock).mockImplementation(async () => {
+      const s = await (currentSession as any)();
+      return s?.user ?? s;
+    });
     (getDb as jest.Mock).mockResolvedValue(mockDb);
+    (mockDb.userTenant.findUnique as jest.Mock).mockResolvedValue({
+      id: 'user-123',
+      userRoles: [{ role: { roleFeature: [{ feature: { key: 'request_set_status' } }, { feature: { key: 'request_set_priority' } }] } }],
+      userAreas: [{ area: { id: 'area-1', areaRole: [{ areaRoleFeatures: [{ feature: { key: 'request_assign_user' } }] }] } }],
+    });
     (mockDb.$transaction as jest.Mock).mockImplementation(async (operations) => {
       if (Array.isArray(operations)) {
         return Promise.all(operations);
       }
-      return operations();
+      return operations(mockDb);
     });
   });
 

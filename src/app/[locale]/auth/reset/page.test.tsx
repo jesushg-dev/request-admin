@@ -8,6 +8,8 @@ import ResetForm from './page';
 jest.mock('@/server/auth-client', () => ({
   authClient: {
     forgetPassword: jest.fn().mockResolvedValue({}),
+    resetPassword: jest.fn().mockResolvedValue({}),
+    requestPasswordReset: jest.fn().mockResolvedValue({}),
   },
 }));
 
@@ -45,7 +47,7 @@ describe('ResetForm', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(authClient.resetPassword).toHaveBeenCalledWith(
+      expect(authClient.requestPasswordReset).toHaveBeenCalledWith(
         {
           email: 'test@example.com',
           redirectTo: '/auth/new-password',

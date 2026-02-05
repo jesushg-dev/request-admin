@@ -1,0 +1,83 @@
+/* Aggressive light theme overrides for Cypress Test Runner (local development)
+	 This file is injected into the parent Test Runner document when
+	 CYPRESS_RUNNER_THEMES_LOCAL=true and --env theme=light
+*/
+
+:root{
+	--runner-bg: #ffffff !important;
+	--runner-surface: #ffffff !important;
+	--runner-muted: #f3f4f6 !important;
+	--runner-border: #e6e7eb !important;
+	--runner-text: #0f172a !important;
+	--runner-subtext: #475569 !important;
+}
+
+html, body, #app, #unified-reporter, .reporter, .reporter .container, .reporter .wrap, .aut-url-container, .specs-list-container, .runnable-header, .container, #main-pane {
+	background: var(--runner-bg) !important;
+	color: var(--runner-text) !important;
+}
+
+/* Sidebar and nav */
+#sidebar, nav, .space-y-1, .v-popper, .sidebar, .aut-url-container, .specs-list-panel, .reporter { 
+	background: var(--runner-surface) !important;
+	border-color: var(--runner-border) !important;
+}
+
+/* Text colors */
+.text-gray-50, .text-white, .text-gray-900, .text-gray-800 { color: var(--runner-text) !important; }
+.text-gray-500, .text-gray-600, .text-gray-700 { color: var(--runner-subtext) !important; }
+
+/* List items and panels */
+.runnables, .runnable, .collapsible-header, .collapsible-header-inner, .collapsible-content, .command-wrapper, .command-wrapper-container {
+	background: transparent !important;
+	color: inherit !important;
+	border-color: var(--runner-border) !important;
+}
+
+/* Badge / stats colors */
+.stats li.passed, .icon-dark-jade-400, .icon-dark-jade-600, .icon-light-jade-300 { color: #16a34a !important; fill: #16a34a !important; }
+.stats li.failed, .icon-dark-red-400 { color: #dc2626 !important; fill: #dc2626 !important; }
+.stats li.pending, .icon-dark-gray-400 { color: #6b7280 !important; fill: #6b7280 !important; }
+
+/* Buttons and controls */
+.cy-button-width, button, .toggle-specs-button, .runnable-options-button, .restart, .launch-studio-button {
+	background: linear-gradient(#ffffff,#f8fafc) !important;
+	color: var(--runner-text) !important;
+	border-color: var(--runner-border) !important;
+}
+
+/* Reporter header / spec list */
+.spec-file-name, .spec-name, .duration, .runnable-title { color: var(--runner-text) !important; }
+
+/* Force icons and svgs to inherit color */
+svg, svg path { fill: currentColor !important; stroke: currentColor !important; }
+
+/* Inputs / labels in runner command list */
+input, textarea, .command-message-text, .command-info, .command-method { color: var(--runner-text) !important; background: transparent !important; }
+
+/* Force removal of dark-only utility classes used by the runner UI */
+.force-dark, .bg-gray-1000, .bg-gray-1100, .border-gray-900, .text-gray-50, .text-gray-600, .text-gray-700, .bg-gray-950, .bg-gray-900 {
+	background: var(--runner-bg) !important;
+	color: var(--runner-text) !important;
+	border-color: var(--runner-border) !important;
+}
+
+/* Ensure aut panel background is light */
+.aut-iframe, .aut-iframe, .spec-iframe, #unified-runner, .screenshot-height-container { background: #ffffff !important; }
+
+/* Last resort: very high specificity overrides for common runner elements */
+body #__cypress *:where(.reporter, .reporter * , #unified-reporter, #unified-reporter * , .runnable, .runnable *) {
+	background: var(--runner-bg) !important;
+	color: var(--runner-text) !important;
+}
+
+/* Make sure panels that use gradients or images switch to light */
+.bg-gradient-to-b, .bg-jade-50, .bg-indigo-50 { background: transparent !important; }
+
+/* small helpers */
+.viewport-tag { background: var(--runner-border) !important; color: var(--runner-text) !important; }
+
+/* Keep reporter white cards visible */
+.reporter .container .wrap .runnables { background: transparent !important; }
+
+/* End of overrides */

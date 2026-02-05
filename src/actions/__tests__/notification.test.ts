@@ -1,6 +1,6 @@
 // Import after ALL mocks
 import { createNotification, deleteNotification, sendEmailNotification, sendSMSNotification, sendWhatsAppNotification } from '@/actions/notification';
-import { currentSession } from '@/server/auth-server';
+import { currentSession, requireUser } from '@/server/auth-server';
 import { getDb } from '@/server/db-client';
 
 import { NotificationTypeEnum } from '@/types/notification';
@@ -77,6 +77,7 @@ jest.mock('@/server/auth-server', () => ({
   currentSession: jest.fn().mockResolvedValue({
     user: { id: 'user-123', isGlobalAdmin: false },
   }),
+  requireUser: jest.fn(),
 }));
 
 jest.mock('sonner', () => ({
@@ -105,6 +106,10 @@ describe('Notification Server Actions', () => {
     jest.clearAllMocks();
     (currentSession as jest.Mock).mockResolvedValue({
       user: { id: 'user-123', isGlobalAdmin: false },
+    });
+    (requireUser as jest.Mock).mockImplementation(async () => {
+      const s = await (currentSession as any)();
+      return s?.user ?? s;
     });
     (getDb as jest.Mock).mockResolvedValue(mockDb);
     (console.error as jest.Mock).mockClear();

@@ -217,6 +217,7 @@ export const updateCurrentStatus = async (tenantId: UUID, requestId: UUID, statu
 };
 
 export const updateCurrentPriority = async (tenantId: UUID, requestId: UUID, priorityId: UUID, metadata: RequestMetadata): Promise<{ priorityId: UUID }> => {
+
   const session = await currentSession();
   if (!session?.user?.id) throw new AuthorizationError('Authentication required');
 

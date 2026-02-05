@@ -98,6 +98,10 @@ const config: Config = {
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^@/server/auth-server$': '<rootDir>/__mocks__/server/auth-server.ts',
+    '^jose(.*)$': '<rootDir>/__mocks__/jose.js',
+    '^uuid(.*)$': '<rootDir>/__mocks__/uuid.js',
+    '^next-intl(.*)$': '<rootDir>/__mocks__/next-intl.js',
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
@@ -169,9 +173,7 @@ const config: Config = {
   // ],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
-  // testPathIgnorePatterns: [
-  //   "\\\\node_modules\\\\"
-  // ],
+  testPathIgnorePatterns: ['<rootDir>/cypress/', '\\\\node_modules\\\\'],
 
   // The regexp pattern or array of patterns that Jest uses to detect test files
   // testRegex: [],
@@ -186,7 +188,8 @@ const config: Config = {
   // transform: undefined,
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
-  transformIgnorePatterns: ['node_modules/(?!next-intl|uncrypto|better-auth|better-call|@zenstackhq|@prisma|@tanstack)'],
+  // Allow transforming certain ESM packages inside node_modules (pnpm layout)
+  transformIgnorePatterns: ['node_modules/(?!(uuid|jose|next-intl|@better-auth|@better-auth/sso|uncrypto|better-auth|better-call|@zenstackhq|@prisma|@tanstack)/)'],
 
   // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them
   // unmockedModulePathPatterns: undefined,

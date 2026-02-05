@@ -11,6 +11,8 @@ export default defineConfig({
     env: {
       TEST_USER_EMAIL: 'jess232016@gmail.com',
       TEST_USER_PASSWORD: 'Lamisma123*',
+      // Theme for Cypress Test Runner: 'dark' | 'light' | 'colorblind'
+      theme: 'light',
     },
     viewportWidth: 1920,
     viewportHeight: 1080,

@@ -1,4 +1,4 @@
-import { currentSession } from '@/server/auth-server';
+import { currentSession, requireUser } from '@/server/auth-server';
 import { getDb } from '@/server/db-client';
 
 import { getAuthContext } from '../authorization';
@@ -6,6 +6,7 @@ import { getAuthContext } from '../authorization';
 // Mock the dependencies
 jest.mock('@/server/auth-server', () => ({
   currentSession: jest.fn(),
+  requireUser: jest.fn(),
 }));
 
 const mockDb = {
@@ -25,6 +26,10 @@ describe('Authorization Module', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (getDb as jest.Mock).mockResolvedValue(mockDb);
+    (requireUser as jest.Mock).mockImplementation(async () => {
+      const s = await (currentSession as any)();
+      return s?.user ?? s;
+    });
   });
 
   describe('getAuthContext', () => {
