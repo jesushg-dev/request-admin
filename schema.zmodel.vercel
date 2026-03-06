@@ -2,7 +2,7 @@ import './zmodel/tenant.zmodel'
 import './zmodel/theme.zmodel'
 
 plugin hooks {
-  provider = '@zenstackhq/tanstack-query'
+  provider = 'node_modules/@zenstackhq/tanstack-query'
   target = 'react'
   version = 'v5'
   output = "./src/services/api/hooks"

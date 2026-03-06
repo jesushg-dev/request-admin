@@ -4,7 +4,11 @@ import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 
 import { useTenantContext } from './tenant-provider';
-import { parseThemeColors, mergeThemeColors, type ThemeColorKey } from '@/types/theme-colors';
+import {
+  parseThemeColors,
+  mergeThemeColors,
+  defaultExtendedStyleProps,
+} from '@/types/theme-colors';
 import { generateThemeColors } from '@/lib/color-utils';
 
 /**
@@ -40,8 +44,12 @@ export function TenantThemeProvider({ children }: { children: React.ReactNode })
       };
     }
 
-    // Merge with defaults
-    const mergedColors = mergeThemeColors(tenantThemeColors);
+    // Merge with defaults (colors + extended props: fonts, radius, shadows)
+    const merged = mergeThemeColors(tenantThemeColors);
+    const mergedColors = {
+      light: { ...defaultExtendedStyleProps, ...merged.light },
+      dark: { ...defaultExtendedStyleProps, ...merged.dark },
+    };
 
     // Determine if we're in dark mode
     const isDark = 
@@ -52,7 +60,6 @@ export function TenantThemeProvider({ children }: { children: React.ReactNode })
 
     // Apply all colors to CSS variables
     const applyColors = (colorMap: typeof colors) => {
-      if (!colorMap) return;
       Object.entries(colorMap).forEach(([key, value]) => {
         if (value) {
           root.style.setProperty(`--${key}`, value);

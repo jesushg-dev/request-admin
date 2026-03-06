@@ -39,6 +39,11 @@ export const ThemeColorsPreview: FC<ThemeColorsPreviewProps> = ({ colors, mode }
   const borderColor = getColor('border') || (mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : '#e5e5e5');
   const mutedColor = getColor('muted') || (mode === 'dark' ? '#404040' : '#f5f5f5');
   const destructiveColor = getColor('destructive') || '#ef4444';
+  const accentColor = getColor('accent') || (mode === 'dark' ? '#404040' : '#f5f5f5');
+  const ringColor = getColor('ring') || (mode === 'dark' ? '#71717a' : '#a1a1aa');
+  const chartColors = [1, 2, 3, 4, 5].map(
+    (i) => getColor(`chart-${i}` as keyof ThemeColors) || primaryColor
+  );
 
   return (
     <div
@@ -156,6 +161,29 @@ export const ThemeColorsPreview: FC<ThemeColorsPreviewProps> = ({ colors, mode }
               <XCircle className="h-4 w-4" />
               <AlertDescription>Error message here.</AlertDescription>
             </Alert>
+          </div>
+        </div>
+
+        {/* Chart colors bar */}
+        <div className="space-y-2">
+          <p className="text-sm font-medium opacity-70">Chart colors</p>
+          <div className="flex gap-1 h-8 rounded overflow-hidden">
+            {chartColors.map((fill, i) => (
+              <div key={i} className="flex-1 min-w-0" style={{ backgroundColor: fill }} title={`chart-${i + 1}`} />
+            ))}
+          </div>
+        </div>
+
+        <Separator style={{ backgroundColor: borderColor }} />
+
+        {/* Accent / focus ring */}
+        <div className="space-y-2">
+          <p className="text-sm font-medium opacity-70">Accent & ring</p>
+          <div
+            className="rounded-md p-3 border-2 transition-colors"
+            style={{ backgroundColor: accentColor, borderColor: ringColor }}
+          >
+            <span style={{ color: fgColor }}>Focus ring / accent block</span>
           </div>
         </div>
 

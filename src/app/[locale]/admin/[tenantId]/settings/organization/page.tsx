@@ -34,7 +34,7 @@ const EditPage: FC<EditPageProps> = async ({ params }) => {
           organizationId: tenantId,
         }}
       />
-      <ThemeColorsForm initialThemeColors={(organization as any).themeColors} />
+      <ThemeColorsForm initialThemeColors={organization.themeColors} />
       <FeatureFlagsManager tenantId={tenantId} />
     </div>
   );

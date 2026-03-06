@@ -128,6 +128,8 @@ export * from './message';
 export * from './reaction';
 export * from './person';
 export * from './identification-type';
+export * from './theme';
+export * from './ai-usage';
 export { getQueryKey } from '@zenstackhq/tanstack-query/runtime-v5';
 export { Provider } from '@zenstackhq/tanstack-query/runtime-v5/react';
 export { default as metadata } from './__model_meta';

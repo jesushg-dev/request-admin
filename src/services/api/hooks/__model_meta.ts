@@ -15119,6 +15119,91 @@ const metadata: ModelMeta = {
         },
       },
     },
+    theme: {
+      name: 'Theme',
+      fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+        },
+        userId: {
+          name: 'userId',
+          type: 'String',
+        },
+        name: {
+          name: 'name',
+          type: 'String',
+        },
+        styles: {
+          name: 'styles',
+          type: 'String',
+          attributes: [{ name: '@default', args: [{ name: 'value', value: '{}' }] }],
+        },
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          attributes: [{ name: '@updatedAt', args: [] }],
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
+    aiUsage: {
+      name: 'AiUsage',
+      fields: {
+        id: {
+          name: 'id',
+          type: 'String',
+          isId: true,
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+        },
+        userId: {
+          name: 'userId',
+          type: 'String',
+        },
+        modelId: {
+          name: 'modelId',
+          type: 'String',
+        },
+        promptTokens: {
+          name: 'promptTokens',
+          type: 'Int',
+          attributes: [{ name: '@default', args: [{ name: 'value', value: 0 }] }],
+        },
+        completionTokens: {
+          name: 'completionTokens',
+          type: 'Int',
+          attributes: [{ name: '@default', args: [{ name: 'value', value: 0 }] }],
+        },
+        daysSinceEpoch: {
+          name: 'daysSinceEpoch',
+          type: 'Int',
+          attributes: [{ name: '@default', args: [{ name: 'value', value: 0 }] }],
+        },
+        createdAt: {
+          name: 'createdAt',
+          type: 'DateTime',
+          attributes: [{ name: '@default', args: [{ name: 'value' }] }],
+        },
+      },
+      uniqueConstraints: {
+        id: {
+          name: 'id',
+          fields: ['id'],
+        },
+      },
+    },
   },
   deleteCascade: {
     user: ['UserTenant', 'InvitationTenant', 'Session', 'Account', 'TwoFactor', 'SsoProvider', 'Apikey', 'Passkey'],

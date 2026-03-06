@@ -155,3 +155,19 @@ export function mergeThemeColors(custom: TenantThemeColors | null): TenantThemeC
   };
 }
 
+// Re-export extended theme types (fonts, shadows, radius, etc.)
+export type {
+  ThemeStyleProps,
+  ExtendedThemeStyles,
+  HslAdjustments,
+  CommonStyleKey,
+} from './extended-theme';
+export {
+  COMMON_STYLE_KEYS,
+  defaultExtendedStyleProps,
+  defaultHslAdjustments,
+  isCommonStyleKey,
+  DEFAULT_FONT_SANS,
+  DEFAULT_FONT_SERIF,
+  DEFAULT_FONT_MONO,
+} from './extended-theme';

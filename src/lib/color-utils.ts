@@ -35,6 +35,69 @@ function parseColorToRgb(color: string): { r: number; g: number; b: number } | n
   }
 }
 
+/** HSL: h in [0,360), s and l in [0,1] */
+function rgbToHsl(r: number, g: number, b: number): { h: number; s: number; l: number } {
+  const rn = r / 255;
+  const gn = g / 255;
+  const bn = b / 255;
+  const max = Math.max(rn, gn, bn);
+  const min = Math.min(rn, gn, bn);
+  const l = (max + min) / 2;
+  let s = 0;
+  let h = 0;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    if (max === rn) h = ((gn - bn) / d + (gn < bn ? 6 : 0)) / 6;
+    else if (max === gn) h = ((bn - rn) / d + 2) / 6;
+    else h = ((rn - gn) / d + 4) / 6;
+  }
+  return { h: h * 360, s, l };
+}
+
+function hslToRgb(h: number, s: number, l: number): { r: number; g: number; b: number } {
+  const hue2rgb = (p: number, q: number, t: number) => {
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1 / 6) return p + (q - p) * 6 * t;
+    if (t < 1 / 2) return q;
+    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+    return p;
+  };
+  const hNorm = ((h % 360) + 360) % 360 / 360;
+  let r: number, g: number, b: number;
+  if (s === 0) {
+    r = g = b = l;
+  } else {
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    r = hue2rgb(p, q, hNorm + 1 / 3);
+    g = hue2rgb(p, q, hNorm);
+    b = hue2rgb(p, q, hNorm - 1 / 3);
+  }
+  return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
+}
+
+/**
+ * Adjust a color by HSL shifts. Returns OKLCH string for theme consistency.
+ * hueShift in degrees; saturationScale and lightnessScale are multipliers (e.g. 1 = no change).
+ */
+export function adjustColorByHsl(
+  color: string,
+  hueShift: number,
+  saturationScale: number,
+  lightnessScale: number
+): string {
+  const rgb = parseColorToRgb(color);
+  if (!rgb) return color;
+  const { h, s, l } = rgbToHsl(rgb.r, rgb.g, rgb.b);
+  const h2 = (((h + hueShift) % 360) + 360) % 360;
+  const s2 = Math.min(1, Math.max(0, s * saturationScale));
+  const l2 = Math.min(1, Math.max(0.01, l * lightnessScale));
+  const out = hslToRgb(h2, s2, l2);
+  return rgbToOklch(out.r, out.g, out.b);
+}
+
 /**
  * Converts RGB to OKLCH format
  * Uses proper OKLab conversion formulas

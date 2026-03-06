@@ -9,7 +9,7 @@ import { db } from '@/server/db-client';
 import { extractTenantId } from '@/lib/utils';
 import { TenantFormValues } from '@/components/common/tenant/tenant-form';
 
-class UserNotFoundErr extends Error { }
+class UserNotFoundErr extends Error {}
 
 export const getTenantIdFromUrl = async (url: string, redirectOnMissing: boolean = true): Promise<string> => {
   const tenantId = extractTenantId(url, locales);
@@ -66,7 +66,7 @@ export const getTenantInformation = async (tenantId: string): Promise<TenantForm
     contactEmail: response.contactEmail ?? undefined,
     contactPhone: response.contactPhone ?? undefined,
     address: response.address ?? undefined,
-  } as TenantFormValues & { themeColors?: string | null };
+  };
 };
 
 /**
@@ -137,20 +137,25 @@ export async function createTenantWithInitialization(data: {
   };
 }
 
-export const setActiveTenant = async (tenantId: string) => {
+/**
+ * Sets the active organization (tenant) in the session.
+ * Call this when the user selects a tenant so Better Auth stores activeOrganizationId.
+ * Uses raw Prisma (db) for the access check so it does not depend on ZenStack generate.
+ */
+export async function setActiveTenant(tenantId: string): Promise<void> {
   const session = await currentSession();
-  if (!session) throw new UserNotFoundErr('User not found');
-
-  try {
-    await auth.api.setActiveOrganization({
-      body: {
-        organizationId: tenantId,
-      },
-      headers: await headers(),
-    });
-    return { success: true };
-  } catch (error) {
-    console.error('Error setting active organization:', error);
-    return { success: false, error: 'Failed to set active organization' };
+  if (!session?.user) {
+    throw new Error('Unauthorized: You must be logged in to set active tenant');
   }
-};
+  const link = await db.userTenant.findUnique({
+    where: { userId_tenantId: { userId: session.user.id, tenantId } },
+    select: { isActive: true },
+  });
+  if (!link || !link.isActive) {
+    throw new Error('You do not have access to this organization');
+  }
+  await auth.api.setActiveOrganization({
+    body: { organizationId: tenantId },
+    headers: await headers(),
+  });
+}

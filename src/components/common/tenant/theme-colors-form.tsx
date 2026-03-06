@@ -1,13 +1,13 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { FC, useState, useRef, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { useTransition } from 'react';
-import { Palette, Sun, Moon, Save, RotateCcw, Eye } from 'lucide-react';
+import { Palette, Sun, Moon, Save, RotateCcw, Eye, Type, Settings2, SlidersHorizontal, Download } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,11 +28,34 @@ import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { ThemeColorsPreview } from './theme-colors-preview';
 import { authClient } from '@/server/auth-client';
-import { parseThemeColors, serializeThemeColors, type ThemeColorKey, defaultThemeColors } from '@/types/theme-colors';
+import {
+  parseThemeColors,
+  serializeThemeColors,
+  type ThemeColorKey,
+  defaultThemeColors,
+  defaultExtendedStyleProps,
+} from '@/types/theme-colors';
 import { colorToOklchSimple, oklchToColorPickerFormat } from '@/lib/color-utils';
+import {
+  FontStackSelect,
+  ShadowControl,
+  HslAdjustmentControls,
+} from '@/components/common/tenant/theme-editor';
+import { builtInPresetNames, getBuiltInPreset } from '@/lib/theme-presets';
+import { adjustColorByHsl } from '@/lib/color-utils';
+import type { HslAdjustments } from '@/types/theme-colors';
+import { defaultHslAdjustments } from '@/types/theme-colors';
+import { builtInPresetNames, getBuiltInPreset } from '@/lib/theme-presets';
 
 const themeColorKeys: { key: ThemeColorKey; label: string; description: string; category: string }[] = [
   // Base colors
@@ -108,12 +131,26 @@ export const ThemeColorsForm: FC<ThemeColorsFormProps> = ({ initialThemeColors }
   const t = useTranslations('tenants.organization.themeColors');
   const { tenantId } = useTenantContext();
   const [isPending, startTransition] = useTransition();
+  const [sectionTab, setSectionTab] = useState<'colors' | 'typography' | 'other' | 'adjustments'>(
+    'colors'
+  );
   const [activeTab, setActiveTab] = useState<'light' | 'dark'>('light');
+  const [presetSelectValue, setPresetSelectValue] = useState<string>('');
+  const [hslAdjustments, setHslAdjustments] = useState<HslAdjustments>(defaultHslAdjustments);
+  const baseThemeForHslRef = useRef<{ light: Record<string, string>; dark: Record<string, string> } | null>(null);
 
   const parsedColors = parseThemeColors(initialThemeColors);
   const defaultValues: ThemeColorsFormValues = {
-    light: parsedColors?.light ? { ...defaultThemeColors.light, ...parsedColors.light } : defaultThemeColors.light || {},
-    dark: parsedColors?.dark ? { ...defaultThemeColors.dark, ...parsedColors.dark } : defaultThemeColors.dark || {},
+    light: {
+      ...defaultThemeColors.light,
+      ...defaultExtendedStyleProps,
+      ...(parsedColors?.light ?? {}),
+    },
+    dark: {
+      ...defaultThemeColors.dark,
+      ...defaultExtendedStyleProps,
+      ...(parsedColors?.dark ?? {}),
+    },
   };
 
   const form = useForm<ThemeColorsFormValues>({
@@ -192,6 +229,50 @@ export const ThemeColorsForm: FC<ThemeColorsFormProps> = ({ initialThemeColors }
   const categories = Array.from(new Set(themeColorKeys.map((item) => item.category)));
   const totalColors = themeColorKeys.length;
   const watchedValues = form.watch();
+  const colorKeys = themeColorKeys.map((x) => x.key);
+
+  // When leaving Adjustments tab, clear base so next time we snapshot from current form
+  useEffect(() => {
+    if (sectionTab !== 'adjustments') baseThemeForHslRef.current = null;
+  }, [sectionTab]);
+
+  const applyHslToForm = (adj: HslAdjustments) => {
+    if (!baseThemeForHslRef.current) {
+      const vals = form.getValues();
+      baseThemeForHslRef.current = {
+        light: colorKeys.reduce(
+          (acc, k) => {
+            const v = vals.light?.[k];
+            if (typeof v === 'string') acc[k] = v;
+            return acc;
+          },
+          {} as Record<string, string>
+        ),
+        dark: colorKeys.reduce(
+          (acc, k) => {
+            const v = vals.dark?.[k];
+            if (typeof v === 'string') acc[k] = v;
+            return acc;
+          },
+          {} as Record<string, string>
+        ),
+      };
+    }
+    const base = baseThemeForHslRef.current;
+    const { hueShift, saturationScale, lightnessScale } = adj;
+    const newLight = { ...form.getValues().light };
+    const newDark = { ...form.getValues().dark };
+    colorKeys.forEach((key) => {
+      const lightVal = base.light[key] ?? defaultThemeColors.light?.[key as ThemeColorKey];
+      const darkVal = base.dark[key] ?? defaultThemeColors.dark?.[key as ThemeColorKey];
+      if (lightVal)
+        newLight[key] = adjustColorByHsl(lightVal, hueShift, saturationScale, lightnessScale);
+      if (darkVal)
+        newDark[key] = adjustColorByHsl(darkVal, hueShift, saturationScale, lightnessScale);
+    });
+    form.setValue('light', newLight);
+    form.setValue('dark', newDark);
+  };
 
   // Count how many colors are customized (different from defaults)
   const getCustomizedCount = (mode: 'light' | 'dark') => {
@@ -207,6 +288,22 @@ export const ThemeColorsForm: FC<ThemeColorsFormProps> = ({ initialThemeColors }
     form.setValue(mode, defaults);
     const modeLabel = mode === 'light' ? t('lightMode') : t('darkMode');
     toast.success(`${modeLabel} colors reset to defaults`);
+  };
+
+  const exportCss = () => {
+    const vals = form.getValues();
+    const light = { ...defaultThemeColors.light, ...defaultExtendedStyleProps, ...vals.light };
+    const dark = { ...defaultThemeColors.dark, ...defaultExtendedStyleProps, ...vals.dark };
+    const lightVars = Object.entries(light)
+      .filter(([, v]) => v != null && v !== '')
+      .map(([k, v]) => `  --${k}: ${v};`)
+      .join('\n');
+    const darkVars = Object.entries(dark)
+      .filter(([, v]) => v != null && v !== '')
+      .map(([k, v]) => `  --${k}: ${v};`)
+      .join('\n');
+    const css = `/* Light theme */\n:root {\n${lightVars}\n}\n\n/* Dark theme */\n@media (prefers-color-scheme: dark) {\n  :root {\n${darkVars}\n  }\n}\n`;
+    void navigator.clipboard.writeText(css).then(() => toast.success('CSS copied to clipboard'));
   };
 
   return (
@@ -230,6 +327,202 @@ export const ThemeColorsForm: FC<ThemeColorsFormProps> = ({ initialThemeColors }
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <Tabs
+              value={sectionTab}
+              onValueChange={(v) =>
+                setSectionTab(v as 'colors' | 'typography' | 'other' | 'adjustments')
+              }
+            >
+              <TabsList className="mb-4 grid w-full max-w-2xl grid-cols-4">
+                <TabsTrigger value="colors" className="flex items-center gap-2">
+                  <Palette className="h-4 w-4" />
+                  Colors
+                </TabsTrigger>
+                <TabsTrigger value="typography" className="flex items-center gap-2">
+                  <Type className="h-4 w-4" />
+                  Typography
+                </TabsTrigger>
+                <TabsTrigger value="other" className="flex items-center gap-2">
+                  <Settings2 className="h-4 w-4" />
+                  Other
+                </TabsTrigger>
+                <TabsTrigger value="adjustments" className="flex items-center gap-2">
+                  <SlidersHorizontal className="h-4 w-4" />
+                  Adjustments
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="typography" className="space-y-6 mt-4">
+                <p className="text-sm text-muted-foreground">
+                  Font stacks apply to both light and dark mode. Changes are saved with the theme.
+                </p>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <FontStackSelect
+                    kind="font-sans"
+                    value={watchedValues.light?.['font-sans']}
+                    onChange={(value) => {
+                      form.setValue('light.font-sans', value);
+                      form.setValue('dark.font-sans', value);
+                    }}
+                  />
+                  <FontStackSelect
+                    kind="font-serif"
+                    value={watchedValues.light?.['font-serif']}
+                    onChange={(value) => {
+                      form.setValue('light.font-serif', value);
+                      form.setValue('dark.font-serif', value);
+                    }}
+                  />
+                  <FontStackSelect
+                    kind="font-mono"
+                    value={watchedValues.light?.['font-mono']}
+                    onChange={(value) => {
+                      form.setValue('light.font-mono', value);
+                      form.setValue('dark.font-mono', value);
+                    }}
+                  />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="adjustments" className="mt-4 space-y-6">
+                <p className="text-sm text-muted-foreground">
+                  Global HSL adjustments applied to all theme colors. Use presets or sliders, then
+                  save to keep changes.
+                </p>
+                <HslAdjustmentControls
+                  hslAdjustments={hslAdjustments}
+                  onHslChange={(adj) => {
+                    setHslAdjustments(adj);
+                    applyHslToForm(adj);
+                  }}
+                  previewColors={{
+                    background:
+                      (watchedValues[activeTab]?.background as string) ??
+                      defaultThemeColors[activeTab]?.background ??
+                      'oklch(0.98 0 0)',
+                    primary:
+                      (watchedValues[activeTab]?.primary as string) ??
+                      defaultThemeColors[activeTab]?.primary ??
+                      'oklch(0.45 0.2 250)',
+                    secondary:
+                      (watchedValues[activeTab]?.secondary as string) ??
+                      defaultThemeColors[activeTab]?.secondary ??
+                      'oklch(0.55 0.15 250)',
+                  }}
+                />
+              </TabsContent>
+
+              <TabsContent value="other" className="space-y-6 mt-4">
+                <p className="text-sm text-muted-foreground">
+                  Border radius and shadow. Applied to both modes.
+                </p>
+                <div className="space-y-4">
+                  <div>
+                    <label className="mb-1.5 block text-xs font-medium">Border radius</label>
+                    <FormField
+                      control={form.control}
+                      name="light.radius"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <input
+                              className="border-input bg-background h-9 w-32 rounded-md border px-2 text-sm"
+                              value={field.value ?? defaultExtendedStyleProps.radius}
+                              onChange={(e) => {
+                                const v = e.target.value;
+                                field.onChange(v);
+                                form.setValue('dark.radius', v);
+                              }}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <span className="mb-2 block text-xs font-medium">Shadow</span>
+                    <ShadowControl
+                      shadowColor={
+                        (watchedValues.light?.['shadow-color'] as string) ??
+                        defaultExtendedStyleProps['shadow-color']
+                      }
+                      shadowOpacity={parseFloat(
+                        String(
+                          watchedValues.light?.['shadow-opacity'] ??
+                            defaultExtendedStyleProps['shadow-opacity']
+                        ).replace(/px/g, '')
+                      )}
+                      shadowBlur={parseFloat(
+                        String(
+                          watchedValues.light?.['shadow-blur'] ??
+                            defaultExtendedStyleProps['shadow-blur']
+                        ).replace(/px/g, '') || '3'
+                      )}
+                      shadowSpread={parseFloat(
+                        String(
+                          watchedValues.light?.['shadow-spread'] ??
+                            defaultExtendedStyleProps['shadow-spread']
+                        ).replace(/px/g, '') || '0'
+                      )}
+                      shadowOffsetX={parseFloat(
+                        String(
+                          watchedValues.light?.['shadow-offset-x'] ??
+                            defaultExtendedStyleProps['shadow-offset-x']
+                        ).replace(/px/g, '') || '0'
+                      )}
+                      shadowOffsetY={parseFloat(
+                        String(
+                          watchedValues.light?.['shadow-offset-y'] ??
+                            defaultExtendedStyleProps['shadow-offset-y']
+                        ).replace(/px/g, '') || '1'
+                      )}
+                      onChange={(key, value) => {
+                        const str =
+                          typeof value === 'number'
+                            ? key === 'shadow-opacity'
+                              ? String(value)
+                              : `${value}px`
+                            : value;
+                        form.setValue(`light.${key}` as any, str);
+                        form.setValue(`dark.${key}` as any, str);
+                      }}
+                    />
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="colors" className="mt-4">
+                <div className="mb-4 flex flex-wrap items-center gap-4">
+                  <span className="text-sm text-muted-foreground">Preset:</span>
+                  <Select
+                    value={presetSelectValue}
+                    onValueChange={(name) => {
+                      const preset = getBuiltInPreset(name);
+                      if (preset?.styles) {
+                        form.reset({
+                          light: { ...form.getValues().light, ...preset.styles.light },
+                          dark: { ...form.getValues().dark, ...preset.styles.dark },
+                        });
+                        toast.success(`Applied preset: ${preset.label}`);
+                        setPresetSelectValue('');
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="w-[200px]">
+                      <SelectValue placeholder="Apply a preset..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {builtInPresetNames.map((name) => {
+                        const preset = getBuiltInPreset(name);
+                        return (
+                          <SelectItem key={name} value={name}>
+                            {preset?.label ?? name}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                </div>
             <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'light' | 'dark')}>
               <div className="flex items-center justify-between mb-4">
                 <TabsList className="grid w-full max-w-md grid-cols-2">
@@ -385,12 +678,22 @@ export const ThemeColorsForm: FC<ThemeColorsFormProps> = ({ initialThemeColors }
                 </TabsContent>
               ))}
             </Tabs>
+              </TabsContent>
+            </Tabs>
 
             <div className="flex items-center justify-between pt-4 border-t">
               <div className="text-sm text-muted-foreground">
                 Light: {getCustomizedCount('light')} customized • Dark: {getCustomizedCount('dark')} customized
               </div>
               <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={exportCss}
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Export CSS
+                </Button>
                 <Button
                   type="button"
                   variant="outline"

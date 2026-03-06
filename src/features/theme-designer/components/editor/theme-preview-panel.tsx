@@ -30,7 +30,6 @@ import TabsTriggerPill from "./theme-preview/tabs-trigger-pill";
 const DemoCards = lazy(() => import("@/features/theme-designer/components/examples/cards"));
 const DemoMail = lazy(() => import("@/features/theme-designer/components/examples/mail"));
 const DemoDashboard = lazy(() => import("@/features/theme-designer/components/examples/dashboard"));
-const DemoPricing = lazy(() => import("@/features/theme-designer/components/examples/pricing/pricing"));
 const TypographyDemo = lazy(() => import("@/features/theme-designer/components/examples/typography/typography-demo"));
 const CustomDemo = lazy(() => import("@/features/theme-designer/components/examples/custom"));
 
@@ -93,7 +92,6 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
                 <TabsTriggerPill value="dashboard">Dashboard</TabsTriggerPill>
                 <TabsTriggerPill value="mail">Mail</TabsTriggerPill>
               </div>
-              <TabsTriggerPill value="pricing">Pricing</TabsTriggerPill>
               <TabsTriggerPill value="colors">Color Palette</TabsTriggerPill>
 
               <DropdownMenu>
@@ -191,35 +189,6 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
                       <DemoDashboard />
                     </div>
                     <ScrollBar orientation="horizontal" />
-                  </ScrollArea>
-                </ExamplesPreviewContainer>
-              </TabsContent>
-
-              <TabsContent value="pricing" className="@container mt-0 h-full space-y-6">
-                <ExamplesPreviewContainer className="size-full">
-                  <div className="absolute top-4 right-4 z-10">
-                    <Link
-                      href="https://shadcnblocks.com?utm_source=tweakcn&utm_medium=theme-editor-preview"
-                      target="_blank"
-                    >
-                      <Button variant="outline" className="group h-12 shadow-sm">
-                        <div className="flex items-center gap-2">
-                          <ShadcnBlocksLogo
-                            className="shrink-0"
-                            style={{ width: "24px", height: "24px" }}
-                          />
-                          <div className="text-left">
-                            <div className="font-bold">Shadcnblocks.com</div>
-                            <div className="text-muted-foreground group-hover:text-accent-foreground text-xs transition-colors">
-                              600+ extra shadcn blocks
-                            </div>
-                          </div>
-                        </div>
-                      </Button>
-                    </Link>
-                  </div>
-                  <ScrollArea className="size-full">
-                    <DemoPricing />
                   </ScrollArea>
                 </ExamplesPreviewContainer>
               </TabsContent>
