@@ -322,6 +322,18 @@ export async function upsertRequestCategory(category: RequestCategoryValues, ten
 }
 
 /**
+ * Fetches active workflows for a tenant (for request type creation)
+ */
+export async function getWorkflowsForRequestType(tenantId: string) {
+  const db = await getDb();
+  return db.requestWorkflow.findMany({
+    where: { tenantId, isActive: true },
+    select: { id: true, name: true },
+    orderBy: { name: 'asc' },
+  });
+}
+
+/**
  * Creates an initial parent category for a request type
  */
 export async function createInitialRequestCategory({
@@ -329,11 +341,13 @@ export async function createInitialRequestCategory({
   hierarchyLevelId,
   name,
   tenantId,
+  requestWorkflowId,
 }: {
   hierarchyId: string;
   hierarchyLevelId: string;
   name: string;
   tenantId: string;
+  requestWorkflowId?: string | null;
 }): Promise<string> {
   const db = await getDb();
 
@@ -348,6 +362,7 @@ export async function createInitialRequestCategory({
     description: '',
     isActive: true,
     isEligibleForNewClients: true,
+    requestWorkflowId: requestWorkflowId || undefined,
     sla: {
       id: slaId,
       resolutionTime: 24,
@@ -357,7 +372,7 @@ export async function createInitialRequestCategory({
     forms: [],
     guides: [],
     children: [],
-  } as RequestCategoryValues;
+  } as RequestCategoryValues & { requestWorkflowId?: string };
 
   const upsertArgs = buildRequestCategoryUpsertArgs(category, tenantId, hierarchyId);
   await db.requestCategory.upsert(upsertArgs);

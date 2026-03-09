@@ -9,6 +9,8 @@ export function buildRequestCategoryUpsertArgs(category: RequestCategoryValues, 
   const formIds = category.forms?.map((f) => String(f.value)) || [];
   const requirementIds = category.requirements?.map((r) => String(r.value)) || [];
 
+  const requestWorkflowId = (category as RequestCategoryValues & { requestWorkflowId?: string }).requestWorkflowId ?? null;
+
   return {
     where: { id: category.id },
     create: {
@@ -22,6 +24,7 @@ export function buildRequestCategoryUpsertArgs(category: RequestCategoryValues, 
       parentCategoryId: category.parentCategoryId || null,
       hierarchyId,
       hierarchyLevelId: category.hierarchyLevelId,
+      requestWorkflowId,
       // Create nested CategoryForms records from the provided forms array
       categoryForms: {
         create:
@@ -74,6 +77,7 @@ export function buildRequestCategoryUpsertArgs(category: RequestCategoryValues, 
       hierarchyId,
       parentCategoryId: category.parentCategoryId || null,
       hierarchyLevelId: category.hierarchyLevelId,
+      requestWorkflowId,
       // For nested CategoryForms, first delete any forms that are not present in the incoming data,
       // then upsert each provided form.
       categoryForms: {

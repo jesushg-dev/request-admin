@@ -17,8 +17,14 @@ import Select from '@/components/custom-ui/select';
 import { useTenantContext } from '@/components/hoc/tenant-provider';
 import { FormActions, FormContent, FormItem, FormRoot, FormSection } from '@/components/shared/form-root';
 
+interface RequestWorkflowOption {
+  id: string;
+  name: string;
+}
+
 interface CreateNewRequestTypeProps {
   requestHierarchies: RequestHierarchyWithLevelsType[];
+  requestWorkflows?: RequestWorkflowOption[];
 }
 
 function RequestTypeHierarchyView({ control, hierarchies }: { control: Control<TCreateRequestTypeSchema>; hierarchies: RequestHierarchyWithLevelsType[] }) {
@@ -28,13 +34,14 @@ function RequestTypeHierarchyView({ control, hierarchies }: { control: Control<T
   return <PillChain hierarchy={selectedHierarchy} />;
 }
 
-const CreateNewRequestType: FC<CreateNewRequestTypeProps> = ({ requestHierarchies }) => {
+const CreateNewRequestType: FC<CreateNewRequestTypeProps> = ({ requestHierarchies, requestWorkflows }) => {
   const t = useTranslations('admin.requestType.create');
   const router = useRouter();
   const { tenantId } = useTenantContext();
   const [isPending, startTransition] = useTransition();
 
   const hierarchyOptions = requestHierarchies.map((h) => ({ label: h.name, value: h.id }));
+  const workflowOptions = (requestWorkflows ?? []).map((w) => ({ label: w.name, value: w.id }));
 
   const createRequestTypeSchema = useCreateRequestTypeSchema();
 
@@ -42,6 +49,7 @@ const CreateNewRequestType: FC<CreateNewRequestTypeProps> = ({ requestHierarchie
     resolver: zodResolver(createRequestTypeSchema),
     defaultValues: {
       hierarchyId: hierarchyOptions[0] || { value: '', label: '' },
+      workflowId: undefined,
       parentCategoryName: '',
     },
     mode: 'onBlur',
@@ -68,6 +76,7 @@ const CreateNewRequestType: FC<CreateNewRequestTypeProps> = ({ requestHierarchie
           hierarchyLevelId: firstLevel.id,
           name: values.parentCategoryName,
           tenantId,
+          requestWorkflowId: values.workflowId?.value ? String(values.workflowId.value) : null,
         });
 
         toast.success(t('parentCategoryCreated'));
@@ -101,6 +110,24 @@ const CreateNewRequestType: FC<CreateNewRequestTypeProps> = ({ requestHierarchie
             />
 
             <RequestTypeHierarchyView control={form.control} hierarchies={requestHierarchies} />
+
+            <FormField
+              control={form.control}
+              name="workflowId"
+              render={({ field }) => (
+                <FormItem label={t('workflowLabel')} description={t('workflowDescription')}>
+                  <Select
+                    isSearchable
+                    menuPortalTarget={null}
+                    options={workflowOptions}
+                    value={field.value}
+                    onChange={(newValue) => field.onChange(newValue)}
+                    placeholder={t('workflowPlaceholder')}
+                    isClearable
+                  />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}

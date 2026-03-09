@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { getAuthContext } from '@/actions/authorization';
 import { getRequestHierarchiesAndLevelsByTenantId } from '@/actions/hierarchy';
+import { getWorkflowsForRequestType } from '@/actions/request-type';
 import { PermissionActions } from '@/constants/permissions';
 import { redirect } from '@/i18n/routing';
 import { type Locale } from 'next-intl';
@@ -23,7 +24,10 @@ const NewRequestTypePage: FC<NewRequestTypePageProps> = async ({ params }) => {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/configurations/request-types', params: { tenantId } } });
   }
 
-  const hierarchies = await getRequestHierarchiesAndLevelsByTenantId(locale, tenantId);
+  const [hierarchies, workflows] = await Promise.all([
+    getRequestHierarchiesAndLevelsByTenantId(locale, tenantId),
+    getWorkflowsForRequestType(tenantId),
+  ]);
   const t = await getTranslations('admin.requestType.create');
 
   if (hierarchies.length === 0) {
@@ -32,7 +36,7 @@ const NewRequestTypePage: FC<NewRequestTypePageProps> = async ({ params }) => {
 
   return (
     <PageDialogWrapper title={t('createNewRequestType')} description={t('createNewRequestTypeDescription')}>
-      <CreateNewRequestType requestHierarchies={hierarchies} />
+      <CreateNewRequestType requestHierarchies={hierarchies} requestWorkflows={workflows} />
     </PageDialogWrapper>
   );
 };
