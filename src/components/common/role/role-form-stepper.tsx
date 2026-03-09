@@ -22,7 +22,7 @@ import { StepperNavigationButtons } from '@/components/stepper/step-navigation-b
 import RoleForm, { getDefaultRole } from './role-form';
 import RoleFormReview from './role-form-review';
 
-const { useStepper, utils } = defineStepper(
+const { useStepper } = defineStepper(
   { id: 'role', label: 'steps.role', schema: getRolesSchema() },
   { id: 'user', label: 'steps.user', schema: getUserRoleAssignmentSchema() },
   { id: 'finish', label: 'steps.finish', schema: z.object({}) }
@@ -63,31 +63,33 @@ const RoleFormStepper: FC<RoleFormStepperProps> = ({ tenantId, userOptions, modu
   // Create a custom resolver that dynamically selects the correct internationalized schema
   const dynamicResolver = useMemo(() => {
     return (values: any, context: any, options: any) => {
-      const currentSchema = schemasMap[stepper.current.id as keyof typeof schemasMap] || stepper.current.schema;
-      const resolver = zodResolver(currentSchema);
+      const currentData = stepper.state.current.data;
+      const currentSchema = schemasMap[currentData.id as keyof typeof schemasMap] || (currentData as { schema?: z.ZodType }).schema;
+      const resolver = zodResolver(currentSchema ?? z.object({}));
       return resolver(values, context, options);
     };
-  }, [stepper.current.id, schemasMap]);
+  }, [stepper.state.current.data.id, schemasMap, stepper]);
 
   const form = useForm({
     mode: 'onTouched',
     resolver: dynamicResolver,
-    defaultValues: stepper.current.id === 'role' ? { roles: initialValues?.roles ?? [getDefaultRole()], userRoles: initialValues?.userRoles ?? [] } : {},
+    defaultValues: stepper.state.current.data.id === 'role' ? { roles: initialValues?.roles ?? [getDefaultRole()], userRoles: initialValues?.userRoles ?? [] } : {},
   });
 
   // Clear errors when step changes
   useEffect(() => {
     form.clearErrors();
-  }, [stepper.current.id, form]);
+  }, [stepper.state.current.data.id, form]);
 
-  const onSubmit = async (values: z.infer<typeof stepper.current.schema>) => {
-    if (stepper.current.id === 'role' && 'roles' in values) {
+  const currentStepData = stepper.state.current.data;
+  const onSubmit = async (values: unknown) => {
+    if (currentStepData.id === 'role' && 'roles' in values) {
       const rolesOptions = values.roles.map((role) => ({ value: role.id, label: role.name }));
       setRoles(rolesOptions);
     }
 
-    if (!stepper.isLast) {
-      stepper.next();
+    if (!stepper.state.isLast) {
+      stepper.navigation.next();
       return;
     }
 
@@ -117,15 +119,27 @@ const RoleFormStepper: FC<RoleFormStepperProps> = ({ tenantId, userOptions, modu
 
   return (
     <div className="flex flex-col flex-1 p-4">
-      <StepNavigationModern t={t as typeof t & ((key: string) => string)} steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
+      <StepNavigationModern
+        t={t as typeof t & ((key: string) => string)}
+        steps={stepper.lookup.getAll().map((s) => ({ id: s.id, label: s.label }))}
+        currentId={currentStepData.id}
+        getIndex={(id) => stepper.lookup.getIndex(id)}
+        onStepClick={(id) => stepper.navigation.goTo(id)}
+      />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between gap-4 overflow-hidden">
-          {stepper.switch({
+          {stepper.flow.switch({
             role: () => <RoleForm moduleWithFeatures={moduleWithFeatures} />,
             user: () => <UserRoleAssignmentForm userOptions={userOptions} roleOptions={roles} />,
             finish: () => <RoleFormReview />,
           })}
-          <StepperNavigationButtons isPending={isPending} isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onReset={stepper.reset} />
+          <StepperNavigationButtons
+            isPending={isPending}
+            isFirstStep={stepper.state.isFirst}
+            isLastStep={stepper.state.isLast}
+            onPrev={stepper.navigation.prev}
+            onReset={stepper.navigation.reset}
+          />
         </form>
       </Form>
     </div>

@@ -33,7 +33,7 @@ import UserForm, { getDefaultUser } from './user-form';
 import UserRoleForm, { getDefaultUserRole } from './user-role-form';
 import UserTenantScopedReview from './user-tenant-scoped-review';
 
-const { useStepper, utils } = defineStepper(
+const { useStepper } = defineStepper(
   { id: 'user', label: 'steps.user', schema: getUserSchema() },
   { id: 'globalRole', label: 'steps.globalRole', schema: getUserRoleSchema() },
   { id: 'areaRole', label: 'steps.areaRole', schema: getAreaRoleAssignmentSchema() },
@@ -79,11 +79,12 @@ const UserTenantScopedForm: FC<UserTenantScopedFormProps> = ({ defaultValues, te
   // Create a custom resolver that dynamically selects the correct internationalized schema
   const dynamicResolver = useMemo(() => {
     return (values: any, context: any, options: any) => {
-      const currentSchema = schemasMap[stepper.current.id as keyof typeof schemasMap] || stepper.current.schema;
-      const resolver = zodResolver(currentSchema);
+      const currentData = stepper.state.current.data;
+      const currentSchema = schemasMap[currentData.id as keyof typeof schemasMap] || (currentData as { schema?: z.ZodType }).schema;
+      const resolver = zodResolver(currentSchema ?? z.object({}));
       return resolver(values, context, options);
     };
-  }, [stepper.current.id, schemasMap]);
+  }, [stepper.state.current.data.id, schemasMap, stepper]);
 
   const form = useForm({
     mode: 'onTouched',
@@ -98,11 +99,11 @@ const UserTenantScopedForm: FC<UserTenantScopedFormProps> = ({ defaultValues, te
   // Clear errors when step changes
   useEffect(() => {
     form.clearErrors();
-  }, [stepper.current.id, form]);
+  }, [stepper.state.current.data.id, form]);
 
   const onSubmit = async () => {
-    if (!stepper.isLast) {
-      stepper.next();
+    if (!stepper.state.isLast) {
+      stepper.navigation.next();
       return;
     }
 
@@ -130,20 +131,37 @@ const UserTenantScopedForm: FC<UserTenantScopedFormProps> = ({ defaultValues, te
 
   return (
     <div className="flex flex-col flex-1 p-4">
-      <StepNavigationModern t={t as typeof t & ((key: string) => string)} steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
+      <StepNavigationModern
+        t={t as typeof t & ((key: string) => string)}
+        steps={stepper.lookup.getAll().map((s) => ({ id: s.id, label: s.label }))}
+        currentId={stepper.state.current.data.id}
+        getIndex={(id) => stepper.lookup.getIndex(id)}
+        onStepClick={(id) => stepper.navigation.goTo(id)}
+      />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between gap-4 overflow-hidden">
           <div className="flex flex-1 overflow-y-hidden">
             <ScrollArea className="w-full flex-1 overflow-y-hidden">
-              {stepper.switch({
-                user: () => <UserForm identificationTypes={identificationTypes} isEditing={stepper.current.id !== 'user' ? false : undefined} />,
+              {stepper.flow.switch({
+                user: () => (
+                  <UserForm
+                    identificationTypes={identificationTypes}
+                    isEditing={stepper.state.current.data.id !== 'user' ? false : undefined}
+                  />
+                ),
                 globalRole: () => <UserRoleForm tenantId={tenantId} roleOptions={roles} />,
                 areaRole: () => <AreaRoleAssignmentForm areaOptions={areas} />,
                 summary: () => <UserTenantScopedReview />,
               })}
             </ScrollArea>
           </div>
-          <StepperNavigationButtons isPending={isPending} isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onReset={stepper.reset} />
+          <StepperNavigationButtons
+            isPending={isPending}
+            isFirstStep={stepper.state.isFirst}
+            isLastStep={stepper.state.isLast}
+            onPrev={stepper.navigation.prev}
+            onReset={stepper.navigation.reset}
+          />
         </form>
       </Form>
     </div>

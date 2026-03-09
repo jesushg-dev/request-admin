@@ -22,7 +22,7 @@ import { Plan, planSelectionSchema, PlanSelectionStep } from './plan-selection-s
 import { brandingSchema, organizationSchema } from './schemas';
 import TenantReviewStep from './tenant-review-step';
 
-const { useStepper, utils } = defineStepper(
+const { useStepper } = defineStepper(
   { id: 'organization', label: 'steps.organization', schema: organizationSchema },
   { id: 'branding', label: 'steps.branding', schema: brandingSchema },
   { id: 'plan', label: 'steps.plan', schema: planSelectionSchema },
@@ -73,11 +73,12 @@ export function TenantCreationForm({ plans, isGlobalAdmin = false }: TenantCreat
   // Create a custom resolver that dynamically selects the correct schema
   const dynamicResolver = useMemo(() => {
     return (values: any, context: any, options: any) => {
-      const currentSchema = schemasMap[stepper.current.id as keyof typeof schemasMap] || stepper.current.schema;
-      const resolver = zodResolver(currentSchema);
+      const currentData = stepper.state.current.data;
+      const currentSchema = schemasMap[currentData.id as keyof typeof schemasMap] || (currentData as { schema?: z.ZodType }).schema;
+      const resolver = zodResolver(currentSchema ?? z.object({}));
       return resolver(values, context, options);
     };
-  }, [stepper.current.id, schemasMap]);
+  }, [stepper.state.current.data.id, schemasMap, stepper]);
 
   const form = useForm({
     mode: 'onTouched',
@@ -101,12 +102,12 @@ export function TenantCreationForm({ plans, isGlobalAdmin = false }: TenantCreat
   // Clear errors when step changes
   useEffect(() => {
     form.clearErrors();
-  }, [stepper.current.id, form]);
+  }, [stepper.state.current.data.id, form]);
 
   // Handle form submission
   const onSubmit = async () => {
-    if (!stepper.isLast) {
-      stepper.next();
+    if (!stepper.state.isLast) {
+      stepper.navigation.next();
       return;
     }
 
@@ -146,12 +147,18 @@ export function TenantCreationForm({ plans, isGlobalAdmin = false }: TenantCreat
 
   return (
     <div className="max-w-4xl mx-auto w-full flex flex-col flex-1">
-      <StepNavigationModern t={t as typeof t & ((key: string) => string)} steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
+      <StepNavigationModern
+        t={t as typeof t & ((key: string) => string)}
+        steps={stepper.lookup.getAll().map((s) => ({ id: s.id, label: s.label }))}
+        currentId={stepper.state.current.data.id}
+        getIndex={(id) => stepper.lookup.getIndex(id)}
+        onStepClick={(id) => stepper.navigation.goTo(id)}
+      />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between gap-4 overflow-hidden">
           <div className="flex flex-1 overflow-y-hidden">
             <ScrollArea className="w-full flex-1 overflow-y-hidden">
-              {stepper.switch({
+              {stepper.flow.switch({
                 organization: () => <OrganizationStep />,
                 branding: () => <BrandingStep />,
                 plan: () => <PlanSelectionStep plans={plans} isGlobalAdmin={isGlobalAdmin} />,
@@ -159,7 +166,13 @@ export function TenantCreationForm({ plans, isGlobalAdmin = false }: TenantCreat
               })}
             </ScrollArea>
           </div>
-          <StepperNavigationButtons isPending={pending} isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onReset={stepper.reset} />
+          <StepperNavigationButtons
+            isPending={pending}
+            isFirstStep={stepper.state.isFirst}
+            isLastStep={stepper.state.isLast}
+            onPrev={stepper.navigation.prev}
+            onReset={stepper.navigation.reset}
+          />
         </form>
       </Form>
     </div>

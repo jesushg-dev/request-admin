@@ -32,7 +32,7 @@ import AssignmentCategoriesReview from '../category/assignment-categories-review
 import RoleFormReview from '../role/role-form-review';
 
 // Stepper definition
-const { useStepper, utils } = defineStepper(
+const { useStepper } = defineStepper(
   { id: 'description', label: 'steps.description', schema: getAreaSchema() },
   { id: 'assignmentCategory', label: 'steps.assignmentCategory', schema: getCategoriesSchema() },
   { id: 'role', label: 'steps.role', schema: getRolesSchema() },
@@ -81,29 +81,31 @@ const AreaFormStepper: FC<AreaFormStepperProps> = ({ tenantId, assignmentHierarc
   // Create a custom resolver that dynamically selects the correct internationalized schema
   const dynamicResolver = useMemo(() => {
     return (values: any, context: any, options: any) => {
-      const currentSchema = schemasMap[stepper.current.id as keyof typeof schemasMap] || stepper.current.schema;
-      const resolver = zodResolver(currentSchema);
+      const currentData = stepper.state.current.data;
+      const currentSchema = schemasMap[currentData.id as keyof typeof schemasMap] || (currentData as { schema?: z.ZodType }).schema;
+      const resolver = zodResolver(currentSchema ?? z.object({}));
       return resolver(values, context, options);
     };
-  }, [stepper.current.id, schemasMap]);
+  }, [stepper.state.current.data.id, schemasMap, stepper]);
 
   // Initialize React Hook Form with current step schema
   const form = useForm({
     mode: 'onTouched',
     resolver: dynamicResolver,
-    defaultValues: defaultValues ? defaultValues : stepper.current.id === 'description' ? getAreaDefaultValue() : {},
+    defaultValues: defaultValues ? defaultValues : stepper.state.current.data.id === 'description' ? getAreaDefaultValue() : {},
   });
 
   // Clear errors when step changes
   useEffect(() => {
     form.clearErrors();
-  }, [stepper.current.id, form]);
+  }, [stepper.state.current.data.id, form]);
 
   const [roleOptions, setRoleOptions] = useState<OptionType[]>([]);
 
+  const currentStepData = stepper.state.current.data;
   // Handle form submission
-  const onSubmit = (values: z.infer<typeof stepper.current.schema>) => {
-    if (stepper.current.id === 'description' && 'hierarchyId' in values) {
+  const onSubmit = (values: unknown) => {
+    if (currentStepData.id === 'description' && 'hierarchyId' in values) {
       const hierarchy = assignmentHierarchies.find((h) => h.id === values.hierarchyId.value);
       if (!hierarchy) {
         form.setError('root.description.hierarchyId', { message: 'Invalid hierarchy' });
@@ -112,13 +114,13 @@ const AreaFormStepper: FC<AreaFormStepperProps> = ({ tenantId, assignmentHierarc
       setSelectedHierarchy(hierarchy);
     }
 
-    if (stepper.current.id === 'role' && 'roles' in values) {
+    if (currentStepData.id === 'role' && 'roles' in values) {
       const roles = values.roles.map((role) => ({ value: role.id, label: role.name }));
       setRoleOptions(roles);
     }
 
-    if (!stepper.isLast) {
-      stepper.next();
+    if (!stepper.state.isLast) {
+      stepper.navigation.next();
       return;
     }
 
@@ -227,11 +229,17 @@ const AreaFormStepper: FC<AreaFormStepperProps> = ({ tenantId, assignmentHierarc
 
   return (
     <div className="flex flex-col flex-1 p-4">
-      <StepNavigationModern t={t as typeof t & ((key: string) => string)} steps={stepper.all} currentId={stepper.current.id} getIndex={utils.getIndex} onStepClick={stepper.goTo} />
+      <StepNavigationModern
+        t={t as typeof t & ((key: string) => string)}
+        steps={stepper.lookup.getAll().map((s) => ({ id: s.id, label: s.label }))}
+        currentId={currentStepData.id}
+        getIndex={(id) => stepper.lookup.getIndex(id)}
+        onStepClick={(id) => stepper.navigation.goTo(id)}
+      />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col justify-between gap-4 overflow-hidden">
           {error && <PrismaErrorAlert error={error} />}
-          {stepper.switch({
+          {stepper.flow.switch({
             description: () => <AreaForm assignmentHierarchies={assignmentHierarchies} />,
             assignmentCategory: () => (
               <ScrollArea className="w-full flex-1 overflow-y-hidden">
@@ -247,7 +255,13 @@ const AreaFormStepper: FC<AreaFormStepperProps> = ({ tenantId, assignmentHierarc
               </ScrollArea>
             ),
           })}
-          <StepperNavigationButtons isPending={isPending} isFirstStep={stepper.isFirst} isLastStep={stepper.isLast} onPrev={stepper.prev} onReset={stepper.reset} />
+          <StepperNavigationButtons
+            isPending={isPending}
+            isFirstStep={stepper.state.isFirst}
+            isLastStep={stepper.state.isLast}
+            onPrev={stepper.navigation.prev}
+            onReset={stepper.navigation.reset}
+          />
         </form>
       </Form>
     </div>
