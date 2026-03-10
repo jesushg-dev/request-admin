@@ -1,6 +1,6 @@
 'use client';
 
-import { Plus, X } from 'lucide-react';
+import { Plus, RefreshCw, X } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -12,9 +12,11 @@ type MultiSelectorProps = {
   value: OptionType[];
   onChange: (value: OptionType[]) => void;
   messages: { title?: string; addTitle: string; removeTitle: string; empty: string };
+  onRefresh?: () => void;
+  isRefreshing?: boolean;
 };
 
-export function MultiSelector({ options, value, onChange, messages, className }: MultiSelectorProps) {
+export function MultiSelector({ options, value, onChange, messages, className, onRefresh, isRefreshing = false }: MultiSelectorProps) {
   const addRequirement = (requirement: OptionType) => {
     const newRequirements = [...value, requirement];
     onChange(newRequirements);
@@ -40,7 +42,19 @@ export function MultiSelector({ options, value, onChange, messages, className }:
         {value.length === 0 && <div className="text-sm text-gray-500">{messages.empty}</div>}
       </div>
       <div className="border rounded-md p-3">
-        <h4 className="text-xs font-medium mb-2">{messages.addTitle}</h4>
+        <div className="mb-2 flex items-center justify-between">
+          <h4 className="text-xs font-medium">{messages.addTitle}</h4>
+          {onRefresh && (
+            <button
+              type="button"
+              onClick={onRefresh}
+              disabled={isRefreshing}
+              aria-label="Refresh options"
+              className="inline-flex h-6 w-6 items-center justify-center rounded border hover:bg-gray-50 disabled:opacity-50">
+              <RefreshCw className={isRefreshing ? 'h-3 w-3 animate-spin' : 'h-3 w-3'} />
+            </button>
+          )}
+        </div>
         <div className="grid grid-cols-2 gap-2">
           {options
             .filter((r) => !value.some((req) => req.value === r.value))

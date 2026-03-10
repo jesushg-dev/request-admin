@@ -35,6 +35,7 @@ export async function getRequestCategoriesByIds(rootIds: string[], tenantId: str
         hierarchyLevelId: true,
         parentCategoryId: true,
         isEligibleForNewClients: true,
+        requestWorkflowId: true,
         requestCategoryRequirements: {
           select: {
             requirementId: true,
@@ -92,6 +93,7 @@ export async function getRequestCategoriesByIds(rootIds: string[], tenantId: str
           isActive: dbCat.isActive,
           hierarchyLevelId: dbCat.hierarchyLevelId,
           isEligibleForNewClients: dbCat.isEligibleForNewClients,
+          requestWorkflowId: dbCat.requestWorkflowId ?? undefined,
           requirements: dbCat.requestCategoryRequirements.map((r) => ({
             value: r.requirementId,
             label: r.requirement.name || '',
@@ -347,7 +349,7 @@ export async function createInitialRequestCategory({
   hierarchyLevelId: string;
   name: string;
   tenantId: string;
-  requestWorkflowId?: string | null;
+  requestWorkflowId: string;
 }): Promise<string> {
   const db = await getDb();
 
@@ -362,7 +364,7 @@ export async function createInitialRequestCategory({
     description: '',
     isActive: true,
     isEligibleForNewClients: true,
-    requestWorkflowId: requestWorkflowId || undefined,
+    requestWorkflowId,
     sla: {
       id: slaId,
       resolutionTime: 24,

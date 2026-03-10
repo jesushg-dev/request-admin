@@ -4,7 +4,6 @@ import Message from "@/features/theme-designer/components/editor/ai/message";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { ChatMessage } from "@/types/ai";
-import { ThemeStyles } from "@/types/theme";
 import { defaultPresets } from "@/features/theme-designer/utils/theme-presets";
 import { useEffect, useRef } from "react";
 
@@ -104,7 +103,7 @@ const CHAT_PLACEHOLDER_MESSAGES: ChatMessage[] = [
       },
     ],
     metadata: {
-      themeStyles: defaultPresets["modern-minimal"]?.styles ?? defaultPresets["default"].styles as ThemeStyles,
+      themeStyles: defaultPresets["modern-minimal"]?.styles ?? defaultPresets["default"].styles,
     },
   },
   {
@@ -127,7 +126,7 @@ const CHAT_PLACEHOLDER_MESSAGES: ChatMessage[] = [
       },
     ],
     metadata: {
-      themeStyles: defaultPresets["modern-minimal"]?.styles ?? defaultPresets["default"].styles as ThemeStyles,
+      themeStyles: defaultPresets["modern-minimal"]?.styles ?? defaultPresets["default"].styles,
     },
   },
   {
@@ -150,7 +149,7 @@ const CHAT_PLACEHOLDER_MESSAGES: ChatMessage[] = [
       },
     ],
     metadata: {
-      themeStyles: defaultPresets["modern-minimal"]?.styles ?? defaultPresets["default"].styles as ThemeStyles,
+      themeStyles: defaultPresets["modern-minimal"]?.styles ?? defaultPresets["default"].styles,
     },
   },
 ];

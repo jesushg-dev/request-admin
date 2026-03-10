@@ -11,6 +11,7 @@ export const auth = {
     signUpEmail: jest.fn(),
     createInvitation: jest.fn(),
     acceptInvitation: jest.fn(),
+    listMembers: jest.fn(),
   },
 };
 

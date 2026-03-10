@@ -1,9 +1,12 @@
 // category-form/index.tsx
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState, useTransition } from 'react';
+import { getFormsAsOptions } from '@/actions/form';
+import { getRequirementsAsOptions } from '@/actions/requirement';
 import { useRequestCategorySchema, type TRequestCategorySchema } from '@/services/schemas/request-type';
 import { useAtom, useAtomValue } from 'jotai';
 import { useTranslations } from 'next-intl';
 import { useFormContext, useWatch } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { RequestHierarchyWithLevelsType, RequestLevelType } from '@/types/zenstackhq/hierarchy';
 import { generateUuid } from '@/lib/id';
@@ -12,6 +15,7 @@ import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/f
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MultiSelector } from '@/components/custom-ui/multi-selector';
 import { OptionType } from '@/components/custom-ui/select';
+import { useTenantContext } from '@/components/hoc/tenant-provider';
 import FlowBuilder from '@/components/process-flow/flow-builder/flow-builder';
 import { TabSection } from '@/components/shared/tab-section';
 
@@ -24,7 +28,11 @@ import { SlaTab } from './sla-tab';
 
 export type RequestCategoryValues = TRequestCategorySchema;
 
-export const getDefaultCategory = (hierarchyLevelId: string, parentCategoryId?: string | null): RequestCategoryValues => ({
+export const getDefaultCategory = (
+  hierarchyLevelId: string,
+  parentCategoryId?: string | null,
+  requestWorkflowId?: string | null
+): RequestCategoryValues => ({
   id: generateUuid(),
   hierarchyLevelId,
   parentCategoryId,
@@ -32,6 +40,7 @@ export const getDefaultCategory = (hierarchyLevelId: string, parentCategoryId?: 
   description: '',
   isActive: false,
   isEligibleForNewClients: true,
+  requestWorkflowId: requestWorkflowId ?? undefined,
   sla: {
     id: generateUuid(),
     resolutionTime: 24,
@@ -55,9 +64,22 @@ interface CategoryFormProps {
 
 export function CategoryForm({ levels, formsOptions = [], requirementsOptions = [], handleCancelForm, isPending, mode, hierarchy }: CategoryFormProps) {
   const t = useTranslations('admin.requestType.create');
+  const { tenantId } = useTenantContext();
   const { control, setValue } = useFormContext<RequestCategoryValues>();
   const formTitle = mode === 'add' ? t('create') : t('update');
   const currentCategoryId = useWatch({ control, name: 'id' });
+  const [localRequirementsOptions, setLocalRequirementsOptions] = useState<OptionType[]>(requirementsOptions);
+  const [localFormsOptions, setLocalFormsOptions] = useState<OptionType[]>(formsOptions);
+  const [isRefreshingRequirements, startRefreshingRequirements] = useTransition();
+  const [isRefreshingForms, startRefreshingForms] = useTransition();
+
+  useEffect(() => {
+    setLocalRequirementsOptions(requirementsOptions);
+  }, [requirementsOptions]);
+
+  useEffect(() => {
+    setLocalFormsOptions(formsOptions);
+  }, [formsOptions]);
 
   // Use Jotai atoms for hierarchical resource management
   const getInheritedGroups = useAtomValue(getInheritedGroupsAtom);
@@ -85,8 +107,8 @@ export function CategoryForm({ levels, formsOptions = [], requirementsOptions = 
   // Requirements
   const requirementBlockedCount = requirementChildGroups.length;
   const selectableRequirements = useMemo(
-    () => getSelectableResources(requirementsOptions, currentRequirements, requirementInheritedGroups, requirementChildGroups),
-    [requirementsOptions, currentRequirements, requirementInheritedGroups, requirementChildGroups]
+    () => getSelectableResources(localRequirementsOptions, currentRequirements, requirementInheritedGroups, requirementChildGroups),
+    [localRequirementsOptions, currentRequirements, requirementInheritedGroups, requirementChildGroups]
   );
   const onPromoteRequirement = (resource: OptionType, groupInfo: ResourceGroup) => {
     promoteResource(currentCategoryId, 'requirements', resource);
@@ -98,12 +120,38 @@ export function CategoryForm({ levels, formsOptions = [], requirementsOptions = 
 
   // Forms
   const formBlockedCount = formChildGroups.length;
-  const selectableForms = useMemo(() => getSelectableResources(formsOptions, currentForms, formInheritedGroups, formChildGroups), [formsOptions, currentForms, formInheritedGroups, formChildGroups]);
+  const selectableForms = useMemo(() => getSelectableResources(localFormsOptions, currentForms, formInheritedGroups, formChildGroups), [localFormsOptions, currentForms, formInheritedGroups, formChildGroups]);
   const onPromoteForm = (resource: OptionType, groupInfo: ResourceGroup) => {
     promoteResource(currentCategoryId, 'forms', resource);
     if (!currentForms.some((r) => r.value === resource.value)) {
       setValue('forms', [...currentForms, resource]);
     }
+  };
+
+  const handleRefreshRequirements = () => {
+    startRefreshingRequirements(() => {
+      void (async () => {
+        try {
+          const nextRequirements = await getRequirementsAsOptions(tenantId);
+          setLocalRequirementsOptions(nextRequirements);
+        } catch {
+          toast.error(t('unknownError'));
+        }
+      })();
+    });
+  };
+
+  const handleRefreshForms = () => {
+    startRefreshingForms(() => {
+      void (async () => {
+        try {
+          const nextForms = await getFormsAsOptions(tenantId);
+          setLocalFormsOptions(nextForms);
+        } catch {
+          toast.error(t('unknownError'));
+        }
+      })();
+    });
   };
 
   return (
@@ -163,6 +211,8 @@ export function CategoryForm({ levels, formsOptions = [], requirementsOptions = 
                   value={field.value ?? []}
                   onChange={field.onChange}
                   options={selectableRequirements}
+                  onRefresh={handleRefreshRequirements}
+                  isRefreshing={isRefreshingRequirements}
                   messages={{
                     title: t('requirementsTab.title'),
                     addTitle: t('requirementsTab.addTitle'),
@@ -209,6 +259,8 @@ export function CategoryForm({ levels, formsOptions = [], requirementsOptions = 
                   value={field.value ?? []}
                   onChange={field.onChange}
                   options={selectableForms}
+                  onRefresh={handleRefreshForms}
+                  isRefreshing={isRefreshingForms}
                   messages={{
                     title: t('formsTab.title'),
                     addTitle: t('formsTab.addTitle'),

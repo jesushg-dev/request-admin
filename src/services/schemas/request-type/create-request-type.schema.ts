@@ -20,7 +20,7 @@ export function useCreateRequestTypeSchema() {
 export function createCreateRequestTypeSchema(t: TranslationFn) {
   return z.object({
     hierarchyId: optionSchema,
-    workflowId: optionSchema.nullish(),
+    workflowId: optionSchema,
     parentCategoryName: z.string().min(1, { message: t('nameMinLength') }),
   });
 }

@@ -11,6 +11,10 @@ import { TenantFormValues } from '@/components/common/tenant/tenant-form';
 
 class UserNotFoundErr extends Error {}
 
+type TenantInformation = TenantFormValues & {
+  themeColors?: string | null;
+};
+
 export const getTenantIdFromUrl = async (url: string, redirectOnMissing: boolean = true): Promise<string> => {
   const tenantId = extractTenantId(url, locales);
 
@@ -25,7 +29,7 @@ export const getTenantIdFromUrl = async (url: string, redirectOnMissing: boolean
   return tenantId ?? '';
 };
 
-export const getTenantInformation = async (tenantId: string): Promise<TenantFormValues> => {
+export const getTenantInformation = async (tenantId: string): Promise<TenantInformation> => {
   const session = await currentSession();
   if (!session) throw new UserNotFoundErr('User not found');
 

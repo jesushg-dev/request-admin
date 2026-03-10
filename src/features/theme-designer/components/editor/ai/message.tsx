@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/store/editor-store";
 import { AIPromptData, type ChatMessage } from "@/types/ai";
 import { buildAIPromptRender } from "@/utils/ai/ai-prompt";
+import type { ThemeStyles } from "@/types/theme";
 import ColorPreview from "../theme-preview/color-preview";
 import { ChatImagePreview } from "./chat-image-preview";
 import { ChatThemePreview } from "./chat-theme-preview";
@@ -22,6 +23,15 @@ type MessageProps = {
   isLastMessageStreaming: boolean;
   isGeneratingTheme: boolean;
 };
+
+function isThemeStyles(value: unknown): value is ThemeStyles {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "light" in value &&
+    "dark" in value
+  );
+}
 
 export default function Message({
   message,
@@ -123,7 +133,7 @@ function AssistantMessage({ message, isLastMessageStreaming }: AssistantMessageP
 
             if (state === "output-available") {
               const themeStyles = part.output;
-              if (!themeStyles) return null;
+              if (!isThemeStyles(themeStyles)) return null;
               return (
                 <ChatThemePreview
                   key={key}

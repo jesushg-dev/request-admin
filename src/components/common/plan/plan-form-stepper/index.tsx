@@ -38,6 +38,10 @@ interface PlanCreationFormProps {
   features: Feature[];
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
 const { useStepper } = defineStepper(
   { id: 'planInfo', label: 'steps.planInfo', schema: getPlanInfoSchema() },
   { id: 'planFeatures', label: 'steps.planFeatures', schema: getPlanFeatureSchema() },
@@ -91,7 +95,8 @@ export default function PlanCreationForm({ features }: PlanCreationFormProps) {
   }, [stepper.state.current.data.id, form]);
 
   const onSubmit = (values: unknown) => {
-    setPlanData((prevData) => ({ ...prevData, ...values }));
+    const safeValues = (isRecord(values) ? values : {}) as Partial<PlanInfoFormValues & PlanFeatureFormValues>;
+    setPlanData((prevData) => ({ ...prevData, ...safeValues }));
 
     if (!stepper.state.isLast) {
       stepper.navigation.next();
@@ -100,7 +105,7 @@ export default function PlanCreationForm({ features }: PlanCreationFormProps) {
 
     // Submit the form on the last step
     startTransition(async () => {
-      const finalData = { ...planData, ...values } as PlanInfoFormValues & PlanFeatureFormValues;
+      const finalData = { ...planData, ...safeValues } as PlanInfoFormValues & PlanFeatureFormValues;
       const toastId = toast.loading(t('messages.saving'));
       
       try {

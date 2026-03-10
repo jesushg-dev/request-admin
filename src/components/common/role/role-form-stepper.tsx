@@ -38,6 +38,10 @@ interface RoleFormStepperProps {
   initialValues?: RoleFormStepperType | null;
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
 const RoleFormStepper: FC<RoleFormStepperProps> = ({ tenantId, userOptions, moduleWithFeatures, initialValues }) => {
   const router = useRouter();
   const stepper = useStepper();
@@ -83,8 +87,11 @@ const RoleFormStepper: FC<RoleFormStepperProps> = ({ tenantId, userOptions, modu
 
   const currentStepData = stepper.state.current.data;
   const onSubmit = async (values: unknown) => {
-    if (currentStepData.id === 'role' && 'roles' in values) {
-      const rolesOptions = values.roles.map((role) => ({ value: role.id, label: role.name }));
+    if (currentStepData.id === 'role' && isRecord(values)) {
+      const rolesOptions = ((values.roles as TRolesSchema['roles'] | undefined) ?? []).map((role) => ({
+        value: role.id,
+        label: role.name,
+      }));
       setRoles(rolesOptions);
     }
 

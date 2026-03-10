@@ -7,7 +7,7 @@ export const openCheckout = async (link: string) => {
   try {
     // This creates the checkout iframe and returns a Promise
     // that resolves when the checkout is fully loaded
-    const checkout = await PolarEmbedCheckout.create(link, mode);
+    const checkout = await PolarEmbedCheckout.create(link, { theme: mode });
 
     // Now you can interact with the checkout instance
     return checkout;

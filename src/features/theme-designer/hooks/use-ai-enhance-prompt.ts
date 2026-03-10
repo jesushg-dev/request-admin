@@ -51,7 +51,7 @@ export function useAIEnhancePrompt() {
         mentions: activeMentionsRef.current.map((m) => ({
           id: m.id,
           label: m.label,
-          themeData: { light: {}, dark: {} } as Partial<ThemeStyles>,
+          themeData: { light: {}, dark: {} },
         })),
       };
       const jsonContent = convertPromptDataToJSONContent(promptData);

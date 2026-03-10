@@ -16,7 +16,7 @@ async function safeSendEmail(args: Parameters<Resend['emails']['send']>[0]) {
 }
 
 export const sendTwoFactorTokenEmail = async (email: string, token: string) => {
-  await resend.emails.send({
+  await safeSendEmail({
     from: `support@${emailDomain}`,
     to: email,
     subject: '2FA Code',
@@ -25,7 +25,7 @@ export const sendTwoFactorTokenEmail = async (email: string, token: string) => {
 };
 
 export const sendResetPassword = async ({ user, url, token }: { user: { email: string }; url: string; token: string }) => {
-  await resend.emails.send({
+  await safeSendEmail({
     from: `support@${emailDomain}`,
     to: user.email,
     subject: 'Reset your password',
@@ -34,7 +34,7 @@ export const sendResetPassword = async ({ user, url, token }: { user: { email: s
 };
 
 export const sendVerificationEmail = async ({ user, url, token }: { user: { email: string }; url: string; token: string }) => {
-  await resend.emails.send({
+  await safeSendEmail({
     from: `support@${emailDomain}`,
     to: user.email,
     subject: 'Confirm your email',
@@ -43,7 +43,7 @@ export const sendVerificationEmail = async ({ user, url, token }: { user: { emai
 };
 
 export const sendChangeEmailVerification = async ({ user, newEmail, url, token }: { user: { email: string }; newEmail: string; url: string; token: string }) => {
-  await resend.emails.send({
+  await safeSendEmail({
     from: `support@${emailDomain}`,
     to: user.email,
     subject: 'Approve email change',
@@ -53,7 +53,7 @@ export const sendChangeEmailVerification = async ({ user, newEmail, url, token }
 
 export const sendInvitationEmail = async (data: { id: string; role: string; email: string; organizationName: string; invitedByName: string; invitedByEmail: string }) => {
   const acceptUrl = `${domain}/admin/global/tenants/accept-invitation?id=${data.id}`;
-  await resend.emails.send({
+  await safeSendEmail({
     from: `Team ${data.organizationName} <invitations@${emailDomain}>`,
     to: data.email,
     subject: `${data.invitedByName} te invita a unirte a ${data.organizationName}`,
@@ -156,7 +156,7 @@ export const sendInvitationEmail = async (data: { id: string; role: string; emai
 };
 
 export const sendVerificationOTP = async (email: string, otp: string, type: 'sign-in' | 'email-verification' | 'forget-password' | 'two-factor') => {
-  await resend.emails.send({
+  await safeSendEmail({
     from: `support@${emailDomain}`,
     to: email,
     subject: 'OTP Code',
@@ -165,7 +165,7 @@ export const sendVerificationOTP = async (email: string, otp: string, type: 'sig
 };
 
 export const sendMagicLink = async (email: string, token: string, url: string) => {
-  await resend.emails.send({
+  await safeSendEmail({
     from: `support@${emailDomain}`,
     to: email,
     subject: 'Magic Link',
@@ -174,7 +174,7 @@ export const sendMagicLink = async (email: string, token: string, url: string) =
 };
 
 export const sendNotificationEmail = async (email: string[] | string, subject: string, message: string) => {
-  await resend.emails.send({
+  await safeSendEmail({
     from: `support@${emailDomain}`,
     to: email,
     subject,

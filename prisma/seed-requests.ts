@@ -4,15 +4,30 @@ import { generateUuid } from '../src/lib/id.js';
 
 const prisma = new PrismaClient();
 
+type WorkflowStatusType = 'initial' | 'default' | 'final';
+type RequestSeedScenario = {
+  area: string;
+  category: string;
+  parentCategory: string;
+  assignmentCategory: string;
+  subject: string;
+  description: string;
+  isDraft?: boolean;
+  workflowStatusName?: string;
+  workflowStatusType?: WorkflowStatusType;
+};
+
 // Realistic descriptions and subjects for Claro Nicaragua context
 // Extended scenarios covering all major areas and use cases
-const SCENARIOS = [
+const SCENARIOS: RequestSeedScenario[] = [
   // ========== ACTIVACIONES ==========
   {
     area: 'Activaciones',
     category: 'Renovación', // Categoría hoja (nivel 2)
     parentCategory: 'Grandes Empresas', // Categoría padre (nivel 1)
     assignmentCategory: 'Activacion De Linea',
+    isDraft: true,
+    // Drafts should not have ITIL status assigned
     subject: 'Activación de Flota Corporativa - Minsa',
     description: 'Solicitud para activar 50 líneas nuevas del plan Corporativo Ilimitado para el personal de campo del Ministerio de Salud. Se adjunta orden de compra y listado de usuarios.',
   },
@@ -572,6 +587,78 @@ const SCENARIOS = [
   },
 ];
 
+async function createDemoAssignmentHierarchy(tenantId: string) {
+  const existingHierarchy = await prisma.assignmentHierarchy.findFirst({
+    where: {
+      tenantId,
+      name: 'Gestión técnica Claro Nicaragua',
+    },
+    select: { id: true },
+  });
+
+  if (existingHierarchy) return;
+
+  const hierarchy = await prisma.assignmentHierarchy.create({
+    data: {
+      tenantId,
+      name: 'Gestión técnica Claro Nicaragua',
+      description: 'Jerarquía demo para asignaciones técnicas y escalaciones',
+    },
+  });
+
+  await prisma.assignmentHierarchyLevel.createMany({
+    data: [
+      { tenantId, hierarchyId: hierarchy.id, name: 'Dirección Técnica', position: 1 },
+      { tenantId, hierarchyId: hierarchy.id, name: 'Coordinación Técnica', position: 2 },
+      { tenantId, hierarchyId: hierarchy.id, name: 'Mesa Técnica', position: 3 },
+    ],
+  });
+}
+
+async function createDemoRequestHierarchy(tenantId: string) {
+  const existingHierarchy = await prisma.requestHierarchy.findFirst({
+    where: {
+      tenantId,
+      name: 'Canales Claro Nicaragua B2B',
+    },
+    select: { id: true },
+  });
+
+  const hierarchyId =
+    existingHierarchy?.id ??
+    (
+      await prisma.requestHierarchy.create({
+        data: {
+          tenantId,
+          name: 'Canales Claro Nicaragua B2B',
+          description: 'Jerarquía demo comercial para canales y familias de servicio',
+        },
+      })
+    ).id;
+
+  const desiredLevels = [
+    { tenantId, hierarchyId, name: 'Canal Comercial', position: 1 },
+    { tenantId, hierarchyId, name: 'Familia de Servicio', position: 2 },
+    { tenantId, hierarchyId, name: 'Subfamilia de Servicio', position: 3 },
+  ];
+
+  const existingLevels = await prisma.requestHierarchyLevel.findMany({
+    where: { tenantId, hierarchyId },
+    select: { name: true, position: true },
+  });
+
+  const missingLevels = desiredLevels.filter(
+    (desiredLevel) =>
+      !existingLevels.some((existingLevel) => existingLevel.position === desiredLevel.position && existingLevel.name === desiredLevel.name)
+  );
+
+  if (missingLevels.length > 0) {
+    await prisma.requestHierarchyLevel.createMany({
+      data: missingLevels,
+    });
+  }
+}
+
 async function main() {
   console.log('🌱 Starting request seeding with realistic scenarios...');
 
@@ -585,6 +672,10 @@ async function main() {
 
   const tenantId = targetTenant.id;
   console.log(`Using tenant: ${tenantId}`);
+
+  // Demo-only hierarchies for request seeding environments.
+  await createDemoAssignmentHierarchy(tenantId);
+  await createDemoRequestHierarchy(tenantId);
 
   // 2. Get Common Reference Data
   const statuses = await prisma.requestWorkflowStatus.findMany({ where: { tenantId } });
@@ -846,13 +937,36 @@ async function main() {
 
     const requester = getRandom(users);
     const assignee = getRandom(users);
-    const status = getRandom(statuses);
     const priority = getRandom(priorities);
     const type = getRandom(assignmentTypes);
 
     const requestId = generateUuid();
 
     try {
+      const isDraft = scenario.isDraft ?? false;
+      const desiredStatusType: WorkflowStatusType = scenario.workflowStatusType ?? 'default';
+
+      let status = null as (typeof statuses)[number] | null;
+      if (!isDraft) {
+        if (scenario.workflowStatusName) {
+          status = statuses.find((s) => s.name === scenario.workflowStatusName) ?? null;
+        }
+        if (!status) {
+          const statusesByType = statuses.filter((s) => String(s.type).toLowerCase() === desiredStatusType);
+          status = statusesByType[0] ?? null;
+        }
+        if (!status) {
+          // Fallback deterministic status for non-draft requests
+          status = statuses.find((s) => s.name === 'En Progreso') ?? statuses[0] ?? null;
+        }
+      }
+
+      if (!isDraft && !status) {
+        console.warn(`⚠️ Skipping scenario "${scenario.subject}": No workflow status available for non-draft request.`);
+        skippedCount++;
+        continue;
+      }
+
       // Get requirements for the request category
       const categoryRequirements = await prisma.requestCategoryRequirement.findMany({
         where: {
@@ -865,6 +979,16 @@ async function main() {
         },
       });
 
+      const complianceTrackingsData = categoryRequirements.map((cr) => ({
+        tenantId,
+        requirementId: cr.requirementId,
+        // Draft requests can keep requirements pending.
+        // Non-draft requests must have all requirements fulfilled.
+        isFulfilled: !isDraft,
+        isArchived: !cr.isActive,
+        createdBy: requester.user.email,
+      }));
+
       // Create request with dataroom and compliance trackings using transaction
       const request = await prisma.$transaction(async (tx) => {
         // First create the request
@@ -874,40 +998,36 @@ async function main() {
             tenantId,
             issueSubject: scenario.subject,
             description: scenario.description,
-            isDraft: false,
+            isDraft,
             createdBy: requester.user.email,
             // Create compliance trackings for each requirement
             complianceTrackings: {
               createMany: {
-                data: categoryRequirements.map((cr) => ({
-                  tenantId,
-                  requirementId: cr.requirementId,
-                  isFulfilled: false,
-                  isArchived: !cr.isActive,
-                  createdBy: requester.user.email,
-                })),
+                data: complianceTrackingsData,
               },
             },
-            requestAssignments: {
-              create: {
-                tenantId,
-                areaId: area.id,
-                statusId: status.id,
-                typeId: type.id,
-                priorityId: priority.id,
-                requestCategoryId: requestCategory.id,
-                assignmentCategoryId: assignmentCategory.id,
-                createdBy: 'system-seed',
-                assignedUsers: {
+            requestAssignments: isDraft
+              ? undefined
+              : {
                   create: {
                     tenantId,
-                    userTenantId: assignee.id,
-                    role: 'coordinator',
+                    areaId: area.id,
+                    statusId: status!.id,
+                    typeId: type.id,
+                    priorityId: priority.id,
+                    requestCategoryId: requestCategory.id,
+                    assignmentCategoryId: assignmentCategory.id,
                     createdBy: 'system-seed',
+                    assignedUsers: {
+                      create: {
+                        tenantId,
+                        userTenantId: assignee.id,
+                        role: 'coordinator',
+                        createdBy: 'system-seed',
+                      },
+                    },
                   },
                 },
-              },
-            },
           },
         });
 
@@ -949,68 +1069,72 @@ async function main() {
             createdBy: requester.user.email,
             updatedBy: requester.user.email,
           },
-          // Log status assignment
-          {
-            tenantId,
-            requestId: requestId,
-            fieldName: 'status',
-            oldValue: null,
-            newValue: status.id,
-            metadata: JSON.stringify({
-              type: 'STATUS_CHANGE',
-              comment: 'Initial status assignment',
-            }),
-            createdBy: requester.user.email,
-            updatedBy: requester.user.email,
-          },
-          // Log priority assignment
-          {
-            tenantId,
-            requestId: requestId,
-            fieldName: 'priority',
-            oldValue: null,
-            newValue: priority.id,
-            metadata: JSON.stringify({
-              type: 'PRIORITY_CHANGE',
-              reason: 'Initial priority assignment',
-            }),
-            createdBy: requester.user.email,
-            updatedBy: requester.user.email,
-          },
-          // Log area/classification assignment
-          {
-            tenantId,
-            requestId: requestId,
-            fieldName: 'classification',
-            oldValue: null,
-            newValue: area.id,
-            metadata: JSON.stringify({
-              type: 'ASSIGNMENT_AREA_CHANGE',
-              reason: 'Initial area assignment',
-              notify: 'false',
-            }),
-            createdBy: requester.user.email,
-            updatedBy: requester.user.email,
-          },
-          // Log user assignment
-          {
-            tenantId,
-            requestId: requestId,
-            fieldName: 'assignedUsers',
-            oldValue: null,
-            newValue: JSON.stringify([assignee.id]),
-            metadata: JSON.stringify({
-              type: 'ASSIGNMENT_CHANGE',
-              users: [
+          ...(isDraft
+            ? []
+            : [
+                // Log status assignment
                 {
-                  userId: assignee.id,
-                  isCoordinator: true,
+                  tenantId,
+                  requestId: requestId,
+                  fieldName: 'status',
+                  oldValue: null,
+                  newValue: status!.id,
+                  metadata: JSON.stringify({
+                    type: 'STATUS_CHANGE',
+                    comment: 'Initial status assignment',
+                  }),
+                  createdBy: requester.user.email,
+                  updatedBy: requester.user.email,
                 },
-              ],
-            }),
-            createdBy: requester.user.email,
-            updatedBy: requester.user.email,
-          },
+                // Log priority assignment
+                {
+                  tenantId,
+                  requestId: requestId,
+                  fieldName: 'priority',
+                  oldValue: null,
+                  newValue: priority.id,
+                  metadata: JSON.stringify({
+                    type: 'PRIORITY_CHANGE',
+                    reason: 'Initial priority assignment',
+                  }),
+                  createdBy: requester.user.email,
+                  updatedBy: requester.user.email,
+                },
+                // Log area/classification assignment
+                {
+                  tenantId,
+                  requestId: requestId,
+                  fieldName: 'classification',
+                  oldValue: null,
+                  newValue: area.id,
+                  metadata: JSON.stringify({
+                    type: 'ASSIGNMENT_AREA_CHANGE',
+                    reason: 'Initial area assignment',
+                    notify: 'false',
+                  }),
+                  createdBy: requester.user.email,
+                  updatedBy: requester.user.email,
+                },
+                // Log user assignment
+                {
+                  tenantId,
+                  requestId: requestId,
+                  fieldName: 'assignedUsers',
+                  oldValue: null,
+                  newValue: JSON.stringify([assignee.id]),
+                  metadata: JSON.stringify({
+                    type: 'ASSIGNMENT_CHANGE',
+                    users: [
+                      {
+                        userId: assignee.id,
+                        isCoordinator: true,
+                      },
+                    ],
+                  }),
+                  createdBy: requester.user.email,
+                  updatedBy: requester.user.email,
+                },
+              ]),
         ];
 
         await tx.requestChangeLog.createMany({
@@ -1022,7 +1146,7 @@ async function main() {
 
       console.log(`✅ Created Request: ${request.issueSubject} (${request.id})`);
       console.log(`   📁 Dataroom created with ${categoryRequirements.length} requirements`);
-      console.log(`   📝 Created ${5} change logs`);
+      console.log(`   📝 Created ${isDraft ? 1 : 5} change logs`);
       createdCount++;
     } catch (error: any) {
       console.error(`❌ Error creating request "${scenario.subject}":`, error.message);

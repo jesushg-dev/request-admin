@@ -1,4 +1,10 @@
+import type { UIMessage } from "ai";
 import { ThemeStyles } from "@/features/theme-designer/types/theme";
+
+export type ThemeMentionData = {
+  light: Partial<ThemeStyles["light"]>;
+  dark: Partial<ThemeStyles["dark"]>;
+};
 
 export interface PromptImage {
   url: string;
@@ -7,7 +13,7 @@ export interface PromptImage {
 export interface MentionReference {
   id: string;
   label: string;
-  themeData: Partial<ThemeStyles>;
+  themeData: ThemeMentionData;
 }
 
 export interface AIPromptData {
@@ -16,26 +22,13 @@ export interface AIPromptData {
   images?: PromptImage[];
 }
 
-export interface ChatMessagePart {
-  type: "text" | "theme" | "tool-generateTheme" | "reasoning";
-  text?: string;
-  themeStyles?: ThemeStyles;
-  state?: string;
-  output?: ThemeStyles;
-}
-
 export interface ChatMessageMetadata {
   promptData?: AIPromptData;
-  themeStyles?: ThemeStyles;
+  themeStyles?: ThemeMentionData;
 }
 
-export interface ChatMessage {
-  id: string;
-  role: "user" | "assistant" | "system";
-  parts: ChatMessagePart[];
-  metadata?: ChatMessageMetadata;
-  createdAt?: Date;
-}
+export type ChatMessage = UIMessage<ChatMessageMetadata>;
+export type ChatMessagePart = ChatMessage["parts"][number];
 
 export interface AdditionalAIContext {
   currentTheme?: ThemeStyles;

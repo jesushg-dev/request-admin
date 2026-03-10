@@ -58,6 +58,11 @@ const CreateNewRequestType: FC<CreateNewRequestTypeProps> = ({ requestHierarchie
   const onSubmit = async (values: TCreateRequestTypeSchema) => {
     startTransition(async () => {
       try {
+        if (workflowOptions.length === 0) {
+          toast.error(t('workflowRequiredError'));
+          return;
+        }
+
         const selectedHierarchy = requestHierarchies.find((h) => h.id === values.hierarchyId.value);
         if (!selectedHierarchy) {
           toast.error(t('hierarchyNotFound'));
@@ -76,7 +81,7 @@ const CreateNewRequestType: FC<CreateNewRequestTypeProps> = ({ requestHierarchie
           hierarchyLevelId: firstLevel.id,
           name: values.parentCategoryName,
           tenantId,
-          requestWorkflowId: values.workflowId?.value ? String(values.workflowId.value) : null,
+          requestWorkflowId: String(values.workflowId.value),
         });
 
         toast.success(t('parentCategoryCreated'));
@@ -123,7 +128,6 @@ const CreateNewRequestType: FC<CreateNewRequestTypeProps> = ({ requestHierarchie
                     value={field.value}
                     onChange={(newValue) => field.onChange(newValue)}
                     placeholder={t('workflowPlaceholder')}
-                    isClearable
                   />
                 </FormItem>
               )}

@@ -254,7 +254,19 @@ describe('User Actions', () => {
       (mockDb.user.update as jest.Mock).mockResolvedValue(existingUser);
 
       // Ensure Better Auth returns the member for this user so update path is followed
-      (auth.api.listMembers as jest.Mock).mockResolvedValueOnce({ members: [{ id: 'member-1', userId: 'user-1', user: { email: 'john@example.com' } }], total: 1 });
+      jest.mocked(auth.api.listMembers).mockResolvedValueOnce({
+        members: [
+          {
+            id: 'member-1',
+            organizationId: mockTenantId,
+            role: 'member',
+            createdAt: new Date(),
+            userId: 'user-1',
+            user: { id: 'user-1', name: 'John Doe', email: 'john@example.com', image: undefined },
+          },
+        ],
+        total: 1,
+      });
 
       await upsertUser(mockTenantId, mockUserData);
 
@@ -280,8 +292,17 @@ describe('User Actions', () => {
       (mockDb.person.findFirst as jest.Mock).mockResolvedValue({ id: 'existing-person' });
 
       // Ensure Better Auth returns the member so the update path is taken
-      (auth.api.listMembers as jest.Mock).mockResolvedValueOnce({
-        members: [{ id: 'member-1', userId: existingUser.id, user: { email: 'john@example.com' } }],
+      jest.mocked(auth.api.listMembers).mockResolvedValueOnce({
+        members: [
+          {
+            id: 'member-1',
+            organizationId: mockTenantId,
+            role: 'member',
+            createdAt: new Date(),
+            userId: existingUser.id,
+            user: { id: existingUser.id, name: 'John Doe', email: 'john@example.com', image: undefined },
+          },
+        ],
         total: 1,
       });
 

@@ -39,9 +39,11 @@ const UpdateRequestTypePage: FC<UpdateRequestTypePageProps> = async ({ params })
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/configurations/request-types', params: { tenantId } } });
   }
 
-  const forms = await getFormsAsOptions(tenantId);
-  const requirements = await getRequirementsAsOptions(tenantId);
-  const initialValues = await getRequestCategoriesByIds([slug], tenantId);
+  const [forms, requirements, initialValues] = await Promise.all([
+    getFormsAsOptions(tenantId),
+    getRequirementsAsOptions(tenantId),
+    getRequestCategoriesByIds([slug], tenantId),
+  ]);
 
   if (!initialValues || initialValues.categories.length === 0) {
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/configurations/request-types', params: { tenantId } } });
@@ -53,7 +55,15 @@ const UpdateRequestTypePage: FC<UpdateRequestTypePageProps> = async ({ params })
     return redirect({ locale, href: { pathname: '/admin/[tenantId]/configurations/request-types', params: { tenantId } } });
   }
 
-  return <RequestTypeForm initialValues={initialValues} forms={forms} requirements={requirements} requestHierarchy={hierarchy} tenantId={tenantId} />;
+  return (
+    <RequestTypeForm
+      initialValues={initialValues}
+      forms={forms}
+      requirements={requirements}
+      requestHierarchy={hierarchy}
+      tenantId={tenantId}
+    />
+  );
 };
 
 export default UpdateRequestTypePage;

@@ -237,8 +237,10 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
         }
       }
 
-      // Create temporary category for "creating" state
-      const tempCategory = getDefaultCategory(hierarchyLevelId, parentCategoryId);
+      // Cada subcategoría hereda el workflow de su padre (cada jerarquía raíz puede tener uno distinto)
+      const parent = parentCategoryId ? [...categories, ...Array.from(creatingCategories.values())].find((c) => c.id === parentCategoryId) : undefined;
+      const parentWorkflowId = (parent as RequestCategoryValues & { requestWorkflowId?: string })?.requestWorkflowId;
+      const tempCategory = getDefaultCategory(hierarchyLevelId, parentCategoryId, parentWorkflowId);
       addCreatingCategory(tempCategory);
 
       // If has parent, add to parent's children array temporarily
@@ -259,7 +261,7 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
       setMode('add');
       form.reset(tempCategory);
     },
-    [form, requestHierarchy, levelsMap, categories, t, addCreatingCategory, upsertCategory, setSelectedCategoryId]
+    [form, requestHierarchy, levelsMap, categories, creatingCategories, t, addCreatingCategory, upsertCategory, setSelectedCategoryId]
   );
 
   const handleEditCategory = useCallback(
@@ -359,78 +361,87 @@ const RequestTypeForm: FC<RequestTypeFormProps> = ({ initialValues, requirements
     // Note: We no longer block creation when parent has incomplete children chain
     // Instead, we show visual warnings in the UI to guide users
 
+    // Workflow is required: root must have one, children always inherit from parent
+    const parent = cat.parentCategoryId ? allCategories.find((c) => c.id === cat.parentCategoryId) : undefined;
+    const parentWorkflowId = (parent as RequestCategoryValues & { requestWorkflowId?: string })?.requestWorkflowId;
+    const currentWorkflowId = (cat as RequestCategoryValues & { requestWorkflowId?: string }).requestWorkflowId;
+
+    if (!cat.parentCategoryId && !currentWorkflowId) {
+      toast.error(t('workflowRequiredError'));
+      return;
+    }
+
+    if (cat.parentCategoryId && !parentWorkflowId) {
+      toast.error(t('workflowRequiredError'));
+      return;
+    }
+
+    const categoryToSave = cat.parentCategoryId ? { ...cat, requestWorkflowId: parentWorkflowId } : cat;
+
     startTransition(async () => {
       try {
-        const previousCategory = categories.find((c) => c.id === cat.id);
+        const previousCategory = categories.find((c) => c.id === categoryToSave.id);
 
         const toastId = toast.loading(t('category.loading'));
 
         // Use server action with validation when activating, otherwise use the hook
-        if (cat.isActive) {
+        if (categoryToSave.isActive) {
           // Check if category is being activated (new active category or changing from inactive to active)
           const isActivating = !previousCategory || !previousCategory.isActive;
 
           if (isActivating) {
-            // Validate in client first (using local state) before calling server
-            const canActivate = hasCompleteChildrenChain(cat);
+            const canActivate = hasCompleteChildrenChain(categoryToSave);
             if (!canActivate) {
-              toast.error(t('category.errors.cannotActivateIncomplete', { categoryName: cat.name }));
+              toast.error(t('category.errors.cannotActivateIncomplete', { categoryName: categoryToSave.name }));
               return;
             }
           }
 
-          // Use server action for validation
-          await upsertRequestCategory(cat, tenantId, String(initialValues.hierarchyId.value));
+          await upsertRequestCategory(categoryToSave, tenantId, String(initialValues.hierarchyId.value));
         } else {
-          // Use hook for non-activating updates (faster, no validation needed)
-          await upsert(buildRequestCategoryUpsertArgs(cat, tenantId, String(initialValues.hierarchyId.value)));
+          await upsert(buildRequestCategoryUpsertArgs(categoryToSave, tenantId, String(initialValues.hierarchyId.value)));
         }
 
-        // Handle execution flow if needed
-        if (cat.executionSteps) {
+        if (categoryToSave.executionSteps) {
           toast.loading(t('category.executionLoading'), { id: toastId });
-          await createExecutionFlow(cat.executionSteps, cat.id, tenantId);
+          await createExecutionFlow(categoryToSave.executionSteps, categoryToSave.id, tenantId);
         }
 
         toast.success(t('category.success'), { id: toastId });
 
-        // If this was a creating category, convert it to real
         if (!previousCategory) {
-          convertCreatingToReal(cat.id);
+          convertCreatingToReal(categoryToSave.id);
         }
 
-        // Update Jotai atom
         setCategories((prev) => {
           const prevCategories = [...prev];
 
-          // Remove from old parent if parent changed
-          if (previousCategory?.parentCategoryId && previousCategory.parentCategoryId !== cat.parentCategoryId) {
+          if (previousCategory?.parentCategoryId && previousCategory.parentCategoryId !== categoryToSave.parentCategoryId) {
             const oldParent = prevCategories.find((c) => c.id === previousCategory.parentCategoryId);
             if (oldParent) {
-              oldParent.children = oldParent.children.filter((id) => id !== cat.id);
+              oldParent.children = oldParent.children.filter((id) => id !== categoryToSave.id);
             }
           }
 
-          const categoryIndex = prevCategories.findIndex((c) => c.id === cat.id);
+          const categoryIndex = prevCategories.findIndex((c) => c.id === categoryToSave.id);
           const isNewCategory = categoryIndex === -1;
 
           if (isNewCategory) {
             prevCategories.push({
-              ...cat,
-              children: cat.children || [],
+              ...categoryToSave,
+              children: categoryToSave.children || [],
             });
           } else {
             prevCategories[categoryIndex] = {
               ...prevCategories[categoryIndex],
-              ...cat,
+              ...categoryToSave,
             };
           }
 
-          // Add to new parent if has parent
-          if (cat.parentCategoryId) {
-            const newParent = prevCategories.find((c) => c.id === cat.parentCategoryId);
-            if (newParent && !newParent.children.includes(cat.id)) {
-              newParent.children = [...newParent.children, cat.id];
+          if (categoryToSave.parentCategoryId) {
+            const newParent = prevCategories.find((c) => c.id === categoryToSave.parentCategoryId);
+            if (newParent && !newParent.children.includes(categoryToSave.id)) {
+              newParent.children = [...newParent.children, categoryToSave.id];
             }
           }
 

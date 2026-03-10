@@ -3232,6 +3232,7 @@
         "workflowLabel": "Flujo de trabajo",
         "workflowDescription": "Selecciona el flujo de trabajo para las solicitudes de este tipo",
         "workflowPlaceholder": "Seleccionar flujo de trabajo...",
+        "workflowRequiredError": "Debes seleccionar un flujo de trabajo",
         "saveButton": "Guardar",
         "savingChanges": "Guardando cambios...",
         "changeHierarchyWarning": "¡Al cambiar de jerarquía se reiniciarán las categorías! ¿Deseas continuar?",

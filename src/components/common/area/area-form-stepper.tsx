@@ -51,6 +51,10 @@ interface AreaFormStepperProps {
   userOptions: OptionType[];
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
 // AreaFormStepper: Renders stepper and step content
 const AreaFormStepper: FC<AreaFormStepperProps> = ({ tenantId, assignmentHierarchies, userOptions, moduleWithFeatures, defaultValues }) => {
   const router = useRouter();
@@ -105,8 +109,9 @@ const AreaFormStepper: FC<AreaFormStepperProps> = ({ tenantId, assignmentHierarc
   const currentStepData = stepper.state.current.data;
   // Handle form submission
   const onSubmit = (values: unknown) => {
-    if (currentStepData.id === 'description' && 'hierarchyId' in values) {
-      const hierarchy = assignmentHierarchies.find((h) => h.id === values.hierarchyId.value);
+    if (currentStepData.id === 'description' && isRecord(values)) {
+      const hierarchyId = (values.hierarchyId as OptionType | undefined)?.value;
+      const hierarchy = assignmentHierarchies.find((h) => h.id === hierarchyId);
       if (!hierarchy) {
         form.setError('root.description.hierarchyId', { message: 'Invalid hierarchy' });
         return;
@@ -114,8 +119,11 @@ const AreaFormStepper: FC<AreaFormStepperProps> = ({ tenantId, assignmentHierarc
       setSelectedHierarchy(hierarchy);
     }
 
-    if (currentStepData.id === 'role' && 'roles' in values) {
-      const roles = values.roles.map((role) => ({ value: role.id, label: role.name }));
+    if (currentStepData.id === 'role' && isRecord(values)) {
+      const roles = ((values.roles as TRolesSchema['roles'] | undefined) ?? []).map((role) => ({
+        value: role.id,
+        label: role.name,
+      }));
       setRoleOptions(roles);
     }
 

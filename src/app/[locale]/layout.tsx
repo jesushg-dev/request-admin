@@ -1,7 +1,7 @@
 import { type Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
-import { NextIntlClientProvider, type Locale } from 'next-intl';
+import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { ThemeProvider } from 'next-themes';
 import NextTopLoader from 'nextjs-toploader';
@@ -17,8 +17,8 @@ import { geistMono, geistSans, lexend } from '../fonts';
 // Metadata configuration with localization support
 export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const params = await props.params;
-  const { locale } = params;
-  const t = await getTranslations({ locale: locale as Locale, namespace: 'home' });
+  const locale = hasLocale(routing.locales, params.locale) ? params.locale : routing.defaultLocale;
+  const t = await getTranslations({ locale, namespace: 'home' });
 
   return {
     title: t('title'),
@@ -52,22 +52,22 @@ type Props = {
 
 // RootLayout component
 export default async function RootLayout({ children, params }: Props) {
-  const { locale } = await params;
+  const { locale: localeParam } = await params;
 
   // Validate the incoming locale
-  const validLocale = locale as Locale;
-  if (!routing.locales.includes(validLocale)) {
+  if (!hasLocale(routing.locales, localeParam)) {
     notFound();
   }
+  const locale = localeParam;
 
-  const messages = await getMessages({ locale: validLocale });
+  const messages = await getMessages({ locale });
 
   return (
     <html lang={locale} suppressHydrationWarning>
       <body id="body" className={`${geistSans.variable} ${geistMono.variable} ${lexend.variable} flex min-h-screen flex-col antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <FontProvider>
-            <NextIntlClientProvider locale={validLocale} messages={messages}>
+            <NextIntlClientProvider locale={locale} messages={messages}>
               <NextTopLoader />
               <TanstackQueryProvider>
                 <NuqsAdapter>

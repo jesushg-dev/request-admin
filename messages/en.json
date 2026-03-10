@@ -3234,6 +3234,7 @@
         "workflowLabel": "Workflow",
         "workflowDescription": "Select the workflow for requests of this type",
         "workflowPlaceholder": "Select workflow...",
+        "workflowRequiredError": "You must select a workflow",
         "saveButton": "Save",
         "savingChanges": "Saving changes...",
         "changeHierarchyWarning": "Changing the hierarchy will reset the categories! Do you want to continue?",

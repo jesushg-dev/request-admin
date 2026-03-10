@@ -1,15 +1,14 @@
 import "server-only";
 
 import { logError } from "@/features/theme-designer/utils/shared";
-import { Customer } from "@polar-sh/sdk/models/components/customer.js";
 import { User } from "better-auth";
 
 export const getOrCreateCustomer = async (user: User) => {
   // TODO: Replace with actual Polar SDK import when configured
   // import { polar } from "@/lib/polar";
   const { polarStub: polar } = await import("@/features/theme-designer/utils/polar-stub");
-  
-  let customer: Customer | null = null;
+
+  let customer: Awaited<ReturnType<typeof polar.customers.getExternal>> | null = null;
 
   try {
     customer = await polar.customers.getExternal({ externalId: user.id });

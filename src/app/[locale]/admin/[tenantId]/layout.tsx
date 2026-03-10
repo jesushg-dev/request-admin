@@ -2,10 +2,10 @@ import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { getCurrentUserTenant } from '@/actions/user';
 import { env } from '@/env';
-import { redirect } from '@/i18n/routing';
+import { redirect, routing } from '@/i18n/routing';
 import { auth, currentSession, getActiveTenantId } from '@/server/auth-server';
 import { getDb } from '@/server/db-client';
-import { type Locale } from 'next-intl';
+import { hasLocale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
 import { LoginErrorCodeEnum } from '@/types/user';
@@ -19,9 +19,9 @@ import { Navbar } from '@/components/layouts/admin/nav-bar';
 
 export async function generateMetadata(props: { params: Promise<{ locale: string; tenantId: string }> }): Promise<Metadata> {
   const params = await props.params;
-  const { locale } = params;
-  const t = await getTranslations({ locale: locale as Locale, namespace: 'metadata' });
-  const tAdmin = await getTranslations({ locale: locale as Locale, namespace: 'admin' });
+  const locale = hasLocale(routing.locales, params.locale) ? params.locale : routing.defaultLocale;
+  const t = await getTranslations({ locale, namespace: 'metadata' });
+  const tAdmin = await getTranslations({ locale, namespace: 'admin' });
 
   // Default metadata for dashboard (root page)
   return {
@@ -59,9 +59,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
   modal: React.ReactNode;
-  params: Promise<{ tenantId: string, locale: Locale }>;
+  params: Promise<{ tenantId: string; locale: string }>;
 }>) {
-  const { tenantId, locale } = await params;
+  const { tenantId, locale: localeParam } = await params;
+  const locale = hasLocale(routing.locales, localeParam) ? localeParam : routing.defaultLocale;
   
   // REAL AUTHENTICATION CHECK: Validate session properly
   const session = await currentSession();
@@ -96,7 +97,7 @@ export default async function RootLayout({
     } catch (error) {
       console.error('Error setting active organization:', error);
       // If setting fails, redirect to /admin to let the page handle it
-      return redirect({ href: '/admin', locale: locale });
+      return redirect({ href: '/admin', locale });
     }
   }
 

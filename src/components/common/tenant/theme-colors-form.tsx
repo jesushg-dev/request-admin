@@ -55,7 +55,6 @@ import { builtInPresetNames, getBuiltInPreset } from '@/lib/theme-presets';
 import { adjustColorByHsl } from '@/lib/color-utils';
 import type { HslAdjustments } from '@/types/theme-colors';
 import { defaultHslAdjustments } from '@/types/theme-colors';
-import { builtInPresetNames, getBuiltInPreset } from '@/lib/theme-presets';
 
 const themeColorKeys: { key: ThemeColorKey; label: string; description: string; category: string }[] = [
   // Base colors

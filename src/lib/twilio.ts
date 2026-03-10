@@ -22,7 +22,13 @@ function getTwilioClient() {
 
 export async function sendSMS(to: string, message: string) {
   try {
-    const result = await client.messages.create({
+    const twilioClient = getTwilioClient();
+    if (!twilioClient) {
+      console.warn('SMS sending is disabled (ENABLE_EXTERNAL_SMS=false or missing Twilio credentials).');
+      return null;
+    }
+
+    const result = await twilioClient.messages.create({
       body: message,
       to,
       from: process.env.TWILIO_PHONE_NUMBER,
@@ -36,7 +42,13 @@ export async function sendSMS(to: string, message: string) {
 
 export async function sendWhatsApp(to: string, message: string) {
   try {
-    const result = await client.messages.create({
+    const twilioClient = getTwilioClient();
+    if (!twilioClient) {
+      console.warn('WhatsApp sending is disabled (ENABLE_EXTERNAL_SMS=false or missing Twilio credentials).');
+      return null;
+    }
+
+    const result = await twilioClient.messages.create({
       body: message,
       to: `whatsapp:${to}`,
       from: `whatsapp:${process.env.TWILIO_PHONE_NUMBER}`,

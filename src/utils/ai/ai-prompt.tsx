@@ -1,6 +1,6 @@
 import { useEditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
-import { AIPromptData, MentionReference, PromptImage } from "@/types/ai";
+import { AIPromptData, MentionReference, PromptImage, ThemeMentionData } from "@/types/ai";
 import { JSONContent } from "@tiptap/react";
 
 export const getTextContent = (promptData: AIPromptData | null) => {
@@ -121,9 +121,9 @@ export function createPromptDataFromPreset(prompt: string, presetName: string): 
         id: presetName,
         label: preset.label ?? presetName,
         themeData: {
-          light: (preset.styles.light || {}) as Partial<ThemeStyles>["light"],
-          dark: (preset.styles.dark || {}) as Partial<ThemeStyles>["dark"],
-        } as Partial<ThemeStyles>,
+          light: preset.styles.light || {},
+          dark: preset.styles.dark || {},
+        },
       },
     ],
   };
@@ -148,14 +148,19 @@ export function extractTextContentAndMentions(node: JSONContent): {
       textArr.push(`@${n.attrs?.label}`);
       const id = n.attrs?.id;
       const label = n.attrs?.label;
-      let themeData;
+      if (typeof id !== "string" || typeof label !== "string") return;
+
+      let themeData: ThemeMentionData;
       if (id === "editor:current-changes") {
         themeData = useEditorStore.getState().themeState.styles;
       } else {
         const preset = useThemePresetStore.getState().getPreset(id);
-        themeData = preset?.styles || { light: {}, dark: {} };
+        themeData = {
+          light: preset?.styles?.light || {},
+          dark: preset?.styles?.dark || {},
+        };
       }
-      mentionsArr.push({ id, label, themeData: themeData as Partial<ThemeStyles> });
+      mentionsArr.push({ id, label, themeData });
     }
     if (n.type === "hardBreak") {
       textArr.push("\n");

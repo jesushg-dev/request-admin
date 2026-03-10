@@ -43,6 +43,7 @@ export function createRequestCategorySchema(t: TranslationFn, guideSchema: Retur
     guides: z.array(guideSchema),
     children: z.array(z.string()),
     executionSteps: executionFlowSchema.optional(),
+    requestWorkflowId: z.string().nullish(),
   });
 }
 

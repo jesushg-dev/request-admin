@@ -11,7 +11,7 @@
   "i18n-ally.enabledFrameworks": ["next-intl"],
   "cSpell.words": ["Dataroom", "Nuqs", "reactflow", "sonner", "stepperize", "toploader", "Upserting", "xyflow"],
   "typescript.tsdk": "node_modules\\typescript\\lib",
-  "files.associations": {
-    "*.zmodel": "zmodel-v3" // use "zmodel" for ZenStack v2 projects
-  }
+ "files.associations": {
+    "*.zmodel": "zmodel"
+  },
 }
